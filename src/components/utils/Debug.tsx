@@ -11,7 +11,7 @@ const off = process.env.NODE_ENV === "production";
 
 type DebugProps = {
   it: any;
-  force: boolean;
+  force?: boolean;
 };
 
 export const Debug: FunctionComponent<DebugProps> = ({

@@ -1,14 +1,28 @@
-import { grey } from "@material-ui/core/colors";
-import { blue, blueDark, white } from "./colors";
+import { Palette } from "@material-ui/core/styles/createPalette";
+import {
+  blue,
+  blueDark,
+  blueLight,
+  grey,
+  greyContrastText,
+  greyDark,
+  greyLight,
+  white,
+} from "./colors";
 
-export const palette = {
+export const palette: Partial<Palette> = {
   type: "light",
   primary: {
-    light: "#649dff",
+    light: blueLight,
     main: blue,
     dark: blueDark,
     contrastText: white,
   },
-  secondary: grey,
+  secondary: {
+    light: greyLight,
+    main: grey,
+    dark: greyDark,
+    contrastText: greyContrastText,
+  },
   divider: "#DBE0E8",
 };
