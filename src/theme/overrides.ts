@@ -1,7 +1,10 @@
 export const overrides = {
-  // MuiInputLabel: {
-  //   shrink: {
-  //     transform: 'translate(0, 1.5px) scale(0.8125);'
-  //   }
-  // }
-}
+  MuiButton: {
+    root: {
+      fontSize: 16,
+    },
+    containedSizeLarge: {
+      padding: "14px 22px",
+    },
+  },
+};

@@ -4,11 +4,13 @@ import { overrides } from "./overrides";
 import { palette } from "./palette";
 import { props } from "./props";
 import { shape } from "./shape";
+import { typography } from './typography'
 
 let theme = createMuiTheme({
   palette,
   props,
   overrides,
+  typography,
   shape,
   shadows: Array(25).fill("none") as Shadows,
 });
