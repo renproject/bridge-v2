@@ -13,41 +13,21 @@ export const Catalog: FunctionComponent = () => {
         <Typography variant="body1">Body</Typography>
       </Paper>
       <Wrapper>
-        <Button variant="contained" color="primary" disabled>
-          Inactive
-        </Button>
-        <Button variant="contained" color="primary">
-          Normal
-        </Button>
-        <Button variant="contained" color="primary" size="large" disabled>
-          Inactive
-        </Button>
         <Button variant="contained" color="primary" size="large">
-          Normal
-        </Button>
-      </Wrapper>
-      <Wrapper>
-        <Button variant="contained" color="secondary" disabled>
-          Inactive
-        </Button>
-        <Button variant="contained" color="secondary">
-          Normal
-        </Button>
-        <Button variant="contained" color="secondary" size="large" disabled>
-          Inactive
+          Primary Button
         </Button>
         <Button variant="contained" color="secondary" size="large">
-          Normal
+          Secondary Button
         </Button>
       </Wrapper>
       <Cartesian
         Component={Button}
         Wrapper={Wrapper}
-        content={(props: any) => `${props.size}`}
+        content={(props: any) => `${props.color}`}
         propVariants={{
           variant: ["contained"],
           color: ["primary", "secondary"],
-          size: ["large", "small"],
+          size: ["large"],
           disabled: [true, false],
         }}
       />

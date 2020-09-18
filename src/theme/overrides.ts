@@ -4,7 +4,8 @@ export const overrides = {
       fontSize: 16,
     },
     containedSizeLarge: {
-      padding: "14px 22px",
+      padding: "13px 22px",
+      fontSize: 16
     },
   },
 };
