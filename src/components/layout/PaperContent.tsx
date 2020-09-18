@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   },
 });
 
-type PaperContentProps = {
+export type PaperContentProps = {
   top?: boolean;
   bottom?: boolean;
 };
@@ -24,11 +24,12 @@ type PaperContentProps = {
 export const PaperContent: FunctionComponent<PaperContentProps> = ({
   top,
   bottom,
+  children,
 }) => {
   const styles = useStyles();
   const className = classNames(styles.root, {
     [styles.top]: top,
     [styles.bottom]: bottom,
   });
-  return <div className={className}>a</div>;
+  return <div className={className}>{children}</div>;
 };

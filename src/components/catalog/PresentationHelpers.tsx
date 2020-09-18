@@ -1,7 +1,6 @@
-import { makeStyles } from "@material-ui/core/styles";
-import React, { Fragment, FunctionComponent } from "react";
-import { cartesianProps, PropVariants } from "../../utils/cartesian";
-import { Debug } from "../utils/Debug";
+import { makeStyles } from '@material-ui/core/styles'
+import React, { Fragment, FunctionComponent } from 'react'
+import { cartesianProps, PropVariants } from '../../utils/cartesian'
 
 const useStyles = makeStyles({
   root: {
@@ -54,7 +53,6 @@ export const Cartesian: FunctionComponent<CartesianProps> = ({
           </span>
         );
       })}
-      <Debug it={{ combinations }} />
     </Wrapper>
   );
 };
