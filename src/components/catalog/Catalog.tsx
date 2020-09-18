@@ -2,14 +2,9 @@ import { Button, Paper, Typography } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
 import { theme } from "../../theme/theme";
 import { Debug } from "../utils/Debug";
-import { Wrapper } from "./PresentationHelpers";
+import { Cartesian, Wrapper } from "./PresentationHelpers";
 
 export const Catalog: FunctionComponent = () => {
-  // const buttonCombinations = {
-  //   color: ["primary", "secondary"],
-  //   size: ["large", "small"],
-  //   disabled: [true, false],
-  // };
   return (
     <div>
       <Typography variant="h1">Component Catalog</Typography>
@@ -45,6 +40,17 @@ export const Catalog: FunctionComponent = () => {
           Normal
         </Button>
       </Wrapper>
+      <Cartesian
+        Component={Button}
+        Wrapper={Wrapper}
+        content={(props: any) => `${props.size}`}
+        propVariants={{
+          variant: ["contained"],
+          color: ["primary", "secondary"],
+          size: ["large", "small"],
+          disabled: [true, false],
+        }}
+      />
       <Debug force it={theme} />
     </div>
   );

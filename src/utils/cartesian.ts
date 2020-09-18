@@ -15,9 +15,9 @@ export const cartesianProduct = (...sets: Array<any>) => {
   );
 };
 
-type PropVariants = Record<string, Array<any>>;
+export type PropVariants = Record<string, Array<any>>;
 
-export const cartesian = (propVariants: PropVariants) => {
+export const cartesianProps = (propVariants: PropVariants) => {
   const propNames = Object.keys(propVariants);
   const propValues = Object.values(propVariants);
   const valueCombinations = cartesianProduct(...propValues);

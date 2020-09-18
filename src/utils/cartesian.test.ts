@@ -1,12 +1,12 @@
-import { cartesian, cartesianProduct } from "./cartesian";
+import { cartesianProps, cartesianProduct } from "./cartesian";
 
-test("calculates cartesian props", () => {
+test("calculates cartesianProps props", () => {
   const propVariants = {
     color: ["primary", "secondary"],
     size: ["small", "large"],
   };
 
-  const result = cartesian(propVariants);
+  const result = cartesianProps(propVariants);
 
   const expected = [
     { color: "primary", size: "small" },
@@ -17,7 +17,7 @@ test("calculates cartesian props", () => {
   expect(result).toEqual(expected);
 });
 
-test("calculates cartesian product", () => {
+test("calculates cartesianProps product", () => {
   const result = cartesianProduct(["outlined", "solid"], [true, false]);
   const expected = [
     ["outlined", true],
