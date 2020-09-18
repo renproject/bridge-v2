@@ -21,8 +21,8 @@ export const Catalog: FunctionComponent = () => {
 
   return (
     <div>
-      <Typography variant="h1">Component Catalog</Typography>
-      <Typography variant="h2">Buttons</Typography>
+      <Typography variant="h5">Component Catalog</Typography>
+      <Typography variant="h6">Buttons</Typography>
       <Wrapper>
         <Button variant="contained" color="primary" size="large">
           Primary Button

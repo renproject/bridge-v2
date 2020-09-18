@@ -19,9 +19,9 @@ export const overrides = {
     textColorInherit: {
       color: textLighter,
       opacity: 1,
-      fontWeight: 600,
       "&$selected": {
         color: textDark,
+        fontWeight: 600
       },
       "&$disabled": {
         color: textDisabled,

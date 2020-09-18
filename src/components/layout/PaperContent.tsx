@@ -7,12 +7,10 @@ const useStyles = makeStyles({
   root: {
     paddingLeft: PADDING,
     paddingRight: PADDING,
+    paddingBottom: PADDING,
   },
   top: {
     paddingTop: PADDING,
-  },
-  bottom: {
-    paddingBottom: PADDING,
   },
 });
 
@@ -29,7 +27,6 @@ export const PaperContent: FunctionComponent<PaperContentProps> = ({
   const styles = useStyles();
   const className = classNames(styles.root, {
     [styles.top]: topPadding,
-    [styles.bottom]: bottomPadding,
   });
   return <div className={className}>{children}</div>;
 };
