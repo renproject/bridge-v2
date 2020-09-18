@@ -1,11 +1,24 @@
-import { Button, Typography } from '@material-ui/core'
-import React, { FunctionComponent } from 'react'
-import { theme } from '../../theme/theme'
-import { BridgePaper } from '../layout/BridgePaper'
-import { Debug } from '../utils/Debug'
-import { Cartesian, Wrapper } from './PresentationHelpers'
+import {
+  Box,
+  Button,
+  Container,
+  Tab,
+  Tabs,
+  Typography,
+} from "@material-ui/core";
+import React, { FunctionComponent, useCallback } from "react";
+import { theme } from "../../theme/theme";
+import { BridgePaper } from "../layout/BridgePaper";
+import { Debug } from "../utils/Debug";
+import { Cartesian, Wrapper } from "./PresentationHelpers";
 
 export const Catalog: FunctionComponent = () => {
+  const [tab, setTab] = React.useState(0);
+
+  const handleTabChange = useCallback((event, newValue) => {
+    setTab(newValue);
+  }, []);
+
   return (
     <div>
       <Typography variant="h1">Component Catalog</Typography>
@@ -29,8 +42,22 @@ export const Catalog: FunctionComponent = () => {
           disabled: [true, false],
         }}
       />
+      <Typography variant="h6">Paper</Typography>
       <BridgePaper>
-        <Typography variant="body1">Body</Typography>
+        <Tabs
+          value={tab}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          variant="fullWidth"
+        >
+          <Tab label="Mint" />
+          <Tab label="Release" />
+        </Tabs>
+        <Typography variant="body1">Application Main Container</Typography>
+        <Box height={200} />
+        <Button variant="contained" color="primary" size="large" fullWidth>
+          Next
+        </Button>
       </BridgePaper>
       <Typography variant="h4">Theme configuration:</Typography>
       <Debug force it={theme} />
