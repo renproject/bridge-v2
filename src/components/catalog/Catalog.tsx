@@ -5,6 +5,11 @@ import { Debug } from "../utils/Debug";
 import { Wrapper } from "./PresentationHelpers";
 
 export const Catalog: FunctionComponent = () => {
+  // const buttonCombinations = {
+  //   color: ["primary", "secondary"],
+  //   size: ["large", "small"],
+  //   disabled: [true, false],
+  // };
   return (
     <div>
       <Typography variant="h1">Component Catalog</Typography>
@@ -36,7 +41,7 @@ export const Catalog: FunctionComponent = () => {
         <Button variant="contained" color="secondary" size="large" disabled>
           Inactive
         </Button>
-        <Button variant="contained" color="secondary" size="large" >
+        <Button variant="contained" color="secondary" size="large">
           Normal
         </Button>
       </Wrapper>

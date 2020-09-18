@@ -1,5 +1,5 @@
-import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent } from "react";
+import { makeStyles } from '@material-ui/core/styles'
+import React, { FunctionComponent } from 'react'
 
 const useStyles = makeStyles({
   root: {

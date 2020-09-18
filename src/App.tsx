@@ -11,7 +11,7 @@ function App() {
         <Grid item xs={3}>
           RenBridge
         </Grid>
-        <Grid item xs={9} justify="flex-end">
+        <Grid item xs={9}>
           <WalletConnectionStatus />
         </Grid>
       </Grid>
