@@ -2,34 +2,34 @@ import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
 import classNames from "classnames";
 
-const padding = 20;
+const PADDING = 20;
 const useStyles = makeStyles({
   root: {
-    paddingLeft: padding,
-    paddingRight: padding,
+    paddingLeft: PADDING,
+    paddingRight: PADDING,
   },
   top: {
-    paddingTop: padding,
+    paddingTop: PADDING,
   },
   bottom: {
-    paddingBottom: padding,
+    paddingBottom: PADDING,
   },
 });
 
 export type PaperContentProps = {
-  top?: boolean;
-  bottom?: boolean;
+  topPadding?: boolean;
+  bottomPadding?: boolean;
 };
 
 export const PaperContent: FunctionComponent<PaperContentProps> = ({
-  top,
-  bottom,
+  topPadding,
+  bottomPadding,
   children,
 }) => {
   const styles = useStyles();
   const className = classNames(styles.root, {
-    [styles.top]: top,
-    [styles.bottom]: bottom,
+    [styles.top]: topPadding,
+    [styles.bottom]: bottomPadding,
   });
   return <div className={className}>{children}</div>;
 };

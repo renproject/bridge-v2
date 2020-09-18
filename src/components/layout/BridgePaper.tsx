@@ -5,13 +5,13 @@ import { PaperContent, PaperContentProps } from "./PaperContent";
 type BridgePaperProps = PaperContentProps & PaperProps;
 
 export const BridgePaper: FunctionComponent<BridgePaperProps> = ({
-  top,
-  bottom,
+  topPadding,
+  bottomPadding,
   children,
 }) => {
   return (
     <Paper>
-      <PaperContent top={top} bottom={bottom}>
+      <PaperContent topPadding={topPadding} bottomPadding={bottomPadding}>
         {children}
       </PaperContent>
     </Paper>
