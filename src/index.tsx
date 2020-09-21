@@ -5,11 +5,11 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { theme } from "./theme/theme";
+import { lightTheme } from "./theme/theme";
 
 ReactDOM.render(
   <React.StrictMode>
-    <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider theme={lightTheme}>
       <App />
     </MuiThemeProvider>
   </React.StrictMode>,

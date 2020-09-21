@@ -6,7 +6,6 @@ import {
 } from './colors'
 
 export const palette: Partial<Palette> = {
-  type: "light",
   primary: {
     light: blueLight,
     main: blue,
