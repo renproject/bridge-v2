@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core/styles";
 import React, { Fragment, FunctionComponent } from "react";
 import { cartesianProps, PropVariants } from "../../utils/cartesian";
+import Lorem from "react-lorem-component";
 
 const useStyles = makeStyles({
   root: {
@@ -19,6 +20,26 @@ const useStyles = makeStyles({
 export const Wrapper: FunctionComponent = ({ children }) => {
   const styles = useStyles();
   return <div className={styles.root}>{children}</div>;
+};
+
+type RandomTextProps = {
+  words?: number;
+  sentences?: number;
+};
+
+export const RandomText: FunctionComponent<RandomTextProps> = ({
+  words = 7,
+  sentences = 1,
+}) => {
+  return (
+    <Lorem
+      sentenceLowerBound={words}
+      sentenceUpperBound={words}
+      paragraphLowerBound={sentences}
+      paragraphUpperBound={sentences}
+      format="plain"
+    />
+  );
 };
 
 type ContentFn = (props: any) => string;

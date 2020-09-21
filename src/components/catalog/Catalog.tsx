@@ -1,11 +1,11 @@
-import { Box, Button, Tab, Tabs, Typography } from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
-import React, { FunctionComponent, useCallback } from 'react'
-import { loremIpsum } from 'react-lorem-ipsum/dist'
-import { theme } from '../../theme/theme'
-import { BridgePaper } from '../layout/BridgePaper'
-import { Debug } from '../utils/Debug'
-import { Cartesian, Wrapper } from './PresentationHelpers'
+import { Box, Button, Tab, Tabs, Typography } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
+import React, { FunctionComponent, useCallback } from "react";
+import { theme } from "../../theme/theme";
+import { BridgePaper } from "../layout/BridgePaper";
+import { Debug } from "../utils/Debug";
+import { Cartesian, RandomText, Wrapper } from "./PresentationHelpers";
+import Lorem from "react-lorem-component";
 
 export const Catalog: FunctionComponent = () => {
   const [tab, setTab] = React.useState(0);
@@ -64,8 +64,7 @@ export const Catalog: FunctionComponent = () => {
         }}
       >
         <span>
-          {loremIpsum({ p: 1, avgSentencesPerParagraph: 4 })}{' '}
-          <a href="/">a link</a>
+          <RandomText /> <a href="/">a link</a>
         </span>
       </Cartesian>
       <Typography variant="h4">Theme configuration:</Typography>

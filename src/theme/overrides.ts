@@ -24,7 +24,7 @@ export const overrides = {
       opacity: 1,
       "&$selected": {
         color: textDark,
-        fontWeight: 600
+        fontWeight: 500
       },
       "&$disabled": {
         color: textDisabled,

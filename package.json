@@ -18,7 +18,7 @@
     "prettier": "^2.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-lorem-ipsum": "^1.4.7",
+    "react-lorem-component": "^0.13.0",
     "react-scripts": "3.4.3",
     "typescript": "~3.7.2"
   },
