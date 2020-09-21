@@ -11,6 +11,8 @@ import { theme } from "../../theme/theme";
 import { BridgePaper } from "../layout/BridgePaper";
 import { Debug } from "../utils/Debug";
 import { Cartesian, Wrapper } from "./PresentationHelpers";
+import { Alert } from "@material-ui/lab";
+import { LoremIpsum } from "react-lorem-ipsum";
 
 export const Catalog: FunctionComponent = () => {
   const [tab, setTab] = React.useState(0);
@@ -59,6 +61,20 @@ export const Catalog: FunctionComponent = () => {
           Next
         </Button>
       </BridgePaper>
+      <Typography variant="h4">Alerts</Typography>
+      <Cartesian
+        Component={Alert}
+        Wrapper={Wrapper}
+        propVariants={{
+          onClose: [() => {}],
+          severity: ["error", "warning", "info", "success"],
+        }}
+      >
+        <span>
+          <LoremIpsum p={1} avgSentencesPerParagraph={4} />
+          <a href="/">a link</a>
+        </span>
+      </Cartesian>
       <Typography variant="h4">Theme configuration:</Typography>
       <Debug force it={theme} />
     </div>

@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles'
-import React, { Fragment, FunctionComponent } from 'react'
-import { cartesianProps, PropVariants } from '../../utils/cartesian'
+import { makeStyles } from "@material-ui/core/styles";
+import React, { Fragment, FunctionComponent } from "react";
+import { cartesianProps, PropVariants } from "../../utils/cartesian";
 
 const useStyles = makeStyles({
   root: {
@@ -35,6 +35,7 @@ export const Cartesian: FunctionComponent<CartesianProps> = ({
   Component,
   Wrapper = Fragment,
   content,
+  children,
 }) => {
   const combinations = cartesianProps(propVariants);
   return (
@@ -49,7 +50,10 @@ export const Cartesian: FunctionComponent<CartesianProps> = ({
         const title = JSON.stringify(props, null, 2);
         return (
           <span key={index} title={title}>
-            <Component {...props}>{resolvedContent}</Component>
+            <Component {...props}>
+              {resolvedContent}
+              {children}
+            </Component>
           </span>
         );
       })}
