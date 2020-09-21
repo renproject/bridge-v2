@@ -1,11 +1,10 @@
-import { Box, Button, Tab, Tabs, Typography } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-import React, { FunctionComponent, useCallback } from "react";
-import { theme } from "../../theme/theme";
-import { BridgePaper } from "../layout/BridgePaper";
-import { Debug } from "../utils/Debug";
-import { Cartesian, RandomText, Wrapper } from "./PresentationHelpers";
-import Lorem from "react-lorem-component";
+import { Box, Button, Tab, Tabs, Typography } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
+import React, { FunctionComponent, useCallback } from 'react'
+import { theme } from '../../theme/theme'
+import { BridgePaper } from '../layout/BridgePaper'
+import { Debug } from '../utils/Debug'
+import { Cartesian, RandomText, Wrapper } from './PresentationHelpers'
 
 export const Catalog: FunctionComponent = () => {
   const [tab, setTab] = React.useState(0);
