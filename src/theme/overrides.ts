@@ -16,6 +16,9 @@ export const overrides = {
     },
   },
   MuiTab: {
+    root: {
+      fontSize: 16,
+    },
     textColorInherit: {
       color: textLighter,
       opacity: 1,
