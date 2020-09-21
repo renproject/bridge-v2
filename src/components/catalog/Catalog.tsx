@@ -14,7 +14,12 @@ import React, { FunctionComponent, useCallback } from "react";
 import { darkTheme, lightTheme } from "../../theme/theme";
 import { BridgePaper } from "../layout/BridgePaper";
 import { Debug } from "../utils/Debug";
-import { Cartesian, RandomText, Wrapper } from "./PresentationHelpers";
+import {
+  Cartesian,
+  RandomText,
+  SectionHeader,
+  Wrapper,
+} from "./PresentationHelpers";
 
 export const Catalog: FunctionComponent = () => {
   const [tab, setTab] = React.useState(0);
@@ -44,7 +49,7 @@ export const Catalog: FunctionComponent = () => {
             label="Dark mode (beta)"
           />
         </Box>
-        <Typography variant="h6">Buttons</Typography>
+        <SectionHeader>Buttons</SectionHeader>
         <Wrapper>
           <Button variant="contained" color="primary" size="large">
             Primary Button
@@ -64,7 +69,7 @@ export const Catalog: FunctionComponent = () => {
             disabled: [true, false],
           }}
         />
-        <Typography variant="h6">Paper</Typography>
+        <SectionHeader>Paper</SectionHeader>
         <BridgePaper>
           <Tabs
             value={tab}
@@ -81,7 +86,7 @@ export const Catalog: FunctionComponent = () => {
             Next
           </Button>
         </BridgePaper>
-        <Typography variant="h4">Alerts</Typography>
+        <SectionHeader>Alerts</SectionHeader>
         <Cartesian
           Component={Alert}
           Wrapper={Wrapper}
@@ -94,7 +99,29 @@ export const Catalog: FunctionComponent = () => {
             <RandomText /> <a href="/">a link</a>
           </span>
         </Cartesian>
-        <Typography variant="h4">Theme configuration:</Typography>
+        <SectionHeader>Typography</SectionHeader>
+        <Cartesian
+          Component={Typography}
+          content={({ variant }) => variant}
+          propVariants={{
+            variant: [
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6",
+              "subtitle1",
+              "subtitle2",
+              "body1",
+              "body2",
+              "button",
+              "caption",
+              "overline",
+            ],
+          }}
+        />
+        <SectionHeader>Theme configuration:</SectionHeader>
         <Debug force it={selectedTheme} />
       </div>
     </ThemeProvider>
