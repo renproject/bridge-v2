@@ -1,7 +1,7 @@
-import { Box, Button, Tab, Tabs, Typography, } from '@material-ui/core'
+import { Box, Button, Tab, Tabs, Typography } from '@material-ui/core'
 import { Alert } from '@material-ui/lab'
 import React, { FunctionComponent, useCallback } from 'react'
-import { LoremIpsum } from 'react-lorem-ipsum'
+import { loremIpsum } from 'react-lorem-ipsum/dist'
 import { theme } from '../../theme/theme'
 import { BridgePaper } from '../layout/BridgePaper'
 import { Debug } from '../utils/Debug'
@@ -64,7 +64,7 @@ export const Catalog: FunctionComponent = () => {
         }}
       >
         <span>
-          <LoremIpsum p={1} avgSentencesPerParagraph={4} />
+          {loremIpsum({ p: 1, avgSentencesPerParagraph: 4 })}{' '}
           <a href="/">a link</a>
         </span>
       </Cartesian>
