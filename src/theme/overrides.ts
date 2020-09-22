@@ -39,6 +39,7 @@ export const overrides = (palette: Palette): Overrides => ({
     },
     tooltip: {
       borderRadius: 4,
+      textAlign: "center",
       backgroundColor: palette.common.black,
     },
   },
