@@ -1,11 +1,19 @@
-import { Palette } from "@material-ui/core/styles/createPalette";
+import createPalette, { Palette } from "@material-ui/core/styles/createPalette";
 import {
   blue,
   blueDark,
-  blueLight, graphite, graphiteDark, graphiteLight, strokeDefault, textDark, textDisabled, textLighter, white,
-} from './colors'
+  blueLight,
+  graphite,
+  graphiteDark,
+  graphiteLight,
+  strokeDefault,
+  textDark,
+  textDisabled,
+  textLighter,
+  white,
+} from "./colors";
 
-export const palette: Partial<Palette> = {
+const basePalette = {
   primary: {
     light: blueLight,
     main: blue,
@@ -22,7 +30,17 @@ export const palette: Partial<Palette> = {
     primary: textDark,
     secondary: textLighter,
     disabled: textDisabled,
-    hint: textDisabled
+    hint: textDisabled,
   },
   divider: strokeDefault,
 };
+
+export const lightPalette: Palette = createPalette({
+  type: "light",
+  ...basePalette,
+});
+
+export const darkPalette: Palette = createPalette({
+  type: "dark",
+  ...basePalette,
+});

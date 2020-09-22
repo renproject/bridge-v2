@@ -13,6 +13,7 @@ import { Alert } from "@material-ui/lab";
 import React, { FunctionComponent, useCallback } from "react";
 import { darkTheme, lightTheme } from "../../theme/theme";
 import { BridgePaper } from "../layout/BridgePaper";
+import { Tooltip } from "../tooltips/Tooltip";
 import { Debug } from "../utils/Debug";
 import {
   Cartesian,
@@ -46,7 +47,7 @@ export const Catalog: FunctionComponent = () => {
                 color="primary"
               />
             }
-            label="Dark mode (beta)"
+            label="Dark mode (very beta)"
           />
         </Box>
         <SectionHeader>Buttons</SectionHeader>
@@ -121,6 +122,10 @@ export const Catalog: FunctionComponent = () => {
             ],
           }}
         />
+        <SectionHeader>Tooltips</SectionHeader>
+        <Typography variant="body1">
+          This is a text with a <Tooltip title="And appears here"><span>tooltip</span></Tooltip> on hover.
+        </Typography>
         <SectionHeader>Theme configuration:</SectionHeader>
         <Debug force it={selectedTheme} />
       </div>

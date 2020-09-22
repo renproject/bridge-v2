@@ -1,6 +1,8 @@
+import { Palette } from "@material-ui/core/styles/createPalette";
+import { Overrides } from "@material-ui/core/styles/overrides";
 import { textDark, textDisabled, textLighter } from "./colors";
 
-export const overrides = {
+export const overrides = (palette: Palette): Overrides => ({
   MuiButton: {
     root: {
       fontSize: 16,
@@ -24,11 +26,11 @@ export const overrides = {
       opacity: 1,
       "&$selected": {
         color: textDark,
-        fontWeight: 500
+        fontWeight: 500,
       },
       "&$disabled": {
         color: textDisabled,
       },
     },
   },
-};
+});
