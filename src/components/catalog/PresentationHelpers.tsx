@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import React, { Fragment, FunctionComponent } from "react";
 import { cartesianProps, PropVariants } from "../../utils/cartesian";
 import Lorem from "react-lorem-component";
-// import loremIpsum from "node_modules/react-lorem-component/loremIpsum"
 
 const useSeparationWrapperStyles = makeStyles({
   root: {
@@ -44,6 +43,14 @@ export const RandomText: FunctionComponent<RandomTextProps> = ({
   );
 };
 
+type AnchorProps = {
+  id: string;
+};
+
+const Anchor: FunctionComponent<AnchorProps> = ({ id }) => (
+  <a href={id}>{id}</a>
+);
+
 type SectionProps = {
   header?: string;
 };
@@ -55,6 +62,7 @@ export const Section: FunctionComponent<SectionProps> = ({
   return (
     <Box mb={2}>
       <Box mb={2}>
+        <Anchor id={header} />
         <Typography variant="h4" gutterBottom>
           {header}
         </Typography>

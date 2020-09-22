@@ -127,7 +127,15 @@ export const Catalog: FunctionComponent = () => {
               </Typography>
             </Tooltip>{" "}
             ,it can be initially{" "}
-            <Tooltip title="Like that" open>
+            <Tooltip
+              title={
+                <span>
+                  <RandomText />
+                  <br /> with <a href="/">link</a>
+                </span>
+              }
+              open
+            >
               <span>opened</span>
             </Tooltip>{" "}
             on hover.
