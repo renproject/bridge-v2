@@ -1,6 +1,7 @@
-export const blueLight = "#006FE8";
-export const blue = "#0064CF";
-export const blueDark = "#0051A8";
+export const blueLight = "#0073E5";
+export const blue = "#006FE8";
+export const blueDark = "#0064CF"
+// export const blueDark = "#0051A8";
 
 export const graphiteLight = "#001C3A";
 export const graphite = "#001933";

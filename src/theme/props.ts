@@ -1,4 +1,4 @@
-import { ComponentsProps } from '@material-ui/core/styles/props'
+import { ComponentsProps } from "@material-ui/core/styles/props";
 
 export const props: ComponentsProps = {
   MuiButtonBase: {
@@ -6,11 +6,15 @@ export const props: ComponentsProps = {
     disableRipple: true, // No more ripple, on the whole application 💣!
   },
   MuiTextField: {
-    autoComplete: 'off',
+    autoComplete: "off",
     fullWidth: true,
   },
   MuiTooltip: {
     arrow: true,
-    placement: "top-start"
-  }
-}
+    placement: "top-start",
+  },
+  MuiLink: {
+    color: "inherit",
+    underline: "always",
+  },
+};

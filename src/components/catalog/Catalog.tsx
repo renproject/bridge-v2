@@ -11,10 +11,21 @@ import {
   Tooltip,
   Container,
   Divider,
+  Link,
+  Icon,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import React, { FunctionComponent, useCallback } from "react";
 import { darkTheme, lightTheme } from "../../theme/theme";
+import {
+  BitcoinIcon,
+  GithubIcon,
+  MetamaskFoxIcon,
+  RedditIcon,
+  TelegramIcon,
+  TwitterIcon,
+  TxHistoryIcon
+} from '../icons/RenIcons'
 import { BridgePaper } from "../layout/BridgePaper";
 import { Debug } from "../utils/Debug";
 import {
@@ -91,7 +102,7 @@ export const Catalog: FunctionComponent = () => {
             }}
           >
             <span>
-              <RandomText /> <a href="/">a link</a>
+              <RandomText /> <Link href="/">a link</Link>
             </span>
           </Cartesian>
         </Section>
@@ -122,7 +133,7 @@ export const Catalog: FunctionComponent = () => {
           <Typography variant="body1">
             This is a text with a{" "}
             <Tooltip title="And appears here">
-              <Typography color="primary" component="span">
+              <Typography color="primary" display="inline">
                 tooltip
               </Typography>
             </Tooltip>{" "}
@@ -131,14 +142,25 @@ export const Catalog: FunctionComponent = () => {
               title={
                 <span>
                   <RandomText />
-                  <br /> with <a href="/">link</a>
+                  with{" "}
+                  <Link color="inherit" href="/">
+                    link
+                  </Link>
                 </span>
               }
               open
             >
-              <span>opened</span>
+              <Typography color="secondary" display="inline">
+                opened
+              </Typography>
             </Tooltip>{" "}
-            on hover.
+            on hover. <br />
+            <Tooltip placement="bottom-start" title="like that">
+              <Typography color="primary" display="inline">
+                Bottom placement
+              </Typography>
+            </Tooltip>{" "}
+            is also possible.
           </Typography>
         </Section>
         <FormControlLabel
@@ -154,6 +176,15 @@ export const Catalog: FunctionComponent = () => {
         />
         <Section header="Theme configuration">
           <Debug force it={selectedTheme} />
+        </Section>
+        <Section header="Icons">
+          <TxHistoryIcon />
+          <BitcoinIcon />
+          <GithubIcon />
+          <MetamaskFoxIcon />
+          <RedditIcon />
+          <TelegramIcon />
+          <TwitterIcon />
         </Section>
       </Container>
     </ThemeProvider>
