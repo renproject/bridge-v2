@@ -9,7 +9,7 @@ import { ReactComponent as Telegram } from "./../../assets/icons/telegram.svg";
 import { ReactComponent as Twitter } from "./../../assets/icons/twitter.svg";
 
 export const TxHistoryIcon = () => (
-  <SvgIcon component={TxHistory} viewBox="0 0 24 24" />
+  <SvgIcon component={TxHistory} viewBox="0 0 14 10" />
 );
 
 export const BitcoinIcon = () => (

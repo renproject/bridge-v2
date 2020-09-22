@@ -1,4 +1,4 @@
-import { Container, Grid } from "@material-ui/core";
+import { Box, Container, Grid } from "@material-ui/core";
 import React from "react";
 import "./App.css";
 import { Catalog } from "./components/catalog/Catalog";
@@ -12,7 +12,9 @@ function App() {
           RenBridge
         </Grid>
         <Grid item xs={9}>
-          <WalletConnectionStatus />
+          <Box display="flex" justifyContent="flex-end">
+            <WalletConnectionStatus />
+          </Box>
         </Grid>
       </Grid>
       <Grid container item>

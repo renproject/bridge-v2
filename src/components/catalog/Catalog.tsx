@@ -1,18 +1,17 @@
 import {
   Box,
   Button,
+  Container,
+  CssBaseline,
+  Divider,
   FormControlLabel,
+  Link,
   Switch,
   Tab,
   Tabs,
-  Typography,
   ThemeProvider,
-  CssBaseline,
   Tooltip,
-  Container,
-  Divider,
-  Link,
-  Icon,
+  Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import React, { FunctionComponent, useCallback } from "react";
@@ -24,8 +23,8 @@ import {
   RedditIcon,
   TelegramIcon,
   TwitterIcon,
-  TxHistoryIcon
-} from '../icons/RenIcons'
+  TxHistoryIcon,
+} from "../icons/RenIcons";
 import { BridgePaper } from "../layout/BridgePaper";
 import { Debug } from "../utils/Debug";
 import {
@@ -163,6 +162,17 @@ export const Catalog: FunctionComponent = () => {
             is also possible.
           </Typography>
         </Section>
+        <Section header="Icons">
+          <SeparationWrapper>
+            <TxHistoryIcon />
+            <BitcoinIcon />
+            <GithubIcon />
+            <MetamaskFoxIcon />
+            <RedditIcon />
+            <TelegramIcon />
+            <TwitterIcon />
+          </SeparationWrapper>
+        </Section>
         <FormControlLabel
           control={
             <Switch
@@ -176,15 +186,6 @@ export const Catalog: FunctionComponent = () => {
         />
         <Section header="Theme configuration">
           <Debug force it={selectedTheme} />
-        </Section>
-        <Section header="Icons">
-          <TxHistoryIcon />
-          <BitcoinIcon />
-          <GithubIcon />
-          <MetamaskFoxIcon />
-          <RedditIcon />
-          <TelegramIcon />
-          <TwitterIcon />
         </Section>
       </Container>
     </ThemeProvider>
