@@ -1,10 +1,11 @@
-import { Divider, Typography } from "@material-ui/core";
+import { Box, Divider, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { Fragment, FunctionComponent } from "react";
 import { cartesianProps, PropVariants } from "../../utils/cartesian";
 import Lorem from "react-lorem-component";
+// import loremIpsum from "node_modules/react-lorem-component/loremIpsum"
 
-const useStyles = makeStyles({
+const useSeparationWrapperStyles = makeStyles({
   root: {
     "& > *": {
       margin: 4,
@@ -18,8 +19,8 @@ const useStyles = makeStyles({
   },
 });
 
-export const Wrapper: FunctionComponent = ({ children }) => {
-  const styles = useStyles();
+export const SeparationWrapper: FunctionComponent = ({ children }) => {
+  const styles = useSeparationWrapperStyles();
   return <div className={styles.root}>{children}</div>;
 };
 
@@ -43,14 +44,27 @@ export const RandomText: FunctionComponent<RandomTextProps> = ({
   );
 };
 
-export const SectionHeader: FunctionComponent = ({ children }) => {
+type SectionProps = {
+  header?: string;
+};
+
+export const Section: FunctionComponent<SectionProps> = ({
+  header = "",
+  children,
+}) => {
   return (
-    <>
-      <Typography variant="h4">{children}</Typography>
+    <Box mb={2}>
+      <Box mb={2}>
+        <Typography variant="h4" gutterBottom>
+          {header}
+        </Typography>
+        {children}
+      </Box>
       <Divider />
-    </>
+    </Box>
   );
 };
+
 type ContentFn = (props: any) => string;
 
 type CartesianProps = {

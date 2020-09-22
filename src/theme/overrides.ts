@@ -33,4 +33,13 @@ export const overrides = (palette: Palette): Overrides => ({
       },
     },
   },
+  MuiTooltip: {
+    arrow: {
+      color: palette.common.black,
+    },
+    tooltip: {
+      borderRadius: 4,
+      backgroundColor: palette.common.black,
+    },
+  },
 });
