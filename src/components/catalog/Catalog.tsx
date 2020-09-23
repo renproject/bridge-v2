@@ -12,31 +12,18 @@ import {
   ThemeProvider,
   Tooltip,
   Typography,
-} from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-import React, { FunctionComponent, useCallback } from "react";
-import { darkTheme, lightTheme } from "../../theme/theme";
-import {
-  BitcoinIcon,
-  GithubIcon,
-  MetamaskFoxIcon,
-  RedditIcon,
-  TelegramIcon,
-  TwitterIcon,
-  TxHistoryIcon,
-} from "../icons/RenIcons";
-import { BridgePaper } from "../layout/BridgePaper";
-import { Debug } from "../utils/Debug";
-import {
-  Cartesian,
-  RandomText,
-  Section,
-  SeparationWrapper,
-} from "./PresentationHelpers";
+} from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
+import React, { FunctionComponent, useCallback } from 'react'
+import { darkTheme, lightTheme } from '../../theme/theme'
+import { BridgePaper } from '../layout/Paper'
+import { Debug } from '../utils/Debug'
+import { Cartesian, RandomText, Section, SeparationWrapper, } from './PresentationHelpers'
+import { IconsSection } from './sections/IconsSection'
 
 enum TabPhase {
   MINT,
-  RELEASE
+  RELEASE,
 }
 
 export const Catalog: FunctionComponent = () => {
@@ -83,7 +70,6 @@ export const Catalog: FunctionComponent = () => {
             <Tabs
               value={tab}
               onChange={handleTabChange}
-              textColor="primary"
               indicatorColor="primary"
               variant="fullWidth"
             >
@@ -168,17 +154,7 @@ export const Catalog: FunctionComponent = () => {
             is also possible.
           </Typography>
         </Section>
-        <Section header="Icons">
-          <SeparationWrapper>
-            <TxHistoryIcon />
-            <BitcoinIcon />
-            <GithubIcon />
-            <MetamaskFoxIcon />
-            <RedditIcon />
-            <TelegramIcon />
-            <TwitterIcon />
-          </SeparationWrapper>
-        </Section>
+        <IconsSection />
         <FormControlLabel
           control={
             <Switch

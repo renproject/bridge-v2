@@ -73,6 +73,11 @@ type CartesianProps = {
   Wrapper?: FunctionComponent;
 };
 
+const useCartesianStyles = makeStyles({
+  elementWrapper: {
+    display: "inline-block",
+  },
+});
 export const Cartesian: FunctionComponent<CartesianProps> = ({
   propVariants,
   Component,
@@ -81,6 +86,7 @@ export const Cartesian: FunctionComponent<CartesianProps> = ({
   children,
 }) => {
   const combinations = cartesianProps(propVariants);
+  const styles = useCartesianStyles();
   return (
     <Wrapper>
       {combinations.map((props: any, index: number) => {
@@ -92,7 +98,7 @@ export const Cartesian: FunctionComponent<CartesianProps> = ({
         }
         const title = JSON.stringify(props, null, 2);
         return (
-          <span key={index} title={title}>
+          <span key={index} className={styles.elementWrapper} title={title}>
             <Component {...props}>
               {resolvedContent}
               {children}
