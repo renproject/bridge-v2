@@ -34,8 +34,13 @@ import {
   SeparationWrapper,
 } from "./PresentationHelpers";
 
+enum TabPhase {
+  MINT,
+  RELEASE
+}
+
 export const Catalog: FunctionComponent = () => {
-  const [tab, setTab] = React.useState(0);
+  const [tab, setTab] = React.useState(TabPhase.MINT);
   const [theme, setTheme] = React.useState("light");
   const handleTabChange = useCallback((event, newValue) => {
     setTab(newValue);
@@ -67,7 +72,7 @@ export const Catalog: FunctionComponent = () => {
             content={(props: any) => `${props.color}`}
             propVariants={{
               variant: ["contained"],
-              size: ["large"],
+              size: ["large", "small"],
               color: ["primary", "secondary"],
               disabled: [true, false],
             }}
@@ -78,11 +83,12 @@ export const Catalog: FunctionComponent = () => {
             <Tabs
               value={tab}
               onChange={handleTabChange}
+              textColor="primary"
               indicatorColor="primary"
               variant="fullWidth"
             >
-              <Tab label="Mint" />
-              <Tab label="Release" />
+              <Tab label={tab === TabPhase.MINT ? "Minting" : "Mint"} />
+              <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
             </Tabs>
             <Typography variant="body1">Application Main Container</Typography>
             <Box height={200} />
