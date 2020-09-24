@@ -12,6 +12,7 @@ import TwitterIcon from "@material-ui/icons/Twitter";
 import RedditIcon from "@material-ui/icons/Reddit";
 import TelegramIcon from "@material-ui/icons/Telegram";
 import GitHubIcon from "@material-ui/icons/GitHub";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 
 export const IconsSection: FunctionComponent = () => {
   return (
@@ -25,6 +26,7 @@ export const IconsSection: FunctionComponent = () => {
       <SeparationWrapper>
         <BrowserNotificationsIcon />
         <TxHistoryIcon />
+        <MoreVertIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BitcoinIcon />

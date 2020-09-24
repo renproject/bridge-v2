@@ -19,6 +19,7 @@ import { darkTheme, lightTheme } from '../../theme/theme'
 import { BridgePaper } from '../layout/Paper'
 import { Debug } from '../utils/Debug'
 import { Cartesian, RandomText, Section, SeparationWrapper, } from './PresentationHelpers'
+import { ButtonsSection } from './sections/ButtonsSection'
 import { IconsSection } from './sections/IconsSection'
 
 enum TabPhase {
@@ -44,27 +45,7 @@ export const Catalog: FunctionComponent = () => {
           <Typography variant="h1">Catalog</Typography>
           <Divider />
         </Box>
-        <Section header="Buttons">
-          <SeparationWrapper>
-            <Button variant="contained" color="primary" size="large">
-              Primary Button
-            </Button>
-            <Button variant="contained" color="secondary" size="large">
-              Secondary Button
-            </Button>
-          </SeparationWrapper>
-          <Cartesian
-            Component={Button}
-            Wrapper={SeparationWrapper}
-            content={(props: any) => `${props.color}`}
-            propVariants={{
-              variant: ["contained"],
-              size: ["large", "small"],
-              color: ["primary", "secondary"],
-              disabled: [true, false],
-            }}
-          />
-        </Section>
+        <ButtonsSection />
         <Section header="Paper">
           <BridgePaper>
             <Tabs

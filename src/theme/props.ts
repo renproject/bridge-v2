@@ -5,6 +5,9 @@ export const props: ComponentsProps = {
     // The properties to apply
     disableRipple: true, // No more ripple, on the whole application 💣!
   },
+  MuiIconButton: {
+    size: 'small'
+  },
   MuiTextField: {
     autoComplete: "off",
     fullWidth: true,
