@@ -1,6 +1,9 @@
 import React, { FunctionComponent } from "react";
 import {
   BitcoinIcon,
+  BitcoinInCircleIcon,
+  BrowserNotificationsIcon,
+  EthereumIcon,
   MetamaskFoxIcon,
   TxHistoryIcon,
 } from "../../icons/RenIcons";
@@ -9,7 +12,6 @@ import TwitterIcon from "@material-ui/icons/Twitter";
 import RedditIcon from "@material-ui/icons/Reddit";
 import TelegramIcon from "@material-ui/icons/Telegram";
 import GitHubIcon from "@material-ui/icons/GitHub";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 
 export const IconsSection: FunctionComponent = () => {
   return (
@@ -21,11 +23,15 @@ export const IconsSection: FunctionComponent = () => {
         <GitHubIcon />
       </SeparationWrapper>
       <SeparationWrapper>
-        <NotificationsIcon />
+        <BrowserNotificationsIcon />
+        <TxHistoryIcon />
       </SeparationWrapper>
       <SeparationWrapper>
-        <TxHistoryIcon />
         <BitcoinIcon />
+        <EthereumIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
+        <BitcoinInCircleIcon />
         <MetamaskFoxIcon />
       </SeparationWrapper>
     </Section>

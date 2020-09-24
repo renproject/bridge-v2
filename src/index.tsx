@@ -8,11 +8,9 @@ import * as serviceWorker from "./serviceWorker";
 import { lightTheme } from "./theme/theme";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <MuiThemeProvider theme={lightTheme}>
-      <App />
-    </MuiThemeProvider>
-  </React.StrictMode>,
+  <MuiThemeProvider theme={lightTheme}>
+    <App />
+  </MuiThemeProvider>,
   document.getElementById("root")
 );
 

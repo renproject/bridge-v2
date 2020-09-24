@@ -124,7 +124,7 @@ export const Catalog: FunctionComponent = () => {
           <Typography variant="body1">
             This is a text with a{" "}
             <Tooltip title="And appears here">
-              <Typography color="primary" display="inline">
+              <Typography color="primary" component="span">
                 tooltip
               </Typography>
             </Tooltip>{" "}
@@ -141,13 +141,13 @@ export const Catalog: FunctionComponent = () => {
               }
               open
             >
-              <Typography color="secondary" display="inline">
+              <Typography color="secondary" component="span">
                 opened
               </Typography>
             </Tooltip>{" "}
             on hover. <br />
             <Tooltip placement="bottom-start" title="like that">
-              <Typography color="primary" display="inline">
+              <Typography color="primary" component="span">
                 Bottom placement
               </Typography>
             </Tooltip>{" "}
