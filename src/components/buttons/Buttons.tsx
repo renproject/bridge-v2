@@ -3,9 +3,16 @@ import { makeStyles } from "@material-ui/core/styles";
 import { FunctionComponent, useMemo } from "react";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import React from "react";
-import { graphiteLight, gray, grayLight } from "../../theme/colors";
+import {
+  blue,
+  graphiteLight,
+  gray,
+  grayLight,
+  skyBlue,
+  skyBlueLight,
+} from "../../theme/colors";
 import classNames from "classnames";
-import { BrowserNotificationsIcon } from "../icons/RenIcons";
+import { BrowserNotificationsIcon, QrCodeIcon } from "../icons/RenIcons";
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -18,17 +25,16 @@ const useToggleIconButtonStyles = makeStyles((theme) => ({
     backgroundColor: grayLight,
     "&:hover": {
       backgroundColor: gray,
-      // Reset on touch devices, it doesn't add specificity
       "@media (hover: none)": {
         backgroundColor: "transparent",
       },
     },
   },
   label: {
-    padding: 5,
+    padding: 3,
   },
   icon: {
-    fontSize: 16,
+    fontSize: 20,
   },
   pressed: {
     color: theme.palette.common.white,
@@ -66,6 +72,34 @@ export const ToggleIconButton: FunctionComponent<ToggleIconButtonProps> = ({
     <IconButton classes={{ label }} className={className} {...rest}>
       <Icon className={styles.icon} />
       {children}
+    </IconButton>
+  );
+};
+
+const useQrCodeIconButtonStyles = makeStyles((theme) => ({
+  root: {
+    color: blue,
+    backgroundColor: skyBlueLight,
+    "&:hover": {
+      backgroundColor: skyBlue,
+      "@media (hover: none)": {
+        backgroundColor: "transparent",
+      },
+    },
+  },
+  label: {
+    padding: 3,
+  },
+  icon: {
+    fontSize: 20,
+  },
+}));
+
+export const QrCodeIconButton: FunctionComponent<IconButtonProps> = (props) => {
+  const { icon: iconClassName, ...classes } = useQrCodeIconButtonStyles();
+  return (
+    <IconButton classes={classes} {...props}>
+      <QrCodeIcon className={iconClassName} />
     </IconButton>
   );
 };

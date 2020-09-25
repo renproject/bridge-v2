@@ -1,6 +1,9 @@
+export const skyBlueLight = "#F1F7FE";
+export const skyBlue = "#C1DEFF";
+
 export const blueLight = "#0073E5";
 export const blue = "#006FE8";
-export const blueDark = "#0064CF"
+export const blueDark = "#0064CF";
 // export const blueDark = "#0051A8";
 
 export const graphiteLight = "#001C3A";
@@ -25,9 +28,9 @@ export const textDark = "#3F3F48";
 export const textLighter = "#87888C";
 export const textDisabled = "#DCE0E3";
 
-export const grayLight= "#EBEDF2";
-export const gray='#D2D4D9';
-export const grayDark='#D2D4D9';
+export const grayLight = "#EBEDF2";
+export const gray = "#D2D4D9";
+export const grayDark = "#D2D4D9";
 
 export const backgroundDefault = "#FBFBFB";
 export const backgroundWhite = "#FFFFFF";
