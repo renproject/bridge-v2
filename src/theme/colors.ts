@@ -25,6 +25,10 @@ export const textDark = "#3F3F48";
 export const textLighter = "#87888C";
 export const textDisabled = "#DCE0E3";
 
+export const grayLight= "#EBEDF2";
+export const gray='#D2D4D9';
+export const grayDark='#D2D4D9';
+
 export const backgroundDefault = "#FBFBFB";
 export const backgroundWhite = "#FFFFFF";
 export const backgroundAlternative = "#FDFDFE";

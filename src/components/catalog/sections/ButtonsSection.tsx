@@ -1,9 +1,17 @@
-import { Button } from "@material-ui/core";
-import React, { FunctionComponent } from "react";
-import { SettingsButton } from "../../buttons/Buttons";
-import { Cartesian, Section, SeparationWrapper } from "../PresentationHelpers";
+import { Button } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useState } from 'react'
+import { ToggleIconButton } from '../../buttons/Buttons'
+import { Cartesian, Section, SeparationWrapper } from '../PresentationHelpers'
 
 export const ButtonsSection: FunctionComponent = () => {
+  const [settings, setSettings] = useState(false);
+  const [notifications, setNotifications] = useState(false);
+  const toggleSettings = useCallback(() => {
+    setSettings(!settings);
+  }, [settings]);
+  const toggleNotifications = useCallback(() => {
+    setNotifications(!notifications);
+  }, [notifications]);
   return (
     <>
       <Section header="Buttons">
@@ -29,7 +37,16 @@ export const ButtonsSection: FunctionComponent = () => {
       </Section>
       <Section header="Special Buttons">
         <SeparationWrapper>
-          <SettingsButton />
+          <ToggleIconButton
+            variant="settings"
+            pressed={settings}
+            onClick={toggleSettings}
+          />
+          <ToggleIconButton
+            variant="notifications"
+            pressed={notifications}
+            onClick={toggleNotifications}
+          />
         </SeparationWrapper>
       </Section>
     </>
