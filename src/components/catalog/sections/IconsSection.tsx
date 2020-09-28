@@ -1,11 +1,16 @@
 import React, { FunctionComponent } from "react";
 import {
+  BchFullIcon,
   BitcoinIcon,
   BitcoinInCircleIcon,
   BrowserNotificationsIcon,
+  BtcFullIcon,
+  DogeFullIcon,
+  DotsFullIcon,
   EthereumIcon,
   MetamaskFoxIcon,
   TxHistoryIcon,
+  ZecFullIcon,
 } from "../../icons/RenIcons";
 import { Section, SeparationWrapper } from "../PresentationHelpers";
 import TwitterIcon from "@material-ui/icons/Twitter";
@@ -31,6 +36,13 @@ export const IconsSection: FunctionComponent = () => {
       <SeparationWrapper>
         <BitcoinIcon />
         <EthereumIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
+        <BtcFullIcon />
+        <BchFullIcon />
+        <DogeFullIcon />
+        <DotsFullIcon />
+        <ZecFullIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BitcoinInCircleIcon />
