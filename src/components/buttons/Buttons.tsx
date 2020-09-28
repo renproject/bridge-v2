@@ -19,7 +19,11 @@ import {
 } from "../../theme/colors";
 import classNames from "classnames";
 import { copyToClipboard } from "../../utils/copyToClipboard";
-import { BrowserNotificationsIcon, QrCodeIcon } from "../icons/RenIcons";
+import {
+  BrowserNotificationsIcon,
+  QrCodeIcon,
+  TxHistoryIcon,
+} from "../icons/RenIcons";
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -111,11 +115,42 @@ export const QrCodeIconButton: FunctionComponent<IconButtonProps> = (props) => {
   );
 };
 
-const useGatewayButtonStyles = makeStyles((theme) => ({
+const useTxHistoryIconButtonStyles = makeStyles((theme) => ({
+  root: {
+    color: theme.palette.secondary.light,
+    backgroundColor: grayLight,
+    "&:hover": {
+      backgroundColor: gray,
+      "@media (hover: none)": {
+        backgroundColor: "transparent",
+      },
+    },
+  },
+  label: {
+    padding: 3,
+  },
+  icon: {
+    fontSize: 20,
+  },
+}));
+
+export const TxHistoryIconButton: FunctionComponent<IconButtonProps> = (
+  props
+) => {
+  const { icon: iconClassName, ...classes } = useTxHistoryIconButtonStyles();
+  return (
+    <IconButton classes={classes} {...props}>
+      <TxHistoryIcon className={iconClassName} />
+    </IconButton>
+  );
+};
+
+const useGatewayButtonStyles = makeStyles(() => ({
   root: {
     fontSize: 13,
-    color: blue,
     minWidth: 320,
+    userSelect: "all",
+    color: blue,
     backgroundColor: skyBlueLight,
     "&:hover": {
       backgroundColor: skyBlue,
@@ -134,7 +169,7 @@ type GatewayButtonProps = ButtonProps;
 
 export const GatewayButton: FunctionComponent<GatewayButtonProps> = (props) => {
   const classes = useGatewayButtonStyles();
-  return <Button classes={classes} {...props} />;
+  return <Button classes={classes} {...props} component="span" />;
 };
 
 type CopyGatewayButton = GatewayButtonProps & {
@@ -155,7 +190,7 @@ export const CopyGatewayButton: FunctionComponent<CopyGatewayButton> = ({
     }
   }, [address, copied]);
   return (
-    <GatewayButton onClick={handleClick}>
+    <GatewayButton onDoubleClick={handleClick} title="Double click to copy">
       {copied && (
         <Fade in={copied} timeout={1200}>
           <span>Copied!</span>
