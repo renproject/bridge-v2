@@ -160,6 +160,8 @@ const useGatewayButtonStyles = makeStyles(() => ({
     },
   },
   label: {
+    paddingTop: 6,
+    paddingBottom: 5,
     paddingLeft: 20,
     paddingRight: 20,
   },
