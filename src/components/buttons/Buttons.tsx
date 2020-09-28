@@ -1,4 +1,4 @@
-import { IconButton, IconButtonProps } from "@material-ui/core";
+import { Button, IconButton, IconButtonProps } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { FunctionComponent, useMemo } from "react";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -102,4 +102,28 @@ export const QrCodeIconButton: FunctionComponent<IconButtonProps> = (props) => {
       <QrCodeIcon className={iconClassName} />
     </IconButton>
   );
+};
+
+const useGatewayButtonStyles = makeStyles((theme) => ({
+  root: {
+    fontSize: 13,
+    color: blue,
+    backgroundColor: skyBlueLight,
+    "&:hover": {
+      backgroundColor: skyBlue,
+      "@media (hover: none)": {
+        backgroundColor: "transparent",
+      },
+    },
+  },
+  label: {
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+}));
+
+type GatewayButtonProps = {};
+export const GatewayButton: FunctionComponent<GatewayButtonProps> = (props) => {
+  const classes = useGatewayButtonStyles();
+  return <Button classes={classes} {...props} />;
 };

@@ -1,6 +1,6 @@
 import { Button } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
-import { QrCodeIconButton, ToggleIconButton } from "../../buttons/Buttons";
+import { GatewayButton, QrCodeIconButton, ToggleIconButton } from '../../buttons/Buttons'
 import { Cartesian, Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const ButtonsSection: FunctionComponent = () => {
@@ -48,6 +48,9 @@ export const ButtonsSection: FunctionComponent = () => {
             onClick={toggleNotifications}
           />
           <QrCodeIconButton />
+        </SeparationWrapper>
+        <SeparationWrapper>
+          <GatewayButton>1LU14szcGuMwxVNet1rm</GatewayButton>
         </SeparationWrapper>
       </Section>
     </>
