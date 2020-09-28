@@ -1,6 +1,11 @@
 import { Button } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
-import { GatewayButton, QrCodeIconButton, ToggleIconButton } from '../../buttons/Buttons'
+import {
+  CopyGatewayButton,
+  GatewayButton,
+  QrCodeIconButton,
+  ToggleIconButton,
+} from "../../buttons/Buttons";
 import { Cartesian, Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const ButtonsSection: FunctionComponent = () => {
@@ -51,6 +56,7 @@ export const ButtonsSection: FunctionComponent = () => {
         </SeparationWrapper>
         <SeparationWrapper>
           <GatewayButton>1LU14szcGuMwxVNet1rm</GatewayButton>
+          <CopyGatewayButton address="1LU14szcGuMwxVNet1rm" />
         </SeparationWrapper>
       </Section>
     </>

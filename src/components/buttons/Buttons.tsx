@@ -1,6 +1,12 @@
-import { Button, IconButton, IconButtonProps } from "@material-ui/core";
+import {
+  Button,
+  ButtonProps,
+  Fade,
+  IconButton,
+  IconButtonProps,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { FunctionComponent, useMemo } from "react";
+import { FunctionComponent, useCallback, useMemo, useState } from "react";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import React from "react";
 import {
@@ -12,6 +18,7 @@ import {
   skyBlueLight,
 } from "../../theme/colors";
 import classNames from "classnames";
+import { copyToClipboard } from "../../utils/copyToClipboard";
 import { BrowserNotificationsIcon, QrCodeIcon } from "../icons/RenIcons";
 
 type ToggleIconButtonProps = IconButtonProps & {
@@ -108,6 +115,7 @@ const useGatewayButtonStyles = makeStyles((theme) => ({
   root: {
     fontSize: 13,
     color: blue,
+    minWidth: 320,
     backgroundColor: skyBlueLight,
     "&:hover": {
       backgroundColor: skyBlue,
@@ -122,8 +130,38 @@ const useGatewayButtonStyles = makeStyles((theme) => ({
   },
 }));
 
-type GatewayButtonProps = {};
+type GatewayButtonProps = ButtonProps;
+
 export const GatewayButton: FunctionComponent<GatewayButtonProps> = (props) => {
   const classes = useGatewayButtonStyles();
   return <Button classes={classes} {...props} />;
+};
+
+type CopyGatewayButton = GatewayButtonProps & {
+  address: string;
+};
+
+export const CopyGatewayButton: FunctionComponent<CopyGatewayButton> = ({
+  address,
+}) => {
+  const [copied, setCopied] = useState(false);
+  const handleClick = useCallback(() => {
+    if (!copied) {
+      copyToClipboard(address);
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 4000);
+    }
+  }, [address, copied]);
+  return (
+    <GatewayButton onClick={handleClick}>
+      {copied && (
+        <Fade in={copied} timeout={1200}>
+          <span>Copied!</span>
+        </Fade>
+      )}
+      {!copied && address}
+    </GatewayButton>
+  );
 };
