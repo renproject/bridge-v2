@@ -63,13 +63,36 @@ export const Catalog: FunctionComponent = () => {
               <Tab label={tab === TabPhase.MINT ? "Minting" : "Mint"} />
               <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
             </Tabs>
-            <Typography variant="body1">Application Main Container</Typography>
-            <Box height={200}>
-              <AssetDropdown mode="send" />
-            </Box>
-            <Button variant="contained" color="primary" size="large" fullWidth>
-              Next
-            </Button>
+            {tab === TabPhase.MINT && (
+              <div>
+                <Box height={200}>
+                  <AssetDropdown mode="send" />
+                </Box>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  fullWidth
+                >
+                  Next
+                </Button>
+              </div>
+            )}
+            {tab === TabPhase.RELEASE && (
+              <div>
+                <Box height={200}>
+                  <AssetDropdown mode="receive" />
+                </Box>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  fullWidth
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </BridgePaper>
         </Section>
         <Section header="Alerts">

@@ -1,6 +1,11 @@
 import { Box, MenuItem, Select, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import {
   BchFullIcon,
   BtcFullIcon,
@@ -72,7 +77,7 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
   listIcon: iconStyles,
 }));
 
-const valueRenderer = (value: any) => {
+const createValueRenderer = (mode: AssetDropdownMode) => (value: any) => {
   const selected = getOptionBySymbol(value);
   if (!selected) {
     return <span>empty</span>;
@@ -81,7 +86,9 @@ const valueRenderer = (value: any) => {
   return (
     <Box display="flex" alignItems="center" width="100%">
       <Box width="40%">
-        <Typography variant="body2">Send</Typography>
+        <Typography variant="body2">
+          {mode === "send" ? "Send" : "Receive"}
+        </Typography>
       </Box>
       <Box width="45px" display="flex" alignItems="center">
         <Icon style={iconStyles} />
@@ -93,18 +100,21 @@ const valueRenderer = (value: any) => {
   );
 };
 
-type AssetDropdownMode = "send" | "Receive";
+type AssetDropdownMode = "send" | "receive";
 
 type AssetDropdownProps = {
   mode: AssetDropdownMode;
 };
 
-export const AssetDropdown: FunctionComponent<AssetDropdownProps> = () => {
+export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
+  mode,
+}) => {
+  const styles = useAssetDropdownStyles();
   const [asset, setAsset] = useState("BTC");
   const handleChange = useCallback((event) => {
     setAsset(event.target.value);
   }, []);
-  const styles = useAssetDropdownStyles();
+  const valueRenderer = useMemo(() => createValueRenderer(mode), [mode]);
   return (
     <div>
       <Select
