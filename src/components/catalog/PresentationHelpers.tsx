@@ -69,8 +69,9 @@ type ContentFn = (props: any) => string;
 type CartesianProps = {
   Component: FunctionComponent;
   propVariants: PropVariants;
-  content?: ContentFn | string;
   Wrapper?: FunctionComponent;
+  content?: ContentFn | string;
+  elementWrapperStyle?: any;
 };
 
 const useCartesianStyles = makeStyles({
@@ -82,6 +83,7 @@ export const Cartesian: FunctionComponent<CartesianProps> = ({
   propVariants,
   Component,
   Wrapper = Fragment,
+  elementWrapperStyle = {},
   content,
   children,
 }) => {
@@ -98,7 +100,12 @@ export const Cartesian: FunctionComponent<CartesianProps> = ({
         }
         const title = JSON.stringify(props, null, 2);
         return (
-          <span key={index} className={styles.elementWrapper} title={title}>
+          <span
+            key={index}
+            className={styles.elementWrapper}
+            title={title}
+            style={elementWrapperStyle}
+          >
             <Component {...props}>
               {resolvedContent}
               {children}

@@ -12,15 +12,21 @@ import {
   ThemeProvider,
   Tooltip,
   Typography,
-} from '@material-ui/core'
-import { Alert } from '@material-ui/lab'
-import React, { FunctionComponent, useCallback } from 'react'
-import { darkTheme, lightTheme } from '../../theme/theme'
-import { BridgePaper } from '../layout/Paper'
-import { Debug } from '../utils/Debug'
-import { Cartesian, RandomText, Section, SeparationWrapper, } from './PresentationHelpers'
-import { ButtonsSection } from './sections/ButtonsSection'
-import { IconsSection } from './sections/IconsSection'
+} from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
+import React, { FunctionComponent, useCallback } from "react";
+import { darkTheme, lightTheme } from "../../theme/theme";
+import { AssetDropdown } from "../dropdowns/AssetDropdown";
+import { BridgePaper } from "../layout/Paper";
+import { Debug } from "../utils/Debug";
+import {
+  Cartesian,
+  RandomText,
+  Section,
+  SeparationWrapper,
+} from "./PresentationHelpers";
+import { ButtonsSection } from "./sections/ButtonsSection";
+import { IconsSection } from "./sections/IconsSection";
 
 enum TabPhase {
   MINT,
@@ -58,7 +64,9 @@ export const Catalog: FunctionComponent = () => {
               <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
             </Tabs>
             <Typography variant="body1">Application Main Container</Typography>
-            <Box height={200} />
+            <Box height={200}>
+              <AssetDropdown />
+            </Box>
             <Button variant="contained" color="primary" size="large" fullWidth>
               Next
             </Button>
@@ -82,6 +90,7 @@ export const Catalog: FunctionComponent = () => {
           <Cartesian
             Component={Typography}
             content={({ variant }) => variant}
+            elementWrapperStyle={{ display: "block" }}
             propVariants={{
               variant: [
                 "h1",

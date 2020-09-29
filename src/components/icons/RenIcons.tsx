@@ -14,7 +14,7 @@ import { ReactComponent as TxHistory } from "./../../assets/icons/tx-history.svg
 import { ReactComponent as TxSettings } from "./../../assets/icons/tx-settings.svg";
 import { ReactComponent as QrCode } from "./../../assets/icons/qr-code.svg";
 
-type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
+export type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
 
 export const TxHistoryIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={TxHistory} {...props} />
