@@ -1,4 +1,10 @@
-import React, { FunctionComponent } from "react";
+import { Box } from '@material-ui/core'
+import GitHubIcon from '@material-ui/icons/GitHub'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import RedditIcon from '@material-ui/icons/Reddit'
+import TelegramIcon from '@material-ui/icons/Telegram'
+import TwitterIcon from '@material-ui/icons/Twitter'
+import React, { FunctionComponent } from 'react'
 import {
   BchFullIcon,
   BitcoinIcon,
@@ -9,15 +15,12 @@ import {
   DotsFullIcon,
   EthereumIcon,
   MetamaskFoxIcon,
+  RenBridgeLogoIcon,
+  RenLogoIcon,
   TxHistoryIcon,
   ZecFullIcon,
-} from "../../icons/RenIcons";
-import { Section, SeparationWrapper } from "../PresentationHelpers";
-import TwitterIcon from "@material-ui/icons/Twitter";
-import RedditIcon from "@material-ui/icons/Reddit";
-import TelegramIcon from "@material-ui/icons/Telegram";
-import GitHubIcon from "@material-ui/icons/GitHub";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+} from '../../icons/RenIcons'
+import { Section, SeparationWrapper } from '../PresentationHelpers'
 
 export const IconsSection: FunctionComponent = () => {
   return (
@@ -43,6 +46,12 @@ export const IconsSection: FunctionComponent = () => {
         <DogeFullIcon />
         <DotsFullIcon />
         <ZecFullIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
+        <RenBridgeLogoIcon />
+        <Box bgcolor="gray" display="inline-block" p={1}>
+          <RenLogoIcon />
+        </Box>
       </SeparationWrapper>
       <SeparationWrapper>
         <BitcoinInCircleIcon />
