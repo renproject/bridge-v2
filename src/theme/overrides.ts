@@ -12,6 +12,11 @@ export const overrides = (palette: Palette): Overrides => ({
       fontSize: 16,
     },
   },
+  MuiSelect: {
+    root: {
+      padding: `13px 20px`,
+    },
+  },
   MuiTabs: {
     indicator: {
       display: "none",

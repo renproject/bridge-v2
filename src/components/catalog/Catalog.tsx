@@ -65,7 +65,7 @@ export const Catalog: FunctionComponent = () => {
             </Tabs>
             <Typography variant="body1">Application Main Container</Typography>
             <Box height={200}>
-              <AssetDropdown />
+              <AssetDropdown mode="send" />
             </Box>
             <Button variant="contained" color="primary" size="large" fullWidth>
               Next
