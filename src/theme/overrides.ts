@@ -12,6 +12,12 @@ export const overrides = (palette: Palette): Overrides => ({
       fontSize: 16,
     },
   },
+  MuiDrawer: {
+    paperAnchorRight: {
+      borderBottomLeftRadius: 20,
+      borderTopLeftRadius: 20,
+    },
+  },
   MuiSelect: {
     root: {
       padding: `13px 20px`,

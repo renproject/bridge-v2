@@ -4,29 +4,33 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
 import { Catalog } from "./components/catalog/Catalog";
 import { WalletConnectionStatus } from "./components/indicators/WalletConnectionStatus";
+import { MainLayout } from "./components/layout/MainLayout";
 
 function App() {
   return (
     <Router>
-      <Container maxWidth="lg">
-        <Grid container alignItems="center">
-          <Grid item xs={3}>
-            RenBridge
-          </Grid>
-          <Grid item xs={9}>
-            <Box display="flex" justifyContent="flex-end">
-              <WalletConnectionStatus />
-            </Box>
-          </Grid>
-        </Grid>
-        <Grid container item>
-          <Switch>
-            <Route path="/">
+      <Switch>
+        <Route path="/">
+          <MainLayout />
+        </Route>
+        <Route path="/catalog">
+          <Container maxWidth="lg">
+            <Grid container alignItems="center">
+              <Grid item xs={3}>
+                RenBridge
+              </Grid>
+              <Grid item xs={9}>
+                <Box display="flex" justifyContent="flex-end">
+                  <WalletConnectionStatus />
+                </Box>
+              </Grid>
+            </Grid>
+            <Grid container item>
               <Catalog />
-            </Route>
-          </Switch>
-        </Grid>
-      </Container>
+            </Grid>
+          </Container>
+        </Route>
+      </Switch>
     </Router>
   );
 }

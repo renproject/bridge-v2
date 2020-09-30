@@ -1,5 +1,6 @@
 import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
 import { Palette } from "@material-ui/core/styles/createPalette";
+import { Shadows } from "@material-ui/core/styles/shadows";
 // import { Shadows } from "@material-ui/core/styles/shadows";
 import { overrides } from "./overrides";
 import { darkPalette, lightPalette } from "./palette";
@@ -12,7 +13,7 @@ const baseTheme = (palette: Palette) => ({
   overrides: overrides(palette),
   typography,
   shape,
-  // shadows: Array(25).fill("none") as Shadows,
+  shadows: Array(25).fill("none") as Shadows,
 });
 
 export const lightTheme = responsiveFontSizes(
