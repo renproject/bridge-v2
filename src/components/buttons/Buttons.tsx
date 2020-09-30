@@ -243,6 +243,37 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
   );
 };
 
+const useWalletIndicatorStyles = makeStyles((theme) => ({
+  root: {
+    width: 10,
+    height: 10,
+    borderRadius: 10,
+    marginRight: 10,
+    backgroundColor: theme.palette.divider,
+  },
+  connected: {
+    backgroundColor: theme.palette.success.main,
+  },
+  warning: {
+    backgroundColor: theme.palette.warning.main,
+  },
+}));
+
+type WalletIndicatorProps = {
+  status?: "connected" | "warning";
+};
+
+const WalletIndicator: FunctionComponent<WalletIndicatorProps> = ({
+  status,
+}) => {
+  const styles = useWalletIndicatorStyles();
+  const className = classNames(styles.root, {
+    [styles.connected]: status === "connected",
+    [styles.warning]: status === "warning",
+  });
+  return <div className={className} />;
+};
+
 const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
   root: {
     borderColor: theme.palette.divider,
@@ -251,22 +282,13 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.divider,
     },
   },
-  indicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 10,
-    marginRight: 10,
-    backgroundColor: theme.palette.error.main,
-  },
 }));
+
 export const WalletConnectionStatusButton: FunctionComponent = () => {
-  const {
-    indicator: indicatorClassName,
-    ...classes
-  } = useWalletConnectionStatusButtonStyles();
+  const { ...classes } = useWalletConnectionStatusButtonStyles();
   return (
     <Button variant="outlined" color="secondary" classes={classes}>
-      <div className={indicatorClassName} />
+      <WalletIndicator status="warning" />
       <span>Connect Wallet</span>
     </Button>
   );
