@@ -12,6 +12,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import React, { FunctionComponent } from "react";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { WalletConnectionStatus } from "../indicators/WalletConnectionStatus";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,37 +26,15 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
-    searchIcon: {
-      padding: theme.spacing(0, 2),
-      height: "100%",
-      position: "absolute",
-      pointerEvents: "none",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    inputRoot: {
-      color: "inherit",
-    },
-    inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("md")]: {
-        width: "20ch",
-      },
-    },
     sectionDesktop: {
       display: "none",
-      [theme.breakpoints.up("md")]: {
+      [theme.breakpoints.up("sm")]: {
         display: "flex",
       },
     },
     sectionMobile: {
       display: "flex",
-      [theme.breakpoints.up("md")]: {
+      [theme.breakpoints.up("sm")]: {
         display: "none",
       },
     },
@@ -101,8 +80,8 @@ export const MainLayout: FunctionComponent = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <WalletConnectionStatus />
+      <MenuItem onClick={handleMenuClose}>My accountee</MenuItem>
     </Menu>
   );
 

@@ -10,10 +10,10 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/">
+        <Route path="/app">
           <MainLayout />
         </Route>
-        <Route path="/catalog">
+        <Route path="/">
           <Container maxWidth="lg">
             <Grid container alignItems="center">
               <Grid item xs={3}>

@@ -115,6 +115,7 @@ export const QrCodeIconButton: FunctionComponent<IconButtonProps> = (props) => {
   );
 };
 
+// TODO: remove
 const useTxHistoryIconButtonStyles = makeStyles((theme) => ({
   root: {
     color: theme.palette.secondary.light,
@@ -200,5 +201,42 @@ export const CopyGatewayButton: FunctionComponent<CopyGatewayButton> = ({
       )}
       {!copied && address}
     </GatewayButton>
+  );
+};
+
+const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
+  root: {
+    color: theme.palette.secondary.light,
+    border: `1px solid ${theme.palette.divider}`,
+    backgroundColor: "transparent",
+    padding: 6,
+    "&:hover": {
+      backgroundColor: theme.palette.divider,
+      "@media (hover: none)": {
+        backgroundColor: "transparent",
+      },
+    },
+  },
+  label: {
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.divider,
+    padding: 3,
+  },
+  icon: {
+    fontSize: 20,
+  },
+}));
+
+type TransactionHistoryMenuIconButtonProps = IconButtonProps & {};
+
+export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = () => {
+  const {
+    icon: iconClassName,
+    ...classes
+  } = useTransactionHistoryIconButtonStyles();
+  return (
+    <IconButton classes={classes}>
+      <TxHistoryIcon className={iconClassName} />
+    </IconButton>
   );
 };

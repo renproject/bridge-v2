@@ -1,7 +1,13 @@
-import { Button } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { CopyGatewayButton, QrCodeIconButton, ToggleIconButton, TxHistoryIconButton, } from '../../buttons/Buttons'
-import { Cartesian, Section, SeparationWrapper } from '../PresentationHelpers'
+import { Button } from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import {
+  CopyGatewayButton,
+  QrCodeIconButton,
+  ToggleIconButton,
+  TransactionHistoryMenuIconButton,
+  TxHistoryIconButton,
+} from "../../buttons/Buttons";
+import { Cartesian, Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const ButtonsSection: FunctionComponent = () => {
   const [settings, setSettings] = useState(false);
@@ -49,6 +55,7 @@ export const ButtonsSection: FunctionComponent = () => {
           />
           <TxHistoryIconButton />
           <QrCodeIconButton />
+          <TransactionHistoryMenuIconButton />
         </SeparationWrapper>
         <SeparationWrapper>
           <CopyGatewayButton address="1LU14szcGuMwxVNet1rm" />
