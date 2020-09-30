@@ -1,10 +1,11 @@
-import { Link, LinkProps } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import GitHubIcon from '@material-ui/icons/GitHub'
-import RedditIcon from '@material-ui/icons/Reddit'
-import TelegramIcon from '@material-ui/icons/Telegram'
-import TwitterIcon from '@material-ui/icons/Twitter'
-import React, { FunctionComponent } from 'react'
+import { Link, LinkProps } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import GitHubIcon from "@material-ui/icons/GitHub";
+import RedditIcon from "@material-ui/icons/Reddit";
+import TelegramIcon from "@material-ui/icons/Telegram";
+import TwitterIcon from "@material-ui/icons/Twitter";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
 
 const FooterTextLink: FunctionComponent<LinkProps> = (props) => (
   <Link color="textSecondary" underline="hover" {...props} />
@@ -12,7 +13,7 @@ const FooterTextLink: FunctionComponent<LinkProps> = (props) => (
 
 const useFooterIconLinkStyles = makeStyles(() => ({
   root: {
-    fontSize: 16,
+    fontSize: 18,
   },
 }));
 
@@ -30,17 +31,26 @@ const FooterIconLink: FunctionComponent<LinkProps> = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex",
-    justifyContent: "space-between",
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "flex",
+      justifyContent: "space-between",
+    },
+  },
+  rootMobile: {
+    display: "block",
   },
   textLinks: {
-    display: "flex",
-    flexDirection: "row",
+    display: "block",
     listStyleType: "none",
-    // [theme.breakpoints.up("sm")]: {
-    //   flexDirection: "column",
-    // },
+    margin: 0,
+    paddingLeft: 0,
+    [theme.breakpoints.up("sm")]: {
+      display: "flex",
+      flexDirection: "row",
+    },
     "& > li": {
+      margin: `0 0 8px`,
       [theme.breakpoints.up("sm")]: {
         margin: `0 8px`,
         "&:first-child": {
@@ -56,6 +66,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     listStyleType: "none",
+    margin: 0,
+    paddingLeft: 0,
     "& > li": {
       margin: `0 8px`,
       "&:first-child": {
@@ -70,13 +82,16 @@ const useStyles = makeStyles((theme) => ({
 
 type FooterProps = { mobile?: boolean };
 
-export const Footer: FunctionComponent<FooterProps> = () => {
+export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
   const styles = useStyles();
+  const rootClassName = classNames(styles.root, {
+    [styles.rootMobile]: mobile,
+  });
   return (
-    <footer className={styles.root}>
+    <footer className={rootClassName}>
       <ul className={styles.textLinks}>
         <li>
-          <FooterTextLink href="/">What is RenVM?</FooterTextLink>
+          <FooterTextLink href="/app">What is RenVM?</FooterTextLink>
         </li>
         <li>
           <FooterTextLink href="/">About RenVM</FooterTextLink>

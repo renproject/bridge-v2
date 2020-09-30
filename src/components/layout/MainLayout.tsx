@@ -1,21 +1,22 @@
-import { Divider, Drawer, ListItem } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
-import IconButton from '@material-ui/core/IconButton'
-import { makeStyles, Theme } from '@material-ui/core/styles'
-import Toolbar from '@material-ui/core/Toolbar'
-import CloseIcon from '@material-ui/icons/Close'
-import MenuIcon from '@material-ui/icons/Menu'
-import React, { FunctionComponent, useState } from 'react'
+import { Container, Divider, Drawer, ListItem } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import CloseIcon from "@material-ui/icons/Close";
+import MenuIcon from "@material-ui/icons/Menu";
+import classNames from "classnames";
+import React, { FunctionComponent, useState } from "react";
 import {
   TransactionHistoryMenuIconButton,
   WalletConnectionIndicator,
   WalletConnectionStatusButton,
-} from '../buttons/Buttons'
-import { RenBridgeLogoIcon } from '../icons/RenIcons'
-import { Footer } from './Footer'
+} from "../buttons/Buttons";
+import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Footer } from "./Footer";
 
 const headerHeight = 64;
-const footerHeight = 64;
+const footerHeight = 55;
 const useStyles = makeStyles((theme: Theme) => ({
   grow: {
     flexGrow: 1,
@@ -61,12 +62,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   drawerListItem: {
     padding: `16px 0`,
   },
+  drawerFooterListItem: {
+    paddingBottom: 0,
+    flexGrow: 2,
+    alignItems: "flex-end",
+  },
   drawerListItemIcon: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     minWidth: 40,
     marginRight: 16,
+
   },
 }));
 
@@ -111,11 +118,19 @@ export const MainLayout: FunctionComponent = ({ children }) => {
         </div>
         <p>View Transactions</p>
       </ListItem>
+      <ListItem
+        className={classNames(
+          styles.drawerListItem,
+          styles.drawerFooterListItem
+        )}
+      >
+        <Footer mobile />
+      </ListItem>
     </Drawer>
   );
 
   return (
-    <>
+    <Container maxWidth="lg">
       <header className={styles.grow}>
         <AppBar position="static" color="transparent">
           <Toolbar>
@@ -146,6 +161,6 @@ export const MainLayout: FunctionComponent = ({ children }) => {
       </header>
       <main className={styles.main}>{children}</main>
       <Footer />
-    </>
+    </Container>
   );
 };
