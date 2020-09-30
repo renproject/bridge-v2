@@ -1,18 +1,18 @@
-import { Drawer } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import Badge from "@material-ui/core/Badge";
-import IconButton from "@material-ui/core/IconButton";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import MailIcon from "@material-ui/icons/Mail";
-import MenuIcon from "@material-ui/icons/Menu";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import React, { FunctionComponent } from "react";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { WalletConnectionStatus } from "../indicators/WalletConnectionStatus";
+import { Drawer } from '@material-ui/core'
+import AppBar from '@material-ui/core/AppBar'
+import Badge from '@material-ui/core/Badge'
+import IconButton from '@material-ui/core/IconButton'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import Toolbar from '@material-ui/core/Toolbar'
+import AccountCircle from '@material-ui/icons/AccountCircle'
+import MailIcon from '@material-ui/icons/Mail'
+import MenuIcon from '@material-ui/icons/Menu'
+import NotificationsIcon from '@material-ui/icons/Notifications'
+import React, { FunctionComponent } from 'react'
+import { TransactionHistoryMenuIconButton, WalletConnectionStatusButton, } from '../buttons/Buttons'
+import { RenBridgeLogoIcon } from '../icons/RenIcons'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,13 +26,16 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       alignItems: "center",
     },
-    sectionDesktop: {
+    desktopMenu: {
       display: "none",
       [theme.breakpoints.up("sm")]: {
         display: "flex",
       },
     },
-    sectionMobile: {
+    desktopTxHistory: {
+      marginRight: 20,
+    },
+    mobileMenu: {
       display: "flex",
       [theme.breakpoints.up("sm")]: {
         display: "none",
@@ -41,8 +44,8 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const MainLayout: FunctionComponent = () => {
-  const classes = useStyles();
+export const MainLayout: FunctionComponent = ({ children }) => {
+  const styles = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
     mobileMoreAnchorEl,
@@ -80,7 +83,7 @@ export const MainLayout: FunctionComponent = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <WalletConnectionStatus />
+      <WalletConnectionStatusButton />
       <MenuItem onClick={handleMenuClose}>My accountee</MenuItem>
     </Menu>
   );
@@ -125,36 +128,20 @@ export const MainLayout: FunctionComponent = () => {
   );
 
   return (
-    <div className={classes.grow}>
+    <div className={styles.grow}>
       <AppBar position="static" color="transparent">
         <Toolbar>
-          <div className={classes.logo}>
+          <div className={styles.logo}>
             <RenBridgeLogoIcon />
           </div>
-          <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
+          <div className={styles.grow} />
+          <div className={styles.desktopMenu}>
+            <TransactionHistoryMenuIconButton
+              className={styles.desktopTxHistory}
+            />
+            <WalletConnectionStatusButton />
           </div>
-          <div className={classes.sectionMobile}>
+          <div className={styles.mobileMenu}>
             <IconButton
               aria-label="show more"
               aria-controls={mobileMenuId}
@@ -169,6 +156,7 @@ export const MainLayout: FunctionComponent = () => {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
+      {children}
     </div>
   );
 };

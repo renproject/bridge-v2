@@ -229,14 +229,45 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
 
 type TransactionHistoryMenuIconButtonProps = IconButtonProps & {};
 
-export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = () => {
+export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = (
+  props
+) => {
   const {
     icon: iconClassName,
     ...classes
   } = useTransactionHistoryIconButtonStyles();
   return (
-    <IconButton classes={classes}>
+    <IconButton classes={classes} {...props}>
       <TxHistoryIcon className={iconClassName} />
     </IconButton>
+  );
+};
+
+const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
+  root: {
+    borderColor: theme.palette.divider,
+    "&:hover": {
+      borderColor: theme.palette.divider,
+      backgroundColor: theme.palette.divider,
+    },
+  },
+  indicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 10,
+    marginRight: 10,
+    backgroundColor: theme.palette.error.main,
+  },
+}));
+export const WalletConnectionStatusButton: FunctionComponent = () => {
+  const {
+    indicator: indicatorClassName,
+    ...classes
+  } = useWalletConnectionStatusButtonStyles();
+  return (
+    <Button variant="outlined" color="secondary" classes={classes}>
+      <div className={indicatorClassName} />
+      <span>Connect Wallet</span>
+    </Button>
   );
 };
