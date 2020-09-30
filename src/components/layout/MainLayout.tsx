@@ -12,13 +12,16 @@ import {
   WalletConnectionStatusButton,
 } from '../buttons/Buttons'
 import { RenBridgeLogoIcon } from '../icons/RenIcons'
+import { Footer } from './Footer'
 
+const headerHeight = 64;
+const footerHeight = 64;
 const useStyles = makeStyles((theme: Theme) => ({
   grow: {
     flexGrow: 1,
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
+  main: {
+    minHeight: `calc(100vh - ${headerHeight + footerHeight}px)`,
   },
   logo: {
     display: "flex",
@@ -69,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const MainLayout: FunctionComponent = ({ children }) => {
   const styles = useStyles();
-  const [isDrawerOpened, setIsMobileDrawerOpened] = useState(true);
+  const [isDrawerOpened, setIsMobileDrawerOpened] = useState(false);
 
   const handleDrawerClose = () => {
     setIsMobileDrawerOpened(false);
@@ -78,6 +81,8 @@ export const MainLayout: FunctionComponent = ({ children }) => {
   const handleDrawerOpen = () => {
     setIsMobileDrawerOpened(true);
   };
+
+  // TODO: add debounced resize/useLayoutEffect for disabling drawer after transition
 
   const drawerId = "main-menu-mobile";
   const renderDrawer = (
@@ -110,34 +115,37 @@ export const MainLayout: FunctionComponent = ({ children }) => {
   );
 
   return (
-    <div className={styles.grow}>
-      <AppBar position="static" color="transparent">
-        <Toolbar>
-          <div className={styles.logo}>
-            <RenBridgeLogoIcon />
-          </div>
-          <div className={styles.grow} />
-          <div className={styles.desktopMenu}>
-            <TransactionHistoryMenuIconButton
-              className={styles.desktopTxHistory}
-            />
-            <WalletConnectionStatusButton />
-          </div>
-          <div className={styles.mobileMenu}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={drawerId}
-              aria-haspopup="true"
-              onClick={handleDrawerOpen}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-          </div>
-        </Toolbar>
-      </AppBar>
-      {renderDrawer}
-      {children}
-    </div>
+    <>
+      <header className={styles.grow}>
+        <AppBar position="static" color="transparent">
+          <Toolbar>
+            <div className={styles.logo}>
+              <RenBridgeLogoIcon />
+            </div>
+            <div className={styles.grow} />
+            <div className={styles.desktopMenu}>
+              <TransactionHistoryMenuIconButton
+                className={styles.desktopTxHistory}
+              />
+              <WalletConnectionStatusButton />
+            </div>
+            <div className={styles.mobileMenu}>
+              <IconButton
+                aria-label="show more"
+                aria-controls={drawerId}
+                aria-haspopup="true"
+                onClick={handleDrawerOpen}
+                color="inherit"
+              >
+                <MenuIcon />
+              </IconButton>
+            </div>
+          </Toolbar>
+        </AppBar>
+        {renderDrawer}
+      </header>
+      <main className={styles.main}>{children}</main>
+      <Footer />
+    </>
   );
 };
