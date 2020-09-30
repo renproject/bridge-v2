@@ -243,12 +243,11 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
   );
 };
 
-const useWalletIndicatorStyles = makeStyles((theme) => ({
+const useWalletConnectionIndicatorStyles = makeStyles((theme) => ({
   root: {
     width: 10,
     height: 10,
     borderRadius: 10,
-    marginRight: 10,
     backgroundColor: theme.palette.divider,
   },
   connected: {
@@ -257,19 +256,25 @@ const useWalletIndicatorStyles = makeStyles((theme) => ({
   warning: {
     backgroundColor: theme.palette.warning.main,
   },
+  error: {
+    backgroundColor: theme.palette.error.main,
+  },
 }));
 
-type WalletIndicatorProps = {
-  status?: "connected" | "warning";
+type WalletConnectionIndicatorProps = {
+  status?: "connected" | "warning" | "error";
+  className?: string; // TODO: find a better way
 };
 
-const WalletIndicator: FunctionComponent<WalletIndicatorProps> = ({
+export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndicatorProps> = ({
   status,
+  className: classNameProp,
 }) => {
-  const styles = useWalletIndicatorStyles();
-  const className = classNames(styles.root, {
+  const styles = useWalletConnectionIndicatorStyles();
+  const className = classNames(styles.root, classNameProp, {
     [styles.connected]: status === "connected",
     [styles.warning]: status === "warning",
+    [styles.error]: status === "error",
   });
   return <div className={className} />;
 };
@@ -282,14 +287,23 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.divider,
     },
   },
+  indicator: {
+    marginRight: 10,
+  },
 }));
 
 export const WalletConnectionStatusButton: FunctionComponent = () => {
-  const { ...classes } = useWalletConnectionStatusButtonStyles();
+  const {
+    indicator: indicatorClassName,
+    ...classes
+  } = useWalletConnectionStatusButtonStyles();
   return (
     <Button variant="outlined" color="secondary" classes={classes}>
-      <WalletIndicator status="warning" />
-      <span>Connect Wallet</span>
+      <WalletConnectionIndicator
+        status="warning"
+        className={indicatorClassName}
+      />
+      <span>Connect a Wallet</span>
     </Button>
   );
 };

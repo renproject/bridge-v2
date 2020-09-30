@@ -13,6 +13,9 @@ export const overrides = (palette: Palette): Overrides => ({
     },
   },
   MuiDrawer: {
+    paper: {
+      padding: 20
+    },
     paperAnchorRight: {
       borderBottomLeftRadius: 20,
       borderTopLeftRadius: 20,
