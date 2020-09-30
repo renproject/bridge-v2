@@ -124,8 +124,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
         className={styles.select}
         renderValue={valueRenderer}
       >
-        {options.map((option) => {
-          const { symbol, Icon, name } = option;
+        {options.map(({ symbol, Icon, name }) => {
           return (
             <MenuItem key={symbol} value={symbol}>
               <Box display="flex" alignItems="center" width="100%">
