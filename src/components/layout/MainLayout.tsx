@@ -1,22 +1,23 @@
-import { Container, Divider, Drawer, ListItem } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import CloseIcon from "@material-ui/icons/Close";
-import MenuIcon from "@material-ui/icons/Menu";
-import classNames from "classnames";
-import React, { FunctionComponent, useState } from "react";
+import { Container, Divider, Drawer, ListItem } from '@material-ui/core'
+import AppBar from '@material-ui/core/AppBar'
+import IconButton from '@material-ui/core/IconButton'
+import { makeStyles, Theme } from '@material-ui/core/styles'
+import Toolbar from '@material-ui/core/Toolbar'
+import CloseIcon from '@material-ui/icons/Close'
+import MenuIcon from '@material-ui/icons/Menu'
+import classNames from 'classnames'
+import React, { FunctionComponent, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   TransactionHistoryMenuIconButton,
   WalletConnectionIndicator,
   WalletConnectionStatusButton,
-} from "../buttons/Buttons";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { Footer } from "./Footer";
+} from '../buttons/Buttons'
+import { RenBridgeLogoIcon } from '../icons/RenIcons'
+import { Footer } from './Footer'
 
 const headerHeight = 64;
-const footerHeight = 55;
+const footerHeight = 42;
 const useStyles = makeStyles((theme: Theme) => ({
   grow: {
     flexGrow: 1,
@@ -73,7 +74,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: "center",
     minWidth: 40,
     marginRight: 16,
-
   },
 }));
 
@@ -135,7 +135,9 @@ export const MainLayout: FunctionComponent = ({ children }) => {
         <AppBar position="static" color="transparent">
           <Toolbar>
             <div className={styles.logo}>
-              <RenBridgeLogoIcon />
+              <Link to="/">
+                <RenBridgeLogoIcon />
+              </Link>
             </div>
             <div className={styles.grow} />
             <div className={styles.desktopMenu}>
