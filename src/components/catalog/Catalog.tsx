@@ -13,20 +13,15 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import React, { FunctionComponent, useCallback } from "react";
 import { darkTheme, lightTheme } from "../../theme/theme";
 import { AssetDropdown } from "../dropdowns/AssetDropdown";
 import { BridgePaper } from "../layout/Paper";
 import { Debug } from "../utils/Debug";
-import {
-  Cartesian,
-  RandomText,
-  Section,
-  SeparationWrapper,
-} from "./PresentationHelpers";
+import { Cartesian, RandomText, Section } from "./PresentationHelpers";
 import { ButtonsSection } from "./sections/ButtonsSection";
 import { IconsSection } from "./sections/IconsSection";
+import { NotificationsSection } from "./sections/NotifciationsSection";
 
 enum TabPhase {
   MINT,
@@ -95,20 +90,7 @@ export const Catalog: FunctionComponent = () => {
             )}
           </BridgePaper>
         </Section>
-        <Section header="Alerts">
-          <Cartesian
-            Component={Alert}
-            Wrapper={SeparationWrapper}
-            propVariants={{
-              onClose: [() => {}],
-              severity: ["error", "warning", "info", "success"],
-            }}
-          >
-            <span>
-              <RandomText /> <Link href="/">a link</Link>
-            </span>
-          </Cartesian>
-        </Section>
+        <NotificationsSection />
         <Section header="Typography">
           <Cartesian
             Component={Typography}
