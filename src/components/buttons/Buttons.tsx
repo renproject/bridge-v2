@@ -19,6 +19,7 @@ import {
 } from "../../theme/colors";
 import classNames from "classnames";
 import { copyToClipboard } from "../../utils/copyToClipboard";
+import CopyIcon from "@material-ui/icons/FileCopy"
 import {
   BrowserNotificationsIcon,
   QrCodeIcon,
@@ -146,7 +147,7 @@ export const TxHistoryIconButton: FunctionComponent<IconButtonProps> = (
   );
 };
 
-const useGatewayButtonStyles = makeStyles(() => ({
+const useLightButtonStyles = makeStyles(() => ({
   root: {
     fontSize: 13,
     minWidth: 320,
@@ -168,18 +169,18 @@ const useGatewayButtonStyles = makeStyles(() => ({
   },
 }));
 
-type GatewayButtonProps = ButtonProps;
+type LightButtonProps = ButtonProps;
 
-export const GatewayButton: FunctionComponent<GatewayButtonProps> = (props) => {
-  const classes = useGatewayButtonStyles();
+export const LightButton: FunctionComponent<LightButtonProps> = (props) => {
+  const classes = useLightButtonStyles();
   return <Button classes={classes} {...props} component="span" />;
 };
 
-type CopyGatewayButton = GatewayButtonProps & {
+type CopyGatewayButtonProps = LightButtonProps & {
   address: string;
 };
 
-export const CopyGatewayButton: FunctionComponent<CopyGatewayButton> = ({
+export const CopyGatewayButton: FunctionComponent<CopyGatewayButtonProps> = ({
   address,
 }) => {
   const [copied, setCopied] = useState(false);
@@ -193,14 +194,46 @@ export const CopyGatewayButton: FunctionComponent<CopyGatewayButton> = ({
     }
   }, [address, copied]);
   return (
-    <GatewayButton onDoubleClick={handleClick} title="Double click to copy">
+    <LightButton onDoubleClick={handleClick} title="Double click to copy">
       {copied && (
         <Fade in={copied} timeout={1200}>
           <span>Copied!</span>
         </Fade>
       )}
       {!copied && address}
-    </GatewayButton>
+    </LightButton>
+  );
+};
+
+const useCopyContentButtonStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+    justifyContent: "stretch",
+  },
+  content: {
+    flexGrow: 2,
+  },
+  copy: {
+    flexGrow: 0,
+    flexShrink: 0,
+  },
+}));
+
+type CopyContentButtonProps = {
+  content: string;
+};
+
+export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = () => {
+  const styles = useCopyContentButtonStyles();
+  return (
+    <div className={styles.root}>
+      <div className={styles.content}>a</div>
+      <div className={styles.copy}>
+        <IconButton>
+          <CopyIcon />
+        </IconButton>
+      </div>
+    </div>
   );
 };
 

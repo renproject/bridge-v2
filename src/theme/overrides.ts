@@ -24,6 +24,7 @@ export const overrides = (palette: Palette): Overrides =>
       standardSuccess: {
         color: alertSuccess,
         backgroundColor: alertSuccessBackground,
+        boxShadow: `1px 1px 2px 0 ${alertSuccessBackground}`,
         "& $icon": {
           color: alertSuccess,
         },
@@ -31,6 +32,7 @@ export const overrides = (palette: Palette): Overrides =>
       standardInfo: {
         color: alertInfo,
         backgroundColor: alertInfoBackground,
+        boxShadow: `1px 1px 2px 0 ${alertInfoBackground}`,
         "& $icon": {
           color: alertInfo,
         },
@@ -38,6 +40,7 @@ export const overrides = (palette: Palette): Overrides =>
       standardWarning: {
         color: alertWarning,
         backgroundColor: alertWarningBackground,
+        boxShadow: `1px 1px 2px 0 ${alertWarningBackground}`,
         "& $icon": {
           color: alertWarning,
         },
@@ -45,6 +48,7 @@ export const overrides = (palette: Palette): Overrides =>
       standardError: {
         color: alertError,
         backgroundColor: alertErrorBackground,
+        boxShadow: `1px 1px 2px 0 ${alertErrorBackground}`,
         "& $icon": {
           color: alertError,
         },
