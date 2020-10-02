@@ -45,7 +45,6 @@ export const alertWarningBackground = "#FBF3E9";
 
 export const alertInfo = "#5027E2";
 export const alertInfoBackground = "#F7F3FF";
-
 export const alertError = "#D60000";
 export const alertErrorBackground = "#FBE8E8";
 

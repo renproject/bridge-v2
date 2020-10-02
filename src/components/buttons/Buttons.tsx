@@ -1,30 +1,12 @@
-import {
-  Button,
-  ButtonProps,
-  Fade,
-  IconButton,
-  IconButtonProps,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { FunctionComponent, useCallback, useMemo, useState } from "react";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import React from "react";
-import {
-  blue,
-  graphiteLight,
-  gray,
-  grayLight,
-  skyBlue,
-  skyBlueLight,
-} from "../../theme/colors";
-import classNames from "classnames";
-import { copyToClipboard } from "../../utils/copyToClipboard";
-import CopyIcon from "@material-ui/icons/FileCopy"
-import {
-  BrowserNotificationsIcon,
-  QrCodeIcon,
-  TxHistoryIcon,
-} from "../icons/RenIcons";
+import { Button, Fade, IconButton, IconButtonProps, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import CopyIcon from '@material-ui/icons/FileCopyOutlined'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useMemo, useState } from 'react'
+import { blue, graphiteLight, gray, grayLight, skyBlue, skyBlueLight, } from '../../theme/colors'
+import { copyToClipboard } from '../../utils/copyToClipboard'
+import { BrowserNotificationsIcon, QrCodeIcon, TxHistoryIcon, } from '../icons/RenIcons'
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -147,13 +129,11 @@ export const TxHistoryIconButton: FunctionComponent<IconButtonProps> = (
   );
 };
 
-const useLightButtonStyles = makeStyles(() => ({
+const useLightIconButtonStyles = makeStyles((theme) => ({
   root: {
-    fontSize: 13,
-    minWidth: 320,
-    userSelect: "all",
     color: blue,
     backgroundColor: skyBlueLight,
+    fontSize: 19,
     "&:hover": {
       backgroundColor: skyBlue,
       "@media (hover: none)": {
@@ -162,56 +142,27 @@ const useLightButtonStyles = makeStyles(() => ({
     },
   },
   label: {
-    paddingTop: 6,
-    paddingBottom: 5,
-    paddingLeft: 20,
-    paddingRight: 20,
+    padding: 10,
   },
 }));
-
-type LightButtonProps = ButtonProps;
-
-export const LightButton: FunctionComponent<LightButtonProps> = (props) => {
-  const classes = useLightButtonStyles();
-  return <Button classes={classes} {...props} component="span" />;
-};
-
-type CopyGatewayButtonProps = LightButtonProps & {
-  address: string;
-};
-
-export const CopyGatewayButton: FunctionComponent<CopyGatewayButtonProps> = ({
-  address,
-}) => {
-  const [copied, setCopied] = useState(false);
-  const handleClick = useCallback(() => {
-    if (!copied) {
-      copyToClipboard(address);
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-      }, 4000);
-    }
-  }, [address, copied]);
-  return (
-    <LightButton onDoubleClick={handleClick} title="Double click to copy">
-      {copied && (
-        <Fade in={copied} timeout={1200}>
-          <span>Copied!</span>
-        </Fade>
-      )}
-      {!copied && address}
-    </LightButton>
-  );
-};
 
 const useCopyContentButtonStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     justifyContent: "stretch",
+    maxWidth: 320,
   },
   content: {
     flexGrow: 2,
+    fontSize: 13,
+    borderRadius: 20,
+    marginRight: 10,
+    color: blue,
+    backgroundColor: skyBlueLight,
+    userSelect: "all",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   copy: {
     flexGrow: 0,
@@ -223,14 +174,35 @@ type CopyContentButtonProps = {
   content: string;
 };
 
-export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = () => {
+export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
+  content,
+}) => {
   const styles = useCopyContentButtonStyles();
+  const iconClasses = useLightIconButtonStyles();
+  const [copied, setCopied] = useState(false);
+
+  const handleClick = useCallback(() => {
+    if (!copied) {
+      copyToClipboard(content);
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 4000);
+    }
+  }, [content, copied]);
   return (
     <div className={styles.root}>
-      <div className={styles.content}>a</div>
+      <div className={styles.content}>
+        {copied && (
+          <Fade in={copied} timeout={1200}>
+            <span>Copied!</span>
+          </Fade>
+        )}
+        {!copied && <span>{content}</span>}
+      </div>
       <div className={styles.copy}>
-        <IconButton>
-          <CopyIcon />
+        <IconButton classes={iconClasses} onClick={handleClick}>
+          <CopyIcon fontSize="inherit" />
         </IconButton>
       </div>
     </div>

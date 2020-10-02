@@ -1,7 +1,7 @@
 import { Button } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
-  CopyGatewayButton,
+  CopyContentButton,
   QrCodeIconButton,
   ToggleIconButton,
   TransactionHistoryMenuIconButton,
@@ -58,7 +58,7 @@ export const ButtonsSection: FunctionComponent = () => {
           <TransactionHistoryMenuIconButton />
         </SeparationWrapper>
         <SeparationWrapper>
-          <CopyGatewayButton address="1LU14szcGuMwxVNet1rm" />
+          <CopyContentButton content="1LU14szcGuMwxVNet1rm" />
         </SeparationWrapper>
       </Section>
     </>
