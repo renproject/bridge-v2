@@ -1,16 +1,26 @@
-import { Button, Link } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-import { useSnackbar } from "notistack";
-import React, { FunctionComponent } from "react";
-import {
-  Cartesian,
-  RandomText,
-  Section,
-  SeparationWrapper,
-} from "../PresentationHelpers";
+import { Button, Link } from '@material-ui/core'
+import { Alert } from '@material-ui/lab'
+import React, { FunctionComponent, useCallback, useEffect } from 'react'
+import { useNotifications } from '../../../providers/Notifications'
+import { Cartesian, RandomText, Section, SeparationWrapper, } from '../PresentationHelpers'
 
 export const NotificationsSection: FunctionComponent = () => {
-  const { enqueueSnackbar } = useSnackbar();
+  const { showNotification } = useNotifications();
+
+  const showNotifications = useCallback(() => {
+    showNotification("Success", { variant: "success" });
+    showNotification("Warning", { variant: "error" });
+  }, [showNotification]);
+
+  useEffect(showNotifications, []);
+
+  const showAdvancedSnackbar = useCallback(() => {
+    showNotification("Advanced Snackbar content", {
+      variant: "warning",
+      autoHideDuration: 10000,
+    });
+  }, [showNotification]);
+
   return (
     <Section header="Notifications (Alerts / Snackbars)">
       <Cartesian
@@ -25,12 +35,11 @@ export const NotificationsSection: FunctionComponent = () => {
           <RandomText /> <Link href="/">a link</Link>
         </span>
       </Cartesian>
-      <Button
-        onClick={() => {
-          enqueueSnackbar("hi");
-        }}
-      >
-        Snackbar
+      <Button onClick={showNotifications} color="primary">
+        Show snackbars
+      </Button>
+      <Button onClick={showAdvancedSnackbar} color="secondary">
+        Show advanced snackbars
       </Button>
     </Section>
   );

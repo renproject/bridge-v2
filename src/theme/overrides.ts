@@ -3,6 +3,11 @@ import { Overrides } from "@material-ui/core/styles/overrides";
 import { textDark, textDisabled, textLighter } from "./colors";
 
 export const overrides = (palette: Palette): Overrides => ({
+  MuiAlert: {
+    action: {
+      alignItems: "flex-start",
+    },
+  },
   MuiButton: {
     root: {
       fontSize: 16,
@@ -14,7 +19,7 @@ export const overrides = (palette: Palette): Overrides => ({
   },
   MuiDrawer: {
     paper: {
-      padding: 20
+      padding: 20,
     },
     paperAnchorRight: {
       borderBottomLeftRadius: 20,
@@ -65,4 +70,4 @@ export const overrides = (palette: Palette): Overrides => ({
       backgroundColor: palette.common.black,
     },
   },
-});
+} as Overrides);

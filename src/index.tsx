@@ -4,15 +4,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { SnackbarProvider } from "./providers/SnackbarProvider";
+import { NotificationsProvider } from "./providers/Notifications";
 import * as serviceWorker from "./serviceWorker";
 import { lightTheme } from "./theme/theme";
 
 ReactDOM.render(
   <MuiThemeProvider theme={lightTheme}>
-    <SnackbarProvider>
+    <NotificationsProvider>
       <App />
-    </SnackbarProvider>
+    </NotificationsProvider>
   </MuiThemeProvider>,
   document.getElementById("root")
 );
