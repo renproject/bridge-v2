@@ -16,7 +16,7 @@ export const NotificationsSection: FunctionComponent = () => {
     showNotification("Error", { variant: "error" });
     showNotification("Warning", { variant: "warning" });
     showNotification("Info", { variant: "info" });
-    showNotification("Success", { variant: "success" });
+    showNotification("Success", { variant: "success", persist: true });
   }, [showNotification]);
 
   useEffect(showNotifications, []);
