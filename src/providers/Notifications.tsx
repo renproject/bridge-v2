@@ -1,7 +1,10 @@
-import { SnackbarProvider as NotistackSnackbarProvider, VariantType } from 'notistack'
-import { FunctionComponent } from "react";
+import {
+  SnackbarProvider as NotistackSnackbarProvider,
+  VariantType,
+} from "notistack";
+import { FunctionComponent, ReactElement } from "react";
 import React from "react";
-import { CustomSnackMessage } from "../components/notifications/Snackbars";
+import { NotificationMessage } from "../components/notifications/NotificationMessage";
 
 import { useSnackbar as useDefaultSnackbar, OptionsObject } from "notistack";
 
@@ -12,7 +15,7 @@ export const useNotifications = () => {
   } = useDefaultSnackbar();
 
   const showNotification = (
-    message: string,
+    message: string | ReactElement,
     options?: OptionsObject & Partial<{ variant: VariantType }>
   ) => {
     enqueueDefaultSnackbar(message, {
@@ -20,7 +23,7 @@ export const useNotifications = () => {
       content: (key) => {
         const { variant } = options || { variant: undefined };
         return (
-          <CustomSnackMessage id={key} message={message} variant={variant} />
+          <NotificationMessage id={key} message={message} variant={variant} />
         );
       },
     });
@@ -35,6 +38,7 @@ export const NotificationsProvider: FunctionComponent = ({ children }) => (
       vertical: "top",
       horizontal: "right",
     }}
+    maxSnack={4}
   >
     {children}
   </NotistackSnackbarProvider>
