@@ -1,12 +1,19 @@
 import { ComponentsProps } from "@material-ui/core/styles/props";
+import React from "react";
+import { SuccessIcon } from "../components/icons/RenIcons";
 
 export const props: ComponentsProps = {
+  MuiAlert: {
+    iconMapping: {
+      success: <SuccessIcon color="inherit" />,
+    },
+  },
   MuiButtonBase: {
     // The properties to apply
     disableRipple: true, // No more ripple, on the whole application 💣!
   },
   MuiIconButton: {
-    size: 'small'
+    size: "small",
   },
   MuiTextField: {
     autoComplete: "off",
@@ -20,4 +27,4 @@ export const props: ComponentsProps = {
     color: "inherit",
     underline: "always",
   },
-};
+} as ComponentsProps;

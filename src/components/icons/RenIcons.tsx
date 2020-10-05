@@ -1,21 +1,26 @@
-import { SvgIcon, SvgIconProps } from '@material-ui/core'
-import React, { FunctionComponent } from 'react'
-import { getScalingProps } from '../../utils/iconHelpers'
-import { ReactComponent as BchFull } from './../../assets/icons/bch-icon.svg'
-import { ReactComponent as BitcoinInCircle } from './../../assets/icons/bitcoin-in-circle.svg'
-import { ReactComponent as BrowserNotifications } from './../../assets/icons/browser-notifications.svg'
-import { ReactComponent as Bitcoin } from './../../assets/icons/btc-icon-only.svg'
-import { ReactComponent as BtcFull } from './../../assets/icons/btc-icon.svg'
-import { ReactComponent as DogeFull } from './../../assets/icons/doge-icon.svg'
-import { ReactComponent as DotsFull } from './../../assets/icons/dots-icon.svg'
-import { ReactComponent as Ethereum } from './../../assets/icons/eth-icon-only.svg'
-import { ReactComponent as MetamaskFox } from './../../assets/icons/metamask-fox.svg'
-import { ReactComponent as QrCode } from './../../assets/icons/qr-code.svg'
-import { ReactComponent as RenLogo } from './../../assets/icons/ren-logo.svg'
-import { ReactComponent as RenBridgeLogo } from './../../assets/icons/renbridge-logo.svg'
-import { ReactComponent as TxHistory } from './../../assets/icons/tx-history.svg'
-import { ReactComponent as TxSettings } from './../../assets/icons/tx-settings.svg'
-import { ReactComponent as ZecFull } from './../../assets/icons/zec-icon.svg'
+import { SvgIcon, SvgIconProps } from "@material-ui/core";
+import React, { FunctionComponent } from "react";
+import { getScalingProps } from "../../utils/iconHelpers";
+import { ReactComponent as BchFull } from "./../../assets/icons/bch-icon.svg";
+import { ReactComponent as BitcoinInCircle } from "./../../assets/icons/bitcoin-in-circle.svg";
+import { ReactComponent as BrowserNotifications } from "./../../assets/icons/browser-notifications.svg";
+import { ReactComponent as Bitcoin } from "./../../assets/icons/btc-icon-only.svg";
+import { ReactComponent as BtcFull } from "./../../assets/icons/btc-icon.svg";
+import { ReactComponent as DogeFull } from "./../../assets/icons/doge-icon.svg";
+import { ReactComponent as DotsFull } from "./../../assets/icons/dots-icon.svg";
+import { ReactComponent as Ethereum } from "./../../assets/icons/eth-icon-only.svg";
+import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox.svg";
+import { ReactComponent as QrCode } from "./../../assets/icons/qr-code.svg";
+import { ReactComponent as RenLogo } from "./../../assets/icons/ren-logo.svg";
+import { ReactComponent as RenBridgeLogo } from "./../../assets/icons/renbridge-logo.svg";
+import { ReactComponent as TxHistory } from "./../../assets/icons/tx-history.svg";
+import { ReactComponent as TxSettings } from "./../../assets/icons/tx-settings.svg";
+import { ReactComponent as Success } from "./../../assets/icons/success-icon.svg";
+import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
+import { ReactComponent as BinanceChainFull } from "./../../assets/icons/binancesmartchain-circle-icon.svg";
+import { ReactComponent as EthereumChainFull } from "./../../assets/icons/ethereum-circle-icon.svg";
+import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binancesmartchain-colour-icon.svg";
+import { ReactComponent as EthereumChainColor } from "./../../assets/icons/ethereum-colour-icon.svg";
 
 export type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
 
@@ -25,6 +30,10 @@ export const TxHistoryIcon: CustomSvgIconComponent = (props) => (
 
 export const TxSettingsIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={TxSettings} {...props} />
+);
+
+export const SuccessIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Success} {...props} />
 );
 
 export const QrCodeIcon: CustomSvgIconComponent = (props) => (
@@ -62,6 +71,22 @@ export const DotsFullIcon: CustomSvgIconComponent = (props) => (
 export const ZecFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={ZecFull} {...props} />
 );
+
+export const BinanceChainFullIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={BinanceChainFull} {...props} />;
+};
+
+export const EthereumChainFullIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={EthereumChainFull} {...props} />;
+};
+
+export const BinanceChainColorIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={BinanceChainColor} {...props} />;
+};
+
+export const EthereumChainColorIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={EthereumChainColor} {...props} />;
+};
 
 export const RenBridgeLogoIcon: CustomSvgIconComponent = (props) => {
   const scalingProps = getScalingProps(115, 23);
