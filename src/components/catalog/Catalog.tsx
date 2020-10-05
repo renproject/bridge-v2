@@ -22,6 +22,7 @@ import { Cartesian, RandomText, Section } from "./PresentationHelpers";
 import { ButtonsSection } from "./sections/ButtonsSection";
 import { IconsSection } from "./sections/IconsSection";
 import { NotificationsSection } from "./sections/NotifciationsSection";
+import { TypographyHelpersSection } from "./sections/TypographyHelpersSection";
 
 enum TabPhase {
   MINT,
@@ -118,6 +119,7 @@ export const Catalog: FunctionComponent = () => {
             }}
           />
         </Section>
+        <TypographyHelpersSection />
         <Section header="Tooltips">
           <Typography variant="body1">
             This is a text with a{" "}
