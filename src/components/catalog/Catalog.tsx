@@ -61,7 +61,10 @@ export const Catalog: FunctionComponent = () => {
             {tab === TabPhase.MINT && (
               <div>
                 <Box height={200}>
-                  <AssetDropdown mode="send" />
+                  <Box pb={1}>
+                    <AssetDropdown mode="send" defaultValue="BTC" />
+                  </Box>
+                  <AssetDropdown mode="chain" defaultValue="ETHC" />
                 </Box>
                 <Button
                   variant="contained"
@@ -76,7 +79,7 @@ export const Catalog: FunctionComponent = () => {
             {tab === TabPhase.RELEASE && (
               <div>
                 <Box height={200}>
-                  <AssetDropdown mode="receive" />
+                  <AssetDropdown mode="receive" defaultValue="BCH" />
                 </Box>
                 <Button
                   variant="contained"
