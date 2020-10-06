@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent } from 'react'
-import { SuccessIcon } from '../icons/RenIcons'
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent } from "react";
+import { SuccessIcon } from "../icons/RenIcons";
 
 type LabelWithValueProps = {
   label: string;
@@ -19,7 +19,12 @@ const useStyles = makeStyles((theme) => ({
   labelWrapper: {
     color: theme.palette.grey[500],
   },
-  labelTooltip: {},
+  labelTooltip: {
+    marginLeft: 6,
+  },
+  labelTooltipIcon: {
+    fontSize: 12
+  },
   valueWrapper: {
     color: theme.palette.common.black,
   },
@@ -42,7 +47,7 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
         {label}
         {labelTooltip && (
           <span className={styles.labelTooltip}>
-            <SuccessIcon color="inherit" />
+            <SuccessIcon className={styles.labelTooltipIcon} color="inherit" />
           </span>
         )}
       </div>

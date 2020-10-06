@@ -1,8 +1,8 @@
-import { Box, Divider, Typography } from '@material-ui/core'
-import React, { FunctionComponent } from 'react'
-import { BridgePaper } from '../../layout/Paper'
-import { LabelWithValue } from '../../typography/TypographyHelpers'
-import { Section } from '../PresentationHelpers'
+import { Box, Divider, Typography } from "@material-ui/core";
+import React, { FunctionComponent } from "react";
+import { BridgePaper } from "../../layout/Paper";
+import { LabelWithValue } from "../../typography/TypographyHelpers";
+import { Section } from "../PresentationHelpers";
 
 export const TypographyHelpersSection: FunctionComponent = () => {
   return (
@@ -26,6 +26,7 @@ export const TypographyHelpersSection: FunctionComponent = () => {
         </Typography>
         <LabelWithValue
           label="RenVM Fee"
+          labelTooltip="Explaining RenVM Fee"
           value="0.10%"
           valueEquivalent="$11.80"
         />
