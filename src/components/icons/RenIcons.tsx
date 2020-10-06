@@ -21,6 +21,7 @@ import { ReactComponent as BinanceChainFull } from "./../../assets/icons/binance
 import { ReactComponent as EthereumChainFull } from "./../../assets/icons/ethereum-circle-icon.svg";
 import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binancesmartchain-colour-icon.svg";
 import { ReactComponent as EthereumChainColor } from "./../../assets/icons/ethereum-colour-icon.svg";
+import { ReactComponent as Tooltip } from "./../../assets/icons/tooltip.svg";
 
 export type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
 
@@ -30,6 +31,10 @@ export const TxHistoryIcon: CustomSvgIconComponent = (props) => (
 
 export const TxSettingsIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={TxSettings} {...props} />
+);
+
+export const TooltipIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Tooltip} {...props} />
 );
 
 export const SuccessIcon: CustomSvgIconComponent = (props) => (

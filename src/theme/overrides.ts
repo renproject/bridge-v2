@@ -86,6 +86,11 @@ export const overrides = (palette: Palette): Overrides =>
         padding: `13px 20px`,
       },
     },
+    MuiSvgIcon: {
+      root: {
+        pointerEvents: "none",
+      },
+    },
     MuiTabs: {
       indicator: {
         display: "none",

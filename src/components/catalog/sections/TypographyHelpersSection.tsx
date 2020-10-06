@@ -18,7 +18,7 @@ export const TypographyHelpersSection: FunctionComponent = () => {
           valueEquivalent="10,131.65 USD"
         />
         <LabelWithValue label="To" value="Ethereum" />
-        <Box mb>
+        <Box mb={1}>
           <Divider />
         </Box>
         <Typography variant="body1" gutterBottom>
@@ -32,11 +32,13 @@ export const TypographyHelpersSection: FunctionComponent = () => {
         />
         <LabelWithValue
           label="Bitcoin Miner Fee"
+          labelTooltip="Explaining Bitcoin Miner Fee"
           value="0.0007 BTC"
           valueEquivalent="$8.26"
         />
         <LabelWithValue
           label="Esti. Ethereum Fee"
+          labelTooltip="Explaining Esti. Ethereum Fee"
           value="200 GWEI"
           valueEquivalent="$6.42"
         />
