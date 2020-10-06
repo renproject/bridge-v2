@@ -10,13 +10,18 @@ import {
   alertSuccessBackground,
   alertWarning,
   alertWarningBackground,
+  grayPlaceholder,
   textDark,
   textDisabled,
   textLighter,
 } from "./colors";
 
-export const overrides = (palette: Palette): Overrides =>
-  ({
+export const overrides = (palette: Palette): Overrides => {
+  const placeholder = {
+    color: grayPlaceholder,
+  };
+
+  return {
     MuiAlert: {
       action: {
         alignItems: "flex-start",
@@ -73,6 +78,15 @@ export const overrides = (palette: Palette): Overrides =>
         borderTopLeftRadius: 20,
       },
     },
+    MuiInputBase: {
+      input: {
+        "&::-webkit-input-placeholder": placeholder,
+        "&::-moz-placeholder": placeholder, // Firefox 19+
+        "&:-ms-input-placeholder": placeholder, // IE 11
+        "&::-ms-input-placeholder": placeholder, // Edge
+      },
+
+    },
     MuiPaper: {
       elevation1: {
         boxShadow: "0px 1px 20px rgba(0, 27, 58, 0.05)",
@@ -122,4 +136,5 @@ export const overrides = (palette: Palette): Overrides =>
         backgroundColor: palette.common.black,
       },
     },
-  } as Overrides);
+  } as Overrides;
+};

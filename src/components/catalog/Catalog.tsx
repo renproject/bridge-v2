@@ -21,6 +21,7 @@ import { Debug } from "../utils/Debug";
 import { Cartesian, RandomText, Section } from "./PresentationHelpers";
 import { ButtonsSection } from "./sections/ButtonsSection";
 import { IconsSection } from "./sections/IconsSection";
+import { InputsSection } from './sections/InputsSection'
 import { NotificationsSection } from "./sections/NotifciationsSection";
 import { TypographyHelpersSection } from "./sections/TypographyHelpersSection";
 
@@ -119,6 +120,7 @@ export const Catalog: FunctionComponent = () => {
             }}
           />
         </Section>
+        <InputsSection />
         <TypographyHelpersSection />
         <Section header="Tooltips">
           <Typography variant="body1">

@@ -8,6 +8,9 @@ export const props: ComponentsProps = {
       success: <SuccessIcon color="inherit" />,
     },
   },
+  MuiInput: {
+      disableUnderline: true
+  },
   MuiButtonBase: {
     // The properties to apply
     disableRipple: true, // No more ripple, on the whole application 💣!
