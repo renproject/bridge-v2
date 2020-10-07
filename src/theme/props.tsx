@@ -1,6 +1,8 @@
 import { ComponentsProps } from "@material-ui/core/styles/props";
 import React from "react";
 import { SuccessIcon } from "../components/icons/RenIcons";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
 export const props: ComponentsProps = {
   MuiAlert: {
@@ -8,8 +10,12 @@ export const props: ComponentsProps = {
       success: <SuccessIcon color="inherit" />,
     },
   },
+  MuiCheckbox: {
+    icon: <CheckBoxOutlineBlankIcon fontSize="small" />,
+    checkedIcon: <CheckBoxIcon fontSize="small" />,
+  },
   MuiInput: {
-      disableUnderline: true
+    disableUnderline: true,
   },
   MuiButtonBase: {
     // The properties to apply

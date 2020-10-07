@@ -1,7 +1,6 @@
-import { Tooltip } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent } from "react";
-import { TooltipIcon } from "../icons/RenIcons";
+import { makeStyles } from '@material-ui/core/styles'
+import React, { FunctionComponent } from 'react'
+import { TooltipWithIcon } from '../tooltips/TooltipWithIcon'
 
 type LabelWithValueProps = {
   label: string;
@@ -22,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
   labelTooltip: {
     marginLeft: 4,
-    color: theme.palette.grey[600]
+    color: theme.palette.grey[600],
   },
   labelTooltipIcon: {
     fontSize: 12,
@@ -50,14 +49,7 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
         {label}
         {labelTooltip && (
           <span className={styles.labelTooltip}>
-            <Tooltip title={labelTooltip}>
-              <span>
-                <TooltipIcon
-                  className={styles.labelTooltipIcon}
-                  color="inherit"
-                />
-              </span>
-            </Tooltip>
+            <TooltipWithIcon title={labelTooltip} />
           </span>
         )}
       </div>
