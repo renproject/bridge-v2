@@ -21,7 +21,8 @@ import { Debug } from "../utils/Debug";
 import { Cartesian, RandomText, Section } from "./PresentationHelpers";
 import { ButtonsSection } from "./sections/ButtonsSection";
 import { IconsSection } from "./sections/IconsSection";
-import { InputsSection } from './sections/InputsSection'
+import { InputsSection } from "./sections/InputsSection";
+import { ModalsSection } from "./sections/ModalsSection";
 import { NotificationsSection } from "./sections/NotifciationsSection";
 import { TypographyHelpersSection } from "./sections/TypographyHelpersSection";
 
@@ -157,6 +158,7 @@ export const Catalog: FunctionComponent = () => {
           </Typography>
         </Section>
         <IconsSection />
+        <ModalsSection />
         <FormControlLabel
           control={
             <Switch

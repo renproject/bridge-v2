@@ -69,6 +69,30 @@ export const overrides = (palette: Palette): Overrides => {
         fontSize: 16,
       },
     },
+    MuiDialog: {
+      paper: {
+        minWidth: 320,
+      },
+      paperWidthSm: {
+        maxWidth: 420,
+      },
+    },
+    MuiDialogActions: {
+      root: {
+        padding: `40px`,
+      },
+    },
+    MuiDialogTitle: {
+      root: {
+        paddingTop: 16,
+        paddingBottom: 12,
+      },
+    },
+    MuiDialogContent: {
+      root: {
+        padding: `36px 40px`,
+      },
+    },
     MuiDrawer: {
       paper: {
         padding: 20,
@@ -85,7 +109,6 @@ export const overrides = (palette: Palette): Overrides => {
         "&:-ms-input-placeholder": placeholder, // IE 11
         "&::-ms-input-placeholder": placeholder, // Edge
       },
-
     },
     MuiPaper: {
       elevation1: {
