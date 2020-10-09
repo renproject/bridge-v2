@@ -10,7 +10,7 @@ import { BridgeModal } from "../../modals/BridgeModal";
 import { Section } from "../PresentationHelpers";
 
 export const ModalsSection: FunctionComponent = () => {
-  const [opened, setOpened] = useState(true);
+  const [opened, setOpened] = useState(false);
   const handleOpen = useCallback(() => {
     setOpened(true);
   }, []);
@@ -33,14 +33,20 @@ export const ModalsSection: FunctionComponent = () => {
             If you continue with a wallet that has not been tested you are
             risking loss of funds.
           </Typography>
-          <Typography variant="body2" align="center" gutterBottom>
+          <Typography variant="body2" align="center">
             <Link href="/" color="primary" align="center">
               View the full list before continuing ↗
             </Link>
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="primary" size="large" onClick={handleClose} fullWidth>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleClose}
+            fullWidth
+          >
             Continue with WalletConnect
           </Button>
         </DialogActions>
