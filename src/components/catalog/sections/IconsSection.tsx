@@ -6,6 +6,7 @@ import TelegramIcon from "@material-ui/icons/Telegram";
 import TwitterIcon from "@material-ui/icons/Twitter";
 import React, { FunctionComponent } from "react";
 import {
+  BackArrowIcon,
   BchFullIcon,
   BinanceChainColorIcon,
   BinanceChainFullIcon,
@@ -37,6 +38,7 @@ export const IconsSection: FunctionComponent = () => {
         <GitHubIcon />
       </SeparationWrapper>
       <SeparationWrapper>
+        <BackArrowIcon />
         <BrowserNotificationsIcon />
         <TxHistoryIcon />
         <MoreVertIcon />
