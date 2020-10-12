@@ -110,6 +110,11 @@ export const overrides = (palette: Palette): Overrides => {
         "&::-ms-input-placeholder": placeholder, // Edge
       },
     },
+    MuiLink: {
+      root: {
+        cursor: "pointer",
+      },
+    },
     MuiPaper: {
       elevation1: {
         boxShadow: "0px 1px 20px rgba(0, 27, 58, 0.05)",

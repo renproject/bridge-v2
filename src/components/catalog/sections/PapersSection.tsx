@@ -1,9 +1,9 @@
 import {
+  Box,
   Button,
   Fade,
   Grow,
   IconButton,
-  Link,
   Typography,
   Zoom,
 } from "@material-ui/core";
@@ -18,6 +18,7 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../layout/Paper";
+import { Link } from "../../links/Links";
 import { Section } from "../PresentationHelpers";
 
 const SLIDES = 3;
@@ -44,8 +45,26 @@ export const ExampleContent: FunctionComponent = () => {
   );
 };
 
+const CurrencyReceivedContent: FunctionComponent = () => {
+  return (
+    <PaperContent>
+      <Button variant="contained" color="primary" size="large" fullWidth>
+        Return
+      </Button>
+      <Box display="flex" justifyContent="space-between" py={2}>
+        <Link external color="primary" variant="button" underline="hover">
+          Ethereum transaction
+        </Link>
+        <Link external color="primary" variant="button" underline="hover">
+          Bitcoin transaction
+        </Link>
+      </Box>
+    </PaperContent>
+  );
+};
+
 export const PapersSection: FunctionComponent = () => {
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(2);
   const [settings, setSettings] = useState(false);
   const [notifications, setNotifications] = useState(false);
   const handleNext = useCallback(() => {
@@ -68,7 +87,7 @@ export const PapersSection: FunctionComponent = () => {
         <Zoom in={current === 0}>
           <BridgePaper>
             <PaperHeader>
-              <PaperNav></PaperNav>
+              <PaperNav />
               <PaperTitle>Fees</PaperTitle>
               <PaperActions>
                 <ToggleIconButton
@@ -119,10 +138,10 @@ export const PapersSection: FunctionComponent = () => {
           <BridgePaper>
             <PaperHeader>
               <PaperNav />
-              <PaperTitle>Fees</PaperTitle>
+              <PaperTitle />
               <PaperActions></PaperActions>
             </PaperHeader>
-            <ExampleContent />
+            <CurrencyReceivedContent />
           </BridgePaper>
         </Grow>
       )}

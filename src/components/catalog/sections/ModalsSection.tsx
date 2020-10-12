@@ -2,10 +2,10 @@ import {
   Button,
   DialogContent,
   Typography,
-  Link,
   DialogActions,
 } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
+import { Link } from "../../links/Links";
 import { BridgeModal } from "../../modals/BridgeModal";
 import { Section } from "../PresentationHelpers";
 

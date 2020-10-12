@@ -1,7 +1,8 @@
-import { Button, Link } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { useNotifications } from "../../../providers/Notifications";
+import { Link } from "../../links/Links";
 import {
   Cartesian,
   RandomText,
@@ -28,7 +29,10 @@ export const NotificationsSection: FunctionComponent = () => {
     });
     showNotification(
       <span>
-        <RandomText /> <Link href="/">a link</Link>
+        <RandomText />{" "}
+        <Link external href="/">
+          a link
+        </Link>
       </span>,
       {
         variant: "warning",
