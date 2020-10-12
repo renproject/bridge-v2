@@ -1,9 +1,24 @@
-import { Button, Fade, Grow, IconButton, Link, Typography, Zoom, } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { ToggleIconButton } from '../../buttons/Buttons'
-import { BackArrowIcon } from '../../icons/RenIcons'
-import { BridgePaper, PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../layout/Paper'
-import { Section } from '../PresentationHelpers'
+import {
+  Button,
+  Fade,
+  Grow,
+  IconButton,
+  Link,
+  Typography,
+  Zoom,
+} from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { ToggleIconButton } from "../../buttons/Buttons";
+import { BackArrowIcon } from "../../icons/RenIcons";
+import {
+  BridgePaper,
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../layout/Paper";
+import { Section } from "../PresentationHelpers";
 
 const SLIDES = 3;
 export const ExampleContent: FunctionComponent = () => {
@@ -37,7 +52,7 @@ export const PapersSection: FunctionComponent = () => {
     setCurrent((current) => (current + 1) % SLIDES);
   }, []);
   const handlePrev = useCallback(() => {
-    setCurrent((current) => (current - 1) % SLIDES);
+    setCurrent((curr) => (curr > 0 ? curr - 1 : SLIDES - 1));
   }, []);
   const toggleSettings = useCallback(() => {
     setSettings(!settings);
@@ -48,7 +63,7 @@ export const PapersSection: FunctionComponent = () => {
 
   return (
     <Section header="Paper variants">
-      <Button onClick={handleNext}>Next {current}</Button>
+      <Button onClick={handleNext}>Next</Button>
       {current === 0 && (
         <Zoom in={current === 0}>
           <BridgePaper>
@@ -77,8 +92,8 @@ export const PapersSection: FunctionComponent = () => {
           <BridgePaper>
             <PaperHeader>
               <PaperNav>
-                <IconButton>
-                  <BackArrowIcon onClick={handlePrev} />
+                <IconButton onClick={handlePrev}>
+                  <BackArrowIcon />
                 </IconButton>
               </PaperNav>
               <PaperTitle>Fees</PaperTitle>
