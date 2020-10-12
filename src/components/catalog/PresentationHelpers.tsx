@@ -1,6 +1,5 @@
 import { Box, Divider, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import CopyIcon from '@material-ui/icons/FileCopyOutlined'
 import React, { Fragment, FunctionComponent } from 'react'
 import Lorem from 'react-lorem-component'
 import { cartesianProps, PropVariants } from '../../utils/cartesian'
@@ -59,8 +58,8 @@ export const Section: FunctionComponent<SectionProps> = ({
       <Box mb={2}>
         <Typography id={slug} variant="h4" gutterBottom>
           {header}{" "}
-          <Link href={`#${slug}`}>
-            <CopyIcon fontSize="small" />
+          <Link href={`#${slug}`} underline="hover" color="textSecondary">
+            #
           </Link>
         </Typography>
         {children}

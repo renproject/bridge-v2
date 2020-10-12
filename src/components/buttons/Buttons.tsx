@@ -236,6 +236,7 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
     fontSize: 13,
     color: blue,
     backgroundColor: skyBlueLight,
+    maxWidth: "100%",
     padding: `12px 20px 11px 20px`,
     "&:hover": {
       backgroundColor: skyBlue,
@@ -244,9 +245,40 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
       },
     },
   },
+  wrapper: {
+    display: "flex",
+    maxWidth: "100%",
+  },
   chain: {
+    flexGrow: 0,
     color: theme.palette.common.black,
+    whiteSpace: "nowrap",
     marginRight: 4,
+  },
+  addressWrapper: {
+    flexGrow: 1,
+    display: "flex",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    // userSelect: "all",
+    // "&::after": { // experimental
+    //   color: "red",
+    //   display: "inline-flex",
+    //   marginLeft: 0,
+    //   // position: "absolute",
+    //   // right: 0,
+    //   // display: "none",
+    //   content: "attr(data-address)",
+    //   textAlign: "right",
+    //   direction: "rtl",
+    //   overflow: "hidden",
+    //   // width: "50%",
+    // },
+  },
+  address: {
+    maxWidth: "100%",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
 }));
 
@@ -263,7 +295,12 @@ export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButto
 
   return (
     <Button className={styles.button}>
-      <span className={styles.chain}>{chain} Tx: </span> <span>{address}</span>
+      <span className={styles.wrapper}>
+        <span className={styles.chain}>{chain} Tx: </span>{" "}
+        <span className={styles.addressWrapper} data-address={address}>
+          <span className={styles.address}>{address}</span>
+        </span>
+      </span>
     </Button>
   );
 };

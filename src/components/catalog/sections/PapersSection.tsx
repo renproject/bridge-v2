@@ -8,7 +8,10 @@ import {
   Zoom,
 } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
-import { ToggleIconButton } from "../../buttons/Buttons";
+import {
+  ToggleIconButton,
+  TransactionDetailsButton,
+} from "../../buttons/Buttons";
 import { BackArrowIcon } from "../../icons/RenIcons";
 import {
   BridgePaper,
@@ -59,6 +62,10 @@ const CurrencyReceivedContent: FunctionComponent = () => {
           Bitcoin transaction
         </Link>
       </Box>
+      <TransactionDetailsButton
+        chain="BCH"
+        address="0x7a36479806342F7a1d663fF43A0D340b733FA764"
+      />
     </PaperContent>
   );
 };
