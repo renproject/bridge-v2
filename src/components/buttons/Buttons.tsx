@@ -1,12 +1,34 @@
-import { Button, Fade, IconButton, IconButtonProps, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import CopyIcon from '@material-ui/icons/FileCopyOutlined'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useMemo, useState } from 'react'
-import { blue, graphiteLight, gray, grayLight, skyBlue, skyBlueLight, } from '../../theme/colors'
-import { copyToClipboard } from '../../utils/copyToClipboard'
-import { BrowserNotificationsIcon, QrCodeIcon, TxHistoryIcon, } from '../icons/RenIcons'
+import {
+  Button,
+  ButtonProps,
+  Fade,
+  IconButton,
+  IconButtonProps,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import CopyIcon from "@material-ui/icons/FileCopyOutlined";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import classNames from "classnames";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import {
+  blue,
+  graphiteLight,
+  gray,
+  grayLight,
+  skyBlue,
+  skyBlueLight,
+} from "../../theme/colors";
+import { copyToClipboard } from "../../utils/copyToClipboard";
+import {
+  BrowserNotificationsIcon,
+  QrCodeIcon,
+  TxHistoryIcon,
+} from "../icons/RenIcons";
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -206,6 +228,43 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
         </IconButton>
       </div>
     </div>
+  );
+};
+
+const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
+  button: {
+    fontSize: 13,
+    color: blue,
+    backgroundColor: skyBlueLight,
+    padding: `12px 20px 11px 20px`,
+    "&:hover": {
+      backgroundColor: skyBlue,
+      "@media (hover: none)": {
+        backgroundColor: "transparent",
+      },
+    },
+  },
+  chain: {
+    color: theme.palette.common.black,
+    marginRight: 4,
+  },
+}));
+
+type TransactionDetailsButton = ButtonProps & {
+  chain: string;
+  address: string;
+};
+
+export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButton> = ({
+  chain,
+  address,
+}) => {
+  const styles = useTransactionDetailsButtonStyles();
+
+  return (
+    <Button className={styles.button}>
+      <span className={styles.chain}>{chain} Tx: </span> <span>{address}</span>
+    </Button>
   );
 };
 

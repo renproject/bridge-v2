@@ -4,6 +4,7 @@ import {
   CopyContentButton,
   QrCodeIconButton,
   ToggleIconButton,
+  TransactionDetailsButton,
   TransactionHistoryMenuIconButton,
   TxHistoryIconButton,
 } from "../../buttons/Buttons";
@@ -59,6 +60,15 @@ export const ButtonsSection: FunctionComponent = () => {
         </SeparationWrapper>
         <SeparationWrapper>
           <CopyContentButton content="1LU14szcGuMwxVNet1rm" />
+          <TransactionDetailsButton
+            chain="ETH"
+            address="0x7a36479806342F7a1d663fF43A0D340b733FA764"
+          />
+          <br />
+          <TransactionDetailsButton
+            chain="BTC"
+            address="1LU14szcGuMwxVNet1rm"
+          />
         </SeparationWrapper>
       </Section>
     </>
