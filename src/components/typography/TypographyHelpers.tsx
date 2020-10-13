@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent, ReactNode } from 'react'
+import React, { FunctionComponent, ReactNode } from "react";
+import { BitcoinInCircleIcon } from "../icons/RenIcons";
 import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
 type LabelWithValueProps = {
@@ -17,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 8,
   },
   labelWrapper: {
-    color: theme.palette.common.black,
+    color: theme.palette.grey[500],
   },
   labelTooltip: {
     marginLeft: 4,
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     verticalAlign: "middle",
   },
   valueWrapper: {
-    color: theme.palette.grey[500],
+    color: theme.palette.common.black,
   },
   value: {},
   valueEquivalent: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 4,
   },
 }));
+
 export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   label,
   labelTooltip,
@@ -58,6 +60,64 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
         {valueEquivalent && (
           <span className={styles.valueEquivalent}>({valueEquivalent})</span>
         )}
+      </div>
+    </div>
+  );
+};
+
+const useReceivingAssetInfoStyle = makeStyles((theme) => ({
+  root: {
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: 20,
+    padding: 10,
+  },
+  wrapper: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  label: {},
+  icon: {
+    paddingLeft: 10,
+    paddingRight: 20,
+    display: "flex",
+    alignItems: "center",
+    fontSize: 30,
+  },
+  valueWrapper: {
+    flexGrow: 2,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-end",
+  },
+  value: {},
+  valueEquivalent: {
+    fontSize: 13,
+    color: theme.palette.grey[500],
+  },
+}));
+
+type ReceivingAssetInfoProps = LabelWithValueProps & {
+  Icon: ReactNode;
+};
+
+export const AssetInfo: FunctionComponent<ReceivingAssetInfoProps> = ({
+  label,
+  value,
+  valueEquivalent,
+  Icon,
+}) => {
+  const styles = useReceivingAssetInfoStyle();
+  return (
+    <div className={styles.root}>
+      <div className={styles.wrapper}>
+        <span className={styles.label}>{label}</span>
+        <span className={styles.icon}>{Icon}</span>
+        <span className={styles.valueWrapper}>
+          <span className={styles.value}>{value}</span>
+          <span className={styles.valueEquivalent}>{valueEquivalent}</span>
+        </span>
       </div>
     </div>
   );

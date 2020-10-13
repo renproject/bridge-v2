@@ -1,7 +1,8 @@
 import { Box, Divider, Typography } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
+import { BitcoinInCircleIcon } from "../../icons/RenIcons";
 import { BridgePaper } from "../../layout/Paper";
-import { LabelWithValue } from "../../typography/TypographyHelpers";
+import { LabelWithValue, AssetInfo } from "../../typography/TypographyHelpers";
 import { Section } from "../PresentationHelpers";
 
 export const TypographyHelpersSection: FunctionComponent = () => {
@@ -41,6 +42,14 @@ export const TypographyHelpersSection: FunctionComponent = () => {
           labelTooltip="Explaining Esti. Ethereum Fee"
           value="200 GWEI"
           valueEquivalent="$6.42"
+        />
+        <Divider />
+        <Box pt={2} />
+        <AssetInfo
+          label="Receiving:"
+          value="0.31256113 BTC"
+          valueEquivalent=" = $3,612.80 USD"
+          Icon={<BitcoinInCircleIcon fontSize="inherit" />}
         />
       </BridgePaper>
     </Section>
