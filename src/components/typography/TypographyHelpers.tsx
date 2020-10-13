@@ -1,7 +1,6 @@
-import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent, ReactNode } from "react";
-import { BitcoinInCircleIcon } from "../icons/RenIcons";
-import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
+import { makeStyles } from '@material-ui/core/styles'
+import React, { FunctionComponent, ReactNode } from 'react'
+import { TooltipWithIcon } from '../tooltips/TooltipWithIcon'
 
 type LabelWithValueProps = {
   label: string;

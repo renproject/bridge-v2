@@ -1,9 +1,9 @@
-import { Box, Divider, Typography } from "@material-ui/core";
-import React, { FunctionComponent } from "react";
-import { BitcoinInCircleIcon } from "../../icons/RenIcons";
-import { BridgePaper } from "../../layout/Paper";
-import { LabelWithValue, AssetInfo } from "../../typography/TypographyHelpers";
-import { Section } from "../PresentationHelpers";
+import { Box, Divider, Typography } from '@material-ui/core'
+import React, { FunctionComponent } from 'react'
+import { BitcoinInCircleIcon } from '../../icons/RenIcons'
+import { BridgePaper } from '../../layout/Paper'
+import { AssetInfo, LabelWithValue } from '../../typography/TypographyHelpers'
+import { Section } from '../PresentationHelpers'
 
 export const TypographyHelpersSection: FunctionComponent = () => {
   return (
