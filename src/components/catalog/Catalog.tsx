@@ -25,6 +25,7 @@ import { InputsSection } from "./sections/InputsSection";
 import { ModalsSection } from "./sections/ModalsSection";
 import { NotificationsSection } from "./sections/NotifciationsSection";
 import { PapersSection } from "./sections/PapersSection";
+import { ProgressSection } from "./sections/ProgressSection";
 import { TypographyHelpersSection } from "./sections/TypographyHelpersSection";
 
 enum TabPhase {
@@ -98,6 +99,7 @@ export const Catalog: FunctionComponent = () => {
           </BridgePaper>
         </Section>
         <PapersSection />
+        <ProgressSection />
         <NotificationsSection />
         <Section header="Typography">
           <Cartesian

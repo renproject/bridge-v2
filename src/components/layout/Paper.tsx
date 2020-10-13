@@ -86,4 +86,6 @@ export const PaperActions = styled("div")({
 
 export const PaperTitle = styled("div")({
   justifySelf: "center",
+  textAlign: "center",
+  width: "100%",
 });
