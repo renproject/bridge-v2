@@ -1,11 +1,11 @@
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent } from 'react'
-import { TooltipWithIcon } from '../tooltips/TooltipWithIcon'
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, ReactNode } from 'react'
+import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
 type LabelWithValueProps = {
   label: string;
   labelTooltip?: string;
-  value: string | number;
+  value: string | number | ReactNode;
   valueEquivalent?: string | number;
 };
 
