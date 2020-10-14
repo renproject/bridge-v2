@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import React, { FunctionComponent } from "react";
 
-const useStyles = makeStyles((theme) => ({
+const useBridgeModalStyles = makeStyles((theme) => ({
   dialogTitle: {
     display: "flex",
     justifyContent: "space-between",
@@ -31,7 +31,7 @@ export const BridgeModal: FunctionComponent<DialogProps> = ({
   onClose,
   children,
 }) => {
-  const styles = useStyles();
+  const styles = useBridgeModalStyles();
   const onCustomClose = () => {
     if (onClose) {
       onClose({}, "backdropClick");

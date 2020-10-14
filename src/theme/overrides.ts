@@ -69,12 +69,21 @@ export const overrides = (palette: Palette): Overrides => {
         fontSize: 16,
       },
     },
+    MuiChip: {
+      root: {
+        paddingTop: 3, // TODO: fix after investigation font hoisting issue
+      },
+      sizeSmall: {
+        height: 16,
+        fontSize: 12
+      }
+    },
     MuiDialog: {
       paper: {
         minWidth: 320,
       },
       paperWidthSm: {
-        maxWidth: 420,
+        // maxWidth: 420,
       },
     },
     MuiDialogActions: {
@@ -119,9 +128,6 @@ export const overrides = (palette: Palette): Overrides => {
       root: {
         background: "none",
       },
-      dot: {
-        backgroundColor: fade(palette.primary.light, 0.25)
-      }
     },
     MuiPaper: {
       elevation1: {

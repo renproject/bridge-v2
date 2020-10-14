@@ -1,7 +1,8 @@
-import { CircularProgress, Theme, Typography, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
-import React, { FunctionComponent } from 'react'
+import { CircularProgress, Theme, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
+import { EthereumIcon } from "../icons/RenIcons";
 
 const SIZE = 166;
 const THICKNESS = 10;
@@ -76,7 +77,7 @@ const useTransactionStatusInfoStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    color: theme.palette.common.black
+    color: theme.palette.common.black,
   },
   status: {
     fontWeight: theme.typography.fontWeightBold,
@@ -112,6 +113,46 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
       <Typography variant="body1" className={styles.txLink}>
         <span>{address}</span>
       </Typography>
+    </div>
+  );
+};
+
+const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
+  root: {
+    color: theme.palette.primary.main,
+  },
+  iconWrapper: {},
+  iconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  icon: {},
+  indicator: {},
+}));
+
+export type TransactionStatusIndicatorProps = {
+  status?: string;
+  chain?: string;
+};
+
+export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndicatorProps> = ({
+  status = "Pending",
+  chain,
+}) => {
+  const styles = useTransactionStatusIndicatorStyles();
+  return (
+    <div className={styles.root}>
+      <div className={styles.iconWrapper}>
+        <div className={styles.iconCircle}>
+          <ProgressWithContent color="inherit">
+            <EthereumIcon color="inherit" />
+          </ProgressWithContent>
+        </div>
+      </div>
     </div>
   );
 };
