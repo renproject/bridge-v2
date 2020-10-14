@@ -9,7 +9,7 @@ import { Section } from "../PresentationHelpers";
 
 export const InputsSection: FunctionComponent = () => {
   const [value, setValue] = useState();
-  const [checked, setChecked] = useState();
+  const [checked, setChecked] = useState(false);
   const handleCurrencyChange = useCallback((value) => {
     setValue(value);
   }, []);

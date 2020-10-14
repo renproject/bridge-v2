@@ -115,6 +115,14 @@ export const overrides = (palette: Palette): Overrides => {
         cursor: "pointer",
       },
     },
+    MuiMobileStepper: {
+      root: {
+        background: "none",
+      },
+      dot: {
+        backgroundColor: fade(palette.primary.light, 0.25)
+      }
+    },
     MuiPaper: {
       elevation1: {
         boxShadow: "0px 1px 20px rgba(0, 27, 58, 0.05)",

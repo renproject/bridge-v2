@@ -408,3 +408,7 @@ export const WalletConnectionStatusButton: FunctionComponent = () => {
     </Button>
   );
 };
+
+export const ActionButton: FunctionComponent<ButtonProps> = (props) => (
+  <Button variant="contained" size="large" color="primary" fullWidth {...props} />
+);
