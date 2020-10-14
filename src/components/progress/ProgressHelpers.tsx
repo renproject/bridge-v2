@@ -8,6 +8,8 @@ const SIZE = 166;
 const THICKNESS = 10;
 const RELATIVE_THICKNESS = Math.floor((THICKNESS / 2 / SIZE) * 100);
 
+console.log(RELATIVE_THICKNESS);
+
 type ProgressIconSize = "big" | "medium" | number;
 
 type ProgressWithContentProps = {
@@ -15,6 +17,7 @@ type ProgressWithContentProps = {
   fontSize?: ProgressIconSize;
   processing?: boolean;
   value?: number;
+  size?: number;
 };
 
 const useProgressWithContentStyles = makeStyles<
@@ -51,6 +54,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
   value = 100,
   processing,
   children,
+  size = 166,
   ...rest
 }) => {
   const styles = useProgressWithContentStyles({ color, fontSize });
@@ -63,8 +67,8 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
       <CircularProgress
         variant={processing ? "indeterminate" : "static"}
         value={value}
-        size={`${SIZE}px`}
-        thickness={RELATIVE_THICKNESS}
+        size={size}
+        thickness={3}
         color="inherit"
       />
       <div className={styles.content}>{children}</div>
@@ -123,9 +127,10 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
   },
   iconWrapper: {},
   iconCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    borderRadius: 25,
+    background: theme.customColors.skyBlueLight,
+    padding: 6,
+    fontSize: 40,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -148,8 +153,8 @@ export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndi
     <div className={styles.root}>
       <div className={styles.iconWrapper}>
         <div className={styles.iconCircle}>
-          <ProgressWithContent color="inherit">
-            <EthereumIcon color="inherit" />
+          <ProgressWithContent color="inherit" size={42}>
+            <EthereumIcon color="inherit" fontSize="inherit"/>
           </ProgressWithContent>
         </div>
       </div>
