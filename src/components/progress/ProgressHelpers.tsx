@@ -1,10 +1,16 @@
-import { CircularProgress, styled, SvgIconProps, Theme, Typography, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import CompletedIcon from '@material-ui/icons/Check'
-import classNames from 'classnames'
-import React, { FunctionComponent } from 'react'
-import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from '../icons/RenIcons'
-import { ChainSymbols, ChainType, TransactionStatusType } from '../utils/types'
+import {
+  CircularProgress,
+  styled,
+  SvgIconProps,
+  Theme,
+  Typography,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import CompletedIcon from "@material-ui/icons/Check";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
+import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
+import { ChainSymbols, ChainType, TransactionStatusType } from "../utils/types";
 
 const SIZE = 166;
 const THICKNESS = 10;

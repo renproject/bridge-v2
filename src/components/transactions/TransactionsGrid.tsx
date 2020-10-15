@@ -1,9 +1,10 @@
-import { Chip, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent } from 'react'
-import { Link } from '../links/Links'
-import { TransactionStatusIndicator } from '../progress/ProgressHelpers'
-import { ChainType, TransactionStatusType } from '../utils/types'
+import { Chip, styled, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { Link } from "../links/Links";
+import { SimplePagination } from "../pagination/SimplePagination";
+import { TransactionStatusIndicator } from "../progress/ProgressHelpers";
+import { ChainType, TransactionStatusType } from "../utils/types";
 
 type TransactionType = "mint" | "release";
 
@@ -15,7 +16,6 @@ export type Transaction = {
 };
 
 const standardPaddings = {
-  paddingTop: 20,
   paddingLeft: 30,
   paddingRight: 30,
 };
@@ -23,7 +23,8 @@ const standardPaddings = {
 const useTransactionsHeaderStyles = makeStyles((theme) => ({
   root: {
     ...standardPaddings,
-    background: theme.palette.grey[100],
+    paddingTop: 20,
+    background: theme.customColors.greyHeaderBackground,
   },
 }));
 
@@ -45,11 +46,14 @@ export const TransactionsHeader: FunctionComponent<TransactionsHeaderProps> = ({
 const useTransactionsStatusHeaderStyles = makeStyles((theme) => ({
   root: {
     ...standardPaddings,
-    background: theme.palette.grey[100],
+    paddingTop: 12,
+    paddingBottom: 6,
+    background: theme.customColors.greyHeaderBackground,
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
   title: {
     fontWeight: theme.typography.fontWeightBold,
+    lineHeight: 1.2,
   },
 }));
 
@@ -66,10 +70,18 @@ export const TransactionsStatusHeader: FunctionComponent<TransactionsHeaderProps
   );
 };
 
+export const TransactionsPaginationWrapper = styled("div")(({ theme }) => ({
+  ...standardPaddings,
+  paddingTop: 10,
+  paddingBottom: 10,
+  backgroundColor: theme.customColors.greyHeaderBackground,
+}));
+
 const useTransactionEntryStyles = makeStyles((theme) => ({
   root: {
     ...standardPaddings,
-    paddingBottom: 20,
+    paddingTop: 18,
+    paddingBottom: 18,
     borderBottom: `1px solid ${theme.palette.divider}`,
     display: "flex",
     justifyContent: "space-between",
@@ -141,6 +153,14 @@ export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
 export const TransactionsGrid: FunctionComponent<any> = () => {
   const pending = 3;
   const completed = 2;
+
+  const [page, setPage] = useState(0);
+  const handleChangePage = useCallback((event: unknown, newPage: number) => {
+    setPage(newPage);
+  }, []);
+
+  const itemsCount = 15;
+  const itemsPerPage = 4;
   return (
     <div>
       <TransactionsHeader title="Transactions" />
@@ -154,6 +174,14 @@ export const TransactionsGrid: FunctionComponent<any> = () => {
         <TransactionEntry chain="BTCC" status="completed" />
         <TransactionEntry chain="BNCC" status="completed" />
       </div>
+      <TransactionsPaginationWrapper>
+        <SimplePagination
+          count={itemsCount}
+          rowsPerPage={itemsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+        />
+      </TransactionsPaginationWrapper>
     </div>
   );
 };

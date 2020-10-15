@@ -31,7 +31,8 @@ export const textDisabled = "#DCE0E3";
 export const grayLight = "#EBEDF2";
 export const gray = "#D2D4D9";
 export const grayDark = "#D2D4D9";
-export const grayPlaceholder = "#D0D2D9"
+export const grayPlaceholder = "#D0D2D9";
+export const greyHeaderBackground = "#FBFBFC";
 
 export const backgroundDefault = "#FBFBFB";
 export const backgroundWhite = "#FFFFFF";
