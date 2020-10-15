@@ -4,6 +4,7 @@ import {
   Fade,
   IconButton,
   IconButtonProps,
+  styled,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CopyIcon from "@material-ui/icons/FileCopyOutlined";
@@ -305,6 +306,19 @@ export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButto
   );
 };
 
+export const BigQrCode = styled("div")(({ theme }) => ({
+  width: 132,
+  height: 132,
+  padding: 15,
+  borderRadius: 20,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: skyBlueLight,
+  color: theme.palette.common.black,
+  fontSize: 150, // TODO: remove when QR codes done
+}));
+
 const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   root: {
     color: theme.palette.secondary.light,
@@ -410,5 +424,11 @@ export const WalletConnectionStatusButton: FunctionComponent = () => {
 };
 
 export const ActionButton: FunctionComponent<ButtonProps> = (props) => (
-  <Button variant="contained" size="large" color="primary" fullWidth {...props} />
+  <Button
+    variant="contained"
+    size="large"
+    color="primary"
+    fullWidth
+    {...props}
+  />
 );

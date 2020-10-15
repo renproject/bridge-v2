@@ -1,14 +1,16 @@
-import { Button } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import { Button } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import {
+  BigQrCode,
   CopyContentButton,
   QrCodeIconButton,
   ToggleIconButton,
   TransactionDetailsButton,
   TransactionHistoryMenuIconButton,
   TxHistoryIconButton,
-} from "../../buttons/Buttons";
-import { Cartesian, Section, SeparationWrapper } from "../PresentationHelpers";
+} from '../../buttons/Buttons'
+import { QrCodeIcon } from '../../icons/RenIcons'
+import { Cartesian, Section, SeparationWrapper } from '../PresentationHelpers'
 
 export const ButtonsSection: FunctionComponent = () => {
   const [settings, setSettings] = useState(false);
@@ -69,6 +71,11 @@ export const ButtonsSection: FunctionComponent = () => {
             chain="BTC"
             address="1LU14szcGuMwxVNet1rm"
           />
+        </SeparationWrapper>
+        <SeparationWrapper>
+          <BigQrCode>
+            <QrCodeIcon fontSize="inherit"/>
+          </BigQrCode>
         </SeparationWrapper>
       </Section>
     </>
