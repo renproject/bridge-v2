@@ -18,6 +18,7 @@ import { ReactComponent as TxSettings } from "./../../assets/icons/tx-settings.s
 import { ReactComponent as Success } from "./../../assets/icons/success-icon.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
 import { ReactComponent as BinanceChainFull } from "./../../assets/icons/binancesmartchain-circle-icon.svg";
+import { ReactComponent as BinanceChain } from "./../../assets/icons/binancesmartchain-icon.svg";
 import { ReactComponent as EthereumChainFull } from "./../../assets/icons/ethereum-circle-icon.svg";
 import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binancesmartchain-colour-icon.svg";
 import { ReactComponent as EthereumChainColor } from "./../../assets/icons/ethereum-colour-icon.svg";
@@ -80,6 +81,10 @@ export const DotsFullIcon: CustomSvgIconComponent = (props) => (
 
 export const ZecFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={ZecFull} {...props} />
+);
+
+export const BinanceChainIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={BinanceChain} {...props} />
 );
 
 export const BinanceChainFullIcon: CustomSvgIconComponent = (props) => {

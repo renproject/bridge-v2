@@ -1,8 +1,10 @@
-import { CircularProgress, Theme, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import classNames from "classnames";
-import React, { FunctionComponent } from "react";
-import { EthereumIcon } from "../icons/RenIcons";
+import { CircularProgress, styled, SvgIconProps, Theme, Typography, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import CompletedIcon from '@material-ui/icons/Check'
+import classNames from 'classnames'
+import React, { FunctionComponent } from 'react'
+import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from '../icons/RenIcons'
+import { ChainSymbols, ChainType, TransactionStatusType } from '../utils/types'
 
 const SIZE = 166;
 const THICKNESS = 10;
@@ -18,12 +20,13 @@ type ProgressWithContentProps = {
   processing?: boolean;
   value?: number;
   size?: number;
+  confirmations?: number;
 };
 
 const useProgressWithContentStyles = makeStyles<
   Theme,
   ProgressWithContentProps
->(() => ({
+>((theme) => ({
   root: {
     display: "inline-flex",
     position: "relative",
@@ -46,6 +49,37 @@ const useProgressWithContentStyles = makeStyles<
     alignItems: "center",
     justifyContent: "center",
   },
+  progressHidden: {
+    visibility: "hidden",
+  },
+  sections: {
+    position: "relative",
+  },
+  section: {
+    position: "absolute",
+    color: theme.customColors.skyBlue,
+    "& > svg": {
+      transformOrigin: "50% 50%",
+    },
+    "&:nth-child(2) svg": {
+      transform: "rotate(60deg);",
+    },
+    "&:nth-child(3) svg": {
+      transform: "rotate(120deg);",
+    },
+    "&:nth-child(4) svg": {
+      transform: "rotate(180deg);",
+    },
+    "&:nth-child(5) svg": {
+      transform: "rotate(240deg);",
+    },
+    "&:nth-child(6) svg": {
+      transform: "rotate(300deg);",
+    },
+  },
+  sectionCompleted: {
+    color: "inherit",
+  },
 }));
 
 export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = ({
@@ -53,23 +87,49 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
   fontSize,
   value = 100,
   processing,
-  children,
+  confirmations,
   size = 166,
-  ...rest
+  children,
 }) => {
-  const styles = useProgressWithContentStyles({ color, fontSize });
+  const styles = useProgressWithContentStyles({
+    color,
+    fontSize,
+  });
   const rootClassName = classNames(styles.root, {
     [styles.rootBig]: fontSize === "big",
     [styles.rootMedium]: fontSize === "medium",
   });
+  const shared = {
+    size,
+    thickness: 3,
+  };
   return (
     <div className={rootClassName}>
+      {typeof confirmations !== "undefined" && (
+        <div className={styles.sections}>
+          {new Array(6).fill(true).map((_, index) => {
+            const value = 100 / 6 - 3;
+            const sectionClassName = classNames(styles.section, {
+              [styles.sectionCompleted]: index < confirmations,
+            });
+            return (
+              <CircularProgress
+                key={index}
+                className={sectionClassName}
+                variant="static"
+                value={value}
+                color="inherit"
+                {...shared}
+              />
+            );
+          })}
+        </div>
+      )}
       <CircularProgress
         variant={processing ? "indeterminate" : "static"}
-        value={value}
-        size={size}
-        thickness={3}
+        value={typeof confirmations !== "undefined" ? 0 : 100}
         color="inherit"
+        {...shared}
       />
       <div className={styles.content}>{children}</div>
     </div>
@@ -121,9 +181,35 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
   );
 };
 
+export const TransactionStatusCircleIndicator = styled("div")(({ theme }) => ({
+  width: 10,
+  height: 10,
+  borderRadius: 5,
+  background: theme.palette.primary.main,
+}));
+
+const resolveIcon = (chain: ChainType, status: TransactionStatusType) => {
+  const shared = { color: "inherit" } as SvgIconProps;
+  if (status === "completed") {
+    return <CompletedIcon {...shared} fontSize="large" />;
+  }
+  switch (chain) {
+    case ChainSymbols.BNCC:
+      return <BinanceChainIcon {...shared} fontSize="large" />;
+    case ChainSymbols.BTCC:
+      return <BitcoinIcon {...shared} fontSize="large" />;
+    case ChainSymbols.ETHC:
+      return <EthereumIcon {...shared} fontSize="large" />;
+    default:
+      return <EthereumIcon {...shared} fontSize="large" />;
+  }
+};
+
 const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
   root: {
     color: theme.palette.primary.main,
+    display: "flex",
+    alignItems: "center",
   },
   iconWrapper: {},
   iconCircle: {
@@ -136,27 +222,40 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   icon: {},
-  indicator: {},
+  indicatorWrapper: {
+    marginLeft: 10,
+    minWidth: 10,
+  },
 }));
 
 export type TransactionStatusIndicatorProps = {
-  status?: string;
-  chain?: string;
+  status: TransactionStatusType;
+  chain: ChainType;
+  confirmations?: number;
 };
 
 export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndicatorProps> = ({
-  status = "Pending",
+  status,
   chain,
+  confirmations,
 }) => {
   const styles = useTransactionStatusIndicatorStyles();
+  const Icon = resolveIcon(chain, status);
   return (
     <div className={styles.root}>
       <div className={styles.iconWrapper}>
         <div className={styles.iconCircle}>
-          <ProgressWithContent color="inherit" size={42}>
-            <EthereumIcon color="inherit" fontSize="inherit"/>
+          <ProgressWithContent
+            color="inherit"
+            size={42}
+            confirmations={confirmations}
+          >
+            {Icon}
           </ProgressWithContent>
         </div>
+      </div>
+      <div className={styles.indicatorWrapper}>
+        {status === "submitted" && <TransactionStatusCircleIndicator />}
       </div>
     </div>
   );

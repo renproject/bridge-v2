@@ -1,17 +1,17 @@
-import { Chip, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent } from "react";
-import { Link } from "../links/Links";
-import { TransactionStatusIndicator } from "../progress/ProgressHelpers";
+import { Chip, Typography } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import React, { FunctionComponent } from 'react'
+import { Link } from '../links/Links'
+import { TransactionStatusIndicator } from '../progress/ProgressHelpers'
+import { ChainType, TransactionStatusType } from '../utils/types'
 
 type TransactionType = "mint" | "release";
-type TransactionStatus = "pending" | "complete";
 
 export type Transaction = {
   date: string;
   time: string;
   type: TransactionType;
-  status: TransactionStatus;
+  status: TransactionStatusType;
 };
 
 const standardPaddings = {
@@ -24,28 +24,43 @@ const useTransactionsHeaderStyles = makeStyles((theme) => ({
   root: {
     ...standardPaddings,
     background: theme.palette.grey[100],
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-  subtitle: {
-    fontWeight: theme.typography.fontWeightBold,
   },
 }));
 
 type TransactionsHeaderProps = {
-  title?: string;
-  subtitle: string;
+  title: string;
 };
 
 export const TransactionsHeader: FunctionComponent<TransactionsHeaderProps> = ({
   title,
-  subtitle,
 }) => {
   const styles = useTransactionsHeaderStyles();
   return (
     <div className={styles.root}>
-      {title && <Typography variant="h6">{title}</Typography>}
-      <Typography variant="overline" className={styles.subtitle}>
-        {subtitle}
+      <Typography variant="h6">{title}</Typography>
+    </div>
+  );
+};
+
+const useTransactionsStatusHeaderStyles = makeStyles((theme) => ({
+  root: {
+    ...standardPaddings,
+    background: theme.palette.grey[100],
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  title: {
+    fontWeight: theme.typography.fontWeightBold,
+  },
+}));
+
+export const TransactionsStatusHeader: FunctionComponent<TransactionsHeaderProps> = ({
+  title,
+}) => {
+  const styles = useTransactionsStatusHeaderStyles();
+  return (
+    <div className={styles.root}>
+      <Typography variant="overline" className={styles.title}>
+        {title}
       </Typography>
     </div>
   );
@@ -79,7 +94,17 @@ const useTransactionEntryStyles = makeStyles((theme) => ({
   status: {},
 }));
 
-export const TransactionEntry: FunctionComponent<any> = () => {
+type TransactionEntryProps = {
+  chain: ChainType;
+  status: TransactionStatusType;
+  confirmations?: number;
+};
+
+export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
+  chain,
+  status,
+  confirmations,
+}) => {
   const styles = useTransactionEntryStyles();
   return (
     <div className={styles.root}>
@@ -103,24 +128,31 @@ export const TransactionEntry: FunctionComponent<any> = () => {
         </div>
       </div>
       <div className={styles.status}>
-        <TransactionStatusIndicator />
+        <TransactionStatusIndicator
+          chain={chain}
+          status={status}
+          confirmations={confirmations}
+        />
       </div>
     </div>
   );
 };
 
 export const TransactionsGrid: FunctionComponent<any> = () => {
-  const pending = 2;
-  // const completed = 2;
+  const pending = 3;
+  const completed = 2;
   return (
     <div>
-      <TransactionsHeader
-        title="Transactions"
-        subtitle={`Pending (${pending})`}
-      />
+      <TransactionsHeader title="Transactions" />
+      <TransactionsStatusHeader title={`Pending (${pending})`} />
       <div>
-        <TransactionEntry />
-        <TransactionEntry />
+        <TransactionEntry chain="BTCC" status="pending" confirmations={2} />
+        <TransactionEntry chain="BNCC" status="submitted" />
+      </div>
+      <TransactionsStatusHeader title={`Completed (${completed})`} />
+      <div>
+        <TransactionEntry chain="BTCC" status="completed" />
+        <TransactionEntry chain="BNCC" status="completed" />
       </div>
     </div>
   );
