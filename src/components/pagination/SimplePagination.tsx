@@ -107,9 +107,6 @@ function SimplePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-const getDisplayedRows = ({ from, to, count }: any) =>
-  `${from} to ${to} of ${count}`;
-
 const useSimplePaginationStyles = makeStyles((theme) => ({
   toolbar: {
     display: "flex",
@@ -125,10 +122,7 @@ const useSimplePaginationStyles = makeStyles((theme) => ({
     display: "none",
   },
   caption: {
-    fontSize: 14
-  },
-  selectRoot: {
-    // display: "none",
+    fontSize: 14,
   },
 }));
 
@@ -141,7 +135,6 @@ export const SimplePagination: FunctionComponent<TablePaginationProps> = (
       component={Box}
       classes={classes}
       rowsPerPageOptions={[4]}
-      labelDisplayedRows={getDisplayedRows}
       ActionsComponent={SimplePaginationActions}
       {...props}
     />

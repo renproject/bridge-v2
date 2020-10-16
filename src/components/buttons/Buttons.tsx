@@ -22,7 +22,7 @@ import {
   gray,
   grayLight,
   skyBlue,
-  skyBlueLight,
+  skyBlueLighter,
 } from "../../theme/colors";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
@@ -96,7 +96,7 @@ export const ToggleIconButton: FunctionComponent<ToggleIconButtonProps> = ({
 const useQrCodeIconButtonStyles = makeStyles((theme) => ({
   root: {
     color: blue,
-    backgroundColor: skyBlueLight,
+    backgroundColor: skyBlueLighter,
     "&:hover": {
       backgroundColor: skyBlue,
       "@media (hover: none)": {
@@ -155,7 +155,7 @@ export const TxHistoryIconButton: FunctionComponent<IconButtonProps> = (
 const useLightIconButtonStyles = makeStyles((theme) => ({
   root: {
     color: blue,
-    backgroundColor: skyBlueLight,
+    backgroundColor: skyBlueLighter,
     fontSize: 19,
     "&:hover": {
       backgroundColor: skyBlue,
@@ -181,7 +181,7 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
     borderRadius: 20,
     marginRight: 10,
     color: blue,
-    backgroundColor: skyBlueLight,
+    backgroundColor: skyBlueLighter,
     userSelect: "all",
     display: "flex",
     justifyContent: "center",
@@ -235,12 +235,12 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
 const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
   button: {
     fontSize: 13,
-    color: blue,
-    backgroundColor: skyBlueLight,
+    color: theme.palette.primary.main,
+    backgroundColor: theme.customColors.skyBlueLighter,
     maxWidth: "100%",
     padding: `12px 20px 11px 20px`,
     "&:hover": {
-      backgroundColor: skyBlue,
+      backgroundColor: theme.customColors.skyBlueLight,
       "@media (hover: none)": {
         backgroundColor: "transparent",
       },
@@ -314,7 +314,7 @@ export const BigQrCode = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: skyBlueLight,
+  backgroundColor: skyBlueLighter,
   color: theme.palette.common.black,
   fontSize: 150, // TODO: remove when QR codes done
 }));

@@ -1,4 +1,5 @@
-export const skyBlueLight = "#F1F7FE";
+export const skyBlueLighter = "#F1F7FE";
+export const skyBlueLight = "#DAEBFF"
 export const skyBlue = "#C1DEFF";
 
 export const blueLight = "#0073E5";
