@@ -4,15 +4,18 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
+import { MultiwalletProvider } from "./providers/Multiwallet";
 import { NotificationsProvider } from "./providers/Notifications";
 import * as serviceWorker from "./serviceWorker";
 import { lightTheme } from "./theme/theme";
 
 ReactDOM.render(
   <MuiThemeProvider theme={lightTheme}>
-    <NotificationsProvider>
-      <App />
-    </NotificationsProvider>
+    <MultiwalletProvider>
+      <NotificationsProvider>
+        <App />
+      </NotificationsProvider>
+    </MultiwalletProvider>
   </MuiThemeProvider>,
   document.getElementById("root")
 );

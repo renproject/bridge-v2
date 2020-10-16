@@ -1,20 +1,22 @@
-import { Container, Divider, Drawer, ListItem } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
-import IconButton from '@material-ui/core/IconButton'
-import { makeStyles, Theme } from '@material-ui/core/styles'
-import Toolbar from '@material-ui/core/Toolbar'
-import CloseIcon from '@material-ui/icons/Close'
-import MenuIcon from '@material-ui/icons/Menu'
-import classNames from 'classnames'
-import React, { FunctionComponent, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Container, Divider, Drawer, ListItem } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import CloseIcon from "@material-ui/icons/Close";
+import MenuIcon from "@material-ui/icons/Menu";
+import { WalletPickerModal } from "@renproject/multiwallet-ui";
+import classNames from "classnames";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { Link } from "react-router-dom";
+import { walletPickerModalConfig } from "../../providers/Multiwallet";
 import {
   TransactionHistoryMenuIconButton,
   WalletConnectionIndicator,
   WalletConnectionStatusButton,
-} from '../buttons/Buttons'
-import { RenBridgeLogoIcon } from '../icons/RenIcons'
-import { Footer } from './Footer'
+} from "../buttons/Buttons";
+import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Footer } from "./Footer";
 
 const headerHeight = 64;
 const footerHeight = 42;
@@ -79,16 +81,26 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const MainLayout: FunctionComponent = ({ children }) => {
   const styles = useStyles();
-  const [isDrawerOpened, setIsMobileDrawerOpened] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleDrawerClose = () => {
-    setIsMobileDrawerOpened(false);
-  };
+  const [walletPickerOpen, setWalletPickerOpen] = useState(false);
+  const [chain, setChain] = useState("ethereum");
+  const handleWalletPickerClose = useCallback(() => {
+    setWalletPickerOpen(false);
+  }, []);
+  const handleWalletPickerOpen = useCallback(() => {
+    setWalletPickerOpen(true);
+  }, []);
 
-  const handleDrawerOpen = () => {
-    setIsMobileDrawerOpened(true);
-  };
+  const handleMobileMenuClose = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
 
+  const handleMobileMenuOpen = useCallback(() => {
+    setMobileMenuOpen(true);
+  }, []);
+
+  console.log(setChain);
   // TODO: add debounced resize/useLayoutEffect for disabling drawer after transition
 
   const drawerId = "main-menu-mobile";
@@ -97,13 +109,16 @@ export const MainLayout: FunctionComponent = ({ children }) => {
       anchor="right"
       id={drawerId}
       keepMounted
-      open={isDrawerOpened}
-      onClose={handleDrawerClose}
+      open={mobileMenuOpen}
+      onClose={handleMobileMenuClose}
       PaperProps={{ className: styles.drawerPaper }}
     >
       <div className={styles.drawerHeader}>
         <RenBridgeLogoIcon className={styles.drawerLogo} />
-        <CloseIcon className={styles.drawerClose} onClick={handleDrawerClose} />
+        <CloseIcon
+          className={styles.drawerClose}
+          onClick={handleMobileMenuClose}
+        />
       </div>
       <Divider />
       <ListItem divider className={styles.drawerListItem} button>
@@ -144,14 +159,23 @@ export const MainLayout: FunctionComponent = ({ children }) => {
               <TransactionHistoryMenuIconButton
                 className={styles.desktopTxHistory}
               />
-              <WalletConnectionStatusButton />
+              <WalletConnectionStatusButton onClick={handleWalletPickerOpen} />
+              <WalletPickerModal
+                open={walletPickerOpen}
+                close={handleWalletPickerClose}
+                options={{
+                  chain,
+                  close: handleWalletPickerClose,
+                  config: walletPickerModalConfig,
+                }}
+              />
             </div>
             <div className={styles.mobileMenu}>
               <IconButton
                 aria-label="show more"
                 aria-controls={drawerId}
                 aria-haspopup="true"
-                onClick={handleDrawerOpen}
+                onClick={handleMobileMenuOpen}
                 color="inherit"
               >
                 <MenuIcon />

@@ -407,13 +407,15 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
   },
 }));
 
-export const WalletConnectionStatusButton: FunctionComponent = () => {
+export const WalletConnectionStatusButton: FunctionComponent<ButtonProps> = (
+  props
+) => {
   const {
     indicator: indicatorClassName,
     ...classes
   } = useWalletConnectionStatusButtonStyles();
   return (
-    <Button variant="outlined" color="secondary" classes={classes}>
+    <Button variant="outlined" color="secondary" classes={classes} {...props}>
       <WalletConnectionIndicator
         status="warning"
         className={indicatorClassName}
