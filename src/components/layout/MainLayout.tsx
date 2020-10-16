@@ -5,9 +5,17 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
-import { WalletPickerModal } from "@renproject/multiwallet-ui";
+import {
+  WalletPickerModal,
+  WalletPickerProps,
+} from "@renproject/multiwallet-ui";
 import classNames from "classnames";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { Link } from "react-router-dom";
 import { walletPickerModalConfig } from "../../providers/Multiwallet";
 import {
@@ -79,10 +87,25 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const usePickerStyles = makeStyles((theme) => ({
+  root: {},
+  body: {},
+  header: {
+    color: "red",
+  },
+}));
+
 export const MainLayout: FunctionComponent = ({ children }) => {
   const styles = useStyles();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const handleMobileMenuClose = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+  const handleMobileMenuOpen = useCallback(() => {
+    setMobileMenuOpen(true);
+  }, []);
 
+  const pickerClasses = usePickerStyles();
   const [walletPickerOpen, setWalletPickerOpen] = useState(false);
   const [chain, setChain] = useState("ethereum");
   const handleWalletPickerClose = useCallback(() => {
@@ -92,13 +115,15 @@ export const MainLayout: FunctionComponent = ({ children }) => {
     setWalletPickerOpen(true);
   }, []);
 
-  const handleMobileMenuClose = useCallback(() => {
-    setMobileMenuOpen(false);
-  }, []);
-
-  const handleMobileMenuOpen = useCallback(() => {
-    setMobileMenuOpen(true);
-  }, []);
+  const walletPickerOptions = useMemo(() => {
+    const options: WalletPickerProps<any, any> = {
+      pickerClasses,
+      chain,
+      close: handleWalletPickerClose,
+      config: walletPickerModalConfig,
+    };
+    return options;
+  }, [chain, handleWalletPickerClose, pickerClasses]);
 
   console.log(setChain);
   // TODO: add debounced resize/useLayoutEffect for disabling drawer after transition
@@ -163,11 +188,7 @@ export const MainLayout: FunctionComponent = ({ children }) => {
               <WalletPickerModal
                 open={walletPickerOpen}
                 close={handleWalletPickerClose}
-                options={{
-                  chain,
-                  close: handleWalletPickerClose,
-                  config: walletPickerModalConfig,
-                }}
+                options={walletPickerOptions}
               />
             </div>
             <div className={styles.mobileMenu}>

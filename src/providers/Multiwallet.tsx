@@ -1,10 +1,8 @@
-import { makeStyles } from "@material-ui/core/styles";
-import React from "react";
-import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
-import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
-import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
-import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
-import { FunctionComponent } from "react";
+import { BinanceSmartChainInjectedConnector } from '@renproject/multiwallet-binancesmartchain-injected-connector'
+import { EthereumInjectedConnector } from '@renproject/multiwallet-ethereum-injected-connector'
+import { EthereumWalletConnectConnector } from '@renproject/multiwallet-ethereum-walletconnect-connector'
+import { MultiwalletProvider as RenMultiwalletProvider } from '@renproject/multiwallet-ui'
+import React, { FunctionComponent } from 'react'
 
 export const walletPickerModalConfig = {
   chains: {
