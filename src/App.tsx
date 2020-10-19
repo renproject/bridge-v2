@@ -12,8 +12,8 @@ function App() {
         <Container maxWidth="lg">
           <Grid container item>
             <Switch>
-              <Route path="/">.</Route>
-              <Route path="/catalog">
+              <Route exact path="/">.</Route>
+              <Route exact path="/catalog">
                 <Catalog />
               </Route>
             </Switch>

@@ -24,6 +24,7 @@ import {
   WalletConnectionStatusButton,
 } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { useWalletPickerStyles } from "../wallet/WalletHelpers";
 import { Footer } from "./Footer";
 
 const headerHeight = 64;
@@ -87,14 +88,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const usePickerStyles = makeStyles((theme) => ({
-  root: {},
-  body: {},
-  header: {
-    color: "red",
-  },
-}));
-
 export const MainLayout: FunctionComponent = ({ children }) => {
   const styles = useStyles();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -105,8 +98,8 @@ export const MainLayout: FunctionComponent = ({ children }) => {
     setMobileMenuOpen(true);
   }, []);
 
-  const pickerClasses = usePickerStyles();
-  const [walletPickerOpen, setWalletPickerOpen] = useState(false);
+  const pickerClasses = useWalletPickerStyles();
+  const [walletPickerOpen, setWalletPickerOpen] = useState(true);
   const [chain, setChain] = useState("ethereum");
   const handleWalletPickerClose = useCallback(() => {
     setWalletPickerOpen(false);
