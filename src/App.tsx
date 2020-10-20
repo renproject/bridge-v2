@@ -1,25 +1,19 @@
-import { Container, Grid } from "@material-ui/core";
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
-import { Catalog } from "./components/catalog/Catalog";
-import { MainLayout } from "./components/layout/MainLayout";
+import { CatalogPage } from "./pages/CatalogPage";
+import { HomePage } from "./pages/HomePage";
+import { WelcomePage } from "./pages/WelcomePage";
+import { paths } from "./pages/routes";
 
 function App() {
   return (
     <Router>
-      <MainLayout>
-        <Container maxWidth="lg">
-          <Grid container item>
-            <Switch>
-              <Route exact path="/">.</Route>
-              <Route exact path="/catalog">
-                <Catalog />
-              </Route>
-            </Switch>
-          </Grid>
-        </Container>
-      </MainLayout>
+      <Switch>
+        <Route exact path={paths.HOME} component={HomePage} />
+        <Route exact path={paths.WELCOME} component={WelcomePage} />
+        <Route exact path={paths.CATALOG} component={CatalogPage} />
+      </Switch>
     </Router>
   );
 }

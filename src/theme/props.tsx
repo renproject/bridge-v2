@@ -24,6 +24,9 @@ export const props: ComponentsProps = {
   MuiIconButton: {
     size: "small",
   },
+  MuiInputLabel: {
+    shrink: true,
+  },
   MuiTextField: {
     autoComplete: "off",
     fullWidth: true,

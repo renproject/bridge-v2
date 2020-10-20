@@ -72,12 +72,12 @@ export const overrides = (palette: Palette): Overrides => {
     MuiChip: {
       root: {
         paddingTop: 3, // TODO: fix after investigation font hoisting issue
-        backgroundColor: '#F1F1F6'
+        backgroundColor: "#F1F1F6",
       },
       sizeSmall: {
         height: 16,
-        fontSize: 12
-      }
+        fontSize: 12,
+      },
     },
     MuiDialog: {
       paper: {
@@ -118,6 +118,13 @@ export const overrides = (palette: Palette): Overrides => {
         "&::-moz-placeholder": placeholder, // Firefox 19+
         "&:-ms-input-placeholder": placeholder, // IE 11
         "&::-ms-input-placeholder": placeholder, // Edge
+      },
+    },
+    MuiInputLabel: {
+      outlined: {
+        "&$shrink": {
+          transform: "translate(14px, 0px) scale(0.75)",
+        },
       },
     },
     MuiLink: {
