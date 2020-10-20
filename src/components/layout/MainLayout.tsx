@@ -39,6 +39,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
   },
   main: {
+    paddingTop: 1,
+    marginTop: -1,
     minHeight: `calc(100vh - ${headerHeight + footerHeight}px)`,
   },
   logo: {

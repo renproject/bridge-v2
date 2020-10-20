@@ -6,4 +6,8 @@ export const typography: TypographyOptions = {
   button: {
     textTransform: "none",
   },
+  h1: {
+    fontSize: 48,
+    fontWeight: "bold"
+  }
 };

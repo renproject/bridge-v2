@@ -1,6 +1,6 @@
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, ReactNode } from 'react'
-import { TooltipWithIcon } from '../tooltips/TooltipWithIcon'
+import { makeStyles, styled } from "@material-ui/core/styles";
+import React, { FunctionComponent, ReactNode } from "react";
+import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
 type LabelWithValueProps = {
   label: string;
@@ -9,7 +9,7 @@ type LabelWithValueProps = {
   valueEquivalent?: string | number;
 };
 
-const useStyles = makeStyles((theme) => ({
+const useLabelWithValueStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     justifyContent: "space-between",
@@ -43,7 +43,7 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   value,
   valueEquivalent,
 }) => {
-  const styles = useStyles();
+  const styles = useLabelWithValueStyles();
   return (
     <div className={styles.root}>
       <div className={styles.labelWrapper}>
@@ -121,3 +121,9 @@ export const AssetInfo: FunctionComponent<ReceivingAssetInfoProps> = ({
     </div>
   );
 };
+
+export const UnstyledList = styled("ul")({
+  padding: 0,
+  margin: 0,
+  listStyleType: "none",
+});
