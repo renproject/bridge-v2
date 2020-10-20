@@ -1,4 +1,4 @@
-import { getScalingProps } from "./iconHelpers";
+import { getScalingProps } from "./icons";
 
 test("calculates scaling props for wide icon", () => {
   const props = getScalingProps(120, 30);

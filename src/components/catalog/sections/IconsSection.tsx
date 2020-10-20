@@ -5,6 +5,7 @@ import RedditIcon from "@material-ui/icons/Reddit";
 import TelegramIcon from "@material-ui/icons/Telegram";
 import TwitterIcon from "@material-ui/icons/Twitter";
 import React, { FunctionComponent } from "react";
+import { IconWithLabel } from "../../icons/IconHelpers";
 import {
   BackArrowIcon,
   BchFullIcon,
@@ -72,6 +73,12 @@ export const IconsSection: FunctionComponent = () => {
       <SeparationWrapper>
         <BitcoinInCircleIcon />
         <MetamaskFoxIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
+        <IconWithLabel label="BTC" Icon={BtcFullIcon} />
+        <IconWithLabel label="BCH" Icon={BchFullIcon} />
+        <IconWithLabel label="DOGE" Icon={DogeFullIcon} />
+        <IconWithLabel label="ZEC" Icon={ZecFullIcon} />
       </SeparationWrapper>
     </Section>
   );

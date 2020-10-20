@@ -1,10 +1,12 @@
 import { Box, Checkbox, FormControlLabel, Typography } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
+import { BitcoinInCircleIcon } from "../../icons/RenIcons";
+import { AddressInput } from "../../inputs/AddressInput";
 import { BigCurrencyInput } from "../../inputs/BigCurrencyInput";
 import { BridgePaper } from "../../layout/Paper";
 import { Link } from "../../links/Links";
 import { TooltipWithIcon } from "../../tooltips/TooltipWithIcon";
-import { LabelWithValue } from "../../typography/TypographyHelpers";
+import { AssetInfo, LabelWithValue } from "../../typography/TypographyHelpers";
 import { Section } from "../PresentationHelpers";
 
 export const InputsSection: FunctionComponent = () => {
@@ -16,6 +18,10 @@ export const InputsSection: FunctionComponent = () => {
   const handleCheckboxChange = useCallback((event) => {
     setChecked(event.target.checked);
   }, []);
+  const [address, setAddress] = useState("");
+  const handleAddressChange = useCallback((event) => {
+    setAddress(event.target.value);
+  }, []);
   return (
     <Section header="Inputs">
       <BridgePaper topPadding>
@@ -26,7 +32,10 @@ export const InputsSection: FunctionComponent = () => {
           placeholder="0"
           usdValue={value * 9730}
         />
-        <LabelWithValue label="renBTC Balance" value={<Link color="primary">0.23132</Link>} />
+        <LabelWithValue
+          label="renBTC Balance"
+          value={<Link color="primary">0.23132</Link>}
+        />
         <Box display="flex" alignItems="center">
           <FormControlLabel
             control={
@@ -43,6 +52,22 @@ export const InputsSection: FunctionComponent = () => {
                 <TooltipWithIcon title="Explanation" />
               </Typography>
             }
+          />
+        </Box>
+        <Box>
+          <AssetInfo
+            label="Receiving:"
+            value="0.31256113 BTC"
+            valueEquivalent=" = $3,612.80 USD"
+            Icon={<BitcoinInCircleIcon fontSize="inherit" />}
+          />
+        </Box>
+        <Box>
+          <AddressInput
+            chain="BTCC"
+            label="Releasing to"
+            onChange={handleAddressChange}
+            value={address}
           />
         </Box>
       </BridgePaper>

@@ -1,5 +1,5 @@
 export const skyBlueLighter = "#F1F7FE";
-export const skyBlueLight = "#DAEBFF"
+export const skyBlueLight = "#DAEBFF";
 export const skyBlue = "#C1DEFF";
 
 export const blueLight = "#0073E5";
@@ -26,6 +26,7 @@ export const green = "#34A384";
 export const greenDark = "#2C8A6F";
 
 export const textDark = "#3F3F48";
+export const textLight = "#6B6D70";
 export const textLighter = "#87888C";
 export const textDisabled = "#DCE0E3";
 

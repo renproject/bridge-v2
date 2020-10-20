@@ -1,6 +1,6 @@
 import { SvgIcon, SvgIconProps } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
-import { getScalingProps } from "../../utils/iconHelpers";
+import { getScalingProps } from "../../utils/icons";
 import { ReactComponent as BchFull } from "./../../assets/icons/bch-icon.svg";
 import { ReactComponent as BitcoinInCircle } from "./../../assets/icons/bitcoin-in-circle.svg";
 import { ReactComponent as BrowserNotifications } from "./../../assets/icons/browser-notifications.svg";
