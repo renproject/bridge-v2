@@ -1,6 +1,6 @@
 import { Container, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent, useCallback } from "react";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
@@ -14,7 +14,8 @@ import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
 import { MainLayout } from "../components/layout/MainLayout";
 import { Link } from "../components/links/Links";
 import { UnstyledList } from "../components/typography/TypographyHelpers";
-import { storageKeys } from "../constants/constants";
+import { links, storageKeys } from "../constants/constants";
+import { useNotifications } from "../providers/Notifications";
 import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
@@ -54,11 +55,38 @@ const useStyles = makeStyles((theme) => ({
 export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
+  const { showNotification } = useNotifications();
   const styles = useStyles();
+  useEffect(() => {
+    showNotification(
+      <Typography variant="caption">
+        RenVM is new technology and{" "}
+        <Link
+          href={links.SECURITY_AUDITS}
+          target="_blank"
+          color="primary"
+          underline="hover"
+        >
+          security audits
+        </Link>{" "}
+        don't completely eliminate risks. Please don’t supply assets you can’t
+        afford to lose
+      </Typography>,
+      {
+        variant: "specialInfo",
+        persist: true,
+        anchorOrigin: {
+          horizontal: "center",
+          vertical: "top",
+        },
+      }
+    );
+  }, [showNotification]);
   const handleAgree = useCallback(() => {
     localStorage.setItem(storageKeys.TERMS_AGREED, "1");
     history.replace(paths.HOME);
   }, [history]);
+
   return (
     <MainLayout variant="welcome">
       <Container maxWidth="sm">
@@ -71,7 +99,12 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         </Typography>
         <Typography variant="body1" className={styles.continuation}>
           To continue, read and agree to the{" "}
-          <Link color="primary" underline="hover">
+          <Link
+            color="primary"
+            underline="hover"
+            target="_blank"
+            href={links.TERMS_OF_SERVICE}
+          >
             Terms of Service
           </Link>
         </Typography>

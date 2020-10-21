@@ -18,6 +18,14 @@ export const NotificationsSection: FunctionComponent = () => {
     showNotification("Warning", { variant: "warning" });
     showNotification("Info", { variant: "info" });
     showNotification("Success", { variant: "success", persist: true });
+    showNotification("Special Info", {
+      variant: "specialInfo",
+      persist: true,
+      anchorOrigin: {
+        horizontal: "center",
+        vertical: "top",
+      },
+    });
   }, [showNotification]);
 
   useEffect(showNotifications, []);
@@ -40,6 +48,10 @@ export const NotificationsSection: FunctionComponent = () => {
     );
     showNotification(<span>Persistent notification</span>, {
       variant: "success",
+      persist: true,
+    });
+    showNotification(<span>Persistent notification</span>, {
+      variant: "specialInfo",
       persist: true,
     });
   }, [showNotification]);

@@ -8,6 +8,10 @@ import { NotificationMessage } from "../components/notifications/NotificationMes
 
 import { useSnackbar as useDefaultSnackbar, OptionsObject } from "notistack";
 
+// type SpecialInfoVariantType = "specialInfo";
+
+type ExtendedVariantType = VariantType | "specialInfo";
+
 export const useNotifications = () => {
   const {
     enqueueSnackbar: enqueueDefaultSnackbar,
@@ -16,17 +20,21 @@ export const useNotifications = () => {
 
   const showNotification = (
     message: string | ReactElement,
-    options?: OptionsObject & Partial<{ variant: VariantType }>
+    options?: Omit<OptionsObject, "variant"> & Partial<{ variant: ExtendedVariantType }>
   ) => {
     enqueueDefaultSnackbar(message, {
       ...options,
       content: (key) => {
         const { variant } = options || { variant: undefined };
         return (
-          <NotificationMessage id={key} message={message} variant={variant} />
+          <NotificationMessage
+            id={key}
+            message={message}
+            variant={variant as VariantType}
+          />
         );
       },
-    });
+    } as OptionsObject);
   };
 
   return { showNotification, closeNotification };
