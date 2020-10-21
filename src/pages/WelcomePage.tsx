@@ -1,6 +1,7 @@
 import { Container, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useCallback } from "react";
+import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
 import {
@@ -13,6 +14,8 @@ import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
 import { MainLayout } from "../components/layout/MainLayout";
 import { Link } from "../components/links/Links";
 import { UnstyledList } from "../components/typography/TypographyHelpers";
+import { storageKeys } from "../constants/constants";
+import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -48,9 +51,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-between",
   },
 }));
-export const WelcomePage: FunctionComponent = () => {
+export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
+  history,
+}) => {
   const styles = useStyles();
-  const handleAgree = useCallback(() => {}, []);
+  const handleAgree = useCallback(() => {
+    localStorage.setItem(storageKeys.TERMS_AGREED, "1");
+    history.replace(paths.HOME);
+  }, [history]);
   return (
     <MainLayout variant="welcome">
       <Container maxWidth="sm">

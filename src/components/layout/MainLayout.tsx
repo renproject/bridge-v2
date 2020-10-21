@@ -120,6 +120,8 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
     }
   }, [variant]);
 
+  const showMenu = variant !== "welcome";
+
   const pickerClasses = useWalletPickerStyles();
   const [walletPickerOpen, setWalletPickerOpen] = useState(false);
   const [chain, setChain] = useState("ethereum");
@@ -157,69 +159,75 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                   </Link>
                 </div>
                 <div className={styles.grow} />
-                <div className={styles.desktopMenu}>
-                  <TransactionHistoryMenuIconButton
-                    className={styles.desktopTxHistory}
-                  />
-                  <WalletConnectionStatusButton
-                    onClick={handleWalletPickerOpen}
-                  />
-                  <WalletPickerModal
-                    open={walletPickerOpen}
-                    close={handleWalletPickerClose}
-                    options={walletPickerOptions}
-                  />
-                </div>
-                <div className={styles.mobileMenu}>
-                  <IconButton
-                    aria-label="show more"
-                    aria-controls={drawerId}
-                    aria-haspopup="true"
-                    onClick={handleMobileMenuOpen}
-                    color="inherit"
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                </div>
+                {showMenu && (
+                  <>
+                    <div className={styles.desktopMenu}>
+                      <TransactionHistoryMenuIconButton
+                        className={styles.desktopTxHistory}
+                      />
+                      <WalletConnectionStatusButton
+                        onClick={handleWalletPickerOpen}
+                      />
+                      <WalletPickerModal
+                        open={walletPickerOpen}
+                        close={handleWalletPickerClose}
+                        options={walletPickerOptions}
+                      />
+                    </div>
+                    <div className={styles.mobileMenu}>
+                      <IconButton
+                        aria-label="show more"
+                        aria-controls={drawerId}
+                        aria-haspopup="true"
+                        onClick={handleMobileMenuOpen}
+                        color="inherit"
+                      >
+                        <MenuIcon />
+                      </IconButton>
+                    </div>
+                  </>
+                )}
               </Toolbar>
             </AppBar>
-            <Drawer
-              anchor="right"
-              id={drawerId}
-              keepMounted
-              open={mobileMenuOpen}
-              onClose={handleMobileMenuClose}
-              PaperProps={{ className: styles.drawerPaper }}
-            >
-              <div className={styles.drawerHeader}>
-                <RenBridgeLogoIcon className={styles.drawerLogo} />
-                <CloseIcon
-                  className={styles.drawerClose}
-                  onClick={handleMobileMenuClose}
-                />
-              </div>
-              <Divider />
-              <ListItem divider className={styles.drawerListItem} button>
-                <div className={styles.drawerListItemIcon}>
-                  <WalletConnectionIndicator status="error" />
-                </div>
-                <p>Connect a Wallet</p>
-              </ListItem>
-              <ListItem divider className={styles.drawerListItem} button>
-                <div className={styles.drawerListItemIcon}>
-                  <TransactionHistoryMenuIconButton />
-                </div>
-                <p>View Transactions</p>
-              </ListItem>
-              <ListItem
-                className={classNames(
-                  styles.drawerListItem,
-                  styles.drawerFooterListItem
-                )}
+            {showMenu && (
+              <Drawer
+                anchor="right"
+                id={drawerId}
+                keepMounted
+                open={mobileMenuOpen}
+                onClose={handleMobileMenuClose}
+                PaperProps={{ className: styles.drawerPaper }}
               >
-                <Footer mobile />
-              </ListItem>
-            </Drawer>
+                <div className={styles.drawerHeader}>
+                  <RenBridgeLogoIcon className={styles.drawerLogo} />
+                  <CloseIcon
+                    className={styles.drawerClose}
+                    onClick={handleMobileMenuClose}
+                  />
+                </div>
+                <Divider />
+                <ListItem divider className={styles.drawerListItem} button>
+                  <div className={styles.drawerListItemIcon}>
+                    <WalletConnectionIndicator status="error" />
+                  </div>
+                  <p>Connect a Wallet</p>
+                </ListItem>
+                <ListItem divider className={styles.drawerListItem} button>
+                  <div className={styles.drawerListItemIcon}>
+                    <TransactionHistoryMenuIconButton />
+                  </div>
+                  <p>View Transactions</p>
+                </ListItem>
+                <ListItem
+                  className={classNames(
+                    styles.drawerListItem,
+                    styles.drawerFooterListItem
+                  )}
+                >
+                  <Footer mobile />
+                </ListItem>
+              </Drawer>
+            )}
           </header>
           <main className={styles.main}>{children}</main>
           <Footer />
