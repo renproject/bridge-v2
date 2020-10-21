@@ -25,7 +25,7 @@ import {
   WalletConnectionStatusButton,
 } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { useWalletPickerStyles } from "../wallet/WalletHelpers";
+// import { useWalletPickerStyles } from "../wallet/WalletHelpers";
 import { Footer } from "./Footer";
 
 const headerHeight = 64;
@@ -122,7 +122,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const showMenu = variant !== "welcome";
 
-  const pickerClasses = useWalletPickerStyles();
+  // const pickerClasses = useWalletPickerStyles();
   const [walletPickerOpen, setWalletPickerOpen] = useState(false);
   const [chain, setChain] = useState("ethereum");
   const handleWalletPickerClose = useCallback(() => {
@@ -133,13 +133,14 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   }, []);
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
-      pickerClasses,
+      // pickerClasses,
+      targetNetwork: "ethereum",
       chain,
-      close: handleWalletPickerClose,
+      onClose: handleWalletPickerClose,
       config: walletPickerModalConfig,
     };
     return options;
-  }, [chain, handleWalletPickerClose, pickerClasses]);
+  }, [chain, handleWalletPickerClose]);
 
   console.log(setChain);
   // TODO: add debounced resize/useLayoutEffect for disabling drawer after transition
@@ -170,7 +171,6 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                       />
                       <WalletPickerModal
                         open={walletPickerOpen}
-                        close={handleWalletPickerClose}
                         options={walletPickerOptions}
                       />
                     </div>
