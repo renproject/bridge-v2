@@ -10,6 +10,7 @@ import { ReactComponent as DogeFull } from "./../../assets/icons/doge-icon.svg";
 import { ReactComponent as DotsFull } from "./../../assets/icons/dots-icon.svg";
 import { ReactComponent as Ethereum } from "./../../assets/icons/eth-icon-only.svg";
 import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox.svg";
+import { ReactComponent as MetamaskFull } from "./../../assets/icons/metamask-icon-colour.svg";
 import { ReactComponent as QrCode } from "./../../assets/icons/qr-code.svg";
 import { ReactComponent as RenLogo } from "./../../assets/icons/ren-logo.svg";
 import { ReactComponent as RenBridgeLogo } from "./../../assets/icons/renbridge-logo.svg";
@@ -129,4 +130,8 @@ export const BitcoinInCircleIcon: CustomSvgIconComponent = (props) => (
 
 export const MetamaskFoxIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={MetamaskFox} viewBox="0 0 34 32" {...props} />
+);
+
+export const MetamaskFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={MetamaskFull} {...props} />
 );

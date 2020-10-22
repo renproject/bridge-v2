@@ -1,9 +1,13 @@
-import { Button } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { QuestionAnswer } from '@material-ui/icons'
-import { WalletPickerProps } from '@renproject/multiwallet-ui'
-import React from 'react'
-import { MetamaskFoxIcon, WalletConnectFullIcon, } from '../icons/RenIcons'
+import { Button } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { QuestionAnswer } from "@material-ui/icons";
+import { WalletPickerProps } from "@renproject/multiwallet-ui";
+import React from "react";
+import {
+  MetamaskFoxIcon,
+  MetamaskFullIcon,
+  WalletConnectFullIcon,
+} from "../icons/RenIcons";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {},
@@ -24,7 +28,7 @@ export const useWalletPickerStyles = makeStyles((theme) => ({
     lineHeight: 2,
   },
   headerCloseIcon: {
-    fontSize: 18,
+    fontSize: 16,
   },
   button: {
     border: `1px solid ${theme.palette.divider}`,
@@ -39,9 +43,9 @@ const mapWalletEntryIcon = (chain: string, name: string) => {
   if (chain === "ethereum") {
     switch (name) {
       case "Metamask":
-        return <MetamaskFoxIcon />;
+        return <MetamaskFullIcon fontSize="inherit" />;
       case "WalletConnect":
-        return <WalletConnectFullIcon />;
+        return <WalletConnectFullIcon fontSize="inherit" />;
     }
   }
   return <QuestionAnswer />;
@@ -51,7 +55,7 @@ const useWalletEntryButtonStyles = makeStyles({
   root: {
     marginTop: 20,
     fontSize: 16,
-    padding: "15px 20px 15px 40px",
+    padding: "11px 20px 11px 40px",
   },
   label: {
     display: "flex",
@@ -59,7 +63,7 @@ const useWalletEntryButtonStyles = makeStyles({
     alignContent: "center",
   },
   icon: {
-    fontSize: 24,
+    fontSize: 36,
     display: "inline-flex",
   },
 });
