@@ -1,13 +1,9 @@
-import { Button } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { QuestionAnswer } from "@material-ui/icons";
-import { WalletPickerProps } from "@renproject/multiwallet-ui";
-import React from "react";
-import {
-  MetamaskFoxIcon,
-  MetamaskFullIcon,
-  WalletConnectFullIcon,
-} from "../icons/RenIcons";
+import { Button } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import { QuestionAnswer } from '@material-ui/icons'
+import { WalletPickerProps } from '@renproject/multiwallet-ui'
+import React from 'react'
+import { MetamaskFullIcon, WalletConnectFullIcon, } from '../icons/RenIcons'
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {},

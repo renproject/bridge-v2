@@ -2,6 +2,7 @@ import { Container, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { RouteComponentProps } from "react-router";
+import { useTitle } from "react-use";
 import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
 import {
@@ -15,6 +16,7 @@ import { MainLayout } from "../components/layout/MainLayout";
 import { Link } from "../components/links/Links";
 import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
+import { usePageTitle } from "../hooks/usePageTitle";
 import { useNotifications } from "../providers/Notifications";
 import { paths } from "./routes";
 
@@ -55,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
 export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
+  usePageTitle("Welcome");
   const { showNotification } = useNotifications();
   const styles = useStyles();
   useEffect(() => {

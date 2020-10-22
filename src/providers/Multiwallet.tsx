@@ -3,6 +3,7 @@ import { EthereumInjectedConnector } from '@renproject/multiwallet-ethereum-inje
 import { EthereumWalletConnectConnector } from '@renproject/multiwallet-ethereum-walletconnect-connector'
 import { MultiwalletProvider as RenMultiwalletProvider } from '@renproject/multiwallet-ui'
 import React, { FunctionComponent } from 'react'
+import { env } from '../constants/environmentVariables'
 
 export const walletPickerModalConfig = {
   chains: {
@@ -17,7 +18,7 @@ export const walletPickerModalConfig = {
         logo: "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
         connector: new EthereumWalletConnectConnector({
           rpc: {
-            42: `https://kovan.infura.io/v3/${process.env.INFURA_KEY}`,
+            42: `https://kovan.infura.io/v3/${env.INFURA_KEY}`,
           },
           qrcode: true,
           debug: true,

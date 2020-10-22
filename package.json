@@ -29,11 +29,11 @@
     "prettier": "^2.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-helmet": "^6.1.0",
     "react-lorem-component": "^0.13.0",
     "react-number-format": "^4.4.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "react-use": "^15.3.4",
     "typescript": "^4.0.3"
   },
   "scripts": {

@@ -6,6 +6,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
 import {
+  useMultiwallet,
   WalletPickerModal,
   WalletPickerProps,
 } from "@renproject/multiwallet-ui";
@@ -18,6 +19,7 @@ import React, {
   useState,
 } from "react";
 import { Link } from "react-router-dom";
+import { env } from "../../constants/environmentVariables";
 import { walletPickerModalConfig } from "../../providers/Multiwallet";
 import {
   TransactionHistoryMenuIconButton,
@@ -25,6 +27,7 @@ import {
   WalletConnectionStatusButton,
 } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Debug } from "../utils/Debug";
 import {
   useWalletPickerStyles,
   WalletEntryButton,
@@ -128,7 +131,10 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const pickerClasses = useWalletPickerStyles();
   const [walletPickerOpen, setWalletPickerOpen] = useState(false);
-  const [chain, setChain] = useState("ethereum");
+  const [chain] = useState("ethereum");
+  const wallet = useMultiwallet();
+  console.log(wallet);
+  // const { connecting } = wallet.enabledChains[chain];
   const handleWalletPickerClose = useCallback(() => {
     setWalletPickerOpen(false);
   }, []);
@@ -138,7 +144,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
       config: walletPickerModalConfig,
-      targetNetwork: "ethereum",
+      targetNetwork: env.TARGET_NETWORK,
       chain,
       onClose: handleWalletPickerClose,
       pickerClasses,
@@ -147,7 +153,6 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
     return options;
   }, [chain, handleWalletPickerClose, pickerClasses]);
 
-  console.log(setChain);
   // TODO: add debounced resize/useLayoutEffect for disabling drawer after transition
 
   const drawerId = "main-menu-mobile";
@@ -234,7 +239,10 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
               </Drawer>
             )}
           </header>
-          <main className={styles.main}>{children}</main>
+          <main className={styles.main}>
+            {children}
+            <Debug it={{ wallet, env }} />
+          </main>
           <Footer />
         </Container>
       </Grid>
