@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="863px" height="863px" viewBox="0 0 863 863" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 63.1 (92452) - https://sketch.com -->
+    <title>bg-circle-4</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-24.4%" y="-24.4%" width="148.7%" height="148.7%" filterUnits="objectBoundingBox" id="filter-1">
+            <feGaussianBlur stdDeviation="50" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="RenBridge_v2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.11">
+        <circle id="bg-circle-4" fill="#FF9900" filter="url(#filter-1)" cx="432.018761" cy="430.936968" r="308"></circle>
+    </g>
+</svg>

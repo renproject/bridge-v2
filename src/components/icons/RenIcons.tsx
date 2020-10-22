@@ -24,6 +24,8 @@ import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binanc
 import { ReactComponent as EthereumChainColor } from "./../../assets/icons/ethereum-colour-icon.svg";
 import { ReactComponent as Tooltip } from "./../../assets/icons/tooltip.svg";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
+import { ReactComponent as WalletConnectFull } from "./../../assets/icons/walletconnect-icon-colour.svg";
+import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconnect-icon.svg";
 
 export type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
 
@@ -81,6 +83,14 @@ export const DotsFullIcon: CustomSvgIconComponent = (props) => (
 
 export const ZecFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={ZecFull} {...props} />
+);
+
+export const WalletConnectFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={WalletConnectFull} {...props} />
+);
+
+export const WalletConnectIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={WalletConnect} {...props} />
 );
 
 export const BinanceChainIcon: CustomSvgIconComponent = (props) => (
