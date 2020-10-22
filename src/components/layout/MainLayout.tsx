@@ -21,15 +21,13 @@ import React, {
 import { Link } from "react-router-dom";
 import { env } from "../../constants/environmentVariables";
 import { walletPickerModalConfig } from "../../providers/Multiwallet";
-import {
-  TransactionHistoryMenuIconButton,
-  WalletConnectionIndicator,
-  WalletConnectionStatusButton,
-} from "../buttons/Buttons";
+import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Debug } from "../utils/Debug";
 import {
   useWalletPickerStyles,
+  WalletConnectionIndicator,
+  WalletConnectionStatusButton,
   WalletEntryButton,
 } from "../wallet/WalletHelpers";
 // import { useWalletPickerStyles } from "../wallet/WalletHelpers";
@@ -134,7 +132,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const [chain] = useState("ethereum");
   const wallet = useMultiwallet();
   console.log(wallet);
-  // const { connecting } = wallet.enabledChains[chain];
+  const { status = "disconnected" } = wallet?.enabledChains[chain] || {};
   const handleWalletPickerClose = useCallback(() => {
     setWalletPickerOpen(false);
   }, []);
@@ -178,6 +176,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                       />
                       <WalletConnectionStatusButton
                         onClick={handleWalletPickerOpen}
+                        status={status}
                       />
                       <WalletPickerModal
                         open={walletPickerOpen}
@@ -218,7 +217,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                 <Divider />
                 <ListItem divider className={styles.drawerListItem} button>
                   <div className={styles.drawerListItemIcon}>
-                    <WalletConnectionIndicator status="error" />
+                    <WalletConnectionIndicator status={status} />
                   </div>
                   <p>Connect a Wallet</p>
                 </ListItem>

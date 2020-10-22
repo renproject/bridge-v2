@@ -1,35 +1,12 @@
-import {
-  Button,
-  ButtonProps,
-  Fade,
-  IconButton,
-  IconButtonProps,
-  styled,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import CopyIcon from "@material-ui/icons/FileCopyOutlined";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import classNames from "classnames";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import {
-  blue,
-  graphiteLight,
-  gray,
-  grayLight,
-  skyBlue,
-  skyBlueLighter,
-} from "../../theme/colors";
-import { copyToClipboard } from "../../utils/copyToClipboard";
-import {
-  BrowserNotificationsIcon,
-  QrCodeIcon,
-  TxHistoryIcon,
-} from "../icons/RenIcons";
+import { Button, ButtonProps, Fade, IconButton, IconButtonProps, styled, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import CopyIcon from '@material-ui/icons/FileCopyOutlined'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import { blue, graphiteLight, gray, grayLight, skyBlue, skyBlueLighter, } from '../../theme/colors'
+import { copyToClipboard } from '../../utils/copyToClipboard'
+import { BrowserNotificationsIcon, QrCodeIcon, TxHistoryIcon, } from '../icons/RenIcons'
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -355,73 +332,6 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
     <IconButton classes={classes} {...props}>
       <TxHistoryIcon className={iconClassName} />
     </IconButton>
-  );
-};
-
-const useWalletConnectionIndicatorStyles = makeStyles((theme) => ({
-  root: {
-    width: 10,
-    height: 10,
-    borderRadius: 10,
-    backgroundColor: theme.palette.divider,
-  },
-  connected: {
-    backgroundColor: theme.palette.success.main,
-  },
-  warning: {
-    backgroundColor: theme.palette.warning.main,
-  },
-  error: {
-    backgroundColor: theme.palette.error.main,
-  },
-}));
-
-type WalletConnectionIndicatorProps = {
-  status?: "connected" | "warning" | "error";
-  className?: string; // TODO: find a better way
-};
-
-export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndicatorProps> = ({
-  status,
-  className: classNameProp,
-}) => {
-  const styles = useWalletConnectionIndicatorStyles();
-  const className = classNames(styles.root, classNameProp, {
-    [styles.connected]: status === "connected",
-    [styles.warning]: status === "warning",
-    [styles.error]: status === "error",
-  });
-  return <div className={className} />;
-};
-
-const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
-  root: {
-    borderColor: theme.palette.divider,
-    "&:hover": {
-      borderColor: theme.palette.divider,
-      backgroundColor: theme.palette.divider,
-    },
-  },
-  indicator: {
-    marginRight: 10,
-  },
-}));
-
-export const WalletConnectionStatusButton: FunctionComponent<ButtonProps> = (
-  props
-) => {
-  const {
-    indicator: indicatorClassName,
-    ...classes
-  } = useWalletConnectionStatusButtonStyles();
-  return (
-    <Button variant="outlined" color="secondary" classes={classes} {...props}>
-      <WalletConnectionIndicator
-        status="warning"
-        className={indicatorClassName}
-      />
-      <span>Connect a Wallet</span>
-    </Button>
   );
 };
 

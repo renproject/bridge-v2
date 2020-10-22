@@ -17,3 +17,9 @@ export enum ChainSymbols {
 export type ChainType = keyof typeof ChainSymbols;
 
 export type TransactionStatusType = "completed" | "pending" | "submitted";
+
+export type WalletConnectionStatusType =
+  | "disconnected"
+  | "connecting"
+  | "connected"
+  | "wrong_network";

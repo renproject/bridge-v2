@@ -1,9 +1,11 @@
-import { Button } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { QuestionAnswer } from '@material-ui/icons'
-import { WalletPickerProps } from '@renproject/multiwallet-ui'
-import React from 'react'
-import { MetamaskFullIcon, WalletConnectFullIcon, } from '../icons/RenIcons'
+import { Button, ButtonProps } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { QuestionAnswer } from "@material-ui/icons";
+import { WalletPickerProps } from "@renproject/multiwallet-ui";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
+import { MetamaskFullIcon, WalletConnectFullIcon } from "../icons/RenIcons";
+import { WalletConnectionStatusType } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {},
@@ -79,6 +81,97 @@ export const WalletEntryButton: WalletPickerProps<
       onClick={onClick}
     >
       <span>{name}</span> <span className={iconClassName}>{Icon}</span>
+    </Button>
+  );
+};
+
+const useWalletConnectionIndicatorStyles = makeStyles((theme) => ({
+  root: {
+    width: 10,
+    height: 10,
+    borderRadius: 10,
+    backgroundColor: theme.palette.divider,
+  },
+  connected: {
+    backgroundColor: theme.palette.success.main,
+  },
+  wrongNetwork: {
+    backgroundColor: theme.palette.warning.main,
+  },
+  disconnected: {
+    backgroundColor: theme.palette.error.main,
+  },
+  connecting: {
+    backgroundColor: theme.palette.info.main,
+  },
+}));
+
+type WalletConnectionIndicatorProps = {
+  status?: WalletConnectionStatusType;
+  className?: string; // TODO: find a better way
+};
+
+export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndicatorProps> = ({
+  status,
+  className: classNameProp,
+}) => {
+  const styles = useWalletConnectionIndicatorStyles();
+  const className = classNames(styles.root, classNameProp, {
+    [styles.connected]: status === "connected",
+    [styles.wrongNetwork]: status === "wrong_network",
+    [styles.disconnected]: status === "disconnected",
+    [styles.connecting]: status === "connecting",
+  });
+  return <div className={className} />;
+};
+
+const getWalletConnectionLabel = (status: WalletConnectionStatusType) => {
+  switch (status) {
+    case "disconnected":
+      return "Connect a Wallet";
+    case "connecting":
+      return "Connecting...";
+    case "connected":
+      return "Connected";
+    case "wrong_network":
+      return "Wrong Network!";
+  }
+};
+
+const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
+  root: {
+    borderColor: theme.palette.divider,
+    "&:hover": {
+      borderColor: theme.palette.divider,
+      backgroundColor: theme.palette.divider,
+    },
+  },
+  indicator: {
+    // TODO: remove
+    marginRight: 10,
+  },
+}));
+
+type WalletConnectionStatusButtonProps = ButtonProps & {
+  status: WalletConnectionStatusType;
+};
+
+export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionStatusButtonProps> = ({
+  status,
+  ...rest
+}) => {
+  const {
+    indicator: indicatorClassName,
+    ...classes
+  } = useWalletConnectionStatusButtonStyles();
+  const label = getWalletConnectionLabel(status);
+  return (
+    <Button variant="outlined" color="secondary" classes={classes} {...rest}>
+      <WalletConnectionIndicator
+        status={status}
+        className={indicatorClassName}
+      />
+      <span>{label}</span>
     </Button>
   );
 };

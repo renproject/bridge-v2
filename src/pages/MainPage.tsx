@@ -1,12 +1,11 @@
-import { Box, Button, Tab, Tabs } from "@material-ui/core";
-import React, { FunctionComponent, useCallback } from "react";
-import { RouteComponentProps } from "react-router";
-import { useTitle } from "react-use";
-import { AssetDropdown } from "../components/dropdowns/AssetDropdown";
-import { MainLayout } from "../components/layout/MainLayout";
-import { BridgePaper } from "../components/layout/Paper";
-import { storageKeys } from "../constants/constants";
-import { paths } from "./routes";
+import { Box, Button, Tab, Tabs } from '@material-ui/core'
+import React, { FunctionComponent, useCallback } from 'react'
+import { RouteComponentProps } from 'react-router'
+import { AssetDropdown } from '../components/dropdowns/AssetDropdown'
+import { MainLayout } from '../components/layout/MainLayout'
+import { BridgePaper } from '../components/layout/Paper'
+import { storageKeys } from '../constants/constants'
+import { paths } from './routes'
 
 enum TabPhase {
   MINT,
