@@ -1,9 +1,21 @@
-import { BinanceSmartChainInjectedConnector } from '@renproject/multiwallet-binancesmartchain-injected-connector'
-import { EthereumInjectedConnector } from '@renproject/multiwallet-ethereum-injected-connector'
-import { EthereumWalletConnectConnector } from '@renproject/multiwallet-ethereum-walletconnect-connector'
-import { MultiwalletProvider as RenMultiwalletProvider } from '@renproject/multiwallet-ui'
-import React, { FunctionComponent } from 'react'
-import { env } from '../constants/environmentVariables'
+import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
+import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
+import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
+import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
+import React, { FunctionComponent } from "react";
+import { ChainType } from "../components/utils/types";
+import { env } from "../constants/environmentVariables";
+
+export const bridgeChainToMultiwalletChain = (chainSymbol: ChainType) => {
+  switch (chainSymbol) {
+    case "BTCC":
+      return "bitcoin";
+    case "BNCC":
+      return "bsc";
+    case "ETHC":
+      return "ethereum";
+  }
+};
 
 export const walletPickerModalConfig = {
   chains: {

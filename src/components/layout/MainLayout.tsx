@@ -1,28 +1,39 @@
-import { Container, Divider, Drawer, Grid, ListItem } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
-import IconButton from '@material-ui/core/IconButton'
-import { makeStyles, Theme } from '@material-ui/core/styles'
-import Toolbar from '@material-ui/core/Toolbar'
-import CloseIcon from '@material-ui/icons/Close'
-import MenuIcon from '@material-ui/icons/Menu'
-import { RenNetwork } from '@renproject/interfaces'
-import { useMultiwallet, WalletPickerModal, WalletPickerProps, } from '@renproject/multiwallet-ui'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { Link } from 'react-router-dom'
-import { env } from '../../constants/environmentVariables'
-import { walletPickerModalConfig } from '../../providers/Multiwallet'
-import { TransactionHistoryMenuIconButton } from '../buttons/Buttons'
-import { RenBridgeLogoIcon } from '../icons/RenIcons'
-import { Debug } from '../utils/Debug'
+import { Container, Divider, Drawer, Grid, ListItem } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import CloseIcon from "@material-ui/icons/Close";
+import MenuIcon from "@material-ui/icons/Menu";
+import { RenNetwork } from "@renproject/interfaces";
+import {
+  useMultiwallet,
+  WalletPickerModal,
+  WalletPickerProps,
+} from "@renproject/multiwallet-ui";
+import classNames from "classnames";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { Link } from "react-router-dom";
+import { env } from "../../constants/environmentVariables";
+import { bridgeChainToMultiwalletChain, walletPickerModalConfig } from "../../providers/Multiwallet";
+import { useStore } from "../../providers/Store";
+import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
+import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Debug } from "../utils/Debug";
 import {
   useWalletPickerStyles,
   WalletConnectionIndicator,
   WalletConnectionStatusButton,
   WalletEntryButton,
-} from '../wallet/WalletHelpers'
+} from "../wallet/WalletHelpers";
 // import { useWalletPickerStyles } from "../wallet/WalletHelpers";
-import { Footer } from './Footer'
+import { Footer } from "./Footer";
 
 const headerHeight = 64;
 const footerHeight = 25;
@@ -99,6 +110,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   variant,
   children,
 }) => {
+  const [{ chain }] = useStore();
   const styles = useStyles();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const handleMobileMenuClose = useCallback(() => {
@@ -120,7 +132,6 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const pickerClasses = useWalletPickerStyles();
   const [walletPickerOpen, setWalletPickerOpen] = useState(false);
-  const [chain] = useState("ethereum"); // put destination chain here and activate()
   const wallet = useMultiwallet();
   console.log(wallet);
   const { status = "disconnected" } = wallet?.enabledChains[chain] || {};
@@ -133,7 +144,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
       targetNetwork: RenNetwork.Testnet, //env.TARGET_NETWORK, // TODO: pass from env
-      chain,
+      chain: bridgeChainToMultiwalletChain(chain),
       onClose: handleWalletPickerClose,
       pickerClasses,
       WalletEntryButton,

@@ -1,10 +1,5 @@
-import React, {
-  createContext,
-  FunctionComponent,
-  useContext,
-  useReducer,
-} from "react";
-import { initialState, Reducer, reducer, State } from "../pages/store";
+import React, { createContext, FunctionComponent, useContext, useReducer, } from 'react'
+import { initialState, Reducer, reducer, State } from '../pages/store'
 
 export const StateContext = createContext<any>(undefined);
 
@@ -28,5 +23,7 @@ export const StoreProvider: FunctionComponent = ({ children }) => (
     {children}
   </StateContextProvider>
 );
+
+// type UseStore = () => [State, Dispatch<Action>];
 
 export const useStore = () => useContext(StateContext);
