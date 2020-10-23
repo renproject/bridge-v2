@@ -11,7 +11,9 @@ export const walletPickerModalConfig = {
       {
         name: "Metamask",
         logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4",
-        connector: new EthereumInjectedConnector({ debug: true }),
+        connector: new EthereumInjectedConnector({
+          debug: true,
+        }),
       },
       {
         name: "WalletConnect",

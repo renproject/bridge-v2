@@ -1453,7 +1453,24 @@
     web3-eth-contract "1.2.2"
     web3-utils "1.2.2"
 
-"@renproject/chains-ethereum@2.0.0-alpha.7":
+"@renproject/chains-ethereum@^2.0.0-alpha.14":
+  version "2.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-2.0.0-alpha.14.tgz#81e54209f0a8cabedfb8b391099e22f32549f32c"
+  integrity sha512-nikbigumTUrrRp43tGk5q7AsPIO6cXOGGktoxU2OF6yi/yutACXwTk9jjFWw0K053lwYi8AiTCRV2e/2T1sjxw==
+  dependencies:
+    "@renproject/interfaces" "^2.0.0-alpha.14"
+    "@renproject/networks" "^2.0.0-alpha.14"
+    "@renproject/utils" "^2.0.0-alpha.14"
+    "@types/node" "^14.11.1"
+    bignumber.js "^9.0.0"
+    bnc-sdk "^2.1.5"
+    wallet-address-validator "^0.2.4"
+    web3 "^2.0.0-alpha.1"
+    web3-core "^2.0.0-alpha.1"
+    web3-eth-abi "^2.0.0-alpha.1"
+    web3-providers "^2.0.0-alpha.1"
+
+"@renproject/chains-ethereum@^2.0.0-alpha.7":
   version "2.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-2.0.0-alpha.7.tgz#8e1d49f3624c00312b5e8f4b049472954589fa48"
   integrity sha512-5DkE0eooC7btCmr6VsXiPfBqPV2bwEHytAL2ktZwy4nf7oIBFJ/xJnt1y9qbEUJrIc23y6o6OAyExRrp4OgoHg==
@@ -1475,12 +1492,12 @@
   resolved "https://registry.yarnpkg.com/@renproject/fonts/-/fonts-1.0.3-rc1.tgz#66d9d782bfb2e220b9db4f6ac01d39884fb4d4e5"
   integrity sha512-nua2aANNcXgV4SENTf0cRJBx4NGcSyq3ithc3Qf4URMPrlJPQ+N/PWCsPxOd+O3DzH9F4h2UksYhlcSZrH4x2A==
 
-"@renproject/interfaces@2.0.0-alpha.7":
-  version "2.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.0.0-alpha.7.tgz#786691c2c276c0141ec4930f53eabc9233872176"
-  integrity sha512-cErVQX4ojTatgzNhzFJmrInrT/F9nXWwcblRHbUZd6JnzohOVkG8TJNv5etDHaDD57aCin5h73/xBLsm1PGBsA==
+"@renproject/interfaces@^1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-1.0.12.tgz#dc776e8a3819509c5e4b81aaef3b693c9f64d3a2"
+  integrity sha512-zpWJHOyEfar3hI6A0qolGHMjwnXlw7L7lmnK/N1aoq5votx+HJ4djS0Uys/c18LElvCpgaAxe0SUxrqEWeIAUQ==
   dependencies:
-    "@types/node" "^14.11.1"
+    "@types/node" "^13.13.4"
     bignumber.js "^9.0.0"
     web3-core "^2.0.0-alpha.1"
 
@@ -1502,14 +1519,14 @@
     bignumber.js "^9.0.0"
     web3-core "^2.0.0-alpha.1"
 
-"@renproject/multiwallet-abstract-ethereum-connector@^2.0.0-alpha.9":
-  version "2.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-abstract-ethereum-connector/-/multiwallet-abstract-ethereum-connector-2.0.0-alpha.9.tgz#25ec4e4440345624b6d85be9022bd19cc632e46e"
-  integrity sha512-0TivOE/2N60ndWIKQ0O75kmZbHYokO3kjVYVj8Lcr/C1oLx9wZnwszFlTWDyGu4Wq5hogzYgLd6hrX2mOZhjnA==
+"@renproject/multiwallet-abstract-ethereum-connector@^2.0.0-alpha.14":
+  version "2.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-abstract-ethereum-connector/-/multiwallet-abstract-ethereum-connector-2.0.0-alpha.14.tgz#4d0bd317607aa22a83e33c46bb0ba5bb720aeb91"
+  integrity sha512-LrE1y9sFbKdqs4ePX33BJe2a6dDmMz2LCCaYr1R+3blptt2I5csXsvxesxTyJQ0T14twciGYyXKudmivi0erEw==
   dependencies:
-    "@renproject/chains-ethereum" "2.0.0-alpha.7"
-    "@renproject/interfaces" "2.0.0-alpha.7"
-    "@renproject/multiwallet-base-connector" "^2.0.0-alpha.9"
+    "@renproject/chains-ethereum" "^2.0.0-alpha.14"
+    "@renproject/interfaces" "^2.0.0-alpha.14"
+    "@renproject/multiwallet-base-connector" "^2.0.0-alpha.14"
     web3 "^2.0.0-alpha.1"
 
 "@renproject/multiwallet-base-connector@^2.0.0-alpha.14":
@@ -1521,40 +1538,31 @@
     "@types/events" "3.0.0"
     events "3.2.0"
 
-"@renproject/multiwallet-base-connector@^2.0.0-alpha.9":
-  version "2.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-base-connector/-/multiwallet-base-connector-2.0.0-alpha.9.tgz#1e05d9a81fea5114e96b734b1b446ed2f63dcf64"
-  integrity sha512-flMlRk6MYUtzmTfat8WAhz1wwNNLZvxnJ64/iPAkwv4w3f35D40dj/K4afO8oapuOBZsqRsQ+EGGcZGKsSt8uA==
+"@renproject/multiwallet-binancesmartchain-injected-connector@^2.0.0-alpha.14":
+  version "2.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-binancesmartchain-injected-connector/-/multiwallet-binancesmartchain-injected-connector-2.0.0-alpha.14.tgz#ff3f55b1907491d254ca637a3516a67a09897584"
+  integrity sha512-13CZhHvqIgcMXVMg9+nhGacUkaMJ8xx6YilDgAPHSANQBtKQLcu2lFeXzLPtC/7VcKF92uS3VcAro+dA/29PZg==
   dependencies:
-    "@renproject/interfaces" "2.0.0-alpha.7"
-    "@types/events" "3.0.0"
-    events "3.2.0"
+    "@renproject/interfaces" "^2.0.0-alpha.14"
+    "@renproject/multiwallet-abstract-ethereum-connector" "^2.0.0-alpha.14"
+    "@renproject/multiwallet-ethereum-injected-connector" "^2.0.0-alpha.14"
 
-"@renproject/multiwallet-binancesmartchain-injected-connector@^2.0.0-alpha.9":
-  version "2.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-binancesmartchain-injected-connector/-/multiwallet-binancesmartchain-injected-connector-2.0.0-alpha.9.tgz#4b0deb41f9be0f0e3f296892b88192cc8c4f5138"
-  integrity sha512-2tjRqVb++wvQpBTZ4eWuisS/wTmc4z0HHrqH87j/npAHE+MGauX4MLe1CE/pcycGwfz3YQSbEl5+mii62GAsag==
+"@renproject/multiwallet-ethereum-injected-connector@^2.0.0-alpha.14":
+  version "2.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-ethereum-injected-connector/-/multiwallet-ethereum-injected-connector-2.0.0-alpha.14.tgz#392fde8a3412d3815fd098b787231c5b6b9da8b2"
+  integrity sha512-rFXqJQHdNa7lhRTVJqgDu3XsG4d21wEXULjBYHzziRpp0GLfc+YG2xWnOiceWp+8+BO4w2JIwnURraP89VWMng==
   dependencies:
-    "@renproject/interfaces" "2.0.0-alpha.7"
-    "@renproject/multiwallet-abstract-ethereum-connector" "^2.0.0-alpha.9"
-    "@renproject/multiwallet-ethereum-injected-connector" "^2.0.0-alpha.9"
+    "@renproject/multiwallet-abstract-ethereum-connector" "^2.0.0-alpha.14"
+    "@renproject/multiwallet-base-connector" "^2.0.0-alpha.14"
 
-"@renproject/multiwallet-ethereum-injected-connector@^2.0.0-alpha.9":
-  version "2.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-ethereum-injected-connector/-/multiwallet-ethereum-injected-connector-2.0.0-alpha.9.tgz#132728a6faf21637fcd64126f6ec791f9beb352c"
-  integrity sha512-SOztk4JS4n35lkC9NmT8f9GSJCJ+BQFStDo6hhAsmeOGJiLmoNa1TVFqaP+3Kdyde2FVYJRNSrx5W0fOI8ft1g==
+"@renproject/multiwallet-ethereum-walletconnect-connector@^2.0.0-alpha.14":
+  version "2.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-ethereum-walletconnect-connector/-/multiwallet-ethereum-walletconnect-connector-2.0.0-alpha.14.tgz#e71832cf5cf8fab38d15888056c28c7490cf45d7"
+  integrity sha512-nOLibOEkZtBfVvBHm0cl1uHdvCzDUm8dszX7Jjp4a5o9vgr42RSzdfZT6AyflH66dr4MnqXVfXHjpgCD2cKvrg==
   dependencies:
-    "@renproject/multiwallet-abstract-ethereum-connector" "^2.0.0-alpha.9"
-    "@renproject/multiwallet-base-connector" "^2.0.0-alpha.9"
-
-"@renproject/multiwallet-ethereum-walletconnect-connector@^2.0.0-alpha.9":
-  version "2.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-ethereum-walletconnect-connector/-/multiwallet-ethereum-walletconnect-connector-2.0.0-alpha.9.tgz#b42ef8d098da1c1ec48c0c128ccbd1b38865d25a"
-  integrity sha512-thRVXOtx57BPOh3X+WYbDxcH3BAZo96QQZ/yuEjYkeW/BOEgCQ7d89jM0GB14GqT14f4Z0IMz3s8M6LuusxbVA==
-  dependencies:
-    "@renproject/interfaces" "2.0.0-alpha.7"
-    "@renproject/multiwallet-abstract-ethereum-connector" "^2.0.0-alpha.9"
-    "@renproject/multiwallet-base-connector" "^2.0.0-alpha.9"
+    "@renproject/interfaces" "^2.0.0-alpha.14"
+    "@renproject/multiwallet-abstract-ethereum-connector" "^2.0.0-alpha.14"
+    "@renproject/multiwallet-base-connector" "^2.0.0-alpha.14"
 
 "@renproject/multiwallet-ui@^2.0.0-alpha.14":
   version "2.0.0-alpha.14"
@@ -1562,6 +1570,15 @@
   integrity sha512-apV2mVBbWMcbQ9rEatR+38EP5N5Bclg8OMtaDtFSDlxHlMQZn41/9nEAIc0uZmkfnfO3jwHFsHxXpQgATctZNQ==
   dependencies:
     "@renproject/multiwallet-base-connector" "^2.0.0-alpha.14"
+
+"@renproject/networks@^2.0.0-alpha.14":
+  version "2.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@renproject/networks/-/networks-2.0.0-alpha.14.tgz#8ff176c13deb0976b9da7a9981edc670334cfe49"
+  integrity sha512-WvZkEkQ0oXa4hMlXAX44523E4hoiO5ef33gQTShkUZir/Ml1iKsDDfPh/+dQ4WM9n8JNsxiKMIdtfZXUYwS5ug==
+  dependencies:
+    "@renproject/interfaces" "^2.0.0-alpha.14"
+    "@renproject/sol" "^1.0.1"
+    web3-utils "^2.0.0-alpha.1"
 
 "@renproject/networks@^2.0.0-alpha.7":
   version "2.0.0-alpha.11"
@@ -1580,6 +1597,23 @@
     "@openzeppelin/contracts" "^2.5.0"
     "@openzeppelin/contracts-ethereum-package" "^2.4.0"
     "@openzeppelin/upgrades" "^2.7.2"
+
+"@renproject/utils@^2.0.0-alpha.14":
+  version "2.0.0-alpha.14"
+  resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.0.0-alpha.14.tgz#0e8fe940a91daf9ac67eab0b118468daf9a69eab"
+  integrity sha512-QWb3FUD3ZYclDI96XTvciL/LsMeNgwRnMwsGxFlZ0XFsFlu4PoB9h5Oi0U4pl/1dm2UomG3vwv751FJ1DMEtYA==
+  dependencies:
+    "@renproject/interfaces" "^2.0.0-alpha.14"
+    "@types/create-hash" "1.2.2"
+    "@types/keccak" "^3.0.1"
+    "@types/mocha" "^8.0.3"
+    "@types/node" "^14.11.1"
+    axios "^0.20.0"
+    bignumber.js "^9.0.0"
+    ethereumjs-util "^7.0.5"
+    events "^3.2.0"
+    immutable "^4.0.0-rc.12"
+    web3-eth-abi "^2.0.0-alpha.1"
 
 "@renproject/utils@^2.0.0-alpha.7":
   version "2.0.0-alpha.11"
@@ -1997,6 +2031,11 @@
   version "12.12.67"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.67.tgz#4f86badb292e822e3b13730a1f9713ed2377f789"
   integrity sha512-R48tgL2izApf+9rYNH+3RBMbRpPeW3N8f0I9HMhggeq4UXwBDqumJ14SDs4ctTMhG11pIOduZ4z3QWGOiMc9Vg==
+
+"@types/node@^13.13.4":
+  version "13.13.28"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.28.tgz#b6d0628b0371d6c629d729c98322de314b640219"
+  integrity sha512-EM/qFeRH8ZCD+TlsaIPULyyFm9vOhFIvgskY2JmHbEsWsOPgN+rtjSXrcHGgJpob4Nu17VfO95FKewr0XY7iOQ==
 
 "@types/node@^14.11.1":
   version "14.11.8"
