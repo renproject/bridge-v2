@@ -1,12 +1,35 @@
-import { Button, ButtonProps, Fade, IconButton, IconButtonProps, styled, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import CopyIcon from '@material-ui/icons/FileCopyOutlined'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
-import { blue, graphiteLight, gray, grayLight, skyBlue, skyBlueLighter, } from '../../theme/colors'
-import { copyToClipboard } from '../../utils/copyToClipboard'
-import { BrowserNotificationsIcon, QrCodeIcon, TxHistoryIcon, } from '../icons/RenIcons'
+import {
+  Button,
+  ButtonProps,
+  Fade,
+  IconButton,
+  IconButtonProps,
+  styled,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import CopyIcon from "@material-ui/icons/FileCopyOutlined";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import classNames from "classnames";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import {
+  blue,
+  graphiteLight,
+  gray,
+  grayLight,
+  skyBlue,
+  skyBlueLighter,
+} from "../../theme/colors";
+import { copyToClipboard } from "../../utils/copyToClipboard";
+import {
+  BrowserNotificationsIcon,
+  QrCodeIcon,
+  TxHistoryIcon,
+} from "../icons/RenIcons";
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -344,3 +367,7 @@ export const ActionButton: FunctionComponent<ButtonProps> = (props) => (
     {...props}
   />
 );
+
+export const ActionButtonWrapper = styled("div")({
+  marginTop: 20,
+});

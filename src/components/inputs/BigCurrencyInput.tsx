@@ -1,8 +1,8 @@
-import { makeStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
-import Numeral from 'numeral'
-import React, { FunctionComponent, useRef } from 'react'
-import NumberFormat, { NumberFormatValues } from 'react-number-format'
+import { makeStyles, styled } from '@material-ui/core/styles'
+import classNames from "classnames";
+import Numeral from "numeral";
+import React, { FunctionComponent, useRef } from "react";
+import NumberFormat, { NumberFormatValues } from "react-number-format";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -114,3 +114,7 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
     </div>
   );
 };
+
+export const BigCurrencyInputWrapper = styled("div")({
+  marginTop: 40,
+});

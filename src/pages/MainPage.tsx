@@ -1,11 +1,12 @@
-import { Box, Button, Tab, Tabs } from '@material-ui/core'
-import React, { FunctionComponent, useCallback } from 'react'
-import { RouteComponentProps } from 'react-router'
-import { AssetDropdown } from '../components/dropdowns/AssetDropdown'
-import { MainLayout } from '../components/layout/MainLayout'
-import { BridgePaper } from '../components/layout/Paper'
-import { storageKeys } from '../constants/constants'
-import { paths } from './routes'
+import { Box, Button, Tab, Tabs } from "@material-ui/core";
+import React, { FunctionComponent, useCallback } from "react";
+import { RouteComponentProps } from "react-router";
+import { AssetDropdown } from "../components/dropdowns/AssetDropdown";
+import { MainLayout } from "../components/layout/MainLayout";
+import { BridgePaper } from "../components/layout/Paper";
+import { storageKeys } from "../constants/constants";
+import { MintFlow } from "./main/Mint";
+import { paths } from "./routes";
 
 enum TabPhase {
   MINT,
@@ -35,19 +36,7 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
           <Tab label={tab === TabPhase.MINT ? "Minting" : "Mint"} />
           <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
         </Tabs>
-        {tab === TabPhase.MINT && (
-          <div>
-            <Box height={200}>
-              <Box pb={1}>
-                <AssetDropdown mode="send" defaultValue="BTC" />
-              </Box>
-              <AssetDropdown mode="chain" defaultValue="ETHC" />
-            </Box>
-            <Button variant="contained" color="primary" size="large" fullWidth>
-              Next
-            </Button>
-          </div>
-        )}
+        {tab === TabPhase.MINT && <MintFlow />}
         {tab === TabPhase.RELEASE && (
           <div>
             <Box height={200}>

@@ -1,6 +1,6 @@
-import { Box, MenuItem, Select, SelectProps, Typography, } from '@material-ui/core'
+import { Box, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import React, { FunctionComponent, useMemo, } from 'react'
 import {
   BchFullIcon,
   BinanceChainFullIcon,
@@ -11,7 +11,7 @@ import {
   EthereumChainFullIcon,
   ZecFullIcon,
 } from '../icons/RenIcons'
-import { ChainSymbols, CurrencySymbols } from '../utils/types'
+import { ChainSymbols, ChainType, CurrencySymbols, CurrencyType, } from '../utils/types'
 
 type AssetConfig = {
   symbol: string;
@@ -66,6 +66,15 @@ const getOptions = (mode: AssetDropdownMode) =>
 const getOptionBySymbol = (symbol: string, mode: AssetDropdownMode) =>
   getOptions(mode).find((option) => option.symbol === symbol);
 
+const createAvailabilityFilter = (available: Array<string> | undefined) => (
+  option: AssetConfig
+) => {
+  if (!available) {
+    return true;
+  }
+  return available.includes(option.symbol);
+};
+
 const iconStyles = {
   width: 32,
   height: 32,
@@ -90,17 +99,19 @@ type AssetDropdownMode = "send" | "receive" | "chain";
 
 type AssetDropdownProps = SelectProps & {
   mode: AssetDropdownMode;
+  available?: Array<CurrencyType | ChainType>;
 };
 
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   mode,
-  defaultValue,
+  available,
+  ...rest
 }) => {
   const styles = useAssetDropdownStyles();
-  const [asset, setAsset] = useState(defaultValue);
-  const handleChange = useCallback((event) => {
-    setAsset(event.target.value);
-  }, []);
+  const availabilityFilter = useMemo(
+    () => createAvailabilityFilter(available),
+    [available]
+  );
   const valueRenderer = useMemo(
     () => (value: any) => {
       const selected = getOptionBySymbol(value, mode);
@@ -133,30 +144,35 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   return (
     <div>
       <Select
-        value={asset}
-        onChange={handleChange}
         variant="outlined"
         className={styles.select}
         renderValue={valueRenderer}
+        {...rest}
       >
-        {getOptions(mode).map(({ symbol, Icon, name }) => {
-          return (
-            <MenuItem key={symbol} value={symbol}>
-              <Box display="flex" alignItems="center" width="100%">
-                <Box width="45px">
-                  <Icon className={styles.listIcon} />
+        {getOptions(mode)
+          .filter(availabilityFilter)
+          .map(({ symbol, Icon, name }) => {
+            return (
+              <MenuItem key={symbol} value={symbol}>
+                <Box display="flex" alignItems="center" width="100%">
+                  <Box width="45px">
+                    <Icon className={styles.listIcon} />
+                  </Box>
+                  <Box flexGrow={1}>
+                    <Typography variant="body1">{symbol}</Typography>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      {name}
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box flexGrow={1}>
-                  <Typography variant="body1">{symbol}</Typography>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    {name}
-                  </Typography>
-                </Box>
-              </Box>
-            </MenuItem>
-          );
-        })}
+              </MenuItem>
+            );
+          })}
       </Select>
     </div>
   );
 };
+
+export const AssetDropdownWrapper = styled("div")({
+  marginTop: 10,
+});
