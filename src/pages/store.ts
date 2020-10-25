@@ -1,4 +1,5 @@
 import { ChainSymbols } from "../components/utils/types";
+import { bridgeChainToMultiwalletChain } from "../providers/multiwallet/multiwalletUtils";
 
 export type State = typeof initialState;
 export type Action = {
@@ -9,7 +10,7 @@ export type Action = {
 export type Reducer = (state: State, action: Action) => State;
 
 export const initialState = {
-  chain: ChainSymbols.ETHC,
+  chain: bridgeChainToMultiwalletChain(ChainSymbols.ETHC),
 };
 
 export const reducer: Reducer = (state, action) => {

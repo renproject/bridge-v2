@@ -12,12 +12,6 @@ import React, { FunctionComponent } from "react";
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
 import { ChainSymbols, ChainType, TransactionStatusType } from "../utils/types";
 
-const SIZE = 166;
-const THICKNESS = 10;
-const RELATIVE_THICKNESS = Math.floor((THICKNESS / 2 / SIZE) * 100);
-
-console.log(RELATIVE_THICKNESS);
-
 type ProgressIconSize = "big" | "medium" | number;
 
 type ProgressWithContentProps = {
@@ -133,7 +127,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
       )}
       <CircularProgress
         variant={processing ? "indeterminate" : "static"}
-        value={typeof confirmations !== "undefined" ? 0 : 100}
+        value={typeof confirmations !== "undefined" ? 0 : value}
         color="inherit"
         {...shared}
       />

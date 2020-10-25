@@ -3,19 +3,7 @@ import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-inje
 import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
 import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
 import React, { FunctionComponent } from "react";
-import { ChainType } from "../components/utils/types";
-import { env } from "../constants/environmentVariables";
-
-export const bridgeChainToMultiwalletChain = (chainSymbol: ChainType) => {
-  switch (chainSymbol) {
-    case "BTCC":
-      return "bitcoin";
-    case "BNCC":
-      return "bsc";
-    case "ETHC":
-      return "ethereum";
-  }
-};
+import { env } from "../../constants/environmentVariables";
 
 export const walletPickerModalConfig = {
   chains: {

@@ -13,6 +13,10 @@ import {
 } from "../../components/inputs/BigCurrencyInput";
 import { Debug } from "../../components/utils/Debug";
 import { ChainSymbols, CurrencySymbols } from "../../components/utils/types";
+import {
+  bridgeChainToMultiwalletChain,
+  multiwalletChainToBridgeChain,
+} from "../../providers/multiwallet/multiwalletUtils";
 import { useStore } from "../../providers/Store";
 
 const currencyList = [CurrencySymbols.BTC, CurrencySymbols.ZEC];
@@ -21,6 +25,7 @@ const chainList = [ChainSymbols.ETHC, ChainSymbols.BNCC];
 export const MintFlow: FunctionComponent = () => {
   const [store, dispatch] = useStore();
   const { chain } = store;
+  const chainSymbol = multiwalletChainToBridgeChain(chain);
   const [currencyValue, setCurrencyValue] = useState(0);
   const handleCurrencyValueChange = useCallback((value) => {
     setCurrencyValue(value);
@@ -33,7 +38,10 @@ export const MintFlow: FunctionComponent = () => {
 
   const handleChainChange = useCallback(
     (event) => {
-      dispatch({ type: "setChain", payload: event.target.value });
+      dispatch({
+        type: "setChain",
+        payload: bridgeChainToMultiwalletChain(event.target.value),
+      });
       // setChain(event.target.value);
     },
     [dispatch]
@@ -64,7 +72,7 @@ export const MintFlow: FunctionComponent = () => {
         <AssetDropdown
           mode="chain"
           available={chainList}
-          value={chain}
+          value={chainSymbol}
           onChange={handleChainChange}
         />
       </AssetDropdownWrapper>
