@@ -149,6 +149,11 @@ export const overrides = (palette: Palette): Overrides => {
       root: {
         padding: `13px 20px`,
       },
+      select: {
+        "&:focus": {
+          backgroundColor: "initial",
+        },
+      },
     },
     MuiSvgIcon: {
       root: {
