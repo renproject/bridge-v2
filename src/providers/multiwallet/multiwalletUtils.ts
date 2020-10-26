@@ -48,12 +48,14 @@ export const supportedMintDestinationChains = [
 export const getMintedCurrency = (currency: CurrencyType) => {
   switch (currency) {
     case CurrencySymbols.BTC:
-      return CurrencySymbols.RENBTC
+      return CurrencySymbols.RENBTC;
     case CurrencySymbols.BCH:
-      return CurrencySymbols.RENBCH
+      return CurrencySymbols.RENBCH;
     case CurrencySymbols.DOGE:
-      return CurrencySymbols.RENDOGE
+      return CurrencySymbols.RENDOGE;
     case CurrencySymbols.ZEC:
-      return CurrencySymbols.RENZEC
+      return CurrencySymbols.RENZEC;
+    default:
+      return CurrencySymbols.RENBTC; //TODO: create unknown currency
   }
 };
