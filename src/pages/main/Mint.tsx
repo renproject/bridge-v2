@@ -1,26 +1,16 @@
-import React, { FunctionComponent, useCallback, useState } from "react";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../components/buttons/Buttons";
-import {
-  AssetDropdown,
-  AssetDropdownWrapper,
-} from "../../components/dropdowns/AssetDropdown";
-import {
-  BigCurrencyInput,
-  BigCurrencyInputWrapper,
-} from "../../components/inputs/BigCurrencyInput";
-import { Debug } from "../../components/utils/Debug";
-import { ChainSymbols, CurrencySymbols } from "../../components/utils/types";
+import React, { FunctionComponent, useCallback, useState, } from 'react'
+import { ActionButton, ActionButtonWrapper, } from '../../components/buttons/Buttons'
+import { AssetDropdown, AssetDropdownWrapper, } from '../../components/dropdowns/AssetDropdown'
+import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../components/inputs/BigCurrencyInput'
+import { Debug } from '../../components/utils/Debug'
+import { CurrencySymbols } from '../../components/utils/types'
 import {
   bridgeChainToMultiwalletChain,
   multiwalletChainToBridgeChain,
-} from "../../providers/multiwallet/multiwalletUtils";
-import { useStore } from "../../providers/Store";
-
-const currencyList = [CurrencySymbols.BTC, CurrencySymbols.ZEC];
-const chainList = [ChainSymbols.ETHC, ChainSymbols.BNCC];
+  supportedMintCurrencies,
+  supportedMintDestinationChains,
+} from '../../providers/multiwallet/multiwalletUtils'
+import { useStore } from '../../providers/Store'
 
 export const MintFlow: FunctionComponent = () => {
   const [store, dispatch] = useStore();
@@ -31,9 +21,9 @@ export const MintFlow: FunctionComponent = () => {
     setCurrencyValue(value);
   }, []);
 
-  const [currency, setCurrency] = useState(CurrencySymbols.BTC);
+  const [currencySymbol, setCurrencySymbol] = useState(CurrencySymbols.BTC);
   const handleCurrencyChange = useCallback((event) => {
-    setCurrency(event.target.value);
+    setCurrencySymbol(event.target.value);
   }, []);
 
   const handleChainChange = useCallback(
@@ -54,24 +44,23 @@ export const MintFlow: FunctionComponent = () => {
       <BigCurrencyInputWrapper>
         <BigCurrencyInput
           onChange={handleCurrencyValueChange}
-          symbol="BTC"
+          symbol={currencySymbol}
           usdValue={usdValue}
           value={currencyValue}
-          placeholder="0"
         />
       </BigCurrencyInputWrapper>
       <AssetDropdownWrapper>
         <AssetDropdown
           mode="send"
-          available={currencyList}
-          value={currency}
+          available={supportedMintCurrencies}
+          value={currencySymbol}
           onChange={handleCurrencyChange}
         />
       </AssetDropdownWrapper>
       <AssetDropdownWrapper>
         <AssetDropdown
           mode="chain"
-          available={chainList}
+          available={supportedMintDestinationChains}
           value={chainSymbol}
           onChange={handleChainChange}
         />
@@ -80,7 +69,7 @@ export const MintFlow: FunctionComponent = () => {
         <ActionButton>Next</ActionButton>
       </ActionButtonWrapper>
       <Debug
-        it={{ currencyValue, currency, chain, store, dispatch: dispatch }}
+        it={{ currencyValue, currencySymbol, chain, store, dispatch: dispatch }}
       />
     </div>
   );

@@ -15,12 +15,9 @@ import {
   textDisabled,
   textLighter,
 } from "./colors";
+import { generatePlaceholderStyles } from "./themeUtils";
 
 export const overrides = (palette: Palette): Overrides => {
-  const placeholder = {
-    color: grayPlaceholder,
-  };
-
   return {
     MuiAlert: {
       action: {
@@ -113,12 +110,7 @@ export const overrides = (palette: Palette): Overrides => {
       },
     },
     MuiInputBase: {
-      input: {
-        "&::-webkit-input-placeholder": placeholder,
-        "&::-moz-placeholder": placeholder, // Firefox 19+
-        "&:-ms-input-placeholder": placeholder, // IE 11
-        "&::-ms-input-placeholder": placeholder, // Edge
-      },
+      input: { ...generatePlaceholderStyles(grayPlaceholder) },
     },
     MuiInputLabel: {
       outlined: {
