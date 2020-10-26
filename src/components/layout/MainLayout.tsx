@@ -5,7 +5,9 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
+import { RenNetwork } from "@renproject/interfaces";
 import {
+  useMultiwallet,
   WalletPickerModal,
   WalletPickerProps,
 } from "@renproject/multiwallet-ui";
@@ -18,14 +20,19 @@ import React, {
   useState,
 } from "react";
 import { Link } from "react-router-dom";
-import { walletPickerModalConfig } from "../../providers/Multiwallet";
+import { env } from "../../constants/environmentVariables";
+import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
+import { useStore } from "../../providers/Store";
+import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
+import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Debug } from "../utils/Debug";
 import {
-  TransactionHistoryMenuIconButton,
+  useWalletPickerStyles,
   WalletConnectionIndicator,
   WalletConnectionStatusButton,
-} from "../buttons/Buttons";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { useWalletPickerStyles } from "../wallet/WalletHelpers";
+  WalletEntryButton,
+} from "../wallet/WalletHelpers";
+// import { useWalletPickerStyles } from "../wallet/WalletHelpers";
 import { Footer } from "./Footer";
 
 const headerHeight = 64;
@@ -103,6 +110,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   variant,
   children,
 }) => {
+  const [{ chain }] = useStore();
   const styles = useStyles();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const handleMobileMenuClose = useCallback(() => {
@@ -124,7 +132,8 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const pickerClasses = useWalletPickerStyles();
   const [walletPickerOpen, setWalletPickerOpen] = useState(false);
-  const [chain, setChain] = useState("ethereum");
+  const wallet = useMultiwallet();
+  const { status = "disconnected" } = wallet?.enabledChains[chain] || {};
   const handleWalletPickerClose = useCallback(() => {
     setWalletPickerOpen(false);
   }, []);
@@ -133,15 +142,16 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   }, []);
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
-      pickerClasses,
+      targetNetwork: RenNetwork.Testnet, // env.TARGET_NETWORK, // TODO: pass from env before prod
       chain,
-      close: handleWalletPickerClose,
+      onClose: handleWalletPickerClose,
+      pickerClasses,
+      WalletEntryButton,
       config: walletPickerModalConfig,
     };
     return options;
   }, [chain, handleWalletPickerClose, pickerClasses]);
 
-  console.log(setChain);
   // TODO: add debounced resize/useLayoutEffect for disabling drawer after transition
 
   const drawerId = "main-menu-mobile";
@@ -167,10 +177,10 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                       />
                       <WalletConnectionStatusButton
                         onClick={handleWalletPickerOpen}
+                        status={status}
                       />
                       <WalletPickerModal
                         open={walletPickerOpen}
-                        close={handleWalletPickerClose}
                         options={walletPickerOptions}
                       />
                     </div>
@@ -208,7 +218,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                 <Divider />
                 <ListItem divider className={styles.drawerListItem} button>
                   <div className={styles.drawerListItemIcon}>
-                    <WalletConnectionIndicator status="error" />
+                    <WalletConnectionIndicator status={status} />
                   </div>
                   <p>Connect a Wallet</p>
                 </ListItem>
@@ -229,7 +239,10 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
               </Drawer>
             )}
           </header>
-          <main className={styles.main}>{children}</main>
+          <main className={styles.main}>
+            {children}
+            <Debug it={{ wallet, env }} />
+          </main>
           <Footer />
         </Container>
       </Grid>

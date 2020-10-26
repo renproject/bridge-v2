@@ -30,6 +30,8 @@ import {
   RenLogoIcon,
   SuccessIcon,
   TxHistoryIcon,
+  WalletConnectFullIcon,
+  WalletConnectIcon,
   ZecFullIcon,
   ZecGreyIcon,
 } from '../../icons/RenIcons'
@@ -54,6 +56,7 @@ export const IconsSection: FunctionComponent = () => {
       <SeparationWrapper>
         <BitcoinIcon />
         <EthereumIcon />
+        <WalletConnectIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BinanceChainColorIcon />
@@ -62,6 +65,7 @@ export const IconsSection: FunctionComponent = () => {
       <SeparationWrapper>
         <BinanceChainFullIcon />
         <EthereumChainFullIcon />
+        <WalletConnectFullIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BtcFullIcon />

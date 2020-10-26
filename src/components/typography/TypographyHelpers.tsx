@@ -1,3 +1,4 @@
+import { Divider, Typography } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import React, { FunctionComponent, ReactNode } from "react";
 import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
@@ -68,14 +69,16 @@ const useReceivingAssetInfoStyle = makeStyles((theme) => ({
   root: {
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: 20,
-    padding: 10,
+    padding: "10px 20px",
   },
   wrapper: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  label: {},
+  label: {
+    fontSize: 12,
+  },
   icon: {
     paddingLeft: 10,
     paddingRight: 20,
@@ -111,7 +114,9 @@ export const AssetInfo: FunctionComponent<ReceivingAssetInfoProps> = ({
   return (
     <div className={styles.root}>
       <div className={styles.wrapper}>
-        <span className={styles.label}>{label}</span>
+        <Typography variant="body2" className={styles.label} component="span">
+          {label}
+        </Typography>
         <span className={styles.icon}>{Icon}</span>
         <span className={styles.valueWrapper}>
           <span className={styles.value}>{value}</span>
@@ -126,4 +131,9 @@ export const UnstyledList = styled("ul")({
   padding: 0,
   margin: 0,
   listStyleType: "none",
+});
+
+export const SpacedDivider = styled(Divider)({
+  marginTop: 20,
+  marginBottom: 20,
 });
