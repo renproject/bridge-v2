@@ -1,10 +1,11 @@
 import { Box, Button, Tab, Tabs } from "@material-ui/core";
-import React, { FunctionComponent, useCallback } from "react";
+import React, { FunctionComponent, useCallback, useEffect } from 'react'
 import { RouteComponentProps } from "react-router";
 import { AssetDropdown } from "../components/dropdowns/AssetDropdown";
 import { MainLayout } from "../components/layout/MainLayout";
 import { BridgePaper } from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
+import { fetchMarketRates } from "../services/marketData";
 import { MintFlow } from "./main/Mint";
 import { paths } from "./routes";
 
@@ -24,6 +25,11 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
     setTab(newValue);
   }, []);
 
+  useEffect(() => {
+    fetchMarketRates().then((data) => {
+      console.log(data);
+    });
+  }, []);
   return (
     <MainLayout>
       <BridgePaper>
