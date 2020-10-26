@@ -10,6 +10,7 @@ import { ReactComponent as DogeFull } from "./../../assets/icons/doge-icon.svg";
 import { ReactComponent as DotsFull } from "./../../assets/icons/dots-icon.svg";
 import { ReactComponent as Ethereum } from "./../../assets/icons/eth-icon-only.svg";
 import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox.svg";
+import { ReactComponent as MetamaskFull } from "./../../assets/icons/metamask-icon-colour.svg";
 import { ReactComponent as QrCode } from "./../../assets/icons/qr-code.svg";
 import { ReactComponent as RenLogo } from "./../../assets/icons/ren-logo.svg";
 import { ReactComponent as RenBridgeLogo } from "./../../assets/icons/renbridge-logo.svg";
@@ -24,6 +25,8 @@ import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binanc
 import { ReactComponent as EthereumChainColor } from "./../../assets/icons/ethereum-colour-icon.svg";
 import { ReactComponent as Tooltip } from "./../../assets/icons/tooltip.svg";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
+import { ReactComponent as WalletConnectFull } from "./../../assets/icons/walletconnect-icon-colour.svg";
+import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconnect-icon.svg";
 
 export type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
 
@@ -83,6 +86,14 @@ export const ZecFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={ZecFull} {...props} />
 );
 
+export const WalletConnectFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={WalletConnectFull} {...props} />
+);
+
+export const WalletConnectIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={WalletConnect} {...props} />
+);
+
 export const BinanceChainIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BinanceChain} {...props} />
 );
@@ -119,4 +130,8 @@ export const BitcoinInCircleIcon: CustomSvgIconComponent = (props) => (
 
 export const MetamaskFoxIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={MetamaskFox} viewBox="0 0 34 32" {...props} />
+);
+
+export const MetamaskFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={MetamaskFull} {...props} />
 );

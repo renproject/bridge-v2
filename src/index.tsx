@@ -4,19 +4,22 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { MultiwalletProvider } from "./providers/Multiwallet";
+import { MultiwalletProvider } from "./providers/multiwallet/Multiwallet";
 import { NotificationsProvider } from "./providers/Notifications";
+import { StoreProvider } from "./providers/Store";
 import * as serviceWorker from "./serviceWorker";
 import { lightTheme } from "./theme/theme";
 
 ReactDOM.render(
-  <MuiThemeProvider theme={lightTheme}>
-    <MultiwalletProvider>
-      <NotificationsProvider>
-        <App />
-      </NotificationsProvider>
-    </MultiwalletProvider>
-  </MuiThemeProvider>,
+  <StoreProvider>
+    <MuiThemeProvider theme={lightTheme}>
+      <MultiwalletProvider>
+        <NotificationsProvider>
+          <App />
+        </NotificationsProvider>
+      </MultiwalletProvider>
+    </MuiThemeProvider>
+  </StoreProvider>,
   document.getElementById("root")
 );
 

@@ -4,6 +4,11 @@ export enum CurrencySymbols {
   DOTS = "DOTS",
   DOGE = "DOGE",
   ZEC = "ZEC",
+  RENBTC = "RENBTC",
+  RENBCH = "RENBCH",
+  RENDOGE = "RENDOGE",
+  RENZEC = "RENZEC",
+  RENDGB = "RENDGB",
 }
 
 export type CurrencyType = keyof typeof CurrencySymbols;
@@ -17,3 +22,9 @@ export enum ChainSymbols {
 export type ChainType = keyof typeof ChainSymbols;
 
 export type TransactionStatusType = "completed" | "pending" | "submitted";
+
+export type WalletConnectionStatusType =
+  | "disconnected"
+  | "connecting"
+  | "connected"
+  | "wrong_network";

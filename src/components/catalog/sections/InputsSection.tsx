@@ -10,7 +10,7 @@ import { AssetInfo, LabelWithValue } from "../../typography/TypographyHelpers";
 import { Section } from "../PresentationHelpers";
 
 export const InputsSection: FunctionComponent = () => {
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(0);
   const [checked, setChecked] = useState(false);
   const handleCurrencyChange = useCallback((value) => {
     setValue(value);

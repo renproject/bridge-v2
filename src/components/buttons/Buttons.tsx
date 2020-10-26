@@ -358,73 +358,6 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
   );
 };
 
-const useWalletConnectionIndicatorStyles = makeStyles((theme) => ({
-  root: {
-    width: 10,
-    height: 10,
-    borderRadius: 10,
-    backgroundColor: theme.palette.divider,
-  },
-  connected: {
-    backgroundColor: theme.palette.success.main,
-  },
-  warning: {
-    backgroundColor: theme.palette.warning.main,
-  },
-  error: {
-    backgroundColor: theme.palette.error.main,
-  },
-}));
-
-type WalletConnectionIndicatorProps = {
-  status?: "connected" | "warning" | "error";
-  className?: string; // TODO: find a better way
-};
-
-export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndicatorProps> = ({
-  status,
-  className: classNameProp,
-}) => {
-  const styles = useWalletConnectionIndicatorStyles();
-  const className = classNames(styles.root, classNameProp, {
-    [styles.connected]: status === "connected",
-    [styles.warning]: status === "warning",
-    [styles.error]: status === "error",
-  });
-  return <div className={className} />;
-};
-
-const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
-  root: {
-    borderColor: theme.palette.divider,
-    "&:hover": {
-      borderColor: theme.palette.divider,
-      backgroundColor: theme.palette.divider,
-    },
-  },
-  indicator: {
-    marginRight: 10,
-  },
-}));
-
-export const WalletConnectionStatusButton: FunctionComponent<ButtonProps> = (
-  props
-) => {
-  const {
-    indicator: indicatorClassName,
-    ...classes
-  } = useWalletConnectionStatusButtonStyles();
-  return (
-    <Button variant="outlined" color="secondary" classes={classes} {...props}>
-      <WalletConnectionIndicator
-        status="warning"
-        className={indicatorClassName}
-      />
-      <span>Connect a Wallet</span>
-    </Button>
-  );
-};
-
 export const ActionButton: FunctionComponent<ButtonProps> = (props) => (
   <Button
     variant="contained"
@@ -434,3 +367,7 @@ export const ActionButton: FunctionComponent<ButtonProps> = (props) => (
     {...props}
   />
 );
+
+export const ActionButtonWrapper = styled("div")({
+  marginTop: 20,
+});
