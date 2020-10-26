@@ -24,6 +24,13 @@ import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binanc
 import { ReactComponent as EthereumChainColor } from "./../../assets/icons/ethereum-colour-icon.svg";
 import { ReactComponent as Tooltip } from "./../../assets/icons/tooltip.svg";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
+import { ReactComponent as BtcGrey } from "./../../assets/icons/btc-icon-grey.svg";
+import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
+import { ReactComponent as DogeGrey } from "./../../assets/icons/doge-icon-grey.svg";
+import { ReactComponent as BchGrey } from "./../../assets/icons/bch-icon-grey.svg";
+import { ReactComponent as DgbGrey } from "./../../assets/icons/dgb-icon-grey.svg";
+import { ReactComponent as DgbFull } from "./../../assets/icons/dgb-icon.svg";
+import { ReactComponent as Dgb } from "./../../assets/icons/dgb-icon-nocolour.svg";
 
 export type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
 
@@ -67,20 +74,48 @@ export const BtcFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BtcFull} {...props} />
 );
 
+export const BtcGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={BtcGrey} {...props} />
+);
+
 export const BchFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BchFull} {...props} />
+);
+
+export const BchGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={BchGrey} {...props} />
 );
 
 export const DogeFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={DogeFull} {...props} />
 );
 
-export const DotsFullIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={DotsFull} {...props} />
+export const DogeGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={DogeGrey} {...props} />
 );
 
 export const ZecFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={ZecFull} {...props} />
+);
+
+export const ZecGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={ZecGrey} {...props} />
+);
+
+export const DgbIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Dgb} {...props} />
+);
+
+export const DgbFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={DgbFull} {...props} />
+);
+
+export const DgbGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={DgbGrey} {...props} />
+);
+
+export const DotsFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={DotsFull} {...props} />
 );
 
 export const BinanceChainIcon: CustomSvgIconComponent = (props) => (

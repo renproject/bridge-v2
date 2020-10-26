@@ -1,21 +1,26 @@
-import { Box } from "@material-ui/core";
-import GitHubIcon from "@material-ui/icons/GitHub";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import RedditIcon from "@material-ui/icons/Reddit";
-import TelegramIcon from "@material-ui/icons/Telegram";
-import TwitterIcon from "@material-ui/icons/Twitter";
-import React, { FunctionComponent } from "react";
-import { IconWithLabel } from "../../icons/IconHelpers";
+import { Box } from '@material-ui/core'
+import GitHubIcon from '@material-ui/icons/GitHub'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import RedditIcon from '@material-ui/icons/Reddit'
+import TelegramIcon from '@material-ui/icons/Telegram'
+import TwitterIcon from '@material-ui/icons/Twitter'
+import React, { FunctionComponent } from 'react'
+import { IconWithLabel } from '../../icons/IconHelpers'
 import {
   BackArrowIcon,
   BchFullIcon,
+  BchGreyIcon,
   BinanceChainColorIcon,
   BinanceChainFullIcon,
   BitcoinIcon,
   BitcoinInCircleIcon,
   BrowserNotificationsIcon,
   BtcFullIcon,
+  BtcGreyIcon,
+  DgbFullIcon,
+  DgbGreyIcon,
   DogeFullIcon,
+  DogeGreyIcon,
   DotsFullIcon,
   EthereumChainColorIcon,
   EthereumChainFullIcon,
@@ -26,8 +31,9 @@ import {
   SuccessIcon,
   TxHistoryIcon,
   ZecFullIcon,
-} from "../../icons/RenIcons";
-import { Section, SeparationWrapper } from "../PresentationHelpers";
+  ZecGreyIcon,
+} from '../../icons/RenIcons'
+import { Section, SeparationWrapper } from '../PresentationHelpers'
 
 export const IconsSection: FunctionComponent = () => {
   return (
@@ -61,8 +67,16 @@ export const IconsSection: FunctionComponent = () => {
         <BtcFullIcon />
         <BchFullIcon />
         <DogeFullIcon />
-        <DotsFullIcon />
         <ZecFullIcon />
+        <DgbFullIcon />
+        <DotsFullIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
+        <BtcGreyIcon />
+        <BchGreyIcon />
+        <DogeGreyIcon />
+        <ZecGreyIcon />
+        <DgbGreyIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <RenBridgeLogoIcon />
@@ -79,6 +93,7 @@ export const IconsSection: FunctionComponent = () => {
         <IconWithLabel label="BCH" Icon={BchFullIcon} />
         <IconWithLabel label="DOGE" Icon={DogeFullIcon} />
         <IconWithLabel label="ZEC" Icon={ZecFullIcon} />
+        <IconWithLabel label="DGB" Icon={DgbFullIcon} />
       </SeparationWrapper>
     </Section>
   );
