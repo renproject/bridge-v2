@@ -1,6 +1,7 @@
 import { Box, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useMemo, } from 'react'
+import React, { FunctionComponent, useMemo } from 'react'
+import { getChainFullLabel, getCurrencyFullLabel, } from '../../utils/labels'
 import {
   BchFullIcon,
   BinanceChainFullIcon,
@@ -22,27 +23,27 @@ type AssetConfig = {
 const currencyOptions: Array<AssetConfig> = [
   {
     symbol: CurrencySymbols.BTC,
-    name: "Bitcoin",
+    name: getCurrencyFullLabel(CurrencySymbols.BTC),
     Icon: BtcFullIcon,
   },
   {
     symbol: CurrencySymbols.BCH,
-    name: "Bitcoin Cash",
+    name: getCurrencyFullLabel(CurrencySymbols.BCH),
     Icon: BchFullIcon,
   },
   {
     symbol: CurrencySymbols.DOTS,
-    name: "Polkadot",
+    name: getCurrencyFullLabel(CurrencySymbols.DOTS),
     Icon: DotsFullIcon,
   },
   {
     symbol: CurrencySymbols.DOGE,
-    name: "Dogecoin",
+    name: getCurrencyFullLabel(CurrencySymbols.DOGE),
     Icon: DogeFullIcon,
   },
   {
     symbol: CurrencySymbols.ZEC,
-    name: "Zcash",
+    name: getCurrencyFullLabel(CurrencySymbols.ZEC),
     Icon: ZecFullIcon,
   },
 ];
@@ -50,12 +51,12 @@ const currencyOptions: Array<AssetConfig> = [
 const chainOptions: Array<AssetConfig> = [
   {
     symbol: ChainSymbols.BNCC,
-    name: "Binance Smartchain",
+    name: getChainFullLabel(ChainSymbols.BNCC),
     Icon: BinanceChainFullIcon,
   },
   {
     symbol: ChainSymbols.ETHC,
-    name: "Ethereum",
+    name: getChainFullLabel(ChainSymbols.ETHC),
     Icon: EthereumChainFullIcon,
   },
 ];

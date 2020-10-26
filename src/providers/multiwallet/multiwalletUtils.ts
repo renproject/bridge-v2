@@ -33,30 +33,27 @@ export const multiwalletChainToBridgeChain = (chain: string) => {
   }
 };
 
-export const getDestinationChainsByCurrency = (currency: CurrencyType) => {
-  const ethereumChainList = [ChainSymbols.ETHC];
-  switch (currency) {
-    case CurrencySymbols.BTC:
-      return ethereumChainList;
-    case CurrencySymbols.BCH:
-      return ethereumChainList;
-    case CurrencySymbols.DOTS:
-      return ethereumChainList;
-    case CurrencySymbols.DOGE:
-      return ethereumChainList;
-    case CurrencySymbols.ZEC:
-      return ethereumChainList;
-  }
-};
-
 export const supportedMintCurrencies = [
   CurrencySymbols.BTC,
-  CurrencySymbols.ZEC,
   CurrencySymbols.BCH,
   CurrencySymbols.DOGE,
+  CurrencySymbols.ZEC,
 ];
 
 export const supportedMintDestinationChains = [
   ChainSymbols.ETHC,
   ChainSymbols.BNCC,
 ];
+
+export const getMintedCurrency = (currency: CurrencyType) => {
+  switch (currency) {
+    case CurrencySymbols.BTC:
+      return CurrencySymbols.RENBTC
+    case CurrencySymbols.BCH:
+      return CurrencySymbols.RENBCH
+    case CurrencySymbols.DOGE:
+      return CurrencySymbols.RENDOGE
+    case CurrencySymbols.ZEC:
+      return CurrencySymbols.RENZEC
+  }
+};
