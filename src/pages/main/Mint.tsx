@@ -27,6 +27,7 @@ import {
 } from "../../providers/multiwallet/multiwalletUtils";
 import { useStore } from "../../providers/Store";
 import { findExchangeRate } from "../../services/marketData";
+import { toUsdFormat } from "../../utils/formatters";
 import { getCurrencyShortLabel } from "../../utils/labels";
 
 export const MintFlow: FunctionComponent = () => {
@@ -63,7 +64,7 @@ export const MintFlow: FunctionComponent = () => {
   const currencyUsdValue = currencyValue * usd2CurrencyRate;
   const mintedCurrencyUsdValue = mintedValue * usd2MintedCurrencyRate;
   const mintedValueLabel = `${mintedValue} ${mintedCurrency}`;
-  const mintedValueEquivalentLabel = ` = $${mintedCurrencyUsdValue} USD`;
+  const mintedValueEquivalentLabel = ` = ${toUsdFormat(mintedCurrencyUsdValue)} USD`;
 
   return (
     <div>
