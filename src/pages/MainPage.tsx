@@ -1,10 +1,11 @@
 import { Box, Button, Tab, Tabs } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
+import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { RouteComponentProps } from "react-router";
 import { AssetDropdown } from "../components/dropdowns/AssetDropdown";
 import { MainLayout } from "../components/layout/MainLayout";
 import { BridgePaper } from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
+import { useStore } from "../providers/Store";
 import { fetchMarketRates } from "../services/marketData";
 import { MintFlow } from "./main/Mint";
 import { paths } from "./routes";
@@ -17,6 +18,7 @@ enum TabPhase {
 export const MainPage: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
+  const [, dispatch] = useStore();
   if (!localStorage.getItem(storageKeys.TERMS_AGREED)) {
     history.replace(paths.WELCOME);
   }
@@ -26,10 +28,15 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
   }, []);
 
   useEffect(() => {
-    fetchMarketRates().then((data) => {
-      console.log(data);
+    fetchMarketRates().then((rates) => {
+      console.log(rates);
+      dispatch({
+        type: "setExchangeRates",
+        payload: rates,
+      });
     });
-  }, []);
+  }, [dispatch]);
+
   return (
     <MainLayout>
       <BridgePaper>
