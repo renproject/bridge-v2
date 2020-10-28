@@ -30,7 +30,7 @@ export const fetchFees: () => Promise<Array<Fees>> = () =>
   getRenJs().getFees().then(mapToFeesData);
 
 export const findFee: (
-  symbol: CurrencyType,
-  fees: Array<Fee>
-) => Fee | undefined = (symbol, fees = []) =>
+  fees: Array<Fee>,
+  symbol: CurrencyType
+) => Fee | undefined = (fees = [], symbol) =>
   fees.find((fee) => fee.symbol === symbol);
