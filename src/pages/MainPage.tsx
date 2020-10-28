@@ -7,6 +7,7 @@ import { BridgePaper } from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
 import { MintFlow } from "./main/Mint";
 import { paths } from "./routes";
+import { Cron } from "./shared/Cron";
 
 enum TabPhase {
   MINT,
@@ -25,29 +26,37 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
   }, []);
 
   return (
-    <MainLayout>
-      <BridgePaper>
-        <Tabs
-          value={tab}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          variant="fullWidth"
-        >
-          <Tab label={tab === TabPhase.MINT ? "Minting" : "Mint"} />
-          <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
-        </Tabs>
-        {tab === TabPhase.MINT && <MintFlow />}
-        {tab === TabPhase.RELEASE && (
-          <div>
-            <Box height={200}>
-              <AssetDropdown mode="receive" defaultValue="BCH" />
-            </Box>
-            <Button variant="contained" color="primary" size="large" fullWidth>
-              Next
-            </Button>
-          </div>
-        )}
-      </BridgePaper>
-    </MainLayout>
+    <>
+      <Cron />
+      <MainLayout>
+        <BridgePaper>
+          <Tabs
+            value={tab}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            variant="fullWidth"
+          >
+            <Tab label={tab === TabPhase.MINT ? "Minting" : "Mint"} />
+            <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
+          </Tabs>
+          {tab === TabPhase.MINT && <MintFlow />}
+          {tab === TabPhase.RELEASE && (
+            <div>
+              <Box height={200}>
+                <AssetDropdown mode="receive" defaultValue="BCH" />
+              </Box>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </BridgePaper>
+      </MainLayout>
+    </>
   );
 };

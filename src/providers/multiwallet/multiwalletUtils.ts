@@ -45,7 +45,7 @@ export const supportedMintDestinationChains = [
   ChainSymbols.BNCC,
 ];
 
-export const getMintedCurrency = (currency: CurrencyType) => {
+export const getMintedCurrencySymbol = (currency: CurrencyType) => {
   switch (currency) {
     case CurrencySymbols.BTC:
       return CurrencySymbols.RENBTC;

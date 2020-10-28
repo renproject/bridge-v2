@@ -1,9 +1,9 @@
 import { makeStyles, styled } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import Numeral from 'numeral'
 import React, { FunctionComponent, useRef } from 'react'
 import NumberFormat, { NumberFormatValues } from 'react-number-format'
 import { generatePlaceholderStyles } from '../../theme/themeUtils'
+import { toUsdFormat } from '../../utils/formatters'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -107,11 +107,7 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
         placeholder={placeholder}
       />
 
-      {
-        <p className={styles.equivalent}>
-          = {Numeral(usdValue).format("$0,0.00")}
-        </p>
-      }
+      {<p className={styles.equivalent}>= {toUsdFormat(usdValue)}</p>}
     </div>
   );
 };
