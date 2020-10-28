@@ -7,7 +7,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
 import { RenNetwork } from "@renproject/interfaces";
 import {
-  useMultiwallet,
   WalletPickerModal,
   WalletPickerProps,
 } from "@renproject/multiwallet-ui";
@@ -22,6 +21,7 @@ import React, {
 import { Link } from "react-router-dom";
 import { env } from "../../constants/environmentVariables";
 import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
+import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { useStore } from "../../providers/Store";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
@@ -32,7 +32,6 @@ import {
   WalletConnectionStatusButton,
   WalletEntryButton,
 } from "../wallet/WalletHelpers";
-// import { useWalletPickerStyles } from "../wallet/WalletHelpers";
 import { Footer } from "./Footer";
 
 const headerHeight = 64;
@@ -132,8 +131,8 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const pickerClasses = useWalletPickerStyles();
   const [walletPickerOpen, setWalletPickerOpen] = useState(false);
-  const wallet = useMultiwallet();
-  const { status = "disconnected" } = wallet?.enabledChains[chain] || {};
+  const wallet = useWallet(chain);
+  const { status = "disconnected" } = wallet;
   const handleWalletPickerClose = useCallback(() => {
     setWalletPickerOpen(false);
   }, []);
