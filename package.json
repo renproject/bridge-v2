@@ -14,7 +14,8 @@
     "@renproject/multiwallet-ethereum-injected-connector": "^2.0.0-alpha.14",
     "@renproject/multiwallet-ethereum-walletconnect-connector": "^2.0.0-alpha.14",
     "@renproject/multiwallet-ui": "^2.0.0-alpha.14",
-    "@renproject/xstate": "^2.0.0-alpha.14",
+    "@renproject/ren": "^2.0.0-alpha.16",
+    "@renproject/rentx": "^2.0.0-alpha.15",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -26,6 +27,7 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.5",
     "@walletconnect/web3-provider": "^1.3.1",
+    "@xstate/react": "^1.0.1",
     "classnames": "^2.2.6",
     "notistack": "^1.0.0",
     "numeral": "^2.0.6",
@@ -37,7 +39,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-use": "^15.3.4",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "xstate": "^4.13.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -13,6 +13,7 @@ export type Reducer = (state: State, action: Action) => State;
 export const initialState = {
   chain: bridgeChainToMultiwalletChain(ChainSymbols.ETHC),
   exchangeRates: [] as Array<ExchangeRate>,
+  fees: {} as any, // TODO: change
 };
 
 export const reducer: Reducer = (state, action) => {
@@ -26,6 +27,11 @@ export const reducer: Reducer = (state, action) => {
       return {
         ...state,
         exchangeRates: action.payload,
+      };
+    case "setFees":
+      return {
+        ...state,
+        fees: action.payload,
       };
     default:
       return state;
