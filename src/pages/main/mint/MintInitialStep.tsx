@@ -1,41 +1,23 @@
-import React, { FunctionComponent, useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import {
-  AssetDropdown,
-  AssetDropdownWrapper,
-} from "../../../components/dropdowns/AssetDropdown";
-import { BitcoinIcon } from "../../../components/icons/RenIcons";
-import {
-  BigCurrencyInput,
-  BigCurrencyInputWrapper,
-} from "../../../components/inputs/BigCurrencyInput";
-import {
-  AssetInfo,
-  SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { CurrencySymbols, FlowStep } from "../../../components/utils/types";
-import { setFlowStep } from "../../../features/flow/flowSlice";
-import {
-  $mint,
-  setMintAmount,
-  setMintChain,
-  setMintCurrency,
-} from "../../../features/mint/mintSlice";
+import React, { FunctionComponent, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
+import { BitcoinIcon } from '../../../components/icons/RenIcons'
+import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
+import { AssetInfo, SpacedDivider, } from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { FlowStep } from '../../../components/utils/types'
+import { setFlowStep } from '../../../features/flow/flowSlice'
+import { $mint, setMintAmount, setMintChain, setMintCurrency, } from '../../../features/mint/mintSlice'
 import {
   getMintedCurrencySymbol,
-  multiwalletChainToBridgeChain,
   supportedMintCurrencies,
   supportedMintDestinationChains,
-} from "../../../providers/multiwallet/multiwalletUtils";
-import { useStore } from "../../../providers/Store";
-import { findExchangeRate } from "../../../services/marketData";
-import { toUsdFormat } from "../../../utils/formatters";
-import { getCurrencyShortLabel } from "../../../utils/labels";
+} from '../../../providers/multiwallet/multiwalletUtils'
+import { useStore } from '../../../providers/Store'
+import { findExchangeRate } from '../../../services/marketData'
+import { toUsdFormat } from '../../../utils/formatters'
+import { getCurrencyShortLabel } from '../../../utils/labels'
 
 export const MintInitialStep: FunctionComponent = () => {
   const [store, oldDispatch] = useStore();
