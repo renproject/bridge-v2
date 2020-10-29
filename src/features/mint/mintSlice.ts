@@ -1,25 +1,18 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Chain } from "@renproject/interfaces";
-import {
-  BridgeChain,
-  CurrencySymbols,
-  CurrencyType,
-} from "../../components/utils/types";
-import { RootState } from "../../store/rootReducer";
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { CurrencySymbols, CurrencyType, } from '../../components/utils/types'
+import { RootState } from '../../store/rootReducer'
 
 type MintState = {
   currency: CurrencyType;
   amount: number;
-  chain: BridgeChain;
 };
 
 let initialState: MintState = {
   currency: CurrencySymbols.BTC,
   amount: 0,
-  chain: BridgeChain.ETHC,
 };
 
-const mintSlice = createSlice({
+const slice = createSlice({
   name: "mint",
   initialState,
   reducers: {
@@ -29,24 +22,16 @@ const mintSlice = createSlice({
     setMintAmount(state, action: PayloadAction<number>) {
       state.amount = action.payload;
     },
-    setMintChain(state, action: PayloadAction<BridgeChain>) {
-      state.chain = action.payload;
-    },
     reset(state, action: PayloadAction<MintState | undefined>) {
       state = action.payload || initialState;
     },
   },
 });
 
-export const {
-  setMintCurrency,
-  setMintAmount,
-  setMintChain,
-} = mintSlice.actions;
+export const { setMintCurrency, setMintAmount } = slice.actions;
 
-export const mintReducer = mintSlice.reducer;
+export const mintReducer = slice.reducer;
 
 export const $mint = (state: RootState) => state.mint;
 export const $mintCurrency = createSelector($mint, (mint) => mint.currency);
 export const $mintAmount = createSelector($mint, (mint) => mint.amount);
-export const $mintChain = createSelector($mint, (mint) => mint.chain);

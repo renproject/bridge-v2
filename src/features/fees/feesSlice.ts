@@ -1,12 +1,12 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../store/rootReducer";
-import { BridgeFees } from "./feesUtils";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from '../../store/rootReducer'
+import { BridgeFees } from './feesUtils'
 
 type FeesState = BridgeFees;
 
 let initialState: FeesState = [];
 
-const feesSlice = createSlice({
+const slice = createSlice({
   name: "fees",
   initialState,
   reducers: {
@@ -16,8 +16,8 @@ const feesSlice = createSlice({
   },
 });
 
-export const { setFees } = feesSlice.actions;
+export const { setFees } = slice.actions;
 
-export const feesReducer = feesSlice.reducer;
+export const feesReducer = slice.reducer;
 
 export const $fees = (state: RootState) => state.fees;

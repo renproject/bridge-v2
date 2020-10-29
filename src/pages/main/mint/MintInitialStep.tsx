@@ -1,29 +1,46 @@
-import React, { FunctionComponent, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { BitcoinIcon } from '../../../components/icons/RenIcons'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { AssetInfo, SpacedDivider, } from '../../../components/typography/TypographyHelpers'
-import { Debug } from '../../../components/utils/Debug'
-import { FlowStep } from '../../../components/utils/types'
-import { setFlowStep } from '../../../features/flow/flowSlice'
-import { $mint, setMintAmount, setMintChain, setMintCurrency, } from '../../../features/mint/mintSlice'
+import React, { FunctionComponent, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import { BitcoinIcon } from "../../../components/icons/RenIcons";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import {
+  AssetInfo,
+  SpacedDivider,
+} from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { FlowStep } from "../../../components/utils/types";
+import { setFlowStep } from "../../../features/flow/flowSlice";
+import { $marketData } from "../../../features/marketData/marketDataSlice";
+import { findExchangeRate } from "../../../features/marketData/marketDataUtils";
+import {
+  $mint,
+  setMintAmount,
+  setMintCurrency,
+} from "../../../features/mint/mintSlice";
+import { $wallet, setChain } from "../../../features/wallet/walletSlice";
 import {
   getMintedCurrencySymbol,
   supportedMintCurrencies,
   supportedMintDestinationChains,
-} from '../../../providers/multiwallet/multiwalletUtils'
-import { useStore } from '../../../providers/Store'
-import { findExchangeRate } from '../../../services/marketData'
-import { toUsdFormat } from '../../../utils/formatters'
-import { getCurrencyShortLabel } from '../../../utils/labels'
+} from "../../../providers/multiwallet/multiwalletUtils";
+import { toUsdFormat } from "../../../utils/formatters";
+import { getCurrencyShortLabel } from "../../../utils/labels";
 
 export const MintInitialStep: FunctionComponent = () => {
-  const [store, oldDispatch] = useStore();
   const dispatch = useDispatch();
-  const { exchangeRates } = store;
-  const { chain, currency, amount } = useSelector($mint);
+  const { currency, amount } = useSelector($mint);
+  const { chain } = useSelector($wallet);
+  const { rates } = useSelector($marketData);
 
   const handleAmountChange = useCallback(
     (value) => {
@@ -39,21 +56,21 @@ export const MintInitialStep: FunctionComponent = () => {
   );
   const handleChainChange = useCallback(
     (event) => {
-      dispatch(setMintChain(event.target.value));
+      dispatch(setChain(event.target.value));
     },
     [dispatch]
   );
   const handleNextStep = useCallback(() => {
     dispatch(setMintAmount(amount));
     dispatch(setFlowStep(FlowStep.FEES));
-  }, [oldDispatch, amount]);
+  }, [dispatch, amount]);
 
-  const usd2CurrencyRate = findExchangeRate(exchangeRates, currency);
+  const usd2CurrencyRate = findExchangeRate(rates, currency);
   const mintedValue = amount * 0.999;
   const mintedCurrencySymbol = getMintedCurrencySymbol(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
   const usd2MintedCurrencyRate =
-    findExchangeRate(exchangeRates, mintedCurrencySymbol) || usd2CurrencyRate; // TODO: investigate what to do with nonexistent currencies
+    findExchangeRate(rates, mintedCurrencySymbol) || usd2CurrencyRate; // TODO: investigate what to do with nonexistent currencies
   const currencyUsdValue = amount * usd2CurrencyRate;
   const mintedCurrencyUsdValue = mintedValue * usd2MintedCurrencyRate;
   const mintedValueLabel = `${mintedValue} ${mintedCurrency}`;
@@ -101,7 +118,7 @@ export const MintInitialStep: FunctionComponent = () => {
           Next
         </ActionButton>
       </ActionButtonWrapper>
-      <Debug it={{ amount, currency, chain, dispatch: oldDispatch }} />
+      <Debug it={{ amount, currency, chain }} />
     </div>
   );
 };

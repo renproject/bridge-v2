@@ -9,7 +9,6 @@ import { useFetchFees } from "../features/fees/feesHooks";
 import { MintFlow } from "./main/MintFlow";
 import { ReleaseFlow } from "./main/ReleaseFlow";
 import { paths } from "./routes";
-import { MarketRatesData } from "./shared/MarketRatesData";
 
 enum TabPhase {
   MINT = FlowKind.MINT,
@@ -31,7 +30,6 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
 
   return (
     <>
-      <MarketRatesData />
       <MainLayout>
         <BridgePaper>
           <Tabs

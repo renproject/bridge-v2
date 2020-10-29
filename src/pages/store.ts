@@ -1,10 +1,6 @@
-import {
-  BridgeChain,
-  FlowStep,
-  FlowKind,
-} from "../components/utils/types";
+import { BridgeChain, FlowStep, FlowKind } from "../components/utils/types";
+import { ExchangeRate } from "../features/marketData/marketDataUtils";
 import { bridgeChainToMultiwalletChain } from "../providers/multiwallet/multiwalletUtils";
-import { ExchangeRate } from "../services/marketData";
 
 export type Action = {
   type: string;

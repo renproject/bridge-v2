@@ -1,18 +1,15 @@
-import React, { FunctionComponent } from "react";
-import { FlowStep } from "../../components/utils/types";
-import { useStore } from "../../providers/Store";
-import { State } from "../store";
-import { MintFeesStep } from "./mint/MintFeesStep";
-import { MintInitialStep } from "./mint/MintInitialStep";
-
-// TODO: add state based calcuation
-const resolveStep = (store: State) => {
-  return store.flow.step;
-};
+import React, { FunctionComponent } from 'react'
+import { useSelector } from 'react-redux'
+import { FlowStep } from '../../components/utils/types'
+import { $flow } from '../../features/flow/flowSlice'
+import { useMarketDataRates } from '../../features/marketData/marketDataHooks'
+import { MintFeesStep } from './mint/MintFeesStep'
+import { MintInitialStep } from './mint/MintInitialStep'
 
 export const MintFlow: FunctionComponent = () => {
-  const [store] = useStore();
-  const step = resolveStep(store); // TODO: this should be sth like selector
+  console.log("rerendering");
+  useMarketDataRates();
+  const { step } = useSelector($flow);
   return (
     <>
       {step === FlowStep.INITIAL && <MintInitialStep />}

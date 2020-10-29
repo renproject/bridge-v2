@@ -1,15 +1,15 @@
-import "@renproject/fonts/index.css";
-import { MuiThemeProvider } from "@material-ui/core";
-import React, { FunctionComponent } from "react";
-import ReactDOM from "react-dom";
-import "./index.css";
-import { MultiwalletProvider } from "./providers/multiwallet/Multiwallet";
-import { NotificationsProvider } from "./providers/Notifications";
-import { StoreProvider } from "./providers/Store";
-import * as serviceWorker from "./serviceWorker";
-import store from "./store/store";
-import { lightTheme } from "./theme/theme";
-import { Provider } from "react-redux";
+import { MuiThemeProvider } from '@material-ui/core'
+import '@renproject/fonts/index.css'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import './index.css'
+import { MultiwalletProvider } from './providers/multiwallet/Multiwallet'
+import { NotificationsProvider } from './providers/Notifications'
+import { StoreProvider } from './providers/Store'
+import * as serviceWorker from './serviceWorker'
+import store from './store/store'
+import { lightTheme } from './theme/theme'
 
 const render = () => {
   const App = require("./App").default;

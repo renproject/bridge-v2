@@ -1,8 +1,7 @@
-import BandChain from "@bandprotocol/bandchain.js";
-import { CurrencySymbols, CurrencyType } from "../components/utils/types";
-import { env } from "../constants/environmentVariables";
+import { CurrencySymbols, CurrencyType } from "../../components/utils/types";
+import { getBandchain } from "../../services/bandchain";
 
-const mapToBandchainSymbol = (symbol: CurrencyType) => {
+const mapToBandchainCurrencySymbol = (symbol: CurrencyType) => {
   switch (symbol) {
     case CurrencySymbols.DOTS:
       return "DOT";
@@ -18,7 +17,7 @@ const mapToBandchainSymbol = (symbol: CurrencyType) => {
   return symbol;
 };
 
-const mapToBridgeSymbol = (symbol: string) => {
+const mapToBridgeCurrencySymbol = (symbol: string) => {
   switch (symbol) {
     case "DOT":
       return CurrencySymbols.RENBCH;
@@ -31,18 +30,9 @@ const QUOTE = "USD";
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
 const referenceParis = Object.values(CurrencySymbols)
-  .map(mapToBandchainSymbol)
+  .map(mapToBandchainCurrencySymbol)
   .filter((symbol) => !!symbol)
   .map((symbol: string) => getPair(symbol, QUOTE));
-
-let bandchainInstance: typeof BandChain | null = null;
-
-const getBandchain = () => {
-  if (bandchainInstance === null) {
-    bandchainInstance = new BandChain(env.BANDCHAIN_ENDPOINT);
-  }
-  return bandchainInstance;
-};
 
 type BandchainExchangeRateEntry = {
   pair: string;
@@ -59,7 +49,7 @@ const mapToExchangeData = (
   return referenceData.map((entry: any) => {
     const [base, quote] = entry.pair.split("/");
     const data: ExchangeRate = {
-      pair: getPair(mapToBridgeSymbol(base), quote),
+      pair: getPair(mapToBridgeCurrencySymbol(base), quote),
       rate: entry.rate,
     };
     return data;
@@ -71,12 +61,14 @@ export type ExchangeRate = {
   rate: number;
 };
 
-export const fetchMarketRates = async () => {
+export const fetchMarketDataRates = async () => {
+  console.log("fetching");
   return getBandchain()
     .getReferenceData(referenceParis)
     .then(mapToExchangeData);
 };
 
+// TODO: create selector for this
 export const findExchangeRate = (
   exchangeRates: Array<ExchangeRate>,
   base: CurrencyType,
