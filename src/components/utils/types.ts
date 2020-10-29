@@ -28,3 +28,15 @@ export type WalletConnectionStatusType =
   | "connecting"
   | "connected"
   | "wrong_network";
+
+export enum TransactionKind {
+  MINT = "mint",
+  RELEASE = "release",
+}
+
+export enum FlowStep {
+  INITIAL = "initial",
+  FEES = "fees",
+  CONFIRMATION = "confirmation",
+}
+export type FlowStepType = keyof typeof FlowStep;

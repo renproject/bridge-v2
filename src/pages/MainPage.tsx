@@ -1,17 +1,18 @@
-import { Box, Button, Tab, Tabs } from "@material-ui/core";
+import { Tab, Tabs } from "@material-ui/core";
 import React, { FunctionComponent, useCallback } from "react";
 import { RouteComponentProps } from "react-router";
-import { AssetDropdown } from "../components/dropdowns/AssetDropdown";
 import { MainLayout } from "../components/layout/MainLayout";
 import { BridgePaper } from "../components/layout/Paper";
+import { TransactionKind } from "../components/utils/types";
 import { storageKeys } from "../constants/constants";
-import { MintFlow } from "./main/Mint";
+import { MintFlow } from "./main/MintFlow";
+import { ReleaseFlow } from "./main/ReleaseFlow";
 import { paths } from "./routes";
-import { Cron } from "./shared/Cron";
+import { MarketRatesData } from "./shared/MarketRatesData";
 
 enum TabPhase {
-  MINT,
-  RELEASE,
+  MINT = TransactionKind.MINT,
+  RELEASE = TransactionKind.RELEASE,
 }
 
 export const MainPage: FunctionComponent<RouteComponentProps> = ({
@@ -22,12 +23,13 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
   }
   const [tab, setTab] = React.useState(TabPhase.MINT);
   const handleTabChange = useCallback((event, newValue) => {
+    //TODO: check if flow is in progress. Inform with useConfirm()
     setTab(newValue);
   }, []);
 
   return (
     <>
-      <Cron />
+      <MarketRatesData />
       <MainLayout>
         <BridgePaper>
           <Tabs
@@ -36,25 +38,17 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
             indicatorColor="primary"
             variant="fullWidth"
           >
-            <Tab label={tab === TabPhase.MINT ? "Minting" : "Mint"} />
-            <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
+            <Tab
+              label={tab === TabPhase.MINT ? "Minting" : "Mint"}
+              value={TabPhase.MINT}
+            />
+            <Tab
+              label={tab === TabPhase.RELEASE ? "Releasing" : "Release"}
+              value={TabPhase.RELEASE}
+            />
           </Tabs>
           {tab === TabPhase.MINT && <MintFlow />}
-          {tab === TabPhase.RELEASE && (
-            <div>
-              <Box height={200}>
-                <AssetDropdown mode="receive" defaultValue="BCH" />
-              </Box>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                fullWidth
-              >
-                Next
-              </Button>
-            </div>
-          )}
+          {tab === TabPhase.RELEASE && <ReleaseFlow />}
         </BridgePaper>
       </MainLayout>
     </>

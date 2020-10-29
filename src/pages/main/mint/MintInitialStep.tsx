@@ -2,35 +2,35 @@ import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   ActionButton,
   ActionButtonWrapper,
-} from "../../components/buttons/Buttons";
+} from "../../../components/buttons/Buttons";
 import {
   AssetDropdown,
   AssetDropdownWrapper,
-} from "../../components/dropdowns/AssetDropdown";
-import { BitcoinIcon } from "../../components/icons/RenIcons";
+} from "../../../components/dropdowns/AssetDropdown";
+import { BitcoinIcon } from "../../../components/icons/RenIcons";
 import {
   BigCurrencyInput,
   BigCurrencyInputWrapper,
-} from "../../components/inputs/BigCurrencyInput";
+} from "../../../components/inputs/BigCurrencyInput";
 import {
   AssetInfo,
   SpacedDivider,
-} from "../../components/typography/TypographyHelpers";
-import { Debug } from "../../components/utils/Debug";
-import { CurrencySymbols } from "../../components/utils/types";
+} from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { CurrencySymbols, FlowStep } from "../../../components/utils/types";
 import {
   bridgeChainToMultiwalletChain,
   getMintedCurrencySymbol,
   multiwalletChainToBridgeChain,
   supportedMintCurrencies,
   supportedMintDestinationChains,
-} from "../../providers/multiwallet/multiwalletUtils";
-import { useStore } from "../../providers/Store";
-import { findExchangeRate } from "../../services/marketData";
-import { toUsdFormat } from "../../utils/formatters";
-import { getCurrencyShortLabel } from "../../utils/labels";
+} from "../../../providers/multiwallet/multiwalletUtils";
+import { useStore } from "../../../providers/Store";
+import { findExchangeRate } from "../../../services/marketData";
+import { toUsdFormat } from "../../../utils/formatters";
+import { getCurrencyShortLabel } from "../../../utils/labels";
 
-export const MintFlow: FunctionComponent = () => {
+export const MintInitialStep: FunctionComponent = () => {
   const [store, dispatch] = useStore();
   const { chain, exchangeRates } = store;
   const chainSymbol = multiwalletChainToBridgeChain(chain);
@@ -54,6 +54,12 @@ export const MintFlow: FunctionComponent = () => {
     },
     [dispatch]
   );
+  const handleNextStep = useCallback(() => {
+    dispatch({
+      type: "setFlowStep",
+      payload: FlowStep.FEES,
+    });
+  }, [dispatch]);
 
   const usd2CurrencyRate = findExchangeRate(exchangeRates, currencySymbol);
   const mintedValue = currencyValue * 0.999;
@@ -64,7 +70,9 @@ export const MintFlow: FunctionComponent = () => {
   const currencyUsdValue = currencyValue * usd2CurrencyRate;
   const mintedCurrencyUsdValue = mintedValue * usd2MintedCurrencyRate;
   const mintedValueLabel = `${mintedValue} ${mintedCurrency}`;
-  const mintedValueEquivalentLabel = ` = ${toUsdFormat(mintedCurrencyUsdValue)} USD`;
+  const mintedValueEquivalentLabel = ` = ${toUsdFormat(
+    mintedCurrencyUsdValue
+  )} USD`;
 
   return (
     <div>
@@ -100,7 +108,7 @@ export const MintFlow: FunctionComponent = () => {
         Icon={<BitcoinIcon fontSize="inherit" />}
       />
       <ActionButtonWrapper>
-        <ActionButton>Next</ActionButton>
+        <ActionButton onClick={handleNextStep}>Next</ActionButton>
       </ActionButtonWrapper>
       <Debug
         it={{ currencyValue, currencySymbol, chain, store, dispatch: dispatch }}

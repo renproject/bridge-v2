@@ -1,20 +1,36 @@
-import { ChainSymbols } from "../components/utils/types";
+import {
+  ChainSymbols,
+  FlowStep,
+  TransactionKind,
+} from "../components/utils/types";
 import { bridgeChainToMultiwalletChain } from "../providers/multiwallet/multiwalletUtils";
 import { ExchangeRate } from "../services/marketData";
 
-export type State = typeof initialState;
 export type Action = {
   type: string;
   payload: any;
 };
 
-export type Reducer = (state: State, action: Action) => State;
+type Flow = {
+  kind: TransactionKind | undefined;
+  step: FlowStep;
+};
+
+const initialFlow: Flow = {
+  kind: TransactionKind.MINT,
+  step: FlowStep.INITIAL,
+};
 
 export const initialState = {
   chain: bridgeChainToMultiwalletChain(ChainSymbols.ETHC),
   exchangeRates: [] as Array<ExchangeRate>,
   fees: {} as any, // TODO: change
+  flow: initialFlow as Flow,
 };
+
+export type State = typeof initialState;
+
+export type Reducer = (state: State, action: Action) => State;
 
 export const reducer: Reducer = (state, action) => {
   switch (action.type) {
@@ -33,7 +49,16 @@ export const reducer: Reducer = (state, action) => {
         ...state,
         fees: action.payload,
       };
+    case "setFlowStep":
+      return {
+        ...state,
+        flow: {
+          ...state.flow,
+          step: action.payload,
+        },
+      };
     default:
+      console.error("NotImplementedAction", action);
       return state;
   }
 };
