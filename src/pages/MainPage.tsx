@@ -3,7 +3,7 @@ import React, { FunctionComponent, useCallback } from "react";
 import { RouteComponentProps } from "react-router";
 import { MainLayout } from "../components/layout/MainLayout";
 import { BridgePaper } from "../components/layout/Paper";
-import { TransactionKind } from "../components/utils/types";
+import { FlowKind } from "../components/utils/types";
 import { storageKeys } from "../constants/constants";
 import { MintFlow } from "./main/MintFlow";
 import { ReleaseFlow } from "./main/ReleaseFlow";
@@ -11,8 +11,8 @@ import { paths } from "./routes";
 import { MarketRatesData } from "./shared/MarketRatesData";
 
 enum TabPhase {
-  MINT = TransactionKind.MINT,
-  RELEASE = TransactionKind.RELEASE,
+  MINT = FlowKind.MINT,
+  RELEASE = FlowKind.RELEASE,
 }
 
 export const MainPage: FunctionComponent<RouteComponentProps> = ({
@@ -39,7 +39,7 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
             variant="fullWidth"
           >
             <Tab
-              label={tab === TabPhase.MINT ? "Mintingg" : "Mint"}
+              label={tab === TabPhase.MINT ? "Minting" : "Mint"}
               value={TabPhase.MINT}
             />
             <Tab

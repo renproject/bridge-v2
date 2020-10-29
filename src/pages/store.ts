@@ -1,7 +1,7 @@
 import {
-  ChainSymbols,
+  BridgeChain,
   FlowStep,
-  TransactionKind,
+  FlowKind,
 } from "../components/utils/types";
 import { bridgeChainToMultiwalletChain } from "../providers/multiwallet/multiwalletUtils";
 import { ExchangeRate } from "../services/marketData";
@@ -12,17 +12,17 @@ export type Action = {
 };
 
 type Flow = {
-  kind: TransactionKind | undefined;
+  kind: FlowKind | undefined;
   step: FlowStep;
 };
 
 const initialFlow: Flow = {
-  kind: TransactionKind.MINT,
+  kind: FlowKind.MINT,
   step: FlowStep.INITIAL,
 };
 
 export const initialState = {
-  chain: bridgeChainToMultiwalletChain(ChainSymbols.ETHC),
+  chain: bridgeChainToMultiwalletChain(BridgeChain.ETHC),
   exchangeRates: [] as Array<ExchangeRate>,
   fees: {} as any, // TODO: change
   flow: initialFlow as Flow,

@@ -1,5 +1,5 @@
 import {
-  ChainSymbols,
+  BridgeChain,
   ChainType,
   CurrencySymbols,
   CurrencyType,
@@ -62,15 +62,15 @@ export const getCurrencyShortLabel = (symbol: CurrencyType) =>
   currencyLabels[symbol].short || unknownLabel;
 
 export const chainLabels: Record<ChainType, LabelData> = {
-  [ChainSymbols.BTCC]: {
+  [BridgeChain.BTCC]: {
     short: "BTCC",
     full: "Bitcoin SmartChain",
   },
-  [ChainSymbols.BNCC]: {
+  [BridgeChain.BNCC]: {
     short: "BNCC",
     full: "Binance SmartChain",
   },
-  [ChainSymbols.ETHC]: {
+  [BridgeChain.ETHC]: {
     short: "ETHC",
     full: "Ethereum",
   },

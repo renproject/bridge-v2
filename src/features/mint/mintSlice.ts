@@ -1,18 +1,22 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Chain } from "@renproject/interfaces";
-import { CurrencySymbols, CurrencyType } from "../../components/utils/types";
+import {
+  BridgeChain,
+  CurrencySymbols,
+  CurrencyType,
+} from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
 
 type MintState = {
   currency: CurrencyType;
   amount: number;
-  chain: Chain;
+  chain: BridgeChain;
 };
 
 let initialState: MintState = {
   currency: CurrencySymbols.BTC,
   amount: 0,
-  chain: Chain.Ethereum,
+  chain: BridgeChain.ETHC,
 };
 
 const mintSlice = createSlice({
@@ -25,7 +29,7 @@ const mintSlice = createSlice({
     setMintAmount(state, action: PayloadAction<number>) {
       state.amount = action.payload;
     },
-    setMintChain(state, action: PayloadAction<Chain>) {
+    setMintChain(state, action: PayloadAction<BridgeChain>) {
       state.chain = action.payload;
     },
     reset(state, action: PayloadAction<MintState | undefined>) {

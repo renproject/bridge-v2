@@ -13,13 +13,13 @@ export enum CurrencySymbols {
 
 export type CurrencyType = keyof typeof CurrencySymbols;
 
-export enum ChainSymbols {
+export enum BridgeChain {
   BTCC = "BTCC",
   BNCC = "BNCC",
   ETHC = "ETHC",
 }
 
-export type ChainType = keyof typeof ChainSymbols;
+export type ChainType = keyof typeof BridgeChain;
 
 export type TransactionStatusType = "completed" | "pending" | "submitted";
 
@@ -29,7 +29,7 @@ export type WalletConnectionStatusType =
   | "connected"
   | "wrong_network";
 
-export enum TransactionKind {
+export enum FlowKind {
   MINT = "mint",
   RELEASE = "release",
 }

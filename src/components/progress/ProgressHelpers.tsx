@@ -10,7 +10,7 @@ import CompletedIcon from "@material-ui/icons/Check";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
-import { ChainSymbols, ChainType, TransactionStatusType } from "../utils/types";
+import { BridgeChain, ChainType, TransactionStatusType } from "../utils/types";
 
 type ProgressIconSize = "big" | "medium" | number;
 
@@ -194,11 +194,11 @@ const resolveIcon = (chain: ChainType, status: TransactionStatusType) => {
     return <CompletedIcon {...shared} fontSize="large" />;
   }
   switch (chain) {
-    case ChainSymbols.BNCC:
+    case BridgeChain.BNCC:
       return <BinanceChainIcon {...shared} fontSize="large" />;
-    case ChainSymbols.BTCC:
+    case BridgeChain.BTCC:
       return <BitcoinIcon {...shared} fontSize="large" />;
-    case ChainSymbols.ETHC:
+    case BridgeChain.ETHC:
       return <EthereumIcon {...shared} fontSize="large" />;
     default:
       return <EthereumIcon {...shared} fontSize="large" />;

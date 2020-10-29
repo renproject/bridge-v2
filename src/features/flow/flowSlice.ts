@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FlowStep, TransactionKind } from "../../components/utils/types";
+import { FlowStep, FlowKind } from "../../components/utils/types";
 
 type FlowState = {
-  kind: TransactionKind;
+  kind: FlowKind;
   step: FlowStep;
 };
 
 let initialState: FlowState = {
-  kind: TransactionKind.MINT,
+  kind: FlowKind.MINT,
   step: FlowStep.INITIAL,
 };
 
@@ -15,7 +15,7 @@ const flowSlice = createSlice({
   name: "flow",
   initialState,
   reducers: {
-    setFlowKind(state, action: PayloadAction<TransactionKind>) {
+    setFlowKind(state, action: PayloadAction<FlowKind>) {
       state.kind = action.payload;
     },
     setFlowStep(state, action: PayloadAction<FlowStep>) {

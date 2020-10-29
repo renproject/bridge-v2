@@ -22,11 +22,11 @@ import { CurrencySymbols, FlowStep } from "../../../components/utils/types";
 import { setFlowStep } from "../../../features/flow/flowSlice";
 import {
   $mint,
-  $mintChain,
   setMintAmount,
+  setMintChain,
+  setMintCurrency,
 } from "../../../features/mint/mintSlice";
 import {
-  bridgeChainToMultiwalletChain,
   getMintedCurrencySymbol,
   multiwalletChainToBridgeChain,
   supportedMintCurrencies,
@@ -42,37 +42,33 @@ export const MintInitialStep: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { exchangeRates } = store;
   const { chain, currency, amount } = useSelector($mint);
-  const chainSymbol = multiwalletChainToBridgeChain(chain);
-  const handleCurrencyValueChange = useCallback(
+
+  const handleAmountChange = useCallback(
     (value) => {
       dispatch(setMintAmount(value));
     },
     [dispatch]
   );
-
-  const [currencySymbol, setCurrencySymbol] = useState(CurrencySymbols.BTC);
-  const handleCurrencyChange = useCallback((event) => {
-    setCurrencySymbol(event.target.value);
-  }, []);
-
+  const handleCurrencyChange = useCallback(
+    (event) => {
+      dispatch(setMintCurrency(event.target.value));
+    },
+    [dispatch]
+  );
   const handleChainChange = useCallback(
     (event) => {
-      oldDispatch({
-        type: "setChain",
-        payload: bridgeChainToMultiwalletChain(event.target.value),
-      });
-      // setChain(event.target.value);
+      dispatch(setMintChain(event.target.value));
     },
-    [oldDispatch]
+    [dispatch]
   );
   const handleNextStep = useCallback(() => {
     dispatch(setMintAmount(amount));
     dispatch(setFlowStep(FlowStep.FEES));
   }, [oldDispatch, amount]);
 
-  const usd2CurrencyRate = findExchangeRate(exchangeRates, currencySymbol);
+  const usd2CurrencyRate = findExchangeRate(exchangeRates, currency);
   const mintedValue = amount * 0.999;
-  const mintedCurrencySymbol = getMintedCurrencySymbol(currencySymbol);
+  const mintedCurrencySymbol = getMintedCurrencySymbol(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
   const usd2MintedCurrencyRate =
     findExchangeRate(exchangeRates, mintedCurrencySymbol) || usd2CurrencyRate; // TODO: investigate what to do with nonexistent currencies
@@ -89,8 +85,8 @@ export const MintInitialStep: FunctionComponent = () => {
     <div>
       <BigCurrencyInputWrapper>
         <BigCurrencyInput
-          onChange={handleCurrencyValueChange}
-          symbol={currencySymbol}
+          onChange={handleAmountChange}
+          symbol={currency}
           usdValue={currencyUsdValue}
           value={amount}
         />
@@ -99,7 +95,7 @@ export const MintInitialStep: FunctionComponent = () => {
         <AssetDropdown
           mode="send"
           available={supportedMintCurrencies}
-          value={currencySymbol}
+          value={currency}
           onChange={handleCurrencyChange}
         />
       </AssetDropdownWrapper>
@@ -107,7 +103,7 @@ export const MintInitialStep: FunctionComponent = () => {
         <AssetDropdown
           mode="chain"
           available={supportedMintDestinationChains}
-          value={chainSymbol}
+          value={chain}
           onChange={handleChainChange}
         />
       </AssetDropdownWrapper>
@@ -123,7 +119,7 @@ export const MintInitialStep: FunctionComponent = () => {
           Next
         </ActionButton>
       </ActionButtonWrapper>
-      <Debug it={{ amount, currencySymbol, chain, dispatch: oldDispatch }} />
+      <Debug it={{ amount, currency, chain, dispatch: oldDispatch }} />
     </div>
   );
 };
