@@ -1,6 +1,6 @@
 import "@renproject/fonts/index.css";
 import { MuiThemeProvider } from "@material-ui/core";
-import React from "react";
+import React, { FunctionComponent } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
@@ -10,18 +10,30 @@ import { StoreProvider } from "./providers/Store";
 import * as serviceWorker from "./serviceWorker";
 import { lightTheme } from "./theme/theme";
 
-ReactDOM.render(
-  <StoreProvider>
-    <MuiThemeProvider theme={lightTheme}>
-      <MultiwalletProvider>
-        <NotificationsProvider>
-          <App />
-        </NotificationsProvider>
-      </MultiwalletProvider>
-    </MuiThemeProvider>
-  </StoreProvider>,
-  document.getElementById("root")
-);
+const render = (Component: FunctionComponent) =>
+  ReactDOM.render(
+    <StoreProvider>
+      <MuiThemeProvider theme={lightTheme}>
+        <MultiwalletProvider>
+          <NotificationsProvider>
+            <Component />
+          </NotificationsProvider>
+        </MultiwalletProvider>
+      </MuiThemeProvider>
+    </StoreProvider>,
+    document.getElementById("root")
+  );
+
+render(App);
+
+// tslint:disable-next-line: no-any
+if ((module as any).hot) {
+  // tslint:disable-next-line: no-any
+  (module as any).hot.accept("./App", () => {
+    const NextApp = require("./App").App;
+    render(NextApp);
+  });
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

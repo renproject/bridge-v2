@@ -39,7 +39,7 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
             variant="fullWidth"
           >
             <Tab
-              label={tab === TabPhase.MINT ? "Minting" : "Mint"}
+              label={tab === TabPhase.MINT ? "Mintingg" : "Mint"}
               value={TabPhase.MINT}
             />
             <Tab

@@ -56,10 +56,16 @@ export const MintInitialStep: FunctionComponent = () => {
   );
   const handleNextStep = useCallback(() => {
     dispatch({
+      type: "updateTransactionData",
+      payload: {
+        amount: currencyValue,
+      },
+    });
+    dispatch({
       type: "setFlowStep",
       payload: FlowStep.FEES,
     });
-  }, [dispatch]);
+  }, [dispatch, currencyValue]);
 
   const usd2CurrencyRate = findExchangeRate(exchangeRates, currencySymbol);
   const mintedValue = currencyValue * 0.999;
@@ -73,6 +79,8 @@ export const MintInitialStep: FunctionComponent = () => {
   const mintedValueEquivalentLabel = ` = ${toUsdFormat(
     mintedCurrencyUsdValue
   )} USD`;
+
+  const nextEnabled = currencyValue !== 0;
 
   return (
     <div>
@@ -108,10 +116,12 @@ export const MintInitialStep: FunctionComponent = () => {
         Icon={<BitcoinIcon fontSize="inherit" />}
       />
       <ActionButtonWrapper>
-        <ActionButton onClick={handleNextStep}>Next</ActionButton>
+        <ActionButton onClick={handleNextStep} disabled={!nextEnabled}>
+          Next
+        </ActionButton>
       </ActionButtonWrapper>
       <Debug
-        it={{ currencyValue, currencySymbol, chain, store, dispatch: dispatch }}
+        it={{ currencyValue, currencySymbol, chain, dispatch: dispatch }}
       />
     </div>
   );

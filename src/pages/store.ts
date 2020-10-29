@@ -26,6 +26,7 @@ export const initialState = {
   exchangeRates: [] as Array<ExchangeRate>,
   fees: {} as any, // TODO: change
   flow: initialFlow as Flow,
+  transactionData: {} as any,
 };
 
 export type State = typeof initialState;
@@ -55,6 +56,14 @@ export const reducer: Reducer = (state, action) => {
         flow: {
           ...state.flow,
           step: action.payload,
+        },
+      };
+    case "updateTransactionData":
+      return {
+        ...state,
+        flow: {
+          ...state.transactionData,
+          ...action.payload,
         },
       };
     default:
