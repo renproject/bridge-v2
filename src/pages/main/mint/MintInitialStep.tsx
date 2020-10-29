@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -18,6 +19,12 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { CurrencySymbols, FlowStep } from "../../../components/utils/types";
+import { setFlowStep } from "../../../features/flow/flowSlice";
+import {
+  $mint,
+  $mintChain,
+  setMintAmount,
+} from "../../../features/mint/mintSlice";
 import {
   bridgeChainToMultiwalletChain,
   getMintedCurrencySymbol,
@@ -31,13 +38,17 @@ import { toUsdFormat } from "../../../utils/formatters";
 import { getCurrencyShortLabel } from "../../../utils/labels";
 
 export const MintInitialStep: FunctionComponent = () => {
-  const [store, dispatch] = useStore();
-  const { chain, exchangeRates } = store;
+  const [store, oldDispatch] = useStore();
+  const dispatch = useDispatch();
+  const { exchangeRates } = store;
+  const { chain, currency, amount } = useSelector($mint);
   const chainSymbol = multiwalletChainToBridgeChain(chain);
-  const [currencyValue, setCurrencyValue] = useState(0);
-  const handleCurrencyValueChange = useCallback((value) => {
-    setCurrencyValue(value);
-  }, []);
+  const handleCurrencyValueChange = useCallback(
+    (value) => {
+      dispatch(setMintAmount(value));
+    },
+    [dispatch]
+  );
 
   const [currencySymbol, setCurrencySymbol] = useState(CurrencySymbols.BTC);
   const handleCurrencyChange = useCallback((event) => {
@@ -46,41 +57,33 @@ export const MintInitialStep: FunctionComponent = () => {
 
   const handleChainChange = useCallback(
     (event) => {
-      dispatch({
+      oldDispatch({
         type: "setChain",
         payload: bridgeChainToMultiwalletChain(event.target.value),
       });
       // setChain(event.target.value);
     },
-    [dispatch]
+    [oldDispatch]
   );
   const handleNextStep = useCallback(() => {
-    dispatch({
-      type: "updateTransactionData",
-      payload: {
-        amount: currencyValue,
-      },
-    });
-    dispatch({
-      type: "setFlowStep",
-      payload: FlowStep.FEES,
-    });
-  }, [dispatch, currencyValue]);
+    dispatch(setMintAmount(amount));
+    dispatch(setFlowStep(FlowStep.FEES));
+  }, [oldDispatch, amount]);
 
   const usd2CurrencyRate = findExchangeRate(exchangeRates, currencySymbol);
-  const mintedValue = currencyValue * 0.999;
+  const mintedValue = amount * 0.999;
   const mintedCurrencySymbol = getMintedCurrencySymbol(currencySymbol);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
   const usd2MintedCurrencyRate =
     findExchangeRate(exchangeRates, mintedCurrencySymbol) || usd2CurrencyRate; // TODO: investigate what to do with nonexistent currencies
-  const currencyUsdValue = currencyValue * usd2CurrencyRate;
+  const currencyUsdValue = amount * usd2CurrencyRate;
   const mintedCurrencyUsdValue = mintedValue * usd2MintedCurrencyRate;
   const mintedValueLabel = `${mintedValue} ${mintedCurrency}`;
   const mintedValueEquivalentLabel = ` = ${toUsdFormat(
     mintedCurrencyUsdValue
   )} USD`;
 
-  const nextEnabled = currencyValue !== 0;
+  const nextEnabled = amount !== 0;
 
   return (
     <div>
@@ -89,7 +92,7 @@ export const MintInitialStep: FunctionComponent = () => {
           onChange={handleCurrencyValueChange}
           symbol={currencySymbol}
           usdValue={currencyUsdValue}
-          value={currencyValue}
+          value={amount}
         />
       </BigCurrencyInputWrapper>
       <AssetDropdownWrapper>
@@ -120,9 +123,7 @@ export const MintInitialStep: FunctionComponent = () => {
           Next
         </ActionButton>
       </ActionButtonWrapper>
-      <Debug
-        it={{ currencyValue, currencySymbol, chain, dispatch: dispatch }}
-      />
+      <Debug it={{ amount, currencySymbol, chain, dispatch: oldDispatch }} />
     </div>
   );
 };

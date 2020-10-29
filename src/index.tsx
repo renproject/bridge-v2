@@ -3,36 +3,37 @@ import { MuiThemeProvider } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
 import { MultiwalletProvider } from "./providers/multiwallet/Multiwallet";
 import { NotificationsProvider } from "./providers/Notifications";
 import { StoreProvider } from "./providers/Store";
 import * as serviceWorker from "./serviceWorker";
+import store from "./store/store";
 import { lightTheme } from "./theme/theme";
+import { Provider } from "react-redux";
 
-const render = (Component: FunctionComponent) =>
+const render = () => {
+  const App = require("./App").default;
   ReactDOM.render(
-    <StoreProvider>
-      <MuiThemeProvider theme={lightTheme}>
-        <MultiwalletProvider>
-          <NotificationsProvider>
-            <Component />
-          </NotificationsProvider>
-        </MultiwalletProvider>
-      </MuiThemeProvider>
-    </StoreProvider>,
+    <Provider store={store}>
+      <StoreProvider>
+        <MuiThemeProvider theme={lightTheme}>
+          <MultiwalletProvider>
+            <NotificationsProvider>
+              <App />
+            </NotificationsProvider>
+          </MultiwalletProvider>
+        </MuiThemeProvider>
+      </StoreProvider>
+    </Provider>,
     document.getElementById("root")
   );
+};
 
-render(App);
+render();
 
 // tslint:disable-next-line: no-any
-if ((module as any).hot) {
-  // tslint:disable-next-line: no-any
-  (module as any).hot.accept("./App", () => {
-    const NextApp = require("./App").App;
-    render(NextApp);
-  });
+if (process.env.NODE_ENV === "development" && (module as any).hot) {
+  (module as any).hot.accept("./App", render);
 }
 
 // If you want your app to work offline and load faster, you can change
