@@ -5,7 +5,7 @@ import { MainLayout } from "../components/layout/MainLayout";
 import { BridgePaper } from "../components/layout/Paper";
 import { FlowKind } from "../components/utils/types";
 import { storageKeys } from "../constants/constants";
-import { useFetchFees } from "../features/fees/feesHooks";
+import { useFetchFees } from "../features/renData/renDataHooks";
 import { MintFlow } from "./main/MintFlow";
 import { ReleaseFlow } from "./main/ReleaseFlow";
 import { paths } from "./routes";

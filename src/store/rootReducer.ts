@@ -1,5 +1,5 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { feesReducer } from "../features/fees/feesSlice";
+import { renDataReducer } from "../features/renData/renDataSlice";
 import { flowReducer } from "../features/flow/flowSlice";
 import { marketDataReducer } from "../features/marketData/marketDataSlice";
 import { mintReducer } from "../features/mint/mintSlice";
@@ -8,7 +8,7 @@ import { walletReducer } from "../features/wallet/walletSlice";
 const rootReducer = combineReducers({
   mint: mintReducer,
   flow: flowReducer,
-  fees: feesReducer,
+  renData: renDataReducer,
   marketData: marketDataReducer,
   wallet: walletReducer,
 });
