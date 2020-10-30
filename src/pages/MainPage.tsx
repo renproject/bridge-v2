@@ -7,8 +7,8 @@ import { storageKeys } from '../constants/constants'
 import { $flow } from '../features/flow/flowSlice'
 import { FlowKind } from '../features/flow/flowTypes'
 import { useFetchFees } from '../features/renData/renDataHooks'
-import { MintFlow } from './main/MintFlow'
-import { ReleaseFlow } from './main/ReleaseFlow'
+import { MintFlow } from '../features/mint/MintFlow'
+import { ReleaseFlow } from '../features/release/ReleaseFlow'
 import { paths } from './routes'
 
 export const MainPage: FunctionComponent<RouteComponentProps> = ({

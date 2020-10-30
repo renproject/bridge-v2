@@ -18,16 +18,12 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { setFlowStep } from "../../../features/flow/flowSlice";
-import { FlowStep } from '../../../features/flow/flowTypes'
-import { $marketData } from "../../../features/marketData/marketDataSlice";
-import { findExchangeRate } from "../../../features/marketData/marketDataUtils";
-import {
-  $mint,
-  setMintAmount,
-  setMintCurrency,
-} from "../../../features/mint/mintSlice";
-import { $wallet, setChain } from "../../../features/wallet/walletSlice";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import { $marketData } from "../../marketData/marketDataSlice";
+import { findExchangeRate } from "../../marketData/marketDataUtils";
+import { $mint, setMintAmount, setMintCurrency } from "../mintSlice";
+import { $wallet, setChain } from "../../wallet/walletSlice";
 import {
   getMintedCurrencySymbol,
   supportedMintCurrencies,
@@ -35,6 +31,7 @@ import {
 } from "../../../providers/multiwallet/multiwalletUtils";
 import { toUsdFormat } from "../../../utils/formatters";
 import { getCurrencyShortLabel } from "../../../utils/labels";
+import { PaperContent } from "../../../components/layout/Paper";
 
 export const MintInitialStep: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -81,7 +78,7 @@ export const MintInitialStep: FunctionComponent = () => {
   const nextEnabled = amount !== 0;
 
   return (
-    <div>
+    <PaperContent>
       <BigCurrencyInputWrapper>
         <BigCurrencyInput
           onChange={handleAmountChange}
@@ -119,6 +116,6 @@ export const MintInitialStep: FunctionComponent = () => {
         </ActionButton>
       </ActionButtonWrapper>
       <Debug it={{ amount, currency, chain }} />
-    </div>
+    </PaperContent>
   );
 };

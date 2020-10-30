@@ -59,6 +59,8 @@ export const PaperHeader = styled("header")({
   minHeight: 48,
   paddingTop: 16,
   paddingBottom: 16,
+  paddingLeft: PADDING,
+  paddingRight: PADDING,
 });
 
 export const PaperNav = styled("div")({

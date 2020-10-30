@@ -1,11 +1,11 @@
 import React, { FunctionComponent, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { FlowTabs } from '../../features/flow/components/FlowTabs'
-import { $flow, setFlowKind } from '../../features/flow/flowSlice'
-import { FlowStep } from '../../features/flow/flowTypes'
-import { useMarketDataRates } from '../../features/marketData/marketDataHooks'
-import { MintFeesStep } from './mint/MintFeesStep'
-import { MintInitialStep } from './mint/MintInitialStep'
+import { FlowTabs } from '../flow/components/FlowTabs'
+import { $flow, setFlowKind } from '../flow/flowSlice'
+import { FlowStep } from '../flow/flowTypes'
+import { useMarketDataRates } from '../marketData/marketDataHooks'
+import { MintFeesStep } from './steps/MintFeesStep'
+import { MintInitialStep } from './steps/MintInitialStep'
 
 export const MintFlow: FunctionComponent = () => {
   console.log("rerendering");
@@ -13,7 +13,7 @@ export const MintFlow: FunctionComponent = () => {
   const { kind } = useSelector($flow);
   const { step } = useSelector($flow);
   const dispatch = useDispatch();
-  const handleTabChange = useCallback(
+  const handleFlowKindChange = useCallback(
     (kind) => {
       //TODO: check if flow is in progress. Inform with e.g. useConfirm()
       dispatch(setFlowKind(kind));
@@ -24,7 +24,7 @@ export const MintFlow: FunctionComponent = () => {
   return (
     <>
       {step === FlowStep.INITIAL && (
-        <FlowTabs value={kind} onKindChange={handleTabChange} />
+        <FlowTabs value={kind} onKindChange={handleFlowKindChange} />
       )}
       {step === FlowStep.INITIAL && <MintInitialStep />}
       {step === FlowStep.FEES && <MintFeesStep />}
