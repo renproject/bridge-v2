@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { FlowStep, FlowKind } from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
+import { FlowKind, FlowStep } from "./flowTypes";
 
 type FlowState = {
   kind: FlowKind;
@@ -25,7 +25,7 @@ const slice = createSlice({
   },
 });
 
-export const { setFlowStep } = slice.actions;
+export const { setFlowKind, setFlowStep } = slice.actions;
 
 export const flowReducer = slice.reducer;
 

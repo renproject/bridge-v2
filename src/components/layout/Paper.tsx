@@ -5,27 +5,23 @@ import React, { FunctionComponent } from "react";
 
 type BridgePaperProps = PaperContentProps & PaperProps;
 
-const useBridgePaperStyles = makeStyles({
-  root: {
-    maxWidth: 400,
-    margin: "0 auto",
-  },
+export const BridgePurePaper = styled(Paper)({
+  maxWidth: 400,
+  margin: "0 auto",
 });
+
 export const BridgePaper: FunctionComponent<BridgePaperProps> = ({
   topPadding,
   bottomPadding,
   children,
   ...rest
-}) => {
-  const styles = useBridgePaperStyles();
-  return (
-    <Paper className={styles.root} {...rest}>
-      <PaperContent topPadding={topPadding} bottomPadding={bottomPadding}>
-        {children}
-      </PaperContent>
-    </Paper>
-  );
-};
+}) => (
+  <BridgePurePaper {...rest}>
+    <PaperContent topPadding={topPadding} bottomPadding={bottomPadding}>
+      {children}
+    </PaperContent>
+  </BridgePurePaper>
+);
 
 const PADDING = 20;
 const usePaperContentStyles = makeStyles({

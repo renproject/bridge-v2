@@ -18,8 +18,8 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { FlowStep } from "../../../components/utils/types";
 import { setFlowStep } from "../../../features/flow/flowSlice";
+import { FlowStep } from '../../../features/flow/flowTypes'
 import { $marketData } from "../../../features/marketData/marketDataSlice";
 import { findExchangeRate } from "../../../features/marketData/marketDataUtils";
 import {

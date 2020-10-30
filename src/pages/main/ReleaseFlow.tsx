@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { FlowStep } from "../../components/utils/types";
+import { FlowStep } from '../../features/flow/flowTypes'
 import { ReleaseInitialStep } from "./release/ReleaseInitialStep";
 
 const step: FlowStep = FlowStep.INITIAL;
