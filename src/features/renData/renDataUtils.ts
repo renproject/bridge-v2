@@ -8,6 +8,12 @@ export type BridgeFee = Fees & {
 
 export type BridgeFees = Array<BridgeFee>;
 
+export type CalculatedFee = {
+  renVMFee: number;
+  networkFee: number;
+  conversionTotal: number;
+};
+
 const mapToFeesData: (fees: Fees) => BridgeFees = (fees) => {
   return Object.entries(fees).map(([symbol, entry]) => ({
     symbol: toCurrencySymbol(symbol),

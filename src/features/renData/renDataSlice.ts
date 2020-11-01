@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../store/rootReducer";
-import { BridgeFees } from "./renDataUtils";
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from '../../store/rootReducer'
+import { BridgeFees } from './renDataUtils'
 
 type RenDataState = { fees: BridgeFees };
 
@@ -22,4 +22,5 @@ export const { setFees } = slice.actions;
 
 export const renDataReducer = slice.reducer;
 
-export const $fees = (state: RootState) => state.renData;
+export const $renData = (state: RootState) => state.renData;
+export const $fees = createSelector($renData, (renData) => renData.fees);

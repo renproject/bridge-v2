@@ -22,19 +22,21 @@ import {
   supportedMintCurrencies,
   supportedMintDestinationChains,
 } from "../../../providers/multiwallet/multiwalletUtils";
+import { numberFormatOptions } from "../../../utils/formatters";
 import { getCurrencyShortLabel } from "../../../utils/labels";
 import { setFlowStep } from "../../flow/flowSlice";
 import { FlowStep } from "../../flow/flowTypes";
 import { $marketData } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { $wallet, setChain } from "../../wallet/walletSlice";
-import { $mint, setMintAmount, setMintCurrency } from "../mintSlice";
+import { $mint, $mintFees, setMintAmount, setMintCurrency } from "../mintSlice";
 
 export const MintInitialStep: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const { rates } = useSelector($marketData);
+  const { conversionTotal } = useSelector($mintFees);
 
   const handleAmountChange = useCallback(
     (value) => {
@@ -59,13 +61,12 @@ export const MintInitialStep: FunctionComponent = () => {
     dispatch(setFlowStep(FlowStep.FEES));
   }, [dispatch, amount]);
 
-  const usd2CurrencyRate = findExchangeRate(rates, currency);
-  const mintedValue = amount * 0.999; // todo fees here
+  const usd2CurrencyRate = findExchangeRate(rates, currency); // TODO: CRIT: investigate what to do with nonexistent currencies
   const mintedCurrencySymbol = getMintedCurrencySymbol(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
   const currencyUsdValue = amount * usd2CurrencyRate;
   // const usd2MintedCurrencyRate =
-  //   findExchangeRate(rates, mintedCurrencySymbol) || usd2CurrencyRate; // TODO: CRIT: investigate what to do with nonexistent currencies
+  //   findExchangeRate(rates, mintedCurrencySymbol) || usd2CurrencyRate;
   // const mintedCurrencyUsdValue = mintedValue * usd2MintedCurrencyRate;
   // const mintedValueEquivalentLabel = ` = ${toUsdFormat(
   //   mintedCurrencyUsdValue
@@ -111,11 +112,9 @@ export const MintInitialStep: FunctionComponent = () => {
           label="Receiving:"
           value={
             <NumberFormat
-              value={mintedValue}
+              value={conversionTotal}
               displayType="text"
-              thousandSeparator={true}
-              allowLeadingZeros={true}
-              allowNegative={false}
+              {...numberFormatOptions}
               suffix={` ${mintedCurrency}`}
             />
           }

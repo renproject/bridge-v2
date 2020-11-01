@@ -1,9 +1,9 @@
-import { makeStyles, styled } from '@material-ui/core/styles'
-import classNames from 'classnames'
-import React, { FunctionComponent, useRef } from 'react'
-import NumberFormat, { NumberFormatValues } from 'react-number-format'
-import { generatePlaceholderStyles } from '../../theme/themeUtils'
-import { toUsdFormat } from '../../utils/formatters'
+import { makeStyles, styled } from "@material-ui/core/styles";
+import classNames from "classnames";
+import React, { FunctionComponent, useRef } from "react";
+import NumberFormat, { NumberFormatValues } from "react-number-format";
+import { generatePlaceholderStyles } from "../../theme/themeUtils";
+import { numberFormatOptions, toUsdFormat } from "../../utils/formatters";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -95,9 +95,7 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
       <NumberFormat
         value={val}
         ref={inputRef}
-        thousandSeparator={true}
-        allowLeadingZeros={true}
-        allowNegative={false}
+        {...numberFormatOptions}
         suffix={" " + symbol}
         onValueChange={handleChange}
         getInputRef={(input: any) => {
