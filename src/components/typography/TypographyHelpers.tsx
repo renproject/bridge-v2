@@ -93,18 +93,20 @@ const useReceivingAssetInfoStyle = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "flex-end",
   },
-  value: {},
+  value: {
+    fontSize: 14,
+  },
   valueEquivalent: {
     fontSize: 13,
     color: theme.palette.grey[500],
   },
 }));
 
-type ReceivingAssetInfoProps = LabelWithValueProps & {
+type AssetInfoProps = LabelWithValueProps & {
   Icon: ReactNode;
 };
 
-export const AssetInfo: FunctionComponent<ReceivingAssetInfoProps> = ({
+export const AssetInfo: FunctionComponent<AssetInfoProps> = ({
   label,
   value,
   valueEquivalent,

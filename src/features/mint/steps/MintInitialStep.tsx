@@ -1,34 +1,25 @@
-import { Divider } from "@material-ui/core";
-import React, { FunctionComponent, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import {
-  AssetDropdown,
-  AssetDropdownWrapper,
-} from "../../../components/dropdowns/AssetDropdown";
-import { BitcoinIcon } from "../../../components/icons/RenIcons";
-import {
-  BigCurrencyInput,
-  BigCurrencyInputWrapper,
-} from "../../../components/inputs/BigCurrencyInput";
-import { AssetInfo } from "../../../components/typography/TypographyHelpers";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
-import { $marketData } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { $mint, setMintAmount, setMintCurrency } from "../mintSlice";
-import { $wallet, setChain } from "../../wallet/walletSlice";
+import { Divider } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
+import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
+import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
+import { PaperContent } from '../../../components/layout/Paper'
+import { AssetInfo } from '../../../components/typography/TypographyHelpers'
 import {
   getMintedCurrencySymbol,
   supportedMintCurrencies,
   supportedMintDestinationChains,
-} from "../../../providers/multiwallet/multiwalletUtils";
-import { toUsdFormat } from "../../../utils/formatters";
-import { getCurrencyShortLabel } from "../../../utils/labels";
-import { PaperContent } from "../../../components/layout/Paper";
+} from '../../../providers/multiwallet/multiwalletUtils'
+import { toUsdFormat } from '../../../utils/formatters'
+import { getCurrencyShortLabel } from '../../../utils/labels'
+import { setFlowStep } from '../../flow/flowSlice'
+import { FlowStep } from '../../flow/flowTypes'
+import { $marketData } from '../../marketData/marketDataSlice'
+import { findExchangeRate } from '../../marketData/marketDataUtils'
+import { $wallet, setChain } from '../../wallet/walletSlice'
+import { $mint, setMintAmount, setMintCurrency } from '../mintSlice'
 
 export const MintInitialStep: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -74,6 +65,9 @@ export const MintInitialStep: FunctionComponent = () => {
 
   const nextEnabled = amount !== 0;
 
+  const MintedCurrencyIcon = useMemo(() => getCurrencyGreyIcon(mintedCurrencySymbol), [
+    mintedCurrencySymbol,
+  ]);
   return (
     <>
       <PaperContent bottomPadding>
@@ -108,7 +102,7 @@ export const MintInitialStep: FunctionComponent = () => {
           label="Receiving:"
           value={mintedValueLabel}
           valueEquivalent={mintedValueEquivalentLabel}
-          Icon={<BitcoinIcon fontSize="inherit" />}
+          Icon={<MintedCurrencyIcon fontSize="inherit" />}
         />
         <ActionButtonWrapper>
           <ActionButton onClick={handleNextStep} disabled={!nextEnabled}>

@@ -13,6 +13,7 @@ export type LabelData = {
 };
 
 export const currencyLabels: Record<CurrencyType, LabelData> = {
+  // TODO create more generic currencyData
   [CurrencySymbols.BTC]: {
     short: "BTC",
     full: "Bitcoin",

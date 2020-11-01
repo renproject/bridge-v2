@@ -1,23 +1,11 @@
-import { Box, Divider, IconButton, Typography } from "@material-ui/core";
-import React, { FunctionComponent, useCallback } from "react";
-import { useDispatch } from "react-redux";
-import {
-  BackArrowIcon,
-  BitcoinInCircleIcon,
-} from "../../../components/icons/RenIcons";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import {
-  AssetInfo,
-  LabelWithValue,
-} from "../../../components/typography/TypographyHelpers";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
+import { Box, Divider, IconButton, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+import { BackArrowIcon, BtcFullIcon, } from '../../../components/icons/RenIcons'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { AssetInfo, LabelWithValue, } from '../../../components/typography/TypographyHelpers'
+import { setFlowStep } from '../../flow/flowSlice'
+import { FlowStep } from '../../flow/flowTypes'
 
 export const MintFeesStep: FunctionComponent = () => {
   //TODO: add Paper Header with actions here
@@ -81,7 +69,7 @@ export const MintFeesStep: FunctionComponent = () => {
           label="Receiving:"
           value="0.31256113 BTC"
           valueEquivalent=" = $3,612.80 USD"
-          Icon={<BitcoinInCircleIcon fontSize="inherit" />}
+          Icon={<BtcFullIcon fontSize="inherit" />}
         />
       </PaperContent>
     </>
