@@ -1,25 +1,34 @@
-import { Divider } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { AssetInfo } from '../../../components/typography/TypographyHelpers'
+import { Divider } from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useMemo } from "react";
+import NumberFormat from "react-number-format";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { AssetInfo } from "../../../components/typography/TypographyHelpers";
 import {
   getMintedCurrencySymbol,
   supportedMintCurrencies,
   supportedMintDestinationChains,
-} from '../../../providers/multiwallet/multiwalletUtils'
-import { toUsdFormat } from '../../../utils/formatters'
-import { getCurrencyShortLabel } from '../../../utils/labels'
-import { setFlowStep } from '../../flow/flowSlice'
-import { FlowStep } from '../../flow/flowTypes'
-import { $marketData } from '../../marketData/marketDataSlice'
-import { findExchangeRate } from '../../marketData/marketDataUtils'
-import { $wallet, setChain } from '../../wallet/walletSlice'
-import { $mint, setMintAmount, setMintCurrency } from '../mintSlice'
+} from "../../../providers/multiwallet/multiwalletUtils";
+import { getCurrencyShortLabel } from "../../../utils/labels";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import { $marketData } from "../../marketData/marketDataSlice";
+import { findExchangeRate } from "../../marketData/marketDataUtils";
+import { $wallet, setChain } from "../../wallet/walletSlice";
+import { $mint, setMintAmount, setMintCurrency } from "../mintSlice";
 
 export const MintInitialStep: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -51,23 +60,23 @@ export const MintInitialStep: FunctionComponent = () => {
   }, [dispatch, amount]);
 
   const usd2CurrencyRate = findExchangeRate(rates, currency);
-  const mintedValue = amount * 0.999;
+  const mintedValue = amount * 0.999; // todo fees here
   const mintedCurrencySymbol = getMintedCurrencySymbol(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
-  const usd2MintedCurrencyRate =
-    findExchangeRate(rates, mintedCurrencySymbol) || usd2CurrencyRate; // TODO: investigate what to do with nonexistent currencies
   const currencyUsdValue = amount * usd2CurrencyRate;
-  const mintedCurrencyUsdValue = mintedValue * usd2MintedCurrencyRate;
-  const mintedValueLabel = `${mintedValue} ${mintedCurrency}`;
-  const mintedValueEquivalentLabel = ` = ${toUsdFormat(
-    mintedCurrencyUsdValue
-  )} USD`;
+  // const usd2MintedCurrencyRate =
+  //   findExchangeRate(rates, mintedCurrencySymbol) || usd2CurrencyRate; // TODO: CRIT: investigate what to do with nonexistent currencies
+  // const mintedCurrencyUsdValue = mintedValue * usd2MintedCurrencyRate;
+  // const mintedValueEquivalentLabel = ` = ${toUsdFormat(
+  //   mintedCurrencyUsdValue
+  // )} USD`;
 
-  const nextEnabled = amount !== 0;
+  const nextEnabled = !!amount;
 
-  const MintedCurrencyIcon = useMemo(() => getCurrencyGreyIcon(mintedCurrencySymbol), [
-    mintedCurrencySymbol,
-  ]);
+  const MintedCurrencyIcon = useMemo(
+    () => getCurrencyGreyIcon(mintedCurrencySymbol),
+    [mintedCurrencySymbol]
+  );
   return (
     <>
       <PaperContent bottomPadding>
@@ -100,8 +109,16 @@ export const MintInitialStep: FunctionComponent = () => {
       <PaperContent topPadding bottomPadding>
         <AssetInfo
           label="Receiving:"
-          value={mintedValueLabel}
-          valueEquivalent={mintedValueEquivalentLabel}
+          value={
+            <NumberFormat
+              value={mintedValue}
+              displayType="text"
+              thousandSeparator={true}
+              allowLeadingZeros={true}
+              allowNegative={false}
+              suffix={` ${mintedCurrency}`}
+            />
+          }
           Icon={<MintedCurrencyIcon fontSize="inherit" />}
         />
         <ActionButtonWrapper>
