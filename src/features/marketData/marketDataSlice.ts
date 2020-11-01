@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store/rootReducer";
 import { ExchangeRate } from "./marketDataUtils";
 
@@ -25,3 +25,8 @@ export const { setMarketDataRates } = slice.actions;
 export const marketDataReducer = slice.reducer;
 
 export const $marketData = (state: RootState) => state.marketData;
+
+export const $rates = createSelector(
+  $marketData,
+  (marketData) => marketData.rates
+);

@@ -38,35 +38,7 @@ export const $mint = (state: RootState) => state.mint;
 export const $mintCurrency = createSelector($mint, (mint) => mint.currency);
 export const $mintAmount = createSelector($mint, (mint) => mint.amount);
 
-// /**
-//  * Calculate Fees for a Transaction
-//  */
-// export const gatherFeeData = async function () {
-//   const amount = 100;
-//   const selectedAsset = store.get("selectedAsset");
-//   const selectedDirection = store.get("convert.selectedDirection");
-//   const fixedFeeKey = selectedDirection ? "release" : "lock";
-//   const dynamicFeeKey = selectedDirection ? "burn" : "mint";
-//
-//   if (!amount) {
-//     return;
-//   }
-//
-//   const renVMFee = Number(
-//     Number(amount) * Number(fees[selectedAsset].ethereum[dynamicFeeKey] / 10000)
-//   ).toFixed(6);
-//   const networkFee = Number(fees[selectedAsset][fixedFeeKey] / 10 ** 8);
-//   const total =
-//     Number(amount - Number(renVMFee) - networkFee) > 0
-//       ? Number(amount - Number(renVMFee) - networkFee).toFixed(6)
-//       : "0.000000";
-//
-//   store.set("convert.renVMFee", renVMFee);
-//   store.set("convert.networkFee", networkFee);
-//   store.set("convert.conversionTotal", total);
-// };
-//
-
+// TODO: probably should be calculated based on selected flow
 export const $mintFees = createSelector(
   [$mintAmount, $mintCurrency, $fees],
   (amount, currency, fees) => {

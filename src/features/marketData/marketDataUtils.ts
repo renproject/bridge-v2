@@ -68,7 +68,6 @@ export const fetchMarketDataRates = async () => {
     .then(mapToExchangeData);
 };
 
-// TODO: create selector for this
 export const findExchangeRate = (
   exchangeRates: Array<ExchangeRate>,
   base: CurrencyType,

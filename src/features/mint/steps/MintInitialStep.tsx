@@ -64,7 +64,7 @@ export const MintInitialStep: FunctionComponent = () => {
   const usd2CurrencyRate = findExchangeRate(rates, currency); // TODO: CRIT: investigate what to do with nonexistent currencies
   const mintedCurrencySymbol = getMintedCurrencySymbol(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
-  const currencyUsdValue = amount * usd2CurrencyRate;
+  const currencyUsdValue = amount * usd2CurrencyRate; // TODO temporary until CRIT resolved
   // const usd2MintedCurrencyRate =
   //   findExchangeRate(rates, mintedCurrencySymbol) || usd2CurrencyRate;
   // const mintedCurrencyUsdValue = mintedValue * usd2MintedCurrencyRate;
