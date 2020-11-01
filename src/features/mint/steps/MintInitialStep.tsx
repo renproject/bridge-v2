@@ -1,3 +1,4 @@
+import { Divider } from "@material-ui/core";
 import React, { FunctionComponent, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,11 +14,7 @@ import {
   BigCurrencyInput,
   BigCurrencyInputWrapper,
 } from "../../../components/inputs/BigCurrencyInput";
-import {
-  AssetInfo,
-  SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
+import { AssetInfo } from "../../../components/typography/TypographyHelpers";
 import { setFlowStep } from "../../flow/flowSlice";
 import { FlowStep } from "../../flow/flowTypes";
 import { $marketData } from "../../marketData/marketDataSlice";
@@ -78,44 +75,47 @@ export const MintInitialStep: FunctionComponent = () => {
   const nextEnabled = amount !== 0;
 
   return (
-    <PaperContent>
-      <BigCurrencyInputWrapper>
-        <BigCurrencyInput
-          onChange={handleAmountChange}
-          symbol={currency}
-          usdValue={currencyUsdValue}
-          value={amount}
+    <>
+      <PaperContent bottomPadding>
+        <BigCurrencyInputWrapper>
+          <BigCurrencyInput
+            onChange={handleAmountChange}
+            symbol={currency}
+            usdValue={currencyUsdValue}
+            value={amount}
+          />
+        </BigCurrencyInputWrapper>
+        <AssetDropdownWrapper>
+          <AssetDropdown
+            mode="send"
+            available={supportedMintCurrencies}
+            value={currency}
+            onChange={handleCurrencyChange}
+          />
+        </AssetDropdownWrapper>
+        <AssetDropdownWrapper>
+          <AssetDropdown
+            mode="chain"
+            available={supportedMintDestinationChains}
+            value={chain}
+            onChange={handleChainChange}
+          />
+        </AssetDropdownWrapper>
+      </PaperContent>
+      <Divider />
+      <PaperContent topPadding bottomPadding>
+        <AssetInfo
+          label="Receiving:"
+          value={mintedValueLabel}
+          valueEquivalent={mintedValueEquivalentLabel}
+          Icon={<BitcoinIcon fontSize="inherit" />}
         />
-      </BigCurrencyInputWrapper>
-      <AssetDropdownWrapper>
-        <AssetDropdown
-          mode="send"
-          available={supportedMintCurrencies}
-          value={currency}
-          onChange={handleCurrencyChange}
-        />
-      </AssetDropdownWrapper>
-      <AssetDropdownWrapper>
-        <AssetDropdown
-          mode="chain"
-          available={supportedMintDestinationChains}
-          value={chain}
-          onChange={handleChainChange}
-        />
-      </AssetDropdownWrapper>
-      <SpacedDivider />
-      <AssetInfo
-        label="Receiving:"
-        value={mintedValueLabel}
-        valueEquivalent={mintedValueEquivalentLabel}
-        Icon={<BitcoinIcon fontSize="inherit" />}
-      />
-      <ActionButtonWrapper>
-        <ActionButton onClick={handleNextStep} disabled={!nextEnabled}>
-          Next
-        </ActionButton>
-      </ActionButtonWrapper>
-      <Debug it={{ amount, currency, chain }} />
-    </PaperContent>
+        <ActionButtonWrapper>
+          <ActionButton onClick={handleNextStep} disabled={!nextEnabled}>
+            Next
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </>
   );
 };
