@@ -59,17 +59,16 @@ export const $mintFees = createSelector(
     const currencyFee = fees.find((feeEntry) => feeEntry.symbol === currency);
     const feeData: CalculatedFee = {
       renVMFee: 0,
+      renVMFeeAmount: 0,
       networkFee: 0,
       conversionTotal: amount,
     };
     if (currencyFee) {
       feeData.networkFee = Number(currencyFee.lock) / 10 ** 8;
-      feeData.renVMFee = Number(
-        Number(amount) * Number(Number(currencyFee.ethereum.mint) / 10000)
-      );
+      feeData.renVMFee = Number(currencyFee.ethereum.mint) / 10000; // percent value
+      feeData.renVMFeeAmount = Number(Number(amount) * feeData.renVMFee);
       feeData.conversionTotal =
-        Number(Number(amount) - Number(feeData.renVMFee) - feeData.networkFee) >
-        0
+        Number(Number(amount) - feeData.renVMFeeAmount - feeData.networkFee) > 0
           ? Number(amount - Number(feeData.renVMFee) - feeData.networkFee)
           : 0;
     }

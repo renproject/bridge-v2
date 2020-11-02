@@ -1,7 +1,7 @@
-import { Divider, Typography } from "@material-ui/core";
-import { makeStyles, styled } from "@material-ui/core/styles";
-import React, { FunctionComponent, ReactNode } from "react";
-import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
+import { Divider, Typography } from '@material-ui/core'
+import { makeStyles, styled } from '@material-ui/core/styles'
+import React, { FunctionComponent, ReactNode } from 'react'
+import { TooltipWithIcon } from '../tooltips/TooltipWithIcon'
 
 type LabelWithValueProps = {
   label: string;
@@ -139,3 +139,28 @@ export const SpacedDivider = styled(Divider)({
   marginTop: 20,
   marginBottom: 20,
 });
+
+export const BigAssetAmountWrapper = styled("div")({
+  marginBottom: 40,
+});
+
+const useBigAssetAmountStyles = makeStyles({
+  root: {
+    fontSize: 32,
+  },
+});
+
+type BigAssetAmountProps = {
+  value: number | string | ReactNode;
+};
+
+export const BigAssetAmount: FunctionComponent<BigAssetAmountProps> = ({
+  value,
+}) => {
+  const styles = useBigAssetAmountStyles();
+  return (
+    <Typography className={styles.root} variant="h2" align="center">
+      {value}
+    </Typography>
+  );
+};

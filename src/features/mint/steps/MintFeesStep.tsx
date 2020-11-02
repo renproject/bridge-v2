@@ -1,54 +1,45 @@
-import {
-  Box,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  IconButton,
-  Typography,
-} from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { Checkbox, Divider, FormControlLabel, IconButton, Typography, } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { CheckboxWrapper } from '../../../components/inputs/InputHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
 import {
   AssetInfo,
+  BigAssetAmount,
+  BigAssetAmountWrapper,
   LabelWithValue,
-} from "../../../components/typography/TypographyHelpers";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { getMintedCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
-import { getCurrencyShortLabel } from "../../../utils/labels";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import {
-  $ethUsdExchangeRate,
-  $gasPrices,
-} from "../../marketData/marketDataSlice";
-import {
-  $mint,
-  $mintCurrencyUsdAmount,
-  $mintCurrencyUsdRate,
-  $mintFees,
-} from "../mintSlice";
+  SpacedDivider,
+} from '../../../components/typography/TypographyHelpers'
+import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
+import { getMintedCurrencySymbol } from '../../../providers/multiwallet/multiwalletUtils'
+import { fromGwei, toPercent } from '../../../utils/converters'
+import { getCurrencyShortLabel } from '../../../utils/labels'
+import { setFlowStep } from '../../flow/flowSlice'
+import { FlowStep } from '../../flow/flowTypes'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { $ethUsdExchangeRate, $gasPrices, } from '../../marketData/marketDataSlice'
+import { $mint, $mintCurrencyUsdAmount, $mintCurrencyUsdRate, $mintFees, } from '../mintSlice'
+
+const getTooltips = (mintFee: number, releaseFee: number) => ({
+  sending: "The amount and asset you’re sending before fees are applied.",
+  to: "The blockchain you’re sending the asset to.",
+  renVmFee: `RenVM takes a ${toPercent(
+    mintFee
+  )}% fee per mint transaction and ${toPercent(
+    releaseFee
+  )}% per burn transaction. This is shared evenly between all active nodes in the decentralized network.`,
+  bitcoinMinerFee:
+    "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
+  estimatedEthFee:
+    "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
+  acknowledge:
+    "Minting an asset on Ethereum requires you to submit a transaction. It will cost you a small amount of ETH.",
+});
 
 export const MintFeesStep: FunctionComponent = () => {
   useGasPrices();
@@ -57,10 +48,11 @@ export const MintFeesStep: FunctionComponent = () => {
   const currencyUsdRate = useSelector($mintCurrencyUsdRate);
   const ethUsdRate = useSelector($ethUsdExchangeRate);
   const amountUsd = useSelector($mintCurrencyUsdAmount);
-  const { renVMFee, conversionTotal, networkFee } = useSelector($mintFees);
+  const { renVMFee, renVMFeeAmount, conversionTotal, networkFee } = useSelector(
+    $mintFees
+  );
   const gasPrices = useSelector($gasPrices);
   const renVMFeeAmountUsd = amountUsd * renVMFee;
-  const renVMFeePercents = renVMFee * 100;
   const mintedCurrencySymbol = getMintedCurrencySymbol(currency); // selector?
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
   const mintedCurrencyAmountUsd = conversionTotal * currencyUsdRate;
@@ -72,6 +64,7 @@ export const MintFeesStep: FunctionComponent = () => {
     () => getCurrencyGreyIcon(mintedCurrencySymbol),
     [mintedCurrencySymbol]
   );
+  const tooltips = useMemo(() => getTooltips(renVMFee, 0.001), [renVMFee]); // TODO: CRIT: add release fee from selectors
 
   const [ackChecked, setAckChecked] = useState(false);
 
@@ -83,9 +76,12 @@ export const MintFeesStep: FunctionComponent = () => {
   }, []);
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
-  const targetNetworkFeeUsd = (feeInGwei / 10 ** 9) * ethUsdRate;
+  const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
   const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
-  console.log(targetNetworkFeeUsd);
+
+  const handleConfirm = useCallback(() => {
+    console.log("implement");
+  }, []);
 
   return (
     <>
@@ -99,11 +95,17 @@ export const MintFeesStep: FunctionComponent = () => {
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
+        <BigAssetAmountWrapper>
+          <BigAssetAmount
+            value={<NumberFormatText value={amount} spacedSuffix={currency} />}
+          />
+        </BigAssetAmountWrapper>
         <Typography variant="body1" gutterBottom>
           Details
         </Typography>
         <LabelWithValue
           label="Sending"
+          labelTooltip={tooltips.sending}
           value={<NumberFormatText value={amount} spacedSuffix={currency} />}
           valueEquivalent={
             <NumberFormatText
@@ -114,17 +116,21 @@ export const MintFeesStep: FunctionComponent = () => {
             />
           }
         />
-        <LabelWithValue label="To" value={targetNetworkLabel} />
-        <Box mb={1}>
-          <Divider />
-        </Box>
+        <LabelWithValue
+          label="To"
+          labelTooltip={tooltips.to}
+          value={targetNetworkLabel}
+        />
+        <SpacedDivider />
         <Typography variant="body1" gutterBottom>
           Fees
         </Typography>
         <LabelWithValue
           label="RenVM Fee"
-          labelTooltip="Explaining RenVM Fee"
-          value={<NumberFormatText value={renVMFeePercents} suffix="%" />}
+          labelTooltip={tooltips.renVmFee}
+          value={
+            <NumberFormatText value={renVMFeeAmount} spacedSuffix={currency} />
+          }
           valueEquivalent={
             <NumberFormatText
               value={renVMFeeAmountUsd}
@@ -136,7 +142,7 @@ export const MintFeesStep: FunctionComponent = () => {
         />
         <LabelWithValue
           label="Bitcoin Miner Fee"
-          labelTooltip="Explaining Bitcoin Miner Fee"
+          labelTooltip={tooltips.bitcoinMinerFee}
           value={
             <NumberFormatText value={networkFee} spacedSuffix={currency} />
           }
@@ -151,7 +157,7 @@ export const MintFeesStep: FunctionComponent = () => {
         />
         <LabelWithValue
           label="Esti. Ethereum Fee"
-          labelTooltip="Explaining Esti. Ethereum Fee"
+          labelTooltip={tooltips.estimatedEthFee}
           value={targetNetworkFeeLabel}
           valueEquivalent={
             <NumberFormatText
@@ -166,7 +172,7 @@ export const MintFeesStep: FunctionComponent = () => {
       <Divider />
       <PaperContent topPadding bottomPadding>
         <AssetInfo
-          label="Receiving:"
+          label="Receiving"
           value={
             <NumberFormatText
               value={conversionTotal}
@@ -198,13 +204,13 @@ export const MintFeesStep: FunctionComponent = () => {
             label={
               <Typography variant="caption">
                 I acknowledge this transaction requires ETH{" "}
-                <TooltipWithIcon title="Explanation" />
+                <TooltipWithIcon title={tooltips.acknowledge} />
               </Typography>
             }
           />
         </CheckboxWrapper>
         <ActionButtonWrapper>
-          <ActionButton>Next</ActionButton>
+          <ActionButton onClick={handleConfirm}>Next</ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
     </>

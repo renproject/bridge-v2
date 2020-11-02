@@ -10,6 +10,7 @@ export type BridgeFees = Array<BridgeFee>;
 
 export type CalculatedFee = {
   renVMFee: number;
+  renVMFeeAmount: number;
   networkFee: number;
   conversionTotal: number;
 };
