@@ -18,11 +18,12 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { env } from "../../constants/environmentVariables";
+import { $chain } from "../../features/wallet/walletSlice";
 import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
 import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
-import { useStore } from "../../providers/Store";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Debug } from "../utils/Debug";
@@ -109,8 +110,8 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   variant,
   children,
 }) => {
-  const [{ chain }] = useStore();
   const styles = useStyles();
+  const chain = useSelector($chain);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const handleMobileMenuClose = useCallback(() => {
     setMobileMenuOpen(false);

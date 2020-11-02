@@ -1,28 +1,10 @@
-import {
-  Box,
-  Button,
-  Fade,
-  Grow,
-  IconButton,
-  Typography,
-  Zoom,
-} from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useState } from "react";
-import {
-  ToggleIconButton,
-  TransactionDetailsButton,
-} from "../../buttons/Buttons";
-import { BackArrowIcon } from "../../icons/RenIcons";
-import {
-  BridgePaper,
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../layout/Paper";
-import { Link } from "../../links/Links";
-import { Section } from "../PresentationHelpers";
+import { Box, Button, Fade, Grow, IconButton, Typography, Zoom, } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useState } from 'react'
+import { ToggleIconButton, TransactionDetailsButton, } from '../../buttons/Buttons'
+import { BackArrowIcon } from '../../icons/RenIcons'
+import { BridgePurePaper, PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../layout/Paper'
+import { Link } from '../../links/Links'
+import { Section } from '../PresentationHelpers'
 
 const SLIDES = 3;
 export const ExampleContent: FunctionComponent = () => {
@@ -92,7 +74,7 @@ export const PapersSection: FunctionComponent = () => {
       <Button onClick={handleNext}>Next</Button>
       {current === 0 && (
         <Zoom in={current === 0}>
-          <BridgePaper>
+          <BridgePurePaper>
             <PaperHeader>
               <PaperNav />
               <PaperTitle>Fees</PaperTitle>
@@ -110,12 +92,12 @@ export const PapersSection: FunctionComponent = () => {
               </PaperActions>
             </PaperHeader>
             <ExampleContent />
-          </BridgePaper>
+          </BridgePurePaper>
         </Zoom>
       )}
       {current === 1 && (
         <Fade in={current === 1}>
-          <BridgePaper>
+          <BridgePurePaper>
             <PaperHeader>
               <PaperNav>
                 <IconButton onClick={handlePrev}>
@@ -137,19 +119,19 @@ export const PapersSection: FunctionComponent = () => {
               </PaperActions>
             </PaperHeader>
             <ExampleContent />
-          </BridgePaper>
+          </BridgePurePaper>
         </Fade>
       )}
       {current === 2 && (
         <Grow in={current === 2}>
-          <BridgePaper>
+          <BridgePurePaper>
             <PaperHeader>
               <PaperNav />
               <PaperTitle />
-              <PaperActions></PaperActions>
+              <PaperActions />
             </PaperHeader>
             <CurrencyReceivedContent />
-          </BridgePaper>
+          </BridgePurePaper>
         </Grow>
       )}
     </Section>

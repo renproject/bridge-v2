@@ -5,37 +5,38 @@ import React, { FunctionComponent } from "react";
 
 type BridgePaperProps = PaperContentProps & PaperProps;
 
-const useBridgePaperStyles = makeStyles({
-  root: {
-    maxWidth: 400,
-    margin: "0 auto",
-  },
+export const BridgePurePaper = styled(Paper)({
+  maxWidth: 400,
+  margin: "0 auto",
 });
+
 export const BridgePaper: FunctionComponent<BridgePaperProps> = ({
   topPadding,
-  bottomPadding,
+  bottomPadding = true,
   children,
   ...rest
-}) => {
-  const styles = useBridgePaperStyles();
-  return (
-    <Paper className={styles.root} {...rest}>
-      <PaperContent topPadding={topPadding} bottomPadding={bottomPadding}>
-        {children}
-      </PaperContent>
-    </Paper>
-  );
-};
+}) => (
+  <BridgePurePaper {...rest}>
+    <PaperContent topPadding={topPadding} bottomPadding={bottomPadding}>
+      {children}
+    </PaperContent>
+  </BridgePurePaper>
+);
 
-const PADDING = 20;
+const SMALL_PADDING = 10;
+// const PADDING = 20;
+const BIG_PADDING = 40;
+
 const usePaperContentStyles = makeStyles({
   root: {
-    paddingLeft: PADDING,
-    paddingRight: PADDING,
-    paddingBottom: PADDING,
+    paddingLeft: BIG_PADDING,
+    paddingRight: BIG_PADDING,
   },
   top: {
-    paddingTop: PADDING,
+    paddingTop: BIG_PADDING,
+  },
+  bottom: {
+    paddingBottom: BIG_PADDING,
   },
 });
 
@@ -52,6 +53,7 @@ export const PaperContent: FunctionComponent<PaperContentProps> = ({
   const styles = usePaperContentStyles();
   const className = classNames(styles.root, {
     [styles.top]: topPadding,
+    [styles.bottom]: bottomPadding,
   });
   return <div className={className}>{children}</div>;
 };
@@ -60,9 +62,10 @@ export const PaperHeader = styled("header")({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  minHeight: 48,
-  paddingTop: 16,
-  paddingBottom: 16,
+  paddingTop: SMALL_PADDING,
+  paddingBottom: SMALL_PADDING,
+  paddingLeft: SMALL_PADDING,
+  paddingRight: SMALL_PADDING,
 });
 
 export const PaperNav = styled("div")({

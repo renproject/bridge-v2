@@ -109,6 +109,11 @@ export const overrides = (palette: Palette): Overrides => {
         borderTopLeftRadius: 20,
       },
     },
+    MuiFormControlLabel: {
+      root: {
+        marginRight: 0
+      }
+    },
     MuiInputBase: {
       input: { ...generatePlaceholderStyles(grayPlaceholder) },
     },

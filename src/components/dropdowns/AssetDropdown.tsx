@@ -12,7 +12,7 @@ import {
   EthereumChainFullIcon,
   ZecFullIcon,
 } from '../icons/RenIcons'
-import { ChainSymbols, ChainType, CurrencySymbols, CurrencyType, } from '../utils/types'
+import { BridgeChain, ChainType, CurrencySymbols, CurrencyType, } from '../utils/types'
 
 type AssetConfig = {
   symbol: string;
@@ -50,13 +50,13 @@ const currencyOptions: Array<AssetConfig> = [
 
 const chainOptions: Array<AssetConfig> = [
   {
-    symbol: ChainSymbols.BNCC,
-    name: getChainFullLabel(ChainSymbols.BNCC),
+    symbol: BridgeChain.BNCC,
+    name: getChainFullLabel(BridgeChain.BNCC),
     Icon: BinanceChainFullIcon,
   },
   {
-    symbol: ChainSymbols.ETHC,
-    name: getChainFullLabel(ChainSymbols.ETHC),
+    symbol: BridgeChain.ETHC,
+    name: getChainFullLabel(BridgeChain.ETHC),
     Icon: EthereumChainFullIcon,
   },
 ];
