@@ -33,6 +33,7 @@ import {
   AssetInfo,
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
+import { GAS_FEE } from "../../../constants/constants";
 import { getMintedCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
 import { getCurrencyShortLabel } from "../../../utils/labels";
 import { setFlowStep } from "../../flow/flowSlice";
@@ -59,7 +60,6 @@ export const MintFeesStep: FunctionComponent = () => {
   const networkFeeUsd = networkFee * currencyUsdRate;
   // TODO: resolve dynamically
   const targetNetworkLabel = "Ethereum";
-  const targetNetworkFee = "200 GWEI";
   const targetNetworkFeeUsd = "$6.42";
 
   const MintedCurrencyIcon = useMemo(
@@ -75,6 +75,9 @@ export const MintFeesStep: FunctionComponent = () => {
   const handleAckCheckboxChange = useCallback((event) => {
     setAckChecked(event.target.checked);
   }, []);
+
+  const feeInGwei = GAS_FEE;
+  const targetNetworkFee = `${feeInGwei} Gwei`;
 
   return (
     <>

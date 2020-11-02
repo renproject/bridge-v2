@@ -1,4 +1,5 @@
 import { CurrencySymbols, CurrencyType } from "../../components/utils/types";
+import { env } from "../../constants/environmentVariables";
 import { getBandchain } from "../../services/bandchain";
 
 const mapToBandchainCurrencySymbol = (symbol: CurrencyType) => {
@@ -79,3 +80,21 @@ export const findExchangeRate = (
   );
   return rateEntry?.rate || 0;
 };
+
+export type AnyBlockGasPrices = {
+  health: boolean;
+  blockNumber: number;
+  blockTime: number;
+  slow: number;
+  standard: number;
+  fast: number;
+  instant: number;
+};
+
+export const fetchMarketDataGasPrices = () =>
+  fetch(env.GAS_FEE_ENDPOINT)
+    .then((response) => response.json())
+    .then((data : AnyBlockGasPrices) => {
+      console.log("gas", data);
+      return data;
+    });
