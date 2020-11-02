@@ -6,3 +6,5 @@ export const links = {
   SECURITY_AUDITS: "https://github.com/renproject/ren/wiki/Audits",
   TERMS_OF_SERVICE: "https://github.com/renproject/ren/wiki/Audits", //TODO: change when known
 };
+
+export const MINT_GAS_UNIT_COST = 68000;

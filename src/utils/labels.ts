@@ -54,6 +54,10 @@ export const currencyLabels: Record<CurrencyType, LabelData> = {
     short: "renDGB",
     full: "renDGB",
   },
+  [CurrencySymbols.ETH]: {
+    short: "ETH",
+    full: "Ether",
+  },
 };
 
 export const getCurrencyFullLabel = (symbol: CurrencyType) =>
