@@ -69,6 +69,7 @@ export const fetchMarketDataRates = async () => {
 };
 
 export const findExchangeRate = (
+  // TODO: CRIT: investigate what to do with nonexistent currencies
   exchangeRates: Array<ExchangeRate>,
   base: CurrencyType,
   quote = QUOTE

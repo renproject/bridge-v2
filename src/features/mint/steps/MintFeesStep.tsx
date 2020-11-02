@@ -1,18 +1,47 @@
 import { Box, Divider, IconButton, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback } from 'react'
-import { useDispatch } from 'react-redux'
-import { BackArrowIcon, BtcFullIcon, } from '../../../components/icons/RenIcons'
+import React, { FunctionComponent, useCallback, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
 import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
 import { AssetInfo, LabelWithValue, } from '../../../components/typography/TypographyHelpers'
+import { getMintedCurrencySymbol } from '../../../providers/multiwallet/multiwalletUtils'
+import { getCurrencyShortLabel } from '../../../utils/labels'
 import { setFlowStep } from '../../flow/flowSlice'
 import { FlowStep } from '../../flow/flowTypes'
+import { $mint, $mintCurrencyUsdAmount, $mintCurrencyUsdRate, $mintFees, } from '../mintSlice'
 
 export const MintFeesStep: FunctionComponent = () => {
   //TODO: add Paper Header with actions here
   const dispatch = useDispatch();
+  const { amount, currency } = useSelector($mint);
+  const currencyUsdRate = useSelector($mintCurrencyUsdRate);
+  const amountUsd = useSelector($mintCurrencyUsdAmount);
+  const { renVMFee, conversionTotal, networkFee } = useSelector($mintFees);
+  const renVMFeeAmountUsd = amountUsd * renVMFee;
+  const renVMFeePercents = renVMFee * 100;
+
   const handlePreviousStepClick = useCallback(() => {
     dispatch(setFlowStep(FlowStep.INITIAL));
   }, [dispatch]);
+
+  const mintedCurrencySymbol = getMintedCurrencySymbol(currency); // selector?
+  const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
+
+  const mintedCurrencyAmountUsd = conversionTotal * currencyUsdRate;
+
+  const MintedCurrencyIcon = useMemo(
+    () => getCurrencyGreyIcon(mintedCurrencySymbol),
+    [mintedCurrencySymbol]
+  );
+
+  const networkFeeUsd = networkFee * currencyUsdRate;
+
+  const targetNetworkFee = "200 GWEI";
+  const targetNetworkFeeUsd = "$6.42";
+
   return (
     <>
       <PaperHeader>
@@ -26,14 +55,21 @@ export const MintFeesStep: FunctionComponent = () => {
         <PaperTitle>Fees & Confirm</PaperTitle>
         <PaperActions />
       </PaperHeader>
-      <PaperContent>
+      <PaperContent bottomPadding>
         <Typography variant="body1" gutterBottom>
           Details
         </Typography>
         <LabelWithValue
           label="Sending"
-          value="1.0 BTC"
-          valueEquivalent="10,131.65 USD"
+          value={<NumberFormatText value={amount} spacedSuffix={currency} />}
+          valueEquivalent={
+            <NumberFormatText
+              value={amountUsd}
+              spacedSuffix="USD"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          }
         />
         <LabelWithValue label="To" value="Ethereum" />
         <Box mb={1}>
@@ -45,32 +81,63 @@ export const MintFeesStep: FunctionComponent = () => {
         <LabelWithValue
           label="RenVM Fee"
           labelTooltip="Explaining RenVM Fee"
-          value="0.10%"
-          valueEquivalent="$11.80"
+          value={<NumberFormatText value={renVMFeePercents} suffix="%" />}
+          valueEquivalent={
+            <NumberFormatText
+              value={renVMFeeAmountUsd}
+              prefix="$"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          }
         />
         <LabelWithValue
           label="Bitcoin Miner Fee"
           labelTooltip="Explaining Bitcoin Miner Fee"
-          value="0.0007 BTC"
-          valueEquivalent="$8.26"
+          value={
+            <NumberFormatText value={networkFee} spacedSuffix={currency} />
+          }
+          valueEquivalent={
+            <NumberFormatText
+              value={networkFeeUsd}
+              prefix="$"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          }
         />
         <LabelWithValue
           label="Esti. Ethereum Fee"
           labelTooltip="Explaining Esti. Ethereum Fee"
-          value="200 GWEI"
-          valueEquivalent="$6.42"
+          value={targetNetworkFee}
+          valueEquivalent={targetNetworkFeeUsd}
         />
-        <Divider />
-        <Box pt={2} />
       </PaperContent>
       <Divider />
-      <PaperContent>
+      <PaperContent topPadding bottomPadding>
         <AssetInfo
           label="Receiving:"
-          value="0.31256113 BTC"
-          valueEquivalent=" = $3,612.80 USD"
-          Icon={<BtcFullIcon fontSize="inherit" />}
+          value={
+            <NumberFormatText
+              value={conversionTotal}
+              spacedSuffix={mintedCurrency}
+              decimalScale={3}
+            />
+          }
+          valueEquivalent={
+            <NumberFormatText
+              prefix=" = $"
+              value={mintedCurrencyAmountUsd}
+              spacedSuffix="USD"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          }
+          Icon={<MintedCurrencyIcon fontSize="inherit" />}
         />
+        <ActionButtonWrapper>
+          <ActionButton>Next</ActionButton>
+        </ActionButtonWrapper>
       </PaperContent>
     </>
   );

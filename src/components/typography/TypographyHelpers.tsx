@@ -7,7 +7,7 @@ type LabelWithValueProps = {
   label: string;
   labelTooltip?: string;
   value: string | number | ReactNode;
-  valueEquivalent?: string | number;
+  valueEquivalent?: string | number | ReactNode;
 };
 
 const useLabelWithValueStyles = makeStyles((theme) => ({
