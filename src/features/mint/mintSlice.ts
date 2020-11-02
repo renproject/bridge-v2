@@ -69,7 +69,7 @@ export const $mintFees = createSelector(
       feeData.renVMFeeAmount = Number(Number(amount) * feeData.renVMFee);
       feeData.conversionTotal =
         Number(Number(amount) - feeData.renVMFeeAmount - feeData.networkFee) > 0
-          ? Number(amount - Number(feeData.renVMFee) - feeData.networkFee)
+          ? Number(amount) - feeData.renVMFee - feeData.networkFee
           : 0;
     }
 
