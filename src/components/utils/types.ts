@@ -9,6 +9,7 @@ export enum CurrencySymbols {
   RENDOGE = "RENDOGE",
   RENZEC = "RENZEC",
   RENDGB = "RENDGB",
+  ETH = "ETH"
 }
 
 export type CurrencyType = keyof typeof CurrencySymbols;

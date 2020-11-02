@@ -68,9 +68,8 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
   const styles = useStyles();
   const inputRef = useRef(null);
   const val = value ? String(value) : "";
-  const handleChange: NumberChange = (values) => {
-    console.log(values);
-    onChange(values.value);
+  const handleChange: NumberChange = (formatValues) => {
+    onChange(formatValues.value);
   };
 
   const chars = val.replace(".", "").replace(` ${symbol}`, "");

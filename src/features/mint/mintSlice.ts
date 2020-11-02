@@ -1,7 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CurrencySymbols, CurrencyType } from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
-import { $rates } from "../marketData/marketDataSlice";
+import { $exchangeRates } from "../marketData/marketDataSlice";
 import { findExchangeRate } from "../marketData/marketDataUtils";
 import { $fees } from "../renData/renDataSlice";
 import { CalculatedFee } from "../renData/renDataUtils";
@@ -42,7 +42,7 @@ export const $mintAmount = createSelector($mint, (mint) => mint.amount);
 
 export const $mintCurrencyUsdRate = createSelector(
   $mintCurrency,
-  $rates,
+  $exchangeRates,
   (currencySymbol, rates) => findExchangeRate(rates, currencySymbol, "USD")
 );
 

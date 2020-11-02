@@ -33,11 +33,16 @@ import {
   AssetInfo,
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
-import { GAS_FEE } from "../../../constants/constants";
+import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
 import { getMintedCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
 import { getCurrencyShortLabel } from "../../../utils/labels";
 import { setFlowStep } from "../../flow/flowSlice";
 import { FlowStep } from "../../flow/flowTypes";
+import { useGasPrices } from "../../marketData/marketDataHooks";
+import {
+  $ethUsdExchangeRate,
+  $gasPrices,
+} from "../../marketData/marketDataSlice";
 import {
   $mint,
   $mintCurrencyUsdAmount,
@@ -46,12 +51,14 @@ import {
 } from "../mintSlice";
 
 export const MintFeesStep: FunctionComponent = () => {
-  //TODO: add Paper Header with actions here
+  useGasPrices();
   const dispatch = useDispatch();
   const { amount, currency } = useSelector($mint);
   const currencyUsdRate = useSelector($mintCurrencyUsdRate);
+  const ethUsdRate = useSelector($ethUsdExchangeRate);
   const amountUsd = useSelector($mintCurrencyUsdAmount);
   const { renVMFee, conversionTotal, networkFee } = useSelector($mintFees);
+  const gasPrices = useSelector($gasPrices);
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const renVMFeePercents = renVMFee * 100;
   const mintedCurrencySymbol = getMintedCurrencySymbol(currency); // selector?
@@ -60,7 +67,6 @@ export const MintFeesStep: FunctionComponent = () => {
   const networkFeeUsd = networkFee * currencyUsdRate;
   // TODO: resolve dynamically
   const targetNetworkLabel = "Ethereum";
-  const targetNetworkFeeUsd = "$6.42";
 
   const MintedCurrencyIcon = useMemo(
     () => getCurrencyGreyIcon(mintedCurrencySymbol),
@@ -76,17 +82,17 @@ export const MintFeesStep: FunctionComponent = () => {
     setAckChecked(event.target.checked);
   }, []);
 
-  const feeInGwei = GAS_FEE;
-  const targetNetworkFee = `${feeInGwei} Gwei`;
+  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
+  const targetNetworkFeeUsd = (feeInGwei / 10 ** 9) * ethUsdRate;
+  const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
+  console.log(targetNetworkFeeUsd);
 
   return (
     <>
       <PaperHeader>
         <PaperNav>
-          <IconButton>
-            <IconButton onClick={handlePreviousStepClick}>
-              <BackArrowIcon />
-            </IconButton>
+          <IconButton onClick={handlePreviousStepClick}>
+            <BackArrowIcon />
           </IconButton>
         </PaperNav>
         <PaperTitle>Fees & Confirm</PaperTitle>
@@ -146,8 +152,15 @@ export const MintFeesStep: FunctionComponent = () => {
         <LabelWithValue
           label="Esti. Ethereum Fee"
           labelTooltip="Explaining Esti. Ethereum Fee"
-          value={targetNetworkFee}
-          valueEquivalent={targetNetworkFeeUsd}
+          value={targetNetworkFeeLabel}
+          valueEquivalent={
+            <NumberFormatText
+              value={targetNetworkFeeUsd}
+              prefix="$"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          }
         />
       </PaperContent>
       <Divider />

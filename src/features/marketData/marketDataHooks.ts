@@ -1,39 +1,40 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
-import { setMarketDataGasPrices, setMarketDataRates } from "./marketDataSlice";
+import { setGasPrices, setExchangeRates } from "./marketDataSlice";
 import {
   fetchMarketDataGasPrices,
   fetchMarketDataRates,
 } from "./marketDataUtils";
 
-const ratesRefreshSecondsInterval = 30;
+const dataRefreshInterval = 30; // seconds
 
-export const useMarketDataRates = () => {
+export const useExchangeRates = () => {
   const dispatch = useDispatch();
 
-  const refreshRates = useCallback(() => {
+  const fetchData = useCallback(() => {
     fetchMarketDataRates().then((rates) => {
-      dispatch(setMarketDataRates(rates));
+      dispatch(setExchangeRates(rates));
     });
   }, [dispatch]);
 
-  useEffect(refreshRates, []);
-  useInterval(refreshRates, ratesRefreshSecondsInterval * 1000);
+  useEffect(fetchData, []);
+  useInterval(fetchData, dataRefreshInterval * 1000);
 
   return null;
 };
 
-export const useMarketDataGasPrice = () => {
+export const useGasPrices = () => {
   const dispatch = useDispatch();
 
-  const refreshRates = useCallback(() => {
+  const fetchData = useCallback(() => {
     fetchMarketDataGasPrices().then((prices) => {
-      dispatch(setMarketDataGasPrices(prices));
+      dispatch(setGasPrices(prices));
     });
   }, [dispatch]);
 
-  useEffect(refreshRates, []);
+  useEffect(fetchData, []);
+  useInterval(fetchData, dataRefreshInterval * 1000);
 
   return null;
 };

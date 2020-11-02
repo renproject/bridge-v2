@@ -1,40 +1,62 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { CurrencySymbols } from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
-import { AnyBlockGasPrices, ExchangeRate } from "./marketDataUtils";
+import {
+  AnyBlockGasPrices,
+  ExchangeRate,
+  findExchangeRate,
+} from "./marketDataUtils";
 
 type MarketDataState = {
-  rates: Array<ExchangeRate>;
-  gasPrices: AnyBlockGasPrices | null;
+  exchangeRates: Array<ExchangeRate>;
+  gasPrices: AnyBlockGasPrices;
+};
+
+const initialGasPrices: AnyBlockGasPrices = {
+  health: false,
+  blockNumber: 0,
+  blockTime: 0,
+  fast: 0,
+  instant: 0,
+  slow: 0,
+  standard: 0,
 };
 
 let initialState: MarketDataState = {
-  rates: [],
-  gasPrices: null,
+  exchangeRates: [],
+  gasPrices: initialGasPrices,
 };
 
 const slice = createSlice({
   name: "marketData",
   initialState,
   reducers: {
-    setMarketDataRates(state, action: PayloadAction<Array<ExchangeRate>>) {
-      state.rates = action.payload;
+    setExchangeRates(state, action: PayloadAction<Array<ExchangeRate>>) {
+      state.exchangeRates = action.payload;
     },
-    setMarketDataGasPrices(state, action: PayloadAction<AnyBlockGasPrices>) {
+    setGasPrices(state, action: PayloadAction<AnyBlockGasPrices>) {
       state.gasPrices = action.payload;
     },
   },
 });
 
-export const { setMarketDataRates, setMarketDataGasPrices } = slice.actions;
+export const { setExchangeRates, setGasPrices } = slice.actions;
 
 export const marketDataReducer = slice.reducer;
 
 export const $marketData = (state: RootState) => state.marketData;
-
-export const $rates = createSelector(
+export const $exchangeRates = createSelector(
   $marketData,
-  (marketData) => marketData.rates
+  (marketData) => marketData.exchangeRates
 );
+
+export const $ethUsdExchangeRate = createSelector(
+  $exchangeRates,
+  (exchangeRates) => {
+    return findExchangeRate(exchangeRates, CurrencySymbols.ETH, "USD");
+  }
+);
+
 export const $gasPrices = createSelector(
   $marketData,
   (marketData) => marketData.gasPrices

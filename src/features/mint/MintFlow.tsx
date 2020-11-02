@@ -1,17 +1,16 @@
-import React, { FunctionComponent, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { FlowTabs } from '../flow/components/FlowTabs'
-import { $flow, setFlowKind } from '../flow/flowSlice'
-import { FlowStep } from '../flow/flowTypes'
-import { useMarketDataRates } from '../marketData/marketDataHooks'
-import { MintFeesStep } from './steps/MintFeesStep'
-import { MintInitialStep } from './steps/MintInitialStep'
+import React, { FunctionComponent, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FlowTabs } from "../flow/components/FlowTabs";
+import { $flow, setFlowKind } from "../flow/flowSlice";
+import { FlowStep } from "../flow/flowTypes";
+import { useExchangeRates } from "../marketData/marketDataHooks";
+import { MintFeesStep } from "./steps/MintFeesStep";
+import { MintInitialStep } from "./steps/MintInitialStep";
 
 export const MintFlow: FunctionComponent = () => {
   console.log("rerendering");
-  useMarketDataRates();
-  const { kind } = useSelector($flow);
-  const { step } = useSelector($flow);
+  useExchangeRates();
+  const { kind, step } = useSelector($flow);
   const dispatch = useDispatch();
   const handleFlowKindChange = useCallback(
     (kind) => {
