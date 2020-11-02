@@ -1,13 +1,16 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BridgeChain } from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
+import { bridgeChainToMultiwalletChain } from "./walletUtils";
 
-type MintState = {
+type WalletState = {
   chain: BridgeChain;
+  pickerOpened: boolean;
 };
 
-let initialState: MintState = {
+let initialState: WalletState = {
   chain: BridgeChain.ETHC,
+  pickerOpened: false,
 };
 
 const slice = createSlice({
@@ -17,15 +20,22 @@ const slice = createSlice({
     setChain(state, action: PayloadAction<BridgeChain>) {
       state.chain = action.payload;
     },
-    reset(state, action: PayloadAction<MintState | undefined>) {
-      state = action.payload || initialState;
+    setWalletPickerOpened(state, action: PayloadAction<boolean>) {
+      state.pickerOpened = action.payload;
     },
   },
 });
 
-export const { setChain } = slice.actions;
+export const { setChain, setWalletPickerOpened } = slice.actions;
 
 export const walletReducer = slice.reducer;
 
 export const $wallet = (state: RootState) => state.wallet;
 export const $chain = createSelector($wallet, (wallet) => wallet.chain);
+export const $walletPickerOpened = createSelector(
+  $wallet,
+  (wallet) => wallet.pickerOpened
+);
+export const $multiwalletChain = createSelector($chain, (chain) =>
+  bridgeChainToMultiwalletChain(chain)
+);

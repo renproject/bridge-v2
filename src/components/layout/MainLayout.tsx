@@ -1,4 +1,11 @@
-import { Container, Divider, Drawer, Grid, ListItem } from "@material-ui/core";
+import {
+  Container,
+  Divider,
+  Drawer,
+  Grid,
+  ListItem,
+  useTheme,
+} from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import IconButton from "@material-ui/core/IconButton";
 import { makeStyles, Theme } from "@material-ui/core/styles";
@@ -18,10 +25,15 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
-import { $chain } from "../../features/wallet/walletSlice";
+import {
+  $multiwalletChain,
+  $walletPickerOpened,
+  setWalletPickerOpened,
+} from "../../features/wallet/walletSlice";
 import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
 import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
@@ -102,8 +114,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const useBackroundReplacer = (variant: string | undefined) =>
+  useEffect(() => {
+    if (variant === "intro") {
+      document.body.style.backgroundImage = "url(/background.svg)";
+    } else {
+      document.body.style.backgroundImage = "";
+    }
+  }, [variant]);
+
 type MainLayoutProps = {
-  variant?: "welcome";
+  variant?: "intro";
 };
 
 export const MainLayout: FunctionComponent<MainLayoutProps> = ({
@@ -111,7 +132,9 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   children,
 }) => {
   const styles = useStyles();
-  const chain = useSelector($chain);
+  const dispatch = useDispatch();
+  useBackroundReplacer(variant);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const handleMobileMenuClose = useCallback(() => {
     setMobileMenuOpen(false);
@@ -119,42 +142,40 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const handleMobileMenuOpen = useCallback(() => {
     setMobileMenuOpen(true);
   }, []);
-
+  const { width } = useWindowSize();
+  const theme = useTheme();
   useEffect(() => {
-    if (variant === "welcome") {
-      document.body.style.backgroundImage = "url(/background.svg)";
-    } else {
-      document.body.style.backgroundImage = "";
+    if (width > theme.breakpoints.values["sm"]) {
+      setMobileMenuOpen(false);
     }
-  }, [variant]);
+  }, [width, theme.breakpoints]);
 
-  const showMenu = variant !== "welcome";
-
+  const multiwalletChain = useSelector($multiwalletChain);
+  const walletPickerOpen = useSelector($walletPickerOpened);
   const pickerClasses = useWalletPickerStyles();
-  const [walletPickerOpen, setWalletPickerOpen] = useState(false);
-  const wallet = useWallet(chain);
-  const { status = "disconnected" } = wallet;
+  const { status } = useWallet(multiwalletChain);
   const handleWalletPickerClose = useCallback(() => {
-    setWalletPickerOpen(false);
-  }, []);
+    dispatch(setWalletPickerOpened(false));
+  }, [dispatch]);
   const handleWalletPickerOpen = useCallback(() => {
-    setWalletPickerOpen(true);
-  }, []);
+    dispatch(setWalletPickerOpened(true));
+  }, [dispatch]);
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
       targetNetwork: RenNetwork.Testnet, // env.TARGET_NETWORK, // TODO: pass from env before prod
-      chain,
+      chain: multiwalletChain,
       onClose: handleWalletPickerClose,
       pickerClasses,
       WalletEntryButton,
       config: walletPickerModalConfig,
     };
     return options;
-  }, [chain, handleWalletPickerClose, pickerClasses]);
+  }, [multiwalletChain, handleWalletPickerClose, pickerClasses]);
 
-  // TODO: add debounced resize/useLayoutEffect for disabling drawer after transition
+  const debugWallet = useWallet(multiwalletChain); //remove
 
   const drawerId = "main-menu-mobile";
+  const withMenu = variant !== "intro";
 
   return (
     <Container maxWidth="lg">
@@ -169,7 +190,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                   </Link>
                 </div>
                 <div className={styles.grow} />
-                {showMenu && (
+                {withMenu && (
                   <>
                     <div className={styles.desktopMenu}>
                       <TransactionHistoryMenuIconButton
@@ -199,7 +220,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                 )}
               </Toolbar>
             </AppBar>
-            {showMenu && (
+            {withMenu && (
               <Drawer
                 anchor="right"
                 id={drawerId}
@@ -241,7 +262,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
           </header>
           <main className={styles.main}>
             {children}
-            <Debug it={{ wallet, env }} />
+            <Debug it={{ debugWallet, env }} />
           </main>
           <Footer />
         </Container>
