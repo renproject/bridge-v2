@@ -1,17 +1,48 @@
-import { Box, Divider, IconButton, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { AssetInfo, LabelWithValue, } from '../../../components/typography/TypographyHelpers'
-import { getMintedCurrencySymbol } from '../../../providers/multiwallet/multiwalletUtils'
-import { getCurrencyShortLabel } from '../../../utils/labels'
-import { setFlowStep } from '../../flow/flowSlice'
-import { FlowStep } from '../../flow/flowTypes'
-import { $mint, $mintCurrencyUsdAmount, $mintCurrencyUsdRate, $mintFees, } from '../mintSlice'
+import {
+  Box,
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import {
+  AssetInfo,
+  LabelWithValue,
+} from "../../../components/typography/TypographyHelpers";
+import { getMintedCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
+import { getCurrencyShortLabel } from "../../../utils/labels";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import {
+  $mint,
+  $mintCurrencyUsdAmount,
+  $mintCurrencyUsdRate,
+  $mintFees,
+} from "../mintSlice";
 
 export const MintFeesStep: FunctionComponent = () => {
   //TODO: add Paper Header with actions here
@@ -22,25 +53,28 @@ export const MintFeesStep: FunctionComponent = () => {
   const { renVMFee, conversionTotal, networkFee } = useSelector($mintFees);
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const renVMFeePercents = renVMFee * 100;
-
-  const handlePreviousStepClick = useCallback(() => {
-    dispatch(setFlowStep(FlowStep.INITIAL));
-  }, [dispatch]);
-
   const mintedCurrencySymbol = getMintedCurrencySymbol(currency); // selector?
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
-
   const mintedCurrencyAmountUsd = conversionTotal * currencyUsdRate;
+  const networkFeeUsd = networkFee * currencyUsdRate;
+  // TODO: resolve dynamically
+  const targetNetworkLabel = "Ethereum";
+  const targetNetworkFee = "200 GWEI";
+  const targetNetworkFeeUsd = "$6.42";
 
   const MintedCurrencyIcon = useMemo(
     () => getCurrencyGreyIcon(mintedCurrencySymbol),
     [mintedCurrencySymbol]
   );
 
-  const networkFeeUsd = networkFee * currencyUsdRate;
+  const [ackChecked, setAckChecked] = useState(false);
 
-  const targetNetworkFee = "200 GWEI";
-  const targetNetworkFeeUsd = "$6.42";
+  const handlePreviousStepClick = useCallback(() => {
+    dispatch(setFlowStep(FlowStep.INITIAL));
+  }, [dispatch]);
+  const handleAckCheckboxChange = useCallback((event) => {
+    setAckChecked(event.target.checked);
+  }, []);
 
   return (
     <>
@@ -71,7 +105,7 @@ export const MintFeesStep: FunctionComponent = () => {
             />
           }
         />
-        <LabelWithValue label="To" value="Ethereum" />
+        <LabelWithValue label="To" value={targetNetworkLabel} />
         <Box mb={1}>
           <Divider />
         </Box>
@@ -135,6 +169,24 @@ export const MintFeesStep: FunctionComponent = () => {
           }
           Icon={<MintedCurrencyIcon fontSize="inherit" />}
         />
+        <CheckboxWrapper>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={ackChecked}
+                onChange={handleAckCheckboxChange}
+                name="primary"
+                color="primary"
+              />
+            }
+            label={
+              <Typography variant="caption">
+                I acknowledge this transaction requires ETH{" "}
+                <TooltipWithIcon title="Explanation" />
+              </Typography>
+            }
+          />
+        </CheckboxWrapper>
         <ActionButtonWrapper>
           <ActionButton>Next</ActionButton>
         </ActionButtonWrapper>
