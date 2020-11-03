@@ -162,7 +162,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   }, [dispatch]);
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
-      targetNetwork: RenNetwork.Testnet, // env.TARGET_NETWORK, // TODO: pass from env before prod
+      targetNetwork: RenNetwork.Testnet, // env.NETWORK, // TODO: pass from env before prod
       chain: multiwalletChain,
       onClose: handleWalletPickerClose,
       pickerClasses,
