@@ -106,6 +106,8 @@ export const getCurrencyRentxSourceChain = (symbol: BridgeCurrency) => {
   return BridgeChain.UNKNOWNC;
 };
 
+export const getCurrencyRentxNameByChain = (chain: BridgeChain) => {};
+
 type ChainConfig = LabelsConfig & RentxAssetConfig;
 
 export const chainsConfig: Record<BridgeChain, ChainConfig> = {
@@ -122,7 +124,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
   [BridgeChain.ETHC]: {
     short: "ETHC",
     full: "Ethereum",
-    rentxName: "bitcoin",
+    rentxName: "ethereum",
   },
   [BridgeChain.UNKNOWNC]: {
     short: "UNKNOWNC",
@@ -138,4 +140,4 @@ export const getChainFullLabel = (symbol: BridgeChain) =>
   chainsConfig[symbol].full || unknownLabel;
 
 export const getChainRentxName = (symbol: BridgeChain) =>
-  chainsConfig[symbol].full || unknownLabel;
+  chainsConfig[symbol].rentxName || unknownLabel;

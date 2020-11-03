@@ -25,6 +25,6 @@ export const getMintedCurrencySymbol = (currency: BridgeCurrency) => {
     case BridgeCurrency.ZEC:
       return BridgeCurrency.RENZEC;
     default:
-      return BridgeCurrency.RENBTC; //TODO: create unknown currency
+      return BridgeCurrency.UNKNOWN;
   }
 };
