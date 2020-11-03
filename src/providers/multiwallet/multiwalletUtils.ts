@@ -14,8 +14,8 @@ export const supportedMintDestinationChains = [
   BridgeChain.BNCC,
 ];
 
-export const getMintedCurrencySymbol = (currency: BridgeCurrency) => {
-  switch (currency) {
+export const getMintedDestinationCurrencySymbol = (sourceCurrency: BridgeCurrency) => {
+  switch (sourceCurrency) {
     case BridgeCurrency.BTC:
       return BridgeCurrency.RENBTC;
     case BridgeCurrency.BCH:

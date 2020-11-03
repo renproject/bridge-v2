@@ -2,30 +2,36 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GatewaySession } from "@renproject/rentx";
 import { RootState } from "../../store/rootReducer";
 
-type Transaction = GatewaySession;
+type BridgeTransaction = GatewaySession;
 
-type TransactionsState = { txs: Array<Transaction> };
+type TransactionsState = {
+  txs: Array<BridgeTransaction>;
+  currentTx: BridgeTransaction | null;
+};
 
 let initialState: TransactionsState = {
   txs: [],
+  currentTx: null,
 };
 
 const slice = createSlice({
   name: "transactions",
   initialState,
   reducers: {
-    setTransactions(state, action: PayloadAction<Array<Transaction>>) {
+    setTransactions(state, action: PayloadAction<Array<BridgeTransaction>>) {
       state.txs = action.payload;
     },
-    addTransaction(state, action: PayloadAction<Transaction>) {
-      console.log('aaaaaa');
+    setCurrentTransaction(state, action: PayloadAction<BridgeTransaction>) {
+      state.currentTx = action.payload;
+    },
+    addTransaction(state, action: PayloadAction<BridgeTransaction>) {
       const existing =
         state.txs.findIndex((tx) => tx.id === action.payload.id) > -1;
       if (!existing) {
         state.txs.push(action.payload);
       }
     },
-    updateTransaction(state, action: PayloadAction<Transaction>) {
+    updateTransaction(state, action: PayloadAction<BridgeTransaction>) {
       const index = state.txs.findIndex((t) => t.id === action.payload.id);
       if (index > -1) {
         state.txs[index] = action.payload;
@@ -34,14 +40,14 @@ const slice = createSlice({
     updateTransactionById(
       // TODO: optional
       state,
-      action: PayloadAction<{ id: string; transaction: Transaction }>
+      action: PayloadAction<{ id: string; transaction: BridgeTransaction }>
     ) {
       const index = state.txs.findIndex((t) => t.id === action.payload.id);
       if (index > -1) {
         state.txs[index] = action.payload.transaction;
       }
     },
-    removeTransaction(state, action: PayloadAction<Transaction>) {
+    removeTransaction(state, action: PayloadAction<BridgeTransaction>) {
       const index = state.txs.findIndex((t) => t.id === action.payload.id);
       if (index > -1) {
         state.txs.splice(index, 1);
@@ -52,6 +58,7 @@ const slice = createSlice({
 
 export const {
   setTransactions,
+  setCurrentTransaction,
   addTransaction,
   updateTransaction,
   updateTransactionById,
@@ -64,6 +71,10 @@ export const $transactions = (state: RootState) => state.transactions;
 export const $txs = createSelector(
   $transactions,
   (transactions) => transactions.txs
+);
+export const $currentTx = createSelector(
+  $transactions,
+  (transactions) => transactions.currentTx
 );
 
 // export const $currentTx = createSelector($txs, $currentTxId, (txs, id) =>

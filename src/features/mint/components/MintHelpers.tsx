@@ -1,58 +1,77 @@
 import { Button } from "@material-ui/core";
+import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
-  DepositMachineSchema,
-  GatewayTransaction,
   depositMachine,
+  DepositMachineSchema,
+  GatewaySession,
+  GatewayTransaction,
 } from "@renproject/rentx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { FunctionComponent, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Actor } from "xstate";
 import { Debug } from "../../../components/utils/Debug";
 import { BridgeChain, BridgeCurrency } from "../../../components/utils/types";
 import { useWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
+  $currentTx,
   addTransaction,
   removeTransaction,
+  setCurrentTransaction,
 } from "../../transactions/transactionsSlice";
 import { $multiwalletChain } from "../../wallet/walletSlice";
 import { createMintTransaction, useMintMachine } from "../mintUtils";
 
-export const DebugMintTransaction: FunctionComponent = () => {
+export const MintExample: FunctionComponent = () => {
   const dispatch = useDispatch();
   const multiwalletChain = useSelector($multiwalletChain);
-  const { account } = useWallet(multiwalletChain);
-  const tx = createMintTransaction({
-    amount: 0.001,
-    currency: BridgeCurrency.BTC,
-    destAddress: account,
-    mintedCurrencyChain: BridgeChain.ETHC,
-    mintedCurrency: BridgeCurrency.RENBTC,
-    userAddress: account,
-  });
-  const canInitialize = tx.destAddress && tx.userAddress;
-  const [current, , service] = useMintMachine(tx);
+  const { account, status } = useWallet(multiwalletChain);
+  const userAddress = account;
+  const destAddress = account;
+  const tx = useSelector($currentTx);
 
-  // Clean up machine when component unmounts
-  useEffect(
-    () => () => {
-      service.stop();
-    },
-    [service]
-  );
+  const walletNotOK = !(userAddress && destAddress) || status !== "connected";
 
   const handleMint = useCallback(() => {
-    // service.start();
+    const tx = createMintTransaction({
+      amount: 0.001,
+      currency: BridgeCurrency.BTC,
+      destAddress: destAddress,
+      mintedCurrencyChain: BridgeChain.ETHC,
+      mintedCurrency: BridgeCurrency.RENBTC,
+      userAddress: userAddress,
+    });
     dispatch(addTransaction(tx));
-  }, [dispatch, tx]);
+    dispatch(setCurrentTransaction(tx));
+  }, [dispatch, destAddress, userAddress]);
 
   const handleDelete = useCallback(() => {
-    dispatch(removeTransaction(tx));
+    if (tx !== null) {
+      dispatch(removeTransaction(tx));
+    }
   }, [dispatch, tx]);
+
+  return (
+    <>
+      <Debug it={{ tx }} />
+      <Button onClick={handleMint} disabled={walletNotOK}>
+        {walletNotOK ? "Connect Wallet" : "Add"}
+      </Button>
+      <Button onClick={handleDelete}>Remove</Button>
+      {tx !== null && <TransactionDataGuard tx={{ ...tx }} />}
+    </>
+  );
+};
+
+type MintTransactionInfoProps = {
+  tx: GatewaySession;
+};
+
+export const TransactionDataGuard: FunctionComponent<MintTransactionInfoProps> = ({
+  tx,
+  children,
+}) => {
+  const { enabledChains } = useMultiwallet();
+  const [current] = useMintMachine(tx);
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;
@@ -66,16 +85,18 @@ export const DebugMintTransaction: FunctionComponent = () => {
 
   return (
     <>
-      <Debug it={{ tx }} />
-      <Button onClick={handleMint} disabled={!canInitialize}>
-        Add
-      </Button>
-      <Button onClick={handleDelete}>Remove</Button>
-      {activeDeposit !== null && (
+      <Debug it={enabledChains} />
+      {activeDeposit ? (
         <DepositStatus
           deposit={activeDeposit.deposit}
           machine={activeDeposit.machine}
         />
+      ) : (
+        <span>
+          Deposit {Number(current.context.tx.suggestedAmount) / 1e8}{" "}
+          {current.context.tx.sourceAsset} to:{" "}
+          {current.context.tx.gatewayAddress}
+        </span>
       )}
     </>
   );

@@ -63,6 +63,16 @@ export const createMintTransaction = ({
   return tx;
 };
 
+export const preValidateMintTransaction = (tx: GatewaySession) => {
+  // TODO: create advancedValidation
+  return (
+    tx.type === "mint" &&
+    tx.destAddress &&
+    tx.userAddress &&
+    tx.targetAmount > 0
+  );
+};
+
 export const useMintMachine = (mintTransaction: GatewaySession) => {
   const { enabledChains } = useMultiwallet();
   const providers = Object.entries(enabledChains).reduce(
@@ -72,7 +82,7 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     }),
     {}
   );
-  console.log('providers', providers)
+  console.log("providers", providers);
   return useMachine(mintMachine, {
     context: {
       tx: mintTransaction,

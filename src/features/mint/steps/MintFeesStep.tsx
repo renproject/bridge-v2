@@ -35,11 +35,15 @@ import {
   LabelWithValue,
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { useWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { getMintedCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
-import { fromGwei, toPercent } from "../../../utils/converters";
+import {
+  useSelectedChainWallet,
+  useWallet,
+} from "../../../providers/multiwallet/multiwalletHooks";
+import { getMintedDestinationCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
 import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
+import { fromGwei, toPercent } from "../../../utils/converters";
 import { setFlowStep } from "../../flow/flowSlice";
 import { FlowStep } from "../../flow/flowTypes";
 import { useGasPrices } from "../../marketData/marketDataHooks";
@@ -48,7 +52,12 @@ import {
   $gasPrices,
 } from "../../marketData/marketDataSlice";
 import {
+  addTransaction,
+  setCurrentTransaction,
+} from "../../transactions/transactionsSlice";
+import {
   $multiwalletChain,
+  $wallet,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
 import {
@@ -57,6 +66,10 @@ import {
   $mintCurrencyUsdRate,
   $mintFees,
 } from "../mintSlice";
+import {
+  createMintTransaction,
+  preValidateMintTransaction,
+} from "../mintUtils";
 
 const getTooltips = (mintFee: number, releaseFee: number) => ({
   sending: "The amount and asset you’re sending before fees are applied.",
@@ -78,6 +91,8 @@ export const MintFeesStep: FunctionComponent = () => {
   useGasPrices();
   const dispatch = useDispatch();
   const { amount, currency } = useSelector($mint);
+  const { chain } = useSelector($wallet);
+  const { account } = useSelectedChainWallet();
   const currencyUsdRate = useSelector($mintCurrencyUsdRate);
   const ethUsdRate = useSelector($ethUsdExchangeRate);
   const amountUsd = useSelector($mintCurrencyUsdAmount);
@@ -86,7 +101,7 @@ export const MintFeesStep: FunctionComponent = () => {
   );
   const gasPrices = useSelector($gasPrices);
   const renVMFeeAmountUsd = amountUsd * renVMFee;
-  const mintedCurrencySymbol = getMintedCurrencySymbol(currency); // selector?
+  const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency); // selector?
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
   const mintedCurrencyAmountUsd = conversionTotal * currencyUsdRate;
   const networkFeeUsd = networkFee * currencyUsdRate;
@@ -114,15 +129,30 @@ export const MintFeesStep: FunctionComponent = () => {
 
   const multiwalletChain = useSelector($multiwalletChain);
   const { status } = useWallet(multiwalletChain);
-  const nextEnabled = ackChecked && amount > 0;
 
+  const tx = useMemo(
+    () =>
+      createMintTransaction({
+        amount: amount,
+        currency: currency,
+        destAddress: account,
+        mintedCurrency: getMintedDestinationCurrencySymbol(currency),
+        mintedCurrencyChain: chain,
+        userAddress: account,
+      }),
+    [amount, currency, account, chain]
+  );
   const handleConfirm = useCallback(() => {
     if (status === "connected") {
-      // dispatch(setFlowStep())
+      if (preValidateMintTransaction(tx)) {
+        dispatch(setCurrentTransaction(tx));
+        dispatch(addTransaction(tx));
+        dispatch(setFlowStep(FlowStep.DEPOSIT));
+      }
     } else {
       dispatch(setWalletPickerOpened(true));
     }
-  }, [dispatch, status]);
+  }, [dispatch, status, tx]);
   return (
     <>
       <PaperHeader>
@@ -249,9 +279,10 @@ export const MintFeesStep: FunctionComponent = () => {
             }
           />
         </CheckboxWrapper>
+        <Debug it={{ tx }} />
         <ActionButtonWrapper>
-          <ActionButton onClick={handleConfirm} disabled={!nextEnabled}>
-            Confirm {status !== "connected" && "& Connect Wallet"}
+          <ActionButton onClick={handleConfirm}>
+            {status !== "connected" ? "Connect Wallet" : "Confirm"}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

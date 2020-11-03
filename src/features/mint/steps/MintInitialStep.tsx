@@ -18,7 +18,7 @@ import {
 import { PaperContent } from "../../../components/layout/Paper";
 import { AssetInfo } from "../../../components/typography/TypographyHelpers";
 import {
-  getMintedCurrencySymbol,
+  getMintedDestinationCurrencySymbol,
   supportedMintCurrencies,
   supportedMintDestinationChains,
 } from "../../../providers/multiwallet/multiwalletUtils";
@@ -64,7 +64,7 @@ export const MintInitialStep: FunctionComponent = () => {
     dispatch(setFlowStep(FlowStep.FEES));
   }, [dispatch, amount]);
 
-  const mintedCurrencySymbol = getMintedCurrencySymbol(currency);
+  const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
 
   const MintedCurrencyIcon = useMemo(
