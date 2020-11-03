@@ -26,7 +26,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
 import {
@@ -34,6 +34,7 @@ import {
   $walletPickerOpened,
   setWalletPickerOpened,
 } from "../../features/wallet/walletSlice";
+import { paths } from "../../pages/routes";
 import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
 import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
@@ -131,6 +132,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   variant,
   children,
 }) => {
+  const history = useHistory();
   const styles = useStyles();
   const dispatch = useDispatch();
   useBackroundReplacer(variant);
@@ -149,6 +151,10 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
       setMobileMenuOpen(false);
     }
   }, [width, theme.breakpoints]);
+
+  const handleTxHistoryClick = useCallback(() => {
+    history.push(paths.CATALOG);
+  }, [history]);
 
   const multiwalletChain = useSelector($multiwalletChain);
   const walletPickerOpen = useSelector($walletPickerOpened);
@@ -195,6 +201,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                     <div className={styles.desktopMenu}>
                       <TransactionHistoryMenuIconButton
                         className={styles.desktopTxHistory}
+                        onClick={handleTxHistoryClick}
                       />
                       <WalletConnectionStatusButton
                         onClick={handleWalletPickerOpen}
@@ -245,7 +252,9 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                 </ListItem>
                 <ListItem divider className={styles.drawerListItem} button>
                   <div className={styles.drawerListItemIcon}>
-                    <TransactionHistoryMenuIconButton />
+                    <TransactionHistoryMenuIconButton
+                      onClick={handleTxHistoryClick}
+                    />
                   </div>
                   <p>View Transactions</p>
                 </ListItem>

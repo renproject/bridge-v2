@@ -18,7 +18,12 @@ const slice = createSlice({
       state.txs = action.payload;
     },
     addTransaction(state, action: PayloadAction<Transaction>) {
-      state.txs.push(action.payload);
+      console.log('aaaaaa');
+      const existing =
+        state.txs.findIndex((tx) => tx.id === action.payload.id) > -1;
+      if (!existing) {
+        state.txs.push(action.payload);
+      }
     },
     updateTransaction(state, action: PayloadAction<Transaction>) {
       const index = state.txs.findIndex((t) => t.id === action.payload.id);
@@ -27,6 +32,7 @@ const slice = createSlice({
       }
     },
     updateTransactionById(
+      // TODO: optional
       state,
       action: PayloadAction<{ id: string; transaction: Transaction }>
     ) {
@@ -38,18 +44,28 @@ const slice = createSlice({
     removeTransaction(state, action: PayloadAction<Transaction>) {
       const index = state.txs.findIndex((t) => t.id === action.payload.id);
       if (index > -1) {
-        delete state.txs[index];
+        state.txs.splice(index, 1);
       }
     },
   },
 });
 
-export const { setTransactions } = slice.actions;
+export const {
+  setTransactions,
+  addTransaction,
+  updateTransaction,
+  updateTransactionById,
+  removeTransaction,
+} = slice.actions;
 
 export const transactionsReducer = slice.reducer;
 
 export const $transactions = (state: RootState) => state.transactions;
-export const $transactionList = createSelector(
+export const $txs = createSelector(
   $transactions,
   (transactions) => transactions.txs
 );
+
+// export const $currentTx = createSelector($txs, $currentTxId, (txs, id) =>
+//   txs.find((tx) => tx.id === id)
+// );

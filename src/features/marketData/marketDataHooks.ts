@@ -34,7 +34,7 @@ export const useGasPrices = () => {
   }, [dispatch]);
 
   useEffect(fetchData, []);
-  useInterval(fetchData, dataRefreshInterval * 1000);
+  // useInterval(fetchData, dataRefreshInterval * 1000);
 
   return null;
 };
