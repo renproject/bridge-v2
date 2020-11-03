@@ -63,7 +63,6 @@ export type ExchangeRate = {
 };
 
 export const fetchMarketDataRates = async () => {
-  console.log("fetching");
   return getBandchain()
     .getReferenceData(referenceParis)
     .then(mapToExchangeData);

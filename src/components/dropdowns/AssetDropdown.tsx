@@ -1,7 +1,17 @@
-import { Box, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useMemo } from 'react'
-import { getChainFullLabel, getCurrencyFullLabel, } from '../../utils/labels'
+import {
+  Box,
+  MenuItem,
+  Select,
+  SelectProps,
+  styled,
+  Typography,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useMemo } from "react";
+import {
+  getChainFullLabel,
+  getCurrencyFullLabel,
+} from "../../utils/assetConfigs";
 import {
   BchFullIcon,
   BinanceChainFullIcon,
@@ -11,8 +21,13 @@ import {
   DotsFullIcon,
   EthereumChainFullIcon,
   ZecFullIcon,
-} from '../icons/RenIcons'
-import { BridgeChain, ChainType, CurrencySymbols, CurrencyType, } from '../utils/types'
+} from "../icons/RenIcons";
+import {
+  BridgeChain,
+  ChainType,
+  CurrencySymbols,
+  CurrencyType,
+} from "../utils/types";
 
 type AssetConfig = {
   symbol: string;

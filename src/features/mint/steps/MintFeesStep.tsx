@@ -1,29 +1,62 @@
-import { Checkbox, Divider, FormControlLabel, IconButton, Typography, } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { CheckboxWrapper } from '../../../components/inputs/InputHelpers'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
+import {
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from '../../../components/typography/TypographyHelpers'
-import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
-import { getMintedCurrencySymbol } from '../../../providers/multiwallet/multiwalletUtils'
-import { fromGwei, toPercent } from '../../../utils/converters'
-import { getCurrencyShortLabel } from '../../../utils/labels'
-import { setFlowStep } from '../../flow/flowSlice'
-import { FlowStep } from '../../flow/flowTypes'
-import { useGasPrices } from '../../marketData/marketDataHooks'
-import { $ethUsdExchangeRate, $gasPrices, } from '../../marketData/marketDataSlice'
-import { $mint, $mintCurrencyUsdAmount, $mintCurrencyUsdRate, $mintFees, } from '../mintSlice'
+} from "../../../components/typography/TypographyHelpers";
+import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
+import { useWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { getMintedCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
+import { fromGwei, toPercent } from "../../../utils/converters";
+import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import { useGasPrices } from "../../marketData/marketDataHooks";
+import {
+  $ethUsdExchangeRate,
+  $gasPrices,
+} from "../../marketData/marketDataSlice";
+import {
+  $multiwalletChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
+  $mint,
+  $mintCurrencyUsdAmount,
+  $mintCurrencyUsdRate,
+  $mintFees,
+} from "../mintSlice";
 
 const getTooltips = (mintFee: number, releaseFee: number) => ({
   sending: "The amount and asset you’re sending before fees are applied.",
@@ -79,12 +112,17 @@ export const MintFeesStep: FunctionComponent = () => {
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
   const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
 
-  const handleConfirm = useCallback(() => {
-    console.log("implement");
-  }, []);
-
+  const multiwalletChain = useSelector($multiwalletChain);
+  const { status } = useWallet(multiwalletChain);
   const nextEnabled = ackChecked && amount > 0;
 
+  const handleConfirm = useCallback(() => {
+    if (status === "connected") {
+      // dispatch(setFlowStep())
+    } else {
+      dispatch(setWalletPickerOpened(true));
+    }
+  }, [dispatch, status]);
   return (
     <>
       <PaperHeader>
@@ -213,7 +251,7 @@ export const MintFeesStep: FunctionComponent = () => {
         </CheckboxWrapper>
         <ActionButtonWrapper>
           <ActionButton onClick={handleConfirm} disabled={!nextEnabled}>
-            Confirm
+            Confirm {status !== "connected" && "& Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
