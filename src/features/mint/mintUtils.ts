@@ -1,7 +1,7 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { GatewaySession, mintMachine } from "@renproject/rentx";
 import { useMachine } from "@xstate/react";
-import { CurrencySymbols } from '../../components/utils/types'
+import { BridgeCurrency } from '../../components/utils/types'
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
 import { fromChainMap, toChainMap } from "../../services/rentx";
@@ -24,8 +24,8 @@ export const getMintTx: GatewaySession = {
 
 type CreateMintTransactionParams = {
   amount: number,
-  currency: CurrencySymbols,
-  mintedCurrency: CurrencySymbols,
+  currency: BridgeCurrency,
+  mintedCurrency: BridgeCurrency,
   address: string
 };
 

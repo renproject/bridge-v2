@@ -2,7 +2,7 @@ import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
-import { CurrencySymbols } from "../utils/types";
+import { BridgeCurrency } from "../utils/types";
 import {
   BchGreyIcon,
   BtcGreyIcon,
@@ -54,28 +54,28 @@ export const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
   );
 };
 
-export const getCurrencyGreyIcon = (symbol: CurrencySymbols) => {
+export const getCurrencyGreyIcon = (symbol: BridgeCurrency) => {
   // TODO: merge with currencyData
   switch (symbol) {
-    case CurrencySymbols.BTC:
+    case BridgeCurrency.BTC:
       return BtcGreyIcon;
-    case CurrencySymbols.BCH:
+    case BridgeCurrency.BCH:
       return BchGreyIcon;
-    case CurrencySymbols.DOTS:
+    case BridgeCurrency.DOTS:
       return DotsFullIcon; // add
-    case CurrencySymbols.DOGE:
+    case BridgeCurrency.DOGE:
       return DogeGreyIcon;
-    case CurrencySymbols.ZEC:
+    case BridgeCurrency.ZEC:
       return ZecGreyIcon;
-    case CurrencySymbols.RENBTC:
+    case BridgeCurrency.RENBTC:
       return BtcGreyIcon;
-    case CurrencySymbols.RENBCH:
+    case BridgeCurrency.RENBCH:
       return BchGreyIcon;
-    case CurrencySymbols.RENDOGE:
+    case BridgeCurrency.RENDOGE:
       return DogeGreyIcon;
-    case CurrencySymbols.RENZEC:
+    case BridgeCurrency.RENZEC:
       return ZecGreyIcon;
-    case CurrencySymbols.RENDGB:
+    case BridgeCurrency.RENDGB:
       return DgbGreyIcon;
     default:
       return BtcGreyIcon

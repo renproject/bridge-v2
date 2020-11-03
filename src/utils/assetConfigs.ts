@@ -1,7 +1,7 @@
 import {
   BridgeChain,
   ChainType,
-  CurrencySymbols,
+  BridgeCurrency,
   CurrencyType,
 } from "../components/utils/types";
 
@@ -18,58 +18,58 @@ export type RentxAssetConfig = {
 
 export type CurrencyConfig = LabelsConfig & RentxAssetConfig;
 
-export const currenciesConfig: Record<CurrencySymbols, CurrencyConfig> = {
-  [CurrencySymbols.BTC]: {
+export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
+  [BridgeCurrency.BTC]: {
     short: "BTC",
     full: "Bitcoin",
     rentxName: "btc",
   },
-  [CurrencySymbols.BCH]: {
+  [BridgeCurrency.BCH]: {
     short: "BCH",
     full: "Bitcoin Cash",
     rentxName: "bch",
   },
-  [CurrencySymbols.DOTS]: {
+  [BridgeCurrency.DOTS]: {
     short: "DOTS",
     full: "Polkadot",
     rentxName: "dots",
   },
-  [CurrencySymbols.DOGE]: {
+  [BridgeCurrency.DOGE]: {
     short: "DOGE",
     full: "Dogecoin",
     rentxName: "doge",
   },
-  [CurrencySymbols.ZEC]: {
+  [BridgeCurrency.ZEC]: {
     short: "ZEC",
     full: "Zcash",
     rentxName: "zec",
   },
-  [CurrencySymbols.RENBTC]: {
+  [BridgeCurrency.RENBTC]: {
     short: "renBTC",
     full: "renBTC",
     rentxName: "renBTC",
   },
-  [CurrencySymbols.RENBCH]: {
+  [BridgeCurrency.RENBCH]: {
     short: "renBCH",
     full: "renBCH",
     rentxName: "renBCH",
   },
-  [CurrencySymbols.RENDOGE]: {
+  [BridgeCurrency.RENDOGE]: {
     short: "renDOGE",
     full: "renDOGE",
     rentxName: "renDOGE",
   },
-  [CurrencySymbols.RENZEC]: {
+  [BridgeCurrency.RENZEC]: {
     short: "renZEC",
     full: "renZEC",
     rentxName: "renZEC",
   },
-  [CurrencySymbols.RENDGB]: {
+  [BridgeCurrency.RENDGB]: {
     short: "renDGB",
     full: "renDGB",
     rentxName: "renDGB",
   },
-  [CurrencySymbols.ETH]: {
+  [BridgeCurrency.ETH]: {
     short: "ETH",
     full: "Ether",
     rentxName: "eth",

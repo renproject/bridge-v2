@@ -25,7 +25,7 @@ import {
 import {
   BridgeChain,
   ChainType,
-  CurrencySymbols,
+  BridgeCurrency,
   CurrencyType,
 } from "../utils/types";
 
@@ -35,30 +35,30 @@ type AssetConfig = {
   Icon: CustomSvgIconComponent;
 };
 
-const currencyOptions: Array<AssetConfig> = [
+const currencyOptions: Array<AssetConfig> = [ //TODO: merge with assetConfigs
   {
-    symbol: CurrencySymbols.BTC,
-    name: getCurrencyFullLabel(CurrencySymbols.BTC),
+    symbol: BridgeCurrency.BTC,
+    name: getCurrencyFullLabel(BridgeCurrency.BTC),
     Icon: BtcFullIcon,
   },
   {
-    symbol: CurrencySymbols.BCH,
-    name: getCurrencyFullLabel(CurrencySymbols.BCH),
+    symbol: BridgeCurrency.BCH,
+    name: getCurrencyFullLabel(BridgeCurrency.BCH),
     Icon: BchFullIcon,
   },
   {
-    symbol: CurrencySymbols.DOTS,
-    name: getCurrencyFullLabel(CurrencySymbols.DOTS),
+    symbol: BridgeCurrency.DOTS,
+    name: getCurrencyFullLabel(BridgeCurrency.DOTS),
     Icon: DotsFullIcon,
   },
   {
-    symbol: CurrencySymbols.DOGE,
-    name: getCurrencyFullLabel(CurrencySymbols.DOGE),
+    symbol: BridgeCurrency.DOGE,
+    name: getCurrencyFullLabel(BridgeCurrency.DOGE),
     Icon: DogeFullIcon,
   },
   {
-    symbol: CurrencySymbols.ZEC,
-    name: getCurrencyFullLabel(CurrencySymbols.ZEC),
+    symbol: BridgeCurrency.ZEC,
+    name: getCurrencyFullLabel(BridgeCurrency.ZEC),
     Icon: ZecFullIcon,
   },
 ];

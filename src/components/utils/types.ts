@@ -1,4 +1,4 @@
-export enum CurrencySymbols {
+export enum BridgeCurrency {
   BTC = "BTC",
   BCH = "BCH",
   DOTS = "DOTS",
@@ -12,7 +12,7 @@ export enum CurrencySymbols {
   ETH = "ETH"
 }
 
-export type CurrencyType = keyof typeof CurrencySymbols;
+export type CurrencyType = keyof typeof BridgeCurrency;
 
 export enum BridgeChain {
   BTCC = "BTCC",

@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CurrencySymbols, CurrencyType } from "../../components/utils/types";
+import { BridgeCurrency, CurrencyType } from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
 import { $exchangeRates } from "../marketData/marketDataSlice";
 import { findExchangeRate } from "../marketData/marketDataUtils";
@@ -12,7 +12,7 @@ type MintState = {
 };
 
 let initialState: MintState = {
-  currency: CurrencySymbols.BTC,
+  currency: BridgeCurrency.BTC,
   amount: 0,
 };
 
