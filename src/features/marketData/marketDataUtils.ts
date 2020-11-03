@@ -1,8 +1,8 @@
-import { BridgeCurrency, CurrencyType } from "../../components/utils/types";
+import { BridgeCurrency } from "../../components/utils/types";
 import { env } from "../../constants/environmentVariables";
 import { getBandchain } from "../../services/bandchain";
 
-const mapToBandchainCurrencySymbol = (symbol: CurrencyType) => {
+const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
   switch (symbol) {
     case BridgeCurrency.DOTS:
       return "DOT";
@@ -23,7 +23,7 @@ const mapToBridgeCurrencySymbol = (symbol: string) => {
     case "DOT":
       return BridgeCurrency.RENBCH;
   }
-  return symbol as CurrencyType;
+  return symbol as BridgeCurrency;
 };
 
 const QUOTE = "USD";
@@ -71,7 +71,7 @@ export const fetchMarketDataRates = async () => {
 export const findExchangeRate = (
   // TODO: CRIT: investigate what to do with nonexistent currencies
   exchangeRates: Array<ExchangeRate>,
-  base: CurrencyType,
+  base: BridgeCurrency,
   quote = QUOTE
 ) => {
   const rateEntry = exchangeRates.find(
@@ -93,7 +93,7 @@ export type AnyBlockGasPrices = {
 export const fetchMarketDataGasPrices = () =>
   fetch(env.GAS_FEE_ENDPOINT)
     .then((response) => response.json())
-    .then((data : AnyBlockGasPrices) => {
+    .then((data: AnyBlockGasPrices) => {
       console.log("gas", data);
       return data;
     });

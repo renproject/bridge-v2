@@ -12,15 +12,11 @@ export enum BridgeCurrency {
   ETH = "ETH"
 }
 
-export type CurrencyType = keyof typeof BridgeCurrency;
-
 export enum BridgeChain {
   BTCC = "BTCC",
   BNCC = "BNCC",
   ETHC = "ETHC",
 }
-
-export type ChainType = keyof typeof BridgeChain;
 
 export type TransactionStatusType = "completed" | "pending" | "submitted";
 

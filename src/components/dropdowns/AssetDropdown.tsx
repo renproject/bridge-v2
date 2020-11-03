@@ -1,17 +1,7 @@
-import {
-  Box,
-  MenuItem,
-  Select,
-  SelectProps,
-  styled,
-  Typography,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent, useMemo } from "react";
-import {
-  getChainFullLabel,
-  getCurrencyFullLabel,
-} from "../../utils/assetConfigs";
+import { Box, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import React, { FunctionComponent, useMemo } from 'react'
+import { getChainFullLabel, getCurrencyFullLabel, } from '../../utils/assetConfigs'
 import {
   BchFullIcon,
   BinanceChainFullIcon,
@@ -21,13 +11,8 @@ import {
   DotsFullIcon,
   EthereumChainFullIcon,
   ZecFullIcon,
-} from "../icons/RenIcons";
-import {
-  BridgeChain,
-  ChainType,
-  BridgeCurrency,
-  CurrencyType,
-} from "../utils/types";
+} from '../icons/RenIcons'
+import { BridgeChain, BridgeCurrency, } from '../utils/types'
 
 type AssetConfig = {
   symbol: string;
@@ -35,7 +20,8 @@ type AssetConfig = {
   Icon: CustomSvgIconComponent;
 };
 
-const currencyOptions: Array<AssetConfig> = [ //TODO: merge with assetConfigs
+const currencyOptions: Array<AssetConfig> = [
+  //TODO: merge with assetConfigs
   {
     symbol: BridgeCurrency.BTC,
     name: getCurrencyFullLabel(BridgeCurrency.BTC),
@@ -115,7 +101,7 @@ type AssetDropdownMode = "send" | "receive" | "chain";
 
 type AssetDropdownProps = SelectProps & {
   mode: AssetDropdownMode;
-  available?: Array<CurrencyType | ChainType>;
+  available?: Array<BridgeCurrency | BridgeChain>;
 };
 
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({

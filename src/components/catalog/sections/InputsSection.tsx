@@ -7,6 +7,7 @@ import { BridgePaper } from "../../layout/Paper";
 import { Link } from "../../links/Links";
 import { TooltipWithIcon } from "../../tooltips/TooltipWithIcon";
 import { AssetInfo, LabelWithValue } from "../../typography/TypographyHelpers";
+import { BridgeChain } from "../../utils/types";
 import { Section } from "../PresentationHelpers";
 
 export const InputsSection: FunctionComponent = () => {
@@ -64,7 +65,7 @@ export const InputsSection: FunctionComponent = () => {
         </Box>
         <Box>
           <AddressInput
-            chain="BTCC"
+            chain={BridgeChain.BTCC}
             label="Releasing to"
             onChange={handleAddressChange}
             value={address}

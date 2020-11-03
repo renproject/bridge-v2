@@ -1,9 +1,9 @@
 import { Fees } from "@renproject/interfaces";
-import { CurrencyType } from "../../components/utils/types";
+import { BridgeCurrency } from "../../components/utils/types";
 import { getRenJs } from "../../services/renJs";
 
 export type BridgeFee = Fees & {
-  symbol: CurrencyType;
+  symbol: BridgeCurrency;
 };
 
 export type BridgeFees = Array<BridgeFee>;
@@ -23,7 +23,7 @@ const mapToFeesData: (fees: Fees) => BridgeFees = (fees) => {
 };
 
 const toCurrencySymbol = (symbol: string) =>
-  symbol.toUpperCase() as CurrencyType;
+  symbol.toUpperCase() as BridgeCurrency;
 
 export const fetchFees: () => Promise<BridgeFees> = () =>
   getRenJs().getFees().then(mapToFeesData);

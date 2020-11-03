@@ -1,9 +1,4 @@
-import {
-  BridgeChain,
-  ChainType,
-  BridgeCurrency,
-  CurrencyType,
-} from "../components/utils/types";
+import { BridgeChain, BridgeCurrency, } from '../components/utils/types'
 
 const unknownLabel = "unknown";
 
@@ -76,13 +71,13 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
   },
 };
 
-export const getCurrencyShortLabel = (symbol: CurrencyType) =>
+export const getCurrencyShortLabel = (symbol: BridgeCurrency) =>
   currenciesConfig[symbol].short || unknownLabel;
 
-export const getCurrencyFullLabel = (symbol: CurrencyType) =>
+export const getCurrencyFullLabel = (symbol: BridgeCurrency) =>
   currenciesConfig[symbol].full || unknownLabel;
 
-export const getCurrencyRentxName = (symbol: CurrencyType) =>
+export const getCurrencyRentxName = (symbol: BridgeCurrency) =>
   currenciesConfig[symbol].rentxName || unknownLabel;
 
 type RenChainConfig = {
@@ -109,12 +104,12 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
   },
 };
 
-export const getChainShortLabel = (symbol: ChainType) =>
+export const getChainShortLabel = (symbol: BridgeChain) =>
   chainsConfig[symbol].full || unknownLabel;
 
-export const getChainFullLabel = (symbol: ChainType) =>
+export const getChainFullLabel = (symbol: BridgeChain) =>
   chainsConfig[symbol].full || unknownLabel;
 
-export const getChainRentxName = (symbol: ChainType) =>
+export const getChainRentxName = (symbol: BridgeChain) =>
   chainsConfig[symbol].full || unknownLabel;
 

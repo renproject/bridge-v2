@@ -1,7 +1,7 @@
 import { TextField, TextFieldProps } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
-import { ChainType } from "../utils/types";
+import { BridgeChain } from "../utils/types";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,7 +13,7 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 type AddressInputProps = TextFieldProps & {
-  chain: ChainType;
+  chain: BridgeChain;
 };
 
 export const AddressInput: FunctionComponent<AddressInputProps> = ({

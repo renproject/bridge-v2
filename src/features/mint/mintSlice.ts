@@ -1,13 +1,13 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BridgeCurrency, CurrencyType } from "../../components/utils/types";
-import { RootState } from "../../store/rootReducer";
-import { $exchangeRates } from "../marketData/marketDataSlice";
-import { findExchangeRate } from "../marketData/marketDataUtils";
-import { $fees } from "../renData/renDataSlice";
-import { CalculatedFee } from "../renData/renDataUtils";
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { BridgeCurrency } from '../../components/utils/types'
+import { RootState } from '../../store/rootReducer'
+import { $exchangeRates } from '../marketData/marketDataSlice'
+import { findExchangeRate } from '../marketData/marketDataUtils'
+import { $fees } from '../renData/renDataSlice'
+import { CalculatedFee } from '../renData/renDataUtils'
 
 type MintState = {
-  currency: CurrencyType;
+  currency: BridgeCurrency;
   amount: number;
 };
 
@@ -20,7 +20,7 @@ const slice = createSlice({
   name: "mint",
   initialState,
   reducers: {
-    setMintCurrency(state, action: PayloadAction<CurrencyType>) {
+    setMintCurrency(state, action: PayloadAction<BridgeCurrency>) {
       state.currency = action.payload;
     },
     setMintAmount(state, action: PayloadAction<number>) {
