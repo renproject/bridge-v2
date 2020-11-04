@@ -14,7 +14,7 @@ import {
   ToggleIconButton,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
 import {
   PaperActions,
   PaperContent,
@@ -23,12 +23,17 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import {
+  ProgressWithContent,
+  ProgressWrapper,
+} from "../../../components/progress/ProgressHelpers";
+import {
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
+import { orangeLight } from "../../../theme/colors";
 import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
 import { setFlowStep } from "../../flow/flowSlice";
@@ -100,6 +105,11 @@ export const MintDepositStep: FunctionComponent = () => {
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
+        <ProgressWrapper>
+          <ProgressWithContent color={orangeLight} size={64}>
+            <BitcoinIcon fontSize="inherit" color="inherit" />
+          </ProgressWithContent>
+        </ProgressWrapper>
         <BigAssetAmountWrapper>
           <BigAssetAmount
             value={

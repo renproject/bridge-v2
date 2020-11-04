@@ -82,13 +82,20 @@ const useProgressWithContentStyles = makeStyles<
   },
 }));
 
+export const ProgressWrapper = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  marginTop: 20,
+  marginBottom: 20,
+});
+
 export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = ({
   color,
-  fontSize,
   value = 100,
   processing,
   confirmations,
   size = 166,
+  fontSize = Math.floor(0.75 * size),
   children,
 }) => {
   const styles = useProgressWithContentStyles({
