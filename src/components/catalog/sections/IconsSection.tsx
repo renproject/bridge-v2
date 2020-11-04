@@ -1,41 +1,46 @@
-import { Box } from '@material-ui/core'
-import GitHubIcon from '@material-ui/icons/GitHub'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
-import RedditIcon from '@material-ui/icons/Reddit'
-import TelegramIcon from '@material-ui/icons/Telegram'
-import TwitterIcon from '@material-ui/icons/Twitter'
-import React, { FunctionComponent } from 'react'
-import { IconWithLabel } from '../../icons/IconHelpers'
+import { Box } from "@material-ui/core";
+import GitHubIcon from "@material-ui/icons/GitHub";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import RedditIcon from "@material-ui/icons/Reddit";
+import TelegramIcon from "@material-ui/icons/Telegram";
+import TwitterIcon from "@material-ui/icons/Twitter";
+import React, { FunctionComponent } from "react";
+import { IconWithLabel } from "../../icons/IconHelpers";
 import {
   BackArrowIcon,
   BchFullIcon,
-  BchGreyIcon,
+  BchGreyIcon, BchIcon,
   BinanceChainColorIcon,
   BinanceChainFullIcon,
   BitcoinIcon,
   BitcoinInCircleIcon,
   BrowserNotificationsIcon,
   BtcFullIcon,
-  BtcGreyIcon,
+  BtcGreyIcon, BtcIcon,
   DgbFullIcon,
-  DgbGreyIcon,
+  DgbGreyIcon, DgbIcon,
   DogeFullIcon,
-  DogeGreyIcon,
+  DogeGreyIcon, DogeIcon,
   DotsFullIcon,
+  DotsGreyIcon, DotsIcon,
   EthereumChainColorIcon,
   EthereumChainFullIcon,
   EthereumIcon,
+  FilFullIcon,
+  FilGreyIcon, FilIcon,
+  LunaFullIcon,
+  LunaGreyIcon, LunaIcon,
   MetamaskFoxIcon,
   RenBridgeLogoIcon,
   RenLogoIcon,
   SuccessIcon,
-  TxHistoryIcon,
+  TxSettingsIcon,
   WalletConnectFullIcon,
   WalletConnectIcon,
   ZecFullIcon,
-  ZecGreyIcon,
+  ZecGreyIcon, ZecIcon,
 } from '../../icons/RenIcons'
-import { Section, SeparationWrapper } from '../PresentationHelpers'
+import { Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const IconsSection: FunctionComponent = () => {
   return (
@@ -49,7 +54,8 @@ export const IconsSection: FunctionComponent = () => {
       <SeparationWrapper>
         <BackArrowIcon />
         <BrowserNotificationsIcon />
-        <TxHistoryIcon />
+        {/*<TxHistoryIcon />*/}
+        <TxSettingsIcon />
         <MoreVertIcon />
         <SuccessIcon />
       </SeparationWrapper>
@@ -68,12 +74,24 @@ export const IconsSection: FunctionComponent = () => {
         <WalletConnectFullIcon />
       </SeparationWrapper>
       <SeparationWrapper>
+        <BtcIcon />
+        <BchIcon />
+        <DogeIcon />
+        <ZecIcon />
+        <DgbIcon />
+        <DotsIcon />
+        <LunaIcon />
+        <FilIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
         <BtcFullIcon />
         <BchFullIcon />
         <DogeFullIcon />
         <ZecFullIcon />
         <DgbFullIcon />
         <DotsFullIcon />
+        <LunaFullIcon />
+        <FilFullIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BtcGreyIcon />
@@ -81,6 +99,9 @@ export const IconsSection: FunctionComponent = () => {
         <DogeGreyIcon />
         <ZecGreyIcon />
         <DgbGreyIcon />
+        <DotsGreyIcon />
+        <LunaGreyIcon />
+        <FilGreyIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <RenBridgeLogoIcon />
