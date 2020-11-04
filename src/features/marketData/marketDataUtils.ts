@@ -94,6 +94,5 @@ export const fetchMarketDataGasPrices = () =>
   fetch(env.GAS_FEE_ENDPOINT)
     .then((response) => response.json())
     .then((data: AnyBlockGasPrices) => {
-      console.log("gas", data);
       return data;
     });

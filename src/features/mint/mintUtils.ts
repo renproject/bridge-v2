@@ -65,11 +65,6 @@ export const createMintTransaction = ({
 
 export const preValidateMintTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
-  console.log("validating");
-  console.log(tx.type === "mint");
-  console.log(tx.destAddress);
-  console.log(tx.userAddress);
-  console.log(tx.targetAmount);
   return (
     tx.type === "mint" &&
     tx.destAddress &&
@@ -87,7 +82,6 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     }),
     {}
   );
-  console.log("providers", providers);
   return useMachine(mintMachine, {
     context: {
       tx: mintTransaction,

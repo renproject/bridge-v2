@@ -4,13 +4,11 @@ import { FlowTabs } from "../flow/components/FlowTabs";
 import { $flow, setFlowKind } from "../flow/flowSlice";
 import { FlowStep } from "../flow/flowTypes";
 import { useExchangeRates } from "../marketData/marketDataHooks";
-import { MintExample } from "./components/MintHelpers";
-import { MintDepositStep } from './steps/MintDepositStep'
+import { MintDepositStep } from "./steps/MintDepositStep";
 import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
 
 export const MintFlow: FunctionComponent = () => {
-  console.log("rerendering");
   useExchangeRates();
   const { kind, step } = useSelector($flow);
   const dispatch = useDispatch();
@@ -29,8 +27,7 @@ export const MintFlow: FunctionComponent = () => {
       )}
       {step === FlowStep.INITIAL && <MintInitialStep />}
       {step === FlowStep.FEES && <MintFeesStep />}
-      {step === FlowStep.DEPOSIT && <MintDepositStep/>}
-      <MintExample />
+      {step === FlowStep.DEPOSIT && <MintDepositStep />}
     </>
   );
 };

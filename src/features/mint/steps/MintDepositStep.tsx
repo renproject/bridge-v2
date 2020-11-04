@@ -1,60 +1,32 @@
-import { Divider, IconButton } from "@material-ui/core";
-import { GatewaySession } from "@renproject/rentx";
-import queryString from "query-string";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-import {
-  CopyContentButton,
-  ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import {
-  ProgressWithContent,
-  ProgressWrapper,
-} from "../../../components/progress/ProgressHelpers";
+import { Box, Divider, IconButton, Typography } from '@material-ui/core'
+import { GatewaySession } from '@renproject/rentx'
+import queryString from 'query-string'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
+import { CopyContentButton, QrCodeIconButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BackArrowIcon, BitcoinIcon } from '../../../components/icons/RenIcons'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { ProgressWithContent, ProgressWrapper, } from '../../../components/progress/ProgressHelpers'
 import {
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { orangeLight } from "../../../theme/colors";
-import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
-import { fromGwei } from "../../../utils/converters";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import {
-  $ethUsdExchangeRate,
-  $gasPrices,
-} from "../../marketData/marketDataSlice";
-import {
-  $currentTx,
-  setCurrentTransaction,
-} from "../../transactions/transactionsSlice";
-import { getTooltips } from "../components/MintHelpers";
-import {
-  $mint,
-  $mintCurrencyUsdAmount,
-  $mintCurrencyUsdRate,
-  $mintFees,
-} from "../mintSlice";
-import { preValidateMintTransaction } from "../mintUtils";
+} from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
+import { orangeLight } from '../../../theme/colors'
+import { getCurrencyShortLabel } from '../../../utils/assetConfigs'
+import { fromGwei } from '../../../utils/converters'
+import { setFlowStep } from '../../flow/flowSlice'
+import { FlowStep } from '../../flow/flowTypes'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { $ethUsdExchangeRate, $gasPrices, } from '../../marketData/marketDataSlice'
+import { $currentTx, setCurrentTransaction, } from '../../transactions/transactionsSlice'
+import { getTooltips } from '../components/MintHelpers'
+import { $mint, $mintCurrencyUsdAmount, $mintCurrencyUsdRate, $mintFees, } from '../mintSlice'
+import { preValidateMintTransaction } from '../mintUtils'
 
 export const MintDepositStep: FunctionComponent = () => {
   useGasPrices();
@@ -86,10 +58,10 @@ export const MintDepositStep: FunctionComponent = () => {
     if (preValidateMintTransaction(tx)) {
       dispatch(setCurrentTransaction(tx)); // TODO: local state?
     }
-  }, [location.search]);
+  }, [dispatch, location.search]);
 
-  const gatewayAddress = "1LU14szcGuMwxVNet1rm"; // TODO: connect
-
+  const gatewayAddress = "1LU14szcGuMwxVNet1rm"; // TODO: get
+  const processingTime = 60; // TODO: get
   return (
     <>
       <PaperHeader>
@@ -121,6 +93,20 @@ export const MintDepositStep: FunctionComponent = () => {
           />
         </BigAssetAmountWrapper>
         <CopyContentButton content={gatewayAddress} />
+        <Box
+          mt={2}
+          display="flex"
+          justifyContent="center"
+          flexDirection="column"
+          alignItems="center"
+        >
+          <Typography variant="caption" gutterBottom>
+            Estimated processing time: {processingTime} minutes
+          </Typography>
+          <Box mt={2}>
+            <QrCodeIconButton />
+          </Box>
+        </Box>
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
