@@ -9,5 +9,8 @@ export const typography: TypographyOptions = {
   h1: {
     fontSize: 48,
     fontWeight: "bold"
+  },
+  h6: {
+    fontSize: 18
   }
 };

@@ -27,31 +27,24 @@ import { setFlowStep } from '../../flow/flowSlice'
 import { FlowStep } from '../../flow/flowTypes'
 import { useGasPrices } from '../../marketData/marketDataHooks'
 import { $ethUsdExchangeRate, $gasPrices, } from '../../marketData/marketDataSlice'
-import { addTransaction, } from '../../transactions/transactionsSlice'
+import { addTransaction } from '../../transactions/transactionsSlice'
 import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
-import { getTooltips } from '../components/MintHelpers'
+import { getFeeTooltips, tooltips } from '../components/MintHelpers'
 import { $mint, $mintCurrencyUsdAmount, $mintCurrencyUsdRate, $mintFees, } from '../mintSlice'
 import { createMintTransaction, preValidateMintTransaction, } from '../mintUtils'
 
 export const MintFeesStep: FunctionComponent = () => {
-  useGasPrices();
   const dispatch = useDispatch();
   const history = useHistory();
   const { amount, currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const { account } = useSelectedChainWallet();
   const currencyUsdRate = useSelector($mintCurrencyUsdRate);
-  const ethUsdRate = useSelector($ethUsdExchangeRate);
   const amountUsd = useSelector($mintCurrencyUsdAmount);
-  const { renVMFee, renVMFeeAmount, conversionTotal, networkFee } = useSelector(
-    $mintFees
-  );
-  const gasPrices = useSelector($gasPrices);
-  const renVMFeeAmountUsd = amountUsd * renVMFee;
+  const { conversionTotal } = useSelector($mintFees);
   const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency); // selector?
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
   const mintedCurrencyAmountUsd = conversionTotal * currencyUsdRate;
-  const networkFeeUsd = networkFee * currencyUsdRate;
   // TODO: resolve dynamically
   const targetNetworkLabel = getChainShortLabel(chain);
 
@@ -59,7 +52,6 @@ export const MintFeesStep: FunctionComponent = () => {
     () => getCurrencyGreyIcon(mintedCurrencySymbol),
     [mintedCurrencySymbol]
   );
-  const tooltips = useMemo(() => getTooltips(renVMFee, 0.001), [renVMFee]); // TODO: CRIT: add release fee from selectors
 
   const [ackChecked, setAckChecked] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -71,10 +63,6 @@ export const MintFeesStep: FunctionComponent = () => {
     setTouched(true);
     setAckChecked(event.target.checked);
   }, []);
-
-  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
-  const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
-  const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
 
   const { status } = useSelectedChainWallet();
 
@@ -150,49 +138,7 @@ export const MintFeesStep: FunctionComponent = () => {
         <Typography variant="body1" gutterBottom>
           Fees
         </Typography>
-        <LabelWithValue
-          label="RenVM Fee"
-          labelTooltip={tooltips.renVmFee}
-          value={
-            <NumberFormatText value={renVMFeeAmount} spacedSuffix={currency} />
-          }
-          valueEquivalent={
-            <NumberFormatText
-              value={renVMFeeAmountUsd}
-              prefix="$"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          }
-        />
-        <LabelWithValue
-          label="Bitcoin Miner Fee"
-          labelTooltip={tooltips.bitcoinMinerFee}
-          value={
-            <NumberFormatText value={networkFee} spacedSuffix={currency} />
-          }
-          valueEquivalent={
-            <NumberFormatText
-              value={networkFeeUsd}
-              prefix="$"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          }
-        />
-        <LabelWithValue
-          label="Esti. Ethereum Fee"
-          labelTooltip={tooltips.estimatedEthFee}
-          value={targetNetworkFeeLabel}
-          valueEquivalent={
-            <NumberFormatText
-              value={targetNetworkFeeUsd}
-              prefix="$"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          }
-        />
+        <MintFees />
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
@@ -248,6 +194,72 @@ export const MintFeesStep: FunctionComponent = () => {
         </ActionButtonWrapper>
       </PaperContent>
       <Debug it={{ tx }} />
+    </>
+  );
+};
+
+export const MintFees: FunctionComponent = () => {
+  useGasPrices();
+  const { currency } = useSelector($mint);
+
+  const currencyUsdRate = useSelector($mintCurrencyUsdRate);
+  const ethUsdRate = useSelector($ethUsdExchangeRate);
+  const amountUsd = useSelector($mintCurrencyUsdAmount);
+  // considear caluclating everything in $mintFees selector
+  const { renVMFee, renVMFeeAmount, networkFee } = useSelector($mintFees);
+  const gasPrices = useSelector($gasPrices);
+  const renVMFeeAmountUsd = amountUsd * renVMFee;
+  const networkFeeUsd = networkFee * currencyUsdRate;
+
+  const tooltips = useMemo(() => getFeeTooltips(renVMFee, 0.001), [renVMFee]); // TODO: CRIT: add release fee from selectors
+
+  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
+  const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
+  const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
+
+  return (
+    <>
+      <LabelWithValue
+        label="RenVM Fee"
+        labelTooltip={tooltips.renVmFee}
+        value={
+          <NumberFormatText value={renVMFeeAmount} spacedSuffix={currency} />
+        }
+        valueEquivalent={
+          <NumberFormatText
+            value={renVMFeeAmountUsd}
+            prefix="$"
+            decimalScale={2}
+            fixedDecimalScale
+          />
+        }
+      />
+      <LabelWithValue
+        label="Bitcoin Miner Fee"
+        labelTooltip={tooltips.bitcoinMinerFee}
+        value={<NumberFormatText value={networkFee} spacedSuffix={currency} />}
+        valueEquivalent={
+          <NumberFormatText
+            value={networkFeeUsd}
+            prefix="$"
+            decimalScale={2}
+            fixedDecimalScale
+          />
+        }
+      />
+      <LabelWithValue
+        label="Esti. Ethereum Fee"
+        labelTooltip={tooltips.estimatedEthFee}
+        value={targetNetworkFeeLabel}
+        valueEquivalent={
+          <NumberFormatText
+            value={targetNetworkFeeUsd}
+            prefix="$"
+            decimalScale={2}
+            fixedDecimalScale
+          />
+        }
+      />
     </>
   );
 };

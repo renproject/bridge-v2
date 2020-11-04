@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { usePageTitle } from '../../hooks/usePageTitle'
 import { FlowTabs } from "../flow/components/FlowTabs";
 import { $flow, setFlowKind } from "../flow/flowSlice";
 import { FlowStep } from "../flow/flowTypes";
@@ -9,6 +10,7 @@ import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
 
 export const MintFlow: FunctionComponent = () => {
+  usePageTitle("Minting");
   useExchangeRates();
   const { kind, step } = useSelector($flow);
   const dispatch = useDispatch();

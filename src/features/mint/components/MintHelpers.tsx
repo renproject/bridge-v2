@@ -12,7 +12,7 @@ import { Actor } from "xstate";
 import { Debug } from "../../../components/utils/Debug";
 import { BridgeChain, BridgeCurrency } from "../../../components/utils/types";
 import { useWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { toPercent } from '../../../utils/converters'
+import { toPercent } from "../../../utils/converters";
 import {
   $currentTx,
   addTransaction,
@@ -22,9 +22,14 @@ import {
 import { $multiwalletChain } from "../../wallet/walletSlice";
 import { createMintTransaction, useMintMachine } from "../mintUtils";
 
-export const getTooltips = (mintFee: number, releaseFee: number) => ({
+export const tooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",
   to: "The blockchain you’re sending the asset to.",
+  acknowledge:
+    "Minting an asset on Ethereum requires you to submit a transaction. It will cost you a small amount of ETH.",
+};
+
+export const getFeeTooltips = (mintFee: number, releaseFee: number) => ({
   renVmFee: `RenVM takes a ${toPercent(
     mintFee
   )}% fee per mint transaction and ${toPercent(
@@ -34,8 +39,6 @@ export const getTooltips = (mintFee: number, releaseFee: number) => ({
     "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
   estimatedEthFee:
     "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
-  acknowledge:
-    "Minting an asset on Ethereum requires you to submit a transaction. It will cost you a small amount of ETH.",
 });
 
 export const MintExample: FunctionComponent = () => {

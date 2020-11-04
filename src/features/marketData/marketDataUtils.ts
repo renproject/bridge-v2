@@ -14,6 +14,8 @@ const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
       return "";
     case BridgeCurrency.RENDGB:
       return "";
+    case BridgeCurrency.UNKNOWN:
+      return "";
   }
   return symbol;
 };
