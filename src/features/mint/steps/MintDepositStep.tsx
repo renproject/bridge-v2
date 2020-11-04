@@ -28,6 +28,7 @@ export const MintDepositStep: FunctionComponent = () => {
   const { amount, currency } = useSelector($mint);
   const tx = useSelector($currentTx);
 
+
   const handlePreviousStepClick = useCallback(() => {
     dispatch(setFlowStep(FlowStep.FEES));
   }, [dispatch]);
