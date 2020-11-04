@@ -1,4 +1,8 @@
-import { BridgeChain, BridgeCurrency } from "../components/utils/types";
+import {
+  BridgeChain,
+  BridgeCurrency,
+  BridgeNetwork,
+} from "../components/utils/types";
 
 const unknownLabel = "unknown";
 
@@ -133,6 +137,8 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
   },
 };
 
+const unknownChainConfig = chainsConfig[BridgeChain.UNKNOWNC];
+
 export const getChainShortLabel = (symbol: BridgeChain) =>
   chainsConfig[symbol].full || unknownLabel;
 
@@ -141,3 +147,33 @@ export const getChainFullLabel = (symbol: BridgeChain) =>
 
 export const getChainRentxName = (symbol: BridgeChain) =>
   chainsConfig[symbol].rentxName || unknownLabel;
+
+export const getChainConfigByRentxName = (name: string) =>
+  Object.values(chainsConfig).find((chain) => chain.rentxName === name) ||
+  unknownChainConfig;
+
+type NetworkConfig = LabelsConfig & RentxAssetConfig;
+
+export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
+  [BridgeNetwork.MAINNET]: {
+    short: "MAINNET",
+    full: "Mainnet",
+    rentxName: "mainnet",
+  },
+  [BridgeNetwork.TESTNET]: {
+    short: "TESTNET",
+    full: "Testnet",
+    rentxName: "testnet",
+  },
+  [BridgeNetwork.UNKNOWN]: {
+    short: "UNKNOWN",
+    full: "Unknown",
+    rentxName: "unknown",
+  },
+};
+
+const unknownNetworkConfig = networksConfig[BridgeNetwork.UNKNOWN];
+
+export const getNetworkConfigByRentxName = (name: string) =>
+  Object.values(networksConfig).find((network) => network.rentxName === name) ||
+  unknownNetworkConfig;

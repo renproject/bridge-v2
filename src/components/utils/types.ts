@@ -20,6 +20,12 @@ export enum BridgeChain {
   UNKNOWNC = "UNKNOWNC",
 }
 
+export enum BridgeNetwork {
+  MAINNET = "MAINNET",
+  TESTNET = "TESTNET",
+  UNKNOWN = "UNKNOWN",
+}
+
 export type TransactionStatusType = "completed" | "pending" | "submitted";
 
 export type WalletConnectionStatusType =
