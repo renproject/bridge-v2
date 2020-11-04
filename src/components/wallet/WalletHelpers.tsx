@@ -5,7 +5,11 @@ import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent, useMemo, useState } from "react";
 import { useTimeout } from "react-use";
-import { MetamaskFullIcon, WalletConnectFullIcon } from "../icons/RenIcons";
+import {
+  BtcGreyIcon,
+  MetamaskFullIcon,
+  WalletConnectFullIcon,
+} from "../icons/RenIcons";
 import { PaperContent, PaperHeader, PaperTitle } from "../layout/Paper";
 import { BridgeModalTitle } from "../modals/BridgeModal";
 import {
@@ -16,7 +20,7 @@ import { WalletConnectionStatusType } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 400
+    maxWidth: 400,
   },
   body: {
     padding: 24,
@@ -131,6 +135,35 @@ export const WalletConnectingInfo: WalletPickerProps<
         </ProgressWrapper>
         <Typography variant="h6" component="p" align="center">
           {passed ? labels.actionMessage : labels.initialMessage}
+        </Typography>
+      </PaperContent>
+    </>
+  );
+};
+
+export const WalletWrongNetworkInfo: WalletPickerProps<
+  any,
+  any
+>["WrongNetworkInfo"] = ({ chain, targetNetwork, onClose }) => {
+  const theme = useTheme();
+  return (
+    <>
+      <BridgeModalTitle title="Wrong Network" onClose={onClose} />
+      <PaperContent bottomPadding>
+        <ProgressWrapper>
+          <ProgressWithContent
+            size={128}
+            color={theme.customColors.redLighter}
+            fontSize="big"
+          >
+            <BtcGreyIcon fontSize="inherit" />
+          </ProgressWithContent>
+        </ProgressWrapper>
+        <Typography variant="h5" component="p" align="center">
+          Switch to {chain} {targetNetwork}
+        </Typography>
+        <Typography variant="body2" component="p" align="center">
+          RenBridge requires you to connect to the {chain} {targetNetwork}
         </Typography>
       </PaperContent>
     </>

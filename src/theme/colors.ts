@@ -13,6 +13,7 @@ export const graphiteDark = "#001124";
 
 export const tooltipBlack = "#333333";
 
+export const redLighter = "#FDD8D9";
 export const redLight = "#FF4545";
 export const red = "#E63E3E";
 export const redDark = "#BF3434";

@@ -25,7 +25,7 @@ import {
   WalletConnectingInfo,
   WalletConnectionIndicator,
   WalletConnectionStatusButton,
-  WalletEntryButton,
+  WalletEntryButton, WalletWrongNetworkInfo,
 } from '../wallet/WalletHelpers'
 import { Footer } from './Footer'
 
@@ -155,7 +155,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
       pickerClasses,
       // DefaultInfo: () => <span>default</span>,
       ConnectingInfo: WalletConnectingInfo,
-      WrongNetworkInfo: () => <span>wrongNetwork</span>,
+      WrongNetworkInfo: WalletWrongNetworkInfo,
       WalletEntryButton,
       config: walletPickerModalConfig,
     };
