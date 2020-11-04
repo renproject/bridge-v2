@@ -5,6 +5,7 @@ import { $flow, setFlowKind } from "../flow/flowSlice";
 import { FlowStep } from "../flow/flowTypes";
 import { useExchangeRates } from "../marketData/marketDataHooks";
 import { MintExample } from "./components/MintHelpers";
+import { MintDepositStep } from './steps/MintDepositStep'
 import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
 
@@ -28,7 +29,7 @@ export const MintFlow: FunctionComponent = () => {
       )}
       {step === FlowStep.INITIAL && <MintInitialStep />}
       {step === FlowStep.FEES && <MintFeesStep />}
-      {step === FlowStep.DEPOSIT && <span>deposit</span>}
+      {step === FlowStep.DEPOSIT && <MintDepositStep/>}
       <MintExample />
     </>
   );

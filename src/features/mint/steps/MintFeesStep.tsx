@@ -1,91 +1,35 @@
-import {
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  IconButton,
-  Typography,
-} from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { Checkbox, Divider, FormControl, FormControlLabel, FormLabel, IconButton, Typography, } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { CheckboxWrapper } from '../../../components/inputs/InputHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import {
-  useSelectedChainWallet,
-  useWallet,
-} from "../../../providers/multiwallet/multiwalletHooks";
-import { getMintedDestinationCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
-import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
-import { fromGwei, toPercent } from "../../../utils/converters";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import {
-  $ethUsdExchangeRate,
-  $gasPrices,
-} from "../../marketData/marketDataSlice";
-import {
-  addTransaction,
-  setCurrentTransaction,
-} from "../../transactions/transactionsSlice";
-import {
-  $multiwalletChain,
-  $wallet,
-  setWalletPickerOpened,
-} from "../../wallet/walletSlice";
-import {
-  $mint,
-  $mintCurrencyUsdAmount,
-  $mintCurrencyUsdRate,
-  $mintFees,
-} from "../mintSlice";
-import {
-  createMintTransaction,
-  preValidateMintTransaction,
-} from "../mintUtils";
-
-const getTooltips = (mintFee: number, releaseFee: number) => ({
-  sending: "The amount and asset you’re sending before fees are applied.",
-  to: "The blockchain you’re sending the asset to.",
-  renVmFee: `RenVM takes a ${toPercent(
-    mintFee
-  )}% fee per mint transaction and ${toPercent(
-    releaseFee
-  )}% per burn transaction. This is shared evenly between all active nodes in the decentralized network.`,
-  bitcoinMinerFee:
-    "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
-  estimatedEthFee:
-    "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
-  acknowledge:
-    "Minting an asset on Ethereum requires you to submit a transaction. It will cost you a small amount of ETH.",
-});
+} from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { getMintedDestinationCurrencySymbol } from '../../../providers/multiwallet/multiwalletUtils'
+import { getChainShortLabel, getCurrencyShortLabel } from '../../../utils/assetConfigs'
+import { fromGwei } from '../../../utils/converters'
+import { setFlowStep } from '../../flow/flowSlice'
+import { FlowStep } from '../../flow/flowTypes'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { $ethUsdExchangeRate, $gasPrices, } from '../../marketData/marketDataSlice'
+import { addTransaction, setCurrentTransaction, } from '../../transactions/transactionsSlice'
+import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
+import { getTooltips } from '../components/MintHelpers'
+import { $mint, $mintCurrencyUsdAmount, $mintCurrencyUsdRate, $mintFees, } from '../mintSlice'
+import { createMintTransaction, preValidateMintTransaction, } from '../mintUtils'
 
 export const MintFeesStep: FunctionComponent = () => {
   useGasPrices();
@@ -106,7 +50,7 @@ export const MintFeesStep: FunctionComponent = () => {
   const mintedCurrencyAmountUsd = conversionTotal * currencyUsdRate;
   const networkFeeUsd = networkFee * currencyUsdRate;
   // TODO: resolve dynamically
-  const targetNetworkLabel = "Ethereum";
+  const targetNetworkLabel = getChainShortLabel(chain)
 
   const MintedCurrencyIcon = useMemo(
     () => getCurrencyGreyIcon(mintedCurrencySymbol),
@@ -115,11 +59,13 @@ export const MintFeesStep: FunctionComponent = () => {
   const tooltips = useMemo(() => getTooltips(renVMFee, 0.001), [renVMFee]); // TODO: CRIT: add release fee from selectors
 
   const [ackChecked, setAckChecked] = useState(false);
+  const [touched, setTouched] = useState(false);
 
   const handlePreviousStepClick = useCallback(() => {
     dispatch(setFlowStep(FlowStep.INITIAL));
   }, [dispatch]);
   const handleAckCheckboxChange = useCallback((event) => {
+    setTouched(true);
     setAckChecked(event.target.checked);
   }, []);
 
@@ -127,8 +73,7 @@ export const MintFeesStep: FunctionComponent = () => {
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
   const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
 
-  const multiwalletChain = useSelector($multiwalletChain);
-  const { status } = useWallet(multiwalletChain);
+  const { status } = useSelectedChainWallet();
 
   const tx = useMemo(
     () =>
@@ -144,15 +89,20 @@ export const MintFeesStep: FunctionComponent = () => {
   );
   const handleConfirm = useCallback(() => {
     if (status === "connected") {
-      if (preValidateMintTransaction(tx)) {
+      setTouched(true);
+      if (ackChecked && preValidateMintTransaction(tx)) {
         dispatch(setCurrentTransaction(tx));
         dispatch(addTransaction(tx));
         dispatch(setFlowStep(FlowStep.DEPOSIT));
       }
     } else {
+      setTouched(false);
       dispatch(setWalletPickerOpened(true));
     }
-  }, [dispatch, status, tx]);
+  }, [dispatch, ackChecked, status, tx]);
+
+  const showAckError = !ackChecked && touched;
+
   return (
     <>
       <PaperHeader>
@@ -262,30 +212,37 @@ export const MintFeesStep: FunctionComponent = () => {
           Icon={<MintedCurrencyIcon fontSize="inherit" />}
         />
         <CheckboxWrapper>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={ackChecked}
-                onChange={handleAckCheckboxChange}
-                name="primary"
-                color="primary"
-              />
-            }
-            label={
-              <Typography variant="caption">
-                I acknowledge this transaction requires ETH{" "}
-                <TooltipWithIcon title={tooltips.acknowledge} />
-              </Typography>
-            }
-          />
+          <FormControl error={showAckError}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={ackChecked}
+                  onChange={handleAckCheckboxChange}
+                  name="ack"
+                  color="primary"
+                />
+              }
+              label={
+                <FormLabel htmlFor="ack" component={Typography}>
+                  <Typography
+                    variant="caption"
+                    color={showAckError ? "inherit" : "textPrimary"}
+                  >
+                    I acknowledge this transaction requires ETH{" "}
+                    <TooltipWithIcon title={tooltips.acknowledge} />
+                  </Typography>
+                </FormLabel>
+              }
+            />
+          </FormControl>
         </CheckboxWrapper>
-        <Debug it={{ tx }} />
         <ActionButtonWrapper>
-          <ActionButton onClick={handleConfirm}>
+          <ActionButton onClick={handleConfirm} disabled={showAckError}>
             {status !== "connected" ? "Connect Wallet" : "Confirm"}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
+      <Debug it={{ tx }} />
     </>
   );
 };
