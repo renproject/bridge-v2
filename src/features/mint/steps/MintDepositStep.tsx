@@ -1,7 +1,18 @@
 import { Divider, IconButton } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useMemo } from "react";
+import { GatewaySession } from "@renproject/rentx";
+import queryString from "query-string";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CopyContentButton } from "../../../components/buttons/Buttons";
+import { useHistory, useLocation } from "react-router-dom";
+import {
+  CopyContentButton,
+  ToggleIconButton,
+} from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import {
@@ -16,9 +27,10 @@ import {
   BigAssetAmountWrapper,
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
 import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
-import { fromGwei, toPercent } from "../../../utils/converters";
+import { fromGwei } from "../../../utils/converters";
 import { setFlowStep } from "../../flow/flowSlice";
 import { FlowStep } from "../../flow/flowTypes";
 import { useGasPrices } from "../../marketData/marketDataHooks";
@@ -26,6 +38,10 @@ import {
   $ethUsdExchangeRate,
   $gasPrices,
 } from "../../marketData/marketDataSlice";
+import {
+  $currentTx,
+  setCurrentTransaction,
+} from "../../transactions/transactionsSlice";
 import { getTooltips } from "../components/MintHelpers";
 import {
   $mint,
@@ -33,16 +49,19 @@ import {
   $mintCurrencyUsdRate,
   $mintFees,
 } from "../mintSlice";
+import { preValidateMintTransaction } from "../mintUtils";
 
 export const MintDepositStep: FunctionComponent = () => {
   useGasPrices();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { amount, currency } = useSelector($mint);
   const currencyUsdRate = useSelector($mintCurrencyUsdRate);
   const ethUsdRate = useSelector($ethUsdExchangeRate);
   const amountUsd = useSelector($mintCurrencyUsdAmount);
   const { renVMFee, renVMFeeAmount, networkFee } = useSelector($mintFees);
   const gasPrices = useSelector($gasPrices);
+  const tx = useSelector($currentTx);
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 
@@ -56,6 +75,14 @@ export const MintDepositStep: FunctionComponent = () => {
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
   const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
 
+  useEffect(() => {
+    const queryParams = queryString.parse(location.search);
+    const tx: GatewaySession = JSON.parse(queryParams.tx as string);
+    if (preValidateMintTransaction(tx)) {
+      dispatch(setCurrentTransaction(tx)); // TODO: local state?
+    }
+  }, [location.search]);
+
   const gatewayAddress = "1LU14szcGuMwxVNet1rm"; // TODO: connect
 
   return (
@@ -67,7 +94,10 @@ export const MintDepositStep: FunctionComponent = () => {
           </IconButton>
         </PaperNav>
         <PaperTitle>Send {getCurrencyShortLabel(currency)}</PaperTitle>
-        <PaperActions />
+        <PaperActions>
+          <ToggleIconButton variant="settings" />
+          <ToggleIconButton variant="notifications" />
+        </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
         <BigAssetAmountWrapper>
@@ -127,6 +157,7 @@ export const MintDepositStep: FunctionComponent = () => {
             />
           }
         />
+        <Debug it={{ tx }} />
       </PaperContent>
     </>
   );

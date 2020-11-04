@@ -36,6 +36,7 @@
     "notistack": "^1.0.0",
     "numeral": "^2.0.6",
     "prettier": "^2.1.1",
+    "query-string": "^6.13.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-lorem-component": "^0.13.0",
