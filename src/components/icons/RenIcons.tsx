@@ -8,6 +8,7 @@ import { ReactComponent as Bitcoin } from "./../../assets/icons/btc-icon-only.sv
 import { ReactComponent as BtcFull } from "./../../assets/icons/btc-icon.svg";
 import { ReactComponent as DogeFull } from "./../../assets/icons/doge-icon.svg";
 import { ReactComponent as DotsFull } from "./../../assets/icons/dots-icon.svg";
+import { ReactComponent as DotsGrey } from "./../../assets/icons/dots-icon-grey.svg";
 import { ReactComponent as Ethereum } from "./../../assets/icons/eth-icon-only.svg";
 import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox.svg";
 import { ReactComponent as MetamaskFull } from "./../../assets/icons/metamask-icon-colour.svg";
