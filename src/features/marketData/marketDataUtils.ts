@@ -1,18 +1,20 @@
-import { CurrencySymbols, CurrencyType } from "../../components/utils/types";
+import { BridgeCurrency } from "../../components/utils/types";
 import { env } from "../../constants/environmentVariables";
 import { getBandchain } from "../../services/bandchain";
 
-const mapToBandchainCurrencySymbol = (symbol: CurrencyType) => {
+const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
   switch (symbol) {
-    case CurrencySymbols.DOTS:
+    case BridgeCurrency.DOTS:
       return "DOT";
-    case CurrencySymbols.RENBCH:
+    case BridgeCurrency.RENBCH:
       return "";
-    case CurrencySymbols.RENDOGE:
+    case BridgeCurrency.RENDOGE:
       return "";
-    case CurrencySymbols.RENZEC:
+    case BridgeCurrency.RENZEC:
       return "";
-    case CurrencySymbols.RENDGB:
+    case BridgeCurrency.RENDGB:
+      return "";
+    case BridgeCurrency.UNKNOWN:
       return "";
   }
   return symbol;
@@ -21,16 +23,16 @@ const mapToBandchainCurrencySymbol = (symbol: CurrencyType) => {
 const mapToBridgeCurrencySymbol = (symbol: string) => {
   switch (symbol) {
     case "DOT":
-      return CurrencySymbols.RENBCH;
+      return BridgeCurrency.RENBCH;
   }
-  return symbol as CurrencyType;
+  return symbol as BridgeCurrency;
 };
 
 const QUOTE = "USD";
 
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
-const referenceParis = Object.values(CurrencySymbols)
+const referenceParis = Object.values(BridgeCurrency)
   .map(mapToBandchainCurrencySymbol)
   .filter((symbol) => !!symbol)
   .map((symbol: string) => getPair(symbol, QUOTE));
@@ -63,7 +65,6 @@ export type ExchangeRate = {
 };
 
 export const fetchMarketDataRates = async () => {
-  console.log("fetching");
   return getBandchain()
     .getReferenceData(referenceParis)
     .then(mapToExchangeData);
@@ -72,7 +73,7 @@ export const fetchMarketDataRates = async () => {
 export const findExchangeRate = (
   // TODO: CRIT: investigate what to do with nonexistent currencies
   exchangeRates: Array<ExchangeRate>,
-  base: CurrencyType,
+  base: BridgeCurrency,
   quote = QUOTE
 ) => {
   const rateEntry = exchangeRates.find(
@@ -94,7 +95,6 @@ export type AnyBlockGasPrices = {
 export const fetchMarketDataGasPrices = () =>
   fetch(env.GAS_FEE_ENDPOINT)
     .then((response) => response.json())
-    .then((data : AnyBlockGasPrices) => {
-      console.log("gas", data);
+    .then((data: AnyBlockGasPrices) => {
       return data;
     });

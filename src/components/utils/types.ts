@@ -1,4 +1,4 @@
-export enum CurrencySymbols {
+export enum BridgeCurrency {
   BTC = "BTC",
   BCH = "BCH",
   DOTS = "DOTS",
@@ -9,18 +9,22 @@ export enum CurrencySymbols {
   RENDOGE = "RENDOGE",
   RENZEC = "RENZEC",
   RENDGB = "RENDGB",
-  ETH = "ETH"
+  ETH = "ETH",
+  UNKNOWN = "UNKNOWN",
 }
-
-export type CurrencyType = keyof typeof CurrencySymbols;
 
 export enum BridgeChain {
   BTCC = "BTCC",
   BNCC = "BNCC",
   ETHC = "ETHC",
+  UNKNOWNC = "UNKNOWNC",
 }
 
-export type ChainType = keyof typeof BridgeChain;
+export enum BridgeNetwork {
+  MAINNET = "MAINNET",
+  TESTNET = "TESTNET",
+  UNKNOWN = "UNKNOWN",
+}
 
 export type TransactionStatusType = "completed" | "pending" | "submitted";
 

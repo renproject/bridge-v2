@@ -7,7 +7,6 @@ export const useFetchFees = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     fetchFees().then((fees) => {
-      console.log(fees);
       dispatch(setFees(fees));
     });
   }, [dispatch]);

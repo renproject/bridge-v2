@@ -6,7 +6,7 @@ let renJs: RenJS | null = null;
 
 export const getRenJs = () => {
   if (renJs === null) {
-    renJs = new RenJS(env.TARGET_NETWORK as RenNetwork);
+    renJs = new RenJS(env.NETWORK as RenNetwork);
   }
   return renJs;
 };

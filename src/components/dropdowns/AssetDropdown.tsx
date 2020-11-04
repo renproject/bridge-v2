@@ -1,7 +1,7 @@
 import { Box, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { FunctionComponent, useMemo } from 'react'
-import { getChainFullLabel, getCurrencyFullLabel, } from '../../utils/labels'
+import { getChainFullLabel, getCurrencyFullLabel, } from '../../utils/assetConfigs'
 import {
   BchFullIcon,
   BinanceChainFullIcon,
@@ -12,7 +12,7 @@ import {
   EthereumChainFullIcon,
   ZecFullIcon,
 } from '../icons/RenIcons'
-import { BridgeChain, ChainType, CurrencySymbols, CurrencyType, } from '../utils/types'
+import { BridgeChain, BridgeCurrency, } from '../utils/types'
 
 type AssetConfig = {
   symbol: string;
@@ -21,29 +21,30 @@ type AssetConfig = {
 };
 
 const currencyOptions: Array<AssetConfig> = [
+  //TODO: merge with assetConfigs
   {
-    symbol: CurrencySymbols.BTC,
-    name: getCurrencyFullLabel(CurrencySymbols.BTC),
+    symbol: BridgeCurrency.BTC,
+    name: getCurrencyFullLabel(BridgeCurrency.BTC),
     Icon: BtcFullIcon,
   },
   {
-    symbol: CurrencySymbols.BCH,
-    name: getCurrencyFullLabel(CurrencySymbols.BCH),
+    symbol: BridgeCurrency.BCH,
+    name: getCurrencyFullLabel(BridgeCurrency.BCH),
     Icon: BchFullIcon,
   },
   {
-    symbol: CurrencySymbols.DOTS,
-    name: getCurrencyFullLabel(CurrencySymbols.DOTS),
+    symbol: BridgeCurrency.DOTS,
+    name: getCurrencyFullLabel(BridgeCurrency.DOTS),
     Icon: DotsFullIcon,
   },
   {
-    symbol: CurrencySymbols.DOGE,
-    name: getCurrencyFullLabel(CurrencySymbols.DOGE),
+    symbol: BridgeCurrency.DOGE,
+    name: getCurrencyFullLabel(BridgeCurrency.DOGE),
     Icon: DogeFullIcon,
   },
   {
-    symbol: CurrencySymbols.ZEC,
-    name: getCurrencyFullLabel(CurrencySymbols.ZEC),
+    symbol: BridgeCurrency.ZEC,
+    name: getCurrencyFullLabel(BridgeCurrency.ZEC),
     Icon: ZecFullIcon,
   },
 ];
@@ -100,7 +101,7 @@ type AssetDropdownMode = "send" | "receive" | "chain";
 
 type AssetDropdownProps = SelectProps & {
   mode: AssetDropdownMode;
-  available?: Array<CurrencyType | ChainType>;
+  available?: Array<BridgeCurrency | BridgeChain>;
 };
 
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({

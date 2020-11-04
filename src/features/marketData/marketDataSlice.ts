@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CurrencySymbols } from "../../components/utils/types";
+import { BridgeCurrency } from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
 import {
   AnyBlockGasPrices,
@@ -53,7 +53,7 @@ export const $exchangeRates = createSelector(
 export const $ethUsdExchangeRate = createSelector(
   $exchangeRates,
   (exchangeRates) => {
-    return findExchangeRate(exchangeRates, CurrencySymbols.ETH, "USD");
+    return findExchangeRate(exchangeRates, BridgeCurrency.ETH, "USD");
   }
 );
 

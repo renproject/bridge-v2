@@ -1,23 +1,38 @@
-import { Divider } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { AssetInfo } from '../../../components/typography/TypographyHelpers'
+import { Divider } from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  getMintedCurrencySymbol,
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { AssetInfo } from "../../../components/typography/TypographyHelpers";
+import {
+  getMintedDestinationCurrencySymbol,
   supportedMintCurrencies,
   supportedMintDestinationChains,
-} from '../../../providers/multiwallet/multiwalletUtils'
-import { getCurrencyShortLabel } from '../../../utils/labels'
-import { setFlowStep } from '../../flow/flowSlice'
-import { FlowStep } from '../../flow/flowTypes'
-import { $wallet, setChain } from '../../wallet/walletSlice'
-import { $mint, $mintCurrencyUsdAmount, $mintFees, setMintAmount, setMintCurrency, } from '../mintSlice'
+} from "../../../providers/multiwallet/multiwalletUtils";
+import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import { $wallet, setChain } from "../../wallet/walletSlice";
+import {
+  $mint,
+  $mintCurrencyUsdAmount,
+  $mintFees,
+  setMintAmount,
+  setMintCurrency,
+} from "../mintSlice";
 
 export const MintInitialStep: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -49,7 +64,7 @@ export const MintInitialStep: FunctionComponent = () => {
     dispatch(setFlowStep(FlowStep.FEES));
   }, [dispatch, amount]);
 
-  const mintedCurrencySymbol = getMintedCurrencySymbol(currency);
+  const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
 
   const MintedCurrencyIcon = useMemo(

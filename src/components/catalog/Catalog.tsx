@@ -64,7 +64,7 @@ export const Catalog: FunctionComponent = () => {
               <Tab label={tab === TabPhase.MINT ? "Minting" : "Mint"} />
               <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
             </Tabs>
-            <PaperContent>
+            <PaperContent bottomPadding>
               {tab === TabPhase.MINT && (
                 <div>
                   <Box height={200}>

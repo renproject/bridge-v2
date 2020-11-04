@@ -5,11 +5,12 @@ import { Shadows } from "@material-ui/core/styles/shadows";
 import { overrides } from "./overrides";
 import { darkPalette, lightPalette } from "./palette";
 import { props } from "./props";
-import { shape } from "./shape";
+import { shape, breakpoints } from "./other";
 import { typography } from "./typography";
 import * as customColors from "./colors";
 
 const baseTheme = (palette: Palette) => ({
+  breakpoints,
   props,
   overrides: overrides(palette),
   typography,

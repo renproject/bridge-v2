@@ -1,14 +1,22 @@
-import { Button, ButtonProps } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { QuestionAnswer } from "@material-ui/icons";
-import { WalletPickerProps } from "@renproject/multiwallet-ui";
-import classNames from "classnames";
-import React, { FunctionComponent } from "react";
-import { MetamaskFullIcon, WalletConnectFullIcon } from "../icons/RenIcons";
-import { WalletConnectionStatusType } from "../utils/types";
+import { Button, ButtonProps, Typography, useTheme } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import { QuestionAnswer } from '@material-ui/icons'
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet'
+import { WalletPickerProps } from '@renproject/multiwallet-ui'
+import classNames from 'classnames'
+import React, { FunctionComponent, useMemo } from 'react'
+import { useTimeout } from 'react-use'
+import { getChainConfigByRentxName, getNetworkConfigByRentxName, } from '../../utils/assetConfigs'
+import { MetamaskFullIcon, WalletConnectFullIcon, } from '../icons/RenIcons'
+import { PaperContent } from '../layout/Paper'
+import { BridgeModalTitle } from '../modals/BridgeModal'
+import { ProgressWithContent, ProgressWrapper, } from '../progress/ProgressHelpers'
+import { WalletConnectionStatusType } from '../utils/types'
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
-  root: {},
+  root: {
+    maxWidth: 400,
+  },
   body: {
     padding: 24,
   },
@@ -39,10 +47,10 @@ export const useWalletPickerStyles = makeStyles((theme) => ({
 const mapWalletEntryIcon = (chain: string, name: string) => {
   console.log(chain, name);
   if (chain === "ethereum") {
-    switch (name) {
-      case "Metamask":
+    switch (name.toLowerCase()) {
+      case "metamask":
         return <MetamaskFullIcon fontSize="inherit" />;
-      case "WalletConnect":
+      case "walletconnect":
         return <WalletConnectFullIcon fontSize="inherit" />;
     }
   }
@@ -82,6 +90,80 @@ export const WalletEntryButton: WalletPickerProps<
     >
       <span>{name}</span> <span className={iconClassName}>{Icon}</span>
     </Button>
+  );
+};
+
+export const WalletConnectingInfo: WalletPickerProps<
+  any,
+  any
+>["ConnectingInfo"] = ({ chain, onClose }) => {
+  const theme = useTheme();
+  const labels = useMemo(
+    () => ({
+      initialTitle: "Connecting",
+      actionTitle: "MetaMask action required",
+      initialMessage: `Connecting to ${chain}`,
+      actionMessage:
+        "When prompted, connect securely via the MetaMask browser extension.",
+    }),
+    [chain]
+  );
+
+  const [isPassed] = useTimeout(3000);
+  const passed = isPassed();
+  return (
+    <>
+      <BridgeModalTitle
+        title={passed ? labels.actionTitle : labels.initialTitle}
+        onClose={onClose}
+      />
+      <PaperContent bottomPadding>
+        <ProgressWrapper>
+          <ProgressWithContent
+            size={128}
+            color={theme.customColors.skyBlueLight}
+            fontSize="big"
+            processing
+          >
+            <MetamaskFullIcon fontSize="inherit" />
+          </ProgressWithContent>
+        </ProgressWrapper>
+        <Typography variant="h6" align="center">
+          {passed ? labels.actionMessage : labels.initialMessage}
+        </Typography>
+      </PaperContent>
+    </>
+  );
+};
+
+export const WalletWrongNetworkInfo: WalletPickerProps<
+  any,
+  any
+>["WrongNetworkInfo"] = ({ chain, targetNetwork, onClose }) => {
+  const theme = useTheme();
+  const chainName = getChainConfigByRentxName(chain).full;
+  const networkName = getNetworkConfigByRentxName(targetNetwork).full;
+  return (
+    <>
+      <BridgeModalTitle title="Wrong Network" onClose={onClose} />
+      <PaperContent bottomPadding>
+        <ProgressWrapper>
+          <ProgressWithContent
+            size={128}
+            color={theme.customColors.redLighter}
+            fontSize="big"
+          >
+            <AccountBalanceWalletIcon fontSize="inherit" color="secondary" />
+          </ProgressWithContent>
+        </ProgressWrapper>
+        <Typography variant="h5" align="center" gutterBottom>
+          Switch to {chainName} {networkName}
+        </Typography>
+        <Typography variant="body1" align="center" color="textSecondary">
+          RenBridge requires you to connect to the {chainName} {networkName}
+        </Typography>
+      </PaperContent>
+    </>
   );
 };
 

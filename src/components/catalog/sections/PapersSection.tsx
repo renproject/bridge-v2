@@ -9,7 +9,7 @@ import { Section } from '../PresentationHelpers'
 const SLIDES = 3;
 export const ExampleContent: FunctionComponent = () => {
   return (
-    <PaperContent>
+    <PaperContent bottomPadding>
       <Typography variant="h5" align="center" gutterBottom>
         Limited wallet support
       </Typography>
@@ -32,7 +32,7 @@ export const ExampleContent: FunctionComponent = () => {
 
 const CurrencyReceivedContent: FunctionComponent = () => {
   return (
-    <PaperContent>
+    <PaperContent bottomPadding>
       <Button variant="contained" color="primary" size="large" fullWidth>
         Return
       </Button>

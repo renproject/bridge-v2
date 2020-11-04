@@ -10,7 +10,7 @@ import CompletedIcon from "@material-ui/icons/Check";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
-import { BridgeChain, ChainType, TransactionStatusType } from "../utils/types";
+import { BridgeChain, TransactionStatusType } from "../utils/types";
 
 type ProgressIconSize = "big" | "medium" | number;
 
@@ -82,13 +82,20 @@ const useProgressWithContentStyles = makeStyles<
   },
 }));
 
+export const ProgressWrapper = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  marginTop: 20,
+  marginBottom: 20,
+});
+
 export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = ({
   color,
-  fontSize,
   value = 100,
   processing,
   confirmations,
   size = 166,
+  fontSize = Math.floor(0.75 * size),
   children,
 }) => {
   const styles = useProgressWithContentStyles({
@@ -188,7 +195,7 @@ export const TransactionStatusCircleIndicator = styled("div")(({ theme }) => ({
   background: theme.palette.primary.main,
 }));
 
-const resolveIcon = (chain: ChainType, status: TransactionStatusType) => {
+const resolveIcon = (chain: BridgeChain, status: TransactionStatusType) => {
   const shared = { color: "inherit" } as SvgIconProps;
   if (status === "completed") {
     return <CompletedIcon {...shared} fontSize="large" />;
@@ -230,7 +237,7 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
 
 export type TransactionStatusIndicatorProps = {
   status: TransactionStatusType;
-  chain: ChainType;
+  chain: BridgeChain;
   confirmations?: number;
 };
 
