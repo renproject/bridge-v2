@@ -122,7 +122,7 @@ export const TransactionDataGuard: FunctionComponent<MintTransactionInfoProps> =
   );
 };
 
-const DepositStatus: React.FC<{
+export const DepositStatus: React.FC<{
   deposit: GatewayTransaction;
   machine: Actor<typeof depositMachine>;
 }> = ({ deposit, machine }) => {

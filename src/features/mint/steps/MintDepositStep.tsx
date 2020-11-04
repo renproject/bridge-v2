@@ -1,45 +1,71 @@
-import { Box, Divider, IconButton, Typography } from '@material-ui/core'
-import { GatewaySession } from '@renproject/rentx'
-import queryString from 'query-string'
-import React, { FunctionComponent, useCallback, useEffect, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useLocation } from 'react-router-dom'
-import { CopyContentButton, QrCodeIconButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BackArrowIcon, BitcoinIcon } from '../../../components/icons/RenIcons'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { ProgressWithContent, ProgressWrapper, } from '../../../components/progress/ProgressHelpers'
-import { BigAssetAmount, BigAssetAmountWrapper, } from '../../../components/typography/TypographyHelpers'
-import { Debug } from '../../../components/utils/Debug'
-import { orangeLight } from '../../../theme/colors'
-import { getCurrencyShortLabel } from '../../../utils/assetConfigs'
-import { setFlowStep } from '../../flow/flowSlice'
-import { FlowStep } from '../../flow/flowTypes'
-import { useGasPrices } from '../../marketData/marketDataHooks'
-import { $currentTx, setCurrentTransaction, } from '../../transactions/transactionsSlice'
-import { $mint, } from '../mintSlice'
-import { preValidateMintTransaction } from '../mintUtils'
-import { MintFees } from './MintFeesStep'
+import { Box, Divider, IconButton, Typography } from "@material-ui/core";
+import {
+  depositMachine,
+  GatewaySession,
+  GatewayTransaction,
+} from "@renproject/rentx";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Actor } from "xstate";
+import {
+  CopyContentButton,
+  QrCodeIconButton,
+  ToggleIconButton,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import {
+  ProgressWithContent,
+  ProgressWrapper,
+} from "../../../components/progress/ProgressHelpers";
+import {
+  BigAssetAmount,
+  BigAssetAmountWrapper,
+} from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { orangeLight } from "../../../theme/colors";
+import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import { useGasPrices } from "../../marketData/marketDataHooks";
+import { DepositStatus } from "../components/MintHelpers";
+import { $mint } from "../mintSlice";
+import { useMintMachine, useTxParam } from "../mintUtils";
+import { MintFees } from "./MintFeesStep";
 
 export const MintDepositStep: FunctionComponent = () => {
   useGasPrices();
   const dispatch = useDispatch();
-  const location = useLocation();
   const { amount, currency } = useSelector($mint);
-  const tx = useSelector($currentTx);
+  const parsedTx = useTxParam();
+  const [tx] = useState<GatewaySession>(parsedTx);
+  const [current] = useMintMachine(tx);
 
+  const activeDeposit = useMemo<{
+    deposit: GatewayTransaction;
+    machine: Actor<typeof depositMachine>;
+  } | null>(() => {
+    const deposit = Object.values(current.context.tx.transactions)[0];
+    if (!deposit || !current.context.depositMachines) return null;
+    const machine = current.context.depositMachines[deposit.sourceTxHash];
+    return { deposit, machine };
+  }, [current.context]);
 
   const handlePreviousStepClick = useCallback(() => {
     dispatch(setFlowStep(FlowStep.FEES));
   }, [dispatch]);
-
-  useEffect(() => {
-    const queryParams = queryString.parse(location.search);
-    const tx: GatewaySession = JSON.parse(queryParams.tx as string);
-    if (preValidateMintTransaction(tx)) {
-      dispatch(setCurrentTransaction(tx)); // TODO: local state?
-    }
-  }, [dispatch, location.search]);
 
   const gatewayAddress = "1LU14szcGuMwxVNet1rm"; // TODO: get
   const processingTime = 60; // TODO: get
@@ -89,6 +115,18 @@ export const MintDepositStep: FunctionComponent = () => {
           </Box>
         </Box>
       </PaperContent>
+      {activeDeposit ? (
+        <DepositStatus
+          deposit={activeDeposit.deposit}
+          machine={activeDeposit.machine}
+        />
+      ) : (
+        <span>
+          Deposit {Number(current.context.tx.suggestedAmount) / 1e8}{" "}
+          {current.context.tx.sourceAsset} to:{" "}
+          {current.context.tx.gatewayAddress}
+        </span>
+      )}
       <Divider />
       <PaperContent topPadding bottomPadding>
         <MintFees />

@@ -1,31 +1,27 @@
-import React, { FunctionComponent, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { FunctionComponent } from 'react'
+import { useSelector } from 'react-redux'
+import { RouteComponentProps } from 'react-router'
 import { usePageTitle } from '../../hooks/usePageTitle'
-import { FlowTabs } from "../flow/components/FlowTabs";
-import { $flow, setFlowKind } from "../flow/flowSlice";
-import { FlowStep } from "../flow/flowTypes";
-import { useExchangeRates } from "../marketData/marketDataHooks";
-import { MintDepositStep } from "./steps/MintDepositStep";
-import { MintFeesStep } from "./steps/MintFeesStep";
-import { MintInitialStep } from "./steps/MintInitialStep";
+import { FlowTabs } from '../flow/components/FlowTabs'
+import { $flow } from '../flow/flowSlice'
+import { FlowStep } from '../flow/flowTypes'
+import { useExchangeRates } from '../marketData/marketDataHooks'
+import { MintDepositStep } from './steps/MintDepositStep'
+import { MintFeesStep } from './steps/MintFeesStep'
+import { MintInitialStep } from './steps/MintInitialStep'
 
-export const MintFlow: FunctionComponent = () => {
+export const MintFlow: FunctionComponent<RouteComponentProps> = ({
+  history,
+}) => {
   usePageTitle("Minting");
   useExchangeRates();
-  const { kind, step } = useSelector($flow);
-  const dispatch = useDispatch();
-  const handleFlowKindChange = useCallback(
-    (kind) => {
-      //TODO: check if flow is in progress. Inform with e.g. useConfirm()
-      dispatch(setFlowKind(kind));
-    },
-    [dispatch]
-  );
+  const { step } = useSelector($flow);
+
 
   return (
     <>
       {step === FlowStep.INITIAL && (
-        <FlowTabs value={kind} onKindChange={handleFlowKindChange} />
+        <FlowTabs />
       )}
       {step === FlowStep.INITIAL && <MintInitialStep />}
       {step === FlowStep.FEES && <MintFeesStep />}
