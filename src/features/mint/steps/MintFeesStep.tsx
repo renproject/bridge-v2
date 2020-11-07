@@ -1,41 +1,84 @@
-import { Checkbox, Divider, FormControl, FormControlLabel, FormLabel, IconButton, Typography, } from '@material-ui/core'
-import queryString from 'query-string'
-import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { CheckboxWrapper } from '../../../components/inputs/InputHelpers'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
+import {
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
+import queryString from "query-string";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from '../../../components/typography/TypographyHelpers'
-import { Debug } from '../../../components/utils/Debug'
-import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { getMintedDestinationCurrencySymbol } from '../../../providers/multiwallet/multiwalletUtils'
-import { getChainShortLabel, getCurrencyShortLabel, } from '../../../utils/assetConfigs'
-import { fromGwei } from '../../../utils/converters'
-import { setFlowStep } from '../../flow/flowSlice'
-import { FlowStep } from '../../flow/flowTypes'
-import { useGasPrices } from '../../marketData/marketDataHooks'
-import { $ethUsdExchangeRate, $gasPrices, } from '../../marketData/marketDataSlice'
-import { addTransaction } from '../../transactions/transactionsSlice'
-import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
-import { getFeeTooltips, tooltips } from '../components/MintHelpers'
-import { $mint, $mintCurrencyUsdAmount, $mintCurrencyUsdRate, $mintFees, } from '../mintSlice'
-import { createMintTransaction, preValidateMintTransaction, } from '../mintUtils'
+} from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { WalletStatus } from "../../../components/utils/types";
+import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
+import { paths } from "../../../pages/routes";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { getMintedDestinationCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
+import {
+  getChainShortLabel,
+  getCurrencyShortLabel,
+} from "../../../utils/assetConfigs";
+import { fromGwei } from "../../../utils/converters";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import { useGasPrices } from "../../marketData/marketDataHooks";
+import {
+  $ethUsdExchangeRate,
+  $gasPrices,
+} from "../../marketData/marketDataSlice";
+import { createTxQueryString } from "../../transactions/transactionsUtils";
+import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
+import {
+  getFeeTooltips,
+  MintTransactionInitializer,
+  tooltips,
+} from "../components/MintHelpers";
+import {
+  $mint,
+  $mintCurrencyUsdAmount,
+  $mintCurrencyUsdRate,
+  $mintFees,
+} from "../mintSlice";
+import {
+  createMintTransaction,
+  preValidateMintTransaction,
+} from "../mintUtils";
 
 export const MintFeesStep: FunctionComponent = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const [initializeMinting, setInitializeMinting] = useState(false);
   const { amount, currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const { account } = useSelectedChainWallet();
@@ -45,7 +88,6 @@ export const MintFeesStep: FunctionComponent = () => {
   const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency); // selector?
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
   const mintedCurrencyAmountUsd = conversionTotal * currencyUsdRate;
-  // TODO: resolve dynamically
   const targetNetworkLabel = getChainShortLabel(chain);
 
   const MintedCurrencyIcon = useMemo(
@@ -53,7 +95,7 @@ export const MintFeesStep: FunctionComponent = () => {
     [mintedCurrencySymbol]
   );
 
-  const [ackChecked, setAckChecked] = useState(false);
+  const [ackChecked, setAckChecked] = useState(true); // TODO: CRIT: false
   const [touched, setTouched] = useState(false);
 
   const handlePreviousStepClick = useCallback(() => {
@@ -78,26 +120,45 @@ export const MintFeesStep: FunctionComponent = () => {
       }),
     [amount, currency, account, chain]
   );
-  const handleConfirm = useCallback(() => {
-    if (status === "connected") {
-      setTouched(true);
-      if (ackChecked && preValidateMintTransaction(tx)) {
-        dispatch(addTransaction(tx));
-        dispatch(setFlowStep(FlowStep.DEPOSIT));
+  const txValid = preValidateMintTransaction(tx);
+  const canInitializeMinting = ackChecked && txValid;
 
-        const serializedTx = JSON.stringify(tx);
-        history.push({ search: queryString.stringify({ tx: serializedTx }) });
+  const handleConfirm = useCallback(() => {
+    if (status === WalletStatus.CONNECTED) {
+      setTouched(true);
+      if (canInitializeMinting) {
+        setInitializeMinting(true);
+      } else {
+        setInitializeMinting(false);
       }
     } else {
       setTouched(false);
+      setInitializeMinting(false);
       dispatch(setWalletPickerOpened(true));
     }
-  }, [dispatch, history, ackChecked, status, tx]);
+  }, [dispatch, status, canInitializeMinting]);
+
+  const onMintTxCreated = useCallback(
+    (tx) => {
+      console.log("onMintTxCreated");
+      history.push({
+        pathname: paths.MINT,
+        search: "?" + createTxQueryString(tx),
+      });
+    },
+    [history]
+  );
 
   const showAckError = !ackChecked && touched;
 
   return (
     <>
+      {initializeMinting && (
+        <MintTransactionInitializer
+          initialTx={tx}
+          onCreated={onMintTxCreated}
+        />
+      )}
       <PaperHeader>
         <PaperNav>
           <IconButton onClick={handlePreviousStepClick}>

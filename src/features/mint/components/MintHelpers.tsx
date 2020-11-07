@@ -6,7 +6,12 @@ import {
   GatewaySession,
   GatewayTransaction,
 } from "@renproject/rentx";
-import React, { FunctionComponent, useCallback, useMemo } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Actor } from "xstate";
 import { Debug } from "../../../components/utils/Debug";
@@ -40,6 +45,35 @@ export const getFeeTooltips = (mintFee: number, releaseFee: number) => ({
   estimatedEthFee:
     "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
 });
+
+type MintTransactionInitializerProps = {
+  initialTx: GatewaySession;
+  onCreated?: (tx: GatewaySession) => void;
+};
+
+export const MintTransactionInitializer: FunctionComponent<MintTransactionInitializerProps> = ({
+  initialTx,
+  onCreated,
+}) => {
+  const [current] = useMintMachine(initialTx);
+
+  useEffect(() => {
+    console.log(
+      current.context.tx.gatewayAddress,
+      !!current.context.tx.gatewayAddress
+    );
+    if (onCreated && !!current.context.tx.gatewayAddress) {
+      console.log("invoking", current.context.tx);
+      onCreated(current.context.tx);
+    }
+  }, [onCreated, current.context.tx]);
+
+  return <span>minting</span>;
+};
+
+type MintTransactionStatusProps = {
+  tx: GatewaySession;
+};
 
 export const MintExample: FunctionComponent = () => {
   const dispatch = useDispatch();

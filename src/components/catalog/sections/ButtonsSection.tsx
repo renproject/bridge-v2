@@ -61,7 +61,8 @@ export const ButtonsSection: FunctionComponent = () => {
           <TransactionHistoryMenuIconButton />
         </SeparationWrapper>
         <SeparationWrapper>
-          <CopyContentButton content="1LU14szcGuMwxVNet1rm" />
+          <CopyContentButton content="1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm" />
+          <CopyContentButton content="" />
           <TransactionDetailsButton
             chain="ETH"
             address="0x7a36479806342F7a1d663fF43A0D340b733FA764"

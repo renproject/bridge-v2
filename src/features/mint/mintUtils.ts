@@ -1,18 +1,12 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { GatewaySession, mintMachine } from "@renproject/rentx";
-import { useMachine } from "@xstate/react";
-import queryString from "query-string";
-import { useLocation } from "react-router-dom";
-import { BridgeChain, BridgeCurrency } from "../../components/utils/types";
-import { env } from "../../constants/environmentVariables";
-import { getRenJs } from "../../services/renJs";
-import { fromChainMap, toChainMap } from "../../services/rentx";
-import {
-  getChainRentxName,
-  getCurrencyRentxName,
-  getCurrencyRentxSourceChain,
-} from "../../utils/assetConfigs";
+import { RenNetwork } from '@renproject/interfaces'
+import { useMultiwallet } from '@renproject/multiwallet-ui'
+import { GatewaySession, mintMachine } from '@renproject/rentx'
+import { useMachine } from '@xstate/react'
+import { BridgeChain, BridgeCurrency } from '../../components/utils/types'
+import { env } from '../../constants/environmentVariables'
+import { getRenJs } from '../../services/renJs'
+import { fromChainMap, toChainMap } from '../../services/rentx'
+import { getChainRentxName, getCurrencyRentxName, getCurrencyRentxSourceChain, } from '../../utils/assetConfigs'
 
 export const getMintTx: GatewaySession = {
   id: "tx-" + Math.floor(Math.random() * 10 ** 16),
@@ -73,14 +67,6 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
     tx.userAddress &&
     tx.targetAmount > 0
   );
-};
-
-export const useTxParam = () => {
-  const location = useLocation();
-  const queryParams = queryString.parse(location.search);
-  const tx: GatewaySession = JSON.parse(queryParams.tx as string);
-
-  return tx;
 };
 
 export const useMintMachine = (mintTransaction: GatewaySession) => {

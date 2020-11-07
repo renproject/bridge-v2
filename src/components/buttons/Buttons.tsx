@@ -186,6 +186,14 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    maxWidth: 265,
+  },
+  contentValue: {
+    display: "block",
+    paddingRight: 20,
+    paddingLeft: 20,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   copy: {
     flexGrow: 0,
@@ -221,7 +229,7 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
             <span>Copied!</span>
           </Fade>
         )}
-        {!copied && <span>{content}</span>}
+        {!copied && <span className={styles.contentValue}>{content}</span>}
       </div>
       <div className={styles.copy}>
         <IconButton classes={iconClasses} onClick={handleClick}>
