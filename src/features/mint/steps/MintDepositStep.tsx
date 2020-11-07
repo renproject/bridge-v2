@@ -37,8 +37,9 @@ import {
 } from "../../../components/layout/Paper";
 import {
   ProgressWithContent,
-  ProgressWrapper, TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
+  ProgressWrapper,
+  TransactionStatusInfo,
+} from "../../../components/progress/ProgressHelpers";
 import {
   BigAssetAmount,
   BigAssetAmountWrapper,
@@ -56,7 +57,10 @@ import {
 import { setFlowStep } from "../../flow/flowSlice";
 import { FlowStep } from "../../flow/flowTypes";
 import { useGasPrices } from "../../marketData/marketDataHooks";
-import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
+import {
+  BookmarkPageWarning,
+  ProcessingTimeWrapper,
+} from "../../transactions/components/TransactionsHelpers";
 import { useTxParam } from "../../transactions/transactionsUtils";
 import { $mint } from "../mintSlice";
 import { useMintMachine } from "../mintUtils";
@@ -67,7 +71,7 @@ export const MintDepositStep: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const { currency } = useSelector($mint);
-  const { tx: parsedTx } = useTxParam();
+  const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); //TODO fix this
 
   const handlePreviousStepClick = useCallback(() => {
@@ -100,6 +104,7 @@ export const MintDepositStep: FunctionComponent = () => {
         <MintFees />
         <Debug it={{ parsedTx }} />
       </PaperContent>
+      {txState?.newTx && <BookmarkPageWarning />}
     </>
   );
 };
@@ -148,7 +153,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           processingTime={60} // TODO: calculate
         />
       )}
-      <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
+      <Debug disable it={{ contextTx: current.context.tx, activeDeposit }} />
     </>
   );
 };

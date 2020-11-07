@@ -1,10 +1,13 @@
+import { Backdrop } from '@material-ui/core'
 import Dialog, { DialogProps } from '@material-ui/core/Dialog'
 import MuiDialogTitle, { DialogTitleProps, } from '@material-ui/core/DialogTitle'
 import IconButton from '@material-ui/core/IconButton'
+import Slide from '@material-ui/core/Slide'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close'
 import React, { FunctionComponent } from 'react'
+import { BridgePurePaper } from '../layout/Paper'
 
 export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   dialogTitle: {
@@ -70,5 +73,52 @@ export const BridgeModal: FunctionComponent<DialogProps> = ({
       <BridgeModalTitle onClose={onClose} title={title} />
       {children}
     </Dialog>
+  );
+};
+
+const useNestedDrawerStyles = makeStyles((theme) => ({
+  backdrop: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: "auto",
+  },
+  positioner: {
+    position: "relative",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+  },
+  paper: {
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+  },
+}));
+
+type NestedDrawerProps = DialogProps & {
+  open: boolean;
+};
+
+export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
+  open,
+  onClose,
+  title,
+  children,
+}) => {
+  const styles = useNestedDrawerStyles();
+
+  return (
+    <Backdrop id="x" className={styles.backdrop} open={open}>
+      <Slide direction="up" in={open} mountOnEnter unmountOnExit>
+        <BridgePurePaper className={styles.paper}>
+          <BridgeModalTitle onClose={onClose} title={title} />
+          {children}
+        </BridgePurePaper>
+      </Slide>
+    </Backdrop>
   );
 };

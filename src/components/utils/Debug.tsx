@@ -12,17 +12,19 @@ const off = process.env.NODE_ENV === "production";
 type DebugProps = {
   it: any;
   force?: boolean;
+  disable?: boolean;
 };
 
 export const Debug: FunctionComponent<DebugProps> = ({
   it,
   force,
+  disable,
   children,
 }) => {
   const classes = useStyles();
   const target = it || children;
   const show = !off || force;
-  return show ? (
+  return show && !disable ? (
     <pre className={classes.root}>{JSON.stringify(target, null, 2)}</pre>
   ) : null;
 };

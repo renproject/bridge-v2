@@ -8,6 +8,8 @@ type BridgePaperProps = PaperContentProps & PaperProps;
 export const BridgePurePaper = styled(Paper)({
   maxWidth: 400,
   margin: "0 auto",
+  position: "relative",
+  overflow: "hidden",
 });
 
 export const BridgePaper: FunctionComponent<BridgePaperProps> = ({

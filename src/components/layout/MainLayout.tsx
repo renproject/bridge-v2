@@ -255,7 +255,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
           </header>
           <main className={styles.main}>
             {children}
-            <Debug it={{ debugWallet, env }} />
+            <Debug disable it={{ debugWallet, env }} />
           </main>
           <Footer />
         </Container>
