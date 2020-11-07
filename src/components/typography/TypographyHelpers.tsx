@@ -1,7 +1,7 @@
-import { Divider, Typography } from '@material-ui/core'
-import { makeStyles, styled } from '@material-ui/core/styles'
-import React, { FunctionComponent, ReactNode } from 'react'
-import { TooltipWithIcon } from '../tooltips/TooltipWithIcon'
+import { Divider, Typography } from "@material-ui/core";
+import { makeStyles, styled } from "@material-ui/core/styles";
+import React, { FunctionComponent, ReactNode } from "react";
+import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
 type LabelWithValueProps = {
   label: string;
@@ -164,3 +164,7 @@ export const BigAssetAmount: FunctionComponent<BigAssetAmountProps> = ({
     </Typography>
   );
 };
+
+export const ProcessingTimeLabel = styled(Typography)({
+  marginTop: 5,
+});

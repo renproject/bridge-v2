@@ -1,5 +1,6 @@
 import {
   CircularProgress,
+  fade,
   styled,
   SvgIconProps,
   Theme,
@@ -16,11 +17,13 @@ type ProgressIconSize = "big" | "medium" | number;
 
 type ProgressWithContentProps = {
   color: string;
+  incompleteSectionColor?: string;
   fontSize?: ProgressIconSize;
   processing?: boolean;
   value?: number;
   size?: number;
   confirmations?: number;
+  targetConfirmations?: number;
 };
 
 const useProgressWithContentStyles = makeStyles<
@@ -57,7 +60,12 @@ const useProgressWithContentStyles = makeStyles<
   },
   section: {
     position: "absolute",
-    color: theme.customColors.skyBlue,
+    color: ({ color }) => {
+      if (color !== "inherit") {
+        return fade(color, 0.2);
+      }
+      return theme.customColors.skyBlue;
+    },
     "& > svg": {
       transformOrigin: "50% 50%",
     },
@@ -78,7 +86,7 @@ const useProgressWithContentStyles = makeStyles<
     },
   },
   sectionCompleted: {
-    color: "inherit",
+    color: () => "inherit",
   },
 }));
 
@@ -94,6 +102,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
   value = 100,
   processing,
   confirmations,
+  targetConfirmations = 6,
   size = 166,
   fontSize = Math.floor(0.75 * size),
   children,
@@ -164,8 +173,8 @@ const useTransactionStatusInfoStyles = makeStyles((theme) => ({
 }));
 
 type TransactionStatusInfoProps = {
-  chain: string;
-  address: string;
+  chain?: string;
+  address?: string;
   status?: string;
 };
 
@@ -180,10 +189,12 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
       <Typography variant="body1" className={styles.status}>
         {status}
       </Typography>
-      <Typography variant="body1">{chain} Tx:</Typography>
-      <Typography variant="body1" className={styles.txLink}>
-        <span>{address}</span>
-      </Typography>
+      {chain && <Typography variant="body1">{chain} Tx:</Typography>}
+      {address && (
+        <Typography variant="body1" className={styles.txLink}>
+          <span>{address}</span>
+        </Typography>
+      )}
     </div>
   );
 };

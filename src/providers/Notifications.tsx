@@ -2,7 +2,7 @@ import {
   SnackbarProvider as NotistackSnackbarProvider,
   VariantType,
 } from "notistack";
-import { FunctionComponent, ReactElement } from "react";
+import { FunctionComponent, ReactElement, useMemo } from "react";
 import React from "react";
 import { NotificationMessage } from "../components/notifications/NotificationMessage";
 
@@ -18,24 +18,28 @@ export const useNotifications = () => {
     closeSnackbar: closeNotification,
   } = useDefaultSnackbar();
 
-  const showNotification = (
-    message: string | ReactElement,
-    options?: Omit<OptionsObject, "variant"> & Partial<{ variant: ExtendedVariantType }>
-  ) => {
-    enqueueDefaultSnackbar(message, {
-      ...options,
-      content: (key) => {
-        const { variant } = options || { variant: undefined };
-        return (
-          <NotificationMessage
-            id={key}
-            message={message}
-            variant={variant as VariantType}
-          />
-        );
-      },
-    } as OptionsObject);
-  };
+  const showNotification = useMemo(
+    () => (
+      message: string | ReactElement,
+      options?: Omit<OptionsObject, "variant"> &
+        Partial<{ variant: ExtendedVariantType }>
+    ) => {
+      enqueueDefaultSnackbar(message, {
+        ...options,
+        content: (key) => {
+          const { variant } = options || { variant: undefined };
+          return (
+            <NotificationMessage
+              id={key}
+              message={message}
+              variant={variant as VariantType}
+            />
+          );
+        },
+      } as OptionsObject);
+    },
+    [enqueueDefaultSnackbar]
+  );
 
   return { showNotification, closeNotification };
 };

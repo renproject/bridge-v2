@@ -24,12 +24,14 @@ import {
   skyBlue,
   skyBlueLighter,
 } from "../../theme/colors";
+import { chainsConfig } from '../../utils/assetConfigs'
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
   QrCodeIcon,
   TxHistoryIcon,
 } from "../icons/RenIcons";
+import { BridgeChain } from "../utils/types";
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -292,7 +294,7 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
 }));
 
 type TransactionDetailsButton = ButtonProps & {
-  chain: string;
+  chain: BridgeChain;
   address: string;
 };
 
@@ -305,7 +307,7 @@ export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButto
   return (
     <Button className={styles.button}>
       <span className={styles.wrapper}>
-        <span className={styles.chain}>{chain} Tx: </span>{" "}
+        <span className={styles.chain}>{chainsConfig[chain].short} Tx: </span>{" "}
         <span className={styles.addressWrapper} data-address={address}>
           <span className={styles.address}>{address}</span>
         </span>

@@ -10,6 +10,7 @@ import {
   TxHistoryIconButton,
 } from '../../buttons/Buttons'
 import { QrCodeIcon } from '../../icons/RenIcons'
+import { BridgeChain } from '../../utils/types'
 import { Cartesian, Section, SeparationWrapper } from '../PresentationHelpers'
 
 export const ButtonsSection: FunctionComponent = () => {
@@ -64,12 +65,12 @@ export const ButtonsSection: FunctionComponent = () => {
           <CopyContentButton content="1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm" />
           <CopyContentButton content="" />
           <TransactionDetailsButton
-            chain="ETH"
+            chain={BridgeChain.ETHC}
             address="0x7a36479806342F7a1d663fF43A0D340b733FA764"
           />
           <br />
           <TransactionDetailsButton
-            chain="BTC"
+            chain={BridgeChain.BTCC}
             address="1LU14szcGuMwxVNet1rm"
           />
         </SeparationWrapper>

@@ -7,7 +7,6 @@ import {
   IconButton,
   Typography,
 } from "@material-ui/core";
-import queryString from "query-string";
 import React, {
   FunctionComponent,
   useCallback,
