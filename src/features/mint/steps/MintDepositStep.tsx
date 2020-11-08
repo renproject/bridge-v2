@@ -1,8 +1,25 @@
-import { Box, Divider, IconButton, Typography, useTheme, } from '@material-ui/core'
-import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/rentx'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Actor } from 'xstate'
+import {
+  Box,
+  Divider,
+  IconButton,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
+import {
+  depositMachine,
+  DepositMachineSchema,
+  GatewaySession,
+  GatewayTransaction,
+} from "@renproject/rentx";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Actor } from "xstate";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -10,22 +27,31 @@ import {
   QrCodeIconButton,
   ToggleIconButton,
   TransactionDetailsButton,
-} from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { getChainIcon } from '../../../components/icons/IconHelpers'
-import { BackArrowIcon, BitcoinIcon } from '../../../components/icons/RenIcons'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { getChainIcon } from "../../../components/icons/IconHelpers";
+import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { BigAssetAmount, BigAssetAmountWrapper, } from '../../../components/typography/TypographyHelpers'
-import { Debug } from '../../../components/utils/Debug'
-import { BridgeChain, BridgeCurrency } from '../../../components/utils/types'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { useNotifications } from '../../../providers/Notifications'
-import { orangeLight } from '../../../theme/colors'
+} from "../../../components/progress/ProgressHelpers";
+import {
+  BigAssetAmount,
+  BigAssetAmountWrapper,
+} from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { BridgeChain, BridgeCurrency } from "../../../components/utils/types";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { useNotifications } from "../../../providers/Notifications";
+import { orangeLight } from "../../../theme/colors";
 import {
   getChainConfig,
   getChainConfigByRentxName,
@@ -33,15 +59,18 @@ import {
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
   getCurrencySourceChain,
-} from '../../../utils/assetConfigs'
-import { setFlowStep } from '../../flow/flowSlice'
-import { FlowStep } from '../../flow/flowTypes'
-import { useGasPrices } from '../../marketData/marketDataHooks'
-import { BookmarkPageWarning, ProcessingTimeWrapper, } from '../../transactions/components/TransactionsHelpers'
-import { useTxParam } from '../../transactions/transactionsUtils'
-import { $mint } from '../mintSlice'
-import { useMintMachine } from '../mintUtils'
-import { MintFees } from './MintFeesStep'
+} from "../../../utils/assetConfigs";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import { useGasPrices } from "../../marketData/marketDataHooks";
+import {
+  BookmarkPageWarning,
+  ProcessingTimeWrapper,
+} from "../../transactions/components/TransactionsHelpers";
+import { useTxParam } from "../../transactions/transactionsUtils";
+import { $mint } from "../mintSlice";
+import { useMintMachine } from "../mintUtils";
+import { MintFees } from "./MintFeesStep";
 
 export const MintDepositStep: FunctionComponent = () => {
   useGasPrices();
@@ -235,22 +264,16 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
       return <div>Submitting to RenVM</div>;
     case "accepted":
       return (
-        <>
-          <div>
-            Mint {deposit.sourceTxAmount / 1e8}{" "}
-            {machine.state.context.tx.destAsset}?
-          </div>
-          <DepositAcceptedStatus
-            sourceCurrency={sourceCurrencyConfig.symbol}
-            sourceAmount={deposit.sourceTxAmount / 1e8}
-            sourceChain={sourceChainConfig.symbol}
-            sourceTxHash={deposit.sourceTxHash}
-            sourceConfirmations={deposit.sourceTxConfs}
-            sourceConfirmationsTarget={6} // TODO: resolve
-            destinationChain={destinationChainConfig.symbol}
-            onSubmit={handleSubmitToDestinationChain}
-          />
-        </>
+        <DepositAcceptedStatus
+          sourceCurrency={sourceCurrencyConfig.symbol}
+          sourceAmount={deposit.sourceTxAmount / 1e8}
+          sourceChain={sourceChainConfig.symbol}
+          sourceTxHash={deposit.sourceTxHash}
+          sourceConfirmations={deposit.sourceTxConfs}
+          sourceConfirmationsTarget={6} // TODO: resolve
+          destinationChain={destinationChainConfig.symbol}
+          onSubmit={handleSubmitToDestinationChain}
+        />
       );
     case "claiming":
       return <div>Signing mint transaction...</div>;
@@ -262,6 +285,12 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
       return <LoadingStatus />;
   }
 };
+
+/*
+msv accepted
+msv claiming
+msv destInitiated
+ */
 
 export const LoadingStatus: FunctionComponent = () => {
   const theme = useTheme();
@@ -382,6 +411,62 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
   );
 };
 
+type DepositClaimingStatusProps = {
+  sourceCurrency: BridgeCurrency;
+  sourceAmount: number;
+  sourceChain: BridgeChain;
+  sourceTxHash: string;
+  sourceConfirmations: number;
+  sourceConfirmationsTarget: number;
+  destinationChain: BridgeChain;
+  onSubmit?: () => void;
+  submittingPending?: boolean;
+};
+
+export const DepositClaimingStatus: FunctionComponent<DepositClaimingStatusProps> = ({
+  sourceCurrency,
+  sourceAmount,
+  sourceChain,
+  sourceTxHash,
+  sourceConfirmations,
+  sourceConfirmationsTarget = 6, // TODO: resolve from config or tx
+  destinationChain,
+  onSubmit = () => {},
+  submittingPending,
+}) => {
+  const theme = useTheme();
+  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
+  const destinationChainConfig = getChainConfig(destinationChain);
+  const Icon = getChainIcon(destinationChain);
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent
+          color={sourceCurrencyConfig.color || theme.customColors.skyBlue}
+          confirmations={sourceConfirmations}
+          targetConfirmations={sourceConfirmationsTarget}
+        >
+          <Icon fontSize="inherit" color="inherit" />
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <Typography variant="body1" align="center" gutterBottom>
+        <NumberFormatText
+          value={sourceAmount}
+          spacedSuffix={sourceCurrencyConfig.full}
+        />
+      </Typography>
+      <ActionButtonWrapper>
+        <ActionButton onClick={onSubmit} disabled={submittingPending}>
+          {submittingPending ? "Submit" : "Submitting..."} to{" "}
+          {destinationChainConfig.full}
+        </ActionButton>
+      </ActionButtonWrapper>
+      <ActionButtonWrapper>
+        <TransactionDetailsButton chain={sourceChain} address={sourceTxHash} />
+      </ActionButtonWrapper>
+    </>
+  );
+};
 // type SubmitToEthereumStatusProps = {
 //   currency: BridgeCurrency;
 //   amount: number;

@@ -1,5 +1,5 @@
 import { GatewaySession, } from '@renproject/rentx'
-import React, { FunctionComponent, useEffect, } from 'react'
+import { FunctionComponent, useEffect, } from 'react'
 import { toPercent } from '../../../utils/converters'
 import { useMintMachine } from '../mintUtils'
 
@@ -43,5 +43,5 @@ export const MintTransactionInitializer: FunctionComponent<MintTransactionInitia
     }
   }, [onCreated, current.context.tx]);
 
-  return <span>minting</span>;
+  return null;
 };
