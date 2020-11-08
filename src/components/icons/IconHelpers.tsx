@@ -2,14 +2,17 @@ import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
-import { BridgeCurrency } from "../utils/types";
+import { BridgeChain, BridgeCurrency } from "../utils/types";
 import {
   BchGreyIcon,
+  BinanceChainIcon,
+  BitcoinIcon,
   BtcGreyIcon,
   CustomSvgIconComponent,
   DgbGreyIcon,
   DogeGreyIcon,
   DotsFullIcon,
+  EthereumIcon,
   ZecGreyIcon,
 } from "./RenIcons";
 
@@ -55,7 +58,6 @@ export const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
 };
 
 export const getCurrencyGreyIcon = (symbol: BridgeCurrency) => {
-  // TODO: merge with currencyData
   switch (symbol) {
     case BridgeCurrency.BTC:
       return BtcGreyIcon;
@@ -78,6 +80,19 @@ export const getCurrencyGreyIcon = (symbol: BridgeCurrency) => {
     case BridgeCurrency.RENDGB:
       return DgbGreyIcon;
     default:
-      return BtcGreyIcon
+      return BtcGreyIcon;
+  }
+};
+
+export const getChainIcon = (symbol: BridgeChain) => {
+  switch (symbol) {
+    case BridgeChain.BTCC:
+      return BitcoinIcon;
+    case BridgeChain.BNCC:
+      return BinanceChainIcon;
+    case BridgeChain.ETHC:
+      return EthereumIcon;
+    case BridgeChain.UNKNOWNC:
+      return BitcoinIcon;
   }
 };

@@ -1,4 +1,4 @@
-import { styled, Typography } from "@material-ui/core";
+import { Button, styled, Typography } from '@material-ui/core'
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   ActionButton,
@@ -35,6 +35,32 @@ export const BookmarkPageWarning: FunctionComponent = () => {
       <PaperContent bottomPadding>
         <ActionButtonWrapper>
           <ActionButton onClick={handleClose}>I understand</ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </NestedDrawer>
+  );
+};
+
+export const EnableNotificationsWarning: FunctionComponent = () => {
+  const [open, setOpen] = useState(true);
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, []);
+  return (
+    <NestedDrawer title="Warning" open={open} onClose={handleClose}>
+      <SpacedPaperContent topPadding bottomPadding>
+        <Typography variant="h5" align="center" gutterBottom>
+          Bookmark this page
+        </Typography>
+        <Typography variant="body2" align="center" gutterBottom>
+          To ensure you don’t lose track of your transaction, please bookmark
+          this page.
+        </Typography>
+      </SpacedPaperContent>
+      <PaperContent bottomPadding>
+        <Button variant="text" color="primary">Do not enable</Button>
+        <ActionButtonWrapper>
+          <ActionButton onClick={handleClose}>Enable Browser Notifications</ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
     </NestedDrawer>

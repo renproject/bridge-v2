@@ -24,7 +24,7 @@ import {
   skyBlue,
   skyBlueLighter,
 } from "../../theme/colors";
-import { chainsConfig } from '../../utils/assetConfigs'
+import { chainsConfig } from "../../utils/assetConfigs";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
@@ -378,6 +378,6 @@ export const ActionButton: FunctionComponent<ButtonProps> = (props) => (
   />
 );
 
-export const ActionButtonWrapper = styled("div")({
+export const ActionButtonWrapper = styled("div")(() => ({
   marginTop: 20,
-});
+}));

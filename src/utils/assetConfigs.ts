@@ -3,6 +3,7 @@ import {
   BridgeCurrency,
   BridgeNetwork,
 } from "../components/utils/types";
+import { orangeLight } from "../theme/colors";
 
 const unknownLabel = "unknown";
 
@@ -16,7 +17,12 @@ export type RentxAssetConfig = {
   sourceConfirmationTime?: number;
 };
 
+export type ColorsConfig = {
+  color?: string;
+};
+
 export type CurrencyConfig = LabelsConfig &
+  ColorsConfig &
   RentxAssetConfig & {
     symbol: BridgeCurrency;
     sourceChain?: BridgeChain;
@@ -27,6 +33,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     symbol: BridgeCurrency.BTC,
     short: "BTC",
     full: "Bitcoin",
+    color: orangeLight,
     rentxName: "btc",
     sourceChain: BridgeChain.BTCC,
     sourceConfirmationTime: 15,
@@ -107,6 +114,9 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
 
 const unknownCurrencyConfig = currenciesConfig[BridgeCurrency.UNKNOWN];
 
+export const getCurrencyConfig = (symbol: BridgeCurrency) =>
+  currenciesConfig[symbol] || unknownCurrencyConfig;
+
 export const getCurrencyShortLabel = (symbol: BridgeCurrency) =>
   currenciesConfig[symbol].short || unknownLabel;
 
@@ -132,25 +142,32 @@ export const getCurrencyRentxSourceChain = (symbol: BridgeCurrency) => {
   return BridgeChain.UNKNOWNC;
 };
 
-type ChainConfig = LabelsConfig & RentxAssetConfig;
+type ChainConfig = LabelsConfig &
+  RentxAssetConfig & {
+    symbol: BridgeChain;
+  };
 
 export const chainsConfig: Record<BridgeChain, ChainConfig> = {
   [BridgeChain.BTCC]: {
+    symbol: BridgeChain.BTCC,
     short: "BTC",
     full: "Bitcoin",
     rentxName: "bitcoin",
   },
   [BridgeChain.BNCC]: {
+    symbol: BridgeChain.BNCC,
     short: "BNC",
     full: "Binance SmartChain",
     rentxName: "binanceSmartChain",
   },
   [BridgeChain.ETHC]: {
+    symbol: BridgeChain.ETHC,
     short: "ETH",
     full: "Ethereum",
     rentxName: "ethereum",
   },
   [BridgeChain.UNKNOWNC]: {
+    symbol: BridgeChain.UNKNOWNC,
     short: "UNKNOWNC",
     full: "Unknown",
     rentxName: "unknown",
@@ -158,6 +175,9 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
 };
 
 const unknownChainConfig = chainsConfig[BridgeChain.UNKNOWNC];
+
+export const getChainConfig = (symbol: BridgeChain) =>
+  chainsConfig[symbol] || unknownChainConfig;
 
 export const getChainShortLabel = (symbol: BridgeChain) =>
   chainsConfig[symbol].full || unknownLabel;

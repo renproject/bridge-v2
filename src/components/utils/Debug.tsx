@@ -15,6 +15,13 @@ type DebugProps = {
   disable?: boolean;
 };
 
+function replacer(name: any, val: any) {
+  if (val && val.type === "Buffer") {
+    return "buffer";
+  }
+  return val;
+}
+
 export const Debug: FunctionComponent<DebugProps> = ({
   it,
   force,
@@ -25,6 +32,6 @@ export const Debug: FunctionComponent<DebugProps> = ({
   const target = it || children;
   const show = !off || force;
   return show && !disable ? (
-    <pre className={classes.root}>{JSON.stringify(target, null, 2)}</pre>
+    <pre className={classes.root}>{JSON.stringify(target, replacer, 2)}</pre>
   ) : null;
 };
