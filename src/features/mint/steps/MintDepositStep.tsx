@@ -1,9 +1,12 @@
 import {
   Box,
   Divider,
+  Grow,
   IconButton,
+  Slide,
   Typography,
   useTheme,
+  Zoom,
 } from "@material-ui/core";
 import {
   depositMachine,
@@ -18,11 +21,13 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import QRCode from "qrcode.react";
 import { useDispatch, useSelector } from "react-redux";
 import { Actor } from "xstate";
 import {
   ActionButton,
   ActionButtonWrapper,
+  BigQrCode,
   CopyContentButton,
   QrCodeIconButton,
   ToggleIconButton,
@@ -31,6 +36,10 @@ import {
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { getChainIcon } from "../../../components/icons/IconHelpers";
 import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
+import {
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../../components/layout/LayoutHelpers";
 import {
   PaperActions,
   PaperContent,
@@ -68,6 +77,7 @@ import {
   ProcessingTimeWrapper,
 } from "../../transactions/components/TransactionsHelpers";
 import { useTxParam } from "../../transactions/transactionsUtils";
+import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import { $mint } from "../mintSlice";
 import { useMintMachine } from "../mintUtils";
 import { MintFees } from "./MintFeesStep";
@@ -83,6 +93,10 @@ export const MintDepositStep: FunctionComponent = () => {
   const handlePreviousStepClick = useCallback(() => {
     // TODO: warn if dangerous
     dispatch(setFlowStep(FlowStep.FEES));
+  }, [dispatch]);
+
+  const handleWalletPickerOpen = useCallback(() => {
+    dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
 
   const walletConnected = status === "connected";
@@ -103,7 +117,11 @@ export const MintDepositStep: FunctionComponent = () => {
       </PaperHeader>
       <PaperContent bottomPadding>
         {showTransactionStatus && <MintTransactionStatus tx={tx} />}
-        {!walletConnected && <span>connect wallet</span>}
+        {!walletConnected && (
+          <ActionButton onClick={handleWalletPickerOpen}>
+            Connect Wallet
+          </ActionButton>
+        )}
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
@@ -119,8 +137,11 @@ type MintTransactionStatusProps = {
   tx: GatewaySession;
 };
 
-const gatewayAddressValidMessage =
-  "This Gateway Address is only valid for 24 hours. Do not send multiple deposits or deposit after 24 hours.";
+const getAddressValidityMessage = (expiryTime: number) => {
+  const time = Math.floor((expiryTime - Number(new Date())) / 1000 / 3600);
+  const unit = "hours";
+  return `This Gateway Address is only valid for ${time} ${unit}. Do not send multiple deposits or deposit after ${time} ${unit}.`;
+};
 
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
@@ -128,7 +149,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const [current] = useMintMachine(tx);
   const { showNotification } = useNotifications();
   useEffect(() => {
-    showNotification(gatewayAddressValidMessage, { variant: "warning" });
+    showNotification(getAddressValidityMessage(tx.expiryTime), {
+      variant: "warning",
+    });
   }, [showNotification]);
 
   const activeDeposit = useMemo<{
@@ -177,6 +200,11 @@ const DepositTo: FunctionComponent<DepositToProps> = ({
   gatewayAddress,
   processingTime,
 }) => {
+  const [showQr, setShowQr] = useState(false);
+  const toggleQr = useCallback(() => {
+    setShowQr(!showQr);
+  }, [showQr]);
+
   return (
     <>
       <ProgressWrapper>
@@ -184,7 +212,7 @@ const DepositTo: FunctionComponent<DepositToProps> = ({
           <BitcoinIcon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
-      <BigAssetAmountWrapper>
+      <MediumWrapper>
         <BigAssetAmount
           value={
             <span>
@@ -193,8 +221,21 @@ const DepositTo: FunctionComponent<DepositToProps> = ({
             </span>
           }
         />
-      </BigAssetAmountWrapper>
-      {!!gatewayAddress && <CopyContentButton content={gatewayAddress} />}
+      </MediumWrapper>
+      {!!gatewayAddress && (
+        <>
+          {showQr && (
+            <CenteringSpacedBox>
+              <Grow in={showQr}>
+                <BigQrCode>
+                  <QRCode value={gatewayAddress} />
+                </BigQrCode>
+              </Grow>
+            </CenteringSpacedBox>
+          )}
+          <CopyContentButton content={gatewayAddress} />
+        </>
+      )}
       <Box
         mt={2}
         display="flex"
@@ -206,7 +247,7 @@ const DepositTo: FunctionComponent<DepositToProps> = ({
           Estimated processing time: {processingTime} minutes
         </Typography>
         <Box mt={2}>
-          <QrCodeIconButton />
+          <QrCodeIconButton onClick={toggleQr} />
         </Box>
       </Box>
     </>

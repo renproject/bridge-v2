@@ -34,7 +34,6 @@ const generateSections = (all: number) => {
   let sections: any = {};
   const degreeStep = 360 / all;
   const margin = getSectionMargin(all);
-  const initialRotation = margin / 2;
   for (let i = 0; i < all; i++) {
     const key = `&:nth-child(${i + 1}) svg`;
     sections[key] = {
