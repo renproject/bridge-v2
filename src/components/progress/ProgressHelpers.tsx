@@ -26,6 +26,32 @@ type ProgressWithContentProps = {
   targetConfirmations?: number;
 };
 
+const getSectionMargin = (sections: number) => {
+  return sections > 100 ? 1 : 2;
+};
+
+const generateSections = (all: number) => {
+  let sections: any = {};
+  const degreeStep = 360 / all;
+  const margin = getSectionMargin(all);
+  const initialRotation = margin / 2;
+  for (let i = 0; i < all; i++) {
+    const key = `&:nth-child(${i + 1}) svg`;
+    sections[key] = {
+      transform: `rotate(${i * degreeStep + margin}deg);`,
+    };
+  }
+  return sections;
+};
+
+const useSectionStyles = makeStyles<Theme, number>((theme) => {
+  return {
+    dynamicSection: (num: number) => {
+      return generateSections(num);
+    },
+  };
+});
+
 const useProgressWithContentStyles = makeStyles<
   Theme,
   ProgressWithContentProps
@@ -69,21 +95,6 @@ const useProgressWithContentStyles = makeStyles<
     "& > svg": {
       transformOrigin: "50% 50%",
     },
-    "&:nth-child(2) svg": {
-      transform: "rotate(60deg);",
-    },
-    "&:nth-child(3) svg": {
-      transform: "rotate(120deg);",
-    },
-    "&:nth-child(4) svg": {
-      transform: "rotate(180deg);",
-    },
-    "&:nth-child(5) svg": {
-      transform: "rotate(240deg);",
-    },
-    "&:nth-child(6) svg": {
-      transform: "rotate(300deg);",
-    },
   },
   sectionCompleted: {
     color: () => "inherit",
@@ -111,6 +122,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
     color,
     fontSize,
   });
+  const sectionsStyles = useSectionStyles(targetConfirmations);
   const rootClassName = classNames(styles.root, {
     [styles.rootBig]: fontSize === "big",
     [styles.rootMedium]: fontSize === "medium",
@@ -119,15 +131,20 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
     size,
     thickness: 3,
   };
+  const margin = getSectionMargin(targetConfirmations);
   return (
     <div className={rootClassName}>
       {typeof confirmations !== "undefined" && (
         <div className={styles.sections}>
-          {new Array(6).fill(true).map((_, index) => {
-            const value = 100 / 6 - 3;
-            const sectionClassName = classNames(styles.section, {
-              [styles.sectionCompleted]: index < confirmations,
-            });
+          {new Array(targetConfirmations).fill(true).map((_, index) => {
+            const value = 100 / targetConfirmations - margin;
+            const sectionClassName = classNames(
+              styles.section,
+              sectionsStyles.dynamicSection,
+              {
+                [styles.sectionCompleted]: index < confirmations,
+              }
+            );
             return (
               <CircularProgress
                 key={index}

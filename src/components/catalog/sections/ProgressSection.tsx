@@ -106,6 +106,38 @@ export const ProgressSection: FunctionComponent = () => {
               Proceed
             </Button>
           </CenteringBox>
+          <CenteringBox>
+            <ProgressWithContent
+              color={orangeDark}
+              confirmations={1}
+              targetConfirmations={2}
+            >
+              <BitcoinIcon fontSize="inherit" color="inherit" />
+            </ProgressWithContent>
+            <ProgressWithContent
+              color={orangeDark}
+              confirmations={2}
+              targetConfirmations={6}
+            >
+              <BitcoinIcon fontSize="inherit" color="inherit" />
+            </ProgressWithContent>
+          </CenteringBox>
+          <CenteringBox>
+            <ProgressWithContent
+              color={orangeDark}
+              confirmations={5}
+              targetConfirmations={15}
+            >
+              <BitcoinIcon fontSize="inherit" color="inherit" />
+            </ProgressWithContent>
+            <ProgressWithContent
+              color={orangeDark}
+              confirmations={20}
+              targetConfirmations={200}
+            >
+              <BitcoinIcon fontSize="inherit" color="inherit" />
+            </ProgressWithContent>
+          </CenteringBox>
         </PaperContent>
       </BridgePaper>
     </Section>
