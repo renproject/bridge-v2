@@ -3,10 +3,8 @@ import {
   Divider,
   Grow,
   IconButton,
-  Slide,
   Typography,
   useTheme,
-  Zoom,
 } from "@material-ui/core";
 import {
   depositMachine,
@@ -14,6 +12,7 @@ import {
   GatewaySession,
   GatewayTransaction,
 } from "@renproject/rentx";
+import QRCode from "qrcode.react";
 import React, {
   FunctionComponent,
   useCallback,
@@ -21,7 +20,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import QRCode from "qrcode.react";
 import { useDispatch, useSelector } from "react-redux";
 import { Actor } from "xstate";
 import {
@@ -47,15 +45,13 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
-import {
-  BigAssetAmount,
-  BigAssetAmountWrapper,
-} from "../../../components/typography/TypographyHelpers";
+import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { BridgeChain, BridgeCurrency } from "../../../components/utils/types";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
@@ -152,7 +148,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     showNotification(getAddressValidityMessage(tx.expiryTime), {
       variant: "warning",
     });
-  }, [showNotification]);
+  }, [showNotification, tx.expiryTime]);
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;
@@ -260,7 +256,7 @@ type DepositStatusProps = {
   machine: Actor<typeof depositMachine>;
 };
 
-export const forceState = "loading" as keyof DepositMachineSchema["states"];
+export const forceState = "srcConfirmed" as keyof DepositMachineSchema["states"];
 
 export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   tx,
@@ -281,7 +277,9 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   // const destinationCurrencyConfig = getCurrencyConfigByRentxName(
   //   machine.state.context.tx.destAsset
   // );
-  switch (machine.state.value as keyof DepositMachineSchema["states"]) {
+  const stateValue = machine.state
+    .value as keyof DepositMachineSchema["states"];
+  switch (stateValue) {
     // switch (forceState) {
     case "srcSettling":
       return (
@@ -302,7 +300,8 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
         </>
       );
     case "srcConfirmed":
-      return <div>Submitting to RenVM</div>;
+      return <SrcConfirmedStatus />;
+    case "claiming":
     case "accepted":
       return (
         <DepositAcceptedStatus
@@ -314,16 +313,28 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
           sourceConfirmationsTarget={6} // TODO: resolve
           destinationChain={destinationChainConfig.symbol}
           onSubmit={handleSubmitToDestinationChain}
+          submitting={stateValue === "claiming"}
         />
       );
-    case "claiming":
-      return <div>Signing mint transaction...</div>;
     case "destInitiated":
       return (
-        <div>Your assets are on their way. TxHash: {deposit.destTxHash}</div>
+        <>
+          <DestinationPendingStatus
+            sourceCurrency={sourceCurrencyConfig.symbol}
+            sourceAmount={deposit.sourceTxAmount / 1e8}
+            sourceChain={sourceChainConfig.symbol}
+            sourceTxHash={deposit.sourceTxHash}
+            destinationChain={destinationChainConfig.symbol}
+            onSubmit={handleSubmitToDestinationChain}
+            submitting={true}
+            destinationTxHash={deposit.destTxHash || ""}
+          />
+        </>
       );
+    case "restoringDeposit":
+      return <ProgressStatus reason="Restoring..." />;
     default:
-      return <LoadingStatus />;
+      return <ProgressStatus reason={machine.state.value} />;
   }
 };
 
@@ -333,13 +344,24 @@ msv claiming
 msv destInitiated
  */
 
-export const LoadingStatus: FunctionComponent = () => {
+type ProgressStatusProps = {
+  reason?: string;
+  processing?: boolean;
+};
+
+export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
+  reason = "Loading...",
+  processing = true,
+}) => {
   const theme = useTheme();
   return (
     <>
       <ProgressWrapper>
-        <ProgressWithContent processing color={theme.palette.primary.main}>
-          <TransactionStatusInfo status="Loading..." />
+        <ProgressWithContent
+          processing={processing}
+          color={theme.palette.primary.main}
+        >
+          <TransactionStatusInfo status={reason} />
         </ProgressWithContent>
       </ProgressWrapper>
     </>
@@ -407,6 +429,7 @@ type DepositAcceptedStatusProps = {
   sourceConfirmationsTarget: number;
   destinationChain: BridgeChain;
   onSubmit?: () => void;
+  submitting: boolean;
 };
 
 export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps> = ({
@@ -418,6 +441,7 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
   sourceConfirmationsTarget = 6, // TODO: resolve from config or tx
   destinationChain,
   onSubmit = () => {},
+  submitting,
 }) => {
   const theme = useTheme();
   const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
@@ -441,64 +465,8 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
         />
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={onSubmit}>
-          Submit to {destinationChainConfig.full}
-        </ActionButton>
-      </ActionButtonWrapper>
-      <ActionButtonWrapper>
-        <TransactionDetailsButton chain={sourceChain} address={sourceTxHash} />
-      </ActionButtonWrapper>
-    </>
-  );
-};
-
-type DepositClaimingStatusProps = {
-  sourceCurrency: BridgeCurrency;
-  sourceAmount: number;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  sourceConfirmations: number;
-  sourceConfirmationsTarget: number;
-  destinationChain: BridgeChain;
-  onSubmit?: () => void;
-  submittingPending?: boolean;
-};
-
-export const DepositClaimingStatus: FunctionComponent<DepositClaimingStatusProps> = ({
-  sourceCurrency,
-  sourceAmount,
-  sourceChain,
-  sourceTxHash,
-  sourceConfirmations,
-  sourceConfirmationsTarget = 6, // TODO: resolve from config or tx
-  destinationChain,
-  onSubmit = () => {},
-  submittingPending,
-}) => {
-  const theme = useTheme();
-  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  const Icon = getChainIcon(destinationChain);
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent
-          color={sourceCurrencyConfig.color || theme.customColors.skyBlue}
-          confirmations={sourceConfirmations}
-          targetConfirmations={sourceConfirmationsTarget}
-        >
-          <Icon fontSize="inherit" color="inherit" />
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        <NumberFormatText
-          value={sourceAmount}
-          spacedSuffix={sourceCurrencyConfig.full}
-        />
-      </Typography>
-      <ActionButtonWrapper>
-        <ActionButton onClick={onSubmit} disabled={submittingPending}>
-          {submittingPending ? "Submit" : "Submitting..."} to{" "}
+        <ActionButton onClick={onSubmit} disabled={submitting}>
+          {submitting ? "Submitting..." : "Submit"} to{" "}
           {destinationChainConfig.full}
         </ActionButton>
       </ActionButtonWrapper>
@@ -508,24 +476,139 @@ export const DepositClaimingStatus: FunctionComponent<DepositClaimingStatusProps
     </>
   );
 };
-// type SubmitToEthereumStatusProps = {
-//   currency: BridgeCurrency;
-//   amount: number;
-//   sourceTxHash: string;
-// };
-//
-// export const SubmitToEthereumStatus: FunctionComponent<SubmitToEthereumStatusProps> = ({
-//   currency,
-//   amount,
-//   sourceTxHash,
-// }) => {
-//   return (
-//     <>
-//       <ProgressWrapper>
-//         <ProgressWithContent color={orangeLight} confirmations={6}>
-//           <BitcoinIcon fontSize="inherit" color="inherit" />
-//         </ProgressWithContent>
-//       </ProgressWrapper>
-//     </>
-//   );
-// };
+
+type DestinationPendingStatusProps = {
+  sourceCurrency: BridgeCurrency;
+  sourceAmount: number;
+  sourceChain: BridgeChain;
+  sourceTxHash: string;
+  destinationChain: BridgeChain;
+  destinationTxHash: string;
+  onSubmit?: () => void;
+  submitting: boolean;
+};
+
+export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatusProps> = ({
+  sourceCurrency,
+  sourceAmount,
+  sourceChain,
+  sourceTxHash,
+  destinationChain,
+  destinationTxHash,
+  onSubmit = () => {},
+  submitting,
+}) => {
+  const theme = useTheme();
+  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
+  const destinationChainConfig = getChainConfig(destinationChain);
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent color={theme.customColors.skyBlue} processing>
+          <TransactionStatusInfo
+            status="Pending"
+            chain={destinationChainConfig.full}
+            address={destinationTxHash}
+          />
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <Typography variant="body1" align="center" gutterBottom>
+        <NumberFormatText
+          value={sourceAmount}
+          spacedSuffix={sourceCurrencyConfig.full}
+        />
+      </Typography>
+      <ActionButtonWrapper>
+        <ActionButton onClick={onSubmit} disabled={submitting}>
+          {submitting ? "Submitting..." : "Submit"} to{" "}
+          {destinationChainConfig.full}
+        </ActionButton>
+      </ActionButtonWrapper>
+      <ActionButtonWrapper>
+        <TransactionDetailsButton chain={sourceChain} address={sourceTxHash} />
+      </ActionButtonWrapper>
+    </>
+  );
+};
+
+type DestinationReceivedStatusProps = {
+  sourceChain: BridgeChain;
+  sourceTxHash: string;
+  destinationCurrency: BridgeCurrency;
+  destinationChain: BridgeChain;
+  destinationAmount: number;
+  destinationTxHash: string;
+  onReturn?: () => void;
+};
+
+export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedStatusProps> = ({
+  sourceTxHash,
+  destinationCurrency,
+  destinationAmount,
+  destinationChain,
+  destinationTxHash,
+  onReturn = () => {},
+}) => {
+  const theme = useTheme();
+  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
+  const destinationChainConfig = getChainConfig(destinationChain);
+
+  const sourceTxLink = `http://example.com/` + sourceTxHash;
+  const destinationTxLink = `http://example.com/` + destinationTxHash;
+
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent color={theme.palette.primary.main}>
+          <TransactionStatusInfo
+            status="Pending"
+            chain={destinationChainConfig.full}
+            address={destinationTxHash}
+          />
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <Typography variant="body1" align="center" gutterBottom>
+        <NumberFormatText
+          value={destinationAmount}
+          spacedSuffix={destinationCurrencyConfig.full}
+        />
+      </Typography>
+      <ActionButtonWrapper>
+        <ActionButton onClick={onReturn}>Return</ActionButton>
+      </ActionButtonWrapper>
+      <Box display="flex" justifyContent="space-between" py={2}>
+        <Link
+          external
+          color="primary"
+          variant="button"
+          underline="hover"
+          href={sourceTxLink}
+        >
+          Ethereum transaction
+        </Link>
+        <Link
+          external
+          color="primary"
+          variant="button"
+          underline="hover"
+          href={destinationTxLink}
+        >
+          Bitcoin transaction
+        </Link>
+      </Box>
+    </>
+  );
+};
+
+export const SrcConfirmedStatus: FunctionComponent = () => {
+  const theme = useTheme();
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent processing color={theme.palette.primary.main}>
+          <TransactionStatusInfo status="Pending..." />
+        </ProgressWithContent>
+      </ProgressWrapper>
+    </>
+  );
+};

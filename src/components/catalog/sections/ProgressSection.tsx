@@ -1,27 +1,11 @@
-import { Button, styled, useTheme } from "@material-ui/core";
-import DoneIcon from "@material-ui/icons/Done";
-import React, { FunctionComponent, useCallback, useState } from "react";
-import { ToggleIconButton } from "../../buttons/Buttons";
-import { BitcoinIcon, MetamaskFoxIcon } from "../../icons/RenIcons";
-import { CenteringSpacedBox } from "../../layout/LayoutHelpers";
-import {
-  BridgePaper,
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../layout/Paper";
-import {
-  ProgressWithContent,
-  TransactionStatusInfo,
-} from "../../progress/ProgressHelpers";
-import { Section } from "../PresentationHelpers";
-
-const BigDoneIcon = styled(DoneIcon)({
-  fontSize: 120,
-  color: "inherit",
-});
+import { Button, useTheme } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useState } from 'react'
+import { ToggleIconButton } from '../../buttons/Buttons'
+import { BitcoinIcon, MetamaskFoxIcon } from '../../icons/RenIcons'
+import { CenteringSpacedBox } from '../../layout/LayoutHelpers'
+import { BridgePaper, PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../layout/Paper'
+import { BigDoneIcon, ProgressWithContent, TransactionStatusInfo, } from '../../progress/ProgressHelpers'
+import { Section } from '../PresentationHelpers'
 
 const STEPS = 3;
 

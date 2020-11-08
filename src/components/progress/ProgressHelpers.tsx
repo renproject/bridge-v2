@@ -8,10 +8,16 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CompletedIcon from "@material-ui/icons/Check";
+import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
 import { BridgeChain, TransactionStatusType } from "../utils/types";
+
+export const BigDoneIcon = styled(DoneIcon)({
+  fontSize: 120,
+  color: "inherit",
+});
 
 type ProgressIconSize = "big" | "medium" | number;
 
