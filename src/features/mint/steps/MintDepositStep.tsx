@@ -1,4 +1,4 @@
-import { Box, Divider, Grow, Typography } from "@material-ui/core";
+import { Box, Divider, Grow, IconButton, Typography } from "@material-ui/core";
 import {
   depositMachine,
   DepositMachineSchema,
@@ -23,8 +23,9 @@ import {
   ToggleIconButton,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BitcoinIcon } from "../../../components/icons/RenIcons";
+import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
 import {
+  BigWrapper,
   CenteringSpacedBox,
   MediumWrapper,
 } from "../../../components/layout/LayoutHelpers";
@@ -51,6 +52,8 @@ import {
   getCurrencyShortLabel,
   getNetworkConfigByRentxName,
 } from "../../../utils/assetConfigs";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
 import { useTxParam } from "../../transactions/transactionsUtils";
@@ -78,6 +81,10 @@ export const MintDepositStep: FunctionComponent = () => {
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); //TODO fix this
 
+  const handlePreviousStepClick = useCallback(() => {
+    dispatch(setFlowStep(FlowStep.FEES));
+  }, [dispatch]);
+
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
@@ -87,7 +94,13 @@ export const MintDepositStep: FunctionComponent = () => {
   return (
     <>
       <PaperHeader>
-        <PaperNav />
+        <PaperNav>
+          {txState?.newTx && (
+            <IconButton onClick={handlePreviousStepClick}>
+              <BackArrowIcon />
+            </IconButton>
+          )}
+        </PaperNav>
         <PaperTitle>{title}</PaperTitle>
         <PaperActions>
           <ToggleIconButton variant="settings" />
@@ -97,9 +110,11 @@ export const MintDepositStep: FunctionComponent = () => {
       <PaperContent bottomPadding>
         {showTransactionStatus && <MintTransactionStatus tx={tx} />}
         {!walletConnected && (
-          <ActionButton onClick={handleWalletPickerOpen}>
-            Connect Wallet
-          </ActionButton>
+          <BigWrapper>
+            <ActionButton onClick={handleWalletPickerOpen}>
+              Connect Wallet
+            </ActionButton>
+          </BigWrapper>
         )}
       </PaperContent>
       <Divider />

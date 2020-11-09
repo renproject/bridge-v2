@@ -56,7 +56,10 @@ import {
   $ethUsdExchangeRate,
   $gasPrices,
 } from "../../marketData/marketDataSlice";
-import { createTxQueryString, LocationTxState } from '../../transactions/transactionsUtils'
+import {
+  createTxQueryString,
+  LocationTxState,
+} from "../../transactions/transactionsUtils";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   getFeeTooltips,
@@ -144,7 +147,7 @@ export const MintFeesStep: FunctionComponent = () => {
         pathname: paths.MINT,
         search: "?" + createTxQueryString(tx),
         state: {
-          newTransaction: true,
+          txState: { newTx: true },
         } as LocationTxState,
       });
     },
