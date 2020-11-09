@@ -268,7 +268,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   if (!machine) {
     return <div>Transaction completed</div>;
   }
-  console.log("msv", machine.state.value);
+  console.log("state value", machine.state.value);
   const sourceCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const destinationCurrencyConfig = getCurrencyConfigByRentxName(
     tx.sourceAsset

@@ -7,7 +7,10 @@ import {
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { getChainIcon } from "../../../components/icons/IconHelpers";
-import { BitcoinIcon } from "../../../components/icons/RenIcons";
+import {
+  BitcoinIcon,
+  MetamaskFullIcon,
+} from "../../../components/icons/RenIcons";
 import { Link } from "../../../components/links/Links";
 import {
   BigDoneIcon,
@@ -82,9 +85,10 @@ export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationSta
   timeRemaining,
 }) => {
   const [, setTitle] = usePaperTitle();
+  const confirmed = confirmations === targetConfirmations;
   useEffect(() => {
-    setTitle("Confirming");
-  }, [setTitle]);
+    setTitle(confirmed ? "Confirmed" : "Confirming");
+  }, [setTitle, confirmed]);
   const sourceTxExplorerLink = getChainExplorerLink(
     sourceChain,
     network,
@@ -151,6 +155,10 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
   onSubmit = () => {},
   submitting,
 }) => {
+  const [, setTitle] = usePaperTitle();
+  useEffect(() => {
+    setTitle("Submit");
+  }, [setTitle]);
   const theme = useTheme();
   const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
   const destinationChainConfig = getChainConfig(destinationChain);
@@ -164,19 +172,26 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
   return (
     <>
       <ProgressWrapper>
-        <ProgressWithContent
-          color={sourceCurrencyConfig.color || theme.customColors.skyBlue}
-          confirmations={sourceConfirmations}
-          targetConfirmations={sourceConfirmationsTarget}
-        >
-          <Icon fontSize="inherit" color="inherit" />
-        </ProgressWithContent>
+        {submitting ? (
+          <ProgressWithContent color={theme.customColors.skyBlue} processing>
+            <MetamaskFullIcon fontSize="inherit" color="inherit" />
+          </ProgressWithContent>
+        ) : (
+          <ProgressWithContent
+            color={sourceCurrencyConfig.color || theme.customColors.skyBlue}
+            confirmations={sourceConfirmations}
+            targetConfirmations={sourceConfirmationsTarget}
+          >
+            <Icon fontSize="inherit" color="inherit" />
+          </ProgressWithContent>
+        )}
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
           value={sourceAmount}
           spacedSuffix={sourceCurrencyConfig.full}
-        />
+        />{" "}
+        Received
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
