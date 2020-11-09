@@ -12,7 +12,7 @@ const exampleTx: GatewaySession = {
   targetAmount: 1,
   userAddress: "",
   expiryTime: 1604670899484,
-  transactions: {},
+  transactions: {}
 };
 
 const serializedExampleTxQs =

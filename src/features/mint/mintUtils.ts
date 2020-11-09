@@ -91,3 +91,4 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     devTools: env.XSTATE_DEVTOOLS,
   });
 };
+

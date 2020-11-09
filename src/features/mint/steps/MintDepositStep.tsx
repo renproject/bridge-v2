@@ -147,6 +147,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   useEffect(() => {
     showNotification(getAddressValidityMessage(tx.expiryTime), {
       variant: "warning",
+      persist: true
     });
   }, [showNotification, tx.expiryTime]);
 
@@ -286,7 +287,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
         <>
           <DepositConfirmationStatus
             currency={sourceCurrencyConfig.symbol}
-            confirmations={deposit.sourceTxConfs % 6}
+            confirmations={deposit.sourceTxConfs}
             targetConfirmations={deposit.sourceTxConfTarget}
             amount={Number(deposit.sourceTxAmount) / 1e8}
             txHash={deposit.sourceTxHash}
@@ -309,13 +310,13 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
           sourceChain={sourceChainConfig.symbol}
           sourceTxHash={deposit.sourceTxHash}
           sourceConfirmations={deposit.sourceTxConfs}
-          sourceConfirmationsTarget={6} // TODO: resolve
+          sourceConfirmationsTarget={deposit.sourceTxConfTarget} // TODO: resolve
           destinationChain={destinationChainConfig.symbol}
           onSubmit={handleSubmitToDestinationChain}
           submitting={stateValue === "claiming"}
         />
       );
-    case "destInitiated": // final txHash means its done or check if wat balances go up.
+    case "destInitiated": // final txHash means its done or check if wallet balances went up
       return (
         <>
           <DestinationPendingStatus
@@ -425,7 +426,7 @@ type DepositAcceptedStatusProps = {
   sourceChain: BridgeChain;
   sourceTxHash: string;
   sourceConfirmations: number;
-  sourceConfirmationsTarget: number;
+  sourceConfirmationsTarget?: number;
   destinationChain: BridgeChain;
   onSubmit?: () => void;
   submitting: boolean;
@@ -437,7 +438,7 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
   sourceChain,
   sourceTxHash,
   sourceConfirmations,
-  sourceConfirmationsTarget = 6, // TODO: resolve from config or tx
+  sourceConfirmationsTarget,
   destinationChain,
   onSubmit = () => {},
   submitting,
