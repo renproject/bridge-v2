@@ -123,6 +123,14 @@
     "@babel/helper-annotate-as-pure" "^7.10.4"
     "@babel/types" "^7.10.4"
 
+"@babel/helper-call-delegate@^7.12.1":
+  version "7.12.1"
+  resolved "https://registry.yarnpkg.com/@babel/helper-call-delegate/-/helper-call-delegate-7.12.1.tgz#0fa31fee33f7e9bf1e8ae711f5c3be7eda2fb657"
+  integrity sha512-GeAkqxDhZPlbpr7ajtyS97reL9YlGZ1OQtuOZgPADO67yqN58vS8o0Vuu4ImILgvfksUbDonztD9loGV8qNhow==
+  dependencies:
+    "@babel/helper-hoist-variables" "^7.10.4"
+    "@babel/types" "^7.12.1"
+
 "@babel/helper-compilation-targets@^7.12.1", "@babel/helper-compilation-targets@^7.8.7":
   version "7.12.5"
   resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.12.5.tgz#cb470c76198db6a24e9dbc8987275631e5d29831"
@@ -1985,10 +1993,10 @@
     immutable "^4.0.0-rc.12"
     web3-eth-abi "^2.0.0-alpha.1"
 
-"@renproject/rentx@2.0.0-alpha.18.0":
-  version "2.0.0-alpha.18.0"
-  resolved "https://registry.yarnpkg.com/@renproject/rentx/-/rentx-2.0.0-alpha.18.0.tgz#5b8ebb162b6219117bb5a3de51db0797c0610a91"
-  integrity sha512-/91oBE9G+yAiwFCFIqhj2/gX2vti3s0hqCq0tEcFNxOwOHHtS/bPhIGy0loViqceczwIQtCjb6GWnmD0yTLOAQ==
+"@renproject/rentx@2.0.0-alpha.19.0":
+  version "2.0.0-alpha.19.0"
+  resolved "https://registry.yarnpkg.com/@renproject/rentx/-/rentx-2.0.0-alpha.19.0.tgz#dff36f4d1483e6abafca9617a686d354e9f80f2c"
+  integrity sha512-ucY47cfyf0LdIX3a2RKZiAoc2X43MSsKyTdZ2dO90eGkF9ALMwvklJ0DZtDc+i4P5IvCDMDOgEGO1xegsszDng==
   dependencies:
     bignumber.js "^9.0.1"
 
@@ -3674,7 +3682,7 @@ bitcore-lib-cash@^8.22.2:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin, "bitcore-lib-dogecoin@github:CoinSpace/bitcore-lib-dogecoin":
+bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin:
   version "8.1.1"
   resolved "https://codeload.github.com/CoinSpace/bitcore-lib-dogecoin/tar.gz/e8314b746eb72666b11db933b30447484c644969"
   dependencies:
@@ -3686,7 +3694,7 @@ bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin, "bitcore-lib-dogecoin@githu
     lodash "^4.17.15"
     scryptsy "^2.1.0"
 
-"bitcore-lib-zcash@github:zcash-hackworks/bitcore-lib-zcash", bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
+bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
   version "0.13.19"
   resolved "https://codeload.github.com/zcash-hackworks/bitcore-lib-zcash/tar.gz/e97ae1dd2e9f14d6076d5e5429c75d8965afa4ab"
   dependencies:

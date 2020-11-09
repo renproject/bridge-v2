@@ -299,10 +299,9 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
           />
         </>
       );
-    case "srcConfirmed":
-      return <SrcConfirmedStatus />;
+    case "srcConfirmed": // source chain confirmations ok, but renVM still doesn't accept it
     case "claiming":
-    case "accepted":
+    case "accepted": // RenVM accepted it, it can be submitted to ethereum
       return (
         <DepositAcceptedStatus
           sourceCurrency={sourceCurrencyConfig.symbol}
@@ -316,7 +315,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
           submitting={stateValue === "claiming"}
         />
       );
-    case "destInitiated":
+    case "destInitiated": // final txHash means its done or check if wat balances go up.
       return (
         <>
           <DestinationPendingStatus

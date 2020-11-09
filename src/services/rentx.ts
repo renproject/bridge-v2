@@ -1,6 +1,12 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { BinanceSmartChain, Bitcoin, Ethereum } from "@renproject/chains";
+import {
+  BinanceSmartChain,
+  Bitcoin,
+  Ethereum,
+  Zcash,
+  BitcoinCash,
+} from "@renproject/chains";
 
 export const toChainMap = {
   binanceSmartChain: (context: any) => {
@@ -24,6 +30,6 @@ export const toChainMap = {
 // based on the source network
 export const fromChainMap = {
   bitcoin: () => Bitcoin(),
-  // zcash: () => Zcash(),
-  // bitcoinCash: () => BitcoinCash(),
+  zcash: () => Zcash(),
+  bitcoinCash: () => BitcoinCash(),
 };
