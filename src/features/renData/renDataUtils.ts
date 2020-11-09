@@ -1,8 +1,13 @@
-import { Fees } from "@renproject/interfaces";
 import { BridgeCurrency } from "../../components/utils/types";
 import { getRenJs } from "../../services/renJs";
 
+type Fees = {
+  [key: string]: any;
+};
+
 export type BridgeFee = Fees & {
+  lock: number;
+  release: number;
   symbol: BridgeCurrency;
 };
 
@@ -19,6 +24,7 @@ const mapToFeesData: (fees: Fees) => BridgeFees = (fees) => {
   return Object.entries(fees).map(([symbol, entry]) => ({
     symbol: toCurrencySymbol(symbol),
     ...entry,
+    [symbol]: entry,
   }));
 };
 

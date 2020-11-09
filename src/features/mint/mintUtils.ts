@@ -1,12 +1,16 @@
-import { RenNetwork } from '@renproject/interfaces'
-import { useMultiwallet } from '@renproject/multiwallet-ui'
-import { GatewaySession, mintMachine } from '@renproject/rentx'
-import { useMachine } from '@xstate/react'
-import { BridgeChain, BridgeCurrency } from '../../components/utils/types'
-import { env } from '../../constants/environmentVariables'
-import { getRenJs } from '../../services/renJs'
-import { fromChainMap, toChainMap } from '../../services/rentx'
-import { getChainRentxName, getCurrencyRentxName, getCurrencyRentxSourceChain, } from '../../utils/assetConfigs'
+import { RenNetwork } from "@renproject/interfaces";
+import { useMultiwallet } from "@renproject/multiwallet-ui";
+import { GatewaySession, mintMachine } from "@renproject/rentx";
+import { useMachine } from "@xstate/react";
+import { BridgeChain, BridgeCurrency } from "../../components/utils/types";
+import { env } from "../../constants/environmentVariables";
+import { getRenJs } from "../../services/renJs";
+import { fromChainMap, toChainMap } from "../../services/rentx";
+import {
+  getChainRentxName,
+  getCurrencyRentxName,
+  getCurrencyRentxSourceChain,
+} from "../../utils/assetConfigs";
 
 export const getMintTx: GatewaySession = {
   id: "tx-" + Math.floor(Math.random() * 10 ** 16),
@@ -16,12 +20,11 @@ export const getMintTx: GatewaySession = {
   network: "testnet",
   destAddress: "",
   destNetwork: "ethereum",
-  destAsset: "renBTC",
   targetAmount: 1,
-  destConfsTarget: 6,
   userAddress: "",
   expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
   transactions: {},
+  customParams: {},
 };
 
 type CreateMintTransactionParams = {
@@ -37,7 +40,6 @@ export const createMintTransaction = ({
   amount,
   currency,
   mintedCurrencyChain,
-  mintedCurrency,
   userAddress,
   destAddress,
 }: CreateMintTransactionParams) => {
@@ -49,11 +51,11 @@ export const createMintTransaction = ({
     sourceNetwork: getCurrencyRentxSourceChain(currency),
     destAddress,
     destNetwork: getChainRentxName(mintedCurrencyChain),
-    destAsset: getCurrencyRentxName(mintedCurrency),
     targetAmount: Number(amount),
     userAddress,
     expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
     transactions: {},
+    customParams: {},
   };
 
   return tx;
