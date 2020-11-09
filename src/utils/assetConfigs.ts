@@ -192,20 +192,26 @@ export const getChainConfigByRentxName = (name: string) =>
   Object.values(chainsConfig).find((chain) => chain.rentxName === name) ||
   unknownChainConfig;
 
-type NetworkConfig = LabelsConfig & RentxAssetConfig;
+type NetworkConfig = LabelsConfig &
+  RentxAssetConfig & {
+    symbol: BridgeNetwork;
+  };
 
 export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
   [BridgeNetwork.MAINNET]: {
+    symbol: BridgeNetwork.MAINNET,
     short: "MAINNET",
     full: "Mainnet",
     rentxName: "mainnet",
   },
   [BridgeNetwork.TESTNET]: {
+    symbol: BridgeNetwork.TESTNET,
     short: "TESTNET",
     full: "Testnet",
     rentxName: "testnet",
   },
   [BridgeNetwork.UNKNOWN]: {
+    symbol: BridgeNetwork.UNKNOWN,
     short: "UNKNOWN",
     full: "Unknown",
     rentxName: "unknown",

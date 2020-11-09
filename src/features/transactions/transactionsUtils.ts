@@ -1,6 +1,7 @@
-import { GatewaySession } from '@renproject/rentx'
-import queryString from 'query-string'
-import { useLocation } from 'react-router-dom'
+import { GatewaySession } from "@renproject/rentx";
+import queryString from "query-string";
+import { useLocation } from "react-router-dom";
+import { BridgeChain, BridgeNetwork } from "../../components/utils/types";
 
 export type LocationTxState = {
   txState?: {
@@ -35,22 +36,22 @@ const etherscanTestnet = "https://kovan.etherscan.io/tx/";
 const etherscan = "https://etherscan.io/tx/";
 
 export const getChainExplorerLink = (
-  chain: string,
-  network: string,
+  chain: BridgeChain,
+  network: BridgeNetwork,
   txId: string
 ) => {
-  if (network === "testnet") {
+  if (network === BridgeNetwork.TESTNET) {
     switch (chain) {
-      case "bitcoin":
+      case BridgeChain.BTCC:
         return sochainTestnet + txId;
-      case "ethereum":
+      case BridgeChain.ETHC:
         return etherscanTestnet + txId;
     }
-  } else if (network === "mainnet") {
+  } else if (network === BridgeNetwork.MAINNET) {
     switch (chain) {
-      case "bitcoin":
+      case BridgeChain.BTCC:
         return sochain + txId;
-      case "ethereum":
+      case BridgeChain.ETHC:
         return etherscan + txId;
     }
   }

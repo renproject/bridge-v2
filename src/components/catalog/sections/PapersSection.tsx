@@ -4,7 +4,6 @@ import { ToggleIconButton, TransactionDetailsButton, } from '../../buttons/Butto
 import { BackArrowIcon } from '../../icons/RenIcons'
 import { BridgePurePaper, PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../layout/Paper'
 import { Link } from '../../links/Links'
-import { BridgeChain } from '../../utils/types'
 import { Section } from '../PresentationHelpers'
 
 const SLIDES = 3;
@@ -46,7 +45,7 @@ const CurrencyReceivedContent: FunctionComponent = () => {
         </Link>
       </Box>
       <TransactionDetailsButton
-        chain={BridgeChain.BNCC}
+        chain="BNC"
         address="0x7a36479806342F7a1d663fF43A0D340b733FA764"
       />
     </PaperContent>

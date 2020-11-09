@@ -1,37 +1,12 @@
-import {
-  Button,
-  ButtonProps,
-  Fade,
-  IconButton,
-  IconButtonProps,
-  styled,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import CopyIcon from "@material-ui/icons/FileCopyOutlined";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import classNames from "classnames";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import {
-  blue,
-  graphiteLight,
-  gray,
-  grayLight,
-  skyBlue,
-  skyBlueLighter,
-} from "../../theme/colors";
-import { chainsConfig } from "../../utils/assetConfigs";
-import { copyToClipboard } from "../../utils/copyToClipboard";
-import {
-  BrowserNotificationsIcon,
-  QrCodeIcon,
-  TxHistoryIcon,
-} from "../icons/RenIcons";
-import { BridgeChain } from "../utils/types";
+import { Button, ButtonProps, Fade, IconButton, IconButtonProps, styled, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import CopyIcon from '@material-ui/icons/FileCopyOutlined'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import { blue, graphiteLight, gray, grayLight, skyBlue, skyBlueLighter, } from '../../theme/colors'
+import { copyToClipboard } from '../../utils/copyToClipboard'
+import { BrowserNotificationsIcon, QrCodeIcon, TxHistoryIcon, } from '../icons/RenIcons'
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -294,20 +269,22 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
 }));
 
 type TransactionDetailsButton = ButtonProps & {
-  chain: BridgeChain;
+  chain: string;
   address: string;
+  link?: string;
 };
 
 export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButton> = ({
   chain,
   address,
+  link = "",
 }) => {
   const styles = useTransactionDetailsButtonStyles();
 
   return (
-    <Button className={styles.button}>
+    <Button className={styles.button} href={link} target="_blank">
       <span className={styles.wrapper}>
-        <span className={styles.chain}>{chainsConfig[chain].short} Tx: </span>{" "}
+        <span className={styles.chain}>{chain} Tx: </span>{" "}
         <span className={styles.addressWrapper} data-address={address}>
           <span className={styles.address}>{address}</span>
         </span>

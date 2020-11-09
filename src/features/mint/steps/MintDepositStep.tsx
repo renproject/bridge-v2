@@ -1,11 +1,4 @@
-import {
-  Box,
-  Divider,
-  Grow,
-  IconButton,
-  Typography,
-  useTheme,
-} from "@material-ui/core";
+import { Box, Divider, Grow, Typography } from "@material-ui/core";
 import {
   depositMachine,
   DepositMachineSchema,
@@ -24,16 +17,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Actor } from "xstate";
 import {
   ActionButton,
-  ActionButtonWrapper,
   BigQrCode,
   CopyContentButton,
   QrCodeIconButton,
   ToggleIconButton,
-  TransactionDetailsButton,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getChainIcon } from "../../../components/icons/IconHelpers";
-import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
+import { BitcoinIcon } from "../../../components/icons/RenIcons";
 import {
   CenteringSpacedBox,
   MediumWrapper,
@@ -45,37 +35,35 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
 import {
   ProgressWithContent,
   ProgressWrapper,
-  TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { BridgeChain, BridgeCurrency } from "../../../components/utils/types";
+import { BridgeCurrency } from "../../../components/utils/types";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { useNotifications } from "../../../providers/Notifications";
 import { orangeLight } from "../../../theme/colors";
 import {
-  getChainConfig,
   getChainConfigByRentxName,
-  getCurrencyConfig,
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
-  getCurrencySourceChain,
+  getNetworkConfigByRentxName,
 } from "../../../utils/assetConfigs";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
 import { useGasPrices } from "../../marketData/marketDataHooks";
-import {
-  BookmarkPageWarning,
-  ProcessingTimeWrapper,
-} from "../../transactions/components/TransactionsHelpers";
+import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
 import { useTxParam } from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
+import {
+  DepositAcceptedStatus,
+  DepositConfirmationStatus,
+  DestinationPendingStatus,
+  DestinationReceivedStatus,
+  ProgressStatus,
+} from "../components/MintStatuses";
 import { $mint } from "../mintSlice";
-import { useMintMachine } from "../mintUtils";
+import { useMintMachine, usePaperTitle } from "../mintUtils";
 import { MintFees } from "./MintFeesStep";
 
 export const MintDepositStep: FunctionComponent = () => {
@@ -83,13 +71,12 @@ export const MintDepositStep: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const { currency } = useSelector($mint);
+  const [title, setTitle] = usePaperTitle();
+  useEffect(() => {
+    setTitle(`Send ${getCurrencyShortLabel(currency)}`);
+  }, [setTitle, currency]);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); //TODO fix this
-
-  const handlePreviousStepClick = useCallback(() => {
-    // TODO: warn if dangerous
-    dispatch(setFlowStep(FlowStep.FEES));
-  }, [dispatch]);
 
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
@@ -100,12 +87,8 @@ export const MintDepositStep: FunctionComponent = () => {
   return (
     <>
       <PaperHeader>
-        <PaperNav>
-          <IconButton onClick={handlePreviousStepClick}>
-            <BackArrowIcon />
-          </IconButton>
-        </PaperNav>
-        <PaperTitle>Send {getCurrencyShortLabel(currency)}</PaperTitle>
+        <PaperNav />
+        <PaperTitle>{title}</PaperTitle>
         <PaperActions>
           <ToggleIconButton variant="settings" />
           <ToggleIconButton variant="notifications" />
@@ -122,7 +105,7 @@ export const MintDepositStep: FunctionComponent = () => {
       <Divider />
       <PaperContent topPadding bottomPadding>
         <MintFees />
-        <Debug it={{ parsedTx }} />
+        <Debug it={{ parsedTx, txState: txState }} />
       </PaperContent>
       {txState?.newTx && <BookmarkPageWarning />}
     </>
@@ -134,7 +117,7 @@ type MintTransactionStatusProps = {
 };
 
 const getAddressValidityMessage = (expiryTime: number) => {
-  const time = Math.floor((expiryTime - Number(new Date())) / 1000 / 3600);
+  const time = Math.ceil((expiryTime - Number(new Date())) / 1000 / 3600);
   const unit = "hours";
   return `This Gateway Address is only valid for ${time} ${unit}. Do not send multiple deposits or deposit after ${time} ${unit}.`;
 };
@@ -147,7 +130,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   useEffect(() => {
     showNotification(getAddressValidityMessage(tx.expiryTime), {
       variant: "warning",
-      persist: true
     });
   }, [showNotification, tx.expiryTime]);
 
@@ -273,8 +255,12 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   }
   console.log("msv", machine.state.value);
   const sourceCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
+  const destinationCurrencyConfig = getCurrencyConfigByRentxName(
+    tx.sourceAsset
+  ); // TODO: change
   const sourceChainConfig = getChainConfigByRentxName(tx.sourceNetwork);
   const destinationChainConfig = getChainConfigByRentxName(tx.destNetwork);
+  const networkConfig = getNetworkConfigByRentxName(tx.network);
   // const destinationCurrencyConfig = getCurrencyConfigByRentxName(
   //   machine.state.context.tx.destAsset
   // );
@@ -286,6 +272,8 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
       return (
         <>
           <DepositConfirmationStatus
+            network={networkConfig.symbol}
+            sourceChain={sourceChainConfig.symbol}
             currency={sourceCurrencyConfig.symbol}
             confirmations={deposit.sourceTxConfs}
             targetConfirmations={deposit.sourceTxConfTarget}
@@ -305,6 +293,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
     case "accepted": // RenVM accepted it, it can be submitted to ethereum
       return (
         <DepositAcceptedStatus
+          network={networkConfig.symbol}
           sourceCurrency={sourceCurrencyConfig.symbol}
           sourceAmount={deposit.sourceTxAmount / 1e8}
           sourceChain={sourceChainConfig.symbol}
@@ -317,9 +306,23 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
         />
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up
-      return (
-        <>
+      if (deposit.destTxHash) {
+        return (
+          <DestinationReceivedStatus
+            network={networkConfig.symbol}
+            sourceCurrency={sourceCurrencyConfig.symbol}
+            sourceChain={sourceChainConfig.symbol}
+            sourceTxHash={deposit.sourceTxHash}
+            destinationCurrency={destinationCurrencyConfig.symbol}
+            destinationChain={destinationChainConfig.symbol}
+            destinationTxHash={deposit.destTxHash || ""}
+            destinationAmount={Number(tx.targetAmount)}
+          />
+        );
+      } else {
+        return (
           <DestinationPendingStatus
+            network={networkConfig.symbol}
             sourceCurrency={sourceCurrencyConfig.symbol}
             sourceAmount={deposit.sourceTxAmount / 1e8}
             sourceChain={sourceChainConfig.symbol}
@@ -329,286 +332,12 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
             submitting={true}
             destinationTxHash={deposit.destTxHash || ""}
           />
-        </>
-      );
+        );
+      }
+
     case "restoringDeposit":
       return <ProgressStatus reason="Restoring..." />;
     default:
       return <ProgressStatus reason={machine.state.value} />;
   }
-};
-
-/*
-msv accepted
-msv claiming
-msv destInitiated
- */
-
-type ProgressStatusProps = {
-  reason?: string;
-  processing?: boolean;
-};
-
-export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
-  reason = "Loading...",
-  processing = true,
-}) => {
-  const theme = useTheme();
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent
-          processing={processing}
-          color={theme.palette.primary.main}
-        >
-          <TransactionStatusInfo status={reason} />
-        </ProgressWithContent>
-      </ProgressWrapper>
-    </>
-  );
-};
-
-type DepositConfirmationStatusProps = {
-  currency: BridgeCurrency;
-  confirmations: number;
-  targetConfirmations?: number;
-  amount: number;
-  txHash: string;
-  timeRemaining: number;
-};
-
-export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationStatusProps> = ({
-  currency,
-  confirmations,
-  targetConfirmations,
-  amount,
-  txHash,
-  timeRemaining,
-}) => {
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent
-          color={orangeLight}
-          confirmations={confirmations}
-          targetConfirmations={targetConfirmations}
-        >
-          <BitcoinIcon fontSize="inherit" color="inherit" />
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        {confirmations} of {targetConfirmations} confirmations
-      </Typography>
-      <BigAssetAmount
-        value={
-          <NumberFormatText
-            value={amount}
-            spacedSuffix={getCurrencyShortLabel(currency)}
-          />
-        }
-      />
-      <TransactionDetailsButton
-        chain={getCurrencySourceChain(currency)}
-        address={txHash}
-      />
-      <ProcessingTimeWrapper>
-        <Typography variant="caption" component="p" align="center">
-          Estimated time remaining: {timeRemaining} minutes
-        </Typography>
-      </ProcessingTimeWrapper>
-    </>
-  );
-};
-
-type DepositAcceptedStatusProps = {
-  sourceCurrency: BridgeCurrency;
-  sourceAmount: number;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  sourceConfirmations: number;
-  sourceConfirmationsTarget?: number;
-  destinationChain: BridgeChain;
-  onSubmit?: () => void;
-  submitting: boolean;
-};
-
-export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps> = ({
-  sourceCurrency,
-  sourceAmount,
-  sourceChain,
-  sourceTxHash,
-  sourceConfirmations,
-  sourceConfirmationsTarget,
-  destinationChain,
-  onSubmit = () => {},
-  submitting,
-}) => {
-  const theme = useTheme();
-  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  const Icon = getChainIcon(sourceChain);
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent
-          color={sourceCurrencyConfig.color || theme.customColors.skyBlue}
-          confirmations={sourceConfirmations}
-          targetConfirmations={sourceConfirmationsTarget}
-        >
-          <Icon fontSize="inherit" color="inherit" />
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        <NumberFormatText
-          value={sourceAmount}
-          spacedSuffix={sourceCurrencyConfig.full}
-        />
-      </Typography>
-      <ActionButtonWrapper>
-        <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit"} to{" "}
-          {destinationChainConfig.full}
-        </ActionButton>
-      </ActionButtonWrapper>
-      <ActionButtonWrapper>
-        <TransactionDetailsButton chain={sourceChain} address={sourceTxHash} />
-      </ActionButtonWrapper>
-    </>
-  );
-};
-
-type DestinationPendingStatusProps = {
-  sourceCurrency: BridgeCurrency;
-  sourceAmount: number;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  destinationChain: BridgeChain;
-  destinationTxHash: string;
-  onSubmit?: () => void;
-  submitting: boolean;
-};
-
-export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatusProps> = ({
-  sourceCurrency,
-  sourceAmount,
-  sourceChain,
-  sourceTxHash,
-  destinationChain,
-  destinationTxHash,
-  onSubmit = () => {},
-  submitting,
-}) => {
-  const theme = useTheme();
-  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent color={theme.customColors.skyBlue} processing>
-          <TransactionStatusInfo
-            status="Pending"
-            chain={destinationChainConfig.full}
-            address={destinationTxHash}
-          />
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        <NumberFormatText
-          value={sourceAmount}
-          spacedSuffix={sourceCurrencyConfig.full}
-        />
-      </Typography>
-      <ActionButtonWrapper>
-        <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit"} to{" "}
-          {destinationChainConfig.full}
-        </ActionButton>
-      </ActionButtonWrapper>
-      <ActionButtonWrapper>
-        <TransactionDetailsButton chain={sourceChain} address={sourceTxHash} />
-      </ActionButtonWrapper>
-    </>
-  );
-};
-
-type DestinationReceivedStatusProps = {
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  destinationCurrency: BridgeCurrency;
-  destinationChain: BridgeChain;
-  destinationAmount: number;
-  destinationTxHash: string;
-  onReturn?: () => void;
-};
-
-export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedStatusProps> = ({
-  sourceTxHash,
-  destinationCurrency,
-  destinationAmount,
-  destinationChain,
-  destinationTxHash,
-  onReturn = () => {},
-}) => {
-  const theme = useTheme();
-  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-
-  const sourceTxLink = `http://example.com/` + sourceTxHash;
-  const destinationTxLink = `http://example.com/` + destinationTxHash;
-
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent color={theme.palette.primary.main}>
-          <TransactionStatusInfo
-            status="Pending"
-            chain={destinationChainConfig.full}
-            address={destinationTxHash}
-          />
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        <NumberFormatText
-          value={destinationAmount}
-          spacedSuffix={destinationCurrencyConfig.full}
-        />
-      </Typography>
-      <ActionButtonWrapper>
-        <ActionButton onClick={onReturn}>Return</ActionButton>
-      </ActionButtonWrapper>
-      <Box display="flex" justifyContent="space-between" py={2}>
-        <Link
-          external
-          color="primary"
-          variant="button"
-          underline="hover"
-          href={sourceTxLink}
-        >
-          Ethereum transaction
-        </Link>
-        <Link
-          external
-          color="primary"
-          variant="button"
-          underline="hover"
-          href={destinationTxLink}
-        >
-          Bitcoin transaction
-        </Link>
-      </Box>
-    </>
-  );
-};
-
-export const SrcConfirmedStatus: FunctionComponent = () => {
-  const theme = useTheme();
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent processing color={theme.palette.primary.main}>
-          <TransactionStatusInfo status="Pending..." />
-        </ProgressWithContent>
-      </ProgressWrapper>
-    </>
-  );
 };
