@@ -1,73 +1,50 @@
-import { Box, Divider, Grow, IconButton, Typography } from "@material-ui/core";
-import {
-  depositMachine,
-  DepositMachineSchema,
-  GatewaySession,
-  GatewayTransaction,
-} from "@renproject/rentx";
-import QRCode from "qrcode.react";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Actor } from "xstate";
+import { Box, Divider, Grow, IconButton, Typography, } from '@material-ui/core'
+import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/rentx'
+import QRCode from 'qrcode.react'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Actor } from 'xstate'
 import {
   ActionButton,
   BigQrCode,
   CopyContentButton,
   QrCodeIconButton,
   ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
-import {
-  BigWrapper,
-  CenteringSpacedBox,
-  MediumWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import {
-  ProgressWithContent,
-  ProgressWrapper,
-} from "../../../components/progress/ProgressHelpers";
-import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { BridgeCurrency } from "../../../components/utils/types";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { useNotifications } from "../../../providers/Notifications";
-import { orangeLight } from "../../../theme/colors";
+} from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BackArrowIcon, BitcoinIcon } from '../../../components/icons/RenIcons'
+import { BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { ProgressWithContent, ProgressWrapper, } from '../../../components/progress/ProgressHelpers'
+import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { BridgeCurrency } from '../../../components/utils/types'
+import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { useNotifications } from '../../../providers/Notifications'
+import { orangeLight } from '../../../theme/colors'
 import {
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
   getNetworkConfigByRentxName,
-} from "../../../utils/assetConfigs";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
-import { useTxParam } from "../../transactions/transactionsUtils";
-import { setWalletPickerOpened } from "../../wallet/walletSlice";
+} from '../../../utils/assetConfigs'
+import { setFlowStep } from '../../flow/flowSlice'
+import { FlowStep } from '../../flow/flowTypes'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { BookmarkPageWarning } from '../../transactions/components/TransactionsHelpers'
+import { useTxParam } from '../../transactions/transactionsUtils'
+import { setWalletPickerOpened } from '../../wallet/walletSlice'
 import {
   DepositAcceptedStatus,
   DepositConfirmationStatus,
   DestinationPendingStatus,
   DestinationReceivedStatus,
   ProgressStatus,
-} from "../components/MintStatuses";
-import { $mint } from "../mintSlice";
-import { useMintMachine, usePaperTitle } from "../mintUtils";
-import { MintFees } from "./MintFeesStep";
+} from '../components/MintStatuses'
+import { $mint } from '../mintSlice'
+import { useMintMachine, usePaperTitle } from '../mintUtils'
+import { MintFees } from './MintFeesStep'
 
 export const MintDepositStep: FunctionComponent = () => {
   useGasPrices();
@@ -111,6 +88,11 @@ export const MintDepositStep: FunctionComponent = () => {
         {showTransactionStatus && <MintTransactionStatus tx={tx} />}
         {!walletConnected && (
           <BigWrapper>
+            <MediumWrapper>
+              <CenteringSpacedBox>
+                <WalletConnectionProgress />
+              </CenteringSpacedBox>
+            </MediumWrapper>
             <ActionButton onClick={handleWalletPickerOpen}>
               Connect Wallet
             </ActionButton>

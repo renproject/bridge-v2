@@ -10,7 +10,11 @@ import {
   getChainConfigByRentxName,
   getNetworkConfigByRentxName,
 } from "../../utils/assetConfigs";
-import { MetamaskFullIcon, WalletConnectFullIcon } from "../icons/RenIcons";
+import {
+  MetamaskFullIcon,
+  WalletConnectFullIcon,
+  WalletIcon,
+} from "../icons/RenIcons";
 import { PaperContent } from "../layout/Paper";
 import { BridgeModalTitle } from "../modals/BridgeModal";
 import {
@@ -139,6 +143,30 @@ export const WalletConnectingInfo: WalletPickerProps<
         </Typography>
       </PaperContent>
     </>
+  );
+};
+
+const useWalletConnectionProgressStyles = makeStyles((theme) => ({
+  iconWrapper: {
+    borderRadius: "50%",
+    padding: 13,
+    backgroundColor: theme.palette.divider,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 44,
+  },
+}));
+
+export const WalletConnectionProgress: FunctionComponent = () => {
+  const theme = useTheme();
+  const styles = useWalletConnectionProgressStyles();
+  return (
+    <ProgressWithContent color={theme.customColors.redLighter} size={128}>
+      <div className={styles.iconWrapper}>
+        <WalletIcon fontSize="inherit" color="secondary" />
+      </div>
+    </ProgressWithContent>
   );
 };
 
