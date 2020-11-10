@@ -7,22 +7,31 @@ const useStyles = makeStyles({
   },
 });
 
-const off = process.env.NODE_ENV === "production";
+const off = true || process.env.NODE_ENV === "production";
 
 type DebugProps = {
   it: any;
   force?: boolean;
+  disable?: boolean;
 };
+
+function replacer(name: any, val: any) {
+  if (val && val.type === "Buffer") {
+    return "buffer";
+  }
+  return val;
+}
 
 export const Debug: FunctionComponent<DebugProps> = ({
   it,
   force,
+  disable,
   children,
 }) => {
   const classes = useStyles();
   const target = it || children;
   const show = !off || force;
-  return show ? (
-    <pre className={classes.root}>{JSON.stringify(target, null, 2)}</pre>
+  return show && !disable ? (
+    <pre className={classes.root}>{JSON.stringify(target, replacer, 2)}</pre>
   ) : null;
 };

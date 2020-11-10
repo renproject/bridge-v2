@@ -1,34 +1,14 @@
-import { Button, styled, useTheme } from "@material-ui/core";
-import DoneIcon from "@material-ui/icons/Done";
-import React, { FunctionComponent, useCallback, useState } from "react";
-import { ToggleIconButton } from "../../buttons/Buttons";
-import { BitcoinIcon, MetamaskFoxIcon } from "../../icons/RenIcons";
-import {
-  BridgePaper,
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../layout/Paper";
-import {
-  ProgressWithContent,
-  TransactionStatusInfo,
-} from "../../progress/ProgressHelpers";
-import { Section } from "../PresentationHelpers";
-
-const CenteringBox = styled("div")({
-  display: "flex",
-  justifyContent: "center",
-  marginBottom: 24,
-});
-
-const BigDoneIcon = styled(DoneIcon)({
-  fontSize: 120,
-  color: "inherit",
-});
+import { Button, useTheme } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useState } from 'react'
+import { ToggleIconButton } from '../../buttons/Buttons'
+import { BitcoinIcon, MetamaskFoxIcon } from '../../icons/RenIcons'
+import { CenteringSpacedBox } from '../../layout/LayoutHelpers'
+import { BridgePaper, PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../layout/Paper'
+import { BigDoneIcon, ProgressWithContent, TransactionStatusInfo, } from '../../progress/ProgressHelpers'
+import { Section } from '../PresentationHelpers'
 
 const STEPS = 3;
+
 export const ProgressSection: FunctionComponent = () => {
   const [step, setStep] = useState(0);
   const { customColors, palette } = useTheme();
@@ -48,7 +28,7 @@ export const ProgressSection: FunctionComponent = () => {
           </PaperActions>
         </PaperHeader>
         <PaperContent>
-          <CenteringBox>
+          <CenteringSpacedBox>
             <ProgressWithContent
               color={step === 2 ? orangeDark : orangeLight}
               fontSize={120}
@@ -60,8 +40,8 @@ export const ProgressSection: FunctionComponent = () => {
                 <BigDoneIcon />
               )}
             </ProgressWithContent>
-          </CenteringBox>
-          <CenteringBox>
+          </CenteringSpacedBox>
+          <CenteringSpacedBox>
             <ProgressWithContent
               color={step === 2 ? palette.primary.main : skyBlue}
               fontSize={120}
@@ -76,8 +56,8 @@ export const ProgressSection: FunctionComponent = () => {
                 <BigDoneIcon />
               )}
             </ProgressWithContent>
-          </CenteringBox>
-          <CenteringBox>
+          </CenteringSpacedBox>
+          <CenteringSpacedBox>
             <ProgressWithContent
               color={step === 2 ? palette.primary.main : skyBlue}
               fontSize={70}
@@ -94,8 +74,8 @@ export const ProgressSection: FunctionComponent = () => {
               )}
               {step === 2 && <BigDoneIcon />}
             </ProgressWithContent>
-          </CenteringBox>
-          <CenteringBox>
+          </CenteringSpacedBox>
+          <CenteringSpacedBox>
             <Button
               variant="contained"
               size="large"
@@ -105,7 +85,39 @@ export const ProgressSection: FunctionComponent = () => {
             >
               Proceed
             </Button>
-          </CenteringBox>
+          </CenteringSpacedBox>
+          <CenteringSpacedBox>
+            <ProgressWithContent
+              color={orangeDark}
+              confirmations={1}
+              targetConfirmations={2}
+            >
+              <BitcoinIcon fontSize="inherit" color="inherit" />
+            </ProgressWithContent>
+            <ProgressWithContent
+              color={orangeDark}
+              confirmations={2}
+              targetConfirmations={6}
+            >
+              <BitcoinIcon fontSize="inherit" color="inherit" />
+            </ProgressWithContent>
+          </CenteringSpacedBox>
+          <CenteringSpacedBox>
+            <ProgressWithContent
+              color={orangeDark}
+              confirmations={5}
+              targetConfirmations={15}
+            >
+              <BitcoinIcon fontSize="inherit" color="inherit" />
+            </ProgressWithContent>
+            <ProgressWithContent
+              color={orangeDark}
+              confirmations={20}
+              targetConfirmations={200}
+            >
+              <BitcoinIcon fontSize="inherit" color="inherit" />
+            </ProgressWithContent>
+          </CenteringSpacedBox>
         </PaperContent>
       </BridgePaper>
     </Section>

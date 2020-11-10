@@ -1,11 +1,6 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BridgeCurrency } from "../../components/utils/types";
-import { RootState } from "../../store/rootReducer";
-import {
-  AnyBlockGasPrices,
-  ExchangeRate,
-  findExchangeRate,
-} from "./marketDataUtils";
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from '../../store/rootReducer'
+import { AnyBlockGasPrices, ExchangeRate, } from './marketDataUtils'
 
 type MarketDataState = {
   exchangeRates: Array<ExchangeRate>;
@@ -49,14 +44,6 @@ export const $exchangeRates = createSelector(
   $marketData,
   (marketData) => marketData.exchangeRates
 );
-
-export const $ethUsdExchangeRate = createSelector(
-  $exchangeRates,
-  (exchangeRates) => {
-    return findExchangeRate(exchangeRates, BridgeCurrency.ETH, "USD");
-  }
-);
-
 export const $gasPrices = createSelector(
   $marketData,
   (marketData) => marketData.gasPrices

@@ -9,27 +9,34 @@ import { IconWithLabel } from "../../icons/IconHelpers";
 import {
   BackArrowIcon,
   BchFullIcon,
-  BchGreyIcon, BchIcon,
+  BchGreyIcon,
+  BchIcon,
   BinanceChainColorIcon,
   BinanceChainFullIcon,
   BitcoinIcon,
   BitcoinInCircleIcon,
   BrowserNotificationsIcon,
   BtcFullIcon,
-  BtcGreyIcon, BtcIcon,
+  BtcGreyIcon,
+  BtcIcon,
   DgbFullIcon,
-  DgbGreyIcon, DgbIcon,
+  DgbGreyIcon,
+  DgbIcon,
   DogeFullIcon,
-  DogeGreyIcon, DogeIcon,
+  DogeGreyIcon,
+  DogeIcon,
   DotsFullIcon,
-  DotsGreyIcon, DotsIcon,
+  DotsGreyIcon,
+  DotsIcon,
   EthereumChainColorIcon,
   EthereumChainFullIcon,
   EthereumIcon,
   FilFullIcon,
-  FilGreyIcon, FilIcon,
+  FilGreyIcon,
+  FilIcon,
   LunaFullIcon,
-  LunaGreyIcon, LunaIcon,
+  LunaGreyIcon,
+  LunaIcon,
   MetamaskFoxIcon,
   RenBridgeLogoIcon,
   RenLogoIcon,
@@ -37,9 +44,11 @@ import {
   TxSettingsIcon,
   WalletConnectFullIcon,
   WalletConnectIcon,
+  WalletIcon,
   ZecFullIcon,
-  ZecGreyIcon, ZecIcon,
-} from '../../icons/RenIcons'
+  ZecGreyIcon,
+  ZecIcon,
+} from "../../icons/RenIcons";
 import { Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const IconsSection: FunctionComponent = () => {
@@ -57,6 +66,7 @@ export const IconsSection: FunctionComponent = () => {
         {/*<TxHistoryIcon />*/}
         <TxSettingsIcon />
         <MoreVertIcon />
+        <WalletIcon />
         <SuccessIcon />
       </SeparationWrapper>
       <SeparationWrapper>

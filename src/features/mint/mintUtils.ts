@@ -2,6 +2,7 @@ import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { GatewaySession, mintMachine } from "@renproject/rentx";
 import { useMachine } from "@xstate/react";
+import { createStateContext } from "react-use";
 import { BridgeChain, BridgeCurrency } from "../../components/utils/types";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
@@ -20,12 +21,11 @@ export const getMintTx: GatewaySession = {
   network: "testnet",
   destAddress: "",
   destNetwork: "ethereum",
-  destAsset: "renBTC",
   targetAmount: 1,
-  destConfsTarget: 6,
   userAddress: "",
   expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
   transactions: {},
+  customParams: {},
 };
 
 type CreateMintTransactionParams = {
@@ -41,7 +41,6 @@ export const createMintTransaction = ({
   amount,
   currency,
   mintedCurrencyChain,
-  mintedCurrency,
   userAddress,
   destAddress,
 }: CreateMintTransactionParams) => {
@@ -53,11 +52,11 @@ export const createMintTransaction = ({
     sourceNetwork: getCurrencyRentxSourceChain(currency),
     destAddress,
     destNetwork: getChainRentxName(mintedCurrencyChain),
-    destAsset: getCurrencyRentxName(mintedCurrency),
     targetAmount: Number(amount),
     userAddress,
     expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
     transactions: {},
+    customParams: {},
   };
 
   return tx;
@@ -93,3 +92,7 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     devTools: env.XSTATE_DEVTOOLS,
   });
 };
+
+const [usePaperTitle, PaperTitleProvider] = createStateContext("Mint");
+
+export { PaperTitleProvider, usePaperTitle };

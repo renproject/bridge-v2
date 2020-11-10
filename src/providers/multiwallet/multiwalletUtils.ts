@@ -1,20 +1,22 @@
-import { BridgeChain, BridgeCurrency, } from '../../components/utils/types'
+import { BridgeChain, BridgeCurrency } from "../../components/utils/types";
 
 // TODO: Bridge and Multiwallet should use the same chain mapping for example from @renproject/interfaces / Chain
 
 export const supportedMintCurrencies = [
   BridgeCurrency.BTC,
-  BridgeCurrency.BCH,
-  BridgeCurrency.DOGE,
+  // BridgeCurrency.BCH,
+  // BridgeCurrency.DOGE,
   BridgeCurrency.ZEC,
 ];
 
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
-  BridgeChain.BNCC,
+  // BridgeChain.BNCC,
 ];
 
-export const getMintedDestinationCurrencySymbol = (sourceCurrency: BridgeCurrency) => {
+export const getMintedDestinationCurrencySymbol = (
+  sourceCurrency: BridgeCurrency
+) => {
   switch (sourceCurrency) {
     case BridgeCurrency.BTC:
       return BridgeCurrency.RENBTC;

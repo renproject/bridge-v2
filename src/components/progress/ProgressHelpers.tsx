@@ -1,5 +1,6 @@
 import {
   CircularProgress,
+  fade,
   styled,
   SvgIconProps,
   Theme,
@@ -7,21 +8,54 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CompletedIcon from "@material-ui/icons/Check";
+import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
 import { BridgeChain, TransactionStatusType } from "../utils/types";
 
+export const BigDoneIcon = styled(DoneIcon)({
+  fontSize: 120,
+  color: "inherit",
+});
+
 type ProgressIconSize = "big" | "medium" | number;
 
 type ProgressWithContentProps = {
   color: string;
+  incompleteSectionColor?: string;
   fontSize?: ProgressIconSize;
   processing?: boolean;
   value?: number;
   size?: number;
   confirmations?: number;
+  targetConfirmations?: number;
 };
+
+const getSectionMargin = (sections: number) => {
+  return sections > 100 ? 1 : 2;
+};
+
+const generateSections = (all: number) => {
+  let sections: any = {};
+  const degreeStep = 360 / all;
+  const margin = getSectionMargin(all);
+  for (let i = 0; i < all; i++) {
+    const key = `&:nth-child(${i + 1}) svg`;
+    sections[key] = {
+      transform: `rotate(${i * degreeStep + margin}deg);`,
+    };
+  }
+  return sections;
+};
+
+const useSectionStyles = makeStyles<Theme, number>((theme) => {
+  return {
+    dynamicSection: (num: number) => {
+      return generateSections(num);
+    },
+  };
+});
 
 const useProgressWithContentStyles = makeStyles<
   Theme,
@@ -57,28 +91,18 @@ const useProgressWithContentStyles = makeStyles<
   },
   section: {
     position: "absolute",
-    color: theme.customColors.skyBlue,
+    color: ({ color }) => {
+      if (color !== "inherit") {
+        return fade(color, 0.2);
+      }
+      return theme.customColors.skyBlue;
+    },
     "& > svg": {
       transformOrigin: "50% 50%",
     },
-    "&:nth-child(2) svg": {
-      transform: "rotate(60deg);",
-    },
-    "&:nth-child(3) svg": {
-      transform: "rotate(120deg);",
-    },
-    "&:nth-child(4) svg": {
-      transform: "rotate(180deg);",
-    },
-    "&:nth-child(5) svg": {
-      transform: "rotate(240deg);",
-    },
-    "&:nth-child(6) svg": {
-      transform: "rotate(300deg);",
-    },
   },
   sectionCompleted: {
-    color: "inherit",
+    color: () => "inherit",
   },
 }));
 
@@ -94,6 +118,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
   value = 100,
   processing,
   confirmations,
+  targetConfirmations = 6,
   size = 166,
   fontSize = Math.floor(0.75 * size),
   children,
@@ -102,6 +127,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
     color,
     fontSize,
   });
+  const sectionsStyles = useSectionStyles(targetConfirmations);
   const rootClassName = classNames(styles.root, {
     [styles.rootBig]: fontSize === "big",
     [styles.rootMedium]: fontSize === "medium",
@@ -110,15 +136,20 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
     size,
     thickness: 3,
   };
+  const margin = getSectionMargin(targetConfirmations);
   return (
     <div className={rootClassName}>
       {typeof confirmations !== "undefined" && (
         <div className={styles.sections}>
-          {new Array(6).fill(true).map((_, index) => {
-            const value = 100 / 6 - 3;
-            const sectionClassName = classNames(styles.section, {
-              [styles.sectionCompleted]: index < confirmations,
-            });
+          {new Array(targetConfirmations).fill(true).map((_, index) => {
+            const value = 100 / targetConfirmations - margin;
+            const sectionClassName = classNames(
+              styles.section,
+              sectionsStyles.dynamicSection,
+              {
+                [styles.sectionCompleted]: index < confirmations,
+              }
+            );
             return (
               <CircularProgress
                 key={index}
@@ -164,8 +195,8 @@ const useTransactionStatusInfoStyles = makeStyles((theme) => ({
 }));
 
 type TransactionStatusInfoProps = {
-  chain: string;
-  address: string;
+  chain?: string;
+  address?: string;
   status?: string;
 };
 
@@ -180,10 +211,12 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
       <Typography variant="body1" className={styles.status}>
         {status}
       </Typography>
-      <Typography variant="body1">{chain} Tx:</Typography>
-      <Typography variant="body1" className={styles.txLink}>
-        <span>{address}</span>
-      </Typography>
+      {chain && <Typography variant="body1">{chain} Tx:</Typography>}
+      {address && (
+        <Typography variant="body1" className={styles.txLink}>
+          <span>{address}</span>
+        </Typography>
+      )}
     </div>
   );
 };

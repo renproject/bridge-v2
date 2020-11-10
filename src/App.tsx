@@ -10,9 +10,9 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route exact path={paths.HOME} component={MainPage} />
         <Route exact path={paths.WELCOME} component={WelcomePage} />
         <Route exact path={paths.CATALOG} component={CatalogPage} />
+        <Route path={paths.HOME} component={MainPage} />
       </Switch>
     </Router>
   );

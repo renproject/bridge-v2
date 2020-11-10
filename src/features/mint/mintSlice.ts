@@ -4,7 +4,7 @@ import { RootState } from '../../store/rootReducer'
 import { $exchangeRates } from '../marketData/marketDataSlice'
 import { findExchangeRate } from '../marketData/marketDataUtils'
 import { $fees } from '../renData/renDataSlice'
-import { CalculatedFee } from '../renData/renDataUtils'
+import { calculateMintFees } from '../renData/renDataUtils'
 
 type MintState = {
   currency: BridgeCurrency;
@@ -13,7 +13,7 @@ type MintState = {
 
 let initialState: MintState = {
   currency: BridgeCurrency.BTC,
-  amount: 0.001, // TODO: CRIT: change to 0
+  amount: 0.01, // TODO: CRIT: change to 0
 };
 
 const slice = createSlice({
@@ -55,24 +55,5 @@ export const $mintCurrencyUsdAmount = createSelector(
 // TODO: probably should be calculated based on selected flow
 export const $mintFees = createSelector(
   [$mintAmount, $mintCurrency, $fees],
-  (amount, currency, fees) => {
-    const currencyFee = fees.find((feeEntry) => feeEntry.symbol === currency);
-    const feeData: CalculatedFee = {
-      renVMFee: 0,
-      renVMFeeAmount: 0,
-      networkFee: 0,
-      conversionTotal: amount,
-    };
-    if (currencyFee) {
-      feeData.networkFee = Number(currencyFee.lock) / 10 ** 8;
-      feeData.renVMFee = Number(currencyFee.ethereum.mint) / 10000; // percent value
-      feeData.renVMFeeAmount = Number(Number(amount) * feeData.renVMFee);
-      feeData.conversionTotal =
-        Number(Number(amount) - feeData.renVMFeeAmount - feeData.networkFee) > 0
-          ? Number(amount) - feeData.renVMFee - feeData.networkFee
-          : 0;
-    }
-
-    return feeData;
-  }
+  calculateMintFees
 );

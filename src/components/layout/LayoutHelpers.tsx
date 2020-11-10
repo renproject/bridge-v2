@@ -5,3 +5,21 @@ export const NarrowCenteredWrapper = styled("div")({
   marginRight: "auto",
   maxWidth: 400,
 });
+
+export const CenteringSpacedBox = styled("div")({
+  display: "flex",
+  justifyContent: "center",
+  marginBottom: 20,
+});
+
+export const SmallWrapper = styled("div")({
+  marginBottom: 10,
+});
+
+export const MediumWrapper = styled("div")({
+  marginBottom: 20,
+});
+
+export const BigWrapper = styled("div")({
+  marginBottom: 40,
+});
