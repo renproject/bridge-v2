@@ -49,8 +49,6 @@ import {
   getCurrencyConfig,
 } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
@@ -59,6 +57,7 @@ import { calculateMintFees } from "../../renData/renDataUtils";
 import {
   createTxQueryString,
   LocationTxState,
+  TxConfigurationStepProps,
 } from "../../transactions/transactionsUtils";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
@@ -72,7 +71,9 @@ import {
   preValidateMintTransaction,
 } from "../mintUtils";
 
-export const MintFeesStep: FunctionComponent = () => {
+export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
+  onPrev,
+}) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [initializeMinting, setInitializeMinting] = useState(false);
@@ -101,9 +102,6 @@ export const MintFeesStep: FunctionComponent = () => {
   const [ackChecked, setAckChecked] = useState(true); // TODO: CRIT: false
   const [touched, setTouched] = useState(false);
 
-  const handlePreviousStepClick = useCallback(() => {
-    dispatch(setFlowStep(FlowStep.INITIAL));
-  }, [dispatch]);
   const handleAckCheckboxChange = useCallback((event) => {
     setTouched(true);
     setAckChecked(event.target.checked);
@@ -167,7 +165,7 @@ export const MintFeesStep: FunctionComponent = () => {
       )}
       <PaperHeader>
         <PaperNav>
-          <IconButton onClick={handlePreviousStepClick}>
+          <IconButton onClick={onPrev}>
             <BackArrowIcon />
           </IconButton>
         </PaperNav>

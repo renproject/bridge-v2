@@ -23,8 +23,7 @@ import {
   supportedMintDestinationChains,
 } from "../../../providers/multiwallet/multiwalletUtils";
 import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
+import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import { $wallet, setChain } from "../../wallet/walletSlice";
 import {
   $mint,
@@ -34,7 +33,9 @@ import {
   setMintCurrency,
 } from "../mintSlice";
 
-export const MintInitialStep: FunctionComponent = () => {
+export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
+  onNext,
+}) => {
   const dispatch = useDispatch();
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
@@ -61,8 +62,10 @@ export const MintInitialStep: FunctionComponent = () => {
   );
   const handleNextStep = useCallback(() => {
     dispatch(setMintAmount(amount));
-    dispatch(setFlowStep(FlowStep.FEES));
-  }, [dispatch, amount]);
+    if (onNext) {
+      onNext();
+    }
+  }, [dispatch, amount, onNext]);
 
   const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);

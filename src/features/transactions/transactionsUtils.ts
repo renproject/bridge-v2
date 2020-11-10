@@ -3,6 +3,15 @@ import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import { BridgeChain, BridgeNetwork } from "../../components/utils/types";
 
+export enum TxConfigurationStep {
+  INITIAL = "initial",
+  FEES = "fees",
+}
+export type TxConfigurationStepProps = {
+  onPrev?: () => void;
+  onNext?: () => void;
+};
+
 export type LocationTxState = {
   txState?: {
     newTx?: boolean;
