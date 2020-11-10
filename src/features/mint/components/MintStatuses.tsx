@@ -303,7 +303,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
   const sourceChainConfig = getChainConfig(sourceChain);
 
   const sourceTxLink = getChainExplorerLink(
-    destinationChain,
+    sourceChain,
     network,
     sourceTxHash
   );
@@ -336,6 +336,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
           variant="button"
           underline="hover"
           href={sourceTxLink}
+          target="_blank"
         >
           {sourceChainConfig.full} transaction
         </Link>
@@ -345,6 +346,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
           variant="button"
           underline="hover"
           href={destinationTxLink}
+          target="_blank"
         >
           {destinationChainConfig.full} transaction
         </Link>

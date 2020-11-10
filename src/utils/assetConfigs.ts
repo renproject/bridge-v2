@@ -61,6 +61,8 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     short: "ZEC",
     full: "Zcash",
     rentxName: "zec",
+    sourceChain: BridgeChain.ZECC,
+    sourceConfirmationTime: 15,
   },
   [BridgeCurrency.RENBTC]: {
     symbol: BridgeCurrency.RENBTC,
@@ -153,6 +155,12 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "BTC",
     full: "Bitcoin",
     rentxName: "bitcoin",
+  },
+  [BridgeChain.ZECC]: {
+    symbol: BridgeChain.ZECC,
+    short: "ZEC",
+    full: "Zcash",
+    rentxName: "zcash",
   },
   [BridgeChain.BNCC]: {
     symbol: BridgeChain.BNCC,

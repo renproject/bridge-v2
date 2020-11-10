@@ -18,6 +18,7 @@ export const MintFlow: FunctionComponent<RouteComponentProps> = () => {
   const dispatch = useDispatch();
   const { tx } = useTxParam();
   const { step } = useSelector($flow);
+  // TODO: this should be route based, not mixed
   useEffect(() => {
     if (tx && step !== FlowStep.DEPOSIT) {
       dispatch(setFlowStep(FlowStep.DEPOSIT));

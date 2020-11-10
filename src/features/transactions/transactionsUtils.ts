@@ -30,8 +30,8 @@ export const parseTxQueryString: (query: string) => GatewaySession | null = (
   return serializedTx ? JSON.parse(serializedTx as string) : null;
 };
 
-const sochainTestnet = "https://sochain.com/tx/BTCTEST/";
-const sochain = "https://sochain.com/tx/BTC/";
+const sochainTestnet = "https://sochain.com/tx/";
+const sochain = "https://sochain.com/tx/";
 const etherscanTestnet = "https://kovan.etherscan.io/tx/";
 const etherscan = "https://etherscan.io/tx/";
 
@@ -42,17 +42,21 @@ export const getChainExplorerLink = (
 ) => {
   if (network === BridgeNetwork.TESTNET) {
     switch (chain) {
-      case BridgeChain.BTCC:
-        return sochainTestnet + txId;
       case BridgeChain.ETHC:
         return etherscanTestnet + txId;
+      case BridgeChain.BTCC:
+        return sochainTestnet + "BTCTEST/" + txId;
+      case BridgeChain.ZECC:
+        return sochainTestnet + "ZECTEST/" + txId;
     }
   } else if (network === BridgeNetwork.MAINNET) {
     switch (chain) {
-      case BridgeChain.BTCC:
-        return sochain + txId;
       case BridgeChain.ETHC:
         return etherscan + txId;
+      case BridgeChain.BTCC:
+        return sochain + "BTC/" + txId;
+      case BridgeChain.ZECC:
+        return sochain + "ZEC/" + txId;
     }
   }
 };

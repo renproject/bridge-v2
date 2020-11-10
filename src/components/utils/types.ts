@@ -15,6 +15,7 @@ export enum BridgeCurrency {
 
 export enum BridgeChain {
   BTCC = "BTCC",
+  ZECC = "ZECC",
   BNCC = "BNCC",
   ETHC = "ETHC",
   UNKNOWNC = "UNKNOWNC",

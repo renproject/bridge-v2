@@ -13,6 +13,7 @@ import {
   DogeGreyIcon,
   DotsFullIcon,
   EthereumIcon,
+  ZecFullIcon,
   ZecGreyIcon,
 } from "./RenIcons";
 
@@ -92,6 +93,8 @@ export const getChainIcon = (symbol: BridgeChain) => {
       return BinanceChainIcon;
     case BridgeChain.ETHC:
       return EthereumIcon;
+    case BridgeChain.ZECC:
+      return ZecFullIcon; // TODO: add dedicated ZEC chain icon
     case BridgeChain.UNKNOWNC:
       return BitcoinIcon;
   }
