@@ -1,81 +1,41 @@
-import {
-  Checkbox,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-  Typography,
-} from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { Checkbox, Divider, FormControl, FormControlLabel, FormLabel, IconButton, Typography, } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { CheckboxWrapper } from '../../../components/inputs/InputHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { getMintedDestinationCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
-import {
-  getChainShortLabel,
-  getCurrencyShortLabel,
-} from "../../../utils/assetConfigs";
-import { fromGwei } from "../../../utils/converters";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import {
-  $ethUsdExchangeRate,
-  $gasPrices,
-} from "../../marketData/marketDataSlice";
-import {
-  createTxQueryString,
-  LocationTxState,
-} from "../../transactions/transactionsUtils";
-import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
-import {
-  getFeeTooltips,
-  MintTransactionInitializer,
-  tooltips,
-} from "../components/MintHelpers";
-import {
-  $mint,
-  $mintCurrencyUsdAmount,
-  $mintCurrencyUsdRate,
-  $mintFees,
-} from "../mintSlice";
-import {
-  createMintTransaction,
-  preValidateMintTransaction,
-} from "../mintUtils";
+} from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { BridgeCurrency, WalletStatus } from '../../../components/utils/types'
+import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
+import { paths } from '../../../pages/routes'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { getMintedDestinationCurrencySymbol } from '../../../providers/multiwallet/multiwalletUtils'
+import { getChainShortLabel, getCurrencyConfig, } from '../../../utils/assetConfigs'
+import { fromGwei } from '../../../utils/converters'
+import { setFlowStep } from '../../flow/flowSlice'
+import { FlowStep } from '../../flow/flowTypes'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
+import { findExchangeRate } from '../../marketData/marketDataUtils'
+import { $fees } from '../../renData/renDataSlice'
+import { calculateMintFees } from '../../renData/renDataUtils'
+import { createTxQueryString, LocationTxState, } from '../../transactions/transactionsUtils'
+import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
+import { getFeeTooltips, MintTransactionInitializer, tooltips, } from '../components/MintHelpers'
+import { $mint, } from '../mintSlice'
+import { createMintTransaction, preValidateMintTransaction, } from '../mintUtils'
 
 export const MintFeesStep: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -84,17 +44,23 @@ export const MintFeesStep: FunctionComponent = () => {
   const { amount, currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const { account } = useSelectedChainWallet();
-  const currencyUsdRate = useSelector($mintCurrencyUsdRate);
-  const amountUsd = useSelector($mintCurrencyUsdAmount);
-  const { conversionTotal } = useSelector($mintFees);
-  const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency); // selector?
-  const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
-  const mintedCurrencyAmountUsd = conversionTotal * currencyUsdRate;
+  const exchangeRates = useSelector($exchangeRates);
+  const fees = useSelector($fees);
+  const currencyUsdRate = findExchangeRate(exchangeRates, currency, "USD");
+
+  const amountUsd = amount * currencyUsdRate;
+  const { conversionTotal } = calculateMintFees(amount, currency, fees);
+
+  const currencyConfig = getCurrencyConfig(currency);
+  const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
+
   const targetNetworkLabel = getChainShortLabel(chain);
+  const destinationCurrency = getMintedDestinationCurrencySymbol(currency);
+  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
 
   const MintedCurrencyIcon = useMemo(
-    () => getCurrencyGreyIcon(mintedCurrencySymbol),
-    [mintedCurrencySymbol]
+    () => getCurrencyGreyIcon(currencyConfig.symbol),
+    [currencyConfig.symbol]
   );
 
   const [ackChecked, setAckChecked] = useState(true); // TODO: CRIT: false
@@ -204,7 +170,7 @@ export const MintFeesStep: FunctionComponent = () => {
         <Typography variant="body1" gutterBottom>
           Fees
         </Typography>
-        <MintFees />
+        <MintFees amount={amount} currency={currency} />
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
@@ -213,14 +179,14 @@ export const MintFeesStep: FunctionComponent = () => {
           value={
             <NumberFormatText
               value={conversionTotal}
-              spacedSuffix={mintedCurrency}
+              spacedSuffix={destinationCurrencyConfig.short}
               decimalScale={3}
             />
           }
           valueEquivalent={
             <NumberFormatText
               prefix=" = $"
-              value={mintedCurrencyAmountUsd}
+              value={targetCurrencyAmountUsd}
               spacedSuffix="USD"
               decimalScale={2}
               fixedDecimalScale
@@ -264,16 +230,28 @@ export const MintFeesStep: FunctionComponent = () => {
   );
 };
 
-export const MintFees: FunctionComponent = () => {
-  useGasPrices();
-  const { currency } = useSelector($mint);
+type MintFeesProps = {
+  currency: BridgeCurrency;
+  amount: number;
+};
 
-  const currencyUsdRate = useSelector($mintCurrencyUsdRate);
-  const ethUsdRate = useSelector($ethUsdExchangeRate);
-  const amountUsd = useSelector($mintCurrencyUsdAmount);
-  // considear caluclating everything in $mintFees selector
-  const { renVMFee, renVMFeeAmount, networkFee } = useSelector($mintFees);
+export const MintFees: FunctionComponent<MintFeesProps> = ({
+  amount,
+  currency,
+}) => {
+  useGasPrices();
+  const exchangeRates = useSelector($exchangeRates);
+  const fees = useSelector($fees);
   const gasPrices = useSelector($gasPrices);
+  const currencyUsdRate = findExchangeRate(exchangeRates, currency, "USD");
+  const ethUsdRate = findExchangeRate(exchangeRates, BridgeCurrency.ETH, "USD");
+  const amountUsd = amount * currencyUsdRate;
+
+  const { renVMFee, renVMFeeAmount, networkFee } = calculateMintFees(
+    amount,
+    currency,
+    fees
+  );
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 

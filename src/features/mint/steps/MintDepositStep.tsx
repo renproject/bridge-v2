@@ -1,50 +1,75 @@
-import { Box, Divider, Grow, IconButton, Typography, } from '@material-ui/core'
-import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/rentx'
-import QRCode from 'qrcode.react'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Actor } from 'xstate'
+import { Box, Divider, Grow, IconButton, Typography } from "@material-ui/core";
+import {
+  depositMachine,
+  DepositMachineSchema,
+  GatewaySession,
+  GatewayTransaction,
+} from "@renproject/rentx";
+import QRCode from "qrcode.react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Actor } from "xstate";
 import {
   ActionButton,
   BigQrCode,
   CopyContentButton,
   QrCodeIconButton,
   ToggleIconButton,
-} from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BackArrowIcon, BitcoinIcon } from '../../../components/icons/RenIcons'
-import { BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { ProgressWithContent, ProgressWrapper, } from '../../../components/progress/ProgressHelpers'
-import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
-import { Debug } from '../../../components/utils/Debug'
-import { BridgeCurrency } from '../../../components/utils/types'
-import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { useNotifications } from '../../../providers/Notifications'
-import { orangeLight } from '../../../theme/colors'
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
+import {
+  BigWrapper,
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import {
+  ProgressWithContent,
+  ProgressWrapper,
+} from "../../../components/progress/ProgressHelpers";
+import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { BridgeCurrency } from "../../../components/utils/types";
+import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { usePageTitle } from "../../../hooks/usePageTitle";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { useNotifications } from "../../../providers/Notifications";
+import { orangeLight } from "../../../theme/colors";
 import {
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
   getNetworkConfigByRentxName,
-} from '../../../utils/assetConfigs'
-import { setFlowStep } from '../../flow/flowSlice'
-import { FlowStep } from '../../flow/flowTypes'
-import { useGasPrices } from '../../marketData/marketDataHooks'
-import { BookmarkPageWarning } from '../../transactions/components/TransactionsHelpers'
-import { useTxParam } from '../../transactions/transactionsUtils'
-import { setWalletPickerOpened } from '../../wallet/walletSlice'
+} from "../../../utils/assetConfigs";
+import { setFlowStep } from "../../flow/flowSlice";
+import { FlowStep } from "../../flow/flowTypes";
+import { useGasPrices } from "../../marketData/marketDataHooks";
+import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
+import { useTxParam } from "../../transactions/transactionsUtils";
+import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   DepositAcceptedStatus,
   DepositConfirmationStatus,
   DestinationPendingStatus,
   DestinationReceivedStatus,
   ProgressStatus,
-} from '../components/MintStatuses'
-import { $mint } from '../mintSlice'
-import { useMintMachine, usePaperTitle } from '../mintUtils'
-import { MintFees } from './MintFeesStep'
+} from "../components/MintStatuses";
+import { $mint } from "../mintSlice";
+import { useMintMachine, usePaperTitle } from "../mintUtils";
+import { MintFees } from "./MintFeesStep";
 
 export const MintDepositStep: FunctionComponent = () => {
   useGasPrices();
@@ -68,6 +93,8 @@ export const MintDepositStep: FunctionComponent = () => {
 
   const walletConnected = status === "connected";
   const showTransactionStatus = !!tx && walletConnected;
+  const feeCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
+  const amount = Number(tx.targetAmount);
   return (
     <>
       <PaperHeader>
@@ -101,7 +128,7 @@ export const MintDepositStep: FunctionComponent = () => {
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
-        <MintFees />
+        <MintFees amount={amount} currency={feeCurrency} />
         <Debug it={{ parsedTx, txState: txState }} />
       </PaperContent>
       {txState?.newTx && <BookmarkPageWarning />}
@@ -247,9 +274,6 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
     machine?.send({ type: "CLAIM" });
   }, [machine]);
 
-  if (!machine) {
-    return <div>Transaction completed</div>;
-  }
   console.log("state value", machine.state.value);
   const sourceCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const destinationCurrencyConfig = getCurrencyConfigByRentxName(
@@ -258,11 +282,18 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   const sourceChainConfig = getChainConfigByRentxName(tx.sourceNetwork);
   const destinationChainConfig = getChainConfigByRentxName(tx.destNetwork);
   const networkConfig = getNetworkConfigByRentxName(tx.network);
-  // const destinationCurrencyConfig = getCurrencyConfigByRentxName(
-  //   machine.state.context.tx.destAsset
-  // );
+
+  usePageTitle(
+    `Minting - ${tx.targetAmount} ${destinationCurrencyConfig.short}`
+  );
+
+  if (!machine) {
+    return <div>Transaction completed</div>;
+  }
+  const sourceTxHash = (deposit.rawSourceTx as any).txHash || ""; // TODO resolve DepositCommon issue
   const stateValue = machine.state
     .value as keyof DepositMachineSchema["states"];
+  console.log(stateValue);
   switch (stateValue) {
     // switch (forceState) {
     case "srcSettling":
@@ -275,7 +306,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
             confirmations={deposit.sourceTxConfs}
             targetConfirmations={deposit.sourceTxConfTarget}
             amount={Number(deposit.sourceTxAmount) / 1e8}
-            txHash={deposit.sourceTxHash}
+            txHash={sourceTxHash}
             timeRemaining={
               Math.max(
                 Number(deposit.sourceTxConfTarget) - deposit.sourceTxConfs,
@@ -294,7 +325,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
           sourceCurrency={sourceCurrencyConfig.symbol}
           sourceAmount={deposit.sourceTxAmount / 1e8}
           sourceChain={sourceChainConfig.symbol}
-          sourceTxHash={deposit.sourceTxHash}
+          sourceTxHash={sourceTxHash}
           sourceConfirmations={deposit.sourceTxConfs}
           sourceConfirmationsTarget={deposit.sourceTxConfTarget} // TODO: resolve
           destinationChain={destinationChainConfig.symbol}
@@ -309,7 +340,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
             network={networkConfig.symbol}
             sourceCurrency={sourceCurrencyConfig.symbol}
             sourceChain={sourceChainConfig.symbol}
-            sourceTxHash={deposit.sourceTxHash}
+            sourceTxHash={sourceTxHash}
             destinationCurrency={destinationCurrencyConfig.symbol}
             destinationChain={destinationChainConfig.symbol}
             destinationTxHash={deposit.destTxHash || ""}
@@ -323,7 +354,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
             sourceCurrency={sourceCurrencyConfig.symbol}
             sourceAmount={deposit.sourceTxAmount / 1e8}
             sourceChain={sourceChainConfig.symbol}
-            sourceTxHash={deposit.sourceTxHash}
+            sourceTxHash={sourceTxHash}
             destinationChain={destinationChainConfig.symbol}
             onSubmit={handleSubmitToDestinationChain}
             submitting={true}
