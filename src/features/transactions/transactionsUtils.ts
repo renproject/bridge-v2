@@ -20,23 +20,40 @@ export type LocationTxState = {
 
 export const useTxParam = () => {
   const location = useLocation();
+  console.log(location.search);
   const tx = parseTxQueryString(location.search);
   const locationState = location.state as LocationTxState;
 
   return { tx, txState: locationState?.txState };
 };
 
-export const createTxQueryString = (tx: GatewaySession) =>
-  queryString.stringify({
-    tx: JSON.stringify(tx),
-  });
+export const createTxQueryString = (tx: GatewaySession) => {
+  const { customParams, transactions, ...sanitized } = tx;
 
-export const parseTxQueryString: (query: string) => GatewaySession | null = (
+  return queryString.stringify(sanitized as any);
+};
+
+const parseNumber = (value: any) => {
+  if (typeof value === "undefined") {
+    return undefined;
+  }
+  return Number(value);
+};
+
+export const parseTxQueryString: (
   query: string
-) => {
-  const queryParams = queryString.parse(query);
-  const serializedTx = queryParams.tx;
-  return serializedTx ? JSON.parse(serializedTx as string) : null;
+) => Partial<GatewaySession> | null = (query: string) => {
+  const parsed = queryString.parse(query);
+  if (!parsed) {
+    return null;
+  }
+  const { expiryTime, suggestedAmount, targetAmount, ...rest } = parsed;
+  return {
+    ...rest,
+    expiryTime: parseNumber(expiryTime),
+    suggestedAmount: parseNumber(suggestedAmount),
+    targetAmount: parseNumber(targetAmount),
+  };
 };
 
 const sochainTestnet = "https://sochain.com/tx/";

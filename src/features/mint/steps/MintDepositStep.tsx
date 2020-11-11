@@ -161,6 +161,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     deposit: GatewayTransaction;
     machine: Actor<typeof depositMachine>;
   } | null>(() => {
+    if (!current.context.tx.transactions) {
+      return null;
+    }
     const deposit = Object.values(current.context.tx.transactions)[0];
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];

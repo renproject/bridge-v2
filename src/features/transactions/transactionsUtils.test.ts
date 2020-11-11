@@ -1,7 +1,7 @@
 import { GatewaySession } from "@renproject/rentx";
 import { createTxQueryString, parseTxQueryString } from "./transactionsUtils";
 
-const exampleTx: GatewaySession = {
+const tx: GatewaySession = {
   customParams: undefined,
   id: "tx-1234abc",
   type: "mint",
@@ -16,15 +16,57 @@ const exampleTx: GatewaySession = {
   transactions: {},
 };
 
-const serializedExampleTxQs =
-  "tx=%7B%22id%22%3A%22tx-1234abc%22%2C%22type%22%3A%22mint%22%2C%22sourceAsset%22%3A%22btc%22%2C%22sourceNetwork%22%3A%22bitcoin%22%2C%22network%22%3A%22testnet%22%2C%22destAddress%22%3A%22%22%2C%22destNetwork%22%3A%22ethereum%22%2C%22targetAmount%22%3A1%2C%22userAddress%22%3A%22%22%2C%22expiryTime%22%3A1604670899484%2C%22transactions%22%3A%7B%7D%7D";
+const txQuery =
+  "destAddress=&destNetwork=ethereum&expiryTime=1604670899484&id=tx-1234abc&network=testnet&sourceAsset=btc&sourceNetwork=bitcoin&targetAmount=1&type=mint&userAddress=";
 
-test("converts tx to query string", () => {
-  const serialized = createTxQueryString(exampleTx);
-  expect(serialized).toEqual(serializedExampleTxQs);
+const expectedParsedTx: Partial<GatewaySession> = {
+  id: "tx-1234abc",
+  type: "mint",
+  sourceAsset: "btc",
+  sourceNetwork: "bitcoin",
+  network: "testnet",
+  destAddress: "",
+  destNetwork: "ethereum",
+  targetAmount: 1,
+  userAddress: "",
+  expiryTime: 1604670899484,
+};
+
+const realTxQuery =
+  "destAddress=0xdf88bc963e614fab2bda81c298056ba18e01a424&destNetwork=ethereum&expiryTime=1605142829344&gatewayAddress=2NEJcFe7nkJCHFEu4vP2w1PRfeUb9o2ELhM&id=tx-1425032430964379&network=testnet&nonce=c958acd445371132d990073034a19d2f894ef5a3d0a002a4f75f2d1493de42c3&sourceAsset=btc&sourceNetwork=bitcoin&suggestedAmount=1100000&targetAmount=0.01&type=mint&userAddress=0xdf88bc963e614fab2bda81c298056ba18e01a424";
+
+const realTx = {
+  destAddress: "0xdf88bc963e614fab2bda81c298056ba18e01a424",
+  destNetwork: "ethereum",
+  expiryTime: 1605142829344,
+  gatewayAddress: "2NEJcFe7nkJCHFEu4vP2w1PRfeUb9o2ELhM",
+  id: "tx-1425032430964379",
+  network: "testnet",
+  nonce: "c958acd445371132d990073034a19d2f894ef5a3d0a002a4f75f2d1493de42c3",
+  sourceAsset: "btc",
+  sourceNetwork: "bitcoin",
+  suggestedAmount: 1100000,
+  targetAmount: 0.01,
+  type: "mint",
+  userAddress: "0xdf88bc963e614fab2bda81c298056ba18e01a424",
+};
+
+test("serializes tx to query", () => {
+  const serialized = createTxQueryString(tx);
+  expect(serialized).toEqual(txQuery);
 });
 
-test("converts tx query string to tx", () => {
-  const parsed = parseTxQueryString(serializedExampleTxQs);
-  expect(parsed).toEqual(exampleTx);
+test("parses tx query to tx", () => {
+  const parsed = parseTxQueryString(txQuery);
+  expect(parsed).toEqual(expectedParsedTx);
+});
+
+test("serializes real tx to query", () => {
+  const serialized = createTxQueryString(tx);
+  expect(serialized).toEqual(txQuery);
+});
+
+test("parses real tx query to tx", () => {
+  const parsed = parseTxQueryString(realTxQuery);
+  expect(parsed).toEqual(realTx);
 });

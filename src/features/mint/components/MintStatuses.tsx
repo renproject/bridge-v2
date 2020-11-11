@@ -302,11 +302,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
   const destinationChainConfig = getChainConfig(destinationChain);
   const sourceChainConfig = getChainConfig(sourceChain);
 
-  const sourceTxLink = getChainExplorerLink(
-    sourceChain,
-    network,
-    sourceTxHash
-  );
+  const sourceTxLink = getChainExplorerLink(sourceChain, network, sourceTxHash);
   const destinationTxLink = getChainExplorerLink(
     destinationChain,
     network,
