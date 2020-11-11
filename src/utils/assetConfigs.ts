@@ -149,6 +149,7 @@ type ChainConfig = LabelsConfig &
     symbol: BridgeChain;
   };
 
+// TODO: add confirmations from https://support.kraken.com/hc/en-us/articles/203325283-Cryptocurrency-deposit-processing-times
 export const chainsConfig: Record<BridgeChain, ChainConfig> = {
   [BridgeChain.BTCC]: {
     symbol: BridgeChain.BTCC,

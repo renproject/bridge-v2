@@ -23,6 +23,7 @@ import { MintDepositStep } from "./steps/MintDepositStep";
 import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
 
+// TBD: that is possibly transaction generic component
 const MintConfiguration: FunctionComponent<RouteComponentProps> = ({
   match,
 }) => {
@@ -37,7 +38,10 @@ const MintConfiguration: FunctionComponent<RouteComponentProps> = ({
   return (
     <>
       {step === TxConfigurationStep.INITIAL && (
-        <MintInitialStep onNext={onInitialNext} />
+        <>
+          <FlowTabs />
+          <MintInitialStep onNext={onInitialNext} />
+        </>
       )}
       {step === TxConfigurationStep.FEES && (
         <MintFeesStep onPrev={onFeesPrev} />
@@ -49,22 +53,12 @@ const MintConfiguration: FunctionComponent<RouteComponentProps> = ({
 export const MintFlow: FunctionComponent<RouteComponentProps> = ({ match }) => {
   usePageTitle("Minting");
   useExchangeRates();
-  const dispatch = useDispatch();
-  const { tx } = useTxParam();
-  const { step } = useSelector($flow);
-  // TODO: this should be route based, not mixed
-  useEffect(() => {
-    if (tx && step !== FlowStep.DEPOSIT) {
-      dispatch(setFlowStep(FlowStep.DEPOSIT));
-    }
-  }, [dispatch, step, tx]);
+
   return (
     <PaperTitleProvider>
       <Debug it={{ match }} />
-      {step === FlowStep.INITIAL && <FlowTabs />}
       <Route exact path={paths.MINT} component={MintConfiguration} />
-      {step === FlowStep.FEES && <MintFeesStep />}
-      {step === FlowStep.DEPOSIT && <MintDepositStep />}
+      <Route exact path={paths.MINT_TRANSACTION} component={MintDepositStep} />
     </PaperTitleProvider>
   );
 };
