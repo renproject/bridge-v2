@@ -39,7 +39,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const dispatch = useDispatch();
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
-  const { conversionTotal } = useSelector($mintFees);
+  const { conversionTotal } = useSelector($mintFees); // calculate by method
   const currencyUsdValue = useSelector($mintCurrencyUsdAmount);
 
   const handleAmountChange = useCallback(

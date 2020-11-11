@@ -25,9 +25,8 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
     <>
       <MainLayout>
         <BridgePurePaper>
-          <Route path={`${paths.MINT}/:step`} component={MintFlow} />
           <Route path={paths.MINT} component={MintFlow} />
-          <Route path={`${paths.RELEASE}/:step`} component={ReleaseFlow} />
+          <Route path={paths.RELEASE} component={ReleaseFlow} />
         </BridgePurePaper>
       </MainLayout>
     </>

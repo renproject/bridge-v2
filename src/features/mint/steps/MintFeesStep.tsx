@@ -143,7 +143,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     (tx) => {
       console.log("onMintTxCreated");
       history.push({
-        pathname: paths.MINT,
+        pathname: paths.MINT_TRANSACTION,
         search: "?" + createTxQueryString(tx),
         state: {
           txState: { newTx: true },

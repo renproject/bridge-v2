@@ -17,5 +17,4 @@ export const paths = {
   MINT_TRANSACTION,
   RELEASE,
   RELEASE_TRANSACTION,
-  _TRANSACTION,
 };
