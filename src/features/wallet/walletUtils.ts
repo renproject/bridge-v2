@@ -21,6 +21,6 @@ export const multiwalletChainToBridgeChain = (chain: string) => {
     case 'ethereum':
       return BridgeChain.ETHC
     default:
-      return 'unknown'
+      return BridgeChain.UNKNOWNC
   }
 }

@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import { Debug } from "../../components/utils/Debug";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { paths } from "../../pages/routes";
-import { FlowTabs } from "../transactions/components/FlowTabs";
+import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { useExchangeRates } from "../marketData/marketDataHooks";
 import { TxConfigurationStep } from "../transactions/transactionsUtils";
 import { PaperTitleProvider } from "./mintUtils";
@@ -26,7 +26,7 @@ const MintConfiguration: FunctionComponent<RouteComponentProps> = () => {
     <>
       {step === TxConfigurationStep.INITIAL && (
         <>
-          <FlowTabs />
+          <TransactionTypeTabs />
           <MintInitialStep onNext={onInitialNext} />
         </>
       )}
