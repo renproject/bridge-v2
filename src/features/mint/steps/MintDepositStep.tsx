@@ -14,6 +14,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
 import { Actor } from "xstate";
 import {
   ActionButton,
@@ -54,8 +55,6 @@ import {
   getCurrencyShortLabel,
   getNetworkConfigByRentxName,
 } from "../../../utils/assetConfigs";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
 import { useTxParam } from "../../transactions/transactionsUtils";
@@ -71,7 +70,9 @@ import { $mint } from "../mintSlice";
 import { useMintMachine, usePaperTitle } from "../mintUtils";
 import { MintFees } from "./MintFeesStep";
 
-export const MintDepositStep: FunctionComponent = () => {
+export const MintDepositStep: FunctionComponent<RouteComponentProps> = ({
+  history,
+}) => {
   useGasPrices();
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
@@ -81,11 +82,11 @@ export const MintDepositStep: FunctionComponent = () => {
     setTitle(`Send ${getCurrencyShortLabel(currency)}`);
   }, [setTitle, currency]);
   const { tx: parsedTx, txState } = useTxParam();
-  const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); //TODO fix this
+  const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
 
   const handlePreviousStepClick = useCallback(() => {
-    dispatch(setFlowStep(FlowStep.FEES));
-  }, [dispatch]);
+    history.goBack();
+  }, [history]);
 
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));

@@ -1,32 +1,19 @@
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
 import { Debug } from "../../components/utils/Debug";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { paths } from "../../pages/routes";
-import { FlowTabs } from "../flow/components/FlowTabs";
-import { $flow, setFlowStep } from "../flow/flowSlice";
-import { FlowStep } from "../flow/flowTypes";
+import { FlowTabs } from "../transactions/components/FlowTabs";
 import { useExchangeRates } from "../marketData/marketDataHooks";
-import {
-  TxConfigurationStep,
-  useTxParam,
-} from "../transactions/transactionsUtils";
+import { TxConfigurationStep } from "../transactions/transactionsUtils";
 import { PaperTitleProvider } from "./mintUtils";
 import { MintDepositStep } from "./steps/MintDepositStep";
 import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
 
 // TBD: that is possibly transaction generic component
-const MintConfiguration: FunctionComponent<RouteComponentProps> = ({
-  match,
-}) => {
+const MintConfiguration: FunctionComponent<RouteComponentProps> = () => {
   const [step, setStep] = useState(TxConfigurationStep.INITIAL);
   const onInitialNext = useCallback(() => {
     setStep(TxConfigurationStep.FEES);

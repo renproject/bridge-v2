@@ -76,7 +76,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [initializeMinting, setInitializeMinting] = useState(false);
+  const [mintingInitialized, setMintingInitialized] = useState(false);
   const { amount, currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const { account } = useSelectedChainWallet();
@@ -128,13 +128,13 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     if (status === WalletStatus.CONNECTED) {
       setTouched(true);
       if (canInitializeMinting) {
-        setInitializeMinting(true);
+        setMintingInitialized(true);
       } else {
-        setInitializeMinting(false);
+        setMintingInitialized(false);
       }
     } else {
       setTouched(false);
-      setInitializeMinting(false);
+      setMintingInitialized(false);
       dispatch(setWalletPickerOpened(true));
     }
   }, [dispatch, status, canInitializeMinting]);
@@ -157,7 +157,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   return (
     <>
-      {initializeMinting && (
+      {mintingInitialized && (
         <MintTransactionInitializer
           initialTx={tx}
           onCreated={onMintTxCreated}
@@ -253,8 +253,15 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           </FormControl>
         </CheckboxWrapper>
         <ActionButtonWrapper>
-          <ActionButton onClick={handleConfirm} disabled={showAckError}>
-            {status !== "connected" ? "Connect Wallet" : "Confirm"}
+          <ActionButton
+            onClick={handleConfirm}
+            disabled={showAckError || mintingInitialized}
+          >
+            {status !== "connected"
+              ? "Connect Wallet"
+              : mintingInitialized
+              ? "Confirming..."
+              : "Confirm"}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
