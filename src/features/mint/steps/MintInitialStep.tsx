@@ -90,6 +90,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         </BigCurrencyInputWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
+            label="Send"
             mode="send"
             available={supportedMintCurrencies}
             value={currency}
@@ -98,6 +99,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         </AssetDropdownWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
+            label="Destination Chain"
             mode="chain"
             available={supportedMintDestinationChains}
             value={chain}

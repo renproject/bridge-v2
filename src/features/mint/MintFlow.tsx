@@ -1,20 +1,18 @@
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
-import { Debug } from "../../components/utils/Debug";
+import { DebugProps } from "../../components/utils/Debug";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { paths } from "../../pages/routes";
-import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { useExchangeRates } from "../marketData/marketDataHooks";
+import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { TxConfigurationStep } from "../transactions/transactionsUtils";
-import { PaperTitleProvider } from "./mintUtils";
-import { MintDepositStep } from "./steps/MintDepositStep";
 import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
 
-// TBD: that is possibly transaction generic component
 const MintConfiguration: FunctionComponent<RouteComponentProps> = () => {
   const [step, setStep] = useState(TxConfigurationStep.INITIAL);
+
   const onInitialNext = useCallback(() => {
     setStep(TxConfigurationStep.FEES);
   }, []);
@@ -42,10 +40,9 @@ export const MintFlow: FunctionComponent<RouteComponentProps> = ({ match }) => {
   useExchangeRates();
 
   return (
-    <PaperTitleProvider>
-      <Debug it={{ match }} />
+    <>
       <Route exact path={paths.MINT} component={MintConfiguration} />
-      <Route exact path={paths.MINT_TRANSACTION} component={MintDepositStep} />
-    </PaperTitleProvider>
+      <Route exact path={paths.MINT_TRANSACTION} component={DebugProps} />
+    </>
   );
 };

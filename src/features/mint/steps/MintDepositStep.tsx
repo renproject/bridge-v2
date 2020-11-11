@@ -46,6 +46,7 @@ import { Debug } from "../../../components/utils/Debug";
 import { BridgeCurrency } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePageTitle } from "../../../hooks/usePageTitle";
+import { usePaperTitle } from "../../../pages/MainPage";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { useNotifications } from "../../../providers/Notifications";
 import { orangeLight } from "../../../theme/colors";
@@ -67,7 +68,7 @@ import {
   ProgressStatus,
 } from "../components/MintStatuses";
 import { $mint } from "../mintSlice";
-import { useMintMachine, usePaperTitle } from "../mintUtils";
+import { useMintMachine } from "../mintUtils";
 import { MintFees } from "./MintFeesStep";
 
 export const MintDepositStep: FunctionComponent<RouteComponentProps> = ({

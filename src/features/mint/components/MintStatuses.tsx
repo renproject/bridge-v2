@@ -24,6 +24,7 @@ import {
   BridgeCurrency,
   BridgeNetwork,
 } from "../../../components/utils/types";
+import { usePaperTitle } from "../../../pages/MainPage";
 import { orangeLight } from "../../../theme/colors";
 import {
   getChainConfig,
@@ -33,7 +34,6 @@ import {
 } from "../../../utils/assetConfigs";
 import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
 import { getChainExplorerLink } from "../../transactions/transactionsUtils";
-import { usePaperTitle } from "../mintUtils";
 
 type ProgressStatusProps = {
   reason?: string;

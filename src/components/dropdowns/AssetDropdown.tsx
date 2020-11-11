@@ -1,7 +1,17 @@
-import { Box, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useMemo } from 'react'
-import { getChainFullLabel, getCurrencyFullLabel, } from '../../utils/assetConfigs'
+import {
+  Box,
+  MenuItem,
+  Select,
+  SelectProps,
+  styled,
+  Typography,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useMemo } from "react";
+import {
+  getChainFullLabel,
+  getCurrencyFullLabel,
+} from "../../utils/assetConfigs";
 import {
   BchFullIcon,
   BinanceChainFullIcon,
@@ -11,8 +21,8 @@ import {
   DotsFullIcon,
   EthereumChainFullIcon,
   ZecFullIcon,
-} from '../icons/RenIcons'
-import { BridgeChain, BridgeCurrency, } from '../utils/types'
+} from "../icons/RenIcons";
+import { BridgeChain, BridgeCurrency } from "../utils/types";
 
 type AssetConfig = {
   symbol: string;
@@ -25,6 +35,11 @@ const currencyOptions: Array<AssetConfig> = [
   {
     symbol: BridgeCurrency.BTC,
     name: getCurrencyFullLabel(BridgeCurrency.BTC),
+    Icon: BtcFullIcon,
+  },
+  {
+    symbol: BridgeCurrency.RENBTC,
+    name: getCurrencyFullLabel(BridgeCurrency.RENBTC),
     Icon: BtcFullIcon,
   },
   {
@@ -45,6 +60,11 @@ const currencyOptions: Array<AssetConfig> = [
   {
     symbol: BridgeCurrency.ZEC,
     name: getCurrencyFullLabel(BridgeCurrency.ZEC),
+    Icon: ZecFullIcon,
+  },
+  {
+    symbol: BridgeCurrency.RENZEC,
+    name: getCurrencyFullLabel(BridgeCurrency.RENZEC),
     Icon: ZecFullIcon,
   },
 ];
@@ -97,16 +117,18 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
   },
 }));
 
-type AssetDropdownMode = "send" | "receive" | "chain";
+type AssetDropdownMode = "send" | "receive" | "chain"; // TODO: remove recaive
 
 type AssetDropdownProps = SelectProps & {
   mode: AssetDropdownMode;
   available?: Array<BridgeCurrency | BridgeChain>;
+  label: string;
 };
 
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   mode,
   available,
+  label,
   ...rest
 }) => {
   const styles = useAssetDropdownStyles();
@@ -125,9 +147,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
         <Box display="flex" alignItems="center" width="100%">
           <Box width="40%">
             <Typography variant="body2" className={styles.supplementalText}>
-              {mode === "send" && "Send"}
-              {mode === "receive" && "Receive"}
-              {mode === "chain" && "Destination Chain"}
+              {label}
             </Typography>
           </Box>
           <Box width="45px" display="flex" alignItems="center">
@@ -141,7 +161,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
         </Box>
       );
     },
-    [mode, styles]
+    [mode, styles, label]
   );
   return (
     <div>

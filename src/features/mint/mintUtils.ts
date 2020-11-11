@@ -2,7 +2,6 @@ import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { GatewaySession, mintMachine } from "@renproject/rentx";
 import { useMachine } from "@xstate/react";
-import { createStateContext } from "react-use";
 import { BridgeChain, BridgeCurrency } from "../../components/utils/types";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
@@ -92,7 +91,3 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     devTools: env.XSTATE_DEVTOOLS,
   });
 };
-
-const [usePaperTitle, PaperTitleProvider] = createStateContext("Mint");
-
-export { PaperTitleProvider, usePaperTitle };

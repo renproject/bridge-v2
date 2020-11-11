@@ -35,3 +35,7 @@ export const Debug: FunctionComponent<DebugProps> = ({
     <pre className={classes.root}>{JSON.stringify(target, replacer, 2)}</pre>
   ) : null;
 };
+
+export const DebugProps: FunctionComponent<any> = (props) => (
+  <Debug it={props} />
+);

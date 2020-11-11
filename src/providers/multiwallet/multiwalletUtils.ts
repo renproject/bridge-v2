@@ -14,6 +14,17 @@ export const supportedMintDestinationChains = [
   // BridgeChain.BNCC,
 ];
 
+export const supportedReleaseSourceChains = [
+  BridgeChain.ETHC, // BridgeChain.BNCC,
+];
+
+export const supportedReleaseCurrencies = [
+  BridgeCurrency.RENBTC,
+  // BridgeCurrency.RENBCH,
+  // BridgeCurrency.RENDOGE,
+  BridgeCurrency.RENZEC,
+];
+
 export const getMintedDestinationCurrencySymbol = (
   sourceCurrency: BridgeCurrency
 ) => {
@@ -26,6 +37,23 @@ export const getMintedDestinationCurrencySymbol = (
       return BridgeCurrency.RENDOGE;
     case BridgeCurrency.ZEC:
       return BridgeCurrency.RENZEC;
+    default:
+      return BridgeCurrency.UNKNOWN;
+  }
+};
+
+export const getReleasedDestinationCurrencySymbol = (
+  sourceCurrency: BridgeCurrency
+) => {
+  switch (sourceCurrency) {
+    case BridgeCurrency.RENBTC:
+      return BridgeCurrency.BTC;
+    case BridgeCurrency.RENBCH:
+      return BridgeCurrency.BCH;
+    case BridgeCurrency.RENDOGE:
+      return BridgeCurrency.DOGE;
+    case BridgeCurrency.RENZEC:
+      return BridgeCurrency.ZEC;
     default:
       return BridgeCurrency.UNKNOWN;
   }
