@@ -1,42 +1,34 @@
 import { BridgeCurrency } from "../../components/utils/types";
 import { env } from "../../constants/environmentVariables";
 import { getBandchain } from "../../services/bandchain";
+import { uniqueArray } from "../../utils/arrays";
+import {
+  currenciesConfig,
+  getCurrencyConfigByBandchainSymbol,
+} from "../../utils/assetConfigs";
 
 // move to assetConfig
 const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
-  switch (symbol) {
-    case BridgeCurrency.DOTS:
-      return "DOT";
-    case BridgeCurrency.RENBCH:
-      return "";
-    case BridgeCurrency.RENDOGE:
-      return "";
-    case BridgeCurrency.RENZEC:
-      return "";
-    case BridgeCurrency.RENDGB:
-      return "";
-    case BridgeCurrency.UNKNOWN:
-      return "";
-  }
-  return symbol;
+  const config = currenciesConfig[symbol];
+  return config.bandchainSymbol || symbol;
 };
 
 const mapToBridgeCurrencySymbol = (symbol: string) => {
-  switch (symbol) {
-    case "DOT":
-      return BridgeCurrency.RENBCH;
-  }
-  return symbol as BridgeCurrency;
+  const config = getCurrencyConfigByBandchainSymbol(symbol);
+  return config.symbol;
 };
 
 const QUOTE = "USD";
 
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
-const referenceParis = Object.values(BridgeCurrency)
-  .map(mapToBandchainCurrencySymbol)
-  .filter((symbol) => !!symbol)
-  .map((symbol: string) => getPair(symbol, QUOTE));
+const referenceParis = uniqueArray(
+  Object.values(BridgeCurrency)
+    .map(mapToBandchainCurrencySymbol)
+    .filter((symbol) => symbol !== BridgeCurrency.UNKNOWN)
+).map((symbol: string) => getPair(symbol, QUOTE));
+
+console.log(referenceParis);
 
 type BandchainExchangeRateEntry = {
   pair: string;

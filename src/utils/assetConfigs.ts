@@ -53,6 +53,7 @@ export type CurrencyConfig = LabelsConfig &
   RentxAssetConfig & {
     symbol: BridgeCurrency;
     sourceChain?: BridgeChain;
+    bandchainSymbol?: string;
   };
 
 export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
@@ -77,6 +78,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: BtcGreyIcon,
     rentxName: "renBTC",
     sourceChain: BridgeChain.ETHC,
+    bandchainSymbol: BridgeCurrency.BTC,
   },
   [BridgeCurrency.BCH]: {
     symbol: BridgeCurrency.BCH,
@@ -96,6 +98,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: BtcFullIcon,
     rentxName: "renBCH",
     sourceChain: BridgeChain.ETHC,
+    bandchainSymbol: BridgeCurrency.BCH,
   },
   [BridgeCurrency.DOTS]: {
     symbol: BridgeCurrency.DOTS,
@@ -105,6 +108,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: DotsGreyIcon,
     MainIcon: DotsFullIcon,
     rentxName: "dots",
+    bandchainSymbol: "DOT",
   },
   [BridgeCurrency.DOGE]: {
     symbol: BridgeCurrency.DOGE,
@@ -124,6 +128,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: DogeGreyIcon,
     rentxName: "renDOGE",
     sourceChain: BridgeChain.ETHC,
+    bandchainSymbol: BridgeCurrency.DOGE,
   },
   [BridgeCurrency.ZEC]: {
     symbol: BridgeCurrency.ZEC,
@@ -145,15 +150,26 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: ZecGreyIcon,
     rentxName: "renZEC",
     sourceChain: BridgeChain.ETHC,
+    bandchainSymbol: BridgeCurrency.ZEC,
+  },
+  [BridgeCurrency.DGB]: {
+    symbol: BridgeCurrency.DGB,
+    short: "DGB",
+    full: "DigiByte",
+    FullIcon: DgbFullIcon,
+    GreyIcon: DgbGreyIcon,
+    MainIcon: DgbFullIcon,
+    rentxName: "DGB",
   },
   [BridgeCurrency.RENDGB]: {
     symbol: BridgeCurrency.RENDGB,
     short: "renDGB",
-    full: "renDGB",
+    full: "DigiByte",
     FullIcon: DgbFullIcon,
     GreyIcon: DgbGreyIcon,
     MainIcon: DgbGreyIcon,
     rentxName: "renDGB",
+    bandchainSymbol: BridgeCurrency.DGB,
     sourceChain: BridgeChain.ETHC,
   },
   [BridgeCurrency.ETH]: {
@@ -185,12 +201,14 @@ export const getCurrencyConfig = (symbol: BridgeCurrency) =>
 export const getCurrencyShortLabel = (symbol: BridgeCurrency) =>
   currenciesConfig[symbol].short || unknownLabel;
 
-export const getCurrencyFullLabel = (symbol: BridgeCurrency) =>
-  currenciesConfig[symbol].full || unknownLabel;
-
 export const getCurrencyConfigByRentxName = (name: string) =>
   Object.values(currenciesConfig).find(
     (currency) => currency.rentxName === name
+  ) || unknownCurrencyConfig;
+
+export const getCurrencyConfigByBandchainSymbol = (symbol: string) =>
+  Object.values(currenciesConfig).find(
+    (config) => config.bandchainSymbol === symbol || config.symbol === symbol
   ) || unknownCurrencyConfig;
 
 export const getCurrencyRentxName = (symbol: BridgeCurrency) =>

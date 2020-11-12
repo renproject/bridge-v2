@@ -4,6 +4,7 @@ export enum BridgeCurrency {
   DOTS = "DOTS",
   DOGE = "DOGE",
   ZEC = "ZEC",
+  DGB = "DGB",
   RENBTC = "RENBTC",
   RENBCH = "RENBCH",
   RENDOGE = "RENDOGE",
