@@ -112,7 +112,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
       >
         {getOptions(mode)
           .filter(availabilityFilter)
-          .map(({ symbol, FullIcon, full, short }) => {
+          .map(({ symbol, FullIcon, GreyIcon, full, short }) => {
             return (
               <MenuItem key={symbol} value={symbol}>
                 <Box display="flex" alignItems="center" width="100%">
