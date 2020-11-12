@@ -15,10 +15,10 @@ import {
 import { PaperContent } from "../../../components/layout/Paper";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import {
+  getCurrencyConfig,
   supportedReleaseCurrencies,
-  supportedReleaseSourceChains,
-} from "../../../providers/multiwallet/multiwalletUtils";
-import { getCurrencyConfig } from "../../../utils/assetConfigs";
+  supportedReleaseSourceChains
+} from '../../../utils/assetConfigs'
 import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import { $wallet, setChain } from "../../wallet/walletSlice";
 import {

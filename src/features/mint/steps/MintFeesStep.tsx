@@ -43,11 +43,10 @@ import { BridgeCurrency, WalletStatus } from "../../../components/utils/types";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { getMintedDestinationCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
 import {
   getChainShortLabel,
-  getCurrencyConfig,
-} from "../../../utils/assetConfigs";
+  getCurrencyConfig, getMintedDestinationCurrencySymbol,
+} from '../../../utils/assetConfigs'
 import { fromGwei } from "../../../utils/converters";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";

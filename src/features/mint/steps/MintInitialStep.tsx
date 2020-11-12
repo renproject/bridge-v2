@@ -18,11 +18,10 @@ import {
 import { PaperContent } from "../../../components/layout/Paper";
 import { AssetInfo } from "../../../components/typography/TypographyHelpers";
 import {
-  getMintedDestinationCurrencySymbol,
-  supportedMintCurrencies,
-  supportedMintDestinationChains,
-} from "../../../providers/multiwallet/multiwalletUtils";
-import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
+  getCurrencyShortLabel,
+  getMintedDestinationCurrencySymbol, supportedMintCurrencies,
+  supportedMintDestinationChains
+} from '../../../utils/assetConfigs'
 import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import { $wallet, setChain } from "../../wallet/walletSlice";
 import {
