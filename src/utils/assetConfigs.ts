@@ -176,7 +176,7 @@ export const getCurrencyRentxSourceChain = (symbol: BridgeCurrency) => {
   return BridgeChain.UNKNOWNC;
 };
 
-type ChainConfig = LabelsConfig &
+export type ChainConfig = LabelsConfig &
   IconsConfig &
   RentxAssetConfig & {
     symbol: BridgeChain;

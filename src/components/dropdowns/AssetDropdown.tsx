@@ -9,87 +9,26 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useMemo } from "react";
 import {
-  getChainFullLabel,
-  getCurrencyFullLabel,
+  ChainConfig,
+  chainsConfig,
+  currenciesConfig,
+  CurrencyConfig,
 } from "../../utils/assetConfigs";
-import {
-  BchFullIcon,
-  BinanceChainFullIcon,
-  BtcFullIcon,
-  CustomSvgIconComponent,
-  DogeFullIcon,
-  DotsFullIcon,
-  EthereumChainFullIcon,
-  ZecFullIcon,
-} from "../icons/RenIcons";
 import { BridgeChain, BridgeCurrency } from "../utils/types";
 
-type AssetConfig = {
-  symbol: string;
-  name: string;
-  Icon: CustomSvgIconComponent;
+const getOptions = (mode: AssetDropdownMode) => {
+  const options =
+    mode === "chain"
+      ? Object.values(chainsConfig)
+      : Object.values(currenciesConfig);
+  return options as Array<ChainConfig | CurrencyConfig>;
 };
-
-const currencyOptions: Array<AssetConfig> = [
-  //TODO: merge with assetConfigs
-  {
-    symbol: BridgeCurrency.BTC,
-    name: getCurrencyFullLabel(BridgeCurrency.BTC),
-    Icon: BtcFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.RENBTC,
-    name: getCurrencyFullLabel(BridgeCurrency.RENBTC),
-    Icon: BtcFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.BCH,
-    name: getCurrencyFullLabel(BridgeCurrency.BCH),
-    Icon: BchFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.DOTS,
-    name: getCurrencyFullLabel(BridgeCurrency.DOTS),
-    Icon: DotsFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.DOGE,
-    name: getCurrencyFullLabel(BridgeCurrency.DOGE),
-    Icon: DogeFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.ZEC,
-    name: getCurrencyFullLabel(BridgeCurrency.ZEC),
-    Icon: ZecFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.RENZEC,
-    name: getCurrencyFullLabel(BridgeCurrency.RENZEC),
-    Icon: ZecFullIcon,
-  },
-];
-
-const chainOptions: Array<AssetConfig> = [
-  {
-    symbol: BridgeChain.BNCC,
-    name: getChainFullLabel(BridgeChain.BNCC),
-    Icon: BinanceChainFullIcon,
-  },
-  {
-    symbol: BridgeChain.ETHC,
-    name: getChainFullLabel(BridgeChain.ETHC),
-    Icon: EthereumChainFullIcon,
-  },
-];
-
-const getOptions = (mode: AssetDropdownMode) =>
-  mode === "chain" ? chainOptions : currencyOptions;
 
 const getOptionBySymbol = (symbol: string, mode: AssetDropdownMode) =>
   getOptions(mode).find((option) => option.symbol === symbol);
 
 const createAvailabilityFilter = (available: Array<string> | undefined) => (
-  option: AssetConfig
+  option: ChainConfig | CurrencyConfig
 ) => {
   if (!available) {
     return true;
@@ -142,7 +81,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
       if (!selected) {
         return <span>empty</span>;
       }
-      const { Icon, name, symbol } = selected;
+      const { FullIcon, full, short } = selected;
       return (
         <Box display="flex" alignItems="center" width="100%">
           <Box width="40%">
@@ -151,11 +90,11 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
             </Typography>
           </Box>
           <Box width="45px" display="flex" alignItems="center">
-            <Icon className={styles.listIcon} />
+            <FullIcon className={styles.listIcon} />
           </Box>
           <Box flexGrow={1}>
             <Typography variant="body1">
-              {mode === "chain" ? name : symbol}
+              {mode === "chain" ? full : short}
             </Typography>
           </Box>
         </Box>
@@ -173,17 +112,17 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
       >
         {getOptions(mode)
           .filter(availabilityFilter)
-          .map(({ symbol, Icon, name }) => {
+          .map(({ symbol, FullIcon, full, short }) => {
             return (
               <MenuItem key={symbol} value={symbol}>
                 <Box display="flex" alignItems="center" width="100%">
                   <Box width="45px">
-                    <Icon className={styles.listIcon} />
+                    <FullIcon className={styles.listIcon} />
                   </Box>
                   <Box flexGrow={1}>
-                    <Typography variant="body1">{symbol}</Typography>
+                    <Typography variant="body1">{short}</Typography>
                     <Typography variant="subtitle2" color="textSecondary">
-                      {name}
+                      {full}
                     </Typography>
                   </Box>
                 </Box>
