@@ -1,5 +1,9 @@
-import { BridgeChain, BridgeCurrency, BridgeNetwork, } from '../components/utils/types'
-import { orangeLight } from '../theme/colors'
+import {
+  BridgeChain,
+  BridgeCurrency,
+  BridgeNetwork,
+} from "../components/utils/types";
+import { orangeLight } from "../theme/colors";
 
 const unknownLabel = "unknown";
 
@@ -234,49 +238,54 @@ export const supportedMintCurrencies = [
   // BridgeCurrency.BCH,
   // BridgeCurrency.DOGE,
   BridgeCurrency.ZEC,
-]
+];
+
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
   // BridgeChain.BNCC,
-]
+];
+
 export const supportedReleaseSourceChains = [
   BridgeChain.ETHC, // BridgeChain.BNCC,
-]
+];
+
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
   // BridgeCurrency.RENBCH,
   // BridgeCurrency.RENDOGE,
   BridgeCurrency.RENZEC,
-]
+];
+
 export const getMintedDestinationCurrencySymbol = (
   sourceCurrency: BridgeCurrency
 ) => {
   switch (sourceCurrency) {
     case BridgeCurrency.BTC:
-      return BridgeCurrency.RENBTC
+      return BridgeCurrency.RENBTC;
     case BridgeCurrency.BCH:
-      return BridgeCurrency.RENBCH
+      return BridgeCurrency.RENBCH;
     case BridgeCurrency.DOGE:
-      return BridgeCurrency.RENDOGE
+      return BridgeCurrency.RENDOGE;
     case BridgeCurrency.ZEC:
-      return BridgeCurrency.RENZEC
+      return BridgeCurrency.RENZEC;
     default:
-      return BridgeCurrency.UNKNOWN
+      return BridgeCurrency.UNKNOWN;
   }
-}
+};
+
 export const getReleasedDestinationCurrencySymbol = (
   sourceCurrency: BridgeCurrency
 ) => {
   switch (sourceCurrency) {
     case BridgeCurrency.RENBTC:
-      return BridgeCurrency.BTC
+      return BridgeCurrency.BTC;
     case BridgeCurrency.RENBCH:
-      return BridgeCurrency.BCH
+      return BridgeCurrency.BCH;
     case BridgeCurrency.RENDOGE:
-      return BridgeCurrency.DOGE
+      return BridgeCurrency.DOGE;
     case BridgeCurrency.RENZEC:
-      return BridgeCurrency.ZEC
+      return BridgeCurrency.ZEC;
     default:
-      return BridgeCurrency.UNKNOWN
+      return BridgeCurrency.UNKNOWN;
   }
-}
+};
