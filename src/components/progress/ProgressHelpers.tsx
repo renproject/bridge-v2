@@ -11,8 +11,9 @@ import CompletedIcon from "@material-ui/icons/Check";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
+import { BridgeChain } from '../../utils/assetConfigs'
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
-import { BridgeChain, TransactionStatusType } from "../utils/types";
+import { TransactionStatusType } from "../utils/types";
 
 export const BigDoneIcon = styled(DoneIcon)({
   fontSize: 120,

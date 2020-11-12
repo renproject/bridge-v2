@@ -1,6 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BridgeChain } from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
+import { BridgeChain } from '../../utils/assetConfigs'
 import { bridgeChainToMultiwalletChain } from "./walletUtils";
 
 type WalletState = {

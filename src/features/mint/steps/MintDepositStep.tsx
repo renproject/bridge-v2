@@ -43,7 +43,6 @@ import {
 } from "../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { BridgeCurrency } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { usePaperTitle } from "../../../pages/MainPage";
@@ -51,11 +50,12 @@ import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwall
 import { useNotifications } from "../../../providers/Notifications";
 import { orangeLight } from "../../../theme/colors";
 import {
+  BridgeCurrency,
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
   getNetworkConfigByRentxName,
-} from "../../../utils/assetConfigs";
+} from '../../../utils/assetConfigs'
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
 import { useTxParam } from "../../transactions/transactionsUtils";

@@ -1,7 +1,7 @@
 import { TextField, TextFieldProps } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
-import { BridgeChain } from "../utils/types";
+import { BridgeChain } from '../../utils/assetConfigs'
 
 export const useStyles = makeStyles((theme) => ({
   root: {

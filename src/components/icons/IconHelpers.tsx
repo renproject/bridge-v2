@@ -2,7 +2,7 @@ import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
-import { BridgeChain, BridgeCurrency } from "../utils/types";
+import { BridgeChain, BridgeCurrency } from '../../utils/assetConfigs'
 import {
   BchGreyIcon,
   BinanceChainIcon,

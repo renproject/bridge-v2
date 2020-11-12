@@ -39,11 +39,12 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { BridgeCurrency, WalletStatus } from "../../../components/utils/types";
+import { WalletStatus } from "../../../components/utils/types";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
+  BridgeCurrency,
   getChainShortLabel,
   getCurrencyConfig, getMintedDestinationCurrencySymbol,
 } from '../../../utils/assetConfigs'

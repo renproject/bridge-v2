@@ -1,4 +1,4 @@
-import { BridgeChain } from '../../components/utils/types'
+import { BridgeChain } from '../../utils/assetConfigs'
 
 export const bridgeChainToMultiwalletChain = (chainSymbol: BridgeChain) => {
   switch (chainSymbol) {

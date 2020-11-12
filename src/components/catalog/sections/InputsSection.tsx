@@ -1,5 +1,6 @@
 import { Box, Checkbox, FormControlLabel, Typography } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
+import { BridgeChain } from '../../../utils/assetConfigs'
 import { BitcoinInCircleIcon } from "../../icons/RenIcons";
 import { AddressInput } from "../../inputs/AddressInput";
 import { BigCurrencyInput } from "../../inputs/BigCurrencyInput";
@@ -7,7 +8,6 @@ import { BridgePaper } from "../../layout/Paper";
 import { Link } from "../../links/Links";
 import { TooltipWithIcon } from "../../tooltips/TooltipWithIcon";
 import { AssetInfo, LabelWithValue } from "../../typography/TypographyHelpers";
-import { BridgeChain } from "../../utils/types";
 import { Section } from "../PresentationHelpers";
 
 export const InputsSection: FunctionComponent = () => {

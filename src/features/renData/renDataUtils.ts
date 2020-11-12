@@ -1,5 +1,5 @@
-import { BridgeCurrency } from '../../components/utils/types'
 import { getRenJs } from '../../services/renJs'
+import { BridgeCurrency } from '../../utils/assetConfigs'
 
 type Fees = {
   [key: string]: any;

@@ -2,15 +2,15 @@ import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { GatewaySession, mintMachine } from "@renproject/rentx";
 import { useMachine } from "@xstate/react";
-import { BridgeChain, BridgeCurrency } from "../../components/utils/types";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
 import { fromChainMap, toChainMap } from "../../services/rentx";
 import {
+  BridgeChain, BridgeCurrency,
   getChainRentxName,
   getCurrencyRentxName,
   getCurrencyRentxSourceChain,
-} from "../../utils/assetConfigs";
+} from '../../utils/assetConfigs'
 
 export const getMintTx: GatewaySession = {
   id: "tx-" + Math.floor(Math.random() * 10 ** 16),

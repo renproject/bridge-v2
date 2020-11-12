@@ -1,10 +1,11 @@
 import { Chip, styled, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { FunctionComponent, useCallback, useState } from 'react'
+import { BridgeChain } from '../../utils/assetConfigs'
 import { Link } from '../links/Links'
 import { SimplePagination } from '../pagination/SimplePagination'
 import { TransactionStatusIndicator } from '../progress/ProgressHelpers'
-import { BridgeChain, TransactionStatusType } from '../utils/types'
+import { TransactionStatusType } from '../utils/types'
 
 type TransactionType = "mint" | "release";
 

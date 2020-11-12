@@ -1,11 +1,12 @@
-import { BridgeCurrency } from "../../components/utils/types";
+
 import { env } from "../../constants/environmentVariables";
 import { getBandchain } from "../../services/bandchain";
 import { uniqueArray } from "../../utils/arrays";
 import {
+  BridgeCurrency,
   currenciesConfig,
   getCurrencyConfigByBandchainSymbol,
-} from "../../utils/assetConfigs";
+} from '../../utils/assetConfigs'
 
 // move to assetConfig
 const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {

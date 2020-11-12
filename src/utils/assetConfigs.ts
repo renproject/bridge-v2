@@ -18,12 +18,37 @@ import {
   ZecFullIcon,
   ZecGreyIcon,
 } from "../components/icons/RenIcons";
-import {
-  BridgeChain,
-  BridgeCurrency,
-  BridgeNetwork,
-} from "../components/utils/types";
 import { orangeLight } from "../theme/colors";
+
+export enum BridgeCurrency {
+  BTC = "BTC",
+  BCH = "BCH",
+  DOTS = "DOTS",
+  DOGE = "DOGE",
+  ZEC = "ZEC",
+  DGB = "DGB",
+  RENBTC = "RENBTC",
+  RENBCH = "RENBCH",
+  RENDOGE = "RENDOGE",
+  RENZEC = "RENZEC",
+  RENDGB = "RENDGB",
+  ETH = "ETH",
+  UNKNOWN = "UNKNOWN",
+}
+
+export enum BridgeChain {
+  BTCC = "BTCC",
+  ZECC = "ZECC",
+  BNCC = "BNCC",
+  ETHC = "ETHC",
+  UNKNOWNC = "UNKNOWNC",
+}
+
+export enum BridgeNetwork {
+  MAINNET = "MAINNET",
+  TESTNET = "TESTNET",
+  UNKNOWN = "UNKNOWN",
+}
 
 const unknownLabel = "unknown";
 

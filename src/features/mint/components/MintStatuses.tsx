@@ -19,19 +19,16 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import {
-  BridgeChain,
-  BridgeCurrency,
-  BridgeNetwork,
-} from "../../../components/utils/types";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { orangeLight } from "../../../theme/colors";
 import {
+  BridgeChain, BridgeCurrency,
+  BridgeNetwork,
   getChainConfig,
   getCurrencyConfig,
   getCurrencyShortLabel,
   getCurrencySourceChain,
-} from "../../../utils/assetConfigs";
+} from '../../../utils/assetConfigs'
 import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
 import { getChainExplorerLink } from "../../transactions/transactionsUtils";
 
