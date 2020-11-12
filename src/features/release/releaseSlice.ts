@@ -45,13 +45,11 @@ export const $releaseAmount = createSelector(
   $release,
   (release) => release.amount
 );
-
 export const $releaseCurrencyUsdRate = createSelector(
   $releaseCurrency,
   $exchangeRates,
   (currencySymbol, rates) => findExchangeRate(rates, currencySymbol, "USD")
 );
-
 export const $releaseCurrencyUsdAmount = createSelector(
   $releaseAmount,
   $releaseCurrencyUsdRate,

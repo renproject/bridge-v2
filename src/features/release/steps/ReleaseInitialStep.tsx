@@ -17,20 +17,22 @@ import { LabelWithValue } from "../../../components/typography/TypographyHelpers
 import {
   getCurrencyConfig,
   supportedReleaseCurrencies,
-  supportedReleaseSourceChains
-} from '../../../utils/assetConfigs'
+  supportedReleaseSourceChains,
+} from "../../../utils/assetConfigs";
 import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import { $wallet, setChain } from "../../wallet/walletSlice";
 import {
   $release,
+  $releaseCurrencyUsdAmount,
   setReleaseAmount,
   setReleaseCurrency,
 } from "../releaseSlice";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = () => {
   const dispatch = useDispatch();
-  const { currency, amount } = useSelector($release);
   const { chain } = useSelector($wallet);
+  const { currency, amount } = useSelector($release);
+  const usdAmount = useSelector($releaseCurrencyUsdAmount);
   const handleChainChange = useCallback(
     (event) => {
       dispatch(setChain(event.target.value));
@@ -61,13 +63,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <BigCurrencyInput
           onChange={handleAmountChange}
           symbol={currencyConfig.short}
-          usdValue={1}
+          usdValue={usdAmount}
           value={amount}
         />
       </BigCurrencyInputWrapper>
       <LabelWithValue
         label={`${currencyConfig.short} Balance`}
-        value={amount} //TODO: suppose to be an action link button which sets up max(balance)
+        value="?" //TODO: suppose to be an action link button which sets up max(balance)
       />
       <AssetDropdownWrapper>
         <AssetDropdown

@@ -1,4 +1,3 @@
-
 import { env } from "../../constants/environmentVariables";
 import { getBandchain } from "../../services/bandchain";
 import { uniqueArray } from "../../utils/arrays";
@@ -70,8 +69,9 @@ export const findExchangeRate = (
   base: BridgeCurrency,
   quote = QUOTE
 ) => {
+  const baseBandchainSymbol = mapToBandchainCurrencySymbol(base)
   const rateEntry = exchangeRates.find(
-    (entry) => entry.pair === getPair(base, quote)
+    (entry) => entry.pair === getPair(baseBandchainSymbol, quote)
   );
   return rateEntry?.rate || 0;
 };
