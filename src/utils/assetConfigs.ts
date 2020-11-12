@@ -43,8 +43,8 @@ export type ColorsConfig = {
 
 export type IconsConfig = {
   FullIcon: CustomSvgIconComponent | SvgIconComponent;
-  Icon: CustomSvgIconComponent | SvgIconComponent;
   GreyIcon?: CustomSvgIconComponent | SvgIconComponent;
+  MainIcon: CustomSvgIconComponent | SvgIconComponent;
 };
 
 export type CurrencyConfig = LabelsConfig &
@@ -63,7 +63,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     color: orangeLight,
     FullIcon: BtcFullIcon,
     GreyIcon: BtcGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: BtcFullIcon,
     rentxName: "btc",
     sourceChain: BridgeChain.BTCC,
     sourceConfirmationTime: 15,
@@ -71,10 +71,10 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
   [BridgeCurrency.RENBTC]: {
     symbol: BridgeCurrency.RENBTC,
     short: "renBTC",
-    full: "renBTC",
+    full: "Bitcoin",
     FullIcon: BtcFullIcon,
     GreyIcon: BtcGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: BtcGreyIcon,
     rentxName: "renBTC",
     sourceChain: BridgeChain.ETHC,
   },
@@ -84,7 +84,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "Bitcoin Cash",
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: BchFullIcon,
     rentxName: "bch",
   },
   [BridgeCurrency.RENBCH]: {
@@ -93,7 +93,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "renBCH",
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: BtcFullIcon,
     rentxName: "renBCH",
     sourceChain: BridgeChain.ETHC,
   },
@@ -103,7 +103,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "Polkadot",
     FullIcon: DotsFullIcon,
     GreyIcon: DotsGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: DotsFullIcon,
     rentxName: "dots",
   },
   [BridgeCurrency.DOGE]: {
@@ -112,16 +112,16 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "Dogecoin",
     FullIcon: DogeFullIcon,
     GreyIcon: DogeGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: DogeFullIcon,
     rentxName: "doge",
   },
   [BridgeCurrency.RENDOGE]: {
     symbol: BridgeCurrency.RENDOGE,
     short: "renDOGE",
-    full: "renDOGE",
+    full: "Dogecoin",
     FullIcon: DogeFullIcon,
     GreyIcon: DogeGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: DogeGreyIcon,
     rentxName: "renDOGE",
     sourceChain: BridgeChain.ETHC,
   },
@@ -131,7 +131,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "Zcash",
     FullIcon: ZecFullIcon,
     GreyIcon: ZecGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: ZecFullIcon,
     rentxName: "zec",
     sourceChain: BridgeChain.ZECC,
     sourceConfirmationTime: 15,
@@ -139,10 +139,10 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
   [BridgeCurrency.RENZEC]: {
     symbol: BridgeCurrency.RENZEC,
     short: "renZEC",
-    full: "renZEC",
+    full: "Zcash",
     FullIcon: ZecFullIcon,
     GreyIcon: ZecGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: ZecGreyIcon,
     rentxName: "renZEC",
     sourceChain: BridgeChain.ETHC,
   },
@@ -152,7 +152,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "renDGB",
     FullIcon: DgbFullIcon,
     GreyIcon: DgbGreyIcon,
-    Icon: BtcFullIcon,
+    MainIcon: DgbGreyIcon,
     rentxName: "renDGB",
     sourceChain: BridgeChain.ETHC,
   },
@@ -162,7 +162,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "Ether",
     FullIcon: EthereumIcon,
     GreyIcon: NotSetIcon,
-    Icon: BtcFullIcon,
+    MainIcon: BtcFullIcon,
     rentxName: "eth",
     sourceChain: BridgeChain.ETHC,
   },
@@ -172,7 +172,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "Unknown",
     FullIcon: NotSetIcon,
     GreyIcon: NotSetIcon,
-    Icon: NotSetIcon,
+    MainIcon: NotSetIcon,
     rentxName: "unknown",
   },
 };
@@ -220,7 +220,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "BTC",
     full: "Bitcoin",
     FullIcon: NotSetIcon,
-    Icon: NotSetIcon,
+    MainIcon: NotSetIcon,
     rentxName: "bitcoin",
   },
   [BridgeChain.ZECC]: {
@@ -228,7 +228,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "ZEC",
     full: "Zcash",
     FullIcon: NotSetIcon,
-    Icon: NotSetIcon,
+    MainIcon: NotSetIcon,
     rentxName: "zcash",
   },
   [BridgeChain.BNCC]: {
@@ -236,7 +236,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "BNC",
     full: "Binance SmartChain",
     FullIcon: BinanceChainFullIcon,
-    Icon: BinanceChainFullIcon,
+    MainIcon: BinanceChainFullIcon,
     rentxName: "binanceSmartChain",
   },
   [BridgeChain.ETHC]: {
@@ -244,7 +244,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "ETH",
     full: "Ethereum",
     FullIcon: EthereumChainFullIcon,
-    Icon: EthereumChainFullIcon,
+    MainIcon: EthereumChainFullIcon,
     rentxName: "ethereum",
   },
   [BridgeChain.UNKNOWNC]: {
@@ -252,7 +252,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "UNKNOWNC",
     full: "Unknown",
     FullIcon: NotSetIcon,
-    Icon: NotSetIcon,
+    MainIcon: NotSetIcon,
     rentxName: "unknown",
   },
 };

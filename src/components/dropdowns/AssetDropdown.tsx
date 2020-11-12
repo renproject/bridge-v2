@@ -81,7 +81,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
       if (!selected) {
         return <span>empty</span>;
       }
-      const { FullIcon, full, short } = selected;
+      const { MainIcon, full, short } = selected;
       return (
         <Box display="flex" alignItems="center" width="100%">
           <Box width="40%">
@@ -90,7 +90,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
             </Typography>
           </Box>
           <Box width="45px" display="flex" alignItems="center">
-            <FullIcon className={styles.listIcon} />
+            <MainIcon className={styles.listIcon} />
           </Box>
           <Box flexGrow={1}>
             <Typography variant="body1">
@@ -112,12 +112,12 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
       >
         {getOptions(mode)
           .filter(availabilityFilter)
-          .map(({ symbol, FullIcon, GreyIcon, full, short }) => {
+          .map(({ symbol, MainIcon, GreyIcon, full, short }) => {
             return (
               <MenuItem key={symbol} value={symbol}>
                 <Box display="flex" alignItems="center" width="100%">
                   <Box width="45px">
-                    <FullIcon className={styles.listIcon} />
+                    <MainIcon className={styles.listIcon} />
                   </Box>
                   <Box flexGrow={1}>
                     <Typography variant="body1">{short}</Typography>

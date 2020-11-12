@@ -2,6 +2,7 @@ import { BridgeCurrency } from "../../components/utils/types";
 import { env } from "../../constants/environmentVariables";
 import { getBandchain } from "../../services/bandchain";
 
+// move to assetConfig
 const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
   switch (symbol) {
     case BridgeCurrency.DOTS:
