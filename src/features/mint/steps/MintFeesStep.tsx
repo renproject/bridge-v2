@@ -1,75 +1,48 @@
-import {
-  Checkbox,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-  Typography,
-} from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { Checkbox, Divider, FormControl, FormControlLabel, FormLabel, IconButton, Typography, } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { getCurrencyGreyIcon } from '../../../components/icons/IconHelpers'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { CheckboxWrapper } from '../../../components/inputs/InputHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+} from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from '../../../components/utils/types'
+import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
+import { paths } from '../../../pages/routes'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
   BridgeCurrency,
   getChainShortLabel,
-  getCurrencyConfig, getMintedDestinationCurrencySymbol,
+  getCurrencyConfig,
+  getMintedDestinationCurrencySymbol,
 } from '../../../utils/assetConfigs'
-import { fromGwei } from "../../../utils/converters";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { $fees } from "../../renData/renDataSlice";
-import { calculateMintFees } from "../../renData/renDataUtils";
+import { fromGwei } from '../../../utils/converters'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
+import { findExchangeRate } from '../../marketData/marketDataUtils'
+import { $fees } from '../../renData/renDataSlice'
+import { calculateTransactionFees, } from '../../renData/renDataUtils'
 import {
   createTxQueryString,
   LocationTxState,
   TxConfigurationStepProps,
-} from "../../transactions/transactionsUtils";
-import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
-import {
-  getFeeTooltips,
-  MintTransactionInitializer,
-  tooltips,
-} from "../components/MintHelpers";
-import { $mint } from "../mintSlice";
-import {
-  createMintTransaction,
-  preValidateMintTransaction,
-} from "../mintUtils";
+  TxType,
+} from '../../transactions/transactionsUtils'
+import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
+import { getFeeTooltips, MintTransactionInitializer, tooltips, } from '../components/MintHelpers'
+import { $mint } from '../mintSlice'
+import { createMintTransaction, preValidateMintTransaction, } from '../mintUtils'
 
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
@@ -85,7 +58,12 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const currencyUsdRate = findExchangeRate(exchangeRates, currency, "USD");
 
   const amountUsd = amount * currencyUsdRate;
-  const { conversionTotal } = calculateMintFees(amount, currency, fees);
+  const { conversionTotal } = calculateTransactionFees({
+    amount,
+    currency,
+    fees,
+    type: TxType.MINT,
+  });
 
   const currencyConfig = getCurrencyConfig(currency);
   const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
@@ -288,11 +266,12 @@ export const MintFees: FunctionComponent<MintFeesProps> = ({
   const ethUsdRate = findExchangeRate(exchangeRates, BridgeCurrency.ETH, "USD");
   const amountUsd = amount * currencyUsdRate;
 
-  const { renVMFee, renVMFeeAmount, networkFee } = calculateMintFees(
+  const { renVMFee, renVMFeeAmount, networkFee } = calculateTransactionFees({
     amount,
     currency,
-    fees
-  );
+    fees,
+    type: TxType.MINT,
+  });
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 

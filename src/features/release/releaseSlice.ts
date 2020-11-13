@@ -1,10 +1,11 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../store/rootReducer";
-import { BridgeCurrency } from "../../utils/assetConfigs";
-import { $exchangeRates } from "../marketData/marketDataSlice";
-import { findExchangeRate } from "../marketData/marketDataUtils";
-import { $fees } from "../renData/renDataSlice";
-import { calculateMintFees } from "../renData/renDataUtils";
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from '../../store/rootReducer'
+import { BridgeCurrency } from '../../utils/assetConfigs'
+import { $exchangeRates } from '../marketData/marketDataSlice'
+import { findExchangeRate } from '../marketData/marketDataUtils'
+import { $fees } from '../renData/renDataSlice'
+import { calculateTransactionFees, } from '../renData/renDataUtils'
+import { TxType } from '../transactions/transactionsUtils'
 
 type ReleaseState = {
   currency: BridgeCurrency;
@@ -28,8 +29,8 @@ const slice = createSlice({
     setReleaseAmount(state, action: PayloadAction<number>) {
       state.amount = action.payload;
     },
-    setReleaseAddress(state, action: PayloadAction<number>) {
-      state.amount = action.payload;
+    setReleaseAddress(state, action: PayloadAction<string>) {
+      state.address = action.payload;
     },
     reset(state, action: PayloadAction<ReleaseState | undefined>) {
       state = action.payload || initialState;
@@ -68,5 +69,6 @@ export const $releaseCurrencyUsdAmount = createSelector(
 // TODO: probably should be calculated based on selected flow
 export const $releaseFees = createSelector(
   [$releaseAmount, $releaseCurrency, $fees],
-  calculateMintFees
+  (amount, currency, fees) =>
+    calculateTransactionFees({ amount, currency, fees, type: TxType.BURN })
 );

@@ -1,10 +1,11 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../../store/rootReducer'
-import { BridgeCurrency } from '../../utils/assetConfigs'
-import { $exchangeRates } from '../marketData/marketDataSlice'
-import { findExchangeRate } from '../marketData/marketDataUtils'
-import { $fees } from '../renData/renDataSlice'
-import { calculateMintFees } from '../renData/renDataUtils'
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../store/rootReducer";
+import { BridgeCurrency } from "../../utils/assetConfigs";
+import { $exchangeRates } from "../marketData/marketDataSlice";
+import { findExchangeRate } from "../marketData/marketDataUtils";
+import { $fees } from "../renData/renDataSlice";
+import { calculateTransactionFees } from "../renData/renDataUtils";
+import { TxType } from "../transactions/transactionsUtils";
 
 type MintState = {
   currency: BridgeCurrency;
@@ -52,8 +53,8 @@ export const $mintCurrencyUsdAmount = createSelector(
   (amount, rate) => amount * rate
 );
 
-// TODO: probably should be calculated based on selected flow
 export const $mintFees = createSelector(
   [$mintAmount, $mintCurrency, $fees],
-  calculateMintFees
+  (amount, currency, fees) =>
+    calculateTransactionFees({ amount, currency, fees, type: TxType.MINT })
 );

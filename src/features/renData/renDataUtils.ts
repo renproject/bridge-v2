@@ -1,5 +1,6 @@
-import { getRenJs } from '../../services/renJs'
-import { BridgeCurrency } from '../../utils/assetConfigs'
+import { getRenJs } from "../../services/renJs";
+import { BridgeCurrency } from "../../utils/assetConfigs";
+import { TxType } from "../transactions/transactionsUtils";
 
 type Fees = {
   [key: string]: any;
@@ -34,11 +35,19 @@ const toCurrencySymbol = (symbol: string) =>
 export const fetchFees: () => Promise<BridgeFees> = () =>
   getRenJs().getFees().then(mapToFeesData);
 
-export const calculateMintFees = (
-  amount: number,
-  currency: BridgeCurrency,
-  fees: BridgeFees
-) => {
+type CalculateTransactionsFeesArgs = {
+  amount: number;
+  currency: BridgeCurrency;
+  fees: BridgeFees;
+  type: TxType;
+};
+
+export const calculateTransactionFees = ({
+  amount,
+  currency,
+  fees,
+  type,
+}: CalculateTransactionsFeesArgs) => {
   const currencyFee = fees.find((feeEntry) => feeEntry.symbol === currency);
   const feeData: CalculatedFee = {
     renVMFee: 0,
@@ -47,8 +56,12 @@ export const calculateMintFees = (
     conversionTotal: amount,
   };
   if (currencyFee) {
+    const renTxTypeFee =
+      type === TxType.MINT
+        ? currencyFee.ethereum.mint
+        : currencyFee.ethereum.burn;
     feeData.networkFee = Number(currencyFee.lock) / 10 ** 8;
-    feeData.renVMFee = Number(currencyFee.ethereum.mint) / 10000; // percent value
+    feeData.renVMFee = Number(renTxTypeFee) / 10000; // percent value
     feeData.renVMFeeAmount = Number(Number(amount) * feeData.renVMFee);
     feeData.conversionTotal =
       Number(Number(amount) - feeData.renVMFeeAmount - feeData.networkFee) > 0

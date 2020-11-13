@@ -1,7 +1,12 @@
 import { GatewaySession } from "@renproject/rentx";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
-import { BridgeChain, BridgeNetwork } from '../../utils/assetConfigs'
+import { BridgeChain, BridgeNetwork } from "../../utils/assetConfigs";
+
+export enum TxType {
+  MINT = "mint",
+  BURN = "burn",
+}
 
 export enum TxConfigurationStep {
   INITIAL = "initial",

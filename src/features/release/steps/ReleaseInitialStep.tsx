@@ -2,12 +2,13 @@ import React, { FunctionComponent, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
 import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { AddressInput } from '../../../components/inputs/AddressInput'
+import { AddressInput, AddressInputWrapper, } from '../../../components/inputs/AddressInput'
 import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
 import { PaperContent } from '../../../components/layout/Paper'
 import { Link } from '../../../components/links/Links'
 import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
 import {
+  getChainConfig,
   getCurrencyConfig,
   getReleasedDestinationCurrencySymbol,
   supportedReleaseCurrencies,
@@ -23,11 +24,14 @@ import {
   setReleaseCurrency,
 } from '../releaseSlice'
 
-export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = () => {
+export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
+  onNext,
+}) => {
   const dispatch = useDispatch();
   const { chain } = useSelector($wallet);
-  const { currency, amount } = useSelector($release);
+  const { currency, amount, address } = useSelector($release);
   const usdAmount = useSelector($releaseCurrencyUsdAmount);
+  const balance = 0.02; // TODO retrieve when wallet balances done
   const handleChainChange = useCallback(
     (event) => {
       dispatch(setChain(event.target.value));
@@ -46,20 +50,28 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     },
     [dispatch]
   );
+  const handleAddressChange = useCallback(
+    (event) => {
+      dispatch(setReleaseAddress(event.target.value));
+    },
+    [dispatch]
+  );
 
-  const handleAddressChange = useCallback((event) => {
-    dispatch(setReleaseAddress(event.target.value));
-  }, []);
-
-  const balance = 0.02; // TODO retrieve when wallet balances done
   const handleSetMaxBalance = useCallback(() => {
     dispatch(setReleaseAmount(balance));
-  }, [balance]);
+  }, [dispatch, balance]);
 
   const targetCurrency = getReleasedDestinationCurrencySymbol(currency);
   const currencyConfig = getCurrencyConfig(currency);
   const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);
+  const nextEnabled = true; //TODO
 
+  const handleNextStep = useCallback(() => {
+    if (onNext) {
+      onNext();
+    }
+  }, [onNext]);
   return (
     <PaperContent bottomPadding>
       <BigCurrencyInputWrapper>
@@ -96,16 +108,18 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
           onChange={handleCurrencyChange}
         />
       </AssetDropdownWrapper>
-      <AssetDropdownWrapper>
+      <AddressInputWrapper>
         <AddressInput
-          chainLabel={targetCurrencyConfig.sourceChain}
+          placeholder={`Enter a Destination ${targetChainConfig.full} Address`}
           label="Releasing to"
           onChange={handleAddressChange}
-          value={targetCurrencyConfig.sourceChain}
+          value={address}
         />
-      </AssetDropdownWrapper>
+      </AddressInputWrapper>
       <ActionButtonWrapper>
-        <ActionButton>Next</ActionButton>
+        <ActionButton onClick={handleNextStep} disabled={!nextEnabled}>
+          Next
+        </ActionButton>
       </ActionButtonWrapper>
     </PaperContent>
   );
