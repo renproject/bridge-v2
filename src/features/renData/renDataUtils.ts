@@ -48,7 +48,13 @@ export const calculateTransactionFees = ({
   fees,
   type,
 }: CalculateTransactionsFeesArgs) => {
-  const currencyFee = fees.find((feeEntry) => feeEntry.symbol === currency);
+  let currencyFee = fees.find((feeEntry) => feeEntry.symbol === currency);
+  if (!currencyFee) {
+    //TODO: CRIT: dirty hack until fetching fees flow ready
+    currencyFee = fees.find(
+      (feeEntry) => feeEntry.symbol === currency.replace("REN", "")
+    );
+  }
   const feeData: CalculatedFee = {
     renVMFee: 0,
     renVMFeeAmount: 0,

@@ -7,7 +7,7 @@ import { BridgeCurrency, getCurrencyConfig } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
+import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
 import { getFeeTooltips } from "../../mint/components/MintHelpers";
 import { $fees } from "../../renData/renDataSlice";
 import {
@@ -37,9 +37,18 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const exchangeRates = useSelector($exchangeRates);
   const fees = useSelector($fees);
   const gasPrices = useSelector($gasPrices);
-  const currencyUsdRate = findExchangeRate(exchangeRates, currency, "USD");
-  const ethUsdRate = findExchangeRate(exchangeRates, BridgeCurrency.ETH, "USD");
+  const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);
+  const ethUsdRate = findExchangeRate(
+    exchangeRates,
+    BridgeCurrency.ETH,
+    USD_SYMBOL
+  );
   const amountUsd = amount * currencyUsdRate;
+
+  console.log(amount,
+    currency,
+    fees,
+    type,);
 
   const {
     renVMFee,
@@ -52,7 +61,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     fees,
     type,
   });
-  console.log(conversionTotal);
+  console.log(renVMFee, renVMFeeAmount, networkFee, conversionTotal);
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 
