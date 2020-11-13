@@ -16,7 +16,7 @@ type ReleaseState = {
 let initialState: ReleaseState = {
   currency: BridgeCurrency.RENBTC,
   amount: 0.01, // TODO: CRIT: change to 0
-  address: "",
+  address: "mzseycKNBVKFW1PjzisnPER226bJsGfnUh", // TODO: CRIT: reset
 };
 
 const slice = createSlice({

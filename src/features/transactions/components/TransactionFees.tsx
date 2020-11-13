@@ -10,13 +10,21 @@ import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { getFeeTooltips } from "../../mint/components/MintHelpers";
 import { $fees } from "../../renData/renDataSlice";
-import { calculateTransactionFees } from "../../renData/renDataUtils";
+import {
+  BridgeFees,
+  calculateTransactionFees,
+} from "../../renData/renDataUtils";
 import { TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {
   type: TxType;
   currency: BridgeCurrency;
   amount: number;
+};
+
+const getMintAndReleaseFees = (fees: BridgeFees) => {
+  const chainFees = fees[0].ethereum;
+  return { mint: chainFees.mint, release: chainFees.burn };
 };
 
 export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
@@ -33,16 +41,25 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const ethUsdRate = findExchangeRate(exchangeRates, BridgeCurrency.ETH, "USD");
   const amountUsd = amount * currencyUsdRate;
 
-  const { renVMFee, renVMFeeAmount, networkFee } = calculateTransactionFees({
+  const {
+    renVMFee,
+    renVMFeeAmount,
+    networkFee,
+    conversionTotal,
+  } = calculateTransactionFees({
     amount,
     currency,
     fees,
     type,
   });
+  console.log(conversionTotal);
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 
-  const tooltips = useMemo(() => getFeeTooltips(renVMFee, 0.001), [renVMFee]); // TODO: CRIT: add release fee from selectors
+  const tooltips = useMemo(() => {
+    const { mint, release } = getMintAndReleaseFees(fees);
+    return getFeeTooltips(mint / 10000, release / 10000);
+  }, [fees]);
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
@@ -54,7 +71,10 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         label="RenVM Fee"
         labelTooltip={tooltips.renVmFee}
         value={
-          <NumberFormatText value={renVMFeeAmount} spacedSuffix={currency} />
+          <NumberFormatText
+            value={renVMFeeAmount}
+            spacedSuffix={currencyConfig.short}
+          />
         }
         valueEquivalent={
           <NumberFormatText
@@ -68,7 +88,12 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
       <LabelWithValue
         label={`${currencyConfig.full} Miner Fee`}
         labelTooltip={tooltips.bitcoinMinerFee}
-        value={<NumberFormatText value={networkFee} spacedSuffix={currency} />}
+        value={
+          <NumberFormatText
+            value={networkFee}
+            spacedSuffix={currencyConfig.short}
+          />
+        }
         valueEquivalent={
           <NumberFormatText
             value={networkFeeUsd}

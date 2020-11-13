@@ -4,7 +4,6 @@ import { Route } from "react-router-dom";
 import { DebugProps } from "../../components/utils/Debug";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { paths } from "../../pages/routes";
-import { useExchangeRates } from "../marketData/marketDataHooks";
 import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { TxConfigurationStep } from "../transactions/transactionsUtils";
 import { MintFeesStep } from "./steps/MintFeesStep";
@@ -37,7 +36,6 @@ const MintConfiguration: FunctionComponent<RouteComponentProps> = () => {
 
 export const MintFlow: FunctionComponent<RouteComponentProps> = ({ match }) => {
   usePageTitle("Minting");
-  useExchangeRates();
 
   return (
     <>

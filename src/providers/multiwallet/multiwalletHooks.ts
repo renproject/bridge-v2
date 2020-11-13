@@ -24,8 +24,3 @@ export const useSelectedChainWallet = () => {
   const multiwalletChain = useSelector($multiwalletChain);
   return useWallet(multiwalletChain);
 };
-
-export const useSelectedChainWalletStatus = () => {
-  const { status } = useSelectedChainWallet();
-  return status;
-};

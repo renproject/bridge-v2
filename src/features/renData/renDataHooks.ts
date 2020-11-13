@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { setFees } from "./renDataSlice";
 import { fetchFees } from "./renDataUtils";
 
-export const useFetchFees = () => {
+export const useFees = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     fetchFees().then((fees) => {

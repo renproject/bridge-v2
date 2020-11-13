@@ -36,7 +36,10 @@ import {
 } from "../../features/wallet/walletSlice";
 import { paths } from "../../pages/routes";
 import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
-import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
+import {
+  useSelectedChainWallet,
+  useWallet,
+} from "../../providers/multiwallet/multiwalletHooks";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Debug } from "../utils/Debug";
@@ -161,7 +164,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const multiwalletChain = useSelector($multiwalletChain);
   const walletPickerOpen = useSelector($walletPickerOpened);
   const pickerClasses = useWalletPickerStyles();
-  const { status } = useWallet(multiwalletChain);
+  const { status, account } = useSelectedChainWallet();
   const handleWalletPickerClose = useCallback(() => {
     dispatch(setWalletPickerOpened(false));
   }, [dispatch]);
@@ -211,6 +214,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                       <WalletConnectionStatusButton
                         onClick={handleWalletPickerOpen}
                         status={status}
+                        account={account}
                       />
                       <WalletPickerModal
                         open={walletPickerOpen}

@@ -10,6 +10,7 @@ import {
   getChainConfigByRentxName,
   getNetworkConfigByRentxName,
 } from "../../utils/assetConfigs";
+import { trimAddress } from "../../utils/strings";
 import {
   MetamaskFullIcon,
   WalletConnectFullIcon,
@@ -266,21 +267,28 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
     // TODO: remove
     marginRight: 10,
   },
+  account: { marginLeft: 20 },
 }));
 
 type WalletConnectionStatusButtonProps = ButtonProps & {
   status: WalletConnectionStatusType;
+  account?: string;
 };
 
 export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionStatusButtonProps> = ({
   status,
+  account,
   ...rest
 }) => {
   const {
     indicator: indicatorClassName,
+    account: accountClassName,
     ...classes
   } = useWalletConnectionStatusButtonStyles();
+
   const label = getWalletConnectionLabel(status);
+  const trimmedAddress = trimAddress(account);
+
   return (
     <Button variant="outlined" color="secondary" classes={classes} {...rest}>
       <WalletConnectionIndicator
@@ -288,6 +296,9 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
         className={indicatorClassName}
       />
       <span>{label}</span>
+      {trimmedAddress && (
+        <span className={accountClassName}>{trimmedAddress}</span>
+      )}
     </Button>
   );
 };

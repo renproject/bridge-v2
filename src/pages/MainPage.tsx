@@ -5,9 +5,10 @@ import { createStateContext } from 'react-use'
 import { MainLayout } from '../components/layout/MainLayout'
 import { BridgePurePaper } from '../components/layout/Paper'
 import { storageKeys } from '../constants/constants'
+import { useExchangeRates } from '../features/marketData/marketDataHooks'
 import { MintFlow } from '../features/mint/MintFlow'
 import { ReleaseFlow } from '../features/release/ReleaseFlow'
-import { useFetchFees } from '../features/renData/renDataHooks'
+import { useFees } from '../features/renData/renDataHooks'
 import { paths } from './routes'
 
 const [usePaperTitle, PaperTitleProvider] = createStateContext("Transaction");
@@ -24,7 +25,8 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
   if (location.pathname === "/") {
     history.replace(paths.MINT);
   }
-  useFetchFees();
+  useFees();
+  useExchangeRates();
 
   return (
     <>
