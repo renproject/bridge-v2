@@ -47,7 +47,7 @@ export const $mintCurrencyUsdRate = createSelector(
   (currencySymbol, rates) => findExchangeRate(rates, currencySymbol, "USD")
 );
 
-export const $mintCurrencyUsdAmount = createSelector(
+export const $mintUsdAmount = createSelector(
   $mintAmount,
   $mintCurrencyUsdRate,
   (amount, rate) => amount * rate

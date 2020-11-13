@@ -1,9 +1,9 @@
-import { GatewaySession, } from '@renproject/rentx'
-import { FunctionComponent, useEffect, } from 'react'
-import { toPercent } from '../../../utils/converters'
-import { useMintMachine } from '../mintUtils'
+import { GatewaySession } from "@renproject/rentx";
+import { FunctionComponent, useEffect } from "react";
+import { toPercent } from "../../../utils/converters";
+import { useMintMachine } from "../mintUtils";
 
-export const tooltips = {
+export const mintTooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",
   to: "The blockchain you’re sending the asset to.",
   acknowledge:

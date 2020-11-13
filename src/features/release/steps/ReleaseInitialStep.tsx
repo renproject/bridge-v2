@@ -18,7 +18,7 @@ import { TxConfigurationStepProps } from '../../transactions/transactionsUtils'
 import { $wallet, setChain } from '../../wallet/walletSlice'
 import {
   $release,
-  $releaseCurrencyUsdAmount,
+  $releaseUsdAmount,
   setReleaseAddress,
   setReleaseAmount,
   setReleaseCurrency,
@@ -30,7 +30,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const dispatch = useDispatch();
   const { chain } = useSelector($wallet);
   const { currency, amount, address } = useSelector($release);
-  const usdAmount = useSelector($releaseCurrencyUsdAmount);
+  const usdAmount = useSelector($releaseUsdAmount);
   const balance = 0.02; // TODO retrieve when wallet balances done
   const handleChainChange = useCallback(
     (event) => {
@@ -65,7 +65,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const currencyConfig = getCurrencyConfig(currency);
   const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
   const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);
-  const nextEnabled = true; //TODO
+  const nextEnabled = true; //TODO check if balanceOK
 
   const handleNextStep = useCallback(() => {
     if (onNext) {

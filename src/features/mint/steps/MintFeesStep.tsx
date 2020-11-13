@@ -40,7 +40,7 @@ import {
   TxType,
 } from '../../transactions/transactionsUtils'
 import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
-import { getFeeTooltips, MintTransactionInitializer, tooltips, } from '../components/MintHelpers'
+import { getFeeTooltips, MintTransactionInitializer, mintTooltips, } from '../components/MintHelpers'
 import { $mint } from '../mintSlice'
 import { createMintTransaction, preValidateMintTransaction, } from '../mintUtils'
 
@@ -161,7 +161,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         </Typography>
         <LabelWithValue
           label="Sending"
-          labelTooltip={tooltips.sending}
+          labelTooltip={mintTooltips.sending}
           value={<NumberFormatText value={amount} spacedSuffix={currency} />}
           valueEquivalent={
             <NumberFormatText
@@ -174,7 +174,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         />
         <LabelWithValue
           label="To"
-          labelTooltip={tooltips.to}
+          labelTooltip={mintTooltips.to}
           value={targetNetworkLabel}
         />
         <SpacedDivider />
@@ -223,7 +223,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                     color={showAckError ? "inherit" : "textPrimary"}
                   >
                     I acknowledge this transaction requires ETH{" "}
-                    <TooltipWithIcon title={tooltips.acknowledge} />
+                    <TooltipWithIcon title={mintTooltips.acknowledge} />
                   </Typography>
                 </FormLabel>
               }

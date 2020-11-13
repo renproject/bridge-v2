@@ -1,11 +1,11 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../../store/rootReducer'
-import { BridgeCurrency } from '../../utils/assetConfigs'
-import { $exchangeRates } from '../marketData/marketDataSlice'
-import { findExchangeRate } from '../marketData/marketDataUtils'
-import { $fees } from '../renData/renDataSlice'
-import { calculateTransactionFees, } from '../renData/renDataUtils'
-import { TxType } from '../transactions/transactionsUtils'
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../store/rootReducer";
+import { BridgeCurrency } from "../../utils/assetConfigs";
+import { $exchangeRates } from "../marketData/marketDataSlice";
+import { findExchangeRate } from "../marketData/marketDataUtils";
+import { $fees } from "../renData/renDataSlice";
+import { calculateTransactionFees } from "../renData/renDataUtils";
+import { TxType } from "../transactions/transactionsUtils";
 
 type ReleaseState = {
   currency: BridgeCurrency;
@@ -60,7 +60,7 @@ export const $releaseCurrencyUsdRate = createSelector(
   $exchangeRates,
   (currencySymbol, rates) => findExchangeRate(rates, currencySymbol, "USD")
 );
-export const $releaseCurrencyUsdAmount = createSelector(
+export const $releaseUsdAmount = createSelector(
   $releaseAmount,
   $releaseCurrencyUsdRate,
   (amount, rate) => amount * rate

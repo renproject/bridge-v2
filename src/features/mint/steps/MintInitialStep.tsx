@@ -26,7 +26,7 @@ import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import { $wallet, setChain } from "../../wallet/walletSlice";
 import {
   $mint,
-  $mintCurrencyUsdAmount,
+  $mintUsdAmount,
   $mintFees,
   setMintAmount,
   setMintCurrency,
@@ -39,7 +39,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const { conversionTotal } = useSelector($mintFees); // calculate by method
-  const currencyUsdValue = useSelector($mintCurrencyUsdAmount);
+  const currencyUsdValue = useSelector($mintUsdAmount);
 
   const handleAmountChange = useCallback(
     (value) => {
