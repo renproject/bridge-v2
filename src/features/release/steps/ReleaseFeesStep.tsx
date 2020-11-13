@@ -1,31 +1,81 @@
-import { Divider, IconButton, Typography, } from '@material-ui/core'
-import React, { FunctionComponent } from 'react'
-import { useSelector } from 'react-redux'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { Divider, IconButton, Typography } from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import {
+  AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from '../../../components/typography/TypographyHelpers'
-import { getChainConfig, getCurrencyConfig, getReleasedDestinationCurrencySymbol, } from '../../../utils/assetConfigs'
-import { mintTooltips } from '../../mint/components/MintHelpers'
-import { TransactionFees } from '../../transactions/components/TransactionFees'
-import { TxConfigurationStepProps, TxType } from '../../transactions/transactionsUtils'
-import { $release, $releaseUsdAmount } from '../releaseSlice'
+} from "../../../components/typography/TypographyHelpers";
+import { WalletStatus } from "../../../components/utils/types";
+import { useSelectedChainWalletStatus } from "../../../providers/multiwallet/multiwalletHooks";
+import {
+  getChainConfig,
+  getCurrencyConfig,
+  getReleasedDestinationCurrencySymbol,
+} from "../../../utils/assetConfigs";
+import { $exchangeRates } from "../../marketData/marketDataSlice";
+import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
+import {
+  TxConfigurationStepProps,
+  TxType,
+} from "../../transactions/transactionsUtils";
+import { setWalletPickerOpened } from "../../wallet/walletSlice";
+import { releaseTooltips } from "../components/ReleaseHelpers";
+import { $release, $releaseFees, $releaseUsdAmount } from "../releaseSlice";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
+  const dispatch = useDispatch();
+  const walletStatus = useSelectedChainWalletStatus();
+  const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency } = useSelector($release);
   const amountUsd = useSelector($releaseUsdAmount);
-  const targetCurrency = getReleasedDestinationCurrencySymbol(currency);
-  const currencyConfig = getCurrencyConfig(currency);
-  const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
-  const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);
-  const nextEnabled = true; //TODO
+  const rates = useSelector($exchangeRates);
+  const { conversionTotal } = useSelector($releaseFees);
+  const destinationCurrency = getReleasedDestinationCurrencySymbol(currency);
+  const destinationCurrencyUsdRate = findExchangeRate(
+    rates,
+    destinationCurrency,
+    USD_SYMBOL
+  );
+  const destinationAmountUsd = conversionTotal * destinationCurrencyUsdRate;
+  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
+  const destinationChainConfig = getChainConfig(
+    destinationCurrencyConfig.sourceChain
+  );
+  const { MainIcon } = destinationChainConfig;
+  const canInitializeReleasing = true;
+
+  const handleConfirm = useCallback(() => {
+    setReleasingInitialized(true);
+    if (walletStatus === WalletStatus.CONNECTED) {
+      if (canInitializeReleasing) {
+        setReleasingInitialized(true);
+      } else {
+        setReleasingInitialized(false);
+      }
+    } else {
+      setReleasingInitialized(false);
+      dispatch(setWalletPickerOpened(true));
+    }
+  }, [dispatch, canInitializeReleasing, walletStatus]);
 
   return (
     <>
@@ -48,8 +98,8 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           Details
         </Typography>
         <LabelWithValue
-          label="Sending"
-          labelTooltip={mintTooltips.sending}
+          label="Releasing"
+          labelTooltip={releaseTooltips.releasing}
           value={<NumberFormatText value={amount} spacedSuffix={currency} />}
           valueEquivalent={
             <NumberFormatText
@@ -62,75 +112,51 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         />
         <LabelWithValue
           label="To"
-          labelTooltip={mintTooltips.to}
-          value={targetChainConfig.full}
+          labelTooltip={releaseTooltips.to}
+          value={destinationChainConfig.full}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
           Fees
         </Typography>
-        <TransactionFees amount={amount} currency={currency} type={TxType.BURN}/>
+        <TransactionFees
+          amount={amount}
+          currency={currency}
+          type={TxType.BURN}
+        />
       </PaperContent>
       <Divider />
-      {/*<PaperContent topPadding bottomPadding>*/}
-      {/*  <AssetInfo*/}
-      {/*    label="Receiving"*/}
-      {/*    value={*/}
-      {/*      <NumberFormatText*/}
-      {/*        value={conversionTotal}*/}
-      {/*        spacedSuffix={destinationCurrencyConfig.short}*/}
-      {/*        decimalScale={3}*/}
-      {/*      />*/}
-      {/*    }*/}
-      {/*    valueEquivalent={*/}
-      {/*      <NumberFormatText*/}
-      {/*        prefix=" = $"*/}
-      {/*        value={targetCurrencyAmountUsd}*/}
-      {/*        spacedSuffix="USD"*/}
-      {/*        decimalScale={2}*/}
-      {/*        fixedDecimalScale*/}
-      {/*      />*/}
-      {/*    }*/}
-      {/*    Icon={<MintedCurrencyIcon fontSize="inherit" />}*/}
-      {/*  />*/}
-      {/*  <CheckboxWrapper>*/}
-      {/*    <FormControl error={showAckError}>*/}
-      {/*      <FormControlLabel*/}
-      {/*        control={*/}
-      {/*          <Checkbox*/}
-      {/*            checked={ackChecked}*/}
-      {/*            onChange={handleAckCheckboxChange}*/}
-      {/*            name="ack"*/}
-      {/*            color="primary"*/}
-      {/*          />*/}
-      {/*        }*/}
-      {/*        label={*/}
-      {/*          <FormLabel htmlFor="ack" component={Typography}>*/}
-      {/*            <Typography*/}
-      {/*              variant="caption"*/}
-      {/*              color={showAckError ? "inherit" : "textPrimary"}*/}
-      {/*            >*/}
-      {/*              I acknowledge this transaction requires ETH{" "}*/}
-      {/*              <TooltipWithIcon title={mintTooltips.acknowledge} />*/}
-      {/*            </Typography>*/}
-      {/*          </FormLabel>*/}
-      {/*        }*/}
-      {/*      />*/}
-      {/*    </FormControl>*/}
-      {/*  </CheckboxWrapper>*/}
-      {/*  <ActionButtonWrapper>*/}
-      {/*    <ActionButton*/}
-      {/*      onClick={handleConfirm}*/}
-      {/*      disabled={showAckError || mintingInitialized}*/}
-      {/*    >*/}
-      {/*      {status !== "connected"*/}
-      {/*        ? "Connect Wallet"*/}
-      {/*        : mintingInitialized*/}
-      {/*        ? "Confirming..."*/}
-      {/*        : "Confirm"}*/}
-      {/*    </ActionButton>*/}
-      {/*  </ActionButtonWrapper>*/}
-      {/*</PaperContent>*/}
+      <PaperContent topPadding bottomPadding>
+        <AssetInfo
+          label="Receiving"
+          value={
+            <NumberFormatText
+              value={conversionTotal}
+              spacedSuffix={destinationCurrencyConfig.short}
+              decimalScale={3}
+            />
+          }
+          valueEquivalent={
+            <NumberFormatText
+              prefix=" = $"
+              value={destinationAmountUsd}
+              spacedSuffix="USD"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          }
+          Icon={<MainIcon fontSize="inherit" />}
+        />
+        <ActionButtonWrapper>
+          <ActionButton onClick={handleConfirm} disabled={false}>
+            {walletStatus !== "connected"
+              ? "Connect Wallet"
+              : releasingInitialized
+              ? "Confirming..."
+              : "Confirm"}
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
     </>
   );
 };

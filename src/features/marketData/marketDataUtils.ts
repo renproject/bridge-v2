@@ -18,7 +18,7 @@ const mapToBridgeCurrencySymbol = (symbol: string) => {
   return config.symbol;
 };
 
-const QUOTE = "USD";
+export const USD_SYMBOL = "USD";
 
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
@@ -26,7 +26,7 @@ const referenceParis = uniqueArray(
   Object.values(BridgeCurrency)
     .map(mapToBandchainCurrencySymbol)
     .filter((symbol) => symbol !== BridgeCurrency.UNKNOWN)
-).map((symbol: string) => getPair(symbol, QUOTE));
+).map((symbol: string) => getPair(symbol, USD_SYMBOL));
 
 console.log(referenceParis);
 
@@ -64,10 +64,9 @@ export const fetchMarketDataRates = async () => {
 };
 
 export const findExchangeRate = (
-  // TODO: CRIT: investigate what to do with nonexistent currencies
   exchangeRates: Array<ExchangeRate>,
   base: BridgeCurrency,
-  quote = QUOTE
+  quote = USD_SYMBOL
 ) => {
   const baseBandchainSymbol = mapToBandchainCurrencySymbol(base)
   const rateEntry = exchangeRates.find(
