@@ -1,5 +1,10 @@
 import { Divider, IconButton, Typography } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -22,7 +27,7 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { WalletStatus } from "../../../components/utils/types";
-import { useSelectedChainWalletStatus } from "../../../providers/multiwallet/multiwalletHooks";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -38,14 +43,18 @@ import {
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import { releaseTooltips } from "../components/ReleaseHelpers";
 import { $release, $releaseFees, $releaseUsdAmount } from "../releaseSlice";
+import {
+  createReleaseTransaction,
+  preValidateReleaseTransaction,
+} from "../releaseUtils";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
   const dispatch = useDispatch();
-  const walletStatus = useSelectedChainWalletStatus();
+  const { status: walletStatus, account } = useSelectedChainWallet();
   const [releasingInitialized, setReleasingInitialized] = useState(false);
-  const { amount, currency } = useSelector($release);
+  const { amount, currency, address } = useSelector($release);
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
   const { conversionTotal } = useSelector($releaseFees);
@@ -61,7 +70,19 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     destinationCurrencyConfig.sourceChain
   );
   const { MainIcon } = destinationChainConfig;
-  const canInitializeReleasing = true;
+  const tx = useMemo(
+    () =>
+      createReleaseTransaction({
+        amount: amount,
+        currency: currency,
+        destAddress: address,
+        userAddress: account,
+        releasedCurrency: destinationCurrency,
+        releasedCurrencyChain: destinationChainConfig.symbol,
+      }),
+    [amount, currency, address, account,destinationCurrency, destinationChainConfig.symbol]
+  );
+  const canInitializeReleasing = preValidateReleaseTransaction(tx);
 
   const handleConfirm = useCallback(() => {
     setReleasingInitialized(true);

@@ -1,28 +1,40 @@
-import React, { FunctionComponent, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { AddressInput, AddressInputWrapper, } from '../../../components/inputs/AddressInput'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
-import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
+import React, { FunctionComponent, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import {
+  AddressInput,
+  AddressInputWrapper,
+} from "../../../components/inputs/AddressInput";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import {
   getChainConfig,
   getCurrencyConfig,
   getReleasedDestinationCurrencySymbol,
   supportedReleaseCurrencies,
   supportedReleaseSourceChains,
-} from '../../../utils/assetConfigs'
-import { TxConfigurationStepProps } from '../../transactions/transactionsUtils'
-import { $wallet, setChain } from '../../wallet/walletSlice'
+} from "../../../utils/assetConfigs";
+import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
+import { $wallet, setChain } from "../../wallet/walletSlice";
 import {
   $release,
   $releaseUsdAmount,
   setReleaseAddress,
   setReleaseAmount,
   setReleaseCurrency,
-} from '../releaseSlice'
+} from "../releaseSlice";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -65,13 +77,14 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const currencyConfig = getCurrencyConfig(currency);
   const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
   const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);
-  const nextEnabled = true; //TODO check if balanceOK
+  //TODO check if balanceOK
+  const canProceed = amount && address;
 
   const handleNextStep = useCallback(() => {
-    if (onNext) {
+    if (onNext && canProceed) {
       onNext();
     }
-  }, [onNext]);
+  }, [onNext, canProceed]);
   return (
     <PaperContent bottomPadding>
       <BigCurrencyInputWrapper>
@@ -117,7 +130,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         />
       </AddressInputWrapper>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleNextStep} disabled={!nextEnabled}>
+        <ActionButton onClick={handleNextStep} disabled={!canProceed}>
           Next
         </ActionButton>
       </ActionButtonWrapper>

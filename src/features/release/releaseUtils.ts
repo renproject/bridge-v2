@@ -13,6 +13,7 @@ export const preValidateReleaseTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
   return (
     tx.type === "burn" &&
+    tx.sourceAsset &&
     tx.destAddress &&
     tx.userAddress &&
     tx.targetAmount > 0
