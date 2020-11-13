@@ -1,32 +1,27 @@
-import React, { FunctionComponent, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import {
-  AssetDropdown,
-  AssetDropdownWrapper,
-} from "../../../components/dropdowns/AssetDropdown";
-import {
-  BigCurrencyInput,
-  BigCurrencyInputWrapper,
-} from "../../../components/inputs/BigCurrencyInput";
-import { PaperContent } from "../../../components/layout/Paper";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import React, { FunctionComponent, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
+import { AddressInput } from '../../../components/inputs/AddressInput'
+import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
+import { PaperContent } from '../../../components/layout/Paper'
+import { Link } from '../../../components/links/Links'
+import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
 import {
   getCurrencyConfig,
+  getReleasedDestinationCurrencySymbol,
   supportedReleaseCurrencies,
   supportedReleaseSourceChains,
-} from "../../../utils/assetConfigs";
-import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
-import { $wallet, setChain } from "../../wallet/walletSlice";
+} from '../../../utils/assetConfigs'
+import { TxConfigurationStepProps } from '../../transactions/transactionsUtils'
+import { $wallet, setChain } from '../../wallet/walletSlice'
 import {
   $release,
   $releaseCurrencyUsdAmount,
+  setReleaseAddress,
   setReleaseAmount,
   setReleaseCurrency,
-} from "../releaseSlice";
+} from '../releaseSlice'
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = () => {
   const dispatch = useDispatch();
@@ -52,10 +47,18 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     [dispatch]
   );
 
+  const handleAddressChange = useCallback((event) => {
+    dispatch(setReleaseAddress(event.target.value));
+  }, []);
+
+  const balance = 0.02; // TODO retrieve when wallet balances done
+  const handleSetMaxBalance = useCallback(() => {
+    dispatch(setReleaseAmount(balance));
+  }, [balance]);
+
+  const targetCurrency = getReleasedDestinationCurrencySymbol(currency);
   const currencyConfig = getCurrencyConfig(currency);
-  // const destinationCurrency = getCurrencyConfig(
-  //   getReleasedDestinationCurrencySymbol(currency)
-  // );
+  const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
 
   return (
     <PaperContent bottomPadding>
@@ -69,7 +72,11 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       </BigCurrencyInputWrapper>
       <LabelWithValue
         label={`${currencyConfig.short} Balance`}
-        value="?" //TODO: suppose to be an action link button which sets up max(balance)
+        value={
+          <Link onClick={handleSetMaxBalance} color="primary">
+            {balance}
+          </Link>
+        } //TODO: suppose to be an action link button which sets up max(balance)
       />
       <AssetDropdownWrapper>
         <AssetDropdown
@@ -87,6 +94,14 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
           available={supportedReleaseCurrencies}
           value={currency}
           onChange={handleCurrencyChange}
+        />
+      </AssetDropdownWrapper>
+      <AssetDropdownWrapper>
+        <AddressInput
+          chainLabel={targetCurrencyConfig.sourceChain}
+          label="Releasing to"
+          onChange={handleAddressChange}
+          value={targetCurrencyConfig.sourceChain}
         />
       </AssetDropdownWrapper>
       <ActionButtonWrapper>
