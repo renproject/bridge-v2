@@ -1,13 +1,14 @@
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { RouteComponentProps } from 'react-router'
-import { Route } from 'react-router-dom'
-import { Debug } from '../../components/utils/Debug'
-import { usePageTitle } from '../../hooks/usePageTitle'
-import { paths } from '../../pages/routes'
-import { TransactionTypeTabs } from '../transactions/components/TransactionTypeTabs'
-import { TxConfigurationStep } from '../transactions/transactionsUtils'
-import { ReleaseFeesStep } from './steps/ReleaseFeesStep'
-import { ReleaseInitialStep } from './steps/ReleaseInitialStep'
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { RouteComponentProps } from "react-router";
+import { Route } from "react-router-dom";
+import { Debug } from "../../components/utils/Debug";
+import { usePageTitle } from "../../hooks/usePageTitle";
+import { paths } from "../../pages/routes";
+import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
+import { TxConfigurationStep } from "../transactions/transactionsUtils";
+import { ReleaseFeesStep } from "./steps/ReleaseFeesStep";
+import { ReleaseInitialStep } from "./steps/ReleaseInitialStep";
+import { ReleaseProcessStep } from "./steps/ReleaseProcessStep";
 
 const ReleaseConfiguration: FunctionComponent<RouteComponentProps> = () => {
   const [step, setStep] = useState(TxConfigurationStep.INITIAL);
@@ -39,7 +40,11 @@ export const ReleaseFlow: FunctionComponent = () => {
   return (
     <>
       <Route exact path={paths.RELEASE} component={ReleaseConfiguration} />
-      <Route exact path={paths.RELEASE_TRANSACTION} component={Debug} />
+      <Route
+        exact
+        path={paths.RELEASE_TRANSACTION}
+        component={ReleaseProcessStep}
+      />
     </>
   );
 };

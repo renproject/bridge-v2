@@ -1,5 +1,5 @@
 import { GatewaySession } from "@renproject/rentx";
-import { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { useBurnMachine } from "../releaseUtils";
 
 export const releaseTooltips = {
@@ -19,10 +19,11 @@ export const BurnTransactionInitializer: FunctionComponent<BurnTransactionInitia
   const [current] = useBurnMachine(initialTx);
 
   useEffect(() => {
-    if (onCreated && !!current.context.tx.gatewayAddress) {
+    console.log(current.context.tx)
+    if (onCreated && Object.values(current.context.tx.transactions).length) { // TODO: here its not
       onCreated(current.context.tx);
     }
   }, [onCreated, current.context.tx]);
 
-  return null;
+  return <span>releasing...</span>;
 };

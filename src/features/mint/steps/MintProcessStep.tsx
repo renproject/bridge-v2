@@ -71,7 +71,7 @@ import {
 import { $mint } from "../mintSlice";
 import { useMintMachine } from "../mintUtils";
 
-export const MintDepositStep: FunctionComponent<RouteComponentProps> = ({
+export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
   useGasPrices();

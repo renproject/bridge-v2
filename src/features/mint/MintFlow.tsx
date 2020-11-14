@@ -6,6 +6,7 @@ import { usePageTitle } from "../../hooks/usePageTitle";
 import { paths } from "../../pages/routes";
 import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { TxConfigurationStep } from "../transactions/transactionsUtils";
+import { MintProcessStep } from "./steps/MintProcessStep";
 import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
 
@@ -40,7 +41,7 @@ export const MintFlow: FunctionComponent<RouteComponentProps> = ({ match }) => {
   return (
     <>
       <Route exact path={paths.MINT} component={MintConfiguration} />
-      <Route exact path={paths.MINT_TRANSACTION} component={DebugProps} />
+      <Route exact path={paths.MINT_TRANSACTION} component={MintProcessStep} />
     </>
   );
 };
