@@ -4,13 +4,14 @@ import { GatewaySession, mintMachine } from "@renproject/rentx";
 import { useMachine } from "@xstate/react";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
-import { fromChainMap, toChainMap } from "../../services/rentx";
+import { lockChainMap, mintChainMap } from "../../services/rentx";
 import {
-  BridgeChain, BridgeCurrency,
+  BridgeChain,
+  BridgeCurrency,
   getChainRentxName,
   getCurrencyRentxName,
   getCurrencyRentxSourceChain,
-} from '../../utils/assetConfigs'
+} from "../../utils/assetConfigs";
 
 export const getMintTx: GatewaySession = {
   id: "tx-" + Math.floor(Math.random() * 10 ** 16),
@@ -85,8 +86,8 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
       tx: mintTransaction,
       providers,
       sdk: getRenJs(),
-      fromChainMap,
-      toChainMap,
+      fromChainMap: lockChainMap,
+      toChainMap: mintChainMap,
     },
     devTools: env.XSTATE_DEVTOOLS,
   });

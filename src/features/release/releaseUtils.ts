@@ -1,12 +1,16 @@
 import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession } from "@renproject/rentx";
+import { useMultiwallet } from "@renproject/multiwallet-ui";
+import { burnMachine, GatewaySession } from "@renproject/rentx";
+import { useMachine } from "@xstate/react";
 import { env } from "../../constants/environmentVariables";
+import { getRenJs } from "../../services/renJs";
+import { burnChainMap, releaseChainMap } from "../../services/rentx";
 import {
-  BridgeChain,
   BridgeCurrency,
   getChainRentxName,
-  getCurrencyRentxName,
+  getCurrencyConfig,
   getCurrencyRentxSourceChain,
+  getReleasedDestinationCurrencySymbol,
 } from "../../utils/assetConfigs";
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
@@ -23,8 +27,6 @@ export const preValidateReleaseTransaction = (tx: GatewaySession) => {
 type CreateReleaseTransactionParams = {
   amount: number;
   currency: BridgeCurrency;
-  releasedCurrency: BridgeCurrency;
-  releasedCurrencyChain: BridgeChain;
   userAddress: string;
   destAddress: string;
 };
@@ -32,18 +34,19 @@ type CreateReleaseTransactionParams = {
 export const createReleaseTransaction = ({
   amount,
   currency,
-  releasedCurrencyChain,
   userAddress,
   destAddress,
 }: CreateReleaseTransactionParams) => {
+  const sourceCurrency = getReleasedDestinationCurrencySymbol(currency);
+  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
   const tx: GatewaySession = {
     id: "tx-" + Math.floor(Math.random() * 10 ** 16),
     type: "burn",
     network: env.NETWORK as RenNetwork,
-    sourceAsset: getCurrencyRentxName(currency),
+    sourceAsset: sourceCurrencyConfig.rentxName,
     sourceNetwork: getCurrencyRentxSourceChain(currency),
     destAddress,
-    destNetwork: getChainRentxName(releasedCurrencyChain),
+    destNetwork: getChainRentxName(sourceCurrencyConfig.sourceChain),
     targetAmount: Number(amount),
     userAddress,
     expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
@@ -52,4 +55,25 @@ export const createReleaseTransaction = ({
   };
 
   return tx;
+};
+
+export const useBurnMachine = (burnTransaction: GatewaySession) => {
+  const { enabledChains } = useMultiwallet();
+  const providers = Object.entries(enabledChains).reduce(
+    (c, n) => ({
+      ...c,
+      [n[0]]: n[1].provider,
+    }),
+    {}
+  );
+  return useMachine(burnMachine, {
+    context: {
+      tx: burnTransaction,
+      providers,
+      sdk: getRenJs(),
+      fromChainMap: burnChainMap,
+      toChainMap: releaseChainMap,
+    },
+    devTools: env.XSTATE_DEVTOOLS,
+  });
 };

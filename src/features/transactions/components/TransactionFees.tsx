@@ -104,15 +104,10 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           />
         }
       />
-      <LabelWithValue
+      <LabelWithValue //TODO: made dependant on the sourceChain
         label={`Bitcoin Miner Fee`}
         labelTooltip={tooltips.bitcoinMinerFee}
-        value={
-          <NumberFormatText
-            value={networkFee}
-            spacedSuffix={destinationCurrencyConfig.short}
-          />
-        }
+        value={<NumberFormatText value={networkFee} spacedSuffix="BTC" />}
         valueEquivalent={
           <NumberFormatText
             value={networkFeeUsd}

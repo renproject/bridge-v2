@@ -79,17 +79,8 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         currency: currency,
         destAddress: address,
         userAddress: account,
-        releasedCurrency: destinationCurrency,
-        releasedCurrencyChain: destinationChainConfig.symbol,
       }),
-    [
-      amount,
-      currency,
-      address,
-      account,
-      destinationCurrency,
-      destinationChainConfig.symbol,
-    ]
+    [amount, currency, address, account]
   );
   const canInitializeReleasing = preValidateReleaseTransaction(tx);
 
@@ -188,10 +179,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           Icon={<MainIcon fontSize="inherit" />}
         />
         <ActionButtonWrapper>
-          <ActionButton
-            onClick={handleConfirm}
-            disabled={releasingInitialized}
-          >
+          <ActionButton onClick={handleConfirm} disabled={releasingInitialized}>
             {walletStatus !== "connected"
               ? "Connect Wallet"
               : releasingInitialized
