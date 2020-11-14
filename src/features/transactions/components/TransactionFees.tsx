@@ -28,8 +28,16 @@ type TransactionFeesProps = {
 };
 
 export const getMintAndReleaseFees = (fees: BridgeFees) => {
-  const chainFees = fees[0].ethereum;
-  return { mint: chainFees.mint, release: chainFees.burn };
+  const result = {
+    mint: 0,
+    release: 0,
+  };
+  if (fees && fees[0] && fees[0].ethereum) {
+    const chainFees = fees[0].ethereum;
+    result.mint = chainFees.min;
+    result.release = chainFees.burn;
+  }
+  return result;
 };
 
 export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({

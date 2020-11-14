@@ -1,21 +1,37 @@
-import { Divider, IconButton } from '@material-ui/core'
-import { GatewaySession } from '@renproject/rentx'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
-import { ActionButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { Debug } from '../../../components/utils/Debug'
-import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
-import { usePaperTitle } from '../../../pages/MainPage'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { getCurrencyConfigByRentxName, getMintedDestinationCurrencySymbol, } from '../../../utils/assetConfigs'
-import { TransactionFees } from '../../transactions/components/TransactionFees'
-import { BookmarkPageWarning } from '../../transactions/components/TransactionsHelpers'
-import { TxType, useTxParam } from '../../transactions/transactionsUtils'
-import { setWalletPickerOpened } from '../../wallet/walletSlice'
+import { Divider, IconButton } from "@material-ui/core";
+import { GatewaySession } from "@renproject/rentx";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import {
+  ActionButton,
+  ToggleIconButton,
+} from "../../../components/buttons/Buttons";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import {
+  BigWrapper,
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { Debug, DebugProps } from '../../../components/utils/Debug'
+import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { usePaperTitle } from "../../../pages/MainPage";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import {
+  getCurrencyConfigByRentxName,
+  getMintedDestinationCurrencySymbol,
+} from "../../../utils/assetConfigs";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
+import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
+import { TxType, useTxParam } from "../../transactions/transactionsUtils";
+import { setWalletPickerOpened } from "../../wallet/walletSlice";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
@@ -36,9 +52,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   const txCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
   const feeCurrency = getMintedDestinationCurrencySymbol(txCurrency);
   const amount = Number(tx.targetAmount);
+  const showTransactionStatus = true;
   return (
     <>
-      <Debug it={{ props, tx }} />
       <PaperHeader>
         <PaperNav>
           {txState?.newTx && (
@@ -54,6 +70,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
+        {showTransactionStatus && <DebugProps tx={tx} />}
         {!walletConnected && (
           <BigWrapper>
             <MediumWrapper>
