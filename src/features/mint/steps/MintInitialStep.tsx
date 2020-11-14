@@ -114,7 +114,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             <NumberFormatText
               value={conversionTotal}
               suffix={` ${mintedCurrency}`}
-              decimalScale={3}
+              decimalScale={5}
             />
           }
           Icon={<MintedCurrencyIcon fontSize="inherit" />}

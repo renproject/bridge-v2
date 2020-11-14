@@ -70,7 +70,6 @@ import {
 } from "../components/MintStatuses";
 import { $mint } from "../mintSlice";
 import { useMintMachine } from "../mintUtils";
-import { MintFees } from "./MintFeesStep";
 
 export const MintDepositStep: FunctionComponent<RouteComponentProps> = ({
   history,

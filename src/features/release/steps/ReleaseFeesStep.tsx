@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -27,6 +28,7 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { WalletStatus } from "../../../components/utils/types";
+import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getChainConfig,
@@ -37,11 +39,16 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
+  createTxQueryString,
+  LocationTxState,
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
-import { releaseTooltips } from "../components/ReleaseHelpers";
+import {
+  BurnTransactionInitializer,
+  releaseTooltips,
+} from "../components/ReleaseHelpers";
 import { $release, $releaseFees, $releaseUsdAmount } from "../releaseSlice";
 import {
   createReleaseTransaction,
@@ -52,6 +59,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { status: walletStatus, account } = useSelectedChainWallet();
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
@@ -98,8 +106,28 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [dispatch, canInitializeReleasing, walletStatus]);
 
+  const onBurnTxCreated = useCallback(
+    (tx) => {
+      console.log("onReleaseTxCreated");
+      history.push({
+        pathname: paths.RELEASE_TRANSACTION,
+        search: "?" + createTxQueryString(tx),
+        state: {
+          txState: { newTx: true },
+        } as LocationTxState,
+      });
+    },
+    [history]
+  );
+
   return (
     <>
+      {releasingInitialized && (
+        <BurnTransactionInitializer
+          initialTx={tx}
+          onCreated={onBurnTxCreated}
+        />
+      )}
       <PaperHeader>
         <PaperNav>
           <IconButton onClick={onPrev}>
