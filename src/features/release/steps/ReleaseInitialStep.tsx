@@ -19,6 +19,7 @@ import {
 import { PaperContent } from "../../../components/layout/Paper";
 import { Link } from "../../../components/links/Links";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -27,7 +28,11 @@ import {
   supportedReleaseSourceChains,
 } from "../../../utils/assetConfigs";
 import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
-import { $wallet, setChain } from "../../wallet/walletSlice";
+import {
+  $wallet,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
 import {
   $release,
   $releaseUsdAmount,
@@ -40,6 +45,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   onNext,
 }) => {
   const dispatch = useDispatch();
+  const { status: walletStatus } = useSelectedChainWallet();
   const { chain } = useSelector($wallet);
   const { currency, amount, address } = useSelector($release);
   const usdAmount = useSelector($releaseUsdAmount);
@@ -81,10 +87,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const canProceed = amount && address;
 
   const handleNextStep = useCallback(() => {
+    if (walletStatus !== "connected") {
+      dispatch(setWalletPickerOpened(true));
+    }
     if (onNext && canProceed) {
       onNext();
     }
-  }, [onNext, canProceed]);
+  }, [dispatch, onNext, canProceed, walletStatus]);
   return (
     <PaperContent bottomPadding>
       <BigCurrencyInputWrapper>
@@ -131,7 +140,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       </AddressInputWrapper>
       <ActionButtonWrapper>
         <ActionButton onClick={handleNextStep} disabled={!canProceed}>
-          Next
+          {walletStatus !== "connected" ? "Connect Wallet" : "Next"}
         </ActionButton>
       </ActionButtonWrapper>
     </PaperContent>

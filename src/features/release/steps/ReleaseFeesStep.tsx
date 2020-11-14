@@ -192,7 +192,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <NumberFormatText
               value={conversionTotal}
               spacedSuffix={destinationCurrencyConfig.short}
-              decimalScale={3}
+              decimalScale={5}
             />
           }
           valueEquivalent={
