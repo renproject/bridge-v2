@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
-import { DebugProps } from "../../components/utils/Debug";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import { paths } from "../../pages/routes";
 import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
