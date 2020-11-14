@@ -55,10 +55,11 @@ import {
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
   getNetworkConfigByRentxName,
-} from '../../../utils/assetConfigs'
+} from "../../../utils/assetConfigs";
 import { useGasPrices } from "../../marketData/marketDataHooks";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
-import { useTxParam } from "../../transactions/transactionsUtils";
+import { TxType, useTxParam } from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   DepositAcceptedStatus,
@@ -130,7 +131,11 @@ export const MintDepositStep: FunctionComponent<RouteComponentProps> = ({
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
-        <MintFees amount={amount} currency={feeCurrency} />
+        <TransactionFees
+          amount={amount}
+          currency={feeCurrency}
+          type={TxType.MINT}
+        />
         <Debug it={{ parsedTx, txState: txState }} />
       </PaperContent>
       {txState?.newTx && <BookmarkPageWarning />}

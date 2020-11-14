@@ -58,6 +58,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
   const { conversionTotal } = useSelector($releaseFees);
+  const currencyConfig = getCurrencyConfig(currency);
   const destinationCurrency = getReleasedDestinationCurrencySymbol(currency);
   const destinationCurrencyUsdRate = findExchangeRate(
     rates,
@@ -81,7 +82,14 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         releasedCurrency: destinationCurrency,
         releasedCurrencyChain: destinationChainConfig.symbol,
       }),
-    [amount, currency, address, account,destinationCurrency, destinationChainConfig.symbol]
+    [
+      amount,
+      currency,
+      address,
+      account,
+      destinationCurrency,
+      destinationChainConfig.symbol,
+    ]
   );
   const canInitializeReleasing = preValidateReleaseTransaction(tx);
 
@@ -113,7 +121,12 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       <PaperContent bottomPadding>
         <BigAssetAmountWrapper>
           <BigAssetAmount
-            value={<NumberFormatText value={amount} spacedSuffix={currency} />}
+            value={
+              <NumberFormatText
+                value={amount}
+                spacedSuffix={currencyConfig.short}
+              />
+            }
           />
         </BigAssetAmountWrapper>
         <Typography variant="body1" gutterBottom>
@@ -122,7 +135,12 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="Releasing"
           labelTooltip={releaseTooltips.releasing}
-          value={<NumberFormatText value={amount} spacedSuffix={currency} />}
+          value={
+            <NumberFormatText
+              value={amount}
+              spacedSuffix={currencyConfig.short}
+            />
+          }
           valueEquivalent={
             <NumberFormatText
               value={amountUsd}
@@ -135,7 +153,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="To"
           labelTooltip={releaseTooltips.to}
-          value={destinationChainConfig.full}
+          value={address}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
@@ -170,7 +188,10 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           Icon={<MainIcon fontSize="inherit" />}
         />
         <ActionButtonWrapper>
-          <ActionButton onClick={handleConfirm} disabled={false}>
+          <ActionButton
+            onClick={handleConfirm}
+            disabled={releasingInitialized}
+          >
             {walletStatus !== "connected"
               ? "Connect Wallet"
               : releasingInitialized

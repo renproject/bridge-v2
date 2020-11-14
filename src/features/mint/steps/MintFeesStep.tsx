@@ -56,16 +56,20 @@ import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { $fees } from "../../renData/renDataSlice";
 import { calculateTransactionFees } from "../../renData/renDataUtils";
 import {
+  getMintAndReleaseFees,
+  TransactionFees,
+} from "../../transactions/components/TransactionFees";
+import {
   createTxQueryString,
+  getFeeTooltips,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
-  getFeeTooltips,
-  MintTransactionInitializer,
   mintTooltips,
+  MintTransactionInitializer,
 } from "../components/MintHelpers";
 import { $mint } from "../mintSlice";
 import {
@@ -208,7 +212,11 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <Typography variant="body1" gutterBottom>
           Fees
         </Typography>
-        <MintFees amount={amount} currency={currency} />
+        <TransactionFees
+          amount={amount}
+          currency={currency}
+          type={TxType.MINT}
+        />
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
@@ -280,6 +288,7 @@ type MintFeesProps = {
   amount: number;
 };
 
+// TODO: use TransactionFees
 export const MintFees: FunctionComponent<MintFeesProps> = ({
   amount,
   currency,
@@ -302,7 +311,14 @@ export const MintFees: FunctionComponent<MintFeesProps> = ({
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 
-  const tooltips = useMemo(() => getFeeTooltips(renVMFee, 0.001), [renVMFee]); // TODO: CRIT: add release fee from selectors
+  const tooltips = useMemo(() => {
+    const { mint, release } = getMintAndReleaseFees(fees);
+    return getFeeTooltips({
+      mintFee: mint / 10000,
+      releaseFee: release / 10000,
+      type: TxType.MINT,
+    });
+  }, [fees]); // TODO: CRIT: add release fee from selectors
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;

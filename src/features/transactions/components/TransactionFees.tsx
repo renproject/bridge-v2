@@ -3,18 +3,23 @@ import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { BridgeCurrency, getCurrencyConfig } from "../../../utils/assetConfigs";
+import {
+  BridgeCurrency,
+  getChainConfig,
+  getCurrencyConfig,
+  getCurrencySourceChain,
+  getReleasedDestinationCurrencySymbol,
+} from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
-import { getFeeTooltips } from "../../mint/components/MintHelpers";
 import { $fees } from "../../renData/renDataSlice";
 import {
   BridgeFees,
   calculateTransactionFees,
 } from "../../renData/renDataUtils";
-import { TxType } from "../transactionsUtils";
+import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {
   type: TxType;
@@ -22,7 +27,7 @@ type TransactionFeesProps = {
   amount: number;
 };
 
-const getMintAndReleaseFees = (fees: BridgeFees) => {
+export const getMintAndReleaseFees = (fees: BridgeFees) => {
   const chainFees = fees[0].ethereum;
   return { mint: chainFees.mint, release: chainFees.burn };
 };
@@ -45,30 +50,35 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   );
   const amountUsd = amount * currencyUsdRate;
 
-  console.log(amount,
-    currency,
-    fees,
-    type,);
-
-  const {
-    renVMFee,
-    renVMFeeAmount,
-    networkFee,
-    conversionTotal,
-  } = calculateTransactionFees({
+  const { renVMFee, renVMFeeAmount, networkFee } = calculateTransactionFees({
     amount,
     currency,
     fees,
     type,
   });
-  console.log(renVMFee, renVMFeeAmount, networkFee, conversionTotal);
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 
+  // TODO: resolve MIner fees
+  const sourceChainConfig = getChainConfig(getCurrencySourceChain(currency));
+  console.log(getCurrencySourceChain(currency), sourceChainConfig);
+  const destinationCurrency = getReleasedDestinationCurrencySymbol(currency);
+  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
+  const destinationChainConfig = getChainConfig(
+    destinationCurrencyConfig.sourceChain
+  );
+  console.log(destinationChainConfig, destinationCurrencyConfig.sourceChain);
+
   const tooltips = useMemo(() => {
     const { mint, release } = getMintAndReleaseFees(fees);
-    return getFeeTooltips(mint / 10000, release / 10000);
-  }, [fees]);
+    return getFeeTooltips({
+      mintFee: mint / 10000,
+      releaseFee: release / 10000,
+      sourceCurrency: currency,
+      destinationCurrency: destinationCurrency,
+      type: TxType.MINT,
+    });
+  }, [fees, currency, destinationCurrency]);
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
@@ -95,12 +105,12 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue
-        label={`${currencyConfig.full} Miner Fee`}
+        label={`Bitcoin Miner Fee`}
         labelTooltip={tooltips.bitcoinMinerFee}
         value={
           <NumberFormatText
             value={networkFee}
-            spacedSuffix={currencyConfig.short}
+            spacedSuffix={destinationCurrencyConfig.short}
           />
         }
         valueEquivalent={

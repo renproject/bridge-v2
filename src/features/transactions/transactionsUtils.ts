@@ -1,7 +1,12 @@
 import { GatewaySession } from "@renproject/rentx";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
-import { BridgeChain, BridgeNetwork } from "../../utils/assetConfigs";
+import {
+  BridgeChain,
+  BridgeCurrency,
+  BridgeNetwork,
+} from "../../utils/assetConfigs";
+import { toPercent } from "../../utils/converters";
 
 export enum TxType {
   MINT = "mint",
@@ -90,4 +95,36 @@ export const getChainExplorerLink = (
         return sochain + "ZEC/" + txId;
     }
   }
+};
+
+type GetFeeToltipsArgs = {
+  mintFee: number;
+  releaseFee: number;
+  sourceCurrency?: BridgeCurrency;
+  destinationCurrency?: BridgeCurrency;
+  type: TxType;
+};
+
+export const getFeeTooltips = ({
+  mintFee,
+  releaseFee,
+  sourceCurrency,
+  destinationCurrency,
+  type,
+}: GetFeeToltipsArgs) => {
+  return {
+    renVmFee: `RenVM takes a ${toPercent(
+      mintFee
+    )}% fee per mint transaction and ${toPercent(
+      releaseFee
+    )}% per burn transaction. This is shared evenly between all active nodes in the decentralized network.`,
+    bitcoinMinerFee:
+      "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
+    estimatedEthFee:
+      "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
+    // estimatedReleasingChainFee:
+    //   "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
+    // estimatedMintingChainFee:
+    //   "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
+  };
 };
