@@ -67,15 +67,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 
-  // TODO: resolve MIner fees
-  const sourceChainConfig = getChainConfig(getCurrencySourceChain(currency));
-  console.log(getCurrencySourceChain(currency), sourceChainConfig);
   const destinationCurrency = getReleasedDestinationCurrencySymbol(currency);
-  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
-  const destinationChainConfig = getChainConfig(
-    destinationCurrencyConfig.sourceChain
-  );
-  console.log(destinationChainConfig, destinationCurrencyConfig.sourceChain);
 
   const tooltips = useMemo(() => {
     const { mint, release } = getMintAndReleaseFees(fees);

@@ -75,10 +75,6 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   );
   const destinationAmountUsd = conversionTotal * destinationCurrencyUsdRate;
   const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
-  const destinationChainConfig = getChainConfig(
-    destinationCurrencyConfig.sourceChain
-  );
-  console.log(destinationChainConfig);
   const { MainIcon } = destinationCurrencyConfig;
   const tx = useMemo(
     () =>
