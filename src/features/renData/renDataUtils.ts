@@ -1,6 +1,6 @@
-import { getRenJs } from "../../services/renJs";
 import { BridgeCurrency } from "../../utils/assetConfigs";
 import { TxType } from "../transactions/transactionsUtils";
+import { mockedFees } from "./mockedFees";
 
 type Fees = {
   [key: string]: any;
@@ -21,19 +21,21 @@ export type CalculatedFee = {
   conversionTotal: number;
 };
 
-const mapToFeesData: (fees: Fees) => BridgeFees = (fees) => {
-  return Object.entries(fees).map(([symbol, entry]) => ({
-    symbol: toCurrencySymbol(symbol),
-    ...entry,
-    [symbol]: entry,
-  }));
+// const mapToFeesData: (fees: Fees) => BridgeFees = (fees) => {
+//   return Object.entries(fees).map(([symbol, entry]) => ({
+//     symbol: toCurrencySymbol(symbol),
+//     ...entry,
+//     [symbol]: entry,
+//   }));
+// };
+
+// const toCurrencySymbol = (symbol: string) =>
+//   symbol.toUpperCase() as BridgeCurrency;
+
+export const fetchFees: () => Promise<BridgeFees> = () => {
+  // TODO: refactor fees to new version
+  return Promise.resolve(mockedFees as BridgeFees);
 };
-
-const toCurrencySymbol = (symbol: string) =>
-  symbol.toUpperCase() as BridgeCurrency;
-
-export const fetchFees: () => Promise<BridgeFees> = () =>
-  getRenJs().getFees().then(mapToFeesData);
 
 type CalculateTransactionsFeesArgs = {
   amount: number;

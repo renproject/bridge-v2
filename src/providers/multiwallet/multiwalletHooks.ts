@@ -18,7 +18,7 @@ export const useWallet: UseWallet = (chain) => {
   const { enabledChains, targetNetwork } = useMultiwallet();
   const { account = "", status = "disconnected" } =
     enabledChains?.[chain] || {};
-  const provider = enabledChains?.[chain].provider;
+  const provider = enabledChains?.[chain]?.provider;
   return { account, status, targetNetwork, provider } as WalletData;
 };
 

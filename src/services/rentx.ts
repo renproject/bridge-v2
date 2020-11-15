@@ -1,22 +1,16 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import {
-  BinanceSmartChain,
-  Bitcoin,
-  Ethereum,
-  Zcash,
-  BitcoinCash,
-} from "@renproject/chains";
-import { BurnMachineContext } from "@renproject/rentx";
+import { Bitcoin, BitcoinCash, Ethereum, Zcash, } from '@renproject/chains'
+import { BurnMachineContext } from '@renproject/rentx'
 
 export const mintChainMap = {
-  binanceSmartChain: (context: any) => {
-    const { destAddress, destNetwork } = context.tx;
-    const { providers } = context;
-    return new BinanceSmartChain(providers[destNetwork]).Account({
-      address: destAddress,
-    });
-  },
+  // binanceSmartChain: (context: any) => {
+  //   const { destAddress, destNetwork } = context.tx;
+  //   const { providers } = context;
+  //   return new BinanceSmartChain(providers[destNetwork]).Account({
+  //     address: destAddress,
+  //   });
+  // },
   ethereum: (context: any) => {
     const { destAddress, destNetwork } = context.tx;
     const { providers } = context;
