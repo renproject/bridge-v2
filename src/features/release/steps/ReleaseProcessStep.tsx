@@ -20,7 +20,7 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
-import { Debug, DebugProps } from '../../../components/utils/Debug'
+import { Debug, DebugProps } from "../../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
@@ -28,6 +28,7 @@ import {
   getCurrencyConfigByRentxName,
   getMintedDestinationCurrencySymbol,
 } from "../../../utils/assetConfigs";
+import { useMintMachine } from "../../mint/mintUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
 import { TxType, useTxParam } from "../../transactions/transactionsUtils";
@@ -42,6 +43,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   const { status } = useSelectedChainWallet();
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -53,6 +55,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   const feeCurrency = getMintedDestinationCurrencySymbol(txCurrency);
   const amount = Number(tx.targetAmount);
   const showTransactionStatus = true;
+
   return (
     <>
       <PaperHeader>
@@ -70,7 +73,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
-        {showTransactionStatus && <DebugProps tx={tx} />}
+        {showTransactionStatus && <ReleaseTransactionStatus tx={tx} />}
         {!walletConnected && (
           <BigWrapper>
             <MediumWrapper>
@@ -96,4 +99,15 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
       {txState?.newTx && <BookmarkPageWarning />}
     </>
   );
+};
+
+type ReleaseTransactionStatusProps = {
+  tx: GatewaySession;
+};
+const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
+  tx,
+}) => {
+  const [current] = useMintMachine(tx);
+  //TODO render steps
+  return <Debug it={{ tx, current }} />;
 };
