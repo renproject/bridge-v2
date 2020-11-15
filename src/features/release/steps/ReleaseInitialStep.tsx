@@ -1,45 +1,25 @@
-import React, { FunctionComponent, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import {
-  AssetDropdown,
-  AssetDropdownWrapper,
-} from "../../../components/dropdowns/AssetDropdown";
-import {
-  AddressInput,
-  AddressInputWrapper,
-} from "../../../components/inputs/AddressInput";
-import {
-  BigCurrencyInput,
-  BigCurrencyInputWrapper,
-} from "../../../components/inputs/BigCurrencyInput";
-import { PaperContent } from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import React, { FunctionComponent, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
+import { AddressInput, AddressInputWrapper, } from '../../../components/inputs/AddressInput'
+import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
+import { PaperContent } from '../../../components/layout/Paper'
+import { Link } from '../../../components/links/Links'
+import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
   getChainConfig,
   getCurrencyConfig,
   getReleasedDestinationCurrencySymbol,
   supportedReleaseCurrencies,
   supportedReleaseSourceChains,
-} from "../../../utils/assetConfigs";
-import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
-import {
-  $wallet,
-  setChain,
-  setWalletPickerOpened,
-} from "../../wallet/walletSlice";
-import {
-  $release,
-  $releaseUsdAmount,
-  setReleaseAddress,
-  setReleaseAmount,
-  setReleaseCurrency,
-} from "../releaseSlice";
+} from '../../../utils/assetConfigs'
+import { TxConfigurationStepProps } from '../../transactions/transactionsUtils'
+import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
+import { $release, $releaseUsdAmount, setReleaseAddress, setReleaseAmount, setReleaseCurrency, } from '../releaseSlice'
+
+// const getBalance = (provider: any, token: string) => {};
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,

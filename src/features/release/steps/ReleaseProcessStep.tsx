@@ -20,7 +20,7 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
-import { Debug, DebugProps } from "../../../components/utils/Debug";
+import { Debug } from "../../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";

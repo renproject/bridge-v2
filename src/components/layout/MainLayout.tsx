@@ -14,6 +14,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
 import { RenNetwork } from "@renproject/interfaces";
 import {
+  useMultiwallet,
   WalletPickerModal,
   WalletPickerProps,
 } from "@renproject/multiwallet-ui";
@@ -187,6 +188,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   }, [multiwalletChain, handleWalletPickerClose, pickerClasses]);
 
   const debugWallet = useWallet(multiwalletChain); //remove
+  const debugMultiwallet = useMultiwallet(); //remove
 
   const drawerId = "main-menu-mobile";
   const withMenu = variant !== "intro";
@@ -280,7 +282,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
           </header>
           <main className={styles.main}>
             {children}
-            <Debug it={{ debugWallet, env }} />
+            <Debug it={{ debugWallet, debugMultiwallet, env }} />
           </main>
           <Footer />
         </Container>
