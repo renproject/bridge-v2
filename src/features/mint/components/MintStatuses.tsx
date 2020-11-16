@@ -1,64 +1,32 @@
-import { Box, Typography, useTheme } from "@material-ui/core";
-import React, { FunctionComponent, useEffect } from "react";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-  TransactionDetailsButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getChainIcon } from "../../../components/icons/IconHelpers";
-import {
-  BitcoinIcon,
-  MetamaskFullIcon,
-} from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
+import { Box, Typography, useTheme } from '@material-ui/core'
+import React, { FunctionComponent, useEffect } from 'react'
+import { ActionButton, ActionButtonWrapper, TransactionDetailsButton, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { getChainIcon } from '../../../components/icons/IconHelpers'
+import { BitcoinIcon, MetamaskFullIcon, } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { usePaperTitle } from "../../../pages/MainPage";
-import { orangeLight } from "../../../theme/colors";
+} from '../../../components/progress/ProgressHelpers'
+import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
+import { usePaperTitle } from '../../../pages/MainPage'
+import { orangeLight } from '../../../theme/colors'
 import {
-  BridgeChain, BridgeCurrency,
+  BridgeChain,
+  BridgeCurrency,
   BridgeNetwork,
   getChainConfig,
   getCurrencyConfig,
   getCurrencyShortLabel,
   getCurrencySourceChain,
 } from '../../../utils/assetConfigs'
-import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
-import { getChainExplorerLink } from "../../transactions/transactionsUtils";
+import { ProcessingTimeWrapper } from '../../transactions/components/TransactionsHelpers'
+import { getChainExplorerLink } from '../../transactions/transactionsUtils'
 
-type ProgressStatusProps = {
-  reason?: string;
-  processing?: boolean;
-};
 
-export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
-  reason = "Loading...",
-  processing = true,
-}) => {
-  const theme = useTheme();
-  const [, setTitle] = usePaperTitle();
-  useEffect(() => {
-    setTitle(reason);
-  }, [setTitle, reason]);
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent
-          processing={processing}
-          color={theme.palette.primary.main}
-        >
-          <TransactionStatusInfo status={reason} />
-        </ProgressWithContent>
-      </ProgressWrapper>
-    </>
-  );
-};
 
 type DepositConfirmationStatusProps = {
   network: BridgeNetwork;

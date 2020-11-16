@@ -38,7 +38,7 @@ import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwall
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
+import { BookmarkPageWarning, ProgressStatus } from '../../transactions/components/TransactionsHelpers'
 import {
   createTxQueryString,
   TxType,
@@ -192,5 +192,5 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     case "destInitiated":
       return <ReleaseCompletedStatus tx={current.context.tx} />;
   }
-  return <span>Loading...</span>;
+  return <ProgressStatus />;
 };

@@ -1,11 +1,22 @@
-import { Button, styled, Typography } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import { Button, styled, Typography, useTheme } from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import {
   ActionButton,
   ActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import { PaperContent } from "../../../components/layout/Paper";
 import { NestedDrawer } from "../../../components/modals/BridgeModal";
+import {
+  ProgressWithContent,
+  ProgressWrapper,
+  TransactionStatusInfo,
+} from "../../../components/progress/ProgressHelpers";
+import { usePaperTitle } from "../../../pages/MainPage";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -68,5 +79,33 @@ export const EnableNotificationsWarning: FunctionComponent = () => {
         </ActionButtonWrapper>
       </PaperContent>
     </NestedDrawer>
+  );
+};
+
+type ProgressStatusProps = {
+  reason?: string;
+  processing?: boolean;
+};
+
+export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
+  reason = "Loading...",
+  processing = true,
+}) => {
+  const theme = useTheme();
+  const [, setTitle] = usePaperTitle();
+  useEffect(() => {
+    setTitle(reason);
+  }, [setTitle, reason]);
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent
+          processing={processing}
+          color={theme.palette.primary.main}
+        >
+          <TransactionStatusInfo status={reason} />
+        </ProgressWithContent>
+      </ProgressWrapper>
+    </>
   );
 };

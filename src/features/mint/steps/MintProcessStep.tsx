@@ -58,7 +58,7 @@ import {
 } from "../../../utils/assetConfigs";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
+import { BookmarkPageWarning, ProgressStatus } from '../../transactions/components/TransactionsHelpers'
 import { TxType, useTxParam } from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
@@ -66,7 +66,7 @@ import {
   DepositConfirmationStatus,
   DestinationPendingStatus,
   DestinationReceivedStatus,
-  ProgressStatus,
+
 } from "../components/MintStatuses";
 import { $mint } from "../mintSlice";
 import { useMintMachine } from "../mintUtils";
