@@ -19,11 +19,11 @@ export const BurnTransactionInitializer: FunctionComponent<BurnTransactionInitia
   const [current] = useBurnMachine(initialTx);
   console.log("buring initialized...");
   useEffect(() => {
-    console.log("current", current);
+    console.log("current.value", current.value);
   }, [current]);
   useEffect(() => {
     console.log("current.context.tx", current.context.tx);
-    if (onCreated && current.context.tx) {
+    if (onCreated && current.value === "srcSettling") {
       onCreated(current.context.tx);
     }
   }, [onCreated, current.context.tx]);

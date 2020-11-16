@@ -1,12 +1,14 @@
 import { Divider, IconButton } from "@material-ui/core";
-import { GatewaySession } from "@renproject/rentx";
+import { BurnMachineSchema, GatewaySession } from "@renproject/rentx";
+import { release } from "os";
 import React, { FunctionComponent, useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import {
   ActionButton,
   ToggleIconButton,
 } from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import {
   BigWrapper,
@@ -20,19 +22,31 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
+import {
+  LabelWithValue,
+  SpacedDivider,
+} from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
+  getCurrencyConfig,
   getCurrencyConfigByRentxName,
   getMintedDestinationCurrencySymbol,
 } from "../../../utils/assetConfigs";
-import { useMintMachine } from "../../mint/mintUtils";
+import { useExchangeRates } from "../../marketData/marketDataHooks";
+import { $exchangeRates } from "../../marketData/marketDataSlice";
+import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
 import { TxType, useTxParam } from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
+import {
+  ReleaseCompletedStatus,
+  ReleasePendingStatus,
+} from "../components/ReleaseStatuses";
+import { getBurnAndReleaseParams, useBurnMachine } from "../releaseUtils";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
@@ -41,6 +55,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   const [title] = usePaperTitle();
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
+  const rates = useSelector($exchangeRates);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
 
@@ -51,13 +66,22 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
   const walletConnected = status === "connected";
-  const txCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
-  const feeCurrency = getMintedDestinationCurrencySymbol(txCurrency);
+
+  const {
+    burnCurrencyConfig,
+    releaseCurrencyConfig,
+    burnChainConfig,
+  } = getBurnAndReleaseParams(tx);
   const amount = Number(tx.targetAmount);
-  const showTransactionStatus = true;
+  const releaseCurrencyUsdRate = findExchangeRate(
+    rates,
+    releaseCurrencyConfig.symbol
+  );
+  const amountUsd = amount * releaseCurrencyUsdRate;
 
   return (
     <>
+      <Debug it={{ burnCurrencyConfig, releaseCurrencyConfig }} />
       <PaperHeader>
         <PaperNav>
           {txState?.newTx && (
@@ -73,7 +97,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
-        {showTransactionStatus && <ReleaseTransactionStatus tx={tx} />}
+        {walletConnected && <ReleaseTransactionStatus tx={tx} />}
         {!walletConnected && (
           <BigWrapper>
             <MediumWrapper>
@@ -89,9 +113,28 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
+        <LabelWithValue
+          label="Releasing"
+          value={
+            <NumberFormatText
+              value={amount}
+              spacedSuffix={burnCurrencyConfig.short}
+            />
+          }
+          valueEquivalent={
+            <NumberFormatText
+              value={amountUsd}
+              prefix="$"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          }
+        />
+        <LabelWithValue label="To" value={tx.destAddress} />
+        <SpacedDivider />
         <TransactionFees
           amount={amount}
-          currency={feeCurrency}
+          currency={burnCurrencyConfig.symbol}
           type={TxType.BURN}
         />
         <Debug it={{ parsedTx, txState: txState }} />
@@ -104,10 +147,33 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
 type ReleaseTransactionStatusProps = {
   tx: GatewaySession;
 };
+
 const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
   tx,
 }) => {
-  const [current] = useMintMachine(tx);
-  //TODO render steps
-  return <Debug it={{ tx, current }} />;
+  // const [current] = useBurnMachine(tx);
+  const current: any = {};
+
+  const [currentValue, setCurrent] = useState("created");
+  console.log(current.value);
+  switch (currentValue as keyof BurnMachineSchema["states"]) {
+    case "created":
+    case "srcSettling":
+      return (
+        <ReleasePendingStatus
+          tx={tx}
+          onSubmit={() => {
+            setCurrent("srcConfirmed");
+            setTimeout(() => {
+              setCurrent("destInitiated");
+            }, 7000);
+          }}
+        />
+      );
+    case "srcConfirmed":
+      return <ReleasePendingStatus tx={tx} submitting />;
+    case "destInitiated":
+      return <ReleaseCompletedStatus tx={tx} />;
+  }
+  return <span>Loading...</span>;
 };

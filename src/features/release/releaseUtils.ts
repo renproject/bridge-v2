@@ -7,9 +7,13 @@ import { getRenJs } from "../../services/renJs";
 import { burnChainMap, releaseChainMap } from "../../services/rentx";
 import {
   BridgeCurrency,
+  getChainConfig,
   getChainRentxName,
   getCurrencyConfig,
+  getCurrencyConfigByRentxName,
   getCurrencyRentxSourceChain,
+  getMintedDestinationCurrencySymbol,
+  getNetworkConfigByRentxName,
   getReleasedDestinationCurrencySymbol,
 } from "../../utils/assetConfigs";
 
@@ -55,6 +59,24 @@ export const createReleaseTransaction = ({
   };
 
   return tx;
+};
+
+export const getBurnAndReleaseParams = (tx: GatewaySession) => {
+  const networkConfig = getNetworkConfigByRentxName(tx.network);
+  const releaseCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
+  const burnCurrencyConfig = getCurrencyConfig(
+    getMintedDestinationCurrencySymbol(releaseCurrencyConfig.symbol)
+  );
+  const burnChainConfig = getChainConfig(burnCurrencyConfig.sourceChain);
+  const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
+
+  return {
+    releaseCurrencyConfig,
+    burnCurrencyConfig,
+    burnChainConfig,
+    networkConfig,
+    releaseChainConfig,
+  };
 };
 
 export const useBurnMachine = (burnTransaction: GatewaySession) => {
