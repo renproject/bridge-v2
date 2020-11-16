@@ -375,7 +375,7 @@ export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
   // BridgeCurrency.RENBCH,
   // BridgeCurrency.RENDOGE,
-  // BridgeCurrency.RENZEC,
+  BridgeCurrency.RENZEC,
 ];
 
 export const getMintedDestinationCurrencySymbol = (

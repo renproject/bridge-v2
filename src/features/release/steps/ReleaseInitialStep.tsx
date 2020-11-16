@@ -35,6 +35,7 @@ import {
 import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import {
   $wallet,
+  addOrUpdateBalance,
   setChain,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
@@ -46,8 +47,6 @@ import {
   setReleaseAmount,
   setReleaseCurrency,
 } from "../releaseSlice";
-
-// const getBalance = (provider: any, token: string) => {};
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -64,6 +63,29 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       });
     }
   }, [provider, account]);
+
+  const fetchAllBalances = useCallback(() => { // TODO: maybe hook?
+    if (provider && account) {
+      for (const currencySymbol of supportedReleaseCurrencies) {
+        const sourceCurrencySymbol = getReleasedDestinationCurrencySymbol(
+          currencySymbol
+        );
+        fetchAssetBalance(provider, account, sourceCurrencySymbol).then(
+          (balance) => {
+            dispatch(
+              addOrUpdateBalance({
+                symbol: currencySymbol,
+                balance,
+              })
+            );
+          }
+        );
+      }
+    }
+  }, [dispatch, provider, account]);
+
+  useEffect(fetchAllBalances, [provider, account]);
+
   const usdAmount = useSelector($releaseUsdAmount);
   const handleChainChange = useCallback(
     (event) => {
@@ -160,7 +182,10 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         />
       </AddressInputWrapper>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleNextStep} disabled={walletStatus === "connected" && !canProceed}>
+        <ActionButton
+          onClick={handleNextStep}
+          disabled={walletStatus === "connected" && !canProceed}
+        >
           {walletStatus !== "connected" ? "Connect Wallet" : "Next"}
         </ActionButton>
       </ActionButtonWrapper>

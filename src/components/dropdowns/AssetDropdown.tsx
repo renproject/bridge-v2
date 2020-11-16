@@ -9,12 +9,13 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useMemo } from "react";
 import {
-  BridgeChain, BridgeCurrency,
+  BridgeChain,
+  BridgeCurrency,
   ChainConfig,
   chainsConfig,
   currenciesConfig,
   CurrencyConfig,
-} from '../../utils/assetConfigs'
+} from "../../utils/assetConfigs";
 
 const getOptions = (mode: AssetDropdownMode) => {
   const options =
