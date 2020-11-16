@@ -189,7 +189,6 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     case "srcSettling":
       return <ReleaseProgressStatus tx={current.context.tx} pending />;
     case "srcConfirmed":
-      return <ReleaseCompletedStatus tx={current.context.tx} />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={current.context.tx} />;
   }

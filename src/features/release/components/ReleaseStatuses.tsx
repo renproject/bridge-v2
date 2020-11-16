@@ -13,6 +13,7 @@ import {
   ProgressWrapper,
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
+import { Debug } from '../../../components/utils/Debug'
 import { useSetPaperTitle } from "../../../pages/MainPage";
 import { getChainExplorerLink } from "../../transactions/transactionsUtils";
 import { getBurnAndReleaseParams } from "../releaseUtils";
@@ -101,13 +102,9 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
     releaseChainConfig,
     burnChainConfig,
     networkConfig,
+    burnTxLink
   } = getBurnAndReleaseParams(tx);
 
-  const burnTxLink = getChainExplorerLink(
-    burnChainConfig.symbol,
-    networkConfig.symbol,
-    "0x12313123131"
-  ); // TODO
   const releaseTxLink = getChainExplorerLink(
     releaseChainConfig.symbol,
     networkConfig.symbol,
@@ -146,6 +143,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
           {burnChainConfig.full} transaction
         </Link>
       </Box>
+      <Debug it={{tx}} />
     </>
   );
 };

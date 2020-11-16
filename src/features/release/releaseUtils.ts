@@ -70,16 +70,28 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   );
   const burnChainConfig = getChainConfig(burnCurrencyConfig.sourceChain);
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
-  const burnTransaction = Object.values(tx.transactions)[0];
-  let burnTxLink: string = "";
+
+  const transaction = Object.values(tx.transactions)[0];
   let burnTxHash: string = "";
-  if (burnTransaction && burnTransaction.sourceTxHash) {
-    burnTxHash = burnTransaction.sourceTxHash;
+  let burnTxLink: string = "";
+  if (transaction && transaction.sourceTxHash) {
+    burnTxHash = transaction.sourceTxHash;
     burnTxLink =
       getChainExplorerLink(
         burnChainConfig.symbol,
         networkConfig.symbol,
-        burnTransaction.sourceTxHash
+        transaction.sourceTxHash
+      ) || "";
+  }
+  let releaseTxHash: string = "";
+  let releaseTxLink: string = "";
+  if (transaction && transaction.destTxHash) {
+    releaseTxHash = transaction.destTxHash;
+    releaseTxLink =
+      getChainExplorerLink(
+        releaseChainConfig.symbol,
+        networkConfig.symbol,
+        releaseTxHash
       ) || "";
   }
 
@@ -89,9 +101,11 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     releaseCurrencyConfig,
     burnChainConfig,
     releaseChainConfig,
-    burnTransaction,
-    burnTxLink,
+    burnTransaction: transaction,
     burnTxHash,
+    burnTxLink,
+    releaseTxHash,
+    releaseTxLink,
   };
 };
 

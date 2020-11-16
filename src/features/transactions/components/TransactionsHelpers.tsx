@@ -1,4 +1,4 @@
-import { Button, styled, Typography } from '@material-ui/core'
+import { Button, styled, Typography } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   ActionButton,
@@ -58,9 +58,13 @@ export const EnableNotificationsWarning: FunctionComponent = () => {
         </Typography>
       </SpacedPaperContent>
       <PaperContent bottomPadding>
-        <Button variant="text" color="primary">Do not enable</Button>
+        <Button variant="text" color="primary">
+          Do not enable
+        </Button>
         <ActionButtonWrapper>
-          <ActionButton onClick={handleClose}>Enable Browser Notifications</ActionButton>
+          <ActionButton onClick={handleClose}>
+            Enable Browser Notifications
+          </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
     </NestedDrawer>
