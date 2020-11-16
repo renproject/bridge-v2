@@ -1,12 +1,13 @@
-import { Container, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent } from 'react'
-import { RouteComponentProps } from 'react-router'
-import { MainLayout } from '../components/layout/MainLayout'
-import { Link } from '../components/links/Links'
-import { MarkText, } from '../components/typography/TypographyHelpers'
-import { links } from '../constants/constants'
-import { usePageTitle } from '../hooks/usePageTitle'
+import { Container, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent } from "react";
+import { RouteComponentProps } from "react-router";
+import { RenLogoFullIcon, RenVMLogoIcon } from "../components/icons/RenIcons";
+import { MainLayout } from "../components/layout/MainLayout";
+import { Link } from "../components/links/Links";
+import { MarkText } from "../components/typography/TypographyHelpers";
+import { links } from "../constants/constants";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,6 +22,22 @@ const useStyles = makeStyles((theme) => ({
   },
   logos: {
     marginTop: 48,
+    display: "flex",
+    alignItems: "center",
+  },
+  ren: {
+    fontSize: 50,
+    display: "inline-flex",
+    alignItems: "center",
+    paddingRight: 25,
+    borderRight: `2px solid ${theme.palette.text.primary}`,
+  },
+  renVM: {
+    fontSize: 26,
+    display: "inline-flex",
+    alignItems: "center",
+    paddingTop: 2,
+    paddingLeft: 25,
   },
 }));
 export const AboutPage: FunctionComponent<RouteComponentProps> = () => {
@@ -68,6 +85,15 @@ export const AboutPage: FunctionComponent<RouteComponentProps> = () => {
           don't completely eliminate risks. Please don't supply assets you can't
           afford to lose!
         </Typography>
+        <div className={styles.logos}>
+          <span className={styles.ren}>
+            <RenLogoFullIcon fontSize="inherit" />
+          </span>
+
+          <span className={styles.renVM}>
+            <RenVMLogoIcon fontSize="inherit" />
+          </span>
+        </div>
       </Container>
     </MainLayout>
   );

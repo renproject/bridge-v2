@@ -1,14 +1,15 @@
-import { Link, LinkProps } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import GitHubIcon from '@material-ui/icons/GitHub'
-import RedditIcon from '@material-ui/icons/Reddit'
-import TelegramIcon from '@material-ui/icons/Telegram'
-import TwitterIcon from '@material-ui/icons/Twitter'
-import classNames from 'classnames'
-import React, { FunctionComponent } from 'react'
-import { paths } from '../../pages/routes'
+import { LinkProps } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import GitHubIcon from "@material-ui/icons/GitHub";
+import RedditIcon from "@material-ui/icons/Reddit";
+import TelegramIcon from "@material-ui/icons/Telegram";
+import TwitterIcon from "@material-ui/icons/Twitter";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
+import { paths } from "../../pages/routes";
+import { CustomLinkProps, Link } from "../links/Links";
 
-const FooterTextLink: FunctionComponent<LinkProps> = (props) => (
+const FooterTextLink: FunctionComponent<CustomLinkProps> = (props) => (
   <Link color="textSecondary" underline="hover" {...props} />
 );
 
@@ -95,13 +96,13 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
           <FooterTextLink href="/">What is RenVM?</FooterTextLink>
         </li>
         <li>
-          <FooterTextLink href={paths.ABOUT}>About RenVM</FooterTextLink>
+          <FooterTextLink to={paths.ABOUT}>About RenVM</FooterTextLink>
         </li>
         <li>
-          <FooterTextLink href="/">Docs</FooterTextLink>
+          <FooterTextLink>Docs</FooterTextLink>
         </li>
         <li>
-          <FooterTextLink href="/">FAQs</FooterTextLink>
+          <FooterTextLink>FAQs</FooterTextLink>
         </li>
         <li>
           <FooterTextLink href="/">Wiki</FooterTextLink>
