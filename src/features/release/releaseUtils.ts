@@ -69,6 +69,8 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   );
   const burnChainConfig = getChainConfig(burnCurrencyConfig.sourceChain);
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
+  // const burnTransactionLinkAddress // ?
+  // const releaseTransactionLinkAddress // ?
 
   return {
     releaseCurrencyConfig,
