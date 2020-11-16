@@ -55,8 +55,22 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
   select: {
     width: "100%",
   },
-  listIcon: iconStyles,
   supplementalText: {
+    fontSize: 12,
+  },
+  iconWrapper: {
+    display: "inline-flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  listIcon: iconStyles,
+  assetName: {
+    fontSize: 13,
+  },
+  assetFullName: {
+    fontSize: 10,
+  },
+  balance: {
     fontSize: 12,
   },
   listSubheader: {
@@ -125,9 +139,9 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
         MenuProps={{
           anchorOrigin: {
             vertical: "bottom",
-            horizontal: "left"
+            horizontal: "left",
           },
-          getContentAnchorEl: null
+          getContentAnchorEl: null,
         }}
         {...rest}
       >
@@ -160,17 +174,27 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
             return (
               <MenuItem key={symbol} value={symbol}>
                 <Box display="flex" alignItems="center" width="100%">
-                  <Box width="45px">
+                  <Box width="45px" className={styles.iconWrapper}>
                     <MainIcon className={styles.listIcon} />
                   </Box>
                   <Box flexGrow={1}>
-                    <Typography variant="body1">{short}</Typography>
-                    <Typography variant="subtitle2" color="textSecondary">
+                    <Typography variant="body1" className={styles.assetName}>
+                      {short}
+                    </Typography>
+                    <Typography
+                      variant="subtitle2"
+                      color="textSecondary"
+                      className={styles.assetFullName}
+                    >
                       {full}
                     </Typography>
                   </Box>
                   {balances && (
-                    <Box flexGrow={1} textAlign="right">
+                    <Box
+                      flexGrow={1}
+                      textAlign="right"
+                      className={styles.balance}
+                    >
                       <NumberFormatText
                         value={getAssetBalance(
                           balances,
