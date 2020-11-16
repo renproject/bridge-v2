@@ -33,7 +33,7 @@ export const burnChainMap: BurnMachineContext["fromChainMap"] = {
   ethereum: (context: any) => {
     return Ethereum(context.providers.ethereum).Account({
       address: context.tx.userAddress,
-      value: context.tx.suggestedAmount + "",
+      value: (context.tx.targetAmount * 1e8) + "",
     }) as any;
   },
 };

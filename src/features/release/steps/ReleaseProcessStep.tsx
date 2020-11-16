@@ -39,7 +39,7 @@ import {
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
 } from "../components/ReleaseStatuses";
-import { getBurnAndReleaseParams } from "../releaseUtils";
+import { getBurnAndReleaseParams, useBurnMachine } from "../releaseUtils";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
@@ -72,7 +72,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
 
   return (
     <>
-      <Debug it={{ burnCurrencyConfig, releaseCurrencyConfig }} />
       <PaperHeader>
         <PaperNav>
           {txState?.newTx && (
@@ -142,8 +141,9 @@ type ReleaseTransactionStatusProps = {
 const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
   tx,
 }) => {
-  // const [current] = useBurnMachine(tx);
-  const current: any = {};
+  console.log(tx);
+  const [current] = useBurnMachine(tx);
+  // const current: any = {};
 
   const [currentValue, setCurrent] = useState("created");
   console.log(current.value);
