@@ -145,22 +145,12 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   const [current] = useBurnMachine(tx);
   // const current: any = {};
 
-  const [currentValue, setCurrent] = useState("created");
+  // const [currentValue, setCurrent] = useState("created");
   console.log(current.value);
-  switch (currentValue as keyof BurnMachineSchema["states"]) {
+  switch (current.value as keyof BurnMachineSchema["states"]) {
     case "created":
     case "srcSettling":
-      return (
-        <ReleaseProgressStatus
-          tx={tx}
-          onSubmit={() => {
-            setCurrent("srcConfirmed");
-            setTimeout(() => {
-              setCurrent("destInitiated");
-            }, 7000);
-          }}
-        />
-      );
+      return <ReleaseProgressStatus tx={tx} onSubmit={() => {}} />;
     case "srcConfirmed":
       return <ReleaseProgressStatus tx={tx} submitting />;
     case "destInitiated":
