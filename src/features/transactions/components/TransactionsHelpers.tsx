@@ -40,7 +40,7 @@ export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = 
       onClosed();
     }
     setOpen(false);
-  }, []);
+  }, [onClosed]);
   return (
     <NestedDrawer title="Warning" open={open} onClose={handleClose}>
       <SpacedPaperContent topPadding bottomPadding>
