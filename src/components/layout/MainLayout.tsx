@@ -131,7 +131,7 @@ const useBackroundReplacer = (variant: string | undefined) =>
   }, [variant]);
 
 type MainLayoutProps = {
-  variant?: "intro";
+  variant?: "intro" | "about";
 };
 
 export const MainLayout: FunctionComponent<MainLayoutProps> = ({
@@ -191,7 +191,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const debugMultiwallet = useMultiwallet(); //remove
 
   const drawerId = "main-menu-mobile";
-  const withMenu = variant !== "intro";
+  const withMenu = variant !== "intro" && variant !== "about";
 
   return (
     <Container maxWidth="lg">

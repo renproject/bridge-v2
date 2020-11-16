@@ -1,5 +1,6 @@
 import { Divider, Typography } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
+import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
 import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
@@ -165,6 +166,31 @@ export const BigAssetAmount: FunctionComponent<BigAssetAmountProps> = ({
   );
 };
 
-export const ProcessingTimeLabel = styled(Typography)({
-  marginTop: 5,
-});
+const useMarkTextStyles = makeStyles((theme) => ({
+  blue: {
+    color: theme.palette.primary.main,
+  },
+  orange: {
+    color: theme.customColors.orangeDark,
+  },
+  grey: {
+    color: theme.palette.grey[600],
+  },
+}));
+
+type MarkTextProps = {
+  color?: "orange" | "blue" | "grey";
+};
+
+export const MarkText: FunctionComponent<MarkTextProps> = ({
+  color = "blue",
+  children,
+}) => {
+  const styles = useMarkTextStyles();
+  const className = classNames({
+    [styles.blue]: color === "blue",
+    [styles.orange]: color === "orange",
+    [styles.grey]: color === "grey",
+  });
+  return <span className={className}>{children}</span>;
+};
