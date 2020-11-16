@@ -174,7 +174,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];
     return { deposit, machine };
-  }, [current.context]);
+  }, [current.context.tx, current.context.depositMachines]);
 
   return (
     <>
@@ -280,7 +280,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   machine,
 }) => {
   const handleSubmitToDestinationChain = useCallback(() => {
-    machine?.send({ type: "CLAIM" });
+    machine.send({ type: "CLAIM" });
   }, [machine]);
 
   console.log("state value", machine.state.value);

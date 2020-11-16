@@ -40,7 +40,11 @@ export const useTxParam = () => {
 export const createTxQueryString = (tx: GatewaySession) => {
   const { customParams, transactions, ...sanitized } = tx;
 
-  return queryString.stringify(sanitized as any);
+  return queryString.stringify({
+    ...sanitized,
+    customParams: JSON.stringify(customParams),
+    transactions: JSON.stringify(transactions),
+  } as any);
 };
 
 const parseNumber = (value: any) => {
@@ -57,9 +61,19 @@ export const parseTxQueryString: (
   if (!parsed) {
     return null;
   }
-  const { expiryTime, suggestedAmount, targetAmount, ...rest } = parsed;
+  const {
+    expiryTime,
+    suggestedAmount,
+    targetAmount,
+    transactions,
+    customParams,
+    ...rest
+  } = parsed;
+
   return {
     ...rest,
+    transactions: JSON.parse((transactions as string) || "{}"),
+    customParams: JSON.parse((customParams as string) || "{}"),
     expiryTime: parseNumber(expiryTime),
     suggestedAmount: parseNumber(suggestedAmount),
     targetAmount: parseNumber(targetAmount),

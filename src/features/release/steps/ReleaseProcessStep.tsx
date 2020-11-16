@@ -141,12 +141,8 @@ type ReleaseTransactionStatusProps = {
 const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
   tx,
 }) => {
-  console.log(tx);
   const [current] = useBurnMachine(tx);
-  // const current: any = {};
 
-  // const [currentValue, setCurrent] = useState("created");
-  console.log(current.value);
   switch (current.value as keyof BurnMachineSchema["states"]) {
     case "created":
     case "srcSettling":
