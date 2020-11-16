@@ -1,6 +1,7 @@
-import { Ethereum } from '@renproject/chains'
-import { RenNetwork } from '@renproject/interfaces'
-import { BridgeChain } from '../../utils/assetConfigs'
+import { Ethereum } from "@renproject/chains";
+import { RenNetwork } from "@renproject/interfaces";
+import { BridgeChain, BridgeCurrency } from "../../utils/assetConfigs";
+import { AssetBalance } from "./walletSlice";
 
 export const bridgeChainToMultiwalletChain = (chainSymbol: BridgeChain) => {
   switch (chainSymbol) {
@@ -37,4 +38,12 @@ export const fetchAssetBalance = (
     console.log("balance", balance.toNumber());
     return balance.toNumber() / 100000000;
   });
+};
+
+export const getAssetBalance = (
+  balances: Array<AssetBalance>,
+  symbol: BridgeCurrency
+) => {
+  const balanceEntry = balances.find((entry) => entry.symbol === symbol);
+  return balanceEntry?.balance;
 };

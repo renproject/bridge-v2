@@ -1,5 +1,6 @@
 import {
   Box,
+  ListSubheader,
   MenuItem,
   Select,
   SelectProps,
@@ -8,6 +9,8 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useMemo } from "react";
+import { AssetBalance } from "../../features/wallet/walletSlice";
+import { getAssetBalance } from "../../features/wallet/walletUtils";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -16,6 +19,7 @@ import {
   currenciesConfig,
   CurrencyConfig,
 } from "../../utils/assetConfigs";
+import { NumberFormatText } from "../formatting/NumberFormatText";
 
 const getOptions = (mode: AssetDropdownMode) => {
   const options =
@@ -55,6 +59,13 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
   supplementalText: {
     fontSize: 12,
   },
+  listSubheader: {
+    fontSize: 10,
+    lineHeight: 1,
+  },
+  listSubheaderLabel: {
+    fontSize: 10,
+  },
 }));
 
 type AssetDropdownMode = "send" | "receive" | "chain"; // TODO: remove recaive
@@ -62,6 +73,7 @@ type AssetDropdownMode = "send" | "receive" | "chain"; // TODO: remove recaive
 type AssetDropdownProps = SelectProps & {
   mode: AssetDropdownMode;
   available?: Array<BridgeCurrency | BridgeChain>;
+  balances?: Array<AssetBalance>;
   label: string;
 };
 
@@ -69,6 +81,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   mode,
   available,
   label,
+  balances,
   ...rest
 }) => {
   const styles = useAssetDropdownStyles();
@@ -109,8 +122,38 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
         variant="outlined"
         className={styles.select}
         renderValue={valueRenderer}
+        MenuProps={{
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "left"
+          },
+          getContentAnchorEl: null
+        }}
         {...rest}
       >
+        <ListSubheader className={styles.listSubheader}>
+          <Box display="flex" alignItems="center" width="100%">
+            <Box width="45px" />
+            <Box flexGrow={1}>
+              <Typography
+                variant="overline"
+                className={styles.listSubheaderLabel}
+              >
+                {mode === "chain" ? "Blockchain" : "Asset"}
+              </Typography>
+            </Box>
+            {balances && (
+              <Box flexGrow={1} textAlign="right">
+                <Typography
+                  variant="overline"
+                  className={styles.listSubheaderLabel}
+                >
+                  Your Balance
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </ListSubheader>
         {getOptions(mode)
           .filter(availabilityFilter)
           .map(({ symbol, MainIcon, GreyIcon, full, short }) => {
@@ -126,6 +169,16 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
                       {full}
                     </Typography>
                   </Box>
+                  {balances && (
+                    <Box flexGrow={1} textAlign="right">
+                      <NumberFormatText
+                        value={getAssetBalance(
+                          balances,
+                          symbol as BridgeCurrency
+                        )}
+                      />
+                    </Box>
+                  )}
                 </Box>
               </MenuItem>
             );

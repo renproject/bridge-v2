@@ -54,7 +54,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const dispatch = useDispatch();
   const { status: walletStatus, account, provider } = useSelectedChainWallet();
   const [balance, setBalance] = useState<number | null>(null);
-  const { chain } = useSelector($wallet);
+  const { chain, balances } = useSelector($wallet);
   const { currency, amount, address } = useSelector($release);
   useEffect(() => {
     if (provider && account) {
@@ -157,7 +157,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       />
       <AssetDropdownWrapper>
         <AssetDropdown
-          label="Destination Chain"
+          label="Chain"
           mode="chain"
           available={supportedReleaseSourceChains}
           value={chain}
@@ -169,6 +169,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
           label="Asset"
           mode="send"
           available={supportedReleaseCurrencies}
+          balances={balances}
           value={currency}
           onChange={handleCurrencyChange}
         />
