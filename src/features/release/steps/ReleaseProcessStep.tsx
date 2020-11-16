@@ -38,7 +38,10 @@ import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwall
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { BookmarkPageWarning, ProgressStatus } from '../../transactions/components/TransactionsHelpers'
+import {
+  BookmarkPageWarning,
+  ProgressStatus,
+} from "../../transactions/components/TransactionsHelpers";
 import {
   createTxQueryString,
   TxType,
@@ -54,7 +57,7 @@ import { getBurnAndReleaseParams, useBurnMachine } from "../releaseUtils";
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
 ) => {
-  const { history } = props;
+  const { history, location } = props;
   const [title] = usePaperTitle();
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
@@ -79,6 +82,10 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
     releaseCurrencyConfig.symbol
   );
   const amountUsd = amount * releaseCurrencyUsdRate;
+
+  const onBookmarkWarningClosed = useCallback(() => {
+    history.replace({ ...location, state: undefined });
+  }, [history, location]);
 
   return (
     <>
@@ -139,7 +146,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         />
         <Debug it={{ parsedTx, txState: txState }} />
       </PaperContent>
-      {txState?.newTx && <BookmarkPageWarning />}
+      {txState?.newTx && (
+        <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
+      )}
     </>
   );
 };

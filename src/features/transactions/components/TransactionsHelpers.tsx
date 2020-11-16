@@ -27,9 +27,18 @@ export const SpacedPaperContent = styled(PaperContent)({
   minHeight: 200,
 });
 
-export const BookmarkPageWarning: FunctionComponent = () => {
+type BookmarkPageWarningProps = {
+  onClosed?: () => void;
+};
+
+export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
+  onClosed,
+}) => {
   const [open, setOpen] = useState(true);
   const handleClose = useCallback(() => {
+    if (onClosed) {
+      onClosed();
+    }
     setOpen(false);
   }, []);
   return (
@@ -52,11 +61,20 @@ export const BookmarkPageWarning: FunctionComponent = () => {
   );
 };
 
-export const EnableNotificationsWarning: FunctionComponent = () => {
+type EnableNotificationsWarningProps = {
+  onClosed?: () => void;
+};
+
+export const EnableNotificationsWarning: FunctionComponent<EnableNotificationsWarningProps> = ({
+  onClosed,
+}) => {
   const [open, setOpen] = useState(true);
   const handleClose = useCallback(() => {
+    if (onClosed) {
+      onClosed();
+    }
     setOpen(false);
-  }, []);
+  }, [onClosed]);
   return (
     <NestedDrawer title="Warning" open={open} onClose={handleClose}>
       <SpacedPaperContent topPadding bottomPadding>

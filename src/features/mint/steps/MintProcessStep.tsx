@@ -58,7 +58,10 @@ import {
 } from "../../../utils/assetConfigs";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { BookmarkPageWarning, ProgressStatus } from '../../transactions/components/TransactionsHelpers'
+import {
+  BookmarkPageWarning,
+  ProgressStatus,
+} from "../../transactions/components/TransactionsHelpers";
 import { TxType, useTxParam } from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
@@ -66,13 +69,13 @@ import {
   DepositConfirmationStatus,
   DestinationPendingStatus,
   DestinationReceivedStatus,
-
 } from "../components/MintStatuses";
 import { $mint } from "../mintSlice";
 import { useMintMachine } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
+  location,
 }) => {
   useGasPrices();
   const dispatch = useDispatch();
@@ -92,6 +95,10 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
+
+  const onBookmarkWarningClosed = useCallback(() => {
+    history.replace({ ...location, state: undefined });
+  }, [history, location]);
 
   const walletConnected = status === "connected";
   const showTransactionStatus = !!tx && walletConnected;
@@ -137,7 +144,9 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         />
         <Debug it={{ parsedTx, txState: txState }} />
       </PaperContent>
-      {txState?.newTx && <BookmarkPageWarning />}
+      {txState?.newTx && (
+        <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
+      )}
     </>
   );
 };
@@ -303,6 +312,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   const stateValue = machine.state
     .value as keyof DepositMachineSchema["states"];
   console.log(stateValue);
+
   switch (stateValue) {
     // switch (forceState) {
     case "srcSettling":
