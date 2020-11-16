@@ -16,6 +16,7 @@ import {
   getNetworkConfigByRentxName,
   getReleasedDestinationCurrencySymbol,
 } from "../../utils/assetConfigs";
+import { getChainExplorerLink } from "../transactions/transactionsUtils";
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
@@ -69,15 +70,28 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   );
   const burnChainConfig = getChainConfig(burnCurrencyConfig.sourceChain);
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
-  // const burnTransactionLinkAddress // ?
-  // const releaseTransactionLinkAddress // ?
+  const burnTransaction = Object.values(tx.transactions)[0];
+  let burnTxLink: string = "";
+  let burnTxHash: string = "";
+  if (burnTransaction && burnTransaction.sourceTxHash) {
+    burnTxHash = burnTransaction.sourceTxHash;
+    burnTxLink =
+      getChainExplorerLink(
+        burnChainConfig.symbol,
+        networkConfig.symbol,
+        burnTransaction.sourceTxHash
+      ) || "";
+  }
 
   return {
-    releaseCurrencyConfig,
-    burnCurrencyConfig,
-    burnChainConfig,
     networkConfig,
+    burnCurrencyConfig,
+    releaseCurrencyConfig,
+    burnChainConfig,
     releaseChainConfig,
+    burnTransaction,
+    burnTxLink,
+    burnTxHash,
   };
 };
 

@@ -34,7 +34,9 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
 }) => {
   useSetPaperTitle("Submit");
   const theme = useTheme();
-  const { burnChainConfig, networkConfig } = getBurnAndReleaseParams(tx);
+  const { burnChainConfig, burnTxHash, burnTxLink } = getBurnAndReleaseParams(
+    tx
+  );
 
   const handleSubmit = useCallback(() => {
     if (onSubmit) {
@@ -43,12 +45,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
   }, [onSubmit]);
 
   const buttonSubmitting = pending || submitting;
-  const burnTransaction = Object.values(tx.transactions)[0];
-  const burnTxLink = getChainExplorerLink(
-    burnChainConfig.symbol,
-    networkConfig.symbol,
-    burnTransaction.sourceTxHash
-  );
+
   return (
     <>
       <ProgressWrapper>
@@ -64,7 +61,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
                   href={burnTxLink}
                   target="_blank"
                 >
-                  {burnTransaction.sourceTxHash}
+                  {burnTxHash}
                 </Link>
               }
             />
