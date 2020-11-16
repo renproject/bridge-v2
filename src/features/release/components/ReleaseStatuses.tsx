@@ -1,18 +1,21 @@
-import { Box, Typography, useTheme } from '@material-ui/core'
-import { GatewaySession } from '@renproject/rentx'
-import React, { FunctionComponent, useCallback } from 'react'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { MetamaskFullIcon } from '../../../components/icons/RenIcons'
-import { Link } from '../../../components/links/Links'
+import { Box, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/rentx";
+import React, { FunctionComponent, useCallback } from "react";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { MetamaskFullIcon } from "../../../components/icons/RenIcons";
+import { Link } from "../../../components/links/Links";
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { useSetPaperTitle } from '../../../pages/MainPage'
-import { getChainExplorerLink } from '../../transactions/transactionsUtils'
-import { getBurnAndReleaseParams } from '../releaseUtils'
+} from "../../../components/progress/ProgressHelpers";
+import { useSetPaperTitle } from "../../../pages/MainPage";
+import { getChainExplorerLink } from "../../transactions/transactionsUtils";
+import { getBurnAndReleaseParams } from "../releaseUtils";
 
 export const a = 1;
 
@@ -20,16 +23,18 @@ type ReleaseProgressStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
   submitting?: boolean;
+  pending?: boolean;
 };
 
 export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps> = ({
   tx,
   onSubmit,
   submitting = false,
+  pending = false,
 }) => {
   useSetPaperTitle("Submit");
   const theme = useTheme();
-  const { burnChainConfig } = getBurnAndReleaseParams(tx);
+  const { burnChainConfig, networkConfig } = getBurnAndReleaseParams(tx);
 
   const handleSubmit = useCallback(() => {
     if (onSubmit) {
@@ -37,31 +42,47 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
     }
   }, [onSubmit]);
 
+  const buttonSubmitting = pending || submitting;
+  const burnTransaction = Object.values(tx.transactions)[0];
+  const burnTxLink = getChainExplorerLink(
+    burnChainConfig.symbol,
+    networkConfig.symbol,
+    burnTransaction.sourceTxHash
+  );
   return (
     <>
       <ProgressWrapper>
         <ProgressWithContent color={theme.customColors.skyBlue} processing>
-          {submitting ? (
+          {pending ? (
             <TransactionStatusInfo
               status="Pending"
               chain={burnChainConfig.full}
-              address={"0x0213131"} // TODO
+              address={
+                <Link
+                  color="primary"
+                  underline="hover"
+                  href={burnTxLink}
+                  target="_blank"
+                >
+                  {burnTransaction.sourceTxHash}
+                </Link>
+              }
             />
           ) : (
             <MetamaskFullIcon fontSize="inherit" color="inherit" />
           )}
         </ProgressWithContent>
       </ProgressWrapper>
-      {!submitting && (
+      {!pending && (
         <Typography variant="body1" align="center" gutterBottom>
           To receive your BTC, submit a release transaction to Ethereum via your
           Web3 Wallet.
         </Typography>
       )}
       <ActionButtonWrapper>
-        <ActionButton onClick={handleSubmit} disabled={submitting}>
-          {submitting ? "Submitting" : "Submit"} to {burnChainConfig.full}
-          {submitting && "..."}
+        <ActionButton onClick={handleSubmit} disabled={buttonSubmitting}>
+          {buttonSubmitting ? "Submitting" : "Submit"} to {burnChainConfig.full}
+          {buttonSubmitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
     </>

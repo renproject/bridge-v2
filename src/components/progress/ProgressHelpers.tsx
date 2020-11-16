@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import CompletedIcon from "@material-ui/icons/Check";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, ReactNode } from 'react'
 import { BridgeChain } from '../../utils/assetConfigs'
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
 import { TransactionStatusType } from "../utils/types";
@@ -197,7 +197,7 @@ const useTransactionStatusInfoStyles = makeStyles((theme) => ({
 
 type TransactionStatusInfoProps = {
   chain?: string;
-  address?: string;
+  address?: string | ReactNode;
   status?: string;
 };
 

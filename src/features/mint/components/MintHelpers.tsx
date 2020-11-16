@@ -1,6 +1,6 @@
-import { GatewaySession } from '@renproject/rentx'
-import { FunctionComponent, useEffect } from 'react'
-import { useMintMachine } from '../mintUtils'
+import { GatewaySession } from "@renproject/rentx";
+import { FunctionComponent, useEffect } from "react";
+import { useMintMachine } from "../mintUtils";
 
 export const mintTooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",
@@ -18,8 +18,13 @@ export const MintTransactionInitializer: FunctionComponent<MintTransactionInitia
   initialTx,
   onCreated,
 }) => {
-  const [current] = useMintMachine(initialTx);
-
+  const [current, , service] = useMintMachine(initialTx);
+  useEffect(
+    () => () => {
+      service.stop();
+    },
+    [service]
+  );
   useEffect(() => {
     console.log(
       current.context.tx.gatewayAddress,

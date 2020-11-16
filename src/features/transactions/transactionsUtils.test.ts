@@ -17,17 +17,20 @@ const tx: GatewaySession = {
 };
 
 const txQuery =
-  "destAddress=&destNetwork=ethereum&expiryTime=1604670899484&id=tx-1234abc&network=testnet&sourceAsset=btc&sourceNetwork=bitcoin&targetAmount=1&type=mint&userAddress=";
+  "destAddress=&destNetwork=ethereum&expiryTime=1604670899484&id=tx-1234abc&network=testnet&sourceAsset=btc&sourceNetwork=bitcoin&targetAmount=1&transactions=%7B%7D&type=mint&userAddress=";
 
 const expectedParsedTx: Partial<GatewaySession> = {
+  customParams: {},
   id: "tx-1234abc",
   type: "mint",
   sourceAsset: "btc",
   sourceNetwork: "bitcoin",
+  suggestedAmount: undefined,
   network: "testnet",
   destAddress: "",
   destNetwork: "ethereum",
   targetAmount: 1,
+  transactions: {},
   userAddress: "",
   expiryTime: 1604670899484,
 };
@@ -36,6 +39,7 @@ const realTxQuery =
   "destAddress=0xdf88bc963e614fab2bda81c298056ba18e01a424&destNetwork=ethereum&expiryTime=1605142829344&gatewayAddress=2NEJcFe7nkJCHFEu4vP2w1PRfeUb9o2ELhM&id=tx-1425032430964379&network=testnet&nonce=c958acd445371132d990073034a19d2f894ef5a3d0a002a4f75f2d1493de42c3&sourceAsset=btc&sourceNetwork=bitcoin&suggestedAmount=1100000&targetAmount=0.01&type=mint&userAddress=0xdf88bc963e614fab2bda81c298056ba18e01a424";
 
 const realTx = {
+  customParams: {},
   destAddress: "0xdf88bc963e614fab2bda81c298056ba18e01a424",
   destNetwork: "ethereum",
   expiryTime: 1605142829344,
@@ -47,6 +51,7 @@ const realTx = {
   sourceNetwork: "bitcoin",
   suggestedAmount: 1100000,
   targetAmount: 0.01,
+  transactions: {},
   type: "mint",
   userAddress: "0xdf88bc963e614fab2bda81c298056ba18e01a424",
 };

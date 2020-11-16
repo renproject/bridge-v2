@@ -16,11 +16,17 @@ export const BurnAndReleaseTransactionInitializer: FunctionComponent<BurnAndRele
   initialTx,
   onCreated,
 }) => {
-  const [current] = useBurnMachine(initialTx);
-  console.log("buring initialized...");
+  const [current, , service] = useBurnMachine(initialTx);
+  useEffect(
+    () => () => {
+      service.stop();
+    },
+    [service]
+  );
+  console.log("buring initialized...", current.value);
   useEffect(() => {
     console.log("current.context.tx", current.context.tx);
-    if (onCreated && current.value === "srcSettling") {
+    if (onCreated && current.value === "created") {
       onCreated(current.context.tx);
     }
   }, [onCreated, current.value, current.context.tx]);

@@ -1,8 +1,13 @@
 import { Divider, IconButton } from "@material-ui/core";
 import { BurnMachineSchema, GatewaySession } from "@renproject/rentx";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, useHistory } from "react-router-dom";
 import {
   ActionButton,
   ToggleIconButton,
@@ -28,12 +33,17 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePaperTitle } from "../../../pages/MainPage";
+import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { BookmarkPageWarning } from "../../transactions/components/TransactionsHelpers";
-import { TxType, useTxParam } from "../../transactions/transactionsUtils";
+import {
+  createTxQueryString,
+  TxType,
+  useTxParam,
+} from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   ReleaseCompletedStatus,
@@ -141,14 +151,45 @@ type ReleaseTransactionStatusProps = {
 const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
   tx,
 }) => {
-  const [current] = useBurnMachine(tx);
+  const history = useHistory();
+  const [current, send, service] = useBurnMachine(tx);
+  useEffect(
+    () => () => {
+      service.stop();
+    },
+    [service]
+  );
 
+  const [submitting, setSubmitting] = useState(false);
+  const handleSubmit = useCallback(() => {
+    setSubmitting(true);
+    send({ type: "SUBMIT" });
+  }, [send]);
+
+  useEffect(() => {
+    if (current.value === "srcSettling") {
+      history.replace({
+        pathname: paths.RELEASE_TRANSACTION,
+        search: "?" + createTxQueryString(current.context.tx),
+      });
+    }
+  }, [history, current.value, current.context.tx]);
+
+  console.log("current.value", current.value);
+  console.log("ctx", current.context.tx);
   switch (current.value as keyof BurnMachineSchema["states"]) {
     case "created":
+      return (
+        <ReleaseProgressStatus
+          tx={tx}
+          onSubmit={handleSubmit}
+          submitting={submitting}
+        />
+      );
     case "srcSettling":
-      return <ReleaseProgressStatus tx={tx} onSubmit={() => {}} />;
+      return <ReleaseProgressStatus tx={tx} pending />;
     case "srcConfirmed":
-      return <ReleaseProgressStatus tx={tx} submitting />;
+      return <ReleaseCompletedStatus tx={tx} />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={tx} />;
   }
