@@ -1,6 +1,6 @@
-import { Bitcoin, Ethereum } from "@renproject/chains";
-import { RenNetwork } from "@renproject/interfaces";
-import { BridgeChain } from "../../utils/assetConfigs";
+import { Ethereum } from '@renproject/chains'
+import { RenNetwork } from '@renproject/interfaces'
+import { BridgeChain } from '../../utils/assetConfigs'
 
 export const bridgeChainToMultiwalletChain = (chainSymbol: BridgeChain) => {
   switch (chainSymbol) {

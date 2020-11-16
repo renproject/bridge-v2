@@ -1,6 +1,5 @@
 import { Divider, IconButton } from "@material-ui/core";
 import { BurnMachineSchema, GatewaySession } from "@renproject/rentx";
-import { release } from "os";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
@@ -30,12 +29,6 @@ import { Debug } from "../../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import {
-  getCurrencyConfig,
-  getCurrencyConfigByRentxName,
-  getMintedDestinationCurrencySymbol,
-} from "../../../utils/assetConfigs";
-import { useExchangeRates } from "../../marketData/marketDataHooks";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
@@ -44,9 +37,9 @@ import { TxType, useTxParam } from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   ReleaseCompletedStatus,
-  ReleasePendingStatus,
+  ReleaseProgressStatus,
 } from "../components/ReleaseStatuses";
-import { getBurnAndReleaseParams, useBurnMachine } from "../releaseUtils";
+import { getBurnAndReleaseParams } from "../releaseUtils";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
@@ -67,11 +60,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   }, [dispatch]);
   const walletConnected = status === "connected";
 
-  const {
-    burnCurrencyConfig,
-    releaseCurrencyConfig,
-    burnChainConfig,
-  } = getBurnAndReleaseParams(tx);
+  const { burnCurrencyConfig, releaseCurrencyConfig } = getBurnAndReleaseParams(
+    tx
+  );
   const amount = Number(tx.targetAmount);
   const releaseCurrencyUsdRate = findExchangeRate(
     rates,
@@ -160,7 +151,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     case "created":
     case "srcSettling":
       return (
-        <ReleasePendingStatus
+        <ReleaseProgressStatus
           tx={tx}
           onSubmit={() => {
             setCurrent("srcConfirmed");
@@ -171,7 +162,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
         />
       );
     case "srcConfirmed":
-      return <ReleasePendingStatus tx={tx} submitting />;
+      return <ReleaseProgressStatus tx={tx} submitting />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={tx} />;
   }

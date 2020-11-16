@@ -1,25 +1,16 @@
-import React, { FunctionComponent, useMemo } from "react";
-import { useSelector } from "react-redux";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import {
-  BridgeCurrency,
-  getChainConfig,
-  getCurrencyConfig,
-  getCurrencySourceChain,
-  getReleasedDestinationCurrencySymbol,
-} from "../../../utils/assetConfigs";
-import { fromGwei } from "../../../utils/converters";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
-import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
-import { $fees } from "../../renData/renDataSlice";
-import {
-  BridgeFees,
-  calculateTransactionFees,
-} from "../../renData/renDataUtils";
-import { getFeeTooltips, TxType } from "../transactionsUtils";
+import React, { FunctionComponent, useMemo } from 'react'
+import { useSelector } from 'react-redux'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
+import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
+import { BridgeCurrency, getCurrencyConfig, getReleasedDestinationCurrencySymbol, } from '../../../utils/assetConfigs'
+import { fromGwei } from '../../../utils/converters'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
+import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
+import { $fees } from '../../renData/renDataSlice'
+import { BridgeFees, calculateTransactionFees, } from '../../renData/renDataUtils'
+import { getFeeTooltips, TxType } from '../transactionsUtils'
 
 type TransactionFeesProps = {
   type: TxType;

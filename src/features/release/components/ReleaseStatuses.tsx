@@ -1,43 +1,33 @@
-import { Box, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/rentx";
-import { release } from "os";
-import React, { FunctionComponent, useCallback } from "react";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { MetamaskFullIcon } from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
+import { Box, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/rentx'
+import React, { FunctionComponent, useCallback } from 'react'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { MetamaskFullIcon } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import {
-  BridgeChain,
-  BridgeCurrency,
-  BridgeNetwork,
-  getChainConfig,
-  getCurrencyConfig,
-} from "../../../utils/assetConfigs";
-import { getChainExplorerLink } from "../../transactions/transactionsUtils";
-import { getBurnAndReleaseParams } from "../releaseUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { useSetPaperTitle } from '../../../pages/MainPage'
+import { getChainExplorerLink } from '../../transactions/transactionsUtils'
+import { getBurnAndReleaseParams } from '../releaseUtils'
 
 export const a = 1;
 
-type ReleasePendingStatusProps = {
+type ReleaseProgressStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
   submitting?: boolean;
 };
 
-export const ReleasePendingStatus: FunctionComponent<ReleasePendingStatusProps> = ({
+export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps> = ({
   tx,
   onSubmit,
   submitting = false,
 }) => {
+  useSetPaperTitle("Submit");
   const theme = useTheme();
   const { burnChainConfig } = getBurnAndReleaseParams(tx);
 
@@ -87,6 +77,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
   tx,
   onReturn = () => {},
 }) => {
+  useSetPaperTitle("Complete");
   const theme = useTheme();
   const {
     releaseChainConfig,

@@ -7,26 +7,26 @@ export const releaseTooltips = {
   to: "The wallet address you're receiving the assets to.",
 };
 
-type BurnTransactionInitializerProps = {
+type BurnAndReleaseTransactionInitializerProps = {
   initialTx: GatewaySession;
   onCreated?: (tx: GatewaySession) => void;
 };
 
-export const BurnTransactionInitializer: FunctionComponent<BurnTransactionInitializerProps> = ({
+export const BurnAndReleaseTransactionInitializer: FunctionComponent<BurnAndReleaseTransactionInitializerProps> = ({
   initialTx,
   onCreated,
 }) => {
   const [current] = useBurnMachine(initialTx);
   console.log("buring initialized...");
-  useEffect(() => {
-    console.log("current.value", current.value);
-  }, [current]);
+  // useEffect(() => {
+  //   console.log("current.value", current.value);
+  // }, [current]);
   useEffect(() => {
     console.log("current.context.tx", current.context.tx);
     if (onCreated && current.value === "srcSettling") {
       onCreated(current.context.tx);
     }
-  }, [onCreated, current.context.tx]);
+  }, [onCreated, current.value, current.context.tx]);
 
   return null;
 };

@@ -1,10 +1,10 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { burnMachine, GatewaySession } from "@renproject/rentx";
-import { useMachine } from "@xstate/react";
-import { env } from "../../constants/environmentVariables";
-import { getRenJs } from "../../services/renJs";
-import { burnChainMap, releaseChainMap } from "../../services/rentx";
+import { RenNetwork } from '@renproject/interfaces'
+import { useMultiwallet } from '@renproject/multiwallet-ui'
+import { burnMachine, GatewaySession } from '@renproject/rentx'
+import { useMachine } from '@xstate/react'
+import { env } from '../../constants/environmentVariables'
+import { getRenJs } from '../../services/renJs'
+import { burnChainMap, releaseChainMap } from '../../services/rentx'
 import {
   BridgeCurrency,
   getChainConfig,
@@ -15,7 +15,7 @@ import {
   getMintedDestinationCurrencySymbol,
   getNetworkConfigByRentxName,
   getReleasedDestinationCurrencySymbol,
-} from "../../utils/assetConfigs";
+} from '../../utils/assetConfigs'
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
