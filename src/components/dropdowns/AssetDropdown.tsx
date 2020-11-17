@@ -121,7 +121,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
             <MainIcon className={styles.listIcon} />
           </Box>
           <Box flexGrow={1}>
-            <Typography variant="body1">
+            <Typography variant="body2">
               {mode === "chain" ? full : short}
             </Typography>
           </Box>
