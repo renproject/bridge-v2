@@ -1,22 +1,18 @@
-import { Box, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import React, { FunctionComponent, useCallback } from "react";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { MetamaskFullIcon } from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
+import { Box, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback } from 'react'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { MetamaskFullIcon } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { useSetPaperTitle } from "../../../pages/MainPage";
-import { getChainExplorerLink } from "../../transactions/transactionsUtils";
-import { getBurnAndReleaseParams } from "../releaseUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { useSetPaperTitle } from '../../../pages/MainPage'
+import { getBurnAndReleaseParams } from '../releaseUtils'
 
 export const a = 1;
 

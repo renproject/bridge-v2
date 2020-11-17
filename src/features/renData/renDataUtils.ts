@@ -1,6 +1,6 @@
-import { BridgeCurrency } from '../../utils/assetConfigs'
-import { TxType } from '../transactions/transactionsUtils'
-import { mockedFees } from './mockedFees'
+import { BridgeCurrency } from "../../utils/assetConfigs";
+import { TxType } from "../transactions/transactionsUtils";
+import { mockedFees } from "./mockedFees";
 
 type Fees = {
   [key: string]: any;
@@ -47,6 +47,45 @@ export type CalculatedFee = {
 export const fetchFees: () => Promise<BridgeFees> = () => {
   // TODO: refactor fees to new version
   return Promise.resolve(mockedFees as BridgeFees);
+};
+
+export type SimpleFee = {
+  lock: number;
+  release: number;
+  mint: number;
+  burn: number;
+};
+
+type GetTransactionsFeesArgs = {
+  amount: number;
+  fees: SimpleFee | null;
+  type: TxType;
+};
+
+export const getTransactionFees = ({
+  amount,
+  type,
+  fees,
+}: GetTransactionsFeesArgs) => {
+  const feeData: CalculatedFee = {
+    renVMFee: 0,
+    renVMFeeAmount: 0,
+    networkFee: 0,
+    conversionTotal: amount,
+  };
+  if (fees) {
+    const renTxTypeFee = type === TxType.MINT ? fees.mint : fees.burn;
+    const networkFee = type === TxType.MINT ? fees.lock : fees.release;
+    feeData.networkFee = Number(networkFee) / 1e8;
+    feeData.renVMFee = Number(renTxTypeFee) / 10000; // percent value
+    feeData.renVMFeeAmount = Number(Number(amount) * feeData.renVMFee);
+    feeData.conversionTotal =
+      Number(Number(amount) - feeData.renVMFeeAmount - feeData.networkFee) > 0
+        ? Number(amount) - feeData.renVMFee - feeData.networkFee
+        : 0;
+  }
+
+  return feeData;
 };
 
 type CalculateTransactionsFeesArgs = {

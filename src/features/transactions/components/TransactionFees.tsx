@@ -1,16 +1,20 @@
-import React, { FunctionComponent, useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
-import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
-import { BridgeCurrency, getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
-import { fromGwei } from '../../../utils/converters'
-import { useGasPrices } from '../../marketData/marketDataHooks'
-import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
-import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { $fees } from '../../renData/renDataSlice'
-import { BridgeFees, calculateTransactionFees, } from '../../renData/renDataUtils'
-import { getFeeTooltips, TxType } from '../transactionsUtils'
+import React, { FunctionComponent, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
+import { useFetchMintFees } from "../../../services/rentx";
+import {
+  BridgeCurrency,
+  getCurrencyConfig,
+  toReleasedCurrency,
+} from "../../../utils/assetConfigs";
+import { fromGwei } from "../../../utils/converters";
+import { useGasPrices } from "../../marketData/marketDataHooks";
+import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
+import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
+import { BridgeFees, getTransactionFees } from "../../renData/renDataUtils";
+import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {
   type: TxType;
@@ -39,7 +43,6 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   useGasPrices();
   const currencyConfig = getCurrencyConfig(currency);
   const exchangeRates = useSelector($exchangeRates);
-  const fees = useSelector($fees);
   const gasPrices = useSelector($gasPrices);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);
   const ethUsdRate = findExchangeRate(
@@ -48,10 +51,9 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     USD_SYMBOL
   );
   const amountUsd = amount * currencyUsdRate;
-
-  const { renVMFee, renVMFeeAmount, networkFee } = calculateTransactionFees({
+  const { fees, feesReady } = useFetchMintFees(currency);
+  const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
     amount,
-    currency,
     fees,
     type,
   });
@@ -61,10 +63,9 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const destinationCurrency = toReleasedCurrency(currency);
 
   const tooltips = useMemo(() => {
-    const { mint, release } = getMintAndReleaseFees(fees);
     return getFeeTooltips({
-      mintFee: mint / 10000,
-      releaseFee: release / 10000,
+      mintFee: fees.mint / 10000,
+      releaseFee: fees.release / 10000,
       sourceCurrency: currency,
       destinationCurrency: destinationCurrency,
       type: TxType.MINT,
@@ -75,6 +76,9 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
   const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
 
+  if (!feesReady) {
+    return null;
+  }
   return (
     <>
       <LabelWithValue
