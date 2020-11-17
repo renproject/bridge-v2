@@ -1,4 +1,4 @@
-const NETWORK = process.env.REACT_APP_NETWORK || "TESTNET";
+const NETWORK = process.env.REACT_APP_NETWORK || "testnet";
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY || "";
 const BANDCHAIN_ENDPOINT =
   process.env.REACT_APP_BANDCHAIN_ENDPOINT || "https://poa-api.bandchain.org";

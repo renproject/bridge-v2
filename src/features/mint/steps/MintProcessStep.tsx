@@ -164,6 +164,7 @@ const getAddressValidityMessage = (expiryTime: number) => {
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
 }) => {
+  console.log("rendering mts...");
   const [current] = useMintMachine(tx);
   const { showNotification } = useNotifications();
   useEffect(() => {
@@ -183,8 +184,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];
     return { deposit, machine };
-  }, [current.context.tx, current.context.depositMachines]);
+  }, [current.context]);
 
+  console.log(activeDeposit);
   return (
     <>
       {activeDeposit ? (

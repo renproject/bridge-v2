@@ -8,10 +8,16 @@ import { lockChainMap, mintChainMap } from "../../services/rentx";
 import {
   BridgeChain,
   BridgeCurrency,
+  getChainConfig,
   getChainRentxName,
+  getCurrencyConfig,
+  getCurrencyConfigByRentxName,
   getCurrencyRentxName,
   getCurrencyRentxSourceChain,
+  getMintedDestinationCurrencySymbol,
+  getNetworkConfigByRentxName,
 } from "../../utils/assetConfigs";
+import { getChainExplorerLink } from "../transactions/transactionsUtils";
 
 export const getMintTx: GatewaySession = {
   id: "tx-" + Math.floor(Math.random() * 10 ** 16),
@@ -91,4 +97,51 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     },
     devTools: env.XSTATE_DEVTOOLS,
   });
+};
+
+export const getLockAndMintParams = (tx: GatewaySession) => {
+  const networkConfig = getNetworkConfigByRentxName(tx.network);
+  const lockCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
+  const mintCurrencyConfig = getCurrencyConfig(
+    getMintedDestinationCurrencySymbol(lockCurrencyConfig.symbol)
+  );
+  const mintChainConfig = getChainConfig(mintCurrencyConfig.sourceChain);
+  const lockChainConfig = getChainConfig(lockCurrencyConfig.sourceChain);
+
+  const transaction = Object.values(tx.transactions)[0];
+  let mintTxHash: string = "";
+  let mintTxLink: string = "";
+  if (transaction && transaction.sourceTxHash) {
+    mintTxHash = transaction.sourceTxHash;
+    mintTxLink =
+      getChainExplorerLink(
+        mintChainConfig.symbol,
+        networkConfig.symbol,
+        transaction.sourceTxHash
+      ) || "";
+  }
+  let lockTxHash: string = "";
+  let lockTxLink: string = "";
+  if (transaction && transaction.destTxHash) {
+    lockTxHash = transaction.destTxHash;
+    lockTxLink =
+      getChainExplorerLink(
+        lockChainConfig.symbol,
+        networkConfig.symbol,
+        lockTxHash
+      ) || "";
+  }
+
+  return {
+    networkConfig,
+    mintCurrencyConfig,
+    lockCurrencyConfig,
+    mintChainConfig,
+    lockChainConfig,
+    mintTransaction: transaction,
+    mintTxHash,
+    mintTxLink,
+    lockTxHash,
+    lockTxLink,
+  };
 };
