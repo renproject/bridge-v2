@@ -2,7 +2,7 @@ import { SvgIconComponent } from "@material-ui/icons";
 import {
   BchFullIcon,
   BchGreyIcon,
-  BinanceChainFullIcon,
+  BinanceChainFullIcon, BitcoinIcon,
   BtcFullIcon,
   BtcGreyIcon,
   CustomSvgIconComponent,
@@ -17,7 +17,7 @@ import {
   TooltipIcon as NotSetIcon,
   ZecFullIcon,
   ZecGreyIcon,
-} from "../components/icons/RenIcons";
+} from '../components/icons/RenIcons'
 import { orangeLight } from "../theme/colors";
 
 export enum BridgeCurrency {
@@ -267,7 +267,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "BTC",
     full: "Bitcoin",
     FullIcon: NotSetIcon,
-    MainIcon: NotSetIcon,
+    MainIcon: BitcoinIcon,
     rentxName: "bitcoin",
     blockTime: 10,
     targetConfirmations: 6,

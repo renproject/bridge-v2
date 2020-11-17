@@ -190,7 +190,8 @@ const DepositTo: FunctionComponent<DepositToProps> = ({ tx }) => {
     lockChainConfig,
     suggestedAmount,
   } = getLockAndMintParams(tx);
-  const { MainIcon, color } = lockCurrencyConfig;
+  const { color } = lockCurrencyConfig;
+  const { MainIcon } = lockChainConfig;
 
   return (
     <>
