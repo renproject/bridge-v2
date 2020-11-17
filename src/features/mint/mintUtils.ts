@@ -14,7 +14,7 @@ import {
   getCurrencyConfigByRentxName,
   getCurrencyRentxName,
   getCurrencyRentxSourceChain,
-  getMintedDestinationCurrencySymbol,
+  toMintedCurrency,
   getNetworkConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { getChainExplorerLink } from "../transactions/transactionsUtils";
@@ -103,7 +103,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   const networkConfig = getNetworkConfigByRentxName(tx.network);
   const lockCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const mintCurrencyConfig = getCurrencyConfig(
-    getMintedDestinationCurrencySymbol(lockCurrencyConfig.symbol)
+    toMintedCurrency(lockCurrencyConfig.symbol)
   );
   const mintChainConfig = getChainConfig(mintCurrencyConfig.sourceChain);
   const lockChainConfig = getChainConfig(lockCurrencyConfig.sourceChain);
@@ -138,7 +138,6 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     lockCurrencyConfig,
     mintChainConfig,
     lockChainConfig,
-    mintTransaction: transaction,
     mintTxHash,
     mintTxLink,
     lockTxHash,

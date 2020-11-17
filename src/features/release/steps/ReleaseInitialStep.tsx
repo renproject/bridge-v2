@@ -23,7 +23,7 @@ import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwall
 import {
   getChainConfig,
   getCurrencyConfig,
-  getReleasedDestinationCurrencySymbol,
+  toReleasedCurrency,
   supportedReleaseCurrencies,
   supportedReleaseSourceChains,
 } from "../../../utils/assetConfigs";
@@ -55,7 +55,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     // TODO: maybe hook?
     if (provider && account && walletStatus === "connected") {
       for (const currencySymbol of supportedReleaseCurrencies) {
-        const sourceCurrencySymbol = getReleasedDestinationCurrencySymbol(
+        const sourceCurrencySymbol = toReleasedCurrency(
           currencySymbol
         );
         fetchAssetBalance(provider, account, sourceCurrencySymbol).then(
@@ -106,7 +106,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     }
   }, [dispatch, balance]);
 
-  const targetCurrency = getReleasedDestinationCurrencySymbol(currency);
+  const targetCurrency = toReleasedCurrency(currency);
   const currencyConfig = getCurrencyConfig(currency);
   const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
   const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);

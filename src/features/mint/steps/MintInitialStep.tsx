@@ -19,7 +19,7 @@ import { PaperContent } from "../../../components/layout/Paper";
 import { AssetInfo } from "../../../components/typography/TypographyHelpers";
 import {
   getCurrencyShortLabel,
-  getMintedDestinationCurrencySymbol,
+  toMintedCurrency,
   supportedMintCurrencies,
   supportedMintDestinationChains,
 } from "../../../utils/assetConfigs";
@@ -68,7 +68,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [dispatch, amount, onNext]);
 
-  const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency);
+  const mintedCurrencySymbol = toMintedCurrency(currency);
   const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
 
   const MintedCurrencyIcon = useMemo(

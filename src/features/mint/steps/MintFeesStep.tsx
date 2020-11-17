@@ -20,7 +20,7 @@ import { Debug } from '../../../components/utils/Debug'
 import { WalletStatus } from '../../../components/utils/types'
 import { paths } from '../../../pages/routes'
 import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { getChainShortLabel, getCurrencyConfig, getMintedDestinationCurrencySymbol, } from '../../../utils/assetConfigs'
+import { getChainShortLabel, getCurrencyConfig, toMintedCurrency, } from '../../../utils/assetConfigs'
 import { $exchangeRates } from '../../marketData/marketDataSlice'
 import { findExchangeRate } from '../../marketData/marketDataUtils'
 import { $fees } from '../../renData/renDataSlice'
@@ -62,7 +62,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
 
   const targetNetworkLabel = getChainShortLabel(chain);
-  const destinationCurrency = getMintedDestinationCurrencySymbol(currency);
+  const destinationCurrency = toMintedCurrency(currency);
   const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
 
   const MintedCurrencyIcon = useMemo(
@@ -84,7 +84,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         amount: amount,
         currency: currency,
         destAddress: account,
-        mintedCurrency: getMintedDestinationCurrencySymbol(currency),
+        mintedCurrency: toMintedCurrency(currency),
         mintedCurrencyChain: chain,
         userAddress: account,
       }),

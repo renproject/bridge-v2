@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
 import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
 import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
-import { BridgeCurrency, getCurrencyConfig, getReleasedDestinationCurrencySymbol, } from '../../../utils/assetConfigs'
+import { BridgeCurrency, getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
 import { fromGwei } from '../../../utils/converters'
 import { useGasPrices } from '../../marketData/marketDataHooks'
 import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
@@ -58,7 +58,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 
-  const destinationCurrency = getReleasedDestinationCurrencySymbol(currency);
+  const destinationCurrency = toReleasedCurrency(currency);
 
   const tooltips = useMemo(() => {
     const { mint, release } = getMintAndReleaseFees(fees);

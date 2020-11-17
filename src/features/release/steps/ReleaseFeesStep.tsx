@@ -32,7 +32,7 @@ import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getCurrencyConfig,
-  getReleasedDestinationCurrencySymbol,
+  toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
@@ -66,7 +66,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const rates = useSelector($exchangeRates);
   const { conversionTotal } = useSelector($releaseFees);
   const currencyConfig = getCurrencyConfig(currency);
-  const destinationCurrency = getReleasedDestinationCurrencySymbol(currency);
+  const destinationCurrency = toReleasedCurrency(currency);
   const destinationCurrencyUsdRate = findExchangeRate(
     rates,
     destinationCurrency,

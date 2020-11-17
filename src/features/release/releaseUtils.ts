@@ -12,9 +12,9 @@ import {
   getCurrencyConfig,
   getCurrencyConfigByRentxName,
   getCurrencyRentxSourceChain,
-  getMintedDestinationCurrencySymbol,
+  toMintedCurrency,
   getNetworkConfigByRentxName,
-  getReleasedDestinationCurrencySymbol,
+  toReleasedCurrency,
 } from "../../utils/assetConfigs";
 import { getChainExplorerLink } from "../transactions/transactionsUtils";
 
@@ -42,7 +42,7 @@ export const createReleaseTransaction = ({
   userAddress,
   destAddress,
 }: CreateReleaseTransactionParams) => {
-  const sourceCurrency = getReleasedDestinationCurrencySymbol(currency);
+  const sourceCurrency = toReleasedCurrency(currency);
   const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
   const tx: GatewaySession = {
     id: "tx-" + Math.floor(Math.random() * 10 ** 16),
@@ -66,7 +66,7 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   const networkConfig = getNetworkConfigByRentxName(tx.network);
   const releaseCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const burnCurrencyConfig = getCurrencyConfig(
-    getMintedDestinationCurrencySymbol(releaseCurrencyConfig.symbol)
+    toMintedCurrency(releaseCurrencyConfig.symbol)
   );
   const burnChainConfig = getChainConfig(burnCurrencyConfig.sourceChain);
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
@@ -101,7 +101,6 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     releaseCurrencyConfig,
     burnChainConfig,
     releaseChainConfig,
-    burnTransaction: transaction,
     burnTxHash,
     burnTxLink,
     releaseTxHash,
