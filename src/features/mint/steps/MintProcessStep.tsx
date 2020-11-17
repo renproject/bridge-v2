@@ -71,7 +71,7 @@ import {
   DestinationReceivedStatus,
 } from "../components/MintStatuses";
 import { $mint } from "../mintSlice";
-import { useMintMachine } from "../mintUtils";
+import { getLockAndMintParams, useMintMachine } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -197,6 +197,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         />
       ) : (
         <DepositTo
+          tx={current.context.tx}
           amount={Number(current.context.tx.suggestedAmount) / 1e8}
           currency={
             getCurrencyConfigByRentxName(current.context.tx.sourceAsset).symbol
@@ -211,6 +212,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 };
 
 type DepositToProps = {
+  tx: GatewaySession;
   amount: number;
   currency: BridgeCurrency;
   gatewayAddress?: string;
@@ -218,9 +220,8 @@ type DepositToProps = {
 };
 
 const DepositTo: FunctionComponent<DepositToProps> = ({
-  amount,
+  tx,
   currency,
-  gatewayAddress,
   processingTime,
 }) => {
   const [showQr, setShowQr] = useState(false);
@@ -228,35 +229,41 @@ const DepositTo: FunctionComponent<DepositToProps> = ({
     setShowQr(!showQr);
   }, [showQr]);
 
+  const { lockCurrencyConfig, suggestedAmount } = getLockAndMintParams(tx);
+  const { MainIcon, color } = lockCurrencyConfig;
   return (
     <>
       <ProgressWrapper>
-        <ProgressWithContent color={orangeLight} size={64}>
-          <BitcoinIcon fontSize="inherit" color="inherit" />
+        <ProgressWithContent color={color || orangeLight} size={64}>
+          <MainIcon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
       <MediumWrapper>
         <BigAssetAmount
           value={
             <span>
-              Send <NumberFormatText value={amount} spacedSuffix={currency} />{" "}
+              Send{" "}
+              <NumberFormatText
+                value={suggestedAmount}
+                spacedSuffix={lockCurrencyConfig.short}
+              />{" "}
               to
             </span>
           }
         />
       </MediumWrapper>
-      {!!gatewayAddress && (
+      {!!tx.gatewayAddress && (
         <>
           {showQr && (
             <CenteringSpacedBox>
               <Grow in={showQr}>
                 <BigQrCode>
-                  <QRCode value={gatewayAddress} />
+                  <QRCode value={tx.gatewayAddress} />
                 </BigQrCode>
               </Grow>
             </CenteringSpacedBox>
           )}
-          <CopyContentButton content={gatewayAddress} />
+          <CopyContentButton content={tx.gatewayAddress} />
         </>
       )}
       <Box

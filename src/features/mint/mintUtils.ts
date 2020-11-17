@@ -142,5 +142,6 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     mintTxLink,
     lockTxHash,
     lockTxLink,
+    suggestedAmount: Number(tx.suggestedAmount) / 1e8
   };
 };
