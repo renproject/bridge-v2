@@ -76,9 +76,22 @@ export const burnChainMap: BurnMachineContext["fromChainMap"] = {
   },
 };
 
-export const burnChainMapClass = {
+export const burnChainClassMap = {
   ethereum: Ethereum,
 };
+
+export const releaseChainMap: BurnMachineContext["toChainMap"] = {
+  bitcoin: (context) => {
+    return Bitcoin().Address(context.tx.destAddress) as any;
+  },
+};
+
+export const releaseChainClassMap = {
+  bitcoin: Bitcoin,
+  zcash: Zcash,
+  bitcoinCash: BitcoinCash,
+};
+
 const mapFees = (rates: any) => {
   return {
     mint: rates.mint,
@@ -88,26 +101,20 @@ const mapFees = (rates: any) => {
   } as SimpleFee;
 };
 
-export const releaseChainMap: BurnMachineContext["toChainMap"] = {
-  bitcoin: (context) => {
-    return Bitcoin().Address(context.tx.destAddress) as any;
-  },
-};
-
 export const getBurnAndReleaseFees = (
   burnedCurrency: BridgeCurrency,
   provider: any,
   network: RenNetwork
 ) => {
+  const burnedCurrencyConfig = getCurrencyConfig(burnedCurrency);
+  const burnedCurrencyChain = getChainConfig(burnedCurrencyConfig.chain);
   const releasedCurrency = toReleasedCurrency(burnedCurrency);
+  const releasedCurrencyConfig = getCurrencyConfig(releasedCurrency);
+  const releasedCurrencyChain = getChainConfig(releasedCurrencyConfig.chain);
 
-  // const burnedCurrencyConfig = getCurrencyConfig(burnedCurrency);
-  // const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.chain);
-  // const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
-  // const mintedCurrencyChain = getChainConfig(mintedCurrencyConfig.chain);
   console.log(releasedCurrency);
-  const From = Ethereum;
-  const To = Bitcoin;
+  const From = (burnChainClassMap as any)[burnedCurrencyChain.rentxName];
+  const To = (releaseChainClassMap as any)[releasedCurrencyChain.rentxName];
   return getRenJs()
     .getFees({
       asset: releasedCurrency,
@@ -135,14 +142,14 @@ export const useFetchFees = (
   const [pending, setPending] = useState(true);
 
   useEffect(() => {
-    console.log("refething fees");
+    console.log("fetching fees");
     if (provider && status === WalletStatus.CONNECTED) {
       fetchFees(lockedCurrency, provider, network).then((feeRates) => {
         setPending(false);
         setFees(feeRates);
       });
     }
-  }, [lockedCurrency, provider, status, network]);
+  }, [lockedCurrency, provider, status, network, fetchFees]);
 
   return { fees, pending };
 };
