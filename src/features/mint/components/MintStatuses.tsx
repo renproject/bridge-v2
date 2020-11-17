@@ -1,19 +1,41 @@
-import { Box, Typography, useTheme } from '@material-ui/core'
-import React, { FunctionComponent, useEffect } from 'react'
-import { ActionButton, ActionButtonWrapper, TransactionDetailsButton, } from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { getChainIcon } from '../../../components/icons/IconHelpers'
-import { BitcoinIcon, MetamaskFullIcon, } from '../../../components/icons/RenIcons'
-import { Link } from '../../../components/links/Links'
+import { Box, Grow, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/rentx";
+import QRCode from "qrcode.react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+  BigQrCode,
+  CopyContentButton,
+  QrCodeIconButton,
+  TransactionDetailsButton,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { getChainIcon } from "../../../components/icons/IconHelpers";
+import {
+  BitcoinIcon,
+  MetamaskFullIcon,
+} from "../../../components/icons/RenIcons";
+import {
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import { Link } from "../../../components/links/Links";
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
-import { usePaperTitle } from '../../../pages/MainPage'
-import { orangeLight } from '../../../theme/colors'
+} from "../../../components/progress/ProgressHelpers";
+import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
+import { usePaperTitle } from "../../../pages/MainPage";
+import { useNotifications } from "../../../providers/Notifications";
+import { orangeLight } from "../../../theme/colors";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -22,11 +44,97 @@ import {
   getCurrencyConfig,
   getCurrencyShortLabel,
   getCurrencySourceChain,
-} from '../../../utils/assetConfigs'
-import { ProcessingTimeWrapper } from '../../transactions/components/TransactionsHelpers'
-import { getChainExplorerLink } from '../../transactions/transactionsUtils'
+} from "../../../utils/assetConfigs";
+import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
+import { getChainExplorerLink } from "../../transactions/transactionsUtils";
+import { getLockAndMintParams } from "../mintUtils";
 
+const getAddressValidityMessage = (expiryTime: number) => {
+  const time = Math.ceil((expiryTime - Number(new Date())) / 1000 / 3600);
+  const unit = "hours";
+  return `This Gateway Address is only valid for ${time} ${unit}. Do not send multiple deposits or deposit after ${time} ${unit}.`;
+};
 
+export type DepositToProps = {
+  tx: GatewaySession;
+};
+
+export const DepositTo: FunctionComponent<DepositToProps> = ({ tx }) => {
+  const [showQr, setShowQr] = useState(false);
+  const toggleQr = useCallback(() => {
+    setShowQr(!showQr);
+  }, [showQr]);
+  const { showNotification } = useNotifications();
+  useEffect(() => {
+    showNotification(getAddressValidityMessage(tx.expiryTime), {
+      variant: "warning",
+    });
+  }, [showNotification, tx.expiryTime]);
+
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    suggestedAmount,
+  } = getLockAndMintParams(tx);
+  const { color } = lockCurrencyConfig;
+  const { MainIcon } = lockChainConfig;
+
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent color={color || orangeLight} size={64}>
+          <MainIcon fontSize="inherit" color="inherit" />
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <MediumWrapper>
+        <BigAssetAmount
+          value={
+            <span>
+              Send{" "}
+              <NumberFormatText
+                value={suggestedAmount}
+                spacedSuffix={lockCurrencyConfig.short}
+              />{" "}
+              to
+            </span>
+          }
+        />
+      </MediumWrapper>
+      {!!tx.gatewayAddress && (
+        <>
+          {showQr && (
+            <CenteringSpacedBox>
+              <Grow in={showQr}>
+                <BigQrCode>
+                  <QRCode value={tx.gatewayAddress} />
+                </BigQrCode>
+              </Grow>
+            </CenteringSpacedBox>
+          )}
+          <CopyContentButton content={tx.gatewayAddress} />
+        </>
+      )}
+      <Box
+        mt={2}
+        display="flex"
+        justifyContent="center"
+        flexDirection="column"
+        alignItems="center"
+      >
+        {lockChainConfig.targetConfirmations && (
+          <Typography variant="caption" gutterBottom>
+            Estimated processing time:{" "}
+            {lockChainConfig.targetConfirmations * lockChainConfig.blockTime}{" "}
+            minutes
+          </Typography>
+        )}
+        <Box mt={2}>
+          <QrCodeIconButton onClick={toggleQr} />
+        </Box>
+      </Box>
+    </>
+  );
+};
 
 type DepositConfirmationStatusProps = {
   network: BridgeNetwork;
@@ -315,4 +423,3 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
     </>
   );
 };
-
