@@ -122,8 +122,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   }
   let lockTxHash: string = "";
   let lockTxLink: string = "";
-  if (transaction && transaction.destTxHash) {
-    lockTxHash = transaction.destTxHash;
+  if (transaction && transaction.rawSourceTx) {
+    lockTxHash = (transaction.rawSourceTx as any).txHash;
     lockTxLink =
       getChainExplorerLink(
         lockChainConfig.symbol,
@@ -133,14 +133,16 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   }
 
   let lockProcessingTime = null;
+  let lockConfirmations = 0;
+  let lockTargetConfirmations = 0;
   if (Object.values(tx.transactions)[0]) {
     const transaction = Object.values(tx.transactions)[0];
+    const lockConfirmations = transaction.sourceTxConfs;
     if (transaction.sourceTxConfTarget) {
+      lockTargetConfirmations = transaction.sourceTxConfTarget;
       lockProcessingTime =
-        Math.max(
-          transaction.sourceTxConfTarget - transaction.sourceTxConfs,
-          0
-        ) * lockChainConfig.blockTime;
+        Math.max(lockTargetConfirmations - lockConfirmations, 0) *
+        lockChainConfig.blockTime;
     }
   }
 
@@ -154,6 +156,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     mintTxLink,
     lockTxHash,
     lockTxLink,
+    lockConfirmations,
+    lockTargetConfirmations,
     lockProcessingTime,
     suggestedAmount: Number(tx.suggestedAmount) / 1e8,
   };

@@ -1,12 +1,7 @@
-import { Box, Grow, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/rentx";
-import QRCode from "qrcode.react";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { Box, Grow, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/rentx'
+import QRCode from 'qrcode.react'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -14,40 +9,32 @@ import {
   CopyContentButton,
   QrCodeIconButton,
   TransactionDetailsButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getChainIcon } from "../../../components/icons/IconHelpers";
-import {
-  BitcoinIcon,
-  MetamaskFullIcon,
-} from "../../../components/icons/RenIcons";
-import {
-  CenteringSpacedBox,
-  MediumWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import { Link } from "../../../components/links/Links";
+} from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { getChainIcon } from '../../../components/icons/IconHelpers'
+import { BitcoinIcon, MetamaskFullIcon, } from '../../../components/icons/RenIcons'
+import { CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { usePaperTitle } from "../../../pages/MainPage";
-import { useNotifications } from "../../../providers/Notifications";
-import { orangeLight } from "../../../theme/colors";
+} from '../../../components/progress/ProgressHelpers'
+import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
+import { usePaperTitle } from '../../../pages/MainPage'
+import { useNotifications } from '../../../providers/Notifications'
+import { orangeLight } from '../../../theme/colors'
 import {
   BridgeChain,
   BridgeCurrency,
   BridgeNetwork,
   getChainConfig,
   getCurrencyConfig,
-  getCurrencyShortLabel,
-  getCurrencySourceChain,
-} from "../../../utils/assetConfigs";
-import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
-import { getChainExplorerLink } from "../../transactions/transactionsUtils";
-import { getLockAndMintParams } from "../mintUtils";
+} from '../../../utils/assetConfigs'
+import { ProcessingTimeWrapper } from '../../transactions/components/TransactionsHelpers'
+import { getChainExplorerLink } from '../../transactions/transactionsUtils'
+import { getLockAndMintParams } from '../mintUtils'
 
 const getAddressValidityMessage = (expiryTime: number) => {
   const time = Math.ceil((expiryTime - Number(new Date())) / 1000 / 3600);
@@ -137,66 +124,59 @@ export const DepositTo: FunctionComponent<DepositToProps> = ({ tx }) => {
 };
 
 type DepositConfirmationStatusProps = {
-  network: BridgeNetwork;
-  sourceChain: BridgeChain;
-  currency: BridgeCurrency;
-  confirmations: number;
-  targetConfirmations?: number;
-  amount: number;
-  txHash: string;
-  timeRemaining: number;
+  tx: GatewaySession;
 };
 
 export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationStatusProps> = ({
-  network,
-  sourceChain,
-  currency,
-  confirmations,
-  targetConfirmations,
-  amount,
-  txHash,
-  timeRemaining,
+  tx,
 }) => {
   const [, setTitle] = usePaperTitle();
-  const confirmed = confirmations === targetConfirmations;
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    lockTxHash,
+    lockTxLink,
+    lockConfirmations,
+    lockTargetConfirmations,
+    lockProcessingTime,
+    suggestedAmount,
+  } = getLockAndMintParams(tx);
+
+  const confirmed = lockConfirmations === lockTargetConfirmations;
   useEffect(() => {
     setTitle(confirmed ? "Confirmed" : "Confirming");
   }, [setTitle, confirmed]);
-  const sourceTxExplorerLink = getChainExplorerLink(
-    sourceChain,
-    network,
-    txHash
-  ); //TODO: renane props end inject
+
   return (
     <>
       <ProgressWrapper>
         <ProgressWithContent
-          color={orangeLight}
-          confirmations={confirmations}
-          targetConfirmations={targetConfirmations}
+          color={lockCurrencyConfig.color || orangeLight}
+          confirmations={lockConfirmations}
+          targetConfirmations={lockTargetConfirmations}
         >
           <BitcoinIcon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
-        {confirmations} of {targetConfirmations} confirmations
+        {lockConfirmations} of {lockTargetConfirmations} confirmations
       </Typography>
       <BigAssetAmount
         value={
           <NumberFormatText
-            value={amount}
-            spacedSuffix={getCurrencyShortLabel(currency)}
+            value={suggestedAmount}
+            spacedSuffix={lockCurrencyConfig.short}
           />
         }
       />
       <TransactionDetailsButton
-        chain={getCurrencySourceChain(currency)}
-        address={txHash}
-        link={sourceTxExplorerLink}
+        chain={lockChainConfig.short}
+        address={lockTxHash}
+        link={lockTxLink}
       />
       <ProcessingTimeWrapper>
         <Typography variant="caption" component="p" align="center">
-          Estimated time remaining: {timeRemaining} minutes
+          Estimated time remaining: {lockProcessingTime} minutes
         </Typography>
       </ProcessingTimeWrapper>
     </>

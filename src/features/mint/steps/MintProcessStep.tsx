@@ -1,77 +1,38 @@
-import { Box, Divider, Grow, IconButton, Typography } from "@material-ui/core";
-import {
-  depositMachine,
-  DepositMachineSchema,
-  GatewaySession,
-  GatewayTransaction,
-} from "@renproject/rentx";
-import QRCode from "qrcode.react";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-import { Actor } from "xstate";
-import {
-  ActionButton,
-  BigQrCode,
-  CopyContentButton,
-  QrCodeIconButton,
-  ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import {
-  BigWrapper,
-  CenteringSpacedBox,
-  MediumWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import {
-  ProgressWithContent,
-  ProgressWrapper,
-} from "../../../components/progress/ProgressHelpers";
-import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { usePageTitle } from "../../../hooks/usePageTitle";
-import { usePaperTitle } from "../../../pages/MainPage";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { useNotifications } from "../../../providers/Notifications";
-import { orangeLight } from "../../../theme/colors";
+import { Divider, IconButton } from '@material-ui/core'
+import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/rentx'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
+import { Actor } from 'xstate'
+import { ActionButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
+import { usePageTitle } from '../../../hooks/usePageTitle'
+import { usePaperTitle } from '../../../pages/MainPage'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
   getNetworkConfigByRentxName,
-} from "../../../utils/assetConfigs";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
-import {
-  BookmarkPageWarning,
-  ProgressStatus,
-} from "../../transactions/components/TransactionsHelpers";
-import { TxType, useTxParam } from "../../transactions/transactionsUtils";
-import { setWalletPickerOpened } from "../../wallet/walletSlice";
+} from '../../../utils/assetConfigs'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
+import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
+import { TxType, useTxParam } from '../../transactions/transactionsUtils'
+import { setWalletPickerOpened } from '../../wallet/walletSlice'
 import {
   DepositAcceptedStatus,
   DepositConfirmationStatus,
   DepositTo,
   DestinationPendingStatus,
   DestinationReceivedStatus,
-} from "../components/MintStatuses";
-import { $mint } from "../mintSlice";
-import { getLockAndMintParams, useMintMachine } from "../mintUtils";
+} from '../components/MintStatuses'
+import { $mint } from '../mintSlice'
+import { useMintMachine } from '../mintUtils'
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -176,7 +137,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
   console.log(current.context.tx);
   useEffect(() => {
-    console.log('eff', current.context);
+    console.log("eff", current.context);
   }, [current.context]);
   return (
     <>
@@ -237,21 +198,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
     case "srcSettling":
       return (
         <>
-          <DepositConfirmationStatus
-            network={networkConfig.symbol}
-            sourceChain={sourceChainConfig.symbol}
-            currency={sourceCurrencyConfig.symbol}
-            confirmations={deposit.sourceTxConfs}
-            targetConfirmations={deposit.sourceTxConfTarget}
-            amount={Number(deposit.sourceTxAmount) / 1e8}
-            txHash={sourceTxHash}
-            timeRemaining={
-              Math.max(
-                Number(deposit.sourceTxConfTarget) - deposit.sourceTxConfs,
-                0
-              ) * Number(sourceChainConfig.blockTime) || 0
-            }
-          />
+          <DepositConfirmationStatus tx={tx} />
         </>
       );
     case "srcConfirmed": // source chain confirmations ok, but renVM still doesn't accept it
