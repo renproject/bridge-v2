@@ -11,7 +11,6 @@ import {
   TransactionDetailsButton,
 } from '../../../components/buttons/Buttons'
 import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { getChainIcon } from '../../../components/icons/IconHelpers'
 import { BitcoinIcon, MetamaskFullIcon, } from '../../../components/icons/RenIcons'
 import { CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
 import { Link } from '../../../components/links/Links'
@@ -22,18 +21,10 @@ import {
   TransactionStatusInfo,
 } from '../../../components/progress/ProgressHelpers'
 import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
-import { usePaperTitle } from '../../../pages/MainPage'
+import { usePaperTitle, useSetPaperTitle } from '../../../pages/MainPage'
 import { useNotifications } from '../../../providers/Notifications'
 import { orangeLight } from '../../../theme/colors'
-import {
-  BridgeChain,
-  BridgeCurrency,
-  BridgeNetwork,
-  getChainConfig,
-  getCurrencyConfig,
-} from '../../../utils/assetConfigs'
 import { ProcessingTimeWrapper } from '../../transactions/components/TransactionsHelpers'
-import { getChainExplorerLink } from '../../transactions/transactionsUtils'
 import { getLockAndMintParams } from '../mintUtils'
 
 const getAddressValidityMessage = (expiryTime: number) => {
@@ -184,44 +175,30 @@ export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationSta
 };
 
 type DepositAcceptedStatusProps = {
-  network: BridgeNetwork;
-  sourceCurrency: BridgeCurrency;
-  sourceAmount: number;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  sourceConfirmations: number;
-  sourceConfirmationsTarget?: number;
-  destinationChain: BridgeChain;
+  tx: GatewaySession;
   onSubmit?: () => void;
   submitting: boolean;
 };
 
 export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps> = ({
-  network, // TODO inject
-  sourceCurrency,
-  sourceAmount,
-  sourceChain,
-  sourceTxHash,
-  sourceConfirmations,
-  sourceConfirmationsTarget,
-  destinationChain,
+  tx,
   onSubmit = () => {},
   submitting,
 }) => {
-  const [, setTitle] = usePaperTitle();
-  useEffect(() => {
-    setTitle("Submit");
-  }, [setTitle]);
+  useSetPaperTitle("Submit");
   const theme = useTheme();
-  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  const sourceChainConfig = getChainConfig(sourceChain);
-  const Icon = getChainIcon(sourceChain);
-  const sourceTxExplorerLink = getChainExplorerLink(
-    sourceChain,
-    network,
-    sourceTxHash
-  );
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    lockTxHash,
+    lockTxAmount,
+    lockTxLink,
+    lockConfirmations,
+    lockTargetConfirmations,
+    mintChainConfig,
+  } = getLockAndMintParams(tx);
+
+  const { MainIcon } = lockChainConfig;
   return (
     <>
       <ProgressWrapper>
@@ -231,32 +208,32 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
           </ProgressWithContent>
         ) : (
           <ProgressWithContent
-            color={sourceCurrencyConfig.color || theme.customColors.skyBlue}
-            confirmations={sourceConfirmations}
-            targetConfirmations={sourceConfirmationsTarget}
+            color={lockCurrencyConfig.color || theme.customColors.skyBlue}
+            confirmations={lockConfirmations}
+            targetConfirmations={lockTargetConfirmations}
           >
-            <Icon fontSize="inherit" color="inherit" />
+            <MainIcon fontSize="inherit" color="inherit" />
           </ProgressWithContent>
         )}
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
-          value={sourceAmount}
-          spacedSuffix={sourceCurrencyConfig.full}
+          value={lockTxAmount}
+          spacedSuffix={lockCurrencyConfig.full}
         />{" "}
         Received
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit"} to{" "}
-          {destinationChainConfig.full}
+          {submitting ? "Submitting" : "Submit"} to {mintChainConfig.full}
+          {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
-          chain={sourceChainConfig.short}
-          address={sourceTxHash}
-          link={sourceTxExplorerLink}
+          chain={lockChainConfig.short}
+          address={lockTxHash}
+          link={lockTxLink}
         />
       </ActionButtonWrapper>
     </>
@@ -264,64 +241,55 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
 };
 
 type DestinationPendingStatusProps = {
-  network: BridgeNetwork;
-  sourceCurrency: BridgeCurrency;
-  sourceAmount: number;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  destinationChain: BridgeChain;
-  destinationTxHash: string;
+  tx: GatewaySession;
   onSubmit?: () => void;
   submitting: boolean;
 };
 
 export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatusProps> = ({
-  network,
-  sourceCurrency,
-  sourceAmount,
-  sourceChain,
-  sourceTxHash,
-  destinationChain,
-  destinationTxHash,
+  tx,
   onSubmit = () => {},
   submitting,
 }) => {
   const theme = useTheme();
-  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  const sourceTxExplorerLink = getChainExplorerLink(
-    sourceChain,
-    network,
-    sourceTxHash
-  );
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    lockTxHash,
+    lockTxAmount,
+    lockTxLink,
+    mintTxHash,
+    mintChainConfig,
+  } = getLockAndMintParams(tx);
+
   return (
     <>
       <ProgressWrapper>
         <ProgressWithContent color={theme.customColors.skyBlue} processing>
           <TransactionStatusInfo
             status="Pending"
-            chain={destinationChainConfig.full}
-            address={destinationTxHash}
+            chain={mintChainConfig.full}
+            address={mintTxHash}
           />
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
-          value={sourceAmount}
-          spacedSuffix={sourceCurrencyConfig.full}
+          value={lockTxAmount}
+          spacedSuffix={lockCurrencyConfig.full}
         />
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit"} to{" "}
-          {destinationChainConfig.full}
+          {submitting ? "Submitting" : "Submit"} to {mintChainConfig.full}
+          {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
-          chain={sourceChain}
-          address={sourceTxHash}
-          link={sourceTxExplorerLink}
+          chain={lockChainConfig.symbol}
+          address={lockTxHash}
+          link={lockTxLink}
         />
       </ActionButtonWrapper>
     </>
@@ -329,39 +297,22 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 };
 
 type DestinationReceivedStatusProps = {
-  network: BridgeNetwork;
-  sourceCurrency: BridgeCurrency;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  destinationCurrency: BridgeCurrency;
-  destinationChain: BridgeChain;
-  destinationAmount: number;
-  destinationTxHash: string;
+  tx: GatewaySession;
   onReturn?: () => void;
 };
 
 export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedStatusProps> = ({
-  network,
-  sourceChain,
-  sourceTxHash,
-  destinationCurrency,
-  destinationAmount,
-  destinationChain,
-  destinationTxHash,
+  tx,
   onReturn = () => {},
 }) => {
   const theme = useTheme();
-  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  const sourceChainConfig = getChainConfig(sourceChain);
-
-  const sourceTxLink = getChainExplorerLink(sourceChain, network, sourceTxHash);
-  const destinationTxLink = getChainExplorerLink(
-    destinationChain,
-    network,
-    destinationTxHash
-  );
-
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    lockTxLink,
+    mintTxLink,
+    mintChainConfig,
+  } = getLockAndMintParams(tx);
   return (
     <>
       <ProgressWrapper>
@@ -371,8 +322,8 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
-          value={destinationAmount}
-          spacedSuffix={destinationCurrencyConfig.full}
+          value={tx.targetAmount}
+          spacedSuffix={lockCurrencyConfig.full}
         />
       </Typography>
       <ActionButtonWrapper>
@@ -384,20 +335,20 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
           color="primary"
           variant="button"
           underline="hover"
-          href={sourceTxLink}
+          href={lockTxLink}
           target="_blank"
         >
-          {sourceChainConfig.full} transaction
+          {lockChainConfig.full} transaction
         </Link>
         <Link
           external
           color="primary"
           variant="button"
           underline="hover"
-          href={destinationTxLink}
+          href={mintTxLink}
           target="_blank"
         >
-          {destinationChainConfig.full} transaction
+          {mintChainConfig.full} transaction
         </Link>
       </Box>
     </>

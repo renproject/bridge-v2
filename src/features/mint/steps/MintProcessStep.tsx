@@ -1,38 +1,63 @@
-import { Divider, IconButton } from '@material-ui/core'
-import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/rentx'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps } from 'react-router-dom'
-import { Actor } from 'xstate'
-import { ActionButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { Debug } from '../../../components/utils/Debug'
-import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
-import { usePageTitle } from '../../../hooks/usePageTitle'
-import { usePaperTitle } from '../../../pages/MainPage'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { Divider, IconButton } from "@material-ui/core";
 import {
-  getChainConfigByRentxName,
+  depositMachine,
+  DepositMachineSchema,
+  GatewaySession,
+  GatewayTransaction,
+} from "@renproject/rentx";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RouteComponentProps } from "react-router-dom";
+import { Actor } from "xstate";
+import {
+  ActionButton,
+  ToggleIconButton,
+} from "../../../components/buttons/Buttons";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import {
+  BigWrapper,
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { Debug } from "../../../components/utils/Debug";
+import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { usePageTitle } from "../../../hooks/usePageTitle";
+import { usePaperTitle } from "../../../pages/MainPage";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import {
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
-  getNetworkConfigByRentxName,
-} from '../../../utils/assetConfigs'
-import { useGasPrices } from '../../marketData/marketDataHooks'
-import { TransactionFees } from '../../transactions/components/TransactionFees'
-import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
-import { TxType, useTxParam } from '../../transactions/transactionsUtils'
-import { setWalletPickerOpened } from '../../wallet/walletSlice'
+} from "../../../utils/assetConfigs";
+import { useGasPrices } from "../../marketData/marketDataHooks";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
+import {
+  BookmarkPageWarning,
+  ProgressStatus,
+} from "../../transactions/components/TransactionsHelpers";
+import { TxType, useTxParam } from "../../transactions/transactionsUtils";
+import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   DepositAcceptedStatus,
   DepositConfirmationStatus,
   DepositTo,
   DestinationPendingStatus,
   DestinationReceivedStatus,
-} from '../components/MintStatuses'
-import { $mint } from '../mintSlice'
-import { useMintMachine } from '../mintUtils'
+} from "../components/MintStatuses";
+import { $mint } from "../mintSlice";
+import { getLockAndMintParams, useMintMachine } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -135,10 +160,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     return { deposit, machine };
   }, [current.context]);
 
-  console.log(current.context.tx);
-  useEffect(() => {
-    console.log("eff", current.context);
-  }, [current.context]);
   return (
     <>
       {activeDeposit ? (
@@ -172,27 +193,15 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
     machine.send({ type: "CLAIM" });
   }, [machine]);
 
-  console.log("state value", machine.state.value);
-  const sourceCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
-  const destinationCurrencyConfig = getCurrencyConfigByRentxName(
-    tx.sourceAsset
-  ); // TODO: change
-  const sourceChainConfig = getChainConfigByRentxName(tx.sourceNetwork);
-  const destinationChainConfig = getChainConfigByRentxName(tx.destNetwork);
-  const networkConfig = getNetworkConfigByRentxName(tx.network);
-
-  usePageTitle(
-    `Minting - ${tx.targetAmount} ${destinationCurrencyConfig.short}`
-  );
+  const { mintCurrencyConfig } = getLockAndMintParams(tx);
+  // TODO: add date here from reverse valid until
+  usePageTitle(`Minting - ${tx.targetAmount} ${mintCurrencyConfig.short}`);
 
   if (!machine) {
     return <div>Transaction completed</div>;
   }
-  const sourceTxHash = (deposit.rawSourceTx as any).txHash || ""; // TODO resolve DepositCommon issue
   const stateValue = machine.state
     .value as keyof DepositMachineSchema["states"];
-  console.log("stv", stateValue);
-
   switch (stateValue) {
     // switch (forceState) {
     case "srcSettling":
@@ -206,44 +215,20 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
     case "accepted": // RenVM accepted it, it can be submitted to ethereum
       return (
         <DepositAcceptedStatus
-          network={networkConfig.symbol}
-          sourceCurrency={sourceCurrencyConfig.symbol}
-          sourceAmount={deposit.sourceTxAmount / 1e8}
-          sourceChain={sourceChainConfig.symbol}
-          sourceTxHash={sourceTxHash}
-          sourceConfirmations={deposit.sourceTxConfs}
-          sourceConfirmationsTarget={deposit.sourceTxConfTarget} // TODO: resolve
-          destinationChain={destinationChainConfig.symbol}
+          tx={tx}
           onSubmit={handleSubmitToDestinationChain}
           submitting={stateValue === "claiming"}
         />
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up
       if (deposit.destTxHash) {
-        return (
-          <DestinationReceivedStatus
-            network={networkConfig.symbol}
-            sourceCurrency={sourceCurrencyConfig.symbol}
-            sourceChain={sourceChainConfig.symbol}
-            sourceTxHash={sourceTxHash}
-            destinationCurrency={destinationCurrencyConfig.symbol}
-            destinationChain={destinationChainConfig.symbol}
-            destinationTxHash={deposit.destTxHash || ""}
-            destinationAmount={Number(tx.targetAmount)}
-          />
-        );
+        return <DestinationReceivedStatus tx={tx} />;
       } else {
         return (
           <DestinationPendingStatus
-            network={networkConfig.symbol}
-            sourceCurrency={sourceCurrencyConfig.symbol}
-            sourceAmount={deposit.sourceTxAmount / 1e8}
-            sourceChain={sourceChainConfig.symbol}
-            sourceTxHash={sourceTxHash}
-            destinationChain={destinationChainConfig.symbol}
+            tx={tx}
             onSubmit={handleSubmitToDestinationChain}
             submitting={true}
-            destinationTxHash={deposit.destTxHash || ""}
           />
         );
       }
