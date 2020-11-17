@@ -378,10 +378,10 @@ export const supportedReleaseCurrencies = [
   BridgeCurrency.RENZEC,
 ];
 
-export const getMintedDestinationCurrencySymbol = (
-  sourceCurrency: BridgeCurrency
+export const getMintedDestinationCurrencySymbol = ( // rename to toMintedCurrency
+  lockedCurrency: BridgeCurrency
 ) => {
-  switch (sourceCurrency) {
+  switch (lockedCurrency) {
     case BridgeCurrency.BTC:
       return BridgeCurrency.RENBTC;
     case BridgeCurrency.BCH:
@@ -395,10 +395,10 @@ export const getMintedDestinationCurrencySymbol = (
   }
 };
 
-export const getReleasedDestinationCurrencySymbol = (
-  sourceCurrency: BridgeCurrency
+export const getReleasedDestinationCurrencySymbol = ( // rename to toReleasedCurrency
+  burnedCurrency: BridgeCurrency
 ) => {
-  switch (sourceCurrency) {
+  switch (burnedCurrency) {
     case BridgeCurrency.RENBTC:
       return BridgeCurrency.BTC;
     case BridgeCurrency.RENBCH:

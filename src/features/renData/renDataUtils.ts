@@ -1,6 +1,6 @@
-import { BridgeCurrency } from "../../utils/assetConfigs";
-import { TxType } from "../transactions/transactionsUtils";
-import { mockedFees } from "./mockedFees";
+import { BridgeCurrency } from '../../utils/assetConfigs'
+import { TxType } from '../transactions/transactionsUtils'
+import { mockedFees } from './mockedFees'
 
 type Fees = {
   [key: string]: any;
@@ -31,6 +31,18 @@ export type CalculatedFee = {
 
 // const toCurrencySymbol = (symbol: string) =>
 //   symbol.toUpperCase() as BridgeCurrency;
+
+// export const fetchAssetFees = (
+//   currency: BridgeCurrency,
+//   provider: any,
+//   network: RenNetwork
+// ) => {
+//   return getRenJs().getFees({
+//     asset: "BTC",
+//     from: Bitcoin(),
+//     to: Ethereum(provider, network),
+//   });
+// };
 
 export const fetchFees: () => Promise<BridgeFees> = () => {
   // TODO: refactor fees to new version

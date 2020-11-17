@@ -37,7 +37,7 @@ export const fetchAssetBalance = (
   return chain.getBalance(asset, account).then((balance) => {
     console.log("balance", balance.toNumber());
     return balance.toNumber() / 100000000;
-  });
+  })
 };
 
 export const getAssetBalance = (

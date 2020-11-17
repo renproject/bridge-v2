@@ -1,9 +1,4 @@
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -39,7 +34,7 @@ import {
   setChain,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
-import { fetchAssetBalance } from "../../wallet/walletUtils";
+import { fetchAssetBalance, getAssetBalance } from "../../wallet/walletUtils";
 import {
   $release,
   $releaseUsdAmount,
@@ -53,19 +48,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
 }) => {
   const dispatch = useDispatch();
   const { status: walletStatus, account, provider } = useSelectedChainWallet();
-  const [balance, setBalance] = useState<number | null>(null);
   const { chain, balances } = useSelector($wallet);
   const { currency, amount, address } = useSelector($release);
-  useEffect(() => {
-    if (provider && account) {
-      fetchAssetBalance(provider, account, "BTC").then((balance) => {
-        setBalance(balance);
-      });
-    }
-  }, [provider, account]);
-
-  const fetchAllBalances = useCallback(() => { // TODO: maybe hook?
-    if (provider && account) {
+  const balance = getAssetBalance(balances, currency);
+  const fetchAllBalances = useCallback(() => {
+    // TODO: maybe hook?
+    if (provider && account && walletStatus === "connected") {
       for (const currencySymbol of supportedReleaseCurrencies) {
         const sourceCurrencySymbol = getReleasedDestinationCurrencySymbol(
           currencySymbol
@@ -82,7 +70,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         );
       }
     }
-  }, [dispatch, provider, account]);
+  }, [dispatch, provider, account, walletStatus]);
 
   useEffect(fetchAllBalances, [provider, account]);
 
@@ -113,7 +101,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   );
 
   const handleSetMaxBalance = useCallback(() => {
-    if (balance !== null) {
+    if (!!balance) {
       dispatch(setReleaseAmount(balance));
     }
   }, [dispatch, balance]);
@@ -123,7 +111,8 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
   const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);
   //TODO check if balanceOK
-  const canProceed = balance !== null && amount && address && amount <= balance;
+  const canProceed =
+    balance !== null && amount && address && amount <= Number(balance);
 
   const handleNextStep = useCallback(() => {
     if (walletStatus !== "connected") {

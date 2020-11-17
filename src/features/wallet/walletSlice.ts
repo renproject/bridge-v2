@@ -1,6 +1,11 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { env } from "../../constants/environmentVariables";
 import { RootState } from "../../store/rootReducer";
-import { BridgeChain, BridgeCurrency } from "../../utils/assetConfigs";
+import {
+  BridgeChain,
+  BridgeCurrency,
+  BridgeNetwork,
+} from "../../utils/assetConfigs";
 import { bridgeChainToMultiwalletChain } from "./walletUtils";
 
 export type AssetBalance = {
@@ -9,12 +14,14 @@ export type AssetBalance = {
 };
 
 type WalletState = {
+  network: BridgeNetwork;
   chain: BridgeChain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
 };
 
 let initialState: WalletState = {
+  network: env.NETWORK as BridgeNetwork,
   chain: BridgeChain.ETHC,
   pickerOpened: false,
   balances: [],
@@ -24,6 +31,9 @@ const slice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
+    setNetwork(state, action: PayloadAction<BridgeNetwork>) {
+      state.network = action.payload;
+    },
     setChain(state, action: PayloadAction<BridgeChain>) {
       state.chain = action.payload;
     },
