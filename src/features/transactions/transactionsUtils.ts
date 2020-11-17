@@ -1,4 +1,4 @@
-import { GatewaySession } from "@renproject/rentx";
+import { GatewaySession } from "@renproject/ren-tx";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import {

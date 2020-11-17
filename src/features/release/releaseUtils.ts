@@ -1,6 +1,6 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { burnMachine, GatewaySession } from "@renproject/rentx";
+import { burnMachine, GatewaySession } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
@@ -49,9 +49,9 @@ export const createReleaseTransaction = ({
     type: "burn",
     network: env.NETWORK as RenNetwork,
     sourceAsset: sourceCurrencyConfig.rentxName,
-    sourceNetwork: getCurrencyRentxSourceChain(currency),
+    sourceChain: getCurrencyRentxSourceChain(currency),
     destAddress,
-    destNetwork: getChainRentxName(sourceCurrencyConfig.chain),
+    destChain: getChainRentxName(sourceCurrencyConfig.chain),
     targetAmount: Number(amount),
     userAddress,
     expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,

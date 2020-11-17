@@ -4,7 +4,7 @@ import {
   DepositMachineSchema,
   GatewaySession,
   GatewayTransaction,
-} from "@renproject/rentx";
+} from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,

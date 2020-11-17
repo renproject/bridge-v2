@@ -1,5 +1,5 @@
 import { Box, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/rentx";
+import { GatewaySession } from "@renproject/ren-tx";
 import React, { FunctionComponent, useCallback } from "react";
 import {
   ActionButton,
@@ -13,7 +13,7 @@ import {
   ProgressWrapper,
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
-import { Debug } from '../../../components/utils/Debug'
+import { Debug } from "../../../components/utils/Debug";
 import { useSetPaperTitle } from "../../../pages/MainPage";
 import { getChainExplorerLink } from "../../transactions/transactionsUtils";
 import { getBurnAndReleaseParams } from "../releaseUtils";
@@ -102,7 +102,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
     releaseChainConfig,
     burnChainConfig,
     networkConfig,
-    burnTxLink
+    burnTxLink,
   } = getBurnAndReleaseParams(tx);
 
   const releaseTxLink = getChainExplorerLink(
@@ -143,7 +143,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
           {burnChainConfig.full} transaction
         </Link>
       </Box>
-      <Debug it={{tx}} />
+      <Debug it={{ tx }} />
     </>
   );
 };

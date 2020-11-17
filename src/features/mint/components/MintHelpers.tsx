@@ -1,4 +1,4 @@
-import { GatewaySession } from "@renproject/rentx";
+import { GatewaySession } from "@renproject/ren-tx";
 import { FunctionComponent, useEffect } from "react";
 import { useMintMachine } from "../mintUtils";
 

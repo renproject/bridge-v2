@@ -1,5 +1,5 @@
 import { Divider, IconButton } from "@material-ui/core";
-import { BurnMachineSchema, GatewaySession } from "@renproject/rentx";
+import { BurnMachineSchema, GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,

@@ -1,6 +1,6 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { GatewaySession, mintMachine } from "@renproject/rentx";
+import { GatewaySession, mintMachine } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
@@ -23,10 +23,10 @@ export const getMintTx: GatewaySession = {
   id: "tx-" + Math.floor(Math.random() * 10 ** 16),
   type: "mint",
   sourceAsset: "btc",
-  sourceNetwork: "bitcoin",
+  sourceChain: "bitcoin",
   network: "testnet",
   destAddress: "",
-  destNetwork: "ethereum",
+  destChain: "ethereum",
   targetAmount: 1,
   userAddress: "",
   expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
@@ -55,9 +55,9 @@ export const createMintTransaction = ({
     type: "mint",
     network: env.NETWORK as RenNetwork,
     sourceAsset: getCurrencyRentxName(currency),
-    sourceNetwork: getCurrencyRentxSourceChain(currency),
+    sourceChain: getCurrencyRentxSourceChain(currency),
     destAddress,
-    destNetwork: getChainRentxName(mintedCurrencyChain),
+    destChain: getChainRentxName(mintedCurrencyChain),
     targetAmount: Number(amount),
     userAddress,
     expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
@@ -117,7 +117,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
       getChainExplorerLink(
         mintChainConfig.symbol,
         networkConfig.symbol,
-        transaction.sourceTxHash
+        transaction.destTxHash || ""
       ) || "";
   }
   let lockTxHash: string = "";
@@ -129,7 +129,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   if (transaction) {
     lockTxAmount = transaction.sourceTxAmount / 1e8;
     if (transaction.rawSourceTx) {
-      lockTxHash = (transaction.rawSourceTx as any).txHash;
+      lockTxHash = transaction.rawSourceTx.transaction.txHash;
       lockTxLink =
         getChainExplorerLink(
           lockChainConfig.symbol,

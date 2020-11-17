@@ -2013,6 +2013,13 @@
     axios "^0.20.0"
     immutable "^4.0.0-rc.12"
 
+"@renproject/ren-tx@^2.0.0-alpha.25":
+  version "2.0.0-alpha.25"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.0.0-alpha.25.tgz#bc70b4f623f413756046cfd0e65e6e3421ba6e3b"
+  integrity sha512-vdJ0CVbmj2gUMsGJo8E2IfWZf8X2/xXgFvGUNUxBORJ2gtuvT+CC4LRz1YpI9CLZUa0zGoBG2VNRGNhTdu5ctA==
+  dependencies:
+    bignumber.js "^9.0.1"
+
 "@renproject/ren@next":
   version "2.0.0-alpha-24"
   resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.0.0-alpha-24.tgz#fd48de055ab6a9420b979856c82220e8ea3d0d59"
@@ -3743,7 +3750,7 @@ bitcore-lib-cash@^8.22.2:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-"bitcore-lib-dogecoin@github:CoinSpace/bitcore-lib-dogecoin":
+bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin:
   version "8.1.1"
   resolved "https://codeload.github.com/CoinSpace/bitcore-lib-dogecoin/tar.gz/e8314b746eb72666b11db933b30447484c644969"
   dependencies:
@@ -3755,7 +3762,7 @@ bitcore-lib-cash@^8.22.2:
     lodash "^4.17.15"
     scryptsy "^2.1.0"
 
-"bitcore-lib-zcash@github:zcash-hackworks/bitcore-lib-zcash":
+bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
   version "0.13.19"
   resolved "https://codeload.github.com/zcash-hackworks/bitcore-lib-zcash/tar.gz/e97ae1dd2e9f14d6076d5e5429c75d8965afa4ab"
   dependencies:

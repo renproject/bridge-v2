@@ -1,7 +1,7 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { Bitcoin, BitcoinCash, Ethereum, Zcash, } from '@renproject/chains'
-import { BurnMachineContext } from '@renproject/rentx'
+import { Bitcoin, BitcoinCash, Ethereum, Zcash } from "@renproject/chains";
+import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 
 export const mintChainMap = {
   // binanceSmartChain: (context: any) => {
@@ -11,11 +11,11 @@ export const mintChainMap = {
   //     address: destAddress,
   //   });
   // },
-  ethereum: (context: any) => {
-    const { destAddress, destNetwork } = context.tx;
+  ethereum: (context: GatewayMachineContext) => {
+    const { destAddress, destChain, network } = context.tx;
     const { providers } = context;
 
-    return Ethereum(providers[destNetwork]).Account({
+    return Ethereum(providers[destChain], network).Account({
       address: destAddress,
     });
   },
@@ -30,16 +30,16 @@ export const lockChainMap = {
 };
 
 export const burnChainMap: BurnMachineContext["fromChainMap"] = {
-  ethereum: (context: any) => {
-    return Ethereum(context.providers.ethereum).Account({
+  ethereum: (context) => {
+    return Ethereum(context.providers.ethereum, context.tx.network).Account({
       address: context.tx.userAddress,
-      value: (context.tx.targetAmount * 1e8) + "",
+      value: context.tx.suggestedAmount,
     }) as any;
   },
 };
 
 export const releaseChainMap: BurnMachineContext["toChainMap"] = {
-  bitcoin: (context: any) => {
+  bitcoin: (context) => {
     return Bitcoin().Address(context.tx.destAddress) as any;
   },
 };
