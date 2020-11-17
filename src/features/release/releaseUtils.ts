@@ -124,6 +124,9 @@ export const useBurnMachine = (burnTransaction: GatewaySession) => {
       sdk: getRenJs(),
       fromChainMap: burnChainMap,
       toChainMap: releaseChainMap,
+      // If we already have a transaction, we need to autoSubmit
+      // to check the tx status
+      autoSubmit: !!Object.values(burnTransaction.transactions)[0],
     },
     devTools: env.XSTATE_DEVTOOLS,
   });
