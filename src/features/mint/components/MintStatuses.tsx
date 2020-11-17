@@ -316,15 +316,3 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
   );
 };
 
-export const SrcConfirmedStatus: FunctionComponent = () => {
-  const theme = useTheme();
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent processing color={theme.palette.primary.main}>
-          <TransactionStatusInfo status="Pending..." />
-        </ProgressWithContent>
-      </ProgressWrapper>
-    </>
-  );
-};
