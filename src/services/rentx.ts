@@ -13,6 +13,7 @@ import {
   getChainConfig,
   getCurrencyConfig,
   toMintedCurrency,
+  toReleasedCurrency,
 } from "../utils/assetConfigs";
 import { getRenJs } from "./renJs";
 
@@ -94,21 +95,22 @@ export const releaseChainMap: BurnMachineContext["toChainMap"] = {
 };
 
 export const getBurnAndReleaseFees = (
-  lockedCurrency: BridgeCurrency,
+  burnedCurrency: BridgeCurrency,
   provider: any,
   network: RenNetwork
 ) => {
-  // const lockedCurrencyConfig = getCurrencyConfig(lockedCurrency);
+  const releasedCurrency = toReleasedCurrency(burnedCurrency);
+
+  // const burnedCurrencyConfig = getCurrencyConfig(burnedCurrency);
   // const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.chain);
-  // const mintedCurrency = toMintedCurrency(lockedCurrency);
   // const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
   // const mintedCurrencyChain = getChainConfig(mintedCurrencyConfig.chain);
-
+  console.log(releasedCurrency);
   const From = Ethereum;
   const To = Bitcoin;
   return getRenJs()
     .getFees({
-      asset: lockedCurrency,
+      asset: releasedCurrency,
       from: From(provider, network),
       to: To(),
     })
@@ -119,6 +121,8 @@ export const useFetchFees = (
   lockedCurrency: BridgeCurrency,
   txType: TxType
 ) => {
+  const fetchFees =
+    txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
   const { provider, status } = useSelectedChainWallet();
   const network = RenNetwork.Testnet; //TODO: getFromSelector;
   const initialFees: SimpleFee = {
@@ -133,7 +137,7 @@ export const useFetchFees = (
   useEffect(() => {
     console.log("refething fees");
     if (provider && status === WalletStatus.CONNECTED) {
-      getLockAndMintFees(lockedCurrency, provider, network).then((feeRates) => {
+      fetchFees(lockedCurrency, provider, network).then((feeRates) => {
         setPending(false);
         setFees(feeRates);
       });

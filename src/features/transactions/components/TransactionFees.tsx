@@ -89,7 +89,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   }
   return (
     <>
-      <Debug it={{fees}} />
+      <Debug it={{fees, type}} />
       <LabelWithValue
         label="RenVM Fee"
         labelTooltip={tooltips.renVmFee}
