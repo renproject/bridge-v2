@@ -101,15 +101,9 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
   const {
     releaseChainConfig,
     burnChainConfig,
-    networkConfig,
     burnTxLink,
+    releaseTxLink,
   } = getBurnAndReleaseParams(tx);
-
-  const releaseTxLink = getChainExplorerLink(
-    releaseChainConfig.symbol,
-    networkConfig.symbol,
-    "0x12313123131"
-  );
 
   return (
     <>
