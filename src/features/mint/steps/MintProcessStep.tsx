@@ -1,77 +1,49 @@
-import { Box, Divider, Grow, IconButton, Typography } from "@material-ui/core";
-import {
-  depositMachine,
-  DepositMachineSchema,
-  GatewaySession,
-  GatewayTransaction,
-} from "@renproject/rentx";
-import QRCode from "qrcode.react";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
-import { Actor } from "xstate";
+import { Box, Divider, Grow, IconButton, Typography } from '@material-ui/core'
+import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/rentx'
+import QRCode from 'qrcode.react'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RouteComponentProps } from 'react-router-dom'
+import { Actor } from 'xstate'
 import {
   ActionButton,
   BigQrCode,
   CopyContentButton,
   QrCodeIconButton,
   ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon, BitcoinIcon } from "../../../components/icons/RenIcons";
+} from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { ProgressWithContent, ProgressWrapper, } from '../../../components/progress/ProgressHelpers'
+import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
+import { usePageTitle } from '../../../hooks/usePageTitle'
+import { usePaperTitle } from '../../../pages/MainPage'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { useNotifications } from '../../../providers/Notifications'
+import { orangeLight } from '../../../theme/colors'
 import {
-  BigWrapper,
-  CenteringSpacedBox,
-  MediumWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import {
-  ProgressWithContent,
-  ProgressWrapper,
-} from "../../../components/progress/ProgressHelpers";
-import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { usePageTitle } from "../../../hooks/usePageTitle";
-import { usePaperTitle } from "../../../pages/MainPage";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { useNotifications } from "../../../providers/Notifications";
-import { orangeLight } from "../../../theme/colors";
-import {
-  BridgeCurrency,
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
   getCurrencyShortLabel,
   getNetworkConfigByRentxName,
-} from "../../../utils/assetConfigs";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
-import {
-  BookmarkPageWarning,
-  ProgressStatus,
-} from "../../transactions/components/TransactionsHelpers";
-import { TxType, useTxParam } from "../../transactions/transactionsUtils";
-import { setWalletPickerOpened } from "../../wallet/walletSlice";
+} from '../../../utils/assetConfigs'
+import { useGasPrices } from '../../marketData/marketDataHooks'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
+import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
+import { TxType, useTxParam } from '../../transactions/transactionsUtils'
+import { setWalletPickerOpened } from '../../wallet/walletSlice'
 import {
   DepositAcceptedStatus,
   DepositConfirmationStatus,
   DestinationPendingStatus,
   DestinationReceivedStatus,
-} from "../components/MintStatuses";
-import { $mint } from "../mintSlice";
-import { getLockAndMintParams, useMintMachine } from "../mintUtils";
+} from '../components/MintStatuses'
+import { $mint } from '../mintSlice'
+import { getLockAndMintParams, useMintMachine } from '../mintUtils'
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -196,15 +168,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           machine={activeDeposit.machine}
         />
       ) : (
-        <DepositTo
-          tx={current.context.tx}
-          amount={Number(current.context.tx.suggestedAmount) / 1e8}
-          currency={
-            getCurrencyConfigByRentxName(current.context.tx.sourceAsset).symbol
-          }
-          gatewayAddress={current.context.tx.gatewayAddress}
-          processingTime={60} // TODO: calculate
-        />
+        <DepositTo tx={current.context.tx} />
       )}
       <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
     </>
@@ -213,24 +177,21 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
 type DepositToProps = {
   tx: GatewaySession;
-  amount: number;
-  currency: BridgeCurrency;
-  gatewayAddress?: string;
-  processingTime: number;
 };
 
-const DepositTo: FunctionComponent<DepositToProps> = ({
-  tx,
-  currency,
-  processingTime,
-}) => {
+const DepositTo: FunctionComponent<DepositToProps> = ({ tx }) => {
   const [showQr, setShowQr] = useState(false);
   const toggleQr = useCallback(() => {
     setShowQr(!showQr);
   }, [showQr]);
 
-  const { lockCurrencyConfig, suggestedAmount } = getLockAndMintParams(tx);
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    suggestedAmount,
+  } = getLockAndMintParams(tx);
   const { MainIcon, color } = lockCurrencyConfig;
+
   return (
     <>
       <ProgressWrapper>
@@ -273,9 +234,13 @@ const DepositTo: FunctionComponent<DepositToProps> = ({
         flexDirection="column"
         alignItems="center"
       >
-        <Typography variant="caption" gutterBottom>
-          Estimated processing time: {processingTime} minutes
-        </Typography>
+        {lockChainConfig.targetConfirmations && (
+          <Typography variant="caption" gutterBottom>
+            Estimated processing time:{" "}
+            {lockChainConfig.targetConfirmations * lockChainConfig.blockTime}{" "}
+            minutes
+          </Typography>
+        )}
         <Box mt={2}>
           <QrCodeIconButton onClick={toggleQr} />
         </Box>
@@ -339,7 +304,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
               Math.max(
                 Number(deposit.sourceTxConfTarget) - deposit.sourceTxConfs,
                 0
-              ) * Number(sourceCurrencyConfig.sourceConfirmationTime) || 0
+              ) * Number(sourceChainConfig.blockTime) || 0
             }
           />
         </>

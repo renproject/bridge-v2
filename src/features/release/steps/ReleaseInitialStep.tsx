@@ -109,7 +109,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const targetCurrency = toReleasedCurrency(currency);
   const currencyConfig = getCurrencyConfig(currency);
   const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
-  const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);
+  const targetChainConfig = getChainConfig(targetCurrencyConfig.chain);
   //TODO check if balanceOK
   const canProceed =
     balance !== null && amount && address && amount <= Number(balance);

@@ -59,7 +59,6 @@ export type LabelsConfig = {
 
 export type RentxAssetConfig = {
   rentxName: string;
-  sourceConfirmationTime?: number;
 };
 
 export type ColorsConfig = {
@@ -77,7 +76,7 @@ export type CurrencyConfig = LabelsConfig &
   IconsConfig &
   RentxAssetConfig & {
     symbol: BridgeCurrency;
-    sourceChain: BridgeChain;
+    chain: BridgeChain;
     bandchainSymbol?: string;
   };
 
@@ -91,8 +90,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: BtcGreyIcon,
     MainIcon: BtcFullIcon,
     rentxName: "btc",
-    sourceChain: BridgeChain.BTCC,
-    sourceConfirmationTime: 15,
+    chain: BridgeChain.BTCC,
   },
   [BridgeCurrency.RENBTC]: {
     symbol: BridgeCurrency.RENBTC,
@@ -102,7 +100,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: BtcGreyIcon,
     MainIcon: BtcGreyIcon,
     rentxName: "renBTC",
-    sourceChain: BridgeChain.ETHC,
+    chain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BTC,
   },
   [BridgeCurrency.BCH]: {
@@ -112,7 +110,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
     MainIcon: BchFullIcon,
-    sourceChain: BridgeChain.UNKNOWNC, // TODO:
+    chain: BridgeChain.UNKNOWNC, // TODO:
     rentxName: "bch",
   },
   [BridgeCurrency.RENBCH]: {
@@ -123,7 +121,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: BchGreyIcon,
     MainIcon: BtcFullIcon,
     rentxName: "renBCH",
-    sourceChain: BridgeChain.ETHC,
+    chain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BCH,
   },
   [BridgeCurrency.DOTS]: {
@@ -133,7 +131,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     FullIcon: DotsFullIcon,
     GreyIcon: DotsGreyIcon,
     MainIcon: DotsFullIcon,
-    sourceChain: BridgeChain.UNKNOWNC, // TODO:
+    chain: BridgeChain.UNKNOWNC, // TODO:
     rentxName: "dots",
     bandchainSymbol: "DOT",
   },
@@ -144,7 +142,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     FullIcon: DogeFullIcon,
     GreyIcon: DogeGreyIcon,
     MainIcon: DogeFullIcon,
-    sourceChain: BridgeChain.UNKNOWNC, // TODO:
+    chain: BridgeChain.UNKNOWNC, // TODO:
     rentxName: "doge",
   },
   [BridgeCurrency.RENDOGE]: {
@@ -155,7 +153,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: DogeGreyIcon,
     MainIcon: DogeGreyIcon,
     rentxName: "renDOGE",
-    sourceChain: BridgeChain.ETHC,
+    chain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DOGE,
   },
   [BridgeCurrency.ZEC]: {
@@ -166,8 +164,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: ZecGreyIcon,
     MainIcon: ZecFullIcon,
     rentxName: "zec",
-    sourceChain: BridgeChain.ZECC,
-    sourceConfirmationTime: 15,
+    chain: BridgeChain.ZECC,
   },
   [BridgeCurrency.RENZEC]: {
     symbol: BridgeCurrency.RENZEC,
@@ -177,7 +174,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: ZecGreyIcon,
     MainIcon: ZecGreyIcon,
     rentxName: "renZEC",
-    sourceChain: BridgeChain.ETHC,
+    chain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.ZEC,
   },
   [BridgeCurrency.DGB]: {
@@ -187,7 +184,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     FullIcon: DgbFullIcon,
     GreyIcon: DgbGreyIcon,
     MainIcon: DgbFullIcon,
-    sourceChain: BridgeChain.UNKNOWNC, // TODO:
+    chain: BridgeChain.UNKNOWNC, // TODO:
     rentxName: "DGB",
   },
   [BridgeCurrency.RENDGB]: {
@@ -198,7 +195,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: DgbGreyIcon,
     MainIcon: DgbGreyIcon,
     rentxName: "renDGB",
-    sourceChain: BridgeChain.ETHC,
+    chain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DGB,
   },
   [BridgeCurrency.ETH]: {
@@ -209,7 +206,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: NotSetIcon,
     MainIcon: BtcFullIcon,
     rentxName: "eth",
-    sourceChain: BridgeChain.ETHC,
+    chain: BridgeChain.ETHC,
   },
   [BridgeCurrency.UNKNOWN]: {
     symbol: BridgeCurrency.UNKNOWN,
@@ -218,7 +215,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     FullIcon: NotSetIcon,
     GreyIcon: NotSetIcon,
     MainIcon: NotSetIcon,
-    sourceChain: BridgeChain.UNKNOWNC,
+    chain: BridgeChain.UNKNOWNC,
     rentxName: "unknown",
   },
 };
@@ -245,7 +242,7 @@ export const getCurrencyRentxName = (symbol: BridgeCurrency) =>
   currenciesConfig[symbol].rentxName || unknownLabel;
 
 export const getCurrencySourceChain = (symbol: BridgeCurrency) =>
-  currenciesConfig[symbol].sourceChain || BridgeChain.UNKNOWNC;
+  currenciesConfig[symbol].chain || BridgeChain.UNKNOWNC;
 
 export const getCurrencyRentxSourceChain = (symbol: BridgeCurrency) => {
   const bridgeChain = getCurrencySourceChain(symbol);
@@ -259,6 +256,8 @@ export type ChainConfig = LabelsConfig &
   IconsConfig &
   RentxAssetConfig & {
     symbol: BridgeChain;
+    blockTime: number;
+    targetConfirmations?: number;
   };
 
 // TODO: add confirmations from https://support.kraken.com/hc/en-us/articles/203325283-Cryptocurrency-deposit-processing-times
@@ -270,6 +269,8 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     FullIcon: NotSetIcon,
     MainIcon: NotSetIcon,
     rentxName: "bitcoin",
+    blockTime: 10,
+    targetConfirmations: 6,
   },
   [BridgeChain.ZECC]: {
     symbol: BridgeChain.ZECC,
@@ -278,6 +279,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     FullIcon: NotSetIcon,
     MainIcon: NotSetIcon,
     rentxName: "zcash",
+    blockTime: 2.5,
   },
   [BridgeChain.BNCC]: {
     symbol: BridgeChain.BNCC,
@@ -286,6 +288,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     FullIcon: BinanceChainFullIcon,
     MainIcon: BinanceChainFullIcon,
     rentxName: "binanceSmartChain",
+    blockTime: 3,
   },
   [BridgeChain.ETHC]: {
     symbol: BridgeChain.ETHC,
@@ -294,6 +297,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     FullIcon: EthereumChainFullIcon,
     MainIcon: EthereumChainFullIcon,
     rentxName: "ethereum",
+    blockTime: 0.25,
   },
   [BridgeChain.UNKNOWNC]: {
     symbol: BridgeChain.UNKNOWNC,
@@ -302,6 +306,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     FullIcon: NotSetIcon,
     MainIcon: NotSetIcon,
     rentxName: "unknown",
+    blockTime: 1e6,
   },
 };
 
