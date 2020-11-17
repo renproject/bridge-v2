@@ -1,9 +1,13 @@
 import React, { FunctionComponent, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from "../../../components/utils/types";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { useFetchMintFees } from "../../../services/rentx";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { useFetchFees } from "../../../services/rentx";
 import {
   BridgeCurrency,
   getCurrencyConfig,
@@ -41,6 +45,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   type,
 }) => {
   useGasPrices();
+  const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
   const exchangeRates = useSelector($exchangeRates);
   const gasPrices = useSelector($gasPrices);
@@ -51,7 +56,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     USD_SYMBOL
   );
   const amountUsd = amount * currencyUsdRate;
-  const { fees, feesReady } = useFetchMintFees(currency);
+  const { fees, pending } = useFetchFees(currency, type);
   const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
     amount,
     fees,
@@ -65,7 +70,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const tooltips = useMemo(() => {
     return getFeeTooltips({
       mintFee: fees.mint / 10000,
-      releaseFee: fees.release / 10000,
+      releaseFee: fees.burn / 10000,
       sourceCurrency: currency,
       destinationCurrency: destinationCurrency,
       type: TxType.MINT,
@@ -76,11 +81,15 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
   const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
 
-  if (!feesReady) {
-    return null;
+  if (status !== WalletStatus.CONNECTED) {
+    return <span>Connect a wallet to view fees</span>;
+  }
+  if (pending) {
+    return <CenteredProgress />;
   }
   return (
     <>
+      <Debug it={{fees}} />
       <LabelWithValue
         label="RenVM Fee"
         labelTooltip={tooltips.renVmFee}

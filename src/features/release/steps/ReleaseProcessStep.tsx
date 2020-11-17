@@ -31,6 +31,7 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
+import { WalletStatus } from '../../../components/utils/types'
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { paths } from "../../../pages/routes";
@@ -71,7 +72,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
-  const walletConnected = status === "connected";
+  const walletConnected = status === WalletStatus.CONNECTED;
 
   const { burnCurrencyConfig, releaseCurrencyConfig } = getBurnAndReleaseParams(
     tx

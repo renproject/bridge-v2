@@ -203,7 +203,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         />
         <ActionButtonWrapper>
           <ActionButton onClick={handleConfirm} disabled={releasingInitialized}>
-            {walletStatus !== "connected"
+            {walletStatus !== WalletStatus.CONNECTED
               ? "Connect Wallet"
               : releasingInitialized
               ? "Confirming..."

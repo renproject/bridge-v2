@@ -33,6 +33,7 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
+import { WalletStatus } from '../../../components/utils/types'
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { usePaperTitle } from "../../../pages/MainPage";
@@ -86,7 +87,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     history.replace({ ...location, state: undefined });
   }, [history, location]);
 
-  const walletConnected = status === "connected";
+  const walletConnected = status === WalletStatus.CONNECTED;
   const showTransactionStatus = !!tx && walletConnected;
   const feeCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
   const amount = Number(tx.targetAmount);

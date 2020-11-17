@@ -22,7 +22,7 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../progress/ProgressHelpers";
-import { WalletConnectionStatusType } from "../utils/types";
+import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
@@ -234,10 +234,10 @@ export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndica
 }) => {
   const styles = useWalletConnectionIndicatorStyles();
   const className = classNames(styles.root, classNameProp, {
-    [styles.connected]: status === "connected",
-    [styles.wrongNetwork]: status === "wrong_network",
-    [styles.disconnected]: status === "disconnected",
-    [styles.connecting]: status === "connecting",
+    [styles.connected]: status === WalletStatus.CONNECTED,
+    [styles.wrongNetwork]: status === WalletStatus.WRONG_NETWORK,
+    [styles.disconnected]: status === WalletStatus.DISCONNECTED,
+    [styles.connecting]: status === WalletStatus.CONNECTING,
   });
   return <div className={className} />;
 };

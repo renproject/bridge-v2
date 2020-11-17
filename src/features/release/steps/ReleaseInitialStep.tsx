@@ -19,6 +19,7 @@ import {
 import { PaperContent } from "../../../components/layout/Paper";
 import { Link } from "../../../components/links/Links";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { WalletStatus } from "../../../components/utils/types";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getChainConfig,
@@ -53,11 +54,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const balance = getAssetBalance(balances, currency);
   const fetchAllBalances = useCallback(() => {
     // TODO: maybe hook?
-    if (provider && account && walletStatus === "connected") {
+    if (provider && account && walletStatus === WalletStatus.CONNECTED) {
       for (const currencySymbol of supportedReleaseCurrencies) {
-        const sourceCurrencySymbol = toReleasedCurrency(
-          currencySymbol
-        );
+        const sourceCurrencySymbol = toReleasedCurrency(currencySymbol);
         fetchAssetBalance(provider, account, sourceCurrencySymbol).then(
           (balance) => {
             dispatch(
@@ -115,7 +114,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     balance !== null && amount && address && amount <= Number(balance);
 
   const handleNextStep = useCallback(() => {
-    if (walletStatus !== "connected") {
+    if (walletStatus !== WalletStatus.CONNECTED) {
       dispatch(setWalletPickerOpened(true));
     }
     if (onNext && canProceed) {
@@ -174,9 +173,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       <ActionButtonWrapper>
         <ActionButton
           onClick={handleNextStep}
-          disabled={walletStatus === "connected" && !canProceed}
+          disabled={walletStatus === WalletStatus.CONNECTED && !canProceed}
         >
-          {walletStatus !== "connected" ? "Connect Wallet" : "Next"}
+          {walletStatus !== WalletStatus.CONNECTED ? "Connect Wallet" : "Next"}
         </ActionButton>
       </ActionButtonWrapper>
     </PaperContent>
