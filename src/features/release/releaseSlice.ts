@@ -3,9 +3,6 @@ import { RootState } from "../../store/rootReducer";
 import { BridgeCurrency } from "../../utils/assetConfigs";
 import { $exchangeRates } from "../marketData/marketDataSlice";
 import { findExchangeRate } from "../marketData/marketDataUtils";
-import { $fees } from "../renData/renDataSlice";
-import { calculateTransactionFees } from "../renData/renDataUtils";
-import { TxType } from "../transactions/transactionsUtils";
 
 type ReleaseState = {
   currency: BridgeCurrency;
@@ -64,11 +61,4 @@ export const $releaseUsdAmount = createSelector(
   $releaseAmount,
   $releaseCurrencyUsdRate,
   (amount, rate) => amount * rate
-);
-
-// TODO: probably should be calculated based on selected flow
-export const $releaseFees = createSelector(
-  [$releaseAmount, $releaseCurrency, $fees],
-  (amount, currency, fees) =>
-    calculateTransactionFees({ amount, currency, fees, type: TxType.BURN })
 );

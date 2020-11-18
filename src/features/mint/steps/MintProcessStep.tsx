@@ -33,7 +33,7 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from '../../../components/utils/types'
+import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { usePaperTitle } from "../../../pages/MainPage";
@@ -190,8 +190,12 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   deposit,
   machine,
 }) => {
+  // const [submitting, setSubmitting] = useState(false);
   const handleSubmitToDestinationChain = useCallback(() => {
+    console.log("handling");
+    // TODO: investigate why claiming is not working
     machine.send({ type: "CLAIM" });
+    // setSubmitting(true);
   }, [machine]);
 
   const { mintCurrencyConfig } = getLockAndMintParams(tx);
@@ -203,6 +207,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   }
   const stateValue = machine.state
     .value as keyof DepositMachineSchema["states"];
+  console.log("stv", stateValue);
   switch (stateValue) {
     // switch (forceState) {
     case "srcSettling":

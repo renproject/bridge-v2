@@ -1,70 +1,56 @@
-import { Divider, IconButton, Typography } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
+import { Divider, IconButton, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { WalletStatus } from "../../../components/utils/types";
-import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import {
-  getCurrencyConfig,
-  toReleasedCurrency,
-} from "../../../utils/assetConfigs";
-import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
+} from '../../../components/typography/TypographyHelpers'
+import { WalletStatus } from '../../../components/utils/types'
+import { paths } from '../../../pages/routes'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
+import { $exchangeRates } from '../../marketData/marketDataSlice'
+import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
+import { getTransactionFees, useFetchFees } from '../../renData/renDataUtils'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
 import {
   createTxQueryString,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
-} from "../../transactions/transactionsUtils";
-import { setWalletPickerOpened } from "../../wallet/walletSlice";
-import {
-  BurnAndReleaseTransactionInitializer,
-  releaseTooltips,
-} from "../components/ReleaseHelpers";
-import { $release, $releaseFees, $releaseUsdAmount } from "../releaseSlice";
-import {
-  createReleaseTransaction,
-  preValidateReleaseTransaction,
-} from "../releaseUtils";
+} from '../../transactions/transactionsUtils'
+import { setWalletPickerOpened } from '../../wallet/walletSlice'
+import { BurnAndReleaseTransactionInitializer, releaseTooltips, } from '../components/ReleaseHelpers'
+import { $release, $releaseUsdAmount } from '../releaseSlice'
+import { createReleaseTransaction, preValidateReleaseTransaction, } from '../releaseUtils'
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { status: walletStatus, account } = useSelectedChainWallet();
+  const { status, account } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
-  const { conversionTotal } = useSelector($releaseFees);
+  const { fees, pending } = useFetchFees(currency, TxType.BURN);
+  const { conversionTotal } = getTransactionFees({
+    amount,
+    fees,
+    type: TxType.BURN,
+  });
+
   const currencyConfig = getCurrencyConfig(currency);
   const destinationCurrency = toReleasedCurrency(currency);
   const destinationCurrencyUsdRate = findExchangeRate(
@@ -89,7 +75,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const handleConfirm = useCallback(() => {
     setReleasingInitialized(true);
-    if (walletStatus === WalletStatus.CONNECTED) {
+    if (walletConnected) {
       if (canInitializeReleasing) {
         setReleasingInitialized(true);
       } else {
@@ -99,7 +85,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       setReleasingInitialized(false);
       dispatch(setWalletPickerOpened(true));
     }
-  }, [dispatch, canInitializeReleasing, walletStatus]);
+  }, [dispatch, canInitializeReleasing, walletConnected]);
 
   const onBurnTxCreated = useCallback(
     (tx) => {
@@ -181,29 +167,33 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
-        <AssetInfo
-          label="Receiving"
-          value={
-            <NumberFormatText
-              value={conversionTotal}
-              spacedSuffix={destinationCurrencyConfig.short}
-              decimalScale={5}
+        {walletConnected &&
+          (pending ? (
+            <CenteredProgress />
+          ) : (
+            <AssetInfo
+              label="Receiving"
+              value={
+                <NumberFormatText
+                  value={conversionTotal}
+                  spacedSuffix={destinationCurrencyConfig.short}
+                />
+              }
+              valueEquivalent={
+                <NumberFormatText
+                  prefix=" = $"
+                  value={destinationAmountUsd}
+                  spacedSuffix="USD"
+                  decimalScale={2}
+                  fixedDecimalScale
+                />
+              }
+              Icon={<MainIcon fontSize="inherit" />}
             />
-          }
-          valueEquivalent={
-            <NumberFormatText
-              prefix=" = $"
-              value={destinationAmountUsd}
-              spacedSuffix="USD"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          }
-          Icon={<MainIcon fontSize="inherit" />}
-        />
+          ))}
         <ActionButtonWrapper>
           <ActionButton onClick={handleConfirm} disabled={releasingInitialized}>
-            {walletStatus !== WalletStatus.CONNECTED
+            {!walletConnected
               ? "Connect Wallet"
               : releasingInitialized
               ? "Confirming..."
