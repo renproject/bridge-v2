@@ -30,7 +30,6 @@ export type LocationTxState = {
 
 export const useTxParam = () => {
   const location = useLocation();
-  console.log(location.search);
   const tx = parseTxQueryString(location.search);
   const locationState = location.state as LocationTxState;
 

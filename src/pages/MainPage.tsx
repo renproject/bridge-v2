@@ -5,7 +5,10 @@ import { createStateContext } from "react-use";
 import { MainLayout } from "../components/layout/MainLayout";
 import { BridgePurePaper } from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
-import { useExchangeRates } from "../features/marketData/marketDataHooks";
+import {
+  useExchangeRates,
+  useGasPrices,
+} from "../features/marketData/marketDataHooks";
 import { MintFlow } from "../features/mint/MintFlow";
 import { ReleaseFlow } from "../features/release/ReleaseFlow";
 import { paths } from "./routes";
@@ -32,7 +35,7 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
     history.replace(paths.MINT);
   }
   useExchangeRates();
-
+  useGasPrices();
   return (
     <>
       <MainLayout>

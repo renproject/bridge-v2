@@ -23,7 +23,7 @@ const slice = createSlice({
   },
 });
 
-// export const { setNetwork } = slice.actions;
+export const { setNetwork } = slice.actions;
 
 export const networkReducer = slice.reducer;
 

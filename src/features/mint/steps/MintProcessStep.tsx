@@ -64,7 +64,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
-  useGasPrices();
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const { currency } = useSelector($mint);

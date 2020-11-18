@@ -8,10 +8,9 @@ import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
 import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import { BridgeCurrency, getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
 import { fromGwei } from '../../../utils/converters'
-import { useGasPrices } from '../../marketData/marketDataHooks'
+import { BridgeFees, getTransactionFees, useFetchFees } from '../../fees/feesUtils'
 import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
 import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { BridgeFees, getTransactionFees, useFetchFees } from '../../fees/feesUtils'
 import { getFeeTooltips, TxType } from '../transactionsUtils'
 
 type TransactionFeesProps = {
@@ -38,7 +37,6 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   currency,
   type,
 }) => {
-  useGasPrices();
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
   const exchangeRates = useSelector($exchangeRates);
