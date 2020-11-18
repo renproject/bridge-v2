@@ -37,7 +37,7 @@ export const mintChainMap = {
   },
 };
 
-export const mintChainMapClass = {
+export const mintChainClassMap = {
   ethereum: Ethereum,
 };
 
@@ -53,7 +53,7 @@ export const getLockAndMintFees = (
   const mintedCurrencyChain = getChainConfig(mintedCurrencyConfig.chain);
 
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
-  const To = (mintChainMapClass as any)[mintedCurrencyChain.rentxName];
+  const To = (mintChainClassMap as any)[mintedCurrencyChain.rentxName];
   return getRenJs()
     .getFees({
       asset: lockedCurrency,
