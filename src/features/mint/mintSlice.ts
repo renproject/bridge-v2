@@ -11,7 +11,7 @@ type MintState = {
 
 let initialState: MintState = {
   currency: BridgeCurrency.BTC,
-  amount: 0.01, // TODO: CRIT: change to 0
+  amount: 0, // 0.01
 };
 
 const slice = createSlice({
