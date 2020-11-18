@@ -35,7 +35,10 @@ import { BigAssetAmount } from "../../../components/typography/TypographyHelpers
 import { usePaperTitle, useSetPaperTitle } from "../../../pages/MainPage";
 import { useNotifications } from "../../../providers/Notifications";
 import { orangeLight } from "../../../theme/colors";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
 import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
+import { TxType } from "../../transactions/transactionsUtils";
 import { getLockAndMintParams } from "../mintUtils";
 
 const getAddressValidityMessage = (expiryTime: number) => {
@@ -138,10 +141,10 @@ export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationSta
     lockChainConfig,
     lockTxHash,
     lockTxLink,
+    lockTxAmount,
     lockConfirmations,
     lockTargetConfirmations,
     lockProcessingTime,
-    suggestedAmount,
   } = getLockAndMintParams(tx);
 
   const confirmed = lockConfirmations === lockTargetConfirmations;
@@ -166,7 +169,7 @@ export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationSta
       <BigAssetAmount
         value={
           <NumberFormatText
-            value={suggestedAmount}
+            value={lockTxAmount}
             spacedSuffix={lockCurrencyConfig.short}
           />
         }
@@ -321,9 +324,16 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
     lockCurrencyConfig,
     lockChainConfig,
     lockTxLink,
+    lockTxAmount,
     mintTxLink,
     mintChainConfig,
   } = getLockAndMintParams(tx);
+  const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
+  const { conversionTotal } = getTransactionFees({
+    amount: lockTxAmount,
+    fees,
+    type: TxType.MINT,
+  });
   return (
     <>
       <ProgressWrapper>
@@ -333,7 +343,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
-          value={tx.targetAmount}
+          value={conversionTotal}
           spacedSuffix={lockCurrencyConfig.full}
         />
       </Typography>

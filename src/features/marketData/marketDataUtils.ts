@@ -22,13 +22,11 @@ export const USD_SYMBOL = "USD";
 
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
-const referenceParis = uniqueArray(
+const referencePairs = uniqueArray(
   Object.values(BridgeCurrency)
     .map(mapToBandchainCurrencySymbol)
     .filter((symbol) => symbol !== BridgeCurrency.UNKNOWN)
 ).map((symbol: string) => getPair(symbol, USD_SYMBOL));
-
-console.log(referenceParis);
 
 type BandchainExchangeRateEntry = {
   pair: string;
@@ -59,7 +57,7 @@ export type ExchangeRate = {
 
 export const fetchMarketDataRates = async () => {
   return getBandchain()
-    .getReferenceData(referenceParis)
+    .getReferenceData(referencePairs)
     .then(mapToExchangeData);
 };
 

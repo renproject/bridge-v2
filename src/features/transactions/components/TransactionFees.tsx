@@ -1,17 +1,23 @@
-import React, { FunctionComponent, useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
-import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
-import { WalletStatus } from '../../../components/utils/types'
-import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { BridgeCurrency, getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
-import { fromGwei } from '../../../utils/converters'
-import { BridgeFees, getTransactionFees, useFetchFees } from '../../fees/feesUtils'
-import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
-import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { getFeeTooltips, TxType } from '../transactionsUtils'
+import React, { FunctionComponent, useMemo } from "react";
+import { useSelector } from "react-redux";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { WalletStatus } from "../../../components/utils/types";
+import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import {
+  BridgeCurrency,
+  getCurrencyConfig,
+  toReleasedCurrency,
+} from "../../../utils/assetConfigs";
+import { fromGwei } from "../../../utils/converters";
+import { useFetchFees } from "../../fees/feesHooks";
+import { BridgeFees, getTransactionFees } from "../../fees/feesUtils";
+import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
+import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
+import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {
   type: TxType;
@@ -81,6 +87,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   }
   return (
     <>
+      <Debug it={{ fees }} />
       <LabelWithValue
         label="RenVM Fee"
         labelTooltip={tooltips.renVmFee}

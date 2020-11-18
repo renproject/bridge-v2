@@ -47,9 +47,10 @@ import {
   getCurrencyConfig,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { getTransactionFees, useFetchFees } from "../../fees/feesUtils";
+import { getTransactionFees } from "../../fees/feesUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   createTxQueryString,

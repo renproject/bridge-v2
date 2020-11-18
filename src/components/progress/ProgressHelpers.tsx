@@ -6,16 +6,16 @@ import {
   SvgIconProps,
   Theme,
   Typography,
-} from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import CompletedIcon from '@material-ui/icons/Check'
-import DoneIcon from '@material-ui/icons/Done'
-import classNames from 'classnames'
-import React, { FunctionComponent, ReactNode } from 'react'
-import { BridgeChain } from '../../utils/assetConfigs'
-import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from '../icons/RenIcons'
-import { CenteringSpacedBox } from '../layout/LayoutHelpers'
-import { TransactionStatusType } from '../utils/types'
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import CompletedIcon from "@material-ui/icons/Check";
+import DoneIcon from "@material-ui/icons/Done";
+import classNames from "classnames";
+import React, { FunctionComponent, ReactNode } from "react";
+import { BridgeChain } from "../../utils/assetConfigs";
+import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
+import { CenteringSpacedBox } from "../layout/LayoutHelpers";
+import { TransactionStatusType } from "../utils/types";
 
 export const CenteredProgress: FunctionComponent<CircularProgressProps> = (
   props
@@ -221,7 +221,7 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
   const styles = useTransactionStatusInfoStyles();
   return (
     <div className={styles.root}>
-      <Typography variant="body1" className={styles.status}>
+      <Typography variant="body1" className={styles.status} align="center">
         {status}
       </Typography>
       {chain && <Typography variant="body1">{chain} Tx:</Typography>}

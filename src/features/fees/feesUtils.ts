@@ -1,13 +1,4 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { WalletStatus } from "../../components/utils/types";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
-import {
-  getBurnAndReleaseFees,
-  getLockAndMintFees,
-} from "../../services/rentx";
 import { BridgeCurrency } from "../../utils/assetConfigs";
-import { $network } from "../network/networkSlice";
 import { TxType } from "../transactions/transactionsUtils";
 
 type Fees = {
@@ -47,22 +38,25 @@ export const getTransactionFees = ({
   type,
   fees,
 }: GetTransactionsFeesArgs) => {
+  const amountNumber = Number(amount);
   const feeData: CalculatedFee = {
     renVMFee: 0,
     renVMFeeAmount: 0,
     networkFee: 0,
-    conversionTotal: amount,
+    conversionTotal: amountNumber,
   };
   if (fees) {
     const renTxTypeFee = type === TxType.MINT ? fees.mint : fees.burn;
     const networkFee = type === TxType.MINT ? fees.lock : fees.release;
     feeData.networkFee = Number(networkFee) / 1e8;
     feeData.renVMFee = Number(renTxTypeFee) / 10000; // percent value
-    feeData.renVMFeeAmount = Number(Number(amount) * feeData.renVMFee);
-    feeData.conversionTotal =
-      Number(Number(amount) - feeData.renVMFeeAmount - feeData.networkFee) > 0
-        ? Number(amount) - feeData.renVMFee - feeData.networkFee
-        : 0;
+    feeData.renVMFeeAmount = Number(amountNumber * feeData.renVMFee);
+    const total = Number(
+      Number(
+        amountNumber - feeData.renVMFeeAmount - feeData.networkFee
+      ).toFixed(6)
+    );
+    feeData.conversionTotal = total > 0 ? total : 0;
   }
 
   return feeData;
@@ -75,38 +69,4 @@ export const mapFees = (rates: any) => {
     lock: rates.lock ? rates.lock.toNumber() : 0,
     release: rates.release ? rates.release.toNumber() : 0,
   } as SimpleFee;
-};
-
-const feesCache: Record<string, SimpleFee> = {};
-export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
-  const { provider, status } = useSelectedChainWallet();
-  const network = useSelector($network);
-  const initialFees: SimpleFee = {
-    mint: 0,
-    burn: 0,
-    lock: 0,
-    release: 0,
-  };
-  const [fees, setFees] = useState(initialFees);
-  const [pending, setPending] = useState(true);
-
-  useEffect(() => {
-    const cacheKey = `${currency}-${txType}`;
-    if (provider && status === WalletStatus.CONNECTED) {
-      if (feesCache[cacheKey]) {
-        setFees(feesCache[cacheKey]);
-        setPending(false);
-      } else {
-        const fetchFees =
-          txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
-        fetchFees(currency, provider, network).then((feeRates) => {
-          setPending(false);
-          feesCache[cacheKey] = feeRates;
-          setFees(feeRates);
-        });
-      }
-    }
-  }, [currency, provider, status, network, txType]);
-
-  return { fees, pending };
 };

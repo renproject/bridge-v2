@@ -18,9 +18,10 @@ import { WalletStatus } from '../../../components/utils/types'
 import { paths } from '../../../pages/routes'
 import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import { getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
 import { $exchangeRates } from '../../marketData/marketDataSlice'
 import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { getTransactionFees, useFetchFees } from '../../fees/feesUtils'
 import { TransactionFees } from '../../transactions/components/TransactionFees'
 import {
   createTxQueryString,

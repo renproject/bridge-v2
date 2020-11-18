@@ -25,7 +25,8 @@ import {
   supportedMintDestinationChains,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
-import { getTransactionFees, useFetchFees } from "../../fees/feesUtils";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
 import {
   TxConfigurationStepProps,
   TxType,
