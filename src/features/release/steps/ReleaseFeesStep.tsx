@@ -20,7 +20,7 @@ import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwall
 import { getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
 import { $exchangeRates } from '../../marketData/marketDataSlice'
 import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { getTransactionFees, useFetchFees } from '../../renData/renDataUtils'
+import { getTransactionFees, useFetchFees } from '../../fees/feesUtils'
 import { TransactionFees } from '../../transactions/components/TransactionFees'
 import {
   createTxQueryString,

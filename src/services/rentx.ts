@@ -3,7 +3,7 @@
 import { Bitcoin, BitcoinCash, Ethereum, Zcash } from '@renproject/chains'
 import { RenNetwork } from '@renproject/interfaces'
 import { BurnMachineContext, GatewayMachineContext } from '@renproject/ren-tx'
-import { mapFees } from '../features/renData/renDataUtils'
+import { mapFees } from '../features/fees/feesUtils'
 import {
   BridgeCurrency,
   getChainConfig,

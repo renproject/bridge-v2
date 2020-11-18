@@ -8,7 +8,6 @@ import {
 } from "../../services/rentx";
 import { BridgeCurrency } from "../../utils/assetConfigs";
 import { TxType } from "../transactions/transactionsUtils";
-import { mockedFees } from "./mockedFees";
 
 type Fees = {
   [key: string]: any;
@@ -27,11 +26,6 @@ export type CalculatedFee = {
   renVMFeeAmount: number;
   networkFee: number;
   conversionTotal: number;
-};
-
-export const fetchFees: () => Promise<BridgeFees> = () => {
-  // TODO: refactor fees to new version
-  return Promise.resolve(mockedFees as BridgeFees);
 };
 
 export type SimpleFee = {

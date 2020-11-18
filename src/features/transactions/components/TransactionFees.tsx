@@ -11,7 +11,7 @@ import { fromGwei } from '../../../utils/converters'
 import { useGasPrices } from '../../marketData/marketDataHooks'
 import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
 import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { BridgeFees, getTransactionFees, useFetchFees } from '../../renData/renDataUtils'
+import { BridgeFees, getTransactionFees, useFetchFees } from '../../fees/feesUtils'
 import { getFeeTooltips, TxType } from '../transactionsUtils'
 
 type TransactionFeesProps = {

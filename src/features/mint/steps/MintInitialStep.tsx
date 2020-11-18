@@ -16,7 +16,7 @@ import {
   supportedMintDestinationChains,
   toMintedCurrency,
 } from '../../../utils/assetConfigs'
-import { getTransactionFees, useFetchFees } from '../../renData/renDataUtils'
+import { getTransactionFees, useFetchFees } from '../../fees/feesUtils'
 import { TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
 import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
 import { $mint, $mintUsdAmount, setMintAmount, setMintCurrency, } from '../mintSlice'

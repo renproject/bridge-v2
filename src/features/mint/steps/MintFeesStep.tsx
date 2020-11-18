@@ -49,7 +49,7 @@ import {
 } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { getTransactionFees, useFetchFees } from "../../renData/renDataUtils";
+import { getTransactionFees, useFetchFees } from "../../fees/feesUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   createTxQueryString,
