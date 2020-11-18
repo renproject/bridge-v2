@@ -3,9 +3,6 @@ import { RootState } from "../../store/rootReducer";
 import { BridgeCurrency } from "../../utils/assetConfigs";
 import { $exchangeRates } from "../marketData/marketDataSlice";
 import { findExchangeRate } from "../marketData/marketDataUtils";
-import { $fees } from "../renData/renDataSlice";
-import { calculateTransactionFees } from "../renData/renDataUtils";
-import { TxType } from "../transactions/transactionsUtils";
 
 type MintState = {
   currency: BridgeCurrency;
@@ -51,10 +48,4 @@ export const $mintUsdAmount = createSelector(
   $mintAmount,
   $mintCurrencyUsdRate,
   (amount, rate) => amount * rate
-);
-
-export const $mintFees = createSelector(
-  [$mintAmount, $mintCurrency, $fees],
-  (amount, currency, fees) =>
-    calculateTransactionFees({ amount, currency, fees, type: TxType.MINT })
 );

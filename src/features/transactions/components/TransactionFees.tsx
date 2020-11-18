@@ -7,7 +7,6 @@ import { Debug } from '../../../components/utils/Debug'
 import { WalletStatus } from "../../../components/utils/types";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { useFetchFees } from "../../../services/rentx";
 import {
   BridgeCurrency,
   getCurrencyConfig,
@@ -17,7 +16,7 @@ import { fromGwei } from "../../../utils/converters";
 import { useGasPrices } from "../../marketData/marketDataHooks";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
-import { BridgeFees, getTransactionFees } from "../../renData/renDataUtils";
+import { BridgeFees, getTransactionFees, useFetchFees } from '../../renData/renDataUtils'
 import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {

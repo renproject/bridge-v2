@@ -20,7 +20,6 @@ import {
   ActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
 import {
@@ -30,6 +29,7 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
@@ -49,8 +49,7 @@ import {
 } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { $fees } from "../../renData/renDataSlice";
-import { calculateTransactionFees } from "../../renData/renDataUtils";
+import { getTransactionFees, useFetchFees } from "../../renData/renDataUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   createTxQueryString,
@@ -75,34 +74,31 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const dispatch = useDispatch();
   const history = useHistory();
   const { status, account } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { amount, currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const exchangeRates = useSelector($exchangeRates);
-  const fees = useSelector($fees);
-  const currencyUsdRate = findExchangeRate(exchangeRates, currency, "USD");
+  const { fees, pending } = useFetchFees(currency, TxType.MINT);
+  const currencyUsdRate = findExchangeRate(exchangeRates, currency);
 
   const amountUsd = amount * currencyUsdRate;
-  const { conversionTotal } = calculateTransactionFees({
+  const { conversionTotal } = getTransactionFees({
     amount,
-    currency,
     fees,
     type: TxType.MINT,
   });
 
   const currencyConfig = getCurrencyConfig(currency);
-  const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
+  const { GreyIcon } = currencyConfig;
 
+  const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
   const targetNetworkLabel = getChainShortLabel(chain);
   const destinationCurrency = toMintedCurrency(currency);
+
   const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
 
-  const MintedCurrencyIcon = useMemo(
-    () => getCurrencyGreyIcon(currencyConfig.symbol),
-    [currencyConfig.symbol]
-  );
-
-  const [ackChecked, setAckChecked] = useState(true); // TODO: CRIT: false
+  const [ackChecked, setAckChecked] = useState(false);
   const [touched, setTouched] = useState(false);
 
   const handleAckCheckboxChange = useCallback((event) => {
@@ -212,26 +208,30 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
-        <AssetInfo
-          label="Receiving"
-          value={
-            <NumberFormatText
-              value={conversionTotal}
-              spacedSuffix={destinationCurrencyConfig.short}
-              decimalScale={3}
+        {walletConnected &&
+          (pending ? (
+            <CenteredProgress />
+          ) : (
+            <AssetInfo
+              label="Receiving"
+              value={
+                <NumberFormatText
+                  value={conversionTotal}
+                  spacedSuffix={destinationCurrencyConfig.short}
+                />
+              }
+              valueEquivalent={
+                <NumberFormatText
+                  prefix=" = $"
+                  value={targetCurrencyAmountUsd}
+                  spacedSuffix="USD"
+                  decimalScale={2}
+                  fixedDecimalScale
+                />
+              }
+              Icon={<GreyIcon fontSize="inherit" />}
             />
-          }
-          valueEquivalent={
-            <NumberFormatText
-              prefix=" = $"
-              value={targetCurrencyAmountUsd}
-              spacedSuffix="USD"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          }
-          Icon={<MintedCurrencyIcon fontSize="inherit" />}
-        />
+          ))}
         <CheckboxWrapper>
           <FormControl error={showAckError}>
             <FormControlLabel
@@ -262,7 +262,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             onClick={handleConfirm}
             disabled={showAckError || mintingInitialized}
           >
-            {status !== WalletStatus.CONNECTED
+            {!walletConnected
               ? "Connect Wallet"
               : mintingInitialized
               ? "Confirming..."

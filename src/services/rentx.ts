@@ -1,21 +1,17 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { Bitcoin, BitcoinCash, Ethereum, Zcash } from "@renproject/chains";
-import { RenNetwork } from "@renproject/interfaces";
-import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
-import { useEffect, useState } from "react";
-import { WalletStatus } from "../components/utils/types";
-import { SimpleFee } from "../features/renData/renDataUtils";
-import { TxType } from "../features/transactions/transactionsUtils";
-import { useSelectedChainWallet } from "../providers/multiwallet/multiwalletHooks";
+import { Bitcoin, BitcoinCash, Ethereum, Zcash } from '@renproject/chains'
+import { RenNetwork } from '@renproject/interfaces'
+import { BurnMachineContext, GatewayMachineContext } from '@renproject/ren-tx'
+import { mapFees } from '../features/renData/renDataUtils'
 import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
   toMintedCurrency,
   toReleasedCurrency,
-} from "../utils/assetConfigs";
-import { getRenJs } from "./renJs";
+} from '../utils/assetConfigs'
+import { getRenJs } from './renJs'
 
 export const lockChainMap = {
   bitcoin: () => Bitcoin(),
@@ -92,15 +88,6 @@ export const releaseChainClassMap = {
   bitcoinCash: BitcoinCash,
 };
 
-const mapFees = (rates: any) => {
-  return {
-    mint: rates.mint,
-    burn: rates.burn,
-    lock: rates.lock ? rates.lock.toNumber() : 0,
-    release: rates.release ? rates.release.toNumber() : 0,
-  } as SimpleFee;
-};
-
 export const getBurnAndReleaseFees = (
   burnedCurrency: BridgeCurrency,
   provider: any,
@@ -124,32 +111,3 @@ export const getBurnAndReleaseFees = (
     .then(mapFees);
 };
 
-export const useFetchFees = (
-  lockedCurrency: BridgeCurrency,
-  txType: TxType
-) => {
-  const fetchFees =
-    txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
-  const { provider, status } = useSelectedChainWallet();
-  const network = RenNetwork.Testnet; //TODO: getFromSelector;
-  const initialFees: SimpleFee = {
-    mint: 0,
-    burn: 0,
-    lock: 0,
-    release: 0,
-  };
-  const [fees, setFees] = useState(initialFees);
-  const [pending, setPending] = useState(true);
-
-  useEffect(() => {
-    console.log("fetching fees");
-    if (provider && status === WalletStatus.CONNECTED) {
-      fetchFees(lockedCurrency, provider, network).then((feeRates) => {
-        setPending(false);
-        setFees(feeRates);
-      });
-    }
-  }, [lockedCurrency, provider, status, network, fetchFees]);
-
-  return { fees, pending };
-};

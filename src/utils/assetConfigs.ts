@@ -2,7 +2,8 @@ import { SvgIconComponent } from "@material-ui/icons";
 import {
   BchFullIcon,
   BchGreyIcon,
-  BinanceChainFullIcon, BitcoinIcon,
+  BinanceChainFullIcon,
+  BitcoinIcon,
   BtcFullIcon,
   BtcGreyIcon,
   CustomSvgIconComponent,
@@ -17,7 +18,7 @@ import {
   TooltipIcon as NotSetIcon,
   ZecFullIcon,
   ZecGreyIcon,
-} from '../components/icons/RenIcons'
+} from "../components/icons/RenIcons";
 import { orangeLight } from "../theme/colors";
 
 export enum BridgeCurrency {
@@ -67,7 +68,7 @@ export type ColorsConfig = {
 
 export type IconsConfig = {
   FullIcon: CustomSvgIconComponent | SvgIconComponent;
-  GreyIcon?: CustomSvgIconComponent | SvgIconComponent;
+  GreyIcon: CustomSvgIconComponent | SvgIconComponent;
   MainIcon: CustomSvgIconComponent | SvgIconComponent;
 };
 
@@ -268,6 +269,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     full: "Bitcoin",
     FullIcon: NotSetIcon,
     MainIcon: BitcoinIcon,
+    GreyIcon: NotSetIcon,
     rentxName: "bitcoin",
     blockTime: 10,
     targetConfirmations: 6,
@@ -277,6 +279,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "ZEC",
     full: "Zcash",
     FullIcon: NotSetIcon,
+    GreyIcon: NotSetIcon,
     MainIcon: NotSetIcon,
     rentxName: "zcash",
     blockTime: 2.5,
@@ -287,6 +290,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     full: "Binance SmartChain",
     FullIcon: BinanceChainFullIcon,
     MainIcon: BinanceChainFullIcon,
+    GreyIcon: NotSetIcon,
     rentxName: "binanceSmartChain",
     blockTime: 3,
   },
@@ -296,6 +300,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     full: "Ethereum",
     FullIcon: EthereumChainFullIcon,
     MainIcon: EthereumChainFullIcon,
+    GreyIcon: NotSetIcon,
     rentxName: "ethereum",
     blockTime: 0.25,
   },
@@ -304,6 +309,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     short: "UNKNOWNC",
     full: "Unknown",
     FullIcon: NotSetIcon,
+    GreyIcon: NotSetIcon,
     MainIcon: NotSetIcon,
     rentxName: "unknown",
     blockTime: 1e6,

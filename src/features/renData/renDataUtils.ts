@@ -1,6 +1,11 @@
-import { BridgeCurrency } from "../../utils/assetConfigs";
-import { TxType } from "../transactions/transactionsUtils";
-import { mockedFees } from "./mockedFees";
+import { RenNetwork } from '@renproject/interfaces'
+import { useEffect, useState } from 'react'
+import { WalletStatus } from '../../components/utils/types'
+import { useSelectedChainWallet } from '../../providers/multiwallet/multiwalletHooks'
+import { getBurnAndReleaseFees, getLockAndMintFees } from '../../services/rentx'
+import { BridgeCurrency } from '../../utils/assetConfigs'
+import { TxType } from '../transactions/transactionsUtils'
+import { mockedFees } from './mockedFees'
 
 type Fees = {
   [key: string]: any;
@@ -130,3 +135,40 @@ export const calculateTransactionFees = ({
 
   return feeData;
 };
+export const mapFees = (rates: any) => {
+  return {
+    mint: rates.mint,
+    burn: rates.burn,
+    lock: rates.lock ? rates.lock.toNumber() : 0,
+    release: rates.release ? rates.release.toNumber() : 0,
+  } as SimpleFee
+}
+export const useFetchFees = (
+  currency: BridgeCurrency,
+  txType: TxType
+) => {
+  const fetchFees =
+    txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees
+  const { provider, status } = useSelectedChainWallet()
+  const network = RenNetwork.Testnet //TODO: getFromSelector;
+  const initialFees: SimpleFee = {
+    mint: 0,
+    burn: 0,
+    lock: 0,
+    release: 0,
+  }
+  const [fees, setFees] = useState(initialFees)
+  const [pending, setPending] = useState(true)
+
+  useEffect(() => {
+    console.log('fetching fees')
+    if (provider && status === WalletStatus.CONNECTED) {
+      fetchFees(currency, provider, network).then((feeRates) => {
+        setPending(false)
+        setFees(feeRates)
+      })
+    }
+  }, [currency, provider, status, network, fetchFees])
+
+  return { fees, pending }
+}

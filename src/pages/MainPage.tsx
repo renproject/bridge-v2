@@ -8,7 +8,6 @@ import { storageKeys } from "../constants/constants";
 import { useExchangeRates } from "../features/marketData/marketDataHooks";
 import { MintFlow } from "../features/mint/MintFlow";
 import { ReleaseFlow } from "../features/release/ReleaseFlow";
-import { useFees } from "../features/renData/renDataHooks";
 import { paths } from "./routes";
 
 const [usePaperTitle, PaperTitleProvider] = createStateContext("Transaction");
@@ -32,7 +31,6 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
   if (location.pathname === "/") {
     history.replace(paths.MINT);
   }
-  useFees();
   useExchangeRates();
 
   return (
