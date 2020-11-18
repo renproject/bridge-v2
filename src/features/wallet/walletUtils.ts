@@ -35,7 +35,6 @@ export const fetchAssetBalance = (
 ) => {
   const chain = Ethereum(provider, RenNetwork.Testnet);
   return chain.getBalance(asset, account).then((balance) => {
-    console.log("balance", balance.toNumber());
     return balance.toNumber() / 100000000;
   })
 };
