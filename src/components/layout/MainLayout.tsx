@@ -12,7 +12,6 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
-import { RenNetwork } from "@renproject/interfaces";
 import {
   useMultiwallet,
   WalletPickerModal,
@@ -30,6 +29,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
+import { $network } from "../../features/network/networkSlice";
 import {
   $multiwalletChain,
   $walletPickerOpened,
@@ -164,6 +164,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const multiwalletChain = useSelector($multiwalletChain);
   const walletPickerOpen = useSelector($walletPickerOpened);
+  const network = useSelector($network);
   const pickerClasses = useWalletPickerStyles();
   const { status, account } = useSelectedChainWallet();
   const handleWalletPickerClose = useCallback(() => {
@@ -174,7 +175,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   }, [dispatch]);
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
-      targetNetwork: RenNetwork.Testnet, // env.NETWORK, // TODO: pass from env before prod
+      targetNetwork: network,
       chain: multiwalletChain,
       onClose: handleWalletPickerClose,
       pickerClasses,
@@ -185,7 +186,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
       config: walletPickerModalConfig,
     };
     return options;
-  }, [multiwalletChain, handleWalletPickerClose, pickerClasses]);
+  }, [multiwalletChain, handleWalletPickerClose, pickerClasses, network]);
 
   const debugWallet = useWallet(multiwalletChain); //remove
   const debugMultiwallet = useMultiwallet(); //remove

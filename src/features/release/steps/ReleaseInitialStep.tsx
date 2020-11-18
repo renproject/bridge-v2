@@ -24,9 +24,9 @@ import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwall
 import {
   getChainConfig,
   getCurrencyConfig,
-  toReleasedCurrency,
+  supportedBurnChains,
   supportedReleaseCurrencies,
-  supportedReleaseSourceChains,
+  toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import {
@@ -35,7 +35,10 @@ import {
   setChain,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
-import { fetchAssetBalance, getAssetBalance } from "../../wallet/walletUtils";
+import {
+  getAssetBalance,
+  useFetchAssetBalance,
+} from "../../wallet/walletUtils";
 import {
   $release,
   $releaseUsdAmount,
@@ -52,24 +55,24 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const { chain, balances } = useSelector($wallet);
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
+  const { fetchAssetBalance } = useFetchAssetBalance();
   const fetchAllBalances = useCallback(() => {
     // TODO: maybe hook?
-    if (provider && account && walletStatus === WalletStatus.CONNECTED) {
-      for (const currencySymbol of supportedReleaseCurrencies) {
-        const sourceCurrencySymbol = toReleasedCurrency(currencySymbol);
-        fetchAssetBalance(provider, account, sourceCurrencySymbol).then(
-          (balance) => {
-            dispatch(
-              addOrUpdateBalance({
-                symbol: currencySymbol,
-                balance,
-              })
-            );
-          }
+    for (const currencySymbol of supportedReleaseCurrencies) {
+      const sourceCurrencySymbol = toReleasedCurrency(currencySymbol);
+      fetchAssetBalance(sourceCurrencySymbol).then((balance: any) => {
+        if (balance === null) {
+          return;
+        }
+        dispatch(
+          addOrUpdateBalance({
+            symbol: currencySymbol,
+            balance,
+          })
         );
-      }
+      });
     }
-  }, [dispatch, provider, account, walletStatus]);
+  }, [dispatch, fetchAssetBalance]);
 
   useEffect(fetchAllBalances, [provider, account]);
 
@@ -147,7 +150,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <AssetDropdown
           label="Chain"
           mode="chain"
-          available={supportedReleaseSourceChains}
+          available={supportedBurnChains}
           value={chain}
           onChange={handleChainChange}
         />

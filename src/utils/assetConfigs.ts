@@ -39,6 +39,7 @@ export enum BridgeCurrency {
 
 export enum BridgeChain {
   BTCC = "BTCC",
+  BCHC = "BCHC",
   ZECC = "ZECC",
   BNCC = "BNCC",
   ETHC = "ETHC",
@@ -111,8 +112,8 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
     MainIcon: BchFullIcon,
-    chain: BridgeChain.UNKNOWNC, // TODO:
-    rentxName: "bch",
+    chain: BridgeChain.BCHC,
+    rentxName: "bitcoinCash",
   },
   [BridgeCurrency.RENBCH]: {
     symbol: BridgeCurrency.RENBCH,
@@ -274,13 +275,24 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     blockTime: 10,
     targetConfirmations: 6,
   },
+  [BridgeChain.BCHC]: {
+    symbol: BridgeChain.BCHC,
+    short: "BCH",
+    full: "Bitcoin Cash",
+    FullIcon: BchFullIcon,
+    GreyIcon: BchGreyIcon,
+    MainIcon: BchFullIcon,
+    rentxName: "bitcoinCash",
+    blockTime: 10,
+    targetConfirmations: 6,
+  },
   [BridgeChain.ZECC]: {
     symbol: BridgeChain.ZECC,
     short: "ZEC",
     full: "Zcash",
-    FullIcon: NotSetIcon,
-    GreyIcon: NotSetIcon,
-    MainIcon: NotSetIcon,
+    FullIcon: ZecFullIcon,
+    GreyIcon: ZecGreyIcon,
+    MainIcon: ZecFullIcon,
     rentxName: "zcash",
     blockTime: 2.5,
   },
@@ -366,7 +378,7 @@ export const getNetworkConfigByRentxName = (name: string) =>
   Object.values(networksConfig).find((network) => network.rentxName === name) ||
   unknownNetworkConfig;
 
-export const supportedMintCurrencies = [
+export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
   // BridgeCurrency.BCH,
   // BridgeCurrency.DOGE,
@@ -378,7 +390,7 @@ export const supportedMintDestinationChains = [
   // BridgeChain.BNCC,
 ];
 
-export const supportedReleaseSourceChains = [
+export const supportedBurnChains = [
   BridgeChain.ETHC, // BridgeChain.BNCC,
 ];
 
@@ -386,7 +398,7 @@ export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
   // BridgeCurrency.RENBCH,
   // BridgeCurrency.RENDOGE,
-  BridgeCurrency.RENZEC,
+  // BridgeCurrency.RENZEC,
 ];
 
 export const toMintedCurrency = (lockedCurrency: BridgeCurrency) => {
