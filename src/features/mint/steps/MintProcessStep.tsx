@@ -13,7 +13,8 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useLocation } from "react-use";
 import { Actor } from "xstate";
 import {
   ActionButton,
@@ -37,6 +38,7 @@ import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePageTitle } from "../../../hooks/usePageTitle";
 import { usePaperTitle } from "../../../pages/MainPage";
+import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getCurrencyConfigByRentxName,
@@ -48,7 +50,12 @@ import {
   BookmarkPageWarning,
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
-import { TxType, useTxParam } from "../../transactions/transactionsUtils";
+import {
+  createTxQueryString,
+  parseTxQueryString,
+  TxType,
+  useTxParam,
+} from "../../transactions/transactionsUtils";
 import { setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   DepositAcceptedStatus,
@@ -160,6 +167,27 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     return { deposit, machine };
   }, [current.context]);
 
+  // In order to enable quick restoration, we need to persist the deposit transaction
+  // We persist via querystring, so lets check if the transaction is present
+  // and update otherwise
+  const location = useLocation();
+  const history = useHistory();
+
+  useEffect(() => {
+    if (!location.search) return;
+    const queryTx = parseTxQueryString(location.search);
+    const deposit = Object.values(queryTx?.transactions || {})[0];
+    // If we have detected a deposit, but there is no deposit in the querystring
+    // update the queryString to have the deposit
+    // TODO: to enable quick resume, we may want to ask users to update their bookmarks
+    if (activeDeposit && !deposit) {
+      history.replace({
+        pathname: paths.MINT_TRANSACTION,
+        search: "?" + createTxQueryString(current.context.tx),
+      });
+    }
+  }, [location, activeDeposit, current.context.tx, history]);
+
   return (
     <>
       {activeDeposit ? (
@@ -192,7 +220,6 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
   // const [submitting, setSubmitting] = useState(false);
   const handleSubmitToDestinationChain = useCallback(() => {
     console.log("handling");
-    // TODO: investigate why claiming is not working
     machine.send({ type: "CLAIM" });
     // setSubmitting(true);
   }, [machine]);
