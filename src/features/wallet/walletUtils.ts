@@ -2,6 +2,7 @@ import { Ethereum } from "@renproject/chains";
 import { RenNetwork } from "@renproject/interfaces";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
+import { WalletStatus } from "../../components/utils/types";
 import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { mintChainClassMap } from "../../services/rentx";
 import {
@@ -39,19 +40,24 @@ export const multiwalletChainToBridgeChain = (chain: string) => {
 
 export const useFetchAssetBalance = () => {
   const bridgeChain = useSelector($chain);
-  const { provider, account } = useSelectedChainWallet();
+  const { status, provider, account } = useSelectedChainWallet();
   const bridgeChainConfig = getChainConfig(bridgeChain);
   const network = useSelector($network);
-  const Chain = (mintChainClassMap as any)[bridgeChainConfig.symbol];
+  const Chain = (mintChainClassMap as any)[bridgeChainConfig.rentxName];
+  console.log(bridgeChain, bridgeChainConfig);
 
   const fetchAssetBalance = useMemo(
     () => (asset: string) => {
-      const chain = Chain(provider, network);
-      return chain.getBalance(asset, account).then((balance: any) => {
-        return balance.toNumber() / 100000000;
-      });
+      if (provider && account && status === WalletStatus.CONNECTED) {
+        const chain = Chain(provider, network);
+        return chain.getBalance(asset, account).then((balance: any) => {
+          return balance.toNumber() / 100000000;
+        });
+      } else {
+        return Promise.resolve(null);
+      }
     },
-    [Chain, account, network, provider]
+    [Chain, account, network, provider, status]
   );
   return { fetchAssetBalance };
 };
