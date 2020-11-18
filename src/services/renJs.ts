@@ -1,12 +1,11 @@
-import { RenNetwork } from '@renproject/interfaces'
-import RenJS from '@renproject/ren'
-import { env } from '../constants/environmentVariables'
+import { RenNetwork } from "@renproject/interfaces";
+import RenJS from "@renproject/ren";
 
-let renJs: RenJS | null = null;
-
-export const getRenJs = () => {
-  if (renJs === null) {
-    renJs = new RenJS(env.NETWORK as RenNetwork);
+type RenJSCache = Record<RenNetwork, RenJS>;
+const renJsCache: Partial<RenJSCache> = {};
+export const getRenJs = (network: RenNetwork) => {
+  if (!renJsCache[network]) {
+    renJsCache[network] = new RenJS(network);
   }
-  return renJs;
+  return renJsCache[network] as RenJS;
 };

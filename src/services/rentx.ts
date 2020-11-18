@@ -1,17 +1,17 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { Bitcoin, BitcoinCash, Ethereum, Zcash } from '@renproject/chains'
-import { RenNetwork } from '@renproject/interfaces'
-import { BurnMachineContext, GatewayMachineContext } from '@renproject/ren-tx'
-import { mapFees } from '../features/fees/feesUtils'
+import { Bitcoin, BitcoinCash, Ethereum, Zcash } from "@renproject/chains";
+import { RenNetwork } from "@renproject/interfaces";
+import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
+import { mapFees } from "../features/fees/feesUtils";
 import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
   toMintedCurrency,
   toReleasedCurrency,
-} from '../utils/assetConfigs'
-import { getRenJs } from './renJs'
+} from "../utils/assetConfigs";
+import { getRenJs } from "./renJs";
 
 export const lockChainMap = {
   bitcoin: () => Bitcoin(),
@@ -54,7 +54,7 @@ export const getLockAndMintFees = (
 
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
   const To = (mintChainClassMap as any)[mintedCurrencyChain.rentxName];
-  return getRenJs()
+  return getRenJs(network)
     .getFees({
       asset: lockedCurrency,
       from: From(),
@@ -102,7 +102,7 @@ export const getBurnAndReleaseFees = (
   console.log(releasedCurrency);
   const From = (burnChainClassMap as any)[burnedCurrencyChain.rentxName];
   const To = (releaseChainClassMap as any)[releasedCurrencyChain.rentxName];
-  return getRenJs()
+  return getRenJs(network)
     .getFees({
       asset: releasedCurrency,
       from: From(provider, network),
@@ -110,4 +110,3 @@ export const getBurnAndReleaseFees = (
     })
     .then(mapFees);
 };
-

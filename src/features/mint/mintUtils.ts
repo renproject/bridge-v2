@@ -2,6 +2,7 @@ import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { GatewaySession, mintMachine } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
+import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
 import { lockChainMap, mintChainMap } from "../../services/rentx";
@@ -17,6 +18,7 @@ import {
   toMintedCurrency,
   getNetworkConfigByRentxName,
 } from "../../utils/assetConfigs";
+import { $network } from "../network/networkSlice";
 import { getChainExplorerLink } from "../transactions/transactionsUtils";
 
 export const getMintTx: GatewaySession = {
@@ -80,6 +82,7 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
 
 export const useMintMachine = (mintTransaction: GatewaySession) => {
   const { enabledChains } = useMultiwallet();
+  const network = useSelector($network);
   const providers = Object.entries(enabledChains).reduce(
     (c, n) => ({
       ...c,
@@ -91,7 +94,7 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     context: {
       tx: mintTransaction,
       providers,
-      sdk: getRenJs(),
+      sdk: getRenJs(network),
       fromChainMap: lockChainMap,
       toChainMap: mintChainMap,
     },
