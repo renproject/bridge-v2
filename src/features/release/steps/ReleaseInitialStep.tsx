@@ -114,7 +114,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const targetChainConfig = getChainConfig(targetCurrencyConfig.chain);
   //TODO check if balanceOK
   const canProceed =
-    balance !== null && amount && address && amount <= Number(balance);
+    balance !== null && amount && address && amount <= Number(balance) && amount > 0;
 
   const handleNextStep = useCallback(() => {
     if (walletStatus !== WalletStatus.CONNECTED) {

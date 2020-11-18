@@ -30,6 +30,7 @@ import { Link, useHistory } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
 import { $network } from "../../features/network/networkSlice";
+import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 import {
   $multiwalletChain,
   $walletPickerOpened,
@@ -141,6 +142,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const history = useHistory();
   const styles = useStyles();
   const dispatch = useDispatch();
+  useSetNetworkFromParam();
   useBackroundReplacer(variant);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

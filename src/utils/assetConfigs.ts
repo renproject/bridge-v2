@@ -1,4 +1,5 @@
 import { SvgIconComponent } from "@material-ui/icons";
+import { RenNetwork } from "@renproject/interfaces";
 import {
   BchFullIcon,
   BchGreyIcon,
@@ -377,6 +378,12 @@ const unknownNetworkConfig = networksConfig[BridgeNetwork.UNKNOWN];
 export const getNetworkConfigByRentxName = (name: string) =>
   Object.values(networksConfig).find((network) => network.rentxName === name) ||
   unknownNetworkConfig;
+
+export const supportedRenNetworks = [
+  RenNetwork.Mainnet,
+  RenNetwork.Testnet,
+  // RenNetwork.TestnetVDot3,
+];
 
 export const supportedLockCurrencies = [
   BridgeCurrency.BTC,

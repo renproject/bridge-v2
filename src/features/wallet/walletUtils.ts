@@ -44,7 +44,6 @@ export const useFetchAssetBalance = () => {
   const bridgeChainConfig = getChainConfig(bridgeChain);
   const network = useSelector($network);
   const Chain = (mintChainClassMap as any)[bridgeChainConfig.rentxName];
-  console.log(bridgeChain, bridgeChainConfig);
 
   const fetchAssetBalance = useMemo(
     () => (asset: string) => {

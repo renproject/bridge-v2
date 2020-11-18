@@ -1,71 +1,35 @@
-import { Divider, IconButton } from "@material-ui/core";
-import {
-  depositMachine,
-  DepositMachineSchema,
-  GatewaySession,
-  GatewayTransaction,
-} from "@renproject/ren-tx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps, useHistory } from "react-router-dom";
-import { useLocation } from "react-use";
-import { Actor } from "xstate";
-import {
-  ActionButton,
-  ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import {
-  BigWrapper,
-  CenteringSpacedBox,
-  MediumWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { usePageTitle } from "../../../hooks/usePageTitle";
-import { usePaperTitle } from "../../../pages/MainPage";
-import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import {
-  getCurrencyConfigByRentxName,
-  getCurrencyShortLabel,
-} from "../../../utils/assetConfigs";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
-import {
-  BookmarkPageWarning,
-  ProgressStatus,
-} from "../../transactions/components/TransactionsHelpers";
-import {
-  createTxQueryString,
-  parseTxQueryString,
-  TxType,
-  useTxParam,
-} from "../../transactions/transactionsUtils";
-import { setWalletPickerOpened } from "../../wallet/walletSlice";
+import { Divider, IconButton } from '@material-ui/core'
+import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
+import { useLocation } from 'react-use'
+import { Actor } from 'xstate'
+import { ActionButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from '../../../components/utils/types'
+import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
+import { usePageTitle } from '../../../hooks/usePageTitle'
+import { usePaperTitle } from '../../../pages/MainPage'
+import { paths } from '../../../pages/routes'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { getCurrencyConfigByRentxName, getCurrencyShortLabel, } from '../../../utils/assetConfigs'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
+import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
+import { createTxQueryString, parseTxQueryString, TxType, useTxParam, } from '../../transactions/transactionsUtils'
+import { setWalletPickerOpened } from '../../wallet/walletSlice'
 import {
   DepositAcceptedStatus,
   DepositConfirmationStatus,
   DepositTo,
   DestinationPendingStatus,
   DestinationReceivedStatus,
-} from "../components/MintStatuses";
-import { $mint } from "../mintSlice";
-import { getLockAndMintParams, useMintMachine } from "../mintUtils";
+} from '../components/MintStatuses'
+import { $mint } from '../mintSlice'
+import { getLockAndMintParams, useMintMachine } from '../mintUtils'
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
