@@ -41,8 +41,7 @@ import { ProcessingTimeWrapper } from "../../transactions/components/Transaction
 import { TxType } from "../../transactions/transactionsUtils";
 import { getLockAndMintParams } from "../mintUtils";
 
-const getAddressValidityMessage = (expiryTime: number) => {
-  const time = Math.ceil((expiryTime - Number(new Date())) / 1000 / 3600);
+const getAddressValidityMessage = (time: number) => {
   const unit = "hours";
   return `This Gateway Address is only valid for ${time} ${unit}. Do not send multiple deposits or deposit after ${time} ${unit}.`;
 };
@@ -58,9 +57,12 @@ export const DepositTo: FunctionComponent<DepositToProps> = ({ tx }) => {
   }, [showQr]);
   const { showNotification } = useNotifications();
   useEffect(() => {
-    showNotification(getAddressValidityMessage(tx.expiryTime), {
-      variant: "warning",
-    });
+    const time = Math.ceil((tx.expiryTime - Number(new Date())) / 1000 / 3600);
+    if (time > 0) {
+      showNotification(getAddressValidityMessage(time), {
+        variant: "warning",
+      });
+    }
   }, [showNotification, tx.expiryTime]);
 
   const {
