@@ -12,7 +12,7 @@ import { WalletStatus } from '../../../components/utils/types'
 import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
   getCurrencyConfig,
-  supportedMintCurrencies,
+  supportedLockCurrencies,
   supportedMintDestinationChains,
   toMintedCurrency,
 } from '../../../utils/assetConfigs'
@@ -89,7 +89,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
           <AssetDropdown
             label="Send"
             mode="send"
-            available={supportedMintCurrencies}
+            available={supportedLockCurrencies}
             value={currency}
             onChange={handleCurrencyChange}
           />

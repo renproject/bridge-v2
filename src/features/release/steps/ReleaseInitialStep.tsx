@@ -26,7 +26,7 @@ import {
   getCurrencyConfig,
   toReleasedCurrency,
   supportedReleaseCurrencies,
-  supportedReleaseSourceChains,
+  supportedBurnChains,
 } from "../../../utils/assetConfigs";
 import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import {
@@ -147,7 +147,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <AssetDropdown
           label="Chain"
           mode="chain"
-          available={supportedReleaseSourceChains}
+          available={supportedBurnChains}
           value={chain}
           onChange={handleChainChange}
         />
