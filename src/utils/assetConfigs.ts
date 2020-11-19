@@ -16,7 +16,9 @@ import {
   DotsGreyIcon,
   EthereumChainFullIcon,
   EthereumIcon,
+  MetamaskFullIcon,
   TooltipIcon as NotSetIcon,
+  WalletConnectFullIcon,
   ZecFullIcon,
   ZecGreyIcon,
 } from "../components/icons/RenIcons";
@@ -53,6 +55,13 @@ export enum BridgeNetwork {
   UNKNOWN = "UNKNOWN",
 }
 
+export enum BridgeWallet {
+  METAMASKW = "METAMASKW",
+  WALLETCONNECTW = "WALLETCONNECTW",
+  BINANCESMARTCHAINW = "BINANCESMARTCHAINW",
+  UNKNOWNW = "UNKNOWNW",
+}
+
 const unknownLabel = "unknown";
 
 export type LabelsConfig = {
@@ -67,11 +76,13 @@ export type RentxAssetConfig = {
 export type ColorsConfig = {
   color?: string;
 };
+export type MainIconConfig = {
+  MainIcon: CustomSvgIconComponent | SvgIconComponent;
+};
 
-export type IconsConfig = {
+export type IconsConfig = MainIconConfig & {
   FullIcon: CustomSvgIconComponent | SvgIconComponent;
   GreyIcon: CustomSvgIconComponent | SvgIconComponent;
-  MainIcon: CustomSvgIconComponent | SvgIconComponent;
 };
 
 export type CurrencyConfig = LabelsConfig &
@@ -255,7 +266,7 @@ export const getCurrencyRentxSourceChain = (symbol: BridgeCurrency) => {
   return BridgeChain.UNKNOWNC;
 };
 
-export type ChainConfig = LabelsConfig &
+export type BridgeChainConfig = LabelsConfig &
   IconsConfig &
   RentxAssetConfig & {
     symbol: BridgeChain;
@@ -264,7 +275,7 @@ export type ChainConfig = LabelsConfig &
   };
 
 // TODO: add confirmations from https://support.kraken.com/hc/en-us/articles/203325283-Cryptocurrency-deposit-processing-times
-export const chainsConfig: Record<BridgeChain, ChainConfig> = {
+export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
   [BridgeChain.BTCC]: {
     symbol: BridgeChain.BTCC,
     short: "BTC",
@@ -299,7 +310,7 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
   },
   [BridgeChain.BSCC]: {
     symbol: BridgeChain.BSCC,
-    short: "BNC",
+    short: "BSC",
     full: "Binance SmartChain",
     FullIcon: BinanceChainFullIcon,
     MainIcon: BinanceChainFullIcon,
@@ -394,7 +405,7 @@ export const supportedLockCurrencies = [
 
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
-  // BridgeChain.BSCC,
+  BridgeChain.BSCC,
 ];
 
 export const supportedBurnChains = [
@@ -437,3 +448,55 @@ export const toReleasedCurrency = (burnedCurrency: BridgeCurrency) => {
       return BridgeCurrency.UNKNOWN;
   }
 };
+
+export type BridgeWalletConfig = LabelsConfig &
+  ColorsConfig &
+  MainIconConfig &
+  RentxAssetConfig & {
+    symbol: BridgeWallet;
+    chain: BridgeChain;
+  };
+
+export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
+  [BridgeWallet.METAMASKW]: {
+    symbol: BridgeWallet.METAMASKW,
+    short: "MetaMask",
+    full: "MetaMask Wallet",
+    MainIcon: MetamaskFullIcon,
+    chain: BridgeChain.ETHC,
+    rentxName: "metamask",
+  },
+  [BridgeWallet.WALLETCONNECTW]: {
+    symbol: BridgeWallet.METAMASKW,
+    short: "MetaMask",
+    full: "MetaMask Wallet",
+    MainIcon: WalletConnectFullIcon,
+    chain: BridgeChain.ETHC,
+    rentxName: "walletconnect",
+  },
+  [BridgeWallet.BINANCESMARTCHAINW]: {
+    symbol: BridgeWallet.METAMASKW,
+    short: "Binance Chain Wallet",
+    full: "Binance Chain Wallet",
+    MainIcon: BinanceChainFullIcon,
+    chain: BridgeChain.BSCC,
+    rentxName: "binanceSmartChain",
+  },
+  [BridgeWallet.UNKNOWNW]: {
+    symbol: BridgeWallet.UNKNOWNW,
+    short: "Unknown",
+    full: "Unknown Wallet",
+    MainIcon: NotSetIcon,
+    chain: BridgeChain.UNKNOWNC,
+    rentxName: "unknown",
+  },
+};
+
+const unknownWalletConfig = walletsConfig[BridgeWallet.UNKNOWNW];
+
+export const getWalletConfig = (symbol: BridgeWallet) =>
+  walletsConfig[symbol] || unknownWalletConfig;
+
+export const getWalletConfigByRentxName = (name: string) =>
+  Object.values(walletsConfig).find((wallet) => wallet.rentxName === name) ||
+  unknownWalletConfig;

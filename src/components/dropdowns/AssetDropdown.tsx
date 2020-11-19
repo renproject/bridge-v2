@@ -14,7 +14,7 @@ import { getAssetBalance } from "../../features/wallet/walletUtils";
 import {
   BridgeChain,
   BridgeCurrency,
-  ChainConfig,
+  BridgeChainConfig,
   chainsConfig,
   currenciesConfig,
   CurrencyConfig,
@@ -26,14 +26,14 @@ const getOptions = (mode: AssetDropdownMode) => {
     mode === "chain"
       ? Object.values(chainsConfig)
       : Object.values(currenciesConfig);
-  return options as Array<ChainConfig | CurrencyConfig>;
+  return options as Array<BridgeChainConfig | CurrencyConfig>;
 };
 
 const getOptionBySymbol = (symbol: string, mode: AssetDropdownMode) =>
   getOptions(mode).find((option) => option.symbol === symbol);
 
 const createAvailabilityFilter = (available: Array<string> | undefined) => (
-  option: ChainConfig | CurrencyConfig
+  option: BridgeChainConfig | CurrencyConfig
 ) => {
   if (!available) {
     return true;

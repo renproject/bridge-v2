@@ -4,14 +4,17 @@ import { QuestionAnswer } from "@material-ui/icons";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
-import React, { FunctionComponent, useMemo } from "react";
+import React, { FunctionComponent } from "react";
 import { useTimeout } from "react-use";
 import {
+  BridgeWallet,
   getChainConfigByRentxName,
   getNetworkConfigByRentxName,
+  getWalletConfig,
+  BridgeWalletConfig,
+  BridgeChainConfig,
 } from "../../utils/assetConfigs";
 import { trimAddress } from "../../utils/strings";
-import { getChainIcon } from "../icons/IconHelpers";
 import {
   BinanceChainFullIcon,
   MetamaskFullIcon,
@@ -24,6 +27,7 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../progress/ProgressHelpers";
+import { Debug } from '../utils/Debug'
 import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
@@ -109,28 +113,39 @@ export const WalletEntryButton: WalletPickerProps<
   );
 };
 
+const getLabels = (
+  chainConfig: BridgeChainConfig,
+  walletConfig: BridgeWalletConfig
+) => {
+  return {
+    initialTitle: "Connecting",
+    actionTitle: `${walletConfig.short} action required`,
+    initialMessage: `Connecting to ${chainConfig.full}`,
+    actionMessage: `When prompted, connect securely via the ${walletConfig.full} browser extension.`,
+  };
+};
+
 export const WalletConnectingInfo: WalletPickerProps<
   any,
   any
 >["ConnectingInfo"] = ({ chain, onClose }) => {
   const theme = useTheme();
-  const labels = useMemo(() => {
-    const walletName =
-      chain === "ethereum" ? "MetaMask" : "Binance Chain Wallet";
-    const Icon = chain === "ethereum" ? MetamaskFullIcon : BinanceChainFullIcon;
-    return {
-      initialTitle: "Connecting",
-      actionTitle: `${walletName} action required`,
-      initialMessage: `Connecting to ${getChainConfigByRentxName(chain).full}`,
-      actionMessage: `When prompted, connect securely via the ${walletName} browser extension.`,
-      Icon,
-    };
-  }, [chain]);
-  const { Icon } = labels;
+  const chainConfig = getChainConfigByRentxName(chain);
+
+  // TODO: There should be better mapping.
+  const walletSymbol =
+    chain === "ethereum"
+      ? BridgeWallet.METAMASKW
+      : BridgeWallet.BINANCESMARTCHAINW;
+  const walletConfig = getWalletConfig(walletSymbol);
+
+  const labels = getLabels(chainConfig, walletConfig);
+  const { MainIcon } = walletConfig;
   const [isPassed] = useTimeout(3000);
   const passed = isPassed();
   return (
     <>
+      <Debug it={{chainConfig}} />
       <BridgeModalTitle
         title={passed ? labels.actionTitle : labels.initialTitle}
         onClose={onClose}
@@ -143,7 +158,7 @@ export const WalletConnectingInfo: WalletPickerProps<
             fontSize="big"
             processing
           >
-            <Icon fontSize="inherit" />
+            <MainIcon fontSize="inherit" />
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h6" align="center">
