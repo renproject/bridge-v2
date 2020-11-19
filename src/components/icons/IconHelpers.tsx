@@ -89,7 +89,7 @@ export const getChainIcon = (symbol: BridgeChain) => {
   switch (symbol) {
     case BridgeChain.BTCC:
       return BitcoinIcon;
-    case BridgeChain.BNCC:
+    case BridgeChain.BSCC:
       return BinanceChainIcon;
     case BridgeChain.ETHC:
       return EthereumIcon;

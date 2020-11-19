@@ -247,7 +247,7 @@ const resolveIcon = (chain: BridgeChain, status: TransactionStatusType) => {
     return <CompletedIcon {...shared} fontSize="large" />;
   }
   switch (chain) {
-    case BridgeChain.BNCC:
+    case BridgeChain.BSCC:
       return <BinanceChainIcon {...shared} fontSize="large" />;
     case BridgeChain.BTCC:
       return <BitcoinIcon {...shared} fontSize="large" />;

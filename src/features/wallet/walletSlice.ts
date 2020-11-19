@@ -1,7 +1,10 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store/rootReducer";
-import { BridgeChain, BridgeCurrency } from "../../utils/assetConfigs";
-import { bridgeChainToMultiwalletChain } from "./walletUtils";
+import {
+  BridgeChain,
+  BridgeCurrency,
+  getChainConfig,
+} from "../../utils/assetConfigs";
 
 export type AssetBalance = {
   symbol: BridgeCurrency;
@@ -57,6 +60,7 @@ export const $walletPickerOpened = createSelector(
   $wallet,
   (wallet) => wallet.pickerOpened
 );
-export const $multiwalletChain = createSelector($chain, (chain) =>
-  bridgeChainToMultiwalletChain(chain)
-);
+export const $multiwalletChain = createSelector($chain, (chain) => {
+  const chainConfig = getChainConfig(chain);
+  return chainConfig.rentxName;
+});

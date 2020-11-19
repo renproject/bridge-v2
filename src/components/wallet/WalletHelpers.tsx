@@ -11,7 +11,9 @@ import {
   getNetworkConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { trimAddress } from "../../utils/strings";
+import { getChainIcon } from "../icons/IconHelpers";
 import {
+  BinanceChainFullIcon,
   MetamaskFullIcon,
   WalletConnectFullIcon,
   WalletIcon,
@@ -65,6 +67,9 @@ const mapWalletEntryIcon = (chain: string, name: string) => {
         return <WalletConnectFullIcon fontSize="inherit" />;
     }
   }
+  if (chain === "binanceSmartChain") {
+    return <BinanceChainFullIcon fontSize="inherit" />;
+  }
   return <QuestionAnswer />;
 };
 
@@ -72,7 +77,7 @@ const useWalletEntryButtonStyles = makeStyles({
   root: {
     marginTop: 20,
     fontSize: 16,
-    padding: "11px 20px 11px 40px",
+    padding: "11px 20px 11px 20px",
   },
   label: {
     display: "flex",
@@ -109,17 +114,19 @@ export const WalletConnectingInfo: WalletPickerProps<
   any
 >["ConnectingInfo"] = ({ chain, onClose }) => {
   const theme = useTheme();
-  const labels = useMemo(
-    () => ({
+  const labels = useMemo(() => {
+    const walletName =
+      chain === "ethereum" ? "MetaMask" : "Binance Chain Wallet";
+    const Icon = chain === "ethereum" ? MetamaskFullIcon : BinanceChainFullIcon;
+    return {
       initialTitle: "Connecting",
-      actionTitle: "MetaMask action required",
+      actionTitle: `${walletName} action required`,
       initialMessage: `Connecting to ${getChainConfigByRentxName(chain).full}`,
-      actionMessage:
-        "When prompted, connect securely via the MetaMask browser extension.",
-    }),
-    [chain]
-  );
-
+      actionMessage: `When prompted, connect securely via the ${walletName} browser extension.`,
+      Icon,
+    };
+  }, [chain]);
+  const { Icon } = labels;
   const [isPassed] = useTimeout(3000);
   const passed = isPassed();
   return (
@@ -136,7 +143,7 @@ export const WalletConnectingInfo: WalletPickerProps<
             fontSize="big"
             processing
           >
-            <MetamaskFullIcon fontSize="inherit" />
+            <Icon fontSize="inherit" />
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h6" align="center">

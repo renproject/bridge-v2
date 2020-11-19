@@ -27,7 +27,7 @@ export const walletPickerModalConfig = {
         }),
       },
     ],
-    bsc: [
+    binanceSmartChain: [
       {
         name: "BinanceSmartWallet",
         logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",

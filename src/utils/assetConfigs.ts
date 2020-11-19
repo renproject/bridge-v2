@@ -42,7 +42,7 @@ export enum BridgeChain {
   BTCC = "BTCC",
   BCHC = "BCHC",
   ZECC = "ZECC",
-  BNCC = "BNCC",
+  BSCC = "BSCC",
   ETHC = "ETHC",
   UNKNOWNC = "UNKNOWNC",
 }
@@ -297,8 +297,8 @@ export const chainsConfig: Record<BridgeChain, ChainConfig> = {
     rentxName: "zcash",
     blockTime: 2.5,
   },
-  [BridgeChain.BNCC]: {
-    symbol: BridgeChain.BNCC,
+  [BridgeChain.BSCC]: {
+    symbol: BridgeChain.BSCC,
     short: "BNC",
     full: "Binance SmartChain",
     FullIcon: BinanceChainFullIcon,
@@ -394,11 +394,11 @@ export const supportedLockCurrencies = [
 
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
-  // BridgeChain.BNCC,
+  // BridgeChain.BSCC,
 ];
 
 export const supportedBurnChains = [
-  BridgeChain.ETHC, // BridgeChain.BNCC,
+  BridgeChain.ETHC, // BridgeChain.BSCC,
 ];
 
 export const supportedReleaseCurrencies = [

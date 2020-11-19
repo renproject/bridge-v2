@@ -31,7 +31,7 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from '../../../components/utils/types'
+import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { paths } from "../../../pages/routes";
@@ -187,7 +187,9 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
 
   console.log("current.value", current.value);
   console.log("ctx", current.context.tx);
+  // const forceState = "srcConfirmed";
   switch (current.value as keyof BurnMachineSchema["states"]) {
+  // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
       return (
         <ReleaseProgressStatus
@@ -199,6 +201,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     case "srcSettling":
       return <ReleaseProgressStatus tx={current.context.tx} pending />;
     case "srcConfirmed":
+      return <ProgressStatus reason="Submitting to RenVM" />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={current.context.tx} />;
   }

@@ -172,12 +172,12 @@ export const TransactionsGrid: FunctionComponent<any> = () => {
           status="pending"
           confirmations={2}
         />
-        <TransactionEntry chain={BridgeChain.BNCC} status="submitted" />
+        <TransactionEntry chain={BridgeChain.BSCC} status="submitted" />
       </div>
       <TransactionsStatusHeader title={`Completed (${completed})`} />
       <div>
         <TransactionEntry chain={BridgeChain.BTCC} status="completed" />
-        <TransactionEntry chain={BridgeChain.BNCC} status="completed" />
+        <TransactionEntry chain={BridgeChain.BSCC} status="completed" />
       </div>
       <TransactionsPaginationWrapper>
         <SimplePagination
