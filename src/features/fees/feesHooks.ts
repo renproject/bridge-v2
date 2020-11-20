@@ -5,6 +5,7 @@ import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletH
 import {
   getBurnAndReleaseFees,
   getLockAndMintFees,
+  RenChain,
 } from "../../services/rentx";
 import { BridgeCurrency } from "../../utils/assetConfigs";
 import { $network } from "../network/networkSlice";
@@ -27,17 +28,18 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
   useEffect(() => {
     const cacheKey = `${currency}-${txType}`;
     if (provider && status === WalletStatus.CONNECTED) {
+      const chain = RenChain.binanceSmartChain;
       if (feesCache[cacheKey]) {
         setFees(feesCache[cacheKey]);
         setPending(false);
       } else {
         const fetchFees =
           txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
-        // fetchFees(currency, provider, network).then((feeRates) => {
-        //   setPending(false);
-        //   feesCache[cacheKey] = feeRates;
-        //   setFees(feeRates);
-        // });
+        fetchFees(currency, provider, network, chain).then((feeRates) => {
+          setPending(false);
+          feesCache[cacheKey] = feeRates;
+          setFees(feeRates);
+        });
       }
     }
   }, [currency, provider, status, network, txType]);

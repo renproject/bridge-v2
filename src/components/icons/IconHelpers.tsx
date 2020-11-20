@@ -94,7 +94,7 @@ export const getChainIcon = (symbol: BridgeChain) => {
     case BridgeChain.ETHC:
       return EthereumIcon;
     case BridgeChain.ZECC:
-      return ZecFullIcon; // TODO: add dedicated ZEC chain icon
+      return ZecFullIcon; // TODO: add dedicated ZEC sourceChain icon
     case BridgeChain.UNKNOWNC:
       return BitcoinIcon;
   }

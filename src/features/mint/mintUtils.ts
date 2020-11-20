@@ -108,8 +108,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   const mintCurrencyConfig = getCurrencyConfig(
     toMintedCurrency(lockCurrencyConfig.symbol)
   );
-  const mintChainConfig = getChainConfig(mintCurrencyConfig.chain);
-  const lockChainConfig = getChainConfig(lockCurrencyConfig.chain);
+  const mintChainConfig = getChainConfig(mintCurrencyConfig.sourceChain);
+  const lockChainConfig = getChainConfig(lockCurrencyConfig.sourceChain);
 
   const transaction = Object.values(tx.transactions)[0];
   let mintTxHash: string = "";

@@ -53,7 +53,7 @@ export const createReleaseTransaction = ({
     sourceAsset: sourceCurrencyConfig.rentxName,
     sourceChain: getCurrencyRentxSourceChain(currency),
     destAddress,
-    destChain: getChainRentxName(sourceCurrencyConfig.chain),
+    destChain: getChainRentxName(sourceCurrencyConfig.sourceChain),
     targetAmount: Number(amount),
     userAddress,
     expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
@@ -70,8 +70,8 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   const burnCurrencyConfig = getCurrencyConfig(
     toMintedCurrency(releaseCurrencyConfig.symbol)
   );
-  const burnChainConfig = getChainConfig(burnCurrencyConfig.chain);
-  const releaseChainConfig = getChainConfig(releaseCurrencyConfig.chain);
+  const burnChainConfig = getChainConfig(burnCurrencyConfig.sourceChain);
+  const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
 
   const transaction = Object.values(tx.transactions)[0];
   let burnTxHash: string = "";

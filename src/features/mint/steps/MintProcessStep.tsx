@@ -206,7 +206,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
           <DepositConfirmationStatus tx={tx} />
         </>
       );
-    case "srcConfirmed": // source chain confirmations ok, but renVM still doesn't accept it
+    case "srcConfirmed": // source sourceChain confirmations ok, but renVM still doesn't accept it
       return <ProgressStatus reason="Submitting to RenVM" />;
     case "claiming":
     case "accepted": // RenVM accepted it, it can be submitted to ethereum

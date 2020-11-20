@@ -1,6 +1,12 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { BinanceSmartChain, Bitcoin, BitcoinCash, Ethereum, Zcash } from "@renproject/chains";
+import {
+  BinanceSmartChain,
+  Bitcoin,
+  BitcoinCash,
+  Ethereum,
+  Zcash,
+} from "@renproject/chains";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
@@ -8,26 +14,27 @@ import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
-  toMintedCurrency,
   toReleasedCurrency,
 } from "../utils/assetConfigs";
 import { getRenJs } from "./renJs";
 
+// TODO: replace everywhere
+export enum RenChain {
+  binanceSmartChain = "binanceSmartChain",
+  ethereum = "ethereum",
+  bitcoin = "bitcoin",
+  zcash = "zcash",
+  bitcoinCash = "bitcoinCash",
+}
+
 export const lockChainMap = {
-  bitcoin: () => Bitcoin(),
-  zcash: () => Zcash(),
-  bitcoinCash: () => BitcoinCash(),
+  [RenChain.bitcoin]: () => Bitcoin(),
+  [RenChain.zcash]: () => Zcash(),
+  [RenChain.bitcoinCash]: () => BitcoinCash(),
 };
 
 export const mintChainMap = {
-  binanceSmartChain: (context: any) => {
-    const { destAddress, destChain, network } = context.tx;
-    const { providers } = context;
-    return new BinanceSmartChain(providers[destChain], network).Account({
-      address: destAddress,
-    });
-  },
-  ethereum: (context: GatewayMachineContext) => {
+  [RenChain.ethereum]: (context: GatewayMachineContext) => {
     const { destAddress, destChain, network } = context.tx;
     const { providers } = context;
 
@@ -35,25 +42,31 @@ export const mintChainMap = {
       address: destAddress,
     });
   },
+  [RenChain.binanceSmartChain]: (context: GatewayMachineContext) => {
+    const { destAddress, destChain, network } = context.tx;
+    const { providers } = context;
+    return new BinanceSmartChain(providers[destChain], network).Account({
+      address: destAddress,
+    });
+  },
 };
 
 export const mintChainClassMap = {
-  ethereum: Ethereum,
+  [RenChain.binanceSmartChain]: BinanceSmartChain,
+  [RenChain.ethereum]: Ethereum,
 };
 
 export const getLockAndMintFees = (
   lockedCurrency: BridgeCurrency,
   provider: any,
-  network: RenNetwork
+  network: RenNetwork,
+  chain: RenChain
 ) => {
   const lockedCurrencyConfig = getCurrencyConfig(lockedCurrency);
-  const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.chain);
-  const mintedCurrency = toMintedCurrency(lockedCurrency);
-  const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
-  const mintedCurrencyChain = getChainConfig(mintedCurrencyConfig.chain);
+  const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);
 
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
-  const To = (mintChainClassMap as any)[mintedCurrencyChain.rentxName];
+  const To = (mintChainClassMap as any)[chain];
   return getRenJs(network)
     .getFees({
       asset: lockedCurrency,
@@ -64,7 +77,7 @@ export const getLockAndMintFees = (
 };
 
 export const burnChainMap: BurnMachineContext["fromChainMap"] = {
-  ethereum: (context) => {
+  [RenChain.ethereum]: (context) => {
     return Ethereum(context.providers.ethereum, context.tx.network).Account({
       address: context.tx.userAddress,
       value: context.tx.suggestedAmount,
@@ -73,31 +86,35 @@ export const burnChainMap: BurnMachineContext["fromChainMap"] = {
 };
 
 export const burnChainClassMap = {
-  ethereum: Ethereum,
+  [RenChain.ethereum]: Ethereum,
+  [RenChain.binanceSmartChain]: BinanceSmartChain,
 };
 
 export const releaseChainMap: BurnMachineContext["toChainMap"] = {
-  bitcoin: (context) => {
+  [RenChain.bitcoin]: (context) => {
     return Bitcoin().Address(context.tx.destAddress) as any;
   },
 };
 
 export const releaseChainClassMap = {
-  bitcoin: Bitcoin,
-  zcash: Zcash,
-  bitcoinCash: BitcoinCash,
+  [RenChain.bitcoin]: Bitcoin,
+  [RenChain.zcash]: Zcash,
+  [RenChain.bitcoinCash]: BitcoinCash,
 };
 
 export const getBurnAndReleaseFees = (
   burnedCurrency: BridgeCurrency,
   provider: any,
-  network: RenNetwork
+  network: RenNetwork,
+  chain: RenChain
 ) => {
   const burnedCurrencyConfig = getCurrencyConfig(burnedCurrency);
-  const burnedCurrencyChain = getChainConfig(burnedCurrencyConfig.chain);
+  const burnedCurrencyChain = getChainConfig(burnedCurrencyConfig.sourceChain);
   const releasedCurrency = toReleasedCurrency(burnedCurrency);
   const releasedCurrencyConfig = getCurrencyConfig(releasedCurrency);
-  const releasedCurrencyChain = getChainConfig(releasedCurrencyConfig.chain);
+  const releasedCurrencyChain = getChainConfig(
+    releasedCurrencyConfig.sourceChain
+  );
 
   console.log(releasedCurrency);
   const From = (burnChainClassMap as any)[burnedCurrencyChain.rentxName];
