@@ -1,6 +1,6 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { Bitcoin, BitcoinCash, Ethereum, Zcash } from "@renproject/chains";
+import { BinanceSmartChain, Bitcoin, BitcoinCash, Ethereum, Zcash } from "@renproject/chains";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
@@ -20,13 +20,13 @@ export const lockChainMap = {
 };
 
 export const mintChainMap = {
-  // binanceSmartChain: (context: any) => {
-  //   const { destAddress, destNetwork } = context.tx;
-  //   const { providers } = context;
-  //   return new BinanceSmartChain(providers[destNetwork]).Account({
-  //     address: destAddress,
-  //   });
-  // },
+  binanceSmartChain: (context: any) => {
+    const { destAddress, destChain, network } = context.tx;
+    const { providers } = context;
+    return new BinanceSmartChain(providers[destChain], network).Account({
+      address: destAddress,
+    });
+  },
   ethereum: (context: GatewayMachineContext) => {
     const { destAddress, destChain, network } = context.tx;
     const { providers } = context;
