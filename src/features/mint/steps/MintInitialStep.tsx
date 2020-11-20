@@ -17,6 +17,7 @@ import {
 import { PaperContent } from "../../../components/layout/Paper";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { AssetInfo } from "../../../components/typography/TypographyHelpers";
+import { Debug } from '../../../components/utils/Debug'
 import { WalletStatus } from "../../../components/utils/types";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
@@ -50,7 +51,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
-  const { status } = useSelectedChainWallet();
+  const { status, ...rest } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
@@ -98,6 +99,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   return (
     <>
+      <Debug it={{rest}} />
       <PaperContent bottomPadding>
         <BigCurrencyInputWrapper>
           <BigCurrencyInput

@@ -33,11 +33,11 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
       } else {
         const fetchFees =
           txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
-        fetchFees(currency, provider, network).then((feeRates) => {
-          setPending(false);
-          feesCache[cacheKey] = feeRates;
-          setFees(feeRates);
-        });
+        // fetchFees(currency, provider, network).then((feeRates) => {
+        //   setPending(false);
+        //   feesCache[cacheKey] = feeRates;
+        //   setFees(feeRates);
+        // });
       }
     }
   }, [currency, provider, status, network, txType]);
