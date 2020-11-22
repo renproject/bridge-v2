@@ -56,8 +56,10 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
   const { fetchAssetBalance } = useFetchAssetBalance();
+  console.log("rerendering");
   const fetchAllBalances = useCallback(() => {
     // TODO: maybe hook?
+    console.log("refetching");
     for (const currencySymbol of supportedReleaseCurrencies) {
       const sourceCurrencySymbol = toReleasedCurrency(currencySymbol);
       fetchAssetBalance(sourceCurrencySymbol).then((balance: any) => {
@@ -114,7 +116,11 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);
   //TODO check if balanceOK
   const canProceed =
-    balance !== null && amount && address && amount <= Number(balance) && amount > 0;
+    balance !== null &&
+    amount &&
+    address &&
+    amount <= Number(balance) &&
+    amount > 0;
 
   const handleNextStep = useCallback(() => {
     if (walletStatus !== WalletStatus.CONNECTED) {

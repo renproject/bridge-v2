@@ -22,6 +22,7 @@ import {
   ZecFullIcon,
   ZecGreyIcon,
 } from "../components/icons/RenIcons";
+import { RenChain } from "../services/rentx";
 import { orangeLight } from "../theme/colors";
 
 export enum BridgeCurrency {
@@ -37,6 +38,7 @@ export enum BridgeCurrency {
   RENZEC = "RENZEC",
   RENDGB = "RENDGB",
   ETH = "ETH",
+  BNB = "BNB",
   UNKNOWN = "UNKNOWN",
 }
 
@@ -69,10 +71,6 @@ export type LabelsConfig = {
   full: string;
 };
 
-export type RentxAssetConfig = {
-  rentxName: string;
-};
-
 export type ColorsConfig = {
   color?: string;
 };
@@ -87,10 +85,10 @@ export type IconsConfig = MainIconConfig & {
 
 export type CurrencyConfig = LabelsConfig &
   ColorsConfig &
-  IconsConfig &
-  RentxAssetConfig & {
+  IconsConfig & {
     symbol: BridgeCurrency;
     sourceChain: BridgeChain;
+    rentxName: string;
     destinationChains?: Array<BridgeChain>;
     bandchainSymbol?: string;
   };
@@ -223,6 +221,16 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "eth",
     sourceChain: BridgeChain.ETHC,
   },
+  [BridgeCurrency.BNB]: {
+    symbol: BridgeCurrency.BNB,
+    short: "BNB",
+    full: "Binance Coin",
+    FullIcon: EthereumIcon,
+    GreyIcon: NotSetIcon,
+    MainIcon: BtcFullIcon,
+    rentxName: "eth",
+    sourceChain: BridgeChain.ETHC,
+  },
   [BridgeCurrency.UNKNOWN]: {
     symbol: BridgeCurrency.UNKNOWN,
     short: "UNKNOWN",
@@ -230,8 +238,8 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     FullIcon: NotSetIcon,
     GreyIcon: NotSetIcon,
     MainIcon: NotSetIcon,
-    sourceChain: BridgeChain.UNKNOWNC,
     rentxName: "unknown",
+    sourceChain: BridgeChain.UNKNOWNC,
   },
 };
 
@@ -268,10 +276,11 @@ export const getCurrencyRentxSourceChain = (symbol: BridgeCurrency) => {
 };
 
 export type BridgeChainConfig = LabelsConfig &
-  IconsConfig &
-  RentxAssetConfig & {
+  IconsConfig & {
     symbol: BridgeChain;
+    rentxName: RenChain;
     blockTime: number;
+    nativeCurrency: BridgeCurrency;
     targetConfirmations?: number;
   };
 
@@ -284,8 +293,9 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     FullIcon: NotSetIcon,
     MainIcon: BitcoinIcon,
     GreyIcon: NotSetIcon,
-    rentxName: "bitcoin",
+    rentxName: RenChain.bitcoin,
     blockTime: 10,
+    nativeCurrency: BridgeCurrency.BTC,
     targetConfirmations: 6,
   },
   [BridgeChain.BCHC]: {
@@ -295,8 +305,9 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
     MainIcon: BchFullIcon,
-    rentxName: "bitcoinCash",
+    rentxName: RenChain.bitcoinCash,
     blockTime: 10,
+    nativeCurrency: BridgeCurrency.BCH,
     targetConfirmations: 6,
   },
   [BridgeChain.ZECC]: {
@@ -306,8 +317,9 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     FullIcon: ZecFullIcon,
     GreyIcon: ZecGreyIcon,
     MainIcon: ZecFullIcon,
-    rentxName: "zcash",
+    rentxName: RenChain.zcash,
     blockTime: 2.5,
+    nativeCurrency: BridgeCurrency.ZEC,
   },
   [BridgeChain.BSCC]: {
     symbol: BridgeChain.BSCC,
@@ -316,8 +328,9 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     FullIcon: BinanceChainFullIcon,
     MainIcon: BinanceChainFullIcon,
     GreyIcon: NotSetIcon,
-    rentxName: "binanceSmartChain",
+    rentxName: RenChain.binanceSmartChain,
     blockTime: 3,
+    nativeCurrency: BridgeCurrency.BNB,
   },
   [BridgeChain.ETHC]: {
     symbol: BridgeChain.ETHC,
@@ -326,8 +339,9 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     FullIcon: EthereumChainFullIcon,
     MainIcon: EthereumChainFullIcon,
     GreyIcon: NotSetIcon,
-    rentxName: "ethereum",
+    rentxName: RenChain.ethereum,
     blockTime: 0.25,
+    nativeCurrency: BridgeCurrency.ETH,
   },
   [BridgeChain.UNKNOWNC]: {
     symbol: BridgeChain.UNKNOWNC,
@@ -336,8 +350,9 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     FullIcon: NotSetIcon,
     GreyIcon: NotSetIcon,
     MainIcon: NotSetIcon,
-    rentxName: "unknown",
+    rentxName: RenChain.unknown,
     blockTime: 1e6,
+    nativeCurrency: BridgeCurrency.UNKNOWN,
   },
 };
 
@@ -359,10 +374,10 @@ export const getChainConfigByRentxName = (name: string) =>
   Object.values(chainsConfig).find((chain) => chain.rentxName === name) ||
   unknownChainConfig;
 
-type NetworkConfig = LabelsConfig &
-  RentxAssetConfig & {
-    symbol: BridgeNetwork;
-  };
+type NetworkConfig = LabelsConfig & {
+  rentxName: string;
+  symbol: BridgeNetwork;
+};
 
 export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
   [BridgeNetwork.MAINNET]: {
@@ -401,7 +416,7 @@ export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
   // BridgeCurrency.BCH,
   // BridgeCurrency.DOGE,
-  // BridgeCurrency.ZEC,
+  BridgeCurrency.ZEC,
 ];
 
 export const supportedMintDestinationChains = [
@@ -409,15 +424,13 @@ export const supportedMintDestinationChains = [
   BridgeChain.BSCC,
 ];
 
-export const supportedBurnChains = [
-  BridgeChain.ETHC, // BridgeChain.BSCC,
-];
+export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
 
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
   // BridgeCurrency.RENBCH,
   // BridgeCurrency.RENDOGE,
-  // BridgeCurrency.RENZEC,
+  BridgeCurrency.RENZEC,
 ];
 
 export const toMintedCurrency = (lockedCurrency: BridgeCurrency) => {
@@ -452,8 +465,8 @@ export const toReleasedCurrency = (burnedCurrency: BridgeCurrency) => {
 
 export type BridgeWalletConfig = LabelsConfig &
   ColorsConfig &
-  MainIconConfig &
-  RentxAssetConfig & {
+  MainIconConfig & {
+    rentxName: string;
     symbol: BridgeWallet;
     chain: BridgeChain;
   };

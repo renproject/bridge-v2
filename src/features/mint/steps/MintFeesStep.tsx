@@ -43,6 +43,7 @@ import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
+  getChainConfig,
   getChainShortLabel,
   getCurrencyConfig,
   toMintedCurrency,
@@ -60,6 +61,7 @@ import {
 } from "../../transactions/transactionsUtils";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
+  getMintDynamicTooltips,
   mintTooltips,
   MintTransactionInitializer,
 } from "../components/MintHelpers";
@@ -90,14 +92,22 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     type: TxType.MINT,
   });
 
-  const currencyConfig = getCurrencyConfig(currency);
-  const { GreyIcon } = currencyConfig;
+  const lockCurrencyConfig = getCurrencyConfig(currency);
+  const { GreyIcon } = lockCurrencyConfig;
 
   const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
   const targetNetworkLabel = getChainShortLabel(chain);
-  const destinationCurrency = toMintedCurrency(currency);
+  const destinationChainConfig = getChainConfig(chain);
+  const destinationChainNativeCurrencyConfig = getCurrencyConfig(
+    destinationChainConfig.nativeCurrency
+  );
+  const mintDynamicTooltips = getMintDynamicTooltips(
+    destinationChainConfig,
+    destinationChainNativeCurrencyConfig
+  );
+  const mintedCurrency = toMintedCurrency(currency);
 
-  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
+  const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
 
   const [ackChecked, setAckChecked] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -218,7 +228,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
               value={
                 <NumberFormatText
                   value={conversionTotal}
-                  spacedSuffix={destinationCurrencyConfig.short}
+                  spacedSuffix={mintedCurrencyConfig.short}
                 />
               }
               valueEquivalent={
@@ -250,8 +260,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                     variant="caption"
                     color={showAckError ? "inherit" : "textPrimary"}
                   >
-                    I acknowledge this transaction requires ETH{" "}
-                    <TooltipWithIcon title={mintTooltips.acknowledge} />
+                    I acknowledge this transaction requires{" "}
+                    {destinationChainNativeCurrencyConfig.short}{" "}
+                    <TooltipWithIcon title={mintDynamicTooltips.acknowledge} />
                   </Typography>
                 </FormLabel>
               }

@@ -25,6 +25,7 @@ export enum RenChain {
   bitcoin = "bitcoin",
   zcash = "zcash",
   bitcoinCash = "bitcoinCash",
+  unknown = "unknown",
 }
 
 export const lockChainMap = {

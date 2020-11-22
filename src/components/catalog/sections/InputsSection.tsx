@@ -48,7 +48,7 @@ export const InputsSection: FunctionComponent = () => {
             }
             label={
               <Typography variant="caption">
-                I acknowledge this transaction requires ETH{" "}
+                Something to agree{" "}
                 <TooltipWithIcon title="Explanation" />
               </Typography>
             }

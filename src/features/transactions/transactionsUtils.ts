@@ -83,6 +83,8 @@ const sochainTestnet = "https://sochain.com/tx/";
 const sochain = "https://sochain.com/tx/";
 const etherscanTestnet = "https://kovan.etherscan.io/tx/";
 const etherscan = "https://etherscan.io/tx/";
+const binanceTestnet = "https://testnet.bscscan.com/";
+const binance = "https://bscscan.com/";
 
 export const getChainExplorerLink = (
   chain: BridgeChain,
@@ -93,6 +95,8 @@ export const getChainExplorerLink = (
     switch (chain) {
       case BridgeChain.ETHC:
         return etherscanTestnet + txId;
+      case BridgeChain.BSCC:
+        return binanceTestnet + txId;
       case BridgeChain.BTCC:
         return sochainTestnet + "BTCTEST/" + txId;
       case BridgeChain.ZECC:
@@ -102,6 +106,8 @@ export const getChainExplorerLink = (
     switch (chain) {
       case BridgeChain.ETHC:
         return etherscan + txId;
+      case BridgeChain.BSCC:
+        return binance + txId;
       case BridgeChain.BTCC:
         return sochain + "BTC/" + txId;
       case BridgeChain.ZECC:

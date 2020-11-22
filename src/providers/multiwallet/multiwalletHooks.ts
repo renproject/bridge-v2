@@ -15,11 +15,9 @@ type UseWallet = (chain: string) => WalletData;
 
 // TODO: change status to walletStatus
 export const useWallet: UseWallet = (chain) => {
-  const { enabledChains, targetNetwork, ...rest } = useMultiwallet();
-  console.log("multi", rest);
+  const { enabledChains, targetNetwork } = useMultiwallet();
   const { account = "", status = "disconnected" } =
     enabledChains?.[chain] || {};
-  console.log("chains", enabledChains);
   const provider = enabledChains?.[chain]?.provider;
   return {
     account,
