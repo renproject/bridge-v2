@@ -14,19 +14,10 @@ import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
+  RenChain,
   toReleasedCurrency,
 } from "../utils/assetConfigs";
 import { getRenJs } from "./renJs";
-
-// TODO: replace everywhere
-export enum RenChain {
-  binanceSmartChain = "binanceSmartChain",
-  ethereum = "ethereum",
-  bitcoin = "bitcoin",
-  zcash = "zcash",
-  bitcoinCash = "bitcoinCash",
-  unknown = "unknown",
-}
 
 export const lockChainMap = {
   [RenChain.bitcoin]: () => Bitcoin(),

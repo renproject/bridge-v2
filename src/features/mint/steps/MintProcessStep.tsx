@@ -1,7 +1,7 @@
 import { Divider, IconButton } from '@material-ui/core'
 import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/ren-tx'
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { Actor } from 'xstate'
@@ -16,10 +16,16 @@ import { usePageTitle } from '../../../hooks/usePageTitle'
 import { usePaperTitle } from '../../../pages/MainPage'
 import { paths } from '../../../pages/routes'
 import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { getCurrencyConfigByRentxName, getCurrencyShortLabel, } from '../../../utils/assetConfigs'
+import { getCurrencyConfigByRentxName, } from '../../../utils/assetConfigs'
 import { TransactionFees } from '../../transactions/components/TransactionFees'
 import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
-import { createTxQueryString, parseTxQueryString, TxType, useTxParam, } from '../../transactions/transactionsUtils'
+import {
+  createTxQueryString,
+  getTxPageTitle,
+  parseTxQueryString,
+  TxType,
+  useTxParam,
+} from '../../transactions/transactionsUtils'
 import { setWalletPickerOpened } from '../../wallet/walletSlice'
 import {
   DepositAcceptedStatus,
@@ -28,7 +34,6 @@ import {
   DestinationPendingStatus,
   DestinationReceivedStatus,
 } from '../components/MintStatuses'
-import { $mint } from '../mintSlice'
 import { getLockAndMintParams, useMintMachine } from '../mintUtils'
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
@@ -37,13 +42,10 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 }) => {
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
-  const { currency } = useSelector($mint);
-  const [title, setTitle] = usePaperTitle();
-  useEffect(() => {
-    setTitle(`Send ${getCurrencyShortLabel(currency)}`);
-  }, [setTitle, currency]);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  usePageTitle(getTxPageTitle(tx));
+  const [paperTitle] = usePaperTitle();
 
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
@@ -71,7 +73,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
             </IconButton>
           )}
         </PaperNav>
-        <PaperTitle>{title}</PaperTitle>
+        <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
           <ToggleIconButton variant="settings" />
           <ToggleIconButton variant="notifications" />

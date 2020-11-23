@@ -1,9 +1,7 @@
-import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
-import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
-import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
-import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
-import React, { FunctionComponent } from "react";
-import { env } from "../../constants/environmentVariables";
+import { BinanceSmartChainInjectedConnector } from '@renproject/multiwallet-binancesmartchain-injected-connector'
+import { EthereumInjectedConnector } from '@renproject/multiwallet-ethereum-injected-connector'
+import { MultiwalletProvider as RenMultiwalletProvider } from '@renproject/multiwallet-ui'
+import React, { FunctionComponent } from 'react'
 
 export const walletPickerModalConfig = {
   chains: {
@@ -14,18 +12,18 @@ export const walletPickerModalConfig = {
         connector: new EthereumInjectedConnector({
           debug: true,
         }),
-      },
-      {
-        name: "WalletConnect",
-        logo: "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
-        connector: new EthereumWalletConnectConnector({
-          rpc: {
-            42: `https://kovan.infura.io/v3/${env.INFURA_KEY}`,
-          },
-          qrcode: true,
-          debug: true,
-        }),
-      },
+      }, //,
+      // {
+      //   name: "WalletConnect",
+      //   logo: "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
+      //   connector: new EthereumWalletConnectConnector({
+      //     rpc: {
+      //       42: `https://kovan.infura.io/v3/${env.INFURA_KEY}`,
+      //     },
+      //     qrcode: true,
+      //     debug: true,
+      //   }),
+      // },
     ],
     binanceSmartChain: [
       {

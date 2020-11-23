@@ -51,7 +51,8 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   onNext,
 }) => {
   const dispatch = useDispatch();
-  const { status: walletStatus, account, provider } = useSelectedChainWallet();
+  const { status, account, provider } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, balances } = useSelector($wallet);
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
@@ -123,13 +124,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     amount > 0;
 
   const handleNextStep = useCallback(() => {
-    if (walletStatus !== WalletStatus.CONNECTED) {
+    if (!walletConnected) {
       dispatch(setWalletPickerOpened(true));
     }
     if (onNext && canProceed) {
       onNext();
     }
-  }, [dispatch, onNext, canProceed, walletStatus]);
+  }, [dispatch, onNext, canProceed, walletConnected]);
   return (
     <PaperContent bottomPadding>
       <BigCurrencyInputWrapper>
@@ -182,9 +183,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       <ActionButtonWrapper>
         <ActionButton
           onClick={handleNextStep}
-          disabled={walletStatus === WalletStatus.CONNECTED && !canProceed}
+          disabled={walletConnected && !canProceed}
         >
-          {walletStatus !== WalletStatus.CONNECTED ? "Connect Wallet" : "Next"}
+          {walletConnected ? "Next" : "Connect Wallet"}
         </ActionButton>
       </ActionButtonWrapper>
     </PaperContent>

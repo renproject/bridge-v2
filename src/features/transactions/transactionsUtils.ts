@@ -5,6 +5,7 @@ import {
   BridgeChain,
   BridgeCurrency,
   BridgeNetwork,
+  getCurrencyConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
 
@@ -146,4 +147,13 @@ export const getFeeTooltips = ({
     // estimatedMintingChainFee:
     //   "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
   };
+};
+
+export const getTxPageTitle = (tx: GatewaySession) => {
+  const amount = tx.targetAmount;
+  const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
+  const type = tx.type === TxType.MINT ? "Mint" : "Release";
+  const date = new Date(tx.expiryTime - 24 * 3600 * 1000).toISOString();
+
+  return `${type} - ${amount} ${asset} - ${date}`;
 };

@@ -33,6 +33,7 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { usePageTitle } from "../../../hooks/usePageTitle";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
@@ -45,6 +46,7 @@ import {
 } from "../../transactions/components/TransactionsHelpers";
 import {
   createTxQueryString,
+  getTxPageTitle,
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
@@ -59,12 +61,14 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
 ) => {
   const { history, location } = props;
-  const [title] = usePaperTitle();
+  const [paperTitle] = usePaperTitle();
+
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const rates = useSelector($exchangeRates);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  usePageTitle(getTxPageTitle(tx));
 
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
@@ -98,7 +102,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
             </IconButton>
           )}
         </PaperNav>
-        <PaperTitle>{title}</PaperTitle>
+        <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
           <ToggleIconButton variant="settings" />
           <ToggleIconButton variant="notifications" />
@@ -189,7 +193,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   console.log("ctx", current.context.tx);
   // const forceState = "srcConfirmed";
   switch (current.value as keyof BurnMachineSchema["states"]) {
-  // switch (forceState as keyof BurnMachineSchema["states"]) {
+    // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
       return (
         <ReleaseProgressStatus

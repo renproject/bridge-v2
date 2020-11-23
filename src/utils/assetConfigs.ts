@@ -22,8 +22,17 @@ import {
   ZecFullIcon,
   ZecGreyIcon,
 } from "../components/icons/RenIcons";
-import { RenChain } from "../services/rentx";
 import { orangeLight } from "../theme/colors";
+
+// TODO: replace everywhere
+export enum RenChain {
+  binanceSmartChain = "binanceSmartChain",
+  ethereum = "ethereum",
+  bitcoin = "bitcoin",
+  zcash = "zcash",
+  bitcoinCash = "bitcoinCash",
+  unknown = "unknown",
+}
 
 export enum BridgeCurrency {
   BTC = "BTC",
