@@ -18,7 +18,7 @@ type WalletState = {
 };
 
 let initialState: WalletState = {
-  chain: BridgeChain.BSCC,
+  chain: BridgeChain.ETHC,
   pickerOpened: false,
   balances: [],
 };
