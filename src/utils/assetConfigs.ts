@@ -425,7 +425,7 @@ export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
   // BridgeCurrency.BCH,
   // BridgeCurrency.DOGE,
-  // BridgeCurrency.ZEC,
+  BridgeCurrency.ZEC,
 ];
 
 export const supportedMintDestinationChains = [
@@ -439,7 +439,7 @@ export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
   // BridgeCurrency.RENBCH,
   // BridgeCurrency.RENDOGE,
-  // BridgeCurrency.RENZEC,
+  BridgeCurrency.RENZEC,
 ];
 
 export const toMintedCurrency = (lockedCurrency: BridgeCurrency) => {

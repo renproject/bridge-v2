@@ -22,21 +22,6 @@ import {
 import { $network } from "../network/networkSlice";
 import { getChainExplorerLink } from "../transactions/transactionsUtils";
 
-export const getMintTx: GatewaySession = {
-  id: "tx-" + Math.floor(Math.random() * 10 ** 16),
-  type: "mint",
-  sourceAsset: "btc",
-  sourceChain: "bitcoin",
-  network: "testnet",
-  destAddress: "",
-  destChain: "ethereum",
-  targetAmount: 1,
-  userAddress: "",
-  expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
-  transactions: {},
-  customParams: {},
-};
-
 type CreateMintTransactionParams = {
   amount: number;
   currency: BridgeCurrency;
@@ -44,6 +29,7 @@ type CreateMintTransactionParams = {
   mintedCurrencyChain: BridgeChain;
   userAddress: string;
   destAddress: string;
+  network: RenNetwork;
 };
 
 export const createMintTransaction = ({
@@ -52,11 +38,12 @@ export const createMintTransaction = ({
   mintedCurrencyChain,
   userAddress,
   destAddress,
+  network,
 }: CreateMintTransactionParams) => {
   const tx: GatewaySession = {
     id: "tx-" + Math.floor(Math.random() * 10 ** 16),
     type: "mint",
-    network: env.NETWORK as RenNetwork,
+    network,
     sourceAsset: getCurrencyRentxName(currency),
     sourceChain: getCurrencyRentxSourceChain(currency),
     destAddress,

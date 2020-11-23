@@ -52,6 +52,7 @@ import { useFetchFees } from "../../fees/feesHooks";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { getTransactionFees } from "../../fees/feesUtils";
+import { $network } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   createTxQueryString,
@@ -81,6 +82,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { amount, currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
+  const network = useSelector($network);
   const exchangeRates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);
@@ -126,6 +128,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         mintedCurrency: toMintedCurrency(currency),
         mintedCurrencyChain: chain,
         userAddress: account,
+        network: network,
       }),
     [amount, currency, account, chain]
   );

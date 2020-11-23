@@ -1,12 +1,7 @@
-import { Box, Grow, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import QRCode from "qrcode.react";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { Box, Grow, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import QRCode from 'qrcode.react'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -14,32 +9,26 @@ import {
   CopyContentButton,
   QrCodeIconButton,
   TransactionDetailsButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import {
-  BitcoinIcon,
-  MetamaskFullIcon,
-} from "../../../components/icons/RenIcons";
-import {
-  CenteringSpacedBox,
-  MediumWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import { Link } from "../../../components/links/Links";
+} from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { MetamaskFullIcon, } from '../../../components/icons/RenIcons'
+import { CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { usePaperTitle, useSetPaperTitle } from "../../../pages/MainPage";
-import { useNotifications } from "../../../providers/Notifications";
-import { orangeLight } from "../../../theme/colors";
-import { useFetchFees } from "../../fees/feesHooks";
-import { getTransactionFees } from "../../fees/feesUtils";
-import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
-import { TxType } from "../../transactions/transactionsUtils";
-import { getLockAndMintParams } from "../mintUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
+import { usePaperTitle, useSetPaperTitle } from '../../../pages/MainPage'
+import { useNotifications } from '../../../providers/Notifications'
+import { orangeLight } from '../../../theme/colors'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
+import { ProcessingTimeWrapper } from '../../transactions/components/TransactionsHelpers'
+import { TxType } from '../../transactions/transactionsUtils'
+import { getLockAndMintParams } from '../mintUtils'
 
 const getAddressValidityMessage = (time: number) => {
   const unit = "hours";
@@ -148,7 +137,7 @@ export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationSta
     lockTargetConfirmations,
     lockProcessingTime,
   } = getLockAndMintParams(tx);
-
+  const { MainIcon } = lockChainConfig;
   const confirmed = lockConfirmations === lockTargetConfirmations;
   useEffect(() => {
     setTitle(confirmed ? "Confirmed" : "Confirming");
@@ -162,7 +151,7 @@ export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationSta
           confirmations={lockConfirmations}
           targetConfirmations={lockTargetConfirmations}
         >
-          <BitcoinIcon fontSize="inherit" color="inherit" />
+          <MainIcon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>

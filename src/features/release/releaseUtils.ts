@@ -2,7 +2,7 @@ import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { burnMachine, GatewaySession } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
-import { useSelector } from 'react-redux'
+import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
 import { burnChainMap, releaseChainMap } from "../../services/rentx";
@@ -17,7 +17,7 @@ import {
   getNetworkConfigByRentxName,
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
-import { $network } from '../network/networkSlice'
+import { $network } from "../network/networkSlice";
 import { getChainExplorerLink } from "../transactions/transactionsUtils";
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
@@ -36,6 +36,7 @@ type CreateReleaseTransactionParams = {
   currency: BridgeCurrency;
   userAddress: string;
   destAddress: string;
+  network: RenNetwork;
 };
 
 export const createReleaseTransaction = ({
@@ -43,13 +44,14 @@ export const createReleaseTransaction = ({
   currency,
   userAddress,
   destAddress,
+  network,
 }: CreateReleaseTransactionParams) => {
   const sourceCurrency = toReleasedCurrency(currency);
   const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
   const tx: GatewaySession = {
     id: "tx-" + Math.floor(Math.random() * 10 ** 16),
     type: "burn",
-    network: env.NETWORK as RenNetwork,
+    network,
     sourceAsset: sourceCurrencyConfig.rentxName,
     sourceChain: getCurrencyRentxSourceChain(currency),
     destAddress,

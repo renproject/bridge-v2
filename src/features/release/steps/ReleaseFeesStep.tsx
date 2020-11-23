@@ -1,38 +1,62 @@
-import { Divider, IconButton, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { Divider, IconButton, Typography } from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from '../../../components/typography/TypographyHelpers'
-import { WalletStatus } from '../../../components/utils/types'
-import { paths } from '../../../pages/routes'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { $exchangeRates } from '../../marketData/marketDataSlice'
-import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { TransactionFees } from '../../transactions/components/TransactionFees'
+} from "../../../components/typography/TypographyHelpers";
+import { WalletStatus } from "../../../components/utils/types";
+import { paths } from "../../../pages/routes";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import {
+  getCurrencyConfig,
+  toReleasedCurrency,
+} from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { $exchangeRates } from "../../marketData/marketDataSlice";
+import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
+import { $network } from "../../network/networkSlice";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   createTxQueryString,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
-} from '../../transactions/transactionsUtils'
-import { setWalletPickerOpened } from '../../wallet/walletSlice'
-import { BurnAndReleaseTransactionInitializer, releaseTooltips, } from '../components/ReleaseHelpers'
-import { $release, $releaseUsdAmount } from '../releaseSlice'
-import { createReleaseTransaction, preValidateReleaseTransaction, } from '../releaseUtils'
+} from "../../transactions/transactionsUtils";
+import { setWalletPickerOpened } from "../../wallet/walletSlice";
+import {
+  BurnAndReleaseTransactionInitializer,
+  releaseTooltips,
+} from "../components/ReleaseHelpers";
+import { $release, $releaseUsdAmount } from "../releaseSlice";
+import {
+  createReleaseTransaction,
+  preValidateReleaseTransaction,
+} from "../releaseUtils";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
@@ -43,6 +67,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const walletConnected = status === WalletStatus.CONNECTED;
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
+  const network = useSelector($network);
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
@@ -69,6 +94,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         currency: currency,
         destAddress: address,
         userAddress: account,
+        network: network,
       }),
     [amount, currency, address, account]
   );

@@ -55,8 +55,11 @@ export const getLockAndMintFees = (
   chain: RenChain
 ) => {
   const lockedCurrencyConfig = getCurrencyConfig(lockedCurrency);
+  console.log(lockedCurrency);
+
   const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);
 
+  console.log(lockedCurrencyChain.rentxName, network)
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
   const To = (mintChainClassMap as any)[chain];
   return getRenJs(network)
