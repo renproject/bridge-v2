@@ -3,9 +3,7 @@ import React, { FunctionComponent, useCallback } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { paths } from "../../../pages/routes";
 
-export type FlowTabsProps = TabsProps & {};
-
-export const FlowTabs: FunctionComponent<FlowTabsProps> = () => {
+export const TransactionTypeTabs: FunctionComponent<TabsProps> = () => {
   const history = useHistory();
   const { path } = useRouteMatch();
   const onTabChange = useCallback(

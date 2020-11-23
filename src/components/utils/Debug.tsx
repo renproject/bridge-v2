@@ -7,7 +7,7 @@ const useStyles = makeStyles({
   },
 });
 
-const off = true || process.env.NODE_ENV === "production";
+const off = process.env.NODE_ENV === "production";
 
 type DebugProps = {
   it: any;
@@ -35,3 +35,7 @@ export const Debug: FunctionComponent<DebugProps> = ({
     <pre className={classes.root}>{JSON.stringify(target, replacer, 2)}</pre>
   ) : null;
 };
+
+export const DebugProps: FunctionComponent<any> = (props) => (
+  <Debug it={props} />
+);

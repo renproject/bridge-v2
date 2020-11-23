@@ -1,19 +1,49 @@
-import React, { FunctionComponent } from "react";
-import { useSelector } from "react-redux";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { RouteComponentProps } from "react-router";
+import { Route } from "react-router-dom";
 import { usePageTitle } from "../../hooks/usePageTitle";
-import { FlowTabs } from "../flow/components/FlowTabs";
-import { $flow } from "../flow/flowSlice";
-import { FlowStep } from "../flow/flowTypes";
+import { paths } from "../../pages/routes";
+import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
+import { TxConfigurationStep } from "../transactions/transactionsUtils";
+import { ReleaseFeesStep } from "./steps/ReleaseFeesStep";
 import { ReleaseInitialStep } from "./steps/ReleaseInitialStep";
+import { ReleaseProcessStep } from "./steps/ReleaseProcessStep";
 
-export const ReleaseFlow: FunctionComponent = () => {
-  usePageTitle("Releasing");
-  const { step } = useSelector($flow);
+const ReleaseConfiguration: FunctionComponent<RouteComponentProps> = () => {
+  const [step, setStep] = useState(TxConfigurationStep.INITIAL);
+  const onInitialNext = useCallback(() => {
+    setStep(TxConfigurationStep.FEES);
+  }, []);
+  const onFeesPrev = useCallback(() => {
+    setStep(TxConfigurationStep.INITIAL);
+  }, []);
 
   return (
     <>
-      {step === FlowStep.INITIAL && <FlowTabs />}
-      {step === FlowStep.INITIAL && <ReleaseInitialStep />}
+      {step === TxConfigurationStep.INITIAL && (
+        <>
+          <TransactionTypeTabs />
+          <ReleaseInitialStep onNext={onInitialNext} />
+        </>
+      )}
+      {step === TxConfigurationStep.FEES && (
+        <ReleaseFeesStep onPrev={onFeesPrev} />
+      )}
+    </>
+  );
+};
+
+export const ReleaseFlow: FunctionComponent = () => {
+  usePageTitle("Releasing");
+
+  return (
+    <>
+      <Route exact path={paths.RELEASE} component={ReleaseConfiguration} />
+      <Route
+        exact
+        path={paths.RELEASE_TRANSACTION}
+        component={ReleaseProcessStep}
+      />
     </>
   );
 };

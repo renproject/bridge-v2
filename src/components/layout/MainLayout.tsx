@@ -12,8 +12,8 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
-import { RenNetwork } from "@renproject/interfaces";
 import {
+  useMultiwallet,
   WalletPickerModal,
   WalletPickerProps,
 } from "@renproject/multiwallet-ui";
@@ -29,6 +29,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
+import { $network } from "../../features/network/networkSlice";
+import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 import {
   $multiwalletChain,
   $walletPickerOpened,
@@ -36,7 +38,10 @@ import {
 } from "../../features/wallet/walletSlice";
 import { paths } from "../../pages/routes";
 import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
-import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
+import {
+  useSelectedChainWallet,
+  useWallet,
+} from "../../providers/multiwallet/multiwalletHooks";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Debug } from "../utils/Debug";
@@ -127,7 +132,7 @@ const useBackroundReplacer = (variant: string | undefined) =>
   }, [variant]);
 
 type MainLayoutProps = {
-  variant?: "intro";
+  variant?: "intro" | "about";
 };
 
 export const MainLayout: FunctionComponent<MainLayoutProps> = ({
@@ -137,6 +142,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const history = useHistory();
   const styles = useStyles();
   const dispatch = useDispatch();
+  useSetNetworkFromParam();
   useBackroundReplacer(variant);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -160,8 +166,9 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const multiwalletChain = useSelector($multiwalletChain);
   const walletPickerOpen = useSelector($walletPickerOpened);
+  const network = useSelector($network);
   const pickerClasses = useWalletPickerStyles();
-  const { status } = useWallet(multiwalletChain);
+  const { status, account } = useSelectedChainWallet();
   const handleWalletPickerClose = useCallback(() => {
     dispatch(setWalletPickerOpened(false));
   }, [dispatch]);
@@ -170,7 +177,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   }, [dispatch]);
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
-      targetNetwork: RenNetwork.Testnet, // env.NETWORK, // TODO: pass from env before prod
+      targetNetwork: network,
       chain: multiwalletChain,
       onClose: handleWalletPickerClose,
       pickerClasses,
@@ -181,12 +188,13 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
       config: walletPickerModalConfig,
     };
     return options;
-  }, [multiwalletChain, handleWalletPickerClose, pickerClasses]);
+  }, [multiwalletChain, handleWalletPickerClose, pickerClasses, network]);
 
   const debugWallet = useWallet(multiwalletChain); //remove
+  const debugMultiwallet = useMultiwallet(); //remove
 
   const drawerId = "main-menu-mobile";
-  const withMenu = variant !== "intro";
+  const withMenu = variant !== "intro" && variant !== "about";
 
   return (
     <Container maxWidth="lg">
@@ -211,6 +219,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                       <WalletConnectionStatusButton
                         onClick={handleWalletPickerOpen}
                         status={status}
+                        account={account}
                       />
                       <WalletPickerModal
                         open={walletPickerOpen}
@@ -276,7 +285,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
           </header>
           <main className={styles.main}>
             {children}
-            <Debug it={{ debugWallet, env }} />
+            <Debug it={{ debugWallet, debugMultiwallet, env }} />
           </main>
           <Footer />
         </Container>

@@ -38,8 +38,8 @@ import {
   LunaGreyIcon,
   LunaIcon,
   MetamaskFoxIcon,
-  RenBridgeLogoIcon,
-  RenLogoIcon,
+  RenBridgeLogoIcon, RenLogoFullIcon,
+  RenLogoIcon, RenVMLogoIcon,
   SuccessIcon,
   TxSettingsIcon,
   WalletConnectFullIcon,
@@ -48,7 +48,7 @@ import {
   ZecFullIcon,
   ZecGreyIcon,
   ZecIcon,
-} from "../../icons/RenIcons";
+} from '../../icons/RenIcons'
 import { Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const IconsSection: FunctionComponent = () => {
@@ -115,6 +115,8 @@ export const IconsSection: FunctionComponent = () => {
       </SeparationWrapper>
       <SeparationWrapper>
         <RenBridgeLogoIcon />
+        <RenLogoFullIcon />
+        <RenVMLogoIcon />
         <Box bgcolor="gray" display="inline-block" p={1}>
           <RenLogoIcon />
         </Box>

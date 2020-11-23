@@ -4,13 +4,19 @@ import { QuestionAnswer } from "@material-ui/icons";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
-import React, { FunctionComponent, useMemo } from "react";
+import React, { FunctionComponent } from "react";
 import { useTimeout } from "react-use";
 import {
+  BridgeWallet,
   getChainConfigByRentxName,
   getNetworkConfigByRentxName,
+  getWalletConfig,
+  BridgeWalletConfig,
+  BridgeChainConfig,
 } from "../../utils/assetConfigs";
+import { trimAddress } from "../../utils/strings";
 import {
+  BinanceChainFullIcon,
   MetamaskFullIcon,
   WalletConnectFullIcon,
   WalletIcon,
@@ -21,7 +27,8 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../progress/ProgressHelpers";
-import { WalletConnectionStatusType } from "../utils/types";
+import { Debug } from '../utils/Debug'
+import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
@@ -64,6 +71,9 @@ const mapWalletEntryIcon = (chain: string, name: string) => {
         return <WalletConnectFullIcon fontSize="inherit" />;
     }
   }
+  if (chain === "binanceSmartChain") {
+    return <BinanceChainFullIcon fontSize="inherit" />;
+  }
   return <QuestionAnswer />;
 };
 
@@ -71,7 +81,7 @@ const useWalletEntryButtonStyles = makeStyles({
   root: {
     marginTop: 20,
     fontSize: 16,
-    padding: "11px 20px 11px 40px",
+    padding: "11px 20px 11px 20px",
   },
   label: {
     display: "flex",
@@ -103,26 +113,39 @@ export const WalletEntryButton: WalletPickerProps<
   );
 };
 
+const getLabels = (
+  chainConfig: BridgeChainConfig,
+  walletConfig: BridgeWalletConfig
+) => {
+  return {
+    initialTitle: "Connecting",
+    actionTitle: `${walletConfig.short} action required`,
+    initialMessage: `Connecting to ${chainConfig.full}`,
+    actionMessage: `When prompted, connect securely via the ${walletConfig.full} browser extension.`,
+  };
+};
+
 export const WalletConnectingInfo: WalletPickerProps<
   any,
   any
 >["ConnectingInfo"] = ({ chain, onClose }) => {
   const theme = useTheme();
-  const labels = useMemo(
-    () => ({
-      initialTitle: "Connecting",
-      actionTitle: "MetaMask action required",
-      initialMessage: `Connecting to ${getChainConfigByRentxName(chain).full}`,
-      actionMessage:
-        "When prompted, connect securely via the MetaMask browser extension.",
-    }),
-    [chain]
-  );
+  const chainConfig = getChainConfigByRentxName(chain);
 
+  // TODO: There should be better mapping.
+  const walletSymbol =
+    chain === "ethereum"
+      ? BridgeWallet.METAMASKW
+      : BridgeWallet.BINANCESMARTCHAINW;
+  const walletConfig = getWalletConfig(walletSymbol);
+
+  const labels = getLabels(chainConfig, walletConfig);
+  const { MainIcon } = walletConfig;
   const [isPassed] = useTimeout(3000);
   const passed = isPassed();
   return (
     <>
+      <Debug it={{chainConfig}} />
       <BridgeModalTitle
         title={passed ? labels.actionTitle : labels.initialTitle}
         onClose={onClose}
@@ -135,7 +158,7 @@ export const WalletConnectingInfo: WalletPickerProps<
             fontSize="big"
             processing
           >
-            <MetamaskFullIcon fontSize="inherit" />
+            <MainIcon fontSize="inherit" />
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h6" align="center">
@@ -233,10 +256,10 @@ export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndica
 }) => {
   const styles = useWalletConnectionIndicatorStyles();
   const className = classNames(styles.root, classNameProp, {
-    [styles.connected]: status === "connected",
-    [styles.wrongNetwork]: status === "wrong_network",
-    [styles.disconnected]: status === "disconnected",
-    [styles.connecting]: status === "connecting",
+    [styles.connected]: status === WalletStatus.CONNECTED,
+    [styles.wrongNetwork]: status === WalletStatus.WRONG_NETWORK,
+    [styles.disconnected]: status === WalletStatus.DISCONNECTED,
+    [styles.connecting]: status === WalletStatus.CONNECTING,
   });
   return <div className={className} />;
 };
@@ -266,21 +289,28 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
     // TODO: remove
     marginRight: 10,
   },
+  account: { marginLeft: 20 },
 }));
 
 type WalletConnectionStatusButtonProps = ButtonProps & {
   status: WalletConnectionStatusType;
+  account?: string;
 };
 
 export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionStatusButtonProps> = ({
   status,
+  account,
   ...rest
 }) => {
   const {
     indicator: indicatorClassName,
+    account: accountClassName,
     ...classes
   } = useWalletConnectionStatusButtonStyles();
+
   const label = getWalletConnectionLabel(status);
+  const trimmedAddress = trimAddress(account);
+
   return (
     <Button variant="outlined" color="secondary" classes={classes} {...rest}>
       <WalletConnectionIndicator
@@ -288,6 +318,9 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
         className={indicatorClassName}
       />
       <span>{label}</span>
+      {trimmedAddress && (
+        <span className={accountClassName}>{trimmedAddress}</span>
+      )}
     </Button>
   );
 };

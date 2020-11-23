@@ -20,7 +20,6 @@ import {
   ActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
 import {
@@ -30,6 +29,7 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
@@ -39,32 +39,31 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { BridgeCurrency, WalletStatus } from "../../../components/utils/types";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
+import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { getMintedDestinationCurrencySymbol } from "../../../providers/multiwallet/multiwalletUtils";
 import {
+  getChainConfig,
   getChainShortLabel,
   getCurrencyConfig,
+  toMintedCurrency,
 } from "../../../utils/assetConfigs";
-import { fromGwei } from "../../../utils/converters";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
-import { useGasPrices } from "../../marketData/marketDataHooks";
-import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
+import { useFetchFees } from "../../fees/feesHooks";
+import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { $fees } from "../../renData/renDataSlice";
-import { calculateMintFees } from "../../renData/renDataUtils";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   createTxQueryString,
   LocationTxState,
+  TxConfigurationStepProps,
+  TxType,
 } from "../../transactions/transactionsUtils";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
-  getFeeTooltips,
+  getMintDynamicTooltips,
+  mintTooltips,
   MintTransactionInitializer,
-  tooltips,
 } from "../components/MintHelpers";
 import { $mint } from "../mintSlice";
 import {
@@ -72,44 +71,51 @@ import {
   preValidateMintTransaction,
 } from "../mintUtils";
 
-export const MintFeesStep: FunctionComponent = () => {
+export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
+  onPrev,
+}) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [initializeMinting, setInitializeMinting] = useState(false);
+  const { status, account } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
+  const [mintingInitialized, setMintingInitialized] = useState(false);
   const { amount, currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
-  const { account } = useSelectedChainWallet();
   const exchangeRates = useSelector($exchangeRates);
-  const fees = useSelector($fees);
-  const currencyUsdRate = findExchangeRate(exchangeRates, currency, "USD");
+  const { fees, pending } = useFetchFees(currency, TxType.MINT);
+  const currencyUsdRate = findExchangeRate(exchangeRates, currency);
 
   const amountUsd = amount * currencyUsdRate;
-  const { conversionTotal } = calculateMintFees(amount, currency, fees);
+  const { conversionTotal } = getTransactionFees({
+    amount,
+    fees,
+    type: TxType.MINT,
+  });
 
-  const currencyConfig = getCurrencyConfig(currency);
+  const lockCurrencyConfig = getCurrencyConfig(currency);
+  const { GreyIcon } = lockCurrencyConfig;
+
   const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
-
   const targetNetworkLabel = getChainShortLabel(chain);
-  const destinationCurrency = getMintedDestinationCurrencySymbol(currency);
-  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
-
-  const MintedCurrencyIcon = useMemo(
-    () => getCurrencyGreyIcon(currencyConfig.symbol),
-    [currencyConfig.symbol]
+  const destinationChainConfig = getChainConfig(chain);
+  const destinationChainNativeCurrencyConfig = getCurrencyConfig(
+    destinationChainConfig.nativeCurrency
   );
+  const mintDynamicTooltips = getMintDynamicTooltips(
+    destinationChainConfig,
+    destinationChainNativeCurrencyConfig
+  );
+  const mintedCurrency = toMintedCurrency(currency);
 
-  const [ackChecked, setAckChecked] = useState(true); // TODO: CRIT: false
+  const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
+
+  const [ackChecked, setAckChecked] = useState(false);
   const [touched, setTouched] = useState(false);
 
-  const handlePreviousStepClick = useCallback(() => {
-    dispatch(setFlowStep(FlowStep.INITIAL));
-  }, [dispatch]);
   const handleAckCheckboxChange = useCallback((event) => {
     setTouched(true);
     setAckChecked(event.target.checked);
   }, []);
-
-  const { status } = useSelectedChainWallet();
 
   const tx = useMemo(
     () =>
@@ -117,7 +123,7 @@ export const MintFeesStep: FunctionComponent = () => {
         amount: amount,
         currency: currency,
         destAddress: account,
-        mintedCurrency: getMintedDestinationCurrencySymbol(currency),
+        mintedCurrency: toMintedCurrency(currency),
         mintedCurrencyChain: chain,
         userAddress: account,
       }),
@@ -130,13 +136,13 @@ export const MintFeesStep: FunctionComponent = () => {
     if (status === WalletStatus.CONNECTED) {
       setTouched(true);
       if (canInitializeMinting) {
-        setInitializeMinting(true);
+        setMintingInitialized(true);
       } else {
-        setInitializeMinting(false);
+        setMintingInitialized(false);
       }
     } else {
       setTouched(false);
-      setInitializeMinting(false);
+      setMintingInitialized(false);
       dispatch(setWalletPickerOpened(true));
     }
   }, [dispatch, status, canInitializeMinting]);
@@ -145,7 +151,7 @@ export const MintFeesStep: FunctionComponent = () => {
     (tx) => {
       console.log("onMintTxCreated");
       history.push({
-        pathname: paths.MINT,
+        pathname: paths.MINT_TRANSACTION,
         search: "?" + createTxQueryString(tx),
         state: {
           txState: { newTx: true },
@@ -159,7 +165,7 @@ export const MintFeesStep: FunctionComponent = () => {
 
   return (
     <>
-      {initializeMinting && (
+      {mintingInitialized && (
         <MintTransactionInitializer
           initialTx={tx}
           onCreated={onMintTxCreated}
@@ -167,7 +173,7 @@ export const MintFeesStep: FunctionComponent = () => {
       )}
       <PaperHeader>
         <PaperNav>
-          <IconButton onClick={handlePreviousStepClick}>
+          <IconButton onClick={onPrev}>
             <BackArrowIcon />
           </IconButton>
         </PaperNav>
@@ -185,7 +191,7 @@ export const MintFeesStep: FunctionComponent = () => {
         </Typography>
         <LabelWithValue
           label="Sending"
-          labelTooltip={tooltips.sending}
+          labelTooltip={mintTooltips.sending}
           value={<NumberFormatText value={amount} spacedSuffix={currency} />}
           valueEquivalent={
             <NumberFormatText
@@ -198,37 +204,45 @@ export const MintFeesStep: FunctionComponent = () => {
         />
         <LabelWithValue
           label="To"
-          labelTooltip={tooltips.to}
+          labelTooltip={mintTooltips.to}
           value={targetNetworkLabel}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
           Fees
         </Typography>
-        <MintFees amount={amount} currency={currency} />
+        <TransactionFees
+          amount={amount}
+          currency={currency}
+          type={TxType.MINT}
+        />
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
-        <AssetInfo
-          label="Receiving"
-          value={
-            <NumberFormatText
-              value={conversionTotal}
-              spacedSuffix={destinationCurrencyConfig.short}
-              decimalScale={3}
+        {walletConnected &&
+          (pending ? (
+            <CenteredProgress />
+          ) : (
+            <AssetInfo
+              label="Receiving"
+              value={
+                <NumberFormatText
+                  value={conversionTotal}
+                  spacedSuffix={mintedCurrencyConfig.short}
+                />
+              }
+              valueEquivalent={
+                <NumberFormatText
+                  prefix=" = $"
+                  value={targetCurrencyAmountUsd}
+                  spacedSuffix="USD"
+                  decimalScale={2}
+                  fixedDecimalScale
+                />
+              }
+              Icon={<GreyIcon fontSize="inherit" />}
             />
-          }
-          valueEquivalent={
-            <NumberFormatText
-              prefix=" = $"
-              value={targetCurrencyAmountUsd}
-              spacedSuffix="USD"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          }
-          Icon={<MintedCurrencyIcon fontSize="inherit" />}
-        />
+          ))}
         <CheckboxWrapper>
           <FormControl error={showAckError}>
             <FormControlLabel
@@ -246,8 +260,9 @@ export const MintFeesStep: FunctionComponent = () => {
                     variant="caption"
                     color={showAckError ? "inherit" : "textPrimary"}
                   >
-                    I acknowledge this transaction requires ETH{" "}
-                    <TooltipWithIcon title={tooltips.acknowledge} />
+                    I acknowledge this transaction requires{" "}
+                    {destinationChainNativeCurrencyConfig.short}{" "}
+                    <TooltipWithIcon title={mintDynamicTooltips.acknowledge} />
                   </Typography>
                 </FormLabel>
               }
@@ -255,91 +270,19 @@ export const MintFeesStep: FunctionComponent = () => {
           </FormControl>
         </CheckboxWrapper>
         <ActionButtonWrapper>
-          <ActionButton onClick={handleConfirm} disabled={showAckError}>
-            {status !== "connected" ? "Connect Wallet" : "Confirm"}
+          <ActionButton
+            onClick={handleConfirm}
+            disabled={showAckError || mintingInitialized}
+          >
+            {!walletConnected
+              ? "Connect Wallet"
+              : mintingInitialized
+              ? "Confirming..."
+              : "Confirm"}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
       <Debug it={{ tx }} />
-    </>
-  );
-};
-
-type MintFeesProps = {
-  currency: BridgeCurrency;
-  amount: number;
-};
-
-export const MintFees: FunctionComponent<MintFeesProps> = ({
-  amount,
-  currency,
-}) => {
-  useGasPrices();
-  const currencyConfig = getCurrencyConfig(currency);
-  const exchangeRates = useSelector($exchangeRates);
-  const fees = useSelector($fees);
-  const gasPrices = useSelector($gasPrices);
-  const currencyUsdRate = findExchangeRate(exchangeRates, currency, "USD");
-  const ethUsdRate = findExchangeRate(exchangeRates, BridgeCurrency.ETH, "USD");
-  const amountUsd = amount * currencyUsdRate;
-
-  const { renVMFee, renVMFeeAmount, networkFee } = calculateMintFees(
-    amount,
-    currency,
-    fees
-  );
-  const renVMFeeAmountUsd = amountUsd * renVMFee;
-  const networkFeeUsd = networkFee * currencyUsdRate;
-
-  const tooltips = useMemo(() => getFeeTooltips(renVMFee, 0.001), [renVMFee]); // TODO: CRIT: add release fee from selectors
-
-  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
-  const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
-  const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
-
-  return (
-    <>
-      <LabelWithValue
-        label="RenVM Fee"
-        labelTooltip={tooltips.renVmFee}
-        value={
-          <NumberFormatText value={renVMFeeAmount} spacedSuffix={currency} />
-        }
-        valueEquivalent={
-          <NumberFormatText
-            value={renVMFeeAmountUsd}
-            prefix="$"
-            decimalScale={2}
-            fixedDecimalScale
-          />
-        }
-      />
-      <LabelWithValue
-        label={`${currencyConfig.full} Miner Fee`}
-        labelTooltip={tooltips.bitcoinMinerFee}
-        value={<NumberFormatText value={networkFee} spacedSuffix={currency} />}
-        valueEquivalent={
-          <NumberFormatText
-            value={networkFeeUsd}
-            prefix="$"
-            decimalScale={2}
-            fixedDecimalScale
-          />
-        }
-      />
-      <LabelWithValue
-        label="Esti. Ethereum Fee"
-        labelTooltip={tooltips.estimatedEthFee}
-        value={targetNetworkFeeLabel}
-        valueEquivalent={
-          <NumberFormatText
-            value={targetNetworkFeeUsd}
-            prefix="$"
-            decimalScale={2}
-            fixedDecimalScale
-          />
-        }
-      />
     </>
   );
 };

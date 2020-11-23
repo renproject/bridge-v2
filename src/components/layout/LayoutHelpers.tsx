@@ -23,3 +23,15 @@ export const MediumWrapper = styled("div")({
 export const BigWrapper = styled("div")({
   marginBottom: 40,
 });
+
+export const SmallTopWrapper = styled("div")({
+  marginTop: 10,
+});
+
+export const MediumTopWrapper = styled("div")({
+  marginTop: 20,
+});
+
+export const BigTopWrapper = styled("div")({
+  marginTop: 40,
+});

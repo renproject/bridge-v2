@@ -1,14 +1,13 @@
-import { Box, Checkbox, FormControlLabel, Typography } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useState } from "react";
-import { BitcoinInCircleIcon } from "../../icons/RenIcons";
-import { AddressInput } from "../../inputs/AddressInput";
-import { BigCurrencyInput } from "../../inputs/BigCurrencyInput";
-import { BridgePaper } from "../../layout/Paper";
-import { Link } from "../../links/Links";
-import { TooltipWithIcon } from "../../tooltips/TooltipWithIcon";
-import { AssetInfo, LabelWithValue } from "../../typography/TypographyHelpers";
-import { BridgeChain } from "../../utils/types";
-import { Section } from "../PresentationHelpers";
+import { Box, Checkbox, FormControlLabel, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useState } from 'react'
+import { BitcoinInCircleIcon } from '../../icons/RenIcons'
+import { AddressInput } from '../../inputs/AddressInput'
+import { BigCurrencyInput } from '../../inputs/BigCurrencyInput'
+import { BridgePaper } from '../../layout/Paper'
+import { Link } from '../../links/Links'
+import { TooltipWithIcon } from '../../tooltips/TooltipWithIcon'
+import { AssetInfo, LabelWithValue } from '../../typography/TypographyHelpers'
+import { Section } from '../PresentationHelpers'
 
 export const InputsSection: FunctionComponent = () => {
   const [value, setValue] = useState(0);
@@ -49,7 +48,7 @@ export const InputsSection: FunctionComponent = () => {
             }
             label={
               <Typography variant="caption">
-                I acknowledge this transaction requires ETH{" "}
+                Something to agree{" "}
                 <TooltipWithIcon title="Explanation" />
               </Typography>
             }
@@ -65,8 +64,7 @@ export const InputsSection: FunctionComponent = () => {
         </Box>
         <Box>
           <AddressInput
-            chain={BridgeChain.BTCC}
-            label="Releasing to"
+            label="Releasing to:"
             onChange={handleAddressChange}
             value={address}
           />

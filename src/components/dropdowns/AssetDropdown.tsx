@@ -1,75 +1,39 @@
-import { Box, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useMemo } from 'react'
-import { getChainFullLabel, getCurrencyFullLabel, } from '../../utils/assetConfigs'
 import {
-  BchFullIcon,
-  BinanceChainFullIcon,
-  BtcFullIcon,
-  CustomSvgIconComponent,
-  DogeFullIcon,
-  DotsFullIcon,
-  EthereumChainFullIcon,
-  ZecFullIcon,
-} from '../icons/RenIcons'
-import { BridgeChain, BridgeCurrency, } from '../utils/types'
+  Box,
+  ListSubheader,
+  MenuItem,
+  Select,
+  SelectProps,
+  styled,
+  Typography,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useMemo } from "react";
+import { AssetBalance } from "../../features/wallet/walletSlice";
+import { getAssetBalance } from "../../features/wallet/walletUtils";
+import {
+  BridgeChain,
+  BridgeCurrency,
+  BridgeChainConfig,
+  chainsConfig,
+  currenciesConfig,
+  CurrencyConfig,
+} from "../../utils/assetConfigs";
+import { NumberFormatText } from "../formatting/NumberFormatText";
 
-type AssetConfig = {
-  symbol: string;
-  name: string;
-  Icon: CustomSvgIconComponent;
+const getOptions = (mode: AssetDropdownMode) => {
+  const options =
+    mode === "chain"
+      ? Object.values(chainsConfig)
+      : Object.values(currenciesConfig);
+  return options as Array<BridgeChainConfig | CurrencyConfig>;
 };
-
-const currencyOptions: Array<AssetConfig> = [
-  //TODO: merge with assetConfigs
-  {
-    symbol: BridgeCurrency.BTC,
-    name: getCurrencyFullLabel(BridgeCurrency.BTC),
-    Icon: BtcFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.BCH,
-    name: getCurrencyFullLabel(BridgeCurrency.BCH),
-    Icon: BchFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.DOTS,
-    name: getCurrencyFullLabel(BridgeCurrency.DOTS),
-    Icon: DotsFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.DOGE,
-    name: getCurrencyFullLabel(BridgeCurrency.DOGE),
-    Icon: DogeFullIcon,
-  },
-  {
-    symbol: BridgeCurrency.ZEC,
-    name: getCurrencyFullLabel(BridgeCurrency.ZEC),
-    Icon: ZecFullIcon,
-  },
-];
-
-const chainOptions: Array<AssetConfig> = [
-  {
-    symbol: BridgeChain.BNCC,
-    name: getChainFullLabel(BridgeChain.BNCC),
-    Icon: BinanceChainFullIcon,
-  },
-  {
-    symbol: BridgeChain.ETHC,
-    name: getChainFullLabel(BridgeChain.ETHC),
-    Icon: EthereumChainFullIcon,
-  },
-];
-
-const getOptions = (mode: AssetDropdownMode) =>
-  mode === "chain" ? chainOptions : currencyOptions;
 
 const getOptionBySymbol = (symbol: string, mode: AssetDropdownMode) =>
   getOptions(mode).find((option) => option.symbol === symbol);
 
 const createAvailabilityFilter = (available: Array<string> | undefined) => (
-  option: AssetConfig
+  option: BridgeChainConfig | CurrencyConfig
 ) => {
   if (!available) {
     return true;
@@ -91,22 +55,47 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
   select: {
     width: "100%",
   },
-  listIcon: iconStyles,
   supplementalText: {
     fontSize: 12,
   },
+  iconWrapper: {
+    display: "inline-flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  listIcon: iconStyles,
+  assetName: {
+    fontSize: 13,
+  },
+  assetFullName: {
+    fontSize: 10,
+  },
+  balance: {
+    fontSize: 12,
+  },
+  listSubheader: {
+    fontSize: 10,
+    lineHeight: 1,
+  },
+  listSubheaderLabel: {
+    fontSize: 10,
+  },
 }));
 
-type AssetDropdownMode = "send" | "receive" | "chain";
+type AssetDropdownMode = "send" | "receive" | "chain"; // TODO: remove recaive
 
 type AssetDropdownProps = SelectProps & {
   mode: AssetDropdownMode;
   available?: Array<BridgeCurrency | BridgeChain>;
+  balances?: Array<AssetBalance>;
+  label: string;
 };
 
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   mode,
   available,
+  label,
+  balances,
   ...rest
 }) => {
   const styles = useAssetDropdownStyles();
@@ -120,28 +109,26 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
       if (!selected) {
         return <span>empty</span>;
       }
-      const { Icon, name, symbol } = selected;
+      const { MainIcon, full, short } = selected;
       return (
         <Box display="flex" alignItems="center" width="100%">
           <Box width="40%">
             <Typography variant="body2" className={styles.supplementalText}>
-              {mode === "send" && "Send"}
-              {mode === "receive" && "Receive"}
-              {mode === "chain" && "Destination Chain"}
+              {label}
             </Typography>
           </Box>
           <Box width="45px" display="flex" alignItems="center">
-            <Icon className={styles.listIcon} />
+            <MainIcon className={styles.listIcon} />
           </Box>
           <Box flexGrow={1}>
-            <Typography variant="body1">
-              {mode === "chain" ? name : symbol}
+            <Typography variant="body2">
+              {mode === "chain" ? full : short}
             </Typography>
           </Box>
         </Box>
       );
     },
-    [mode, styles]
+    [mode, styles, label]
   );
   return (
     <div>
@@ -149,23 +136,73 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
         variant="outlined"
         className={styles.select}
         renderValue={valueRenderer}
+        MenuProps={{
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "left",
+          },
+          getContentAnchorEl: null,
+        }}
         {...rest}
       >
+        <ListSubheader className={styles.listSubheader}>
+          <Box display="flex" alignItems="center" width="100%">
+            <Box width="45px" />
+            <Box flexGrow={1}>
+              <Typography
+                variant="overline"
+                className={styles.listSubheaderLabel}
+              >
+                {mode === "chain" ? "Blockchain" : "Asset"}
+              </Typography>
+            </Box>
+            {balances && (
+              <Box flexGrow={1} textAlign="right">
+                <Typography
+                  variant="overline"
+                  className={styles.listSubheaderLabel}
+                >
+                  Your Balance
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </ListSubheader>
         {getOptions(mode)
           .filter(availabilityFilter)
-          .map(({ symbol, Icon, name }) => {
+          .map(({ symbol, MainIcon, GreyIcon, full, short }) => {
             return (
               <MenuItem key={symbol} value={symbol}>
                 <Box display="flex" alignItems="center" width="100%">
-                  <Box width="45px">
-                    <Icon className={styles.listIcon} />
+                  <Box width="45px" className={styles.iconWrapper}>
+                    <MainIcon className={styles.listIcon} />
                   </Box>
                   <Box flexGrow={1}>
-                    <Typography variant="body1">{symbol}</Typography>
-                    <Typography variant="subtitle2" color="textSecondary">
-                      {name}
+                    <Typography variant="body1" className={styles.assetName}>
+                      {short}
+                    </Typography>
+                    <Typography
+                      variant="subtitle2"
+                      color="textSecondary"
+                      className={styles.assetFullName}
+                    >
+                      {full}
                     </Typography>
                   </Box>
+                  {balances && (
+                    <Box
+                      flexGrow={1}
+                      textAlign="right"
+                      className={styles.balance}
+                    >
+                      <NumberFormatText
+                        value={getAssetBalance(
+                          balances,
+                          symbol as BridgeCurrency
+                        )}
+                      />
+                    </Box>
+                  )}
                 </Box>
               </MenuItem>
             );

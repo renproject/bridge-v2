@@ -2,7 +2,7 @@ import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
-import { BridgeChain, BridgeCurrency } from "../utils/types";
+import { BridgeChain, BridgeCurrency } from '../../utils/assetConfigs'
 import {
   BchGreyIcon,
   BinanceChainIcon,
@@ -89,12 +89,12 @@ export const getChainIcon = (symbol: BridgeChain) => {
   switch (symbol) {
     case BridgeChain.BTCC:
       return BitcoinIcon;
-    case BridgeChain.BNCC:
+    case BridgeChain.BSCC:
       return BinanceChainIcon;
     case BridgeChain.ETHC:
       return EthereumIcon;
     case BridgeChain.ZECC:
-      return ZecFullIcon; // TODO: add dedicated ZEC chain icon
+      return ZecFullIcon; // TODO: add dedicated ZEC sourceChain icon
     case BridgeChain.UNKNOWNC:
       return BitcoinIcon;
   }

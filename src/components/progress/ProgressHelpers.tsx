@@ -1,5 +1,6 @@
 import {
   CircularProgress,
+  CircularProgressProps,
   fade,
   styled,
   SvgIconProps,
@@ -10,9 +11,21 @@ import { makeStyles } from "@material-ui/core/styles";
 import CompletedIcon from "@material-ui/icons/Check";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
+import { BridgeChain } from "../../utils/assetConfigs";
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
-import { BridgeChain, TransactionStatusType } from "../utils/types";
+import { CenteringSpacedBox } from "../layout/LayoutHelpers";
+import { TransactionStatusType } from "../utils/types";
+
+export const CenteredProgress: FunctionComponent<CircularProgressProps> = (
+  props
+) => {
+  return (
+    <CenteringSpacedBox>
+      <CircularProgress size={40} {...props} />
+    </CenteringSpacedBox>
+  );
+};
 
 export const BigDoneIcon = styled(DoneIcon)({
   fontSize: 120,
@@ -196,7 +209,7 @@ const useTransactionStatusInfoStyles = makeStyles((theme) => ({
 
 type TransactionStatusInfoProps = {
   chain?: string;
-  address?: string;
+  address?: string | ReactNode;
   status?: string;
 };
 
@@ -208,7 +221,7 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
   const styles = useTransactionStatusInfoStyles();
   return (
     <div className={styles.root}>
-      <Typography variant="body1" className={styles.status}>
+      <Typography variant="body1" className={styles.status} align="center">
         {status}
       </Typography>
       {chain && <Typography variant="body1">{chain} Tx:</Typography>}
@@ -234,7 +247,7 @@ const resolveIcon = (chain: BridgeChain, status: TransactionStatusType) => {
     return <CompletedIcon {...shared} fontSize="large" />;
   }
   switch (chain) {
-    case BridgeChain.BNCC:
+    case BridgeChain.BSCC:
       return <BinanceChainIcon {...shared} fontSize="large" />;
     case BridgeChain.BTCC:
       return <BitcoinIcon {...shared} fontSize="large" />;

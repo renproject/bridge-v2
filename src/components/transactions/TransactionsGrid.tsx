@@ -1,10 +1,11 @@
 import { Chip, styled, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import React, { FunctionComponent, useCallback, useState } from 'react'
+import { BridgeChain } from '../../utils/assetConfigs'
 import { Link } from '../links/Links'
 import { SimplePagination } from '../pagination/SimplePagination'
 import { TransactionStatusIndicator } from '../progress/ProgressHelpers'
-import { BridgeChain, TransactionStatusType } from '../utils/types'
+import { TransactionStatusType } from '../utils/types'
 
 type TransactionType = "mint" | "release";
 
@@ -171,12 +172,12 @@ export const TransactionsGrid: FunctionComponent<any> = () => {
           status="pending"
           confirmations={2}
         />
-        <TransactionEntry chain={BridgeChain.BNCC} status="submitted" />
+        <TransactionEntry chain={BridgeChain.BSCC} status="submitted" />
       </div>
       <TransactionsStatusHeader title={`Completed (${completed})`} />
       <div>
         <TransactionEntry chain={BridgeChain.BTCC} status="completed" />
-        <TransactionEntry chain={BridgeChain.BNCC} status="completed" />
+        <TransactionEntry chain={BridgeChain.BSCC} status="completed" />
       </div>
       <TransactionsPaginationWrapper>
         <SimplePagination

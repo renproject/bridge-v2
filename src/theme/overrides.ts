@@ -1,6 +1,6 @@
-import { fade } from "@material-ui/core";
-import { Palette } from "@material-ui/core/styles/createPalette";
-import { Overrides } from "@material-ui/core/styles/overrides";
+import { fade } from '@material-ui/core'
+import { Palette } from '@material-ui/core/styles/createPalette'
+import { Overrides } from '@material-ui/core/styles/overrides'
 import {
   alertError,
   alertErrorBackground,
@@ -10,12 +10,10 @@ import {
   alertSuccessBackground,
   alertWarning,
   alertWarningBackground,
-  grayPlaceholder,
   textDark,
   textDisabled,
   textLighter,
-} from "./colors";
-import { generatePlaceholderStyles } from "./themeUtils";
+} from './colors'
 
 export const overrides = (palette: Palette): Overrides => {
   return {
@@ -111,17 +109,25 @@ export const overrides = (palette: Palette): Overrides => {
     },
     MuiFormControlLabel: {
       root: {
-        marginRight: 0
-      }
+        marginRight: 0,
+      },
     },
     MuiInputBase: {
-      input: { ...generatePlaceholderStyles(grayPlaceholder) },
+      // input: { ...generatePlaceholderStyles("ff0000") },
     },
     MuiInputLabel: {
       outlined: {
+        fontSize: 14,
         "&$shrink": {
-          transform: "translate(14px, 0px) scale(0.75)",
+          color: palette.primary.main,
+          transform: "translate(20px, 11px) scale(0.75)",
         },
+      },
+    },
+    MuiOutlinedInput: {
+      input: {
+        paddingRight: 20,
+        paddingLeft: 20,
       },
     },
     MuiLink: {

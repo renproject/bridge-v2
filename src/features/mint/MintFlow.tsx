@@ -1,35 +1,46 @@
-import React, { FunctionComponent, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { RouteComponentProps } from "react-router";
+import { Route } from "react-router-dom";
 import { usePageTitle } from "../../hooks/usePageTitle";
-import { FlowTabs } from "../flow/components/FlowTabs";
-import { $flow, setFlowStep } from "../flow/flowSlice";
-import { FlowStep } from "../flow/flowTypes";
-import { useExchangeRates } from "../marketData/marketDataHooks";
-import { useTxParam } from "../transactions/transactionsUtils";
-import { PaperTitleProvider } from "./mintUtils";
-import { MintDepositStep } from "./steps/MintDepositStep";
+import { paths } from "../../pages/routes";
+import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
+import { TxConfigurationStep } from "../transactions/transactionsUtils";
+import { MintProcessStep } from "./steps/MintProcessStep";
 import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
 
-export const MintFlow: FunctionComponent<RouteComponentProps> = () => {
-  usePageTitle("Minting");
-  useExchangeRates();
-  const dispatch = useDispatch();
-  const { tx } = useTxParam();
-  const { step } = useSelector($flow);
-  // TODO: this should be route based, not mixed
-  useEffect(() => {
-    if (tx && step !== FlowStep.DEPOSIT) {
-      dispatch(setFlowStep(FlowStep.DEPOSIT));
-    }
-  }, [dispatch, step, tx]);
+const MintConfiguration: FunctionComponent<RouteComponentProps> = () => {
+  const [step, setStep] = useState(TxConfigurationStep.INITIAL);
+
+  const onInitialNext = useCallback(() => {
+    setStep(TxConfigurationStep.FEES);
+  }, []);
+  const onFeesPrev = useCallback(() => {
+    setStep(TxConfigurationStep.INITIAL);
+  }, []);
+
   return (
-    <PaperTitleProvider>
-      {step === FlowStep.INITIAL && <FlowTabs />}
-      {step === FlowStep.INITIAL && <MintInitialStep />}
-      {step === FlowStep.FEES && <MintFeesStep />}
-      {step === FlowStep.DEPOSIT && <MintDepositStep />}
-    </PaperTitleProvider>
+    <>
+      {step === TxConfigurationStep.INITIAL && (
+        <>
+          <TransactionTypeTabs />
+          <MintInitialStep onNext={onInitialNext} />
+        </>
+      )}
+      {step === TxConfigurationStep.FEES && (
+        <MintFeesStep onPrev={onFeesPrev} />
+      )}
+    </>
+  );
+};
+
+export const MintFlow: FunctionComponent<RouteComponentProps> = ({ match }) => {
+  usePageTitle("Minting");
+
+  return (
+    <>
+      <Route exact path={paths.MINT} component={MintConfiguration} />
+      <Route exact path={paths.MINT_TRANSACTION} component={MintProcessStep} />
+    </>
   );
 };

@@ -1,16 +1,26 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { BridgeChain } from "../../components/utils/types";
 import { RootState } from "../../store/rootReducer";
-import { bridgeChainToMultiwalletChain } from "./walletUtils";
+import {
+  BridgeChain,
+  BridgeCurrency,
+  getChainConfig,
+} from "../../utils/assetConfigs";
+
+export type AssetBalance = {
+  symbol: BridgeCurrency;
+  balance: number;
+};
 
 type WalletState = {
   chain: BridgeChain;
   pickerOpened: boolean;
+  balances: Array<AssetBalance>;
 };
 
 let initialState: WalletState = {
-  chain: BridgeChain.ETHC,
+  chain: BridgeChain.BSCC,
   pickerOpened: false,
+  balances: [],
 };
 
 const slice = createSlice({
@@ -23,10 +33,24 @@ const slice = createSlice({
     setWalletPickerOpened(state, action: PayloadAction<boolean>) {
       state.pickerOpened = action.payload;
     },
+    addOrUpdateBalance(state, action: PayloadAction<AssetBalance>) {
+      const index = state.balances.findIndex(
+        (entry) => entry.symbol === action.payload.symbol
+      );
+      if (index > -1) {
+        state.balances[index] = action.payload;
+      } else {
+        state.balances.push(action.payload);
+      }
+    },
   },
 });
 
-export const { setChain, setWalletPickerOpened } = slice.actions;
+export const {
+  setChain,
+  setWalletPickerOpened,
+  addOrUpdateBalance,
+} = slice.actions;
 
 export const walletReducer = slice.reducer;
 
@@ -36,6 +60,7 @@ export const $walletPickerOpened = createSelector(
   $wallet,
   (wallet) => wallet.pickerOpened
 );
-export const $multiwalletChain = createSelector($chain, (chain) =>
-  bridgeChainToMultiwalletChain(chain)
-);
+export const $multiwalletChain = createSelector($chain, (chain) => {
+  const chainConfig = getChainConfig(chain);
+  return chainConfig.rentxName;
+});

@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GatewaySession } from "@renproject/rentx";
+import { GatewaySession } from "@renproject/ren-tx";
 import { RootState } from "../../store/rootReducer";
 
 type BridgeTransaction = GatewaySession;

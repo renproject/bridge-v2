@@ -1,45 +1,43 @@
-import { Divider } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Divider } from '@material-ui/core'
+import React, { FunctionComponent, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
+import { PaperContent } from '../../../components/layout/Paper'
+import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { AssetInfo } from '../../../components/typography/TypographyHelpers'
+import { WalletStatus } from '../../../components/utils/types'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import {
-  AssetDropdown,
-  AssetDropdownWrapper,
-} from "../../../components/dropdowns/AssetDropdown";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getCurrencyGreyIcon } from "../../../components/icons/IconHelpers";
-import {
-  BigCurrencyInput,
-  BigCurrencyInputWrapper,
-} from "../../../components/inputs/BigCurrencyInput";
-import { PaperContent } from "../../../components/layout/Paper";
-import { AssetInfo } from "../../../components/typography/TypographyHelpers";
-import {
-  getMintedDestinationCurrencySymbol,
-  supportedMintCurrencies,
+  getCurrencyConfig,
+  supportedLockCurrencies,
   supportedMintDestinationChains,
-} from "../../../providers/multiwallet/multiwalletUtils";
-import { getCurrencyShortLabel } from "../../../utils/assetConfigs";
-import { setFlowStep } from "../../flow/flowSlice";
-import { FlowStep } from "../../flow/flowTypes";
-import { $wallet, setChain } from "../../wallet/walletSlice";
-import {
-  $mint,
-  $mintCurrencyUsdAmount,
-  $mintFees,
-  setMintAmount,
-  setMintCurrency,
-} from "../mintSlice";
+  toMintedCurrency,
+} from '../../../utils/assetConfigs'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
+import { TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
+import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
+import { $mint, $mintUsdAmount, setMintAmount, setMintCurrency, } from '../mintSlice'
 
-export const MintInitialStep: FunctionComponent = () => {
+export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
+  onNext,
+}) => {
   const dispatch = useDispatch();
+
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
-  const { conversionTotal } = useSelector($mintFees);
-  const currencyUsdValue = useSelector($mintCurrencyUsdAmount);
+  const { status} = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
+  const { fees, pending } = useFetchFees(currency, TxType.MINT);
+  const { conversionTotal } = getTransactionFees({
+    amount,
+    type: TxType.MINT,
+    fees,
+  });
+  const currencyUsdValue = useSelector($mintUsdAmount);
 
   const handleAmountChange = useCallback(
     (value) => {
@@ -59,20 +57,24 @@ export const MintInitialStep: FunctionComponent = () => {
     },
     [dispatch]
   );
+
+  const canProceed = !!amount && amount > 0;
+  console.log(canProceed)
+
   const handleNextStep = useCallback(() => {
-    dispatch(setMintAmount(amount));
-    dispatch(setFlowStep(FlowStep.FEES));
-  }, [dispatch, amount]);
+    if (!walletConnected) {
+      dispatch(setWalletPickerOpened(true));
+    } else {
+      if (onNext && canProceed) {
+        onNext();
+      }
+    }
+  }, [dispatch, onNext, walletConnected, canProceed]);
 
-  const mintedCurrencySymbol = getMintedDestinationCurrencySymbol(currency);
-  const mintedCurrency = getCurrencyShortLabel(mintedCurrencySymbol);
-
-  const MintedCurrencyIcon = useMemo(
-    () => getCurrencyGreyIcon(mintedCurrencySymbol),
-    [mintedCurrencySymbol]
-  );
-
-  const nextEnabled = !!amount;
+  const mintedCurrencySymbol = toMintedCurrency(currency);
+  // TODO: get from config
+  const mintedCurrencyConfig = getCurrencyConfig(mintedCurrencySymbol);
+  const { GreyIcon } = mintedCurrencyConfig;
 
   return (
     <>
@@ -87,14 +89,16 @@ export const MintInitialStep: FunctionComponent = () => {
         </BigCurrencyInputWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
+            label="Send"
             mode="send"
-            available={supportedMintCurrencies}
+            available={supportedLockCurrencies}
             value={currency}
             onChange={handleCurrencyChange}
           />
         </AssetDropdownWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
+            label="Destination Chain"
             mode="chain"
             available={supportedMintDestinationChains}
             value={chain}
@@ -104,20 +108,27 @@ export const MintInitialStep: FunctionComponent = () => {
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
-        <AssetInfo
-          label="Receiving:"
-          value={
-            <NumberFormatText
-              value={conversionTotal}
-              suffix={` ${mintedCurrency}`}
-              decimalScale={3}
+        {walletConnected &&
+          (pending ? (
+            <CenteredProgress />
+          ) : (
+            <AssetInfo
+              label="Receiving:"
+              value={
+                <NumberFormatText
+                  value={conversionTotal}
+                  spacedSuffix={mintedCurrencyConfig.short}
+                />
+              }
+              Icon={<GreyIcon fontSize="inherit" />}
             />
-          }
-          Icon={<MintedCurrencyIcon fontSize="inherit" />}
-        />
+          ))}
         <ActionButtonWrapper>
-          <ActionButton onClick={handleNextStep} disabled={!nextEnabled}>
-            Next
+          <ActionButton
+            onClick={handleNextStep}
+            disabled={walletConnected && !canProceed}
+          >
+            {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

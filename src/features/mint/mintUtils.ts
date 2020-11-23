@@ -1,26 +1,35 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { GatewaySession, mintMachine } from "@renproject/rentx";
+import { GatewaySession, mintMachine } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
-import { createStateContext } from "react-use";
-import { BridgeChain, BridgeCurrency } from "../../components/utils/types";
+import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
-import { fromChainMap, toChainMap } from "../../services/rentx";
+import { lockChainMap, mintChainMap } from "../../services/rentx";
 import {
+  BridgeChain,
+  BridgeCurrency,
+  getChainConfig,
   getChainRentxName,
+  getCurrencyConfig,
+  getCurrencyConfigByRentxName,
   getCurrencyRentxName,
   getCurrencyRentxSourceChain,
+  toMintedCurrency,
+  getNetworkConfigByRentxName,
+  getChainConfigByRentxName,
 } from "../../utils/assetConfigs";
+import { $network } from "../network/networkSlice";
+import { getChainExplorerLink } from "../transactions/transactionsUtils";
 
 export const getMintTx: GatewaySession = {
   id: "tx-" + Math.floor(Math.random() * 10 ** 16),
   type: "mint",
   sourceAsset: "btc",
-  sourceNetwork: "bitcoin",
+  sourceChain: "bitcoin",
   network: "testnet",
   destAddress: "",
-  destNetwork: "ethereum",
+  destChain: "ethereum",
   targetAmount: 1,
   userAddress: "",
   expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
@@ -49,9 +58,9 @@ export const createMintTransaction = ({
     type: "mint",
     network: env.NETWORK as RenNetwork,
     sourceAsset: getCurrencyRentxName(currency),
-    sourceNetwork: getCurrencyRentxSourceChain(currency),
+    sourceChain: getCurrencyRentxSourceChain(currency),
     destAddress,
-    destNetwork: getChainRentxName(mintedCurrencyChain),
+    destChain: getChainRentxName(mintedCurrencyChain),
     targetAmount: Number(amount),
     userAddress,
     expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
@@ -74,6 +83,7 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
 
 export const useMintMachine = (mintTransaction: GatewaySession) => {
   const { enabledChains } = useMultiwallet();
+  const network = useSelector($network);
   const providers = Object.entries(enabledChains).reduce(
     (c, n) => ({
       ...c,
@@ -85,14 +95,74 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     context: {
       tx: mintTransaction,
       providers,
-      sdk: getRenJs(),
-      fromChainMap,
-      toChainMap,
+      sdk: getRenJs(network),
+      fromChainMap: lockChainMap,
+      toChainMap: mintChainMap,
     },
     devTools: env.XSTATE_DEVTOOLS,
   });
 };
 
-const [usePaperTitle, PaperTitleProvider] = createStateContext("Mint");
+export const getLockAndMintParams = (tx: GatewaySession) => {
+  const networkConfig = getNetworkConfigByRentxName(tx.network);
+  const lockCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
+  const mintCurrencyConfig = getCurrencyConfig(
+    toMintedCurrency(lockCurrencyConfig.symbol)
+  );
+  const lockChainConfig = getChainConfig(lockCurrencyConfig.sourceChain);
+  const mintChainConfig = getChainConfigByRentxName(tx.destChain);
 
-export { PaperTitleProvider, usePaperTitle };
+  const transaction = Object.values(tx.transactions)[0];
+  let mintTxHash: string = "";
+  let mintTxLink: string = "";
+  if (transaction && transaction.sourceTxHash) {
+    mintTxHash = transaction.sourceTxHash;
+    mintTxLink =
+      getChainExplorerLink(
+        mintChainConfig.symbol,
+        networkConfig.symbol,
+        transaction.destTxHash || ""
+      ) || "";
+  }
+  let lockTxHash: string = "";
+  let lockTxLink: string = "";
+  let lockTxAmount = 0;
+  let lockProcessingTime = null;
+  let lockConfirmations = 0;
+  let lockTargetConfirmations = 0;
+  if (transaction) {
+    lockTxAmount = transaction.sourceTxAmount / 1e8;
+    if (transaction.rawSourceTx) {
+      lockTxHash = transaction.rawSourceTx.transaction.txHash;
+      lockTxLink =
+        getChainExplorerLink(
+          lockChainConfig.symbol,
+          networkConfig.symbol,
+          lockTxHash
+        ) || "";
+    }
+    lockConfirmations = transaction.sourceTxConfs;
+    if (transaction.sourceTxConfTarget) {
+      lockTargetConfirmations = transaction.sourceTxConfTarget;
+      lockProcessingTime =
+        Math.max(lockTargetConfirmations - lockConfirmations, 0) *
+        lockChainConfig.blockTime;
+    }
+  }
+  return {
+    networkConfig,
+    mintCurrencyConfig,
+    lockCurrencyConfig,
+    mintChainConfig,
+    lockChainConfig,
+    mintTxHash,
+    mintTxLink,
+    lockTxHash,
+    lockTxLink,
+    lockConfirmations,
+    lockTargetConfirmations,
+    lockProcessingTime,
+    lockTxAmount,
+    suggestedAmount: Number(tx.suggestedAmount) / 1e8,
+  };
+};

@@ -1,16 +1,29 @@
-import { Box, Typography, useTheme } from "@material-ui/core";
-import React, { FunctionComponent, useEffect } from "react";
+import { Box, Grow, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import QRCode from "qrcode.react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import {
   ActionButton,
   ActionButtonWrapper,
+  BigQrCode,
+  CopyContentButton,
+  QrCodeIconButton,
   TransactionDetailsButton,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { getChainIcon } from "../../../components/icons/IconHelpers";
 import {
   BitcoinIcon,
   MetamaskFullIcon,
 } from "../../../components/icons/RenIcons";
+import {
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../../components/layout/LayoutHelpers";
 import { Link } from "../../../components/links/Links";
 import {
   BigDoneIcon,
@@ -19,111 +32,158 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import {
-  BridgeChain,
-  BridgeCurrency,
-  BridgeNetwork,
-} from "../../../components/utils/types";
+import { usePaperTitle, useSetPaperTitle } from "../../../pages/MainPage";
+import { useNotifications } from "../../../providers/Notifications";
 import { orangeLight } from "../../../theme/colors";
-import {
-  getChainConfig,
-  getCurrencyConfig,
-  getCurrencyShortLabel,
-  getCurrencySourceChain,
-} from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
 import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
-import { getChainExplorerLink } from "../../transactions/transactionsUtils";
-import { usePaperTitle } from "../mintUtils";
+import { TxType } from "../../transactions/transactionsUtils";
+import { getLockAndMintParams } from "../mintUtils";
 
-type ProgressStatusProps = {
-  reason?: string;
-  processing?: boolean;
+const getAddressValidityMessage = (time: number) => {
+  const unit = "hours";
+  return `This Gateway Address is only valid for ${time} ${unit}. Do not send multiple deposits or deposit after ${time} ${unit}.`;
 };
 
-export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
-  reason = "Loading...",
-  processing = true,
-}) => {
-  const theme = useTheme();
-  const [, setTitle] = usePaperTitle();
+export type DepositToProps = {
+  tx: GatewaySession;
+};
+
+export const DepositTo: FunctionComponent<DepositToProps> = ({ tx }) => {
+  const [showQr, setShowQr] = useState(false);
+  const toggleQr = useCallback(() => {
+    setShowQr(!showQr);
+  }, [showQr]);
+  const { showNotification } = useNotifications();
   useEffect(() => {
-    setTitle(reason);
-  }, [setTitle, reason]);
+    const time = Math.ceil((tx.expiryTime - Number(new Date())) / 1000 / 3600);
+    if (time > 0) {
+      showNotification(getAddressValidityMessage(time), {
+        variant: "warning",
+      });
+    }
+  }, [showNotification, tx.expiryTime]);
+
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    suggestedAmount,
+  } = getLockAndMintParams(tx);
+  const { color } = lockCurrencyConfig;
+  const { MainIcon } = lockChainConfig;
+
   return (
     <>
       <ProgressWrapper>
-        <ProgressWithContent
-          processing={processing}
-          color={theme.palette.primary.main}
-        >
-          <TransactionStatusInfo status={reason} />
+        <ProgressWithContent color={color || orangeLight} size={64}>
+          <MainIcon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
+      <MediumWrapper>
+        <BigAssetAmount
+          value={
+            <span>
+              Send{" "}
+              <NumberFormatText
+                value={suggestedAmount}
+                spacedSuffix={lockCurrencyConfig.short}
+              />{" "}
+              to
+            </span>
+          }
+        />
+      </MediumWrapper>
+      {!!tx.gatewayAddress && (
+        <>
+          {showQr && (
+            <CenteringSpacedBox>
+              <Grow in={showQr}>
+                <BigQrCode>
+                  <QRCode value={tx.gatewayAddress} />
+                </BigQrCode>
+              </Grow>
+            </CenteringSpacedBox>
+          )}
+          <CopyContentButton content={tx.gatewayAddress} />
+        </>
+      )}
+      <Box
+        mt={2}
+        display="flex"
+        justifyContent="center"
+        flexDirection="column"
+        alignItems="center"
+      >
+        {lockChainConfig.targetConfirmations && (
+          <Typography variant="caption" gutterBottom>
+            Estimated processing time:{" "}
+            {lockChainConfig.targetConfirmations * lockChainConfig.blockTime}{" "}
+            minutes
+          </Typography>
+        )}
+        <Box mt={2}>
+          <QrCodeIconButton onClick={toggleQr} />
+        </Box>
+      </Box>
     </>
   );
 };
 
 type DepositConfirmationStatusProps = {
-  network: BridgeNetwork;
-  sourceChain: BridgeChain;
-  currency: BridgeCurrency;
-  confirmations: number;
-  targetConfirmations?: number;
-  amount: number;
-  txHash: string;
-  timeRemaining: number;
+  tx: GatewaySession;
 };
 
 export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationStatusProps> = ({
-  network,
-  sourceChain,
-  currency,
-  confirmations,
-  targetConfirmations,
-  amount,
-  txHash,
-  timeRemaining,
+  tx,
 }) => {
   const [, setTitle] = usePaperTitle();
-  const confirmed = confirmations === targetConfirmations;
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    lockTxHash,
+    lockTxLink,
+    lockTxAmount,
+    lockConfirmations,
+    lockTargetConfirmations,
+    lockProcessingTime,
+  } = getLockAndMintParams(tx);
+
+  const confirmed = lockConfirmations === lockTargetConfirmations;
   useEffect(() => {
     setTitle(confirmed ? "Confirmed" : "Confirming");
   }, [setTitle, confirmed]);
-  const sourceTxExplorerLink = getChainExplorerLink(
-    sourceChain,
-    network,
-    txHash
-  ); //TODO: renane props end inject
+
   return (
     <>
       <ProgressWrapper>
         <ProgressWithContent
-          color={orangeLight}
-          confirmations={confirmations}
-          targetConfirmations={targetConfirmations}
+          color={lockCurrencyConfig.color || orangeLight}
+          confirmations={lockConfirmations}
+          targetConfirmations={lockTargetConfirmations}
         >
           <BitcoinIcon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
-        {confirmations} of {targetConfirmations} confirmations
+        {lockConfirmations} of {lockTargetConfirmations} confirmations
       </Typography>
       <BigAssetAmount
         value={
           <NumberFormatText
-            value={amount}
-            spacedSuffix={getCurrencyShortLabel(currency)}
+            value={lockTxAmount}
+            spacedSuffix={lockCurrencyConfig.short}
           />
         }
       />
       <TransactionDetailsButton
-        chain={getCurrencySourceChain(currency)}
-        address={txHash}
-        link={sourceTxExplorerLink}
+        chain={lockChainConfig.short}
+        address={lockTxHash}
+        link={lockTxLink}
       />
       <ProcessingTimeWrapper>
         <Typography variant="caption" component="p" align="center">
-          Estimated time remaining: {timeRemaining} minutes
+          Estimated time remaining: {lockProcessingTime} minutes
         </Typography>
       </ProcessingTimeWrapper>
     </>
@@ -131,44 +191,30 @@ export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationSta
 };
 
 type DepositAcceptedStatusProps = {
-  network: BridgeNetwork;
-  sourceCurrency: BridgeCurrency;
-  sourceAmount: number;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  sourceConfirmations: number;
-  sourceConfirmationsTarget?: number;
-  destinationChain: BridgeChain;
+  tx: GatewaySession;
   onSubmit?: () => void;
   submitting: boolean;
 };
 
 export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps> = ({
-  network, // TODO inject
-  sourceCurrency,
-  sourceAmount,
-  sourceChain,
-  sourceTxHash,
-  sourceConfirmations,
-  sourceConfirmationsTarget,
-  destinationChain,
+  tx,
   onSubmit = () => {},
   submitting,
 }) => {
-  const [, setTitle] = usePaperTitle();
-  useEffect(() => {
-    setTitle("Submit");
-  }, [setTitle]);
+  useSetPaperTitle("Submit");
   const theme = useTheme();
-  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  const sourceChainConfig = getChainConfig(sourceChain);
-  const Icon = getChainIcon(sourceChain);
-  const sourceTxExplorerLink = getChainExplorerLink(
-    sourceChain,
-    network,
-    sourceTxHash
-  );
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    lockTxHash,
+    lockTxAmount,
+    lockTxLink,
+    lockConfirmations,
+    lockTargetConfirmations,
+    mintChainConfig,
+  } = getLockAndMintParams(tx);
+
+  const { MainIcon } = lockChainConfig;
   return (
     <>
       <ProgressWrapper>
@@ -178,32 +224,32 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
           </ProgressWithContent>
         ) : (
           <ProgressWithContent
-            color={sourceCurrencyConfig.color || theme.customColors.skyBlue}
-            confirmations={sourceConfirmations}
-            targetConfirmations={sourceConfirmationsTarget}
+            color={lockCurrencyConfig.color || theme.customColors.skyBlue}
+            confirmations={lockConfirmations}
+            targetConfirmations={lockTargetConfirmations}
           >
-            <Icon fontSize="inherit" color="inherit" />
+            <MainIcon fontSize="inherit" color="inherit" />
           </ProgressWithContent>
         )}
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
-          value={sourceAmount}
-          spacedSuffix={sourceCurrencyConfig.full}
+          value={lockTxAmount}
+          spacedSuffix={lockCurrencyConfig.full}
         />{" "}
         Received
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit"} to{" "}
-          {destinationChainConfig.full}
+          {submitting ? "Submitting" : "Submit"} to {mintChainConfig.full}
+          {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
-          chain={sourceChainConfig.short}
-          address={sourceTxHash}
-          link={sourceTxExplorerLink}
+          chain={lockChainConfig.short}
+          address={lockTxHash}
+          link={lockTxLink}
         />
       </ActionButtonWrapper>
     </>
@@ -211,64 +257,55 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
 };
 
 type DestinationPendingStatusProps = {
-  network: BridgeNetwork;
-  sourceCurrency: BridgeCurrency;
-  sourceAmount: number;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  destinationChain: BridgeChain;
-  destinationTxHash: string;
+  tx: GatewaySession;
   onSubmit?: () => void;
   submitting: boolean;
 };
 
 export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatusProps> = ({
-  network,
-  sourceCurrency,
-  sourceAmount,
-  sourceChain,
-  sourceTxHash,
-  destinationChain,
-  destinationTxHash,
+  tx,
   onSubmit = () => {},
   submitting,
 }) => {
   const theme = useTheme();
-  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  const sourceTxExplorerLink = getChainExplorerLink(
-    sourceChain,
-    network,
-    sourceTxHash
-  );
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    lockTxHash,
+    lockTxAmount,
+    lockTxLink,
+    mintTxHash,
+    mintChainConfig,
+  } = getLockAndMintParams(tx);
+
   return (
     <>
       <ProgressWrapper>
         <ProgressWithContent color={theme.customColors.skyBlue} processing>
           <TransactionStatusInfo
             status="Pending"
-            chain={destinationChainConfig.full}
-            address={destinationTxHash}
+            chain={mintChainConfig.full}
+            address={mintTxHash}
           />
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
-          value={sourceAmount}
-          spacedSuffix={sourceCurrencyConfig.full}
+          value={lockTxAmount}
+          spacedSuffix={lockCurrencyConfig.full}
         />
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit"} to{" "}
-          {destinationChainConfig.full}
+          {submitting ? "Submitting" : "Submit"} to {mintChainConfig.full}
+          {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
-          chain={sourceChain}
-          address={sourceTxHash}
-          link={sourceTxExplorerLink}
+          chain={lockChainConfig.symbol}
+          address={lockTxHash}
+          link={lockTxLink}
         />
       </ActionButtonWrapper>
     </>
@@ -276,43 +313,29 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 };
 
 type DestinationReceivedStatusProps = {
-  network: BridgeNetwork;
-  sourceCurrency: BridgeCurrency;
-  sourceChain: BridgeChain;
-  sourceTxHash: string;
-  destinationCurrency: BridgeCurrency;
-  destinationChain: BridgeChain;
-  destinationAmount: number;
-  destinationTxHash: string;
+  tx: GatewaySession;
   onReturn?: () => void;
 };
 
 export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedStatusProps> = ({
-  network,
-  sourceChain,
-  sourceTxHash,
-  destinationCurrency,
-  destinationAmount,
-  destinationChain,
-  destinationTxHash,
+  tx,
   onReturn = () => {},
 }) => {
   const theme = useTheme();
-  const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
-  const destinationChainConfig = getChainConfig(destinationChain);
-  const sourceChainConfig = getChainConfig(sourceChain);
-
-  const sourceTxLink = getChainExplorerLink(
-    sourceChain,
-    network,
-    sourceTxHash
-  );
-  const destinationTxLink = getChainExplorerLink(
-    destinationChain,
-    network,
-    destinationTxHash
-  );
-
+  const {
+    lockCurrencyConfig,
+    lockChainConfig,
+    lockTxLink,
+    lockTxAmount,
+    mintTxLink,
+    mintChainConfig,
+  } = getLockAndMintParams(tx);
+  const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
+  const { conversionTotal } = getTransactionFees({
+    amount: lockTxAmount,
+    fees,
+    type: TxType.MINT,
+  });
   return (
     <>
       <ProgressWrapper>
@@ -322,8 +345,8 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
-          value={destinationAmount}
-          spacedSuffix={destinationCurrencyConfig.full}
+          value={conversionTotal}
+          spacedSuffix={lockCurrencyConfig.full}
         />
       </Typography>
       <ActionButtonWrapper>
@@ -335,35 +358,22 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
           color="primary"
           variant="button"
           underline="hover"
-          href={sourceTxLink}
+          href={lockTxLink}
           target="_blank"
         >
-          {sourceChainConfig.full} transaction
+          {lockChainConfig.full} transaction
         </Link>
         <Link
           external
           color="primary"
           variant="button"
           underline="hover"
-          href={destinationTxLink}
+          href={mintTxLink}
           target="_blank"
         >
-          {destinationChainConfig.full} transaction
+          {mintChainConfig.full} transaction
         </Link>
       </Box>
-    </>
-  );
-};
-
-export const SrcConfirmedStatus: FunctionComponent = () => {
-  const theme = useTheme();
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent processing color={theme.palette.primary.main}>
-          <TransactionStatusInfo status="Pending..." />
-        </ProgressWithContent>
-      </ProgressWrapper>
     </>
   );
 };

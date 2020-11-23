@@ -36,6 +36,8 @@ import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox
 import { ReactComponent as MetamaskFull } from "./../../assets/icons/metamask-icon-colour.svg";
 import { ReactComponent as QrCode } from "./../../assets/icons/qr-code.svg";
 import { ReactComponent as RenLogo } from "./../../assets/icons/ren-logo.svg";
+import { ReactComponent as RenLogo3F } from "./../../assets/icons/ren-logo-3f.svg";
+import { ReactComponent as RenVMLogo } from "./../../assets/icons/renvm-logo.svg";
 import { ReactComponent as RenBridgeLogo } from "./../../assets/icons/renbridge-logo.svg";
 import { ReactComponent as Success } from "./../../assets/icons/success-icon.svg";
 import { ReactComponent as Tooltip } from "./../../assets/icons/tooltip.svg";
@@ -98,6 +100,16 @@ export const RenBridgeLogoIcon: CustomSvgIconComponent = (props) => {
 export const RenLogoIcon: CustomSvgIconComponent = (props) => {
   const scalingProps = getScalingProps(24, 27);
   return <SvgIcon component={RenLogo} {...scalingProps} {...props} />;
+};
+
+export const RenVMLogoIcon: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingProps(124, 29);
+  return <SvgIcon component={RenVMLogo} {...scalingProps} {...props} />;
+};
+
+export const RenLogoFullIcon: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingProps(121, 52);
+  return <SvgIcon component={RenLogo3F} {...scalingProps} {...props} />;
 };
 
 export const BitcoinInCircleIcon: CustomSvgIconComponent = (props) => (

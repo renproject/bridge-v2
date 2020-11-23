@@ -8,6 +8,7 @@ type WalletData = {
   account: string;
   status: WalletConnectionStatusType;
   targetNetwork: RenNetwork;
+  provider: any;
 };
 
 type UseWallet = (chain: string) => WalletData;
@@ -17,7 +18,14 @@ export const useWallet: UseWallet = (chain) => {
   const { enabledChains, targetNetwork } = useMultiwallet();
   const { account = "", status = "disconnected" } =
     enabledChains?.[chain] || {};
-  return { account, status, targetNetwork } as WalletData;
+  const provider = enabledChains?.[chain]?.provider;
+  return {
+    account,
+    status,
+    targetNetwork,
+    provider,
+    enabledChains,
+  } as WalletData;
 };
 
 export const useSelectedChainWallet = () => {

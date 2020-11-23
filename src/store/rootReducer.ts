@@ -1,18 +1,18 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { renDataReducer } from "../features/renData/renDataSlice";
-import { flowReducer } from "../features/flow/flowSlice";
+import { networkReducer } from "../features/network/networkSlice";
+import { releaseReducer } from "../features/release/releaseSlice";
 import { marketDataReducer } from "../features/marketData/marketDataSlice";
 import { mintReducer } from "../features/mint/mintSlice";
-import { transactionsReducer } from '../features/transactions/transactionsSlice'
+import { transactionsReducer } from "../features/transactions/transactionsSlice";
 import { walletReducer } from "../features/wallet/walletSlice";
 
 const rootReducer = combineReducers({
-  mint: mintReducer,
-  flow: flowReducer,
-  renData: renDataReducer,
-  marketData: marketDataReducer,
+  network: networkReducer,
   wallet: walletReducer,
-  transactions: transactionsReducer
+  mint: mintReducer,
+  release: releaseReducer,
+  marketData: marketDataReducer,
+  transactions: transactionsReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
