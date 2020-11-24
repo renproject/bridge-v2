@@ -8,6 +8,7 @@ import { WalletStatus } from "../../../components/utils/types";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
+  BridgeChain,
   BridgeCurrency,
   getCurrencyConfig,
   toReleasedCurrency,
@@ -18,12 +19,6 @@ import { BridgeFees, getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
 import { getFeeTooltips, TxType } from "../transactionsUtils";
-
-type TransactionFeesProps = {
-  type: TxType;
-  currency: BridgeCurrency;
-  amount: number;
-};
 
 export const getMintAndReleaseFees = (fees: BridgeFees) => {
   const result = {
@@ -38,10 +33,18 @@ export const getMintAndReleaseFees = (fees: BridgeFees) => {
   return result;
 };
 
+type TransactionFeesProps = {
+  type: TxType;
+  currency: BridgeCurrency;
+  amount: number;
+  chain: BridgeChain;
+};
+
 export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   amount,
   currency,
   type,
+  chain,
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
@@ -71,6 +74,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
       releaseFee: fees.burn / 10000,
       sourceCurrency: currency,
       destinationCurrency: destinationCurrency,
+      chain: chain,
       type: TxType.MINT,
     });
   }, [fees, currency, destinationCurrency]);
@@ -108,7 +112,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
       />
       <LabelWithValue //TODO: made dependant on the sourceChain
         label={`Bitcoin Miner Fee`}
-        labelTooltip={tooltips.bitcoinMinerFee}
+        labelTooltip={tooltips.sourceChainMinerFee}
         value={<NumberFormatText value={networkFee} spacedSuffix="BTC" />}
         valueEquivalent={
           <NumberFormatText
@@ -121,7 +125,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
       />
       <LabelWithValue
         label="Esti. Ethereum Fee"
-        labelTooltip={tooltips.estimatedEthFee}
+        labelTooltip={tooltips.estimatedDestinationChainFee}
         value={targetNetworkFeeLabel}
         valueEquivalent={
           <NumberFormatText

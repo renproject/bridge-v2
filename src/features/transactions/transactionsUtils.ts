@@ -5,6 +5,8 @@ import {
   BridgeChain,
   BridgeCurrency,
   BridgeNetwork,
+  getChainConfig,
+  getCurrencyConfig,
   getCurrencyConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
@@ -18,6 +20,7 @@ export enum TxConfigurationStep {
   INITIAL = "initial",
   FEES = "fees",
 }
+
 export type TxConfigurationStepProps = {
   onPrev?: () => void;
   onNext?: () => void;
@@ -120,8 +123,9 @@ export const getChainExplorerLink = (
 type GetFeeToltipsArgs = {
   mintFee: number;
   releaseFee: number;
-  sourceCurrency?: BridgeCurrency;
-  destinationCurrency?: BridgeCurrency;
+  sourceCurrency: BridgeCurrency;
+  destinationCurrency: BridgeCurrency;
+  chain: BridgeChain;
   type: TxType;
 };
 
@@ -129,23 +133,20 @@ export const getFeeTooltips = ({
   mintFee,
   releaseFee,
   sourceCurrency,
-  destinationCurrency,
-  type,
+  chain,
 }: GetFeeToltipsArgs) => {
+  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
+  const sourceChainConfig = getChainConfig(sourceCurrencyConfig.sourceChain);
+  const destinationChainConfig = getChainConfig(chain);
+  // const destinationCurrencyConfig = getCurrencyConfig(destinationChainConfig.s)
   return {
     renVmFee: `RenVM takes a ${toPercent(
       mintFee
     )}% fee per mint transaction and ${toPercent(
       releaseFee
     )}% per burn transaction. This is shared evenly between all active nodes in the decentralized network.`,
-    bitcoinMinerFee:
-      "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
-    estimatedEthFee:
-      "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
-    // estimatedReleasingChainFee:
-    //   "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
-    // estimatedMintingChainFee:
-    //   "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
+    sourceChainMinerFee: `The fee required by ${sourceChainConfig.short} miners, to move ${sourceCurrencyConfig.short}. This does not go RenVM or the Ren team.`,
+    estimatedDestinationChainFee: `The estimated cost to perform a transaction on the ${destinationChainConfig.short} network. This fee goes to ${destinationChainConfig.short} miners and is paid in ${"TODO"}.`,
   };
 };
 

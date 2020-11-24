@@ -450,7 +450,7 @@ export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
 
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
-  // BridgeCurrency.RENBCH,
+  BridgeCurrency.RENBCH,
   // BridgeCurrency.RENDOGE,
   BridgeCurrency.RENZEC,
 ];

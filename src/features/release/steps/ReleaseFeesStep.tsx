@@ -47,7 +47,7 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
-import { setWalletPickerOpened } from "../../wallet/walletSlice";
+import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
 import {
   BurnAndReleaseTransactionInitializer,
   releaseTooltips,
@@ -68,6 +68,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
   const network = useSelector($network);
+  const { chain } = useSelector($wallet);
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
@@ -187,6 +188,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           Fees
         </Typography>
         <TransactionFees
+          chain={chain}
           amount={amount}
           currency={currency}
           type={TxType.BURN}

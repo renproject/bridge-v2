@@ -215,6 +215,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           Fees
         </Typography>
         <TransactionFees
+          chain={chain}
           amount={amount}
           currency={currency}
           type={TxType.MINT}

@@ -37,6 +37,7 @@ import { usePageTitle } from "../../../hooks/usePageTitle";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
@@ -50,7 +51,11 @@ import {
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
-import { setWalletPickerOpened } from "../../wallet/walletSlice";
+import {
+  $chain,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
 import {
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
@@ -65,6 +70,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
 
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
+  const chain = useSelector($chain);
   const rates = useSelector($exchangeRates);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
@@ -73,6 +79,14 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
   }, [history]);
+
+  useEffect(() => {
+    if (parsedTx?.destChain) {
+      const bridgeChainConfig = getChainConfigByRentxName(parsedTx.destChain);
+      dispatch(setChain(bridgeChainConfig.symbol));
+    }
+  }, [dispatch, parsedTx?.destChain]);
+
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
@@ -145,6 +159,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         <LabelWithValue label="To" value={tx.destAddress} />
         <SpacedDivider />
         <TransactionFees
+          chain={chain}
           amount={amount}
           currency={burnCurrencyConfig.symbol}
           type={TxType.BURN}
