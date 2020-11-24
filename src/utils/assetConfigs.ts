@@ -31,6 +31,7 @@ export enum RenChain {
   bitcoin = "bitcoin",
   zcash = "zcash",
   bitcoinCash = "bitcoinCash",
+  dogecoin = "dogecoin",
   unknown = "unknown",
 }
 
@@ -55,6 +56,7 @@ export enum BridgeChain {
   BTCC = "BTCC",
   BCHC = "BCHC",
   ZECC = "ZECC",
+  DOGC = "DOGC",
   BSCC = "BSCC",
   ETHC = "ETHC",
   UNKNOWNC = "UNKNOWNC",
@@ -164,7 +166,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     FullIcon: DogeFullIcon,
     GreyIcon: DogeGreyIcon,
     MainIcon: DogeFullIcon,
-    sourceChain: BridgeChain.UNKNOWNC, // TODO:
+    sourceChain: BridgeChain.DOGC,
     rentxName: "doge",
   },
   [BridgeCurrency.RENDOGE]: {
@@ -330,6 +332,17 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     blockTime: 2.5,
     nativeCurrency: BridgeCurrency.ZEC,
   },
+  [BridgeChain.DOGC]: {
+    symbol: BridgeChain.DOGC,
+    short: "DOGE",
+    full: "Dogecoin Chain",
+    FullIcon: DogeFullIcon,
+    GreyIcon: DogeGreyIcon,
+    MainIcon: DogeFullIcon,
+    rentxName: RenChain.dogecoin,
+    blockTime: 1,
+    nativeCurrency: BridgeCurrency.DOGE,
+  },
   [BridgeChain.BSCC]: {
     symbol: BridgeChain.BSCC,
     short: "BSC",
@@ -423,14 +436,14 @@ export const supportedRenNetworks = [
 
 export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
-  // BridgeCurrency.BCH,
-  // BridgeCurrency.DOGE,
+  BridgeCurrency.BCH,
+  BridgeCurrency.DOGE,
   BridgeCurrency.ZEC,
 ];
 
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
-  // BridgeChain.BSCC,
+  BridgeChain.BSCC,
 ];
 
 export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];

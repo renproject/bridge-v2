@@ -130,7 +130,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         userAddress: account,
         network: network,
       }),
-    [amount, currency, account, chain]
+    [amount, currency, account, chain, network]
   );
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;

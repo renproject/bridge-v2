@@ -4,6 +4,7 @@ import {
   BinanceSmartChain,
   Bitcoin,
   BitcoinCash,
+  Dogecoin,
   Ethereum,
   Zcash,
 } from "@renproject/chains";
@@ -23,6 +24,7 @@ export const lockChainMap = {
   [RenChain.bitcoin]: () => Bitcoin(),
   [RenChain.zcash]: () => Zcash(),
   [RenChain.bitcoinCash]: () => BitcoinCash(),
+  [RenChain.dogecoin]: () => Dogecoin(),
 };
 
 export const mintChainMap = {
@@ -44,8 +46,8 @@ export const mintChainMap = {
 };
 
 export const mintChainClassMap = {
-  [RenChain.binanceSmartChain]: BinanceSmartChain,
   [RenChain.ethereum]: Ethereum,
+  [RenChain.binanceSmartChain]: BinanceSmartChain,
 };
 
 export const getLockAndMintFees = (
@@ -59,7 +61,7 @@ export const getLockAndMintFees = (
 
   const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);
 
-  console.log(lockedCurrencyChain.rentxName, network)
+  console.log(lockedCurrencyChain.rentxName, network);
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
   const To = (mintChainClassMap as any)[chain];
   return getRenJs(network)

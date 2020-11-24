@@ -96,7 +96,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         userAddress: account,
         network: network,
       }),
-    [amount, currency, address, account]
+    [amount, currency, address, account, network]
   );
   const canInitializeReleasing = preValidateReleaseTransaction(tx);
 
