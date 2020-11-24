@@ -87,8 +87,8 @@ const sochainTestnet = "https://sochain.com/tx/";
 const sochain = "https://sochain.com/tx/";
 const etherscanTestnet = "https://kovan.etherscan.io/tx/";
 const etherscan = "https://etherscan.io/tx/";
-const binanceTestnet = "https://testnet.bscscan.com/";
-const binance = "https://bscscan.com/";
+const binanceTestnet = "https://testnet.bscscan.com/tx/";
+const binance = "https://bscscan.com/tx/";
 
 export const getChainExplorerLink = (
   chain: BridgeChain,
@@ -120,13 +120,11 @@ export const getChainExplorerLink = (
   }
 };
 
-type GetFeeToltipsArgs = {
+type GetFeeTooltipsArgs = {
   mintFee: number;
   releaseFee: number;
   sourceCurrency: BridgeCurrency;
-  destinationCurrency: BridgeCurrency;
   chain: BridgeChain;
-  type: TxType;
 };
 
 export const getFeeTooltips = ({
@@ -134,19 +132,24 @@ export const getFeeTooltips = ({
   releaseFee,
   sourceCurrency,
   chain,
-}: GetFeeToltipsArgs) => {
+}: GetFeeTooltipsArgs) => {
   const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const sourceChainConfig = getChainConfig(sourceCurrencyConfig.sourceChain);
-  const destinationChainConfig = getChainConfig(chain);
-  // const destinationCurrencyConfig = getCurrencyConfig(destinationChainConfig.s)
+  const sourceCurrencyChainConfig = getChainConfig(
+    sourceCurrencyConfig.sourceChain
+  );
+  const renCurrencyChainConfig = getChainConfig(chain);
+  const renNativeChainCurrencyConfig = getCurrencyConfig(
+    renCurrencyChainConfig.nativeCurrency
+  );
+  // const destinationCurrencyConfig = getCurrencyConfig(renCurrencyChainConfig.s)
   return {
     renVmFee: `RenVM takes a ${toPercent(
       mintFee
     )}% fee per mint transaction and ${toPercent(
       releaseFee
     )}% per burn transaction. This is shared evenly between all active nodes in the decentralized network.`,
-    sourceChainMinerFee: `The fee required by ${sourceChainConfig.short} miners, to move ${sourceCurrencyConfig.short}. This does not go RenVM or the Ren team.`,
-    estimatedDestinationChainFee: `The estimated cost to perform a transaction on the ${destinationChainConfig.short} network. This fee goes to ${destinationChainConfig.short} miners and is paid in ${"TODO"}.`,
+    sourceChainMinerFee: `The fee required by ${sourceCurrencyChainConfig.full} miners, to move ${sourceCurrencyConfig.short}. This does not go RenVM or the Ren team.`,
+    renCurrencyChainFee: `The estimated cost to perform a transaction on the ${renCurrencyChainConfig.full} network. This fee goes to ${renCurrencyChainConfig.short} miners and is paid in ${renNativeChainCurrencyConfig.short}.`,
   };
 };
 

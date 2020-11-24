@@ -80,12 +80,13 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
     history.goBack();
   }, [history]);
 
+  const sourceChain = parsedTx?.sourceChain;
   useEffect(() => {
-    if (parsedTx?.destChain) {
-      const bridgeChainConfig = getChainConfigByRentxName(parsedTx.destChain);
+    if (sourceChain) {
+      const bridgeChainConfig = getChainConfigByRentxName(sourceChain);
       dispatch(setChain(bridgeChainConfig.symbol));
     }
-  }, [dispatch, parsedTx?.destChain]);
+  }, [dispatch, sourceChain]);
 
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));

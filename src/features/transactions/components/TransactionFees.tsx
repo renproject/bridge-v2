@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useMemo } from "react";
+import React, { FunctionComponent } from "react";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
@@ -10,6 +10,7 @@ import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwall
 import {
   BridgeChain,
   BridgeCurrency,
+  getChainConfig,
   getCurrencyConfig,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
@@ -66,18 +67,20 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 
-  const destinationCurrency = toReleasedCurrency(currency);
+  const sourceCurrency =
+    type === TxType.MINT ? currency : toReleasedCurrency(currency);
+  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
+  const sourceCurrencyChainConfig = getChainConfig(
+    sourceCurrencyConfig.sourceChain
+  );
+  const renCurrencyChainConfig = getChainConfig(chain);
 
-  const tooltips = useMemo(() => {
-    return getFeeTooltips({
-      mintFee: fees.mint / 10000,
-      releaseFee: fees.burn / 10000,
-      sourceCurrency: currency,
-      destinationCurrency: destinationCurrency,
-      chain: chain,
-      type: TxType.MINT,
-    });
-  }, [fees, currency, destinationCurrency]);
+  const tooltips = getFeeTooltips({
+    mintFee: fees.mint / 10000,
+    releaseFee: fees.burn / 10000,
+    sourceCurrency,
+    chain,
+  });
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
   const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
@@ -91,7 +94,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   }
   return (
     <>
-      <Debug it={{ fees }} />
+      <Debug it={{ currency, fees }} />
       <LabelWithValue
         label="RenVM Fee"
         labelTooltip={tooltips.renVmFee}
@@ -111,7 +114,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue //TODO: made dependant on the sourceChain
-        label={`Bitcoin Miner Fee`}
+        label={`${sourceCurrencyChainConfig.full} Miner Fee`}
         labelTooltip={tooltips.sourceChainMinerFee}
         value={<NumberFormatText value={networkFee} spacedSuffix="BTC" />}
         valueEquivalent={
@@ -124,8 +127,8 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue
-        label="Esti. Ethereum Fee"
-        labelTooltip={tooltips.estimatedDestinationChainFee}
+        label={`Esti. ${renCurrencyChainConfig.full} Fee`}
+        labelTooltip={tooltips.renCurrencyChainFee}
         value={targetNetworkFeeLabel}
         valueEquivalent={
           <NumberFormatText
