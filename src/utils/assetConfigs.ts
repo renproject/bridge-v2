@@ -140,7 +140,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
   [BridgeCurrency.RENBCH]: {
     symbol: BridgeCurrency.RENBCH,
     short: "renBCH",
-    full: "renBCH",
+    full: "Bitcoin Cash",
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
     MainIcon: BtcFullIcon,
@@ -451,7 +451,7 @@ export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
   BridgeCurrency.RENBCH,
-  // BridgeCurrency.RENDOGE,
+  BridgeCurrency.RENDOGE,
   BridgeCurrency.RENZEC,
 ];
 
