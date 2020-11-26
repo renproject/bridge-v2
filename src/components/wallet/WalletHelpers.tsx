@@ -197,6 +197,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   any,
   any
 >["WrongNetworkInfo"] = ({ chain, targetNetwork, onClose }) => {
+  console.log(targetNetwork)
   const theme = useTheme();
   const chainName = getChainConfigByRentxName(chain).full;
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;

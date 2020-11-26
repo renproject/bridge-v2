@@ -62,7 +62,7 @@ const generateSections = (all: number) => {
   return sections;
 };
 
-const useSectionStyles = makeStyles<Theme, number>((theme) => {
+const useSectionStyles = makeStyles<Theme, any>((theme) => {
   return {
     dynamicSection: (num: number) => {
       return generateSections(num);
