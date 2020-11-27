@@ -72,16 +72,16 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
     onChange(formatValues.value);
   };
 
-  const chars = val.replace(".", "").replace(` ${symbol}`, "");
-
+  const chars = val.replace(".", "") + " " + symbol
   let size = "large";
-  if (chars.length > 5 && chars.length <= 7) {
+  if (chars.length > 10 && chars.length <= 12) {
     size = "medium";
-  } else if (chars.length > 7 && chars.length <= 9) {
+  } else if (chars.length > 12 && chars.length <= 14) {
     size = "small";
-  } else if (chars.length > 9) {
+  } else if (chars.length > 14) {
     size = "smallest";
   }
+  console.log(chars, chars.length, size);
 
   const rootClassName = classNames(styles.container, {
     [styles.large]: size === "large",

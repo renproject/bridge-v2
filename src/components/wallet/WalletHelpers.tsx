@@ -32,7 +32,8 @@ import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 400,
+    width: 400,
+    minHeight: 441
   },
   body: {
     padding: 24,
