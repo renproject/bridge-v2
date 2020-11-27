@@ -1,7 +1,13 @@
-import { Box, Grow, Typography, useTheme } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import QRCode from 'qrcode.react'
-import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { Box, Grow, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import QRCode from "qrcode.react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -9,26 +15,30 @@ import {
   CopyContentButton,
   QrCodeIconButton,
   TransactionDetailsButton,
-} from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { MetamaskFullIcon, } from '../../../components/icons/RenIcons'
-import { CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
-import { Link } from '../../../components/links/Links'
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { MetamaskFullIcon } from "../../../components/icons/RenIcons";
+import {
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import { Link } from "../../../components/links/Links";
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
-import { usePaperTitle, useSetPaperTitle } from '../../../pages/MainPage'
-import { useNotifications } from '../../../providers/Notifications'
-import { orangeLight } from '../../../theme/colors'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { ProcessingTimeWrapper } from '../../transactions/components/TransactionsHelpers'
-import { TxType } from '../../transactions/transactionsUtils'
-import { getLockAndMintParams } from '../mintUtils'
+} from "../../../components/progress/ProgressHelpers";
+import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
+import { usePaperTitle, useSetPaperTitle } from "../../../pages/MainPage";
+import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
+import { orangeLight } from "../../../theme/colors";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
+import { TxType } from "../../transactions/transactionsUtils";
+import { getLockAndMintParams } from "../mintUtils";
 
 const getAddressValidityMessage = (time: number) => {
   const unit = "hours";
@@ -303,14 +313,14 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 
 type DestinationReceivedStatusProps = {
   tx: GatewaySession;
-  onReturn?: () => void;
 };
 
 export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedStatusProps> = ({
   tx,
-  onReturn = () => {},
 }) => {
+  useSetPaperTitle("Complete");
   const theme = useTheme();
+  const history = useHistory();
   const {
     lockCurrencyConfig,
     lockChainConfig,
@@ -325,6 +335,9 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
     fees,
     type: TxType.MINT,
   });
+  const handleReturn = useCallback(() => {
+    history.push(paths.MINT);
+  }, [history]);
   return (
     <>
       <ProgressWrapper>
@@ -339,7 +352,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
         />
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={onReturn}>Return</ActionButton>
+        <ActionButton onClick={handleReturn}>Return</ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" py={2}>
         <Link

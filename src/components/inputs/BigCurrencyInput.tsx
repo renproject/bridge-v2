@@ -81,7 +81,6 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
   } else if (chars.length > 14) {
     size = "smallest";
   }
-  console.log(chars, chars.length, size);
 
   const rootClassName = classNames(styles.container, {
     [styles.large]: size === "large",
