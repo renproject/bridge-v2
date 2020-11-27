@@ -12,8 +12,9 @@ export const BridgePurePaper = styled(Paper)({
   overflow: "hidden",
 });
 
-export const BridgePaperWrapper = styled('div')({
+export const BridgePaperWrapper = styled("div")({
   marginTop: 40,
+  marginBottom: 20,
 });
 
 export const BridgePaper: FunctionComponent<BridgePaperProps> = ({

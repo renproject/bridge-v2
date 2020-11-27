@@ -14,6 +14,7 @@ import { ReactComponent as BtcGrey } from "./../../assets/icons/btc-icon-grey.sv
 import { ReactComponent as Btc } from "./../../assets/icons/btc-icon-nocolour.svg";
 import { ReactComponent as Bitcoin } from "./../../assets/icons/btc-icon-only.svg";
 import { ReactComponent as BtcFull } from "./../../assets/icons/btc-icon.svg";
+import { ReactComponent as EmptyCircle } from "./../../assets/icons/empty-circle-icon.svg";
 import { ReactComponent as DgbGrey } from "./../../assets/icons/dgb-icon-grey.svg";
 import { ReactComponent as Dgb } from "./../../assets/icons/dgb-icon-nocolour.svg";
 import { ReactComponent as DgbFull } from "./../../assets/icons/dgb-icon.svg";
@@ -51,6 +52,10 @@ import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.sv
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
 
 export type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
+
+export const EmptyCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={EmptyCircle} {...props} />
+);
 
 export const TxHistoryIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={TxHistory} {...props} />

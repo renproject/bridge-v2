@@ -28,6 +28,7 @@ import {
   DotsFullIcon,
   DotsGreyIcon,
   DotsIcon,
+  EmptyCircleIcon,
   EthereumChainColorIcon,
   EthereumChainFullIcon,
   EthereumIcon,
@@ -38,8 +39,10 @@ import {
   LunaGreyIcon,
   LunaIcon,
   MetamaskFoxIcon,
-  RenBridgeLogoIcon, RenLogoFullIcon,
-  RenLogoIcon, RenVMLogoIcon,
+  RenBridgeLogoIcon,
+  RenLogoFullIcon,
+  RenLogoIcon,
+  RenVMLogoIcon,
   SuccessIcon,
   TxSettingsIcon,
   WalletConnectFullIcon,
@@ -48,7 +51,7 @@ import {
   ZecFullIcon,
   ZecGreyIcon,
   ZecIcon,
-} from '../../icons/RenIcons'
+} from "../../icons/RenIcons";
 import { Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const IconsSection: FunctionComponent = () => {
@@ -68,6 +71,7 @@ export const IconsSection: FunctionComponent = () => {
         <MoreVertIcon />
         <WalletIcon />
         <SuccessIcon />
+        <EmptyCircleIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BitcoinIcon />

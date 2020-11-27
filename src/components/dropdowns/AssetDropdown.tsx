@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent, useMemo } from "react";
 import { AssetBalance } from "../../features/wallet/walletSlice";
 import { getAssetBalance } from "../../features/wallet/walletUtils";
@@ -20,6 +21,7 @@ import {
   CurrencyConfig,
 } from "../../utils/assetConfigs";
 import { NumberFormatText } from "../formatting/NumberFormatText";
+import { BtcFullIcon, EmptyCircleIcon } from "../icons/RenIcons";
 
 const getOptions = (mode: AssetDropdownMode) => {
   const options =
@@ -54,6 +56,7 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
   },
   select: {
     width: "100%",
+    minHeight: 58,
   },
   supplementalText: {
     fontSize: 12,
@@ -74,6 +77,7 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
     fontSize: 12,
   },
   listSubheader: {
+    pointerEvents: "none",
     fontSize: 10,
     lineHeight: 1,
   },
@@ -91,6 +95,24 @@ type AssetDropdownProps = SelectProps & {
   label: string;
 };
 
+const getAssetData = (
+  selected: BridgeChainConfig | CurrencyConfig | undefined
+) => {
+  let full = "Select";
+  let short = "Select";
+  let Icon = EmptyCircleIcon;
+  if (selected) {
+    full = selected.full;
+    short = selected.short;
+    Icon = selected.MainIcon;
+  }
+  return {
+    full,
+    short,
+    Icon,
+  };
+};
+
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   mode,
   available,
@@ -106,10 +128,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   const valueRenderer = useMemo(
     () => (value: any) => {
       const selected = getOptionBySymbol(value, mode);
-      if (!selected) {
-        return <span>empty</span>;
-      }
-      const { MainIcon, full, short } = selected;
+      const { Icon, full, short } = getAssetData(selected);
       return (
         <Box display="flex" alignItems="center" width="100%">
           <Box width="40%">
@@ -118,11 +137,11 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
             </Typography>
           </Box>
           <Box width="45px" display="flex" alignItems="center">
-            <MainIcon className={styles.listIcon} />
+            <Icon className={styles.listIcon} />
           </Box>
           <Box flexGrow={1}>
             <Typography variant="body2">
-              {mode === "chain" ? full : short}
+              {selected && mode === "chain" ? full : short}
             </Typography>
           </Box>
         </Box>
@@ -136,6 +155,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
         variant="outlined"
         className={styles.select}
         renderValue={valueRenderer}
+        displayEmpty
         MenuProps={{
           anchorOrigin: {
             vertical: "bottom",
