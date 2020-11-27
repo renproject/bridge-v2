@@ -1,6 +1,6 @@
-import { fade } from '@material-ui/core'
-import { Palette } from '@material-ui/core/styles/createPalette'
-import { Overrides } from '@material-ui/core/styles/overrides'
+import { fade } from "@material-ui/core";
+import { Palette } from "@material-ui/core/styles/createPalette";
+import { Overrides } from "@material-ui/core/styles/overrides";
 import {
   alertError,
   alertErrorBackground,
@@ -13,7 +13,7 @@ import {
   textDark,
   textDisabled,
   textLighter,
-} from './colors'
+} from "./colors";
 
 export const overrides = (palette: Palette): Overrides => {
   return {
@@ -156,6 +156,11 @@ export const overrides = (palette: Palette): Overrides => {
         "&:focus": {
           backgroundColor: "initial",
         },
+      },
+    },
+    MuiSnackbar: {
+      anchorOriginTopRight: {
+        top: "64px!important",
       },
     },
     MuiSvgIcon: {
