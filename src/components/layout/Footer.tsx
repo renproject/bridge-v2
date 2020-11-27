@@ -6,6 +6,7 @@ import TelegramIcon from "@material-ui/icons/Telegram";
 import TwitterIcon from "@material-ui/icons/Twitter";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
+import { links } from "../../constants/constants";
 import { paths } from "../../pages/routes";
 import { CustomLinkProps, Link } from "../links/Links";
 
@@ -99,13 +100,13 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
           <FooterTextLink to={paths.ABOUT}>About RenVM</FooterTextLink>
         </li>
         <li>
-          <FooterTextLink>Docs</FooterTextLink>
+          <FooterTextLink href={links.DOCS}>Docs</FooterTextLink>
         </li>
         <li>
           <FooterTextLink>FAQs</FooterTextLink>
         </li>
         <li>
-          <FooterTextLink href="/">Wiki</FooterTextLink>
+          <FooterTextLink href={links.WIKI}>Wiki</FooterTextLink>
         </li>
       </ul>
       <ul className={styles.iconLinks}>

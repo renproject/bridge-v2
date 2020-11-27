@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
 import { createStateContext } from "react-use";
 import { MainLayout } from "../components/layout/MainLayout";
-import { BridgePurePaper } from "../components/layout/Paper";
+import { BridgePaperWrapper, BridgePurePaper } from '../components/layout/Paper'
 import { storageKeys } from "../constants/constants";
 import {
   useExchangeRates,
@@ -40,10 +40,12 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
     <>
       <MainLayout>
         <PaperTitleProvider>
-          <BridgePurePaper>
-            <Route path={paths.MINT} component={MintFlow} />
-            <Route path={paths.RELEASE} component={ReleaseFlow} />
-          </BridgePurePaper>
+          <BridgePaperWrapper>
+            <BridgePurePaper>
+              <Route path={paths.MINT} component={MintFlow} />
+              <Route path={paths.RELEASE} component={ReleaseFlow} />
+            </BridgePurePaper>
+          </BridgePaperWrapper>
         </PaperTitleProvider>
       </MainLayout>
     </>

@@ -1,50 +1,26 @@
-import {
-  Container,
-  Divider,
-  Drawer,
-  Grid,
-  ListItem,
-  useTheme,
-} from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import CloseIcon from "@material-ui/icons/Close";
-import MenuIcon from "@material-ui/icons/Menu";
-import {
-  useMultiwallet,
-  WalletPickerModal,
-  WalletPickerProps,
-} from "@renproject/multiwallet-ui";
-import classNames from "classnames";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
-import { useWindowSize } from "react-use";
-import { env } from "../../constants/environmentVariables";
-import { $network } from "../../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../../features/network/networkUtils";
-import {
-  $multiwalletChain,
-  $walletPickerOpened,
-  setWalletPickerOpened,
-} from "../../features/wallet/walletSlice";
-import { paths } from "../../pages/routes";
-import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
-import {
-  useSelectedChainWallet,
-  useWallet,
-} from "../../providers/multiwallet/multiwalletHooks";
-import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { Debug } from "../utils/Debug";
+import { Container, Divider, Drawer, Grid, ListItem, useTheme, } from '@material-ui/core'
+import AppBar from '@material-ui/core/AppBar'
+import IconButton from '@material-ui/core/IconButton'
+import { makeStyles, Theme } from '@material-ui/core/styles'
+import Toolbar from '@material-ui/core/Toolbar'
+import CloseIcon from '@material-ui/icons/Close'
+import MenuIcon from '@material-ui/icons/Menu'
+import { useMultiwallet, WalletPickerModal, WalletPickerProps, } from '@renproject/multiwallet-ui'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, useHistory } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
+import { env } from '../../constants/environmentVariables'
+import { $network } from '../../features/network/networkSlice'
+import { useSetNetworkFromParam } from '../../features/network/networkUtils'
+import { $multiwalletChain, $walletPickerOpened, setWalletPickerOpened, } from '../../features/wallet/walletSlice'
+import { paths } from '../../pages/routes'
+import { walletPickerModalConfig } from '../../providers/multiwallet/Multiwallet'
+import { useSelectedChainWallet, useWallet, } from '../../providers/multiwallet/multiwalletHooks'
+import { TransactionHistoryMenuIconButton } from '../buttons/Buttons'
+import { RenBridgeLogoIcon } from '../icons/RenIcons'
+import { Debug } from '../utils/Debug'
 import {
   useWalletPickerStyles,
   WalletConnectingInfo,
@@ -52,17 +28,18 @@ import {
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
-} from "../wallet/WalletHelpers";
-import { Footer } from "./Footer";
+} from '../wallet/WalletHelpers'
+import { Footer } from './Footer'
 
-const headerHeight = 64;
-const footerHeight = 25;
+const headerHeight = 82;
+const footerHeight = 36;
 
 const useStyles = makeStyles((theme: Theme) => ({
   bodyWelcome: {
     backgroundImage: "url(/background.svg)",
   },
   grow: {
+    minHeight: headerHeight,
     flexGrow: 1,
   },
   main: {
@@ -93,12 +70,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 20,
   },
   drawerPaper: {
+    paddingTop: 0,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 0,
     minWidth: 300,
   },
   drawerHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    marginTop: 20,
     marginBottom: 30,
   },
   drawerClose: {
@@ -109,7 +91,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: `16px 0`,
   },
   drawerFooterListItem: {
-    paddingBottom: 0,
+    paddingBottom: 15,
     flexGrow: 2,
     alignItems: "flex-end",
   },
