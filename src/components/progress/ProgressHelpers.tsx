@@ -167,7 +167,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
               <CircularProgress
                 key={index}
                 className={sectionClassName}
-                variant="static"
+                variant="determinate"
                 value={value}
                 color="inherit"
                 {...shared}

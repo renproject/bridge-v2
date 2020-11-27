@@ -1,27 +1,18 @@
-import {
-  Box,
-  ListSubheader,
-  MenuItem,
-  Select,
-  SelectProps,
-  styled,
-  Typography,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { SvgIconComponent } from "@material-ui/icons";
-import React, { FunctionComponent, useMemo } from "react";
-import { AssetBalance } from "../../features/wallet/walletSlice";
-import { getAssetBalance } from "../../features/wallet/walletUtils";
+import { Box, ListSubheader, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import React, { FunctionComponent, useMemo } from 'react'
+import { AssetBalance } from '../../features/wallet/walletSlice'
+import { getAssetBalance } from '../../features/wallet/walletUtils'
 import {
   BridgeChain,
-  BridgeCurrency,
   BridgeChainConfig,
+  BridgeCurrency,
   chainsConfig,
   currenciesConfig,
   CurrencyConfig,
-} from "../../utils/assetConfigs";
-import { NumberFormatText } from "../formatting/NumberFormatText";
-import { BtcFullIcon, EmptyCircleIcon } from "../icons/RenIcons";
+} from '../../utils/assetConfigs'
+import { NumberFormatText } from '../formatting/NumberFormatText'
+import { EmptyCircleIcon } from '../icons/RenIcons'
 
 const getOptions = (mode: AssetDropdownMode) => {
   const options =

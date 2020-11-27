@@ -80,6 +80,14 @@ export const burnChainMap: BurnMachineContext["fromChainMap"] = {
       value: context.tx.suggestedAmount,
     }) as any;
   },
+  [RenChain.binanceSmartChain]: (context) => {
+    const { destChain, network } = context.tx;
+    const { providers } = context;
+    return new BinanceSmartChain(providers[destChain], network).Account({
+      address: context.tx.userAddress,
+      value: context.tx.suggestedAmount,
+    });
+  },
 };
 
 export const burnChainClassMap = {
@@ -90,6 +98,12 @@ export const burnChainClassMap = {
 export const releaseChainMap: BurnMachineContext["toChainMap"] = {
   [RenChain.bitcoin]: (context) => {
     return Bitcoin().Address(context.tx.destAddress) as any;
+  },
+  [RenChain.zcash]: (context) => {
+    return Zcash().Address(context.tx.destAddress) as any;
+  },
+  [RenChain.bitcoinCash]: (context) => {
+    return BitcoinCash().Address(context.tx.destAddress) as any;
   },
 };
 

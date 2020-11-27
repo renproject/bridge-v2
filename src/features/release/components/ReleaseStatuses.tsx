@@ -119,7 +119,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
       <ActionButtonWrapper>
         <ActionButton onClick={handleReturn}>Return</ActionButton>
       </ActionButtonWrapper>
-      <Box display="flex" justifyContent="space-between" py={2}>
+      <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link
           external
           color="primary"
