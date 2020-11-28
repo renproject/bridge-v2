@@ -18,6 +18,7 @@ export const redLight = "#FF4545";
 export const red = "#E63E3E";
 export const redDark = "#BF3434";
 
+export const bitcoinOrange = "#FF9900";
 export const orangeLight = "#FFB74D";
 export const orange = "#FF9800";
 export const orangeDark = "#F57C00";

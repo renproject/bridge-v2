@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "flex",
       justifyContent: "space-between",
+      paddingTop: 20
     },
   },
   rootMobile: {
@@ -100,33 +101,37 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
           <FooterTextLink to={paths.ABOUT}>About RenVM</FooterTextLink>
         </li>
         <li>
-          <FooterTextLink href={links.DOCS}>Docs</FooterTextLink>
+          <FooterTextLink href={links.DOCS} target="_blank">
+            Docs
+          </FooterTextLink>
         </li>
         <li>
           <FooterTextLink>FAQs</FooterTextLink>
         </li>
         <li>
-          <FooterTextLink href={links.WIKI}>Wiki</FooterTextLink>
+          <FooterTextLink href={links.WIKI} target="_blank">
+            Wiki
+          </FooterTextLink>
         </li>
       </ul>
       <ul className={styles.iconLinks}>
         <li>
-          <FooterIconLink href="/">
+          <FooterIconLink href={links.SOCIAL_TWITTER} target="_blank">
             <TwitterIcon fontSize="inherit" />
           </FooterIconLink>
         </li>
         <li>
-          <FooterIconLink href="/">
+          <FooterIconLink href={links.SOCIAL_GITHUB} target="_blank">
             <GitHubIcon fontSize="inherit" />
           </FooterIconLink>
         </li>
         <li>
-          <FooterIconLink href="/">
+          <FooterIconLink href={links.SOCIAL_TELEGRAM} target="_blank">
             <TelegramIcon fontSize="inherit" />
           </FooterIconLink>
         </li>
         <li>
-          <FooterIconLink href="/">
+          <FooterIconLink href={links.SOCIAL_REDDIT} target="_blank">
             <RedditIcon fontSize="inherit" />
           </FooterIconLink>
         </li>

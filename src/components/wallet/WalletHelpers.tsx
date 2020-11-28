@@ -81,7 +81,7 @@ const mapWalletEntryIcon = (chain: string, name: string) => {
 const useWalletEntryButtonStyles = makeStyles({
   root: {
     marginTop: 20,
-    fontSize: 16,
+    fontSize: 14,
     padding: "11px 20px 11px 20px",
   },
   label: {

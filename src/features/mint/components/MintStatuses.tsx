@@ -1,8 +1,13 @@
-import { Box, Grow, Typography, useTheme } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import QRCode from 'qrcode.react'
-import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
-import { useHistory } from 'react-router-dom'
+import { Box, Grow, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import QRCode from "qrcode.react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -10,26 +15,29 @@ import {
   CopyContentButton,
   QrCodeIconButton,
   TransactionDetailsButton,
-} from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
-import { Link } from '../../../components/links/Links'
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import {
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import { Link } from "../../../components/links/Links";
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
-import { usePaperTitle, useSetPaperTitle } from '../../../pages/MainPage'
-import { paths } from '../../../pages/routes'
-import { useNotifications } from '../../../providers/Notifications'
-import { orangeLight } from '../../../theme/colors'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { ProcessingTimeWrapper } from '../../transactions/components/TransactionsHelpers'
-import { TxType } from '../../transactions/transactionsUtils'
-import { getLockAndMintParams } from '../mintUtils'
+} from "../../../components/progress/ProgressHelpers";
+import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
+import { usePaperTitle, useSetPaperTitle } from "../../../pages/MainPage";
+import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
+import { orangeLight } from "../../../theme/colors";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
+import { TxType } from "../../transactions/transactionsUtils";
+import { getLockAndMintParams } from "../mintUtils";
 
 const getAddressValidityMessage = (time: number) => {
   const unit = "hours";
@@ -314,6 +322,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
   const history = useHistory();
   const {
     lockCurrencyConfig,
+    mintCurrencyConfig,
     lockChainConfig,
     lockTxLink,
     lockTxAmount,
@@ -339,8 +348,9 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
           value={conversionTotal}
-          spacedSuffix={lockCurrencyConfig.full}
-        />
+          spacedSuffix={mintCurrencyConfig.full}
+        />{" "}
+        received!
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={handleReturn}>Return</ActionButton>
