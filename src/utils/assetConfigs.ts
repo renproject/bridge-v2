@@ -346,7 +346,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
   [BridgeChain.BSCC]: {
     symbol: BridgeChain.BSCC,
     short: "BSC",
-    full: "Binance SmartChain",
+    full: "Binance Smart Chain",
     FullIcon: BinanceChainFullIcon,
     MainIcon: BinanceChainFullIcon,
     GreyIcon: NotSetIcon,

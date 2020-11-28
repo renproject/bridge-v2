@@ -5,6 +5,8 @@ const BANDCHAIN_ENDPOINT =
 const GAS_FEE_ENDPOINT =
   process.env.REACT_APP_GAS_FEE_ENDPOINT ||
   "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty";
+const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY || null;
+
 const XSTATE_DEVTOOLS = Boolean(
   process.env.REACT_APP_XSTATE_DEVTOOLS ||
     process.env.NODE_ENV === "development"
@@ -13,6 +15,7 @@ const XSTATE_DEVTOOLS = Boolean(
 export const env = {
   NETWORK,
   INFURA_KEY,
+  FIREBASE_KEY,
   BANDCHAIN_ENDPOINT,
   GAS_FEE_ENDPOINT,
   XSTATE_DEVTOOLS,

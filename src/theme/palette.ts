@@ -57,6 +57,9 @@ const basePalette = {
     dark: "#388e3c",
     contrastText: "rgba(0, 0, 0, 0.87)",
   },
+  grey: {
+    "600": "#737478"
+  }
 };
 
 export const lightPalette: Palette = createPalette({

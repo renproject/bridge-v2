@@ -1,8 +1,16 @@
-import { Box, ListSubheader, MenuItem, Select, SelectProps, styled, Typography, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useMemo } from 'react'
-import { AssetBalance } from '../../features/wallet/walletSlice'
-import { getAssetBalance } from '../../features/wallet/walletUtils'
+import {
+  Box,
+  ListSubheader,
+  MenuItem,
+  Select,
+  SelectProps,
+  styled,
+  Typography,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useMemo } from "react";
+import { AssetBalance } from "../../features/wallet/walletSlice";
+import { getAssetBalance } from "../../features/wallet/walletUtils";
 import {
   BridgeChain,
   BridgeChainConfig,
@@ -10,9 +18,9 @@ import {
   chainsConfig,
   currenciesConfig,
   CurrencyConfig,
-} from '../../utils/assetConfigs'
-import { NumberFormatText } from '../formatting/NumberFormatText'
-import { EmptyCircleIcon } from '../icons/RenIcons'
+} from "../../utils/assetConfigs";
+import { NumberFormatText } from "../formatting/NumberFormatText";
+import { EmptyCircleIcon } from "../icons/RenIcons";
 
 const getOptions = (mode: AssetDropdownMode) => {
   const options =
@@ -62,7 +70,7 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
     fontSize: 13,
   },
   assetFullName: {
-    fontSize: 10,
+    fontSize: 11,
   },
   balance: {
     fontSize: 12,
@@ -190,15 +198,17 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
                   </Box>
                   <Box flexGrow={1}>
                     <Typography variant="body1" className={styles.assetName}>
-                      {short}
+                      {mode === "chain" ? full : short}
                     </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      color="textSecondary"
-                      className={styles.assetFullName}
-                    >
-                      {full}
-                    </Typography>
+                    {mode !== "chain" && (
+                      <Typography
+                        variant="subtitle2"
+                        color="textSecondary"
+                        className={styles.assetFullName}
+                      >
+                        {full}
+                      </Typography>
+                    )}
                   </Box>
                   {balances && (
                     <Box

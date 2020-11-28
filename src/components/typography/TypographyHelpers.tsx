@@ -19,7 +19,7 @@ const useLabelWithValueStyles = makeStyles((theme) => ({
     marginBottom: 8,
   },
   labelWrapper: {
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[600],
   },
   labelTooltip: {
     marginLeft: 4,
@@ -34,7 +34,7 @@ const useLabelWithValueStyles = makeStyles((theme) => ({
   },
   value: {},
   valueEquivalent: {
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[600],
     marginLeft: 4,
   },
 }));
@@ -99,7 +99,7 @@ const useReceivingAssetInfoStyle = makeStyles((theme) => ({
   },
   valueEquivalent: {
     fontSize: 13,
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[600],
   },
 }));
 

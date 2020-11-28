@@ -24,7 +24,7 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   title: {},
   closeButtonWrapper: {},
   closeButton: {
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[600],
   },
 }));
 
