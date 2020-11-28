@@ -1,5 +1,5 @@
-import { SvgIconComponent } from "@material-ui/icons";
-import { RenNetwork } from "@renproject/interfaces";
+import { SvgIconComponent } from '@material-ui/icons'
+import { RenNetwork } from '@renproject/interfaces'
 import {
   BchFullIcon,
   BchGreyIcon,
@@ -21,8 +21,8 @@ import {
   WalletConnectFullIcon,
   ZecFullIcon,
   ZecGreyIcon,
-} from "../components/icons/RenIcons";
-import { bitcoinOrange, orangeLight } from '../theme/colors'
+} from '../components/icons/RenIcons'
+import { bitcoinOrange } from '../theme/colors'
 
 // TODO: replace everywhere
 export enum RenChain {
