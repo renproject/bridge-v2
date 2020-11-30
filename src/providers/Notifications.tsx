@@ -51,6 +51,7 @@ export const NotificationsProvider: FunctionComponent = ({ children }) => (
       horizontal: "right",
     }}
     maxSnack={4}
+    autoHideDuration={20000}
   >
     {children}
   </NotistackSnackbarProvider>
