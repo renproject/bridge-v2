@@ -71,7 +71,7 @@ export enum BridgeNetwork {
 export enum BridgeWallet {
   METAMASKW = "METAMASKW",
   WALLETCONNECTW = "WALLETCONNECTW",
-  BINANCESMARTCHAINW = "BINANCESMARTCHAINW",
+  BINANCESMARTW = "BINANCESMARTW",
   UNKNOWNW = "UNKNOWNW",
 }
 
@@ -500,23 +500,23 @@ export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
     full: "MetaMask Wallet",
     MainIcon: MetamaskFullIcon,
     chain: BridgeChain.ETHC,
-    rentxName: "metamask",
+    rentxName: "Metamask",
   },
   [BridgeWallet.WALLETCONNECTW]: {
-    symbol: BridgeWallet.METAMASKW,
+    symbol: BridgeWallet.WALLETCONNECTW,
     short: "MetaMask",
     full: "MetaMask Wallet",
     MainIcon: WalletConnectFullIcon,
     chain: BridgeChain.ETHC,
     rentxName: "walletconnect",
   },
-  [BridgeWallet.BINANCESMARTCHAINW]: {
-    symbol: BridgeWallet.METAMASKW,
-    short: "Binance Chain Wallet",
-    full: "Binance Chain Wallet",
+  [BridgeWallet.BINANCESMARTW]: {
+    symbol: BridgeWallet.BINANCESMARTW,
+    short: "Binance Wallet",
+    full: "Binance Smart Wallet",
     MainIcon: BinanceChainFullIcon,
     chain: BridgeChain.BSCC,
-    rentxName: "binanceSmartChain",
+    rentxName: "BinanceSmartWallet",
   },
   [BridgeWallet.UNKNOWNW]: {
     symbol: BridgeWallet.UNKNOWNW,
