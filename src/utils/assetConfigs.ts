@@ -119,7 +119,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
   [BridgeCurrency.RENBTC]: {
     symbol: BridgeCurrency.RENBTC,
     short: "renBTC",
-    full: "Bitcoin",
+    full: "Ren Bitcoin",
     FullIcon: BtcFullIcon,
     GreyIcon: BtcGreyIcon,
     MainIcon: BtcGreyIcon,
@@ -143,7 +143,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     full: "Bitcoin Cash",
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
-    MainIcon: BtcFullIcon,
+    MainIcon: BchGreyIcon,
     rentxName: "renBCH",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BCH,
@@ -513,7 +513,7 @@ export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
   [BridgeWallet.BINANCESMARTW]: {
     symbol: BridgeWallet.BINANCESMARTW,
     short: "Binance Wallet",
-    full: "Binance Smart Wallet",
+    full: "Binance Chain Wallet",
     MainIcon: BinanceChainFullIcon,
     chain: BridgeChain.BSCC,
     rentxName: "BinanceSmartWallet",

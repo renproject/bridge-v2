@@ -98,7 +98,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         </AssetDropdownWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
-            label="Destination Chain"
+            label="Destination"
             mode="chain"
             available={supportedMintDestinationChains}
             value={chain}

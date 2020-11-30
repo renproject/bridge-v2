@@ -1,10 +1,10 @@
-import { Button, ButtonProps, Typography, useTheme } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet'
-import { WalletPickerProps } from '@renproject/multiwallet-ui'
-import classNames from 'classnames'
-import React, { FunctionComponent } from 'react'
-import { useTimeout } from 'react-use'
+import { Button, ButtonProps, Typography, useTheme } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import { WalletPickerProps } from "@renproject/multiwallet-ui";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
+import { useTimeout } from "react-use";
 import {
   BridgeChainConfig,
   BridgeWallet,
@@ -13,14 +13,17 @@ import {
   getNetworkConfigByRentxName,
   getWalletConfig,
   getWalletConfigByRentxName,
-} from '../../utils/assetConfigs'
-import { trimAddress } from '../../utils/strings'
-import { WalletIcon, } from '../icons/RenIcons'
-import { PaperContent } from '../layout/Paper'
-import { BridgeModalTitle } from '../modals/BridgeModal'
-import { ProgressWithContent, ProgressWrapper, } from '../progress/ProgressHelpers'
-import { Debug } from '../utils/Debug'
-import { WalletConnectionStatusType, WalletStatus } from '../utils/types'
+} from "../../utils/assetConfigs";
+import { trimAddress } from "../../utils/strings";
+import { WalletIcon } from "../icons/RenIcons";
+import { PaperContent } from "../layout/Paper";
+import { BridgeModalTitle } from "../modals/BridgeModal";
+import {
+  ProgressWithContent,
+  ProgressWrapper,
+} from "../progress/ProgressHelpers";
+import { Debug } from "../utils/Debug";
+import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {

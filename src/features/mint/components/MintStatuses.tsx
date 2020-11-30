@@ -348,7 +348,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
           value={conversionTotal}
-          spacedSuffix={mintCurrencyConfig.full}
+          spacedSuffix={mintCurrencyConfig.short}
         />{" "}
         received!
       </Typography>
