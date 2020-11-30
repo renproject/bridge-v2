@@ -1,5 +1,7 @@
 export enum storageKeys {
   TERMS_AGREED = "termsAgreed",
+  SIG_MAP = "sigMap",
+  RAW_SIG_MAP = "rawSigMap",
 }
 
 export const links = {
