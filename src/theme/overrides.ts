@@ -197,6 +197,7 @@ export const overrides = (palette: Palette): Overrides => {
         borderRadius: 4,
         textAlign: "center",
         backgroundColor: palette.common.black,
+        fontSize: 11,
       },
     },
   } as Overrides;
