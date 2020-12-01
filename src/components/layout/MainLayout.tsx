@@ -34,6 +34,7 @@ import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 import {
   $multiwalletChain,
   $walletPickerOpened,
+  $walletSignatures,
   setWalletPickerOpened,
 } from "../../features/wallet/walletSlice";
 import { paths } from "../../pages/routes";
@@ -42,7 +43,7 @@ import {
   useSelectedChainWallet,
   useWallet,
 } from "../../providers/multiwallet/multiwalletHooks";
-import { useWeb3Signatures } from '../../services/web3'
+import { useWeb3Signatures } from "../../services/web3";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Debug } from "../utils/Debug";
@@ -151,8 +152,10 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const dispatch = useDispatch();
   useSetNetworkFromParam();
   useBackgroundReplacer(variant);
-  const stuff = useWeb3Signatures();
-
+  useWeb3Signatures();
+  const { signature } = useSelector($walletSignatures);
+  console.log(signature);
+  // TODO: add firebase stuff here
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const handleMobileMenuClose = useCallback(() => {
     setMobileMenuOpen(false);

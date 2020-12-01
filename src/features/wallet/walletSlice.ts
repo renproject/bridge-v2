@@ -15,12 +15,17 @@ type WalletState = {
   chain: BridgeChain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
+  signatures: { signature: string; rawSignature: string };
 };
 
 let initialState: WalletState = {
   chain: BridgeChain.ETHC,
   pickerOpened: false,
   balances: [],
+  signatures: {
+    signature: "",
+    rawSignature: "",
+  },
 };
 
 const slice = createSlice({
@@ -43,6 +48,12 @@ const slice = createSlice({
         state.balances.push(action.payload);
       }
     },
+    setSignatures(
+      state,
+      action: PayloadAction<{ signature: string; rawSignature: string }>
+    ) {
+      state.signatures = action.payload;
+    },
   },
 });
 
@@ -50,6 +61,7 @@ export const {
   setChain,
   setWalletPickerOpened,
   addOrUpdateBalance,
+  setSignatures,
 } = slice.actions;
 
 export const walletReducer = slice.reducer;
@@ -64,3 +76,7 @@ export const $multiwalletChain = createSelector($chain, (chain) => {
   const chainConfig = getChainConfig(chain);
   return chainConfig.rentxName;
 });
+export const $walletSignatures = createSelector(
+  $wallet,
+  (wallet) => wallet.signatures
+);
