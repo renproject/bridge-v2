@@ -1,4 +1,4 @@
-import Web3 from "web3";
+import { FireBase } from "./firebase/firebase";
 
 export interface Database<Transaction extends { id: string }> {
   addTx: (
@@ -19,7 +19,7 @@ export interface Database<Transaction extends { id: string }> {
   ) => Promise<{ uid: string } | null>;
 }
 
-import { FireBase } from "./firebase/firebase";
-
 export const newDefaultDatabase = <Transaction extends { id: string }>() =>
   new FireBase<Transaction>();
+
+export const db = newDefaultDatabase();

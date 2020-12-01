@@ -7,11 +7,21 @@ import { getFirebaseUser } from "./firebaseUtils";
 if (!env.FIREBASE_KEY) {
   console.warn(`No database key set.`);
 }
+//
+// firebase.initializeApp({
+//   apiKey: env.FIREBASE_KEY,
+//   authDomain: window.location.hostname,
+//   projectId: env.FIREBASE_PROJECT_ID,
+// });
 
 firebase.initializeApp({
-  apiKey: env.FIREBASE_KEY,
-  authDomain: window.location.hostname,
-  projectId: env.FIREBASE_PROJECT_ID,
+  apiKey: "AIzaSyDxl8HUPRezrYJNdRpzeFK5uUkVVYV4cd0",
+  authDomain: "ren-auth.firebaseapp.com",
+  databaseURL: "https://ren-auth.firebaseio.com",
+  projectId: "ren-auth",
+  storageBucket: "ren-auth.appspot.com",
+  messagingSenderId: "487233458834",
+  appId: "1:487233458834:web:203ebe2de9f84cafe80c4b",
 });
 
 require("firebase/firestore");

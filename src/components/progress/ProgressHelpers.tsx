@@ -177,7 +177,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
         </div>
       )}
       <CircularProgress
-        variant={processing ? "indeterminate" : "static"}
+        variant={processing ? "indeterminate" : "determinate"}
         value={typeof confirmations !== "undefined" ? 0 : value}
         color="inherit"
         {...shared}

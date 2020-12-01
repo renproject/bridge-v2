@@ -7,17 +7,22 @@ type BridgeTransaction = GatewaySession;
 type TransactionsState = {
   txs: Array<BridgeTransaction>;
   currentTx: BridgeTransaction | null;
+  txHistoryOpened: boolean;
 };
 
 let initialState: TransactionsState = {
   txs: [],
   currentTx: null,
+  txHistoryOpened: false,
 };
 
 const slice = createSlice({
   name: "transactions",
   initialState,
   reducers: {
+    setTxHistoryOpened(state, action: PayloadAction<boolean>) {
+      state.txHistoryOpened = action.payload;
+    },
     setTransactions(state, action: PayloadAction<Array<BridgeTransaction>>) {
       state.txs = action.payload;
     },
@@ -57,6 +62,7 @@ const slice = createSlice({
 });
 
 export const {
+  setTxHistoryOpened,
   setTransactions,
   setCurrentTransaction,
   addTransaction,
@@ -72,11 +78,7 @@ export const $txs = createSelector(
   $transactions,
   (transactions) => transactions.txs
 );
-export const $currentTx = createSelector(
+export const $txHistoryOpened = createSelector(
   $transactions,
-  (transactions) => transactions.currentTx
+  (transactions) => transactions.txHistoryOpened
 );
-
-// export const $currentTx = createSelector($txs, $currentTxId, (txs, id) =>
-//   txs.find((tx) => tx.id === id)
-// );
