@@ -2,17 +2,15 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GatewaySession } from "@renproject/ren-tx";
 import { RootState } from "../../store/rootReducer";
 
-type BridgeTransaction = GatewaySession;
+export type BridgeTransaction = GatewaySession;
 
 type TransactionsState = {
   txs: Array<BridgeTransaction>;
-  currentTx: BridgeTransaction | null;
   txHistoryOpened: boolean;
 };
 
 let initialState: TransactionsState = {
   txs: [],
-  currentTx: null,
   txHistoryOpened: false,
 };
 
@@ -25,9 +23,6 @@ const slice = createSlice({
     },
     setTransactions(state, action: PayloadAction<Array<BridgeTransaction>>) {
       state.txs = action.payload;
-    },
-    setCurrentTransaction(state, action: PayloadAction<BridgeTransaction>) {
-      state.currentTx = action.payload;
     },
     addTransaction(state, action: PayloadAction<BridgeTransaction>) {
       const existing =
@@ -64,7 +59,6 @@ const slice = createSlice({
 export const {
   setTxHistoryOpened,
   setTransactions,
-  setCurrentTransaction,
   addTransaction,
   updateTransaction,
   updateTransactionById,

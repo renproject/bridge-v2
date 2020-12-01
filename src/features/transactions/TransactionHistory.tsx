@@ -13,28 +13,46 @@ import {
   TransactionsPaginationWrapper,
   TransactionsStatusHeader,
 } from "../../components/transactions/TransactionsGrid";
+import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../services/database/database";
 import { BridgeChain } from "../../utils/assetConfigs";
-import { $walletSignatures } from "../wallet/walletSlice";
-import { $txHistoryOpened, setTxHistoryOpened } from "./transactionsSlice";
+import { $walletSignatures, $walletUser, setUser } from "../wallet/walletSlice";
+import {
+  $txHistoryOpened,
+  BridgeTransaction,
+  setTransactions,
+  setTxHistoryOpened,
+} from "./transactionsSlice";
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
-  const { signature } = useSelector($walletSignatures);
+  const { account } = useSelectedChainWallet();
+  const user = useSelector($walletUser);
+  const { signature, rawSignature } = useSelector($walletSignatures);
   const opened = useSelector($txHistoryOpened);
 
-  const fetchTxs = useCallback(() => {
-    if (!signature) {
-      return;
+  useEffect(() => {
+    if (account && signature && rawSignature) {
+      console.log("getting user");
+      db.getUser(account.toLowerCase(), {
+        signature,
+        rawSignature,
+      })
+        .then((userData) => {
+          console.log("authenticated", userData);
+          dispatch(setUser(userData));
+        })
+        .catch(console.error);
     }
-    db.getTxs(signature).then((txs) => {
-      console.log("txs", txs);
-    });
-  }, [signature]);
+  }, [dispatch, account, signature, rawSignature]);
 
   useEffect(() => {
-    fetchTxs();
-  }, [fetchTxs]);
+    if (user) {
+      db.getTxs(signature).then((txsData) => {
+        dispatch(setTransactions(txsData as Array<BridgeTransaction>));
+      });
+    }
+  }, [dispatch, user, signature]);
 
   const handleClose = useCallback(() => {
     dispatch(setTxHistoryOpened(false));

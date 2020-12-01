@@ -1,4 +1,3 @@
-
 import firebase from "firebase/app";
 
 require("firebase/auth");
@@ -61,10 +60,10 @@ const signInOrRegister = async (
     user = token
       ? (await firebase.auth().signInWithCustomToken(token)).user
       : (
-        await firebase
-          .auth()
-          .signInWithEmailAndPassword(id, signatures.signature)
-      ).user;
+          await firebase
+            .auth()
+            .signInWithEmailAndPassword(id, signatures.signature)
+        ).user;
   } catch (e) {
     // FIXME: we should probably handle wrong signatures here, as it would imply
     // some sort of corruption or attack.
@@ -94,15 +93,16 @@ export const getFirebaseUser = async (
   host: string,
   signatures: { rawSignature: string; signature: string }
 ) => {
-  const id = `${address.toLowerCase()}@${host}`;
+  const accountEmailAddress = `${address.toLowerCase()}@${host}`;
+  console.log("id", address);
   const { currentUser } = firebase.auth();
 
   if (
     !currentUser ||
-    (currentUser.email && currentUser.email !== id) ||
+    (currentUser.email && currentUser.email !== accountEmailAddress) ||
     (!currentUser.email && currentUser.uid !== address)
   ) {
-    return signInOrRegister(id, signatures);
+    return signInOrRegister(accountEmailAddress, signatures);
   } else {
     return currentUser;
   }
