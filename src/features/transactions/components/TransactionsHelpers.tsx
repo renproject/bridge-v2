@@ -1,4 +1,5 @@
-import { Button, styled, Typography, useTheme } from "@material-ui/core";
+import { Button, Chip, styled, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
@@ -10,13 +11,17 @@ import {
   ActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
 import { NestedDrawer } from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
+  TransactionStatusIndicator,
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
+import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
 import { usePaperTitle } from "../../../pages/MainPage";
+import { getLockAndMintParams } from "../../mint/mintUtils";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -125,5 +130,70 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
         </ProgressWithContent>
       </ProgressWrapper>
     </>
+  );
+};
+
+type TransactionItemProps = {
+  tx: GatewaySession;
+};
+
+export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
+  tx,
+}) => {
+  const styles = useTransactionEntryStyles();
+  const {
+    lockChainConfig,
+    lockConfirmations,
+    lockTxAmount,
+    lockTxLink,
+    lockTargetConfirmations,
+    mintCurrencyConfig,
+    mintChainConfig,
+    mintTxLink,
+  } = getLockAndMintParams(tx);
+  const chainSymbol = mintChainConfig.symbol;
+  return (
+    <div className={styles.root}>
+      <div className={styles.details}>
+        <div className={styles.datetime}>
+          <Chip size="small" label="04/02/20" className={styles.date} />
+          <Chip size="small" label="23:45:32 UTC" />
+        </div>
+        <div className={styles.description}>
+          <Typography variant="body2">
+            Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
+            {mintChainConfig.full}
+          </Typography>
+        </div>
+        <div className={styles.links}>
+          <Link
+            href={lockTxLink}
+            target="_blank"
+            external
+            color="primary"
+            className={styles.link}
+          >
+            {lockChainConfig.full} transaction
+          </Link>
+          <Link
+            href={mintTxLink}
+            target="_blank"
+            external
+            color="primary"
+            className={styles.link}
+          >
+            {mintChainConfig.full} transaction
+          </Link>
+        </div>
+      </div>
+      <div className={styles.status}>
+        <TransactionStatusIndicator
+          chain={chainSymbol}
+          status={"completed"}
+          confirmations={lockConfirmations}
+          targetConfirmations={lockTargetConfirmations}
+        />
+      </div>
+    </div>
   );
 };

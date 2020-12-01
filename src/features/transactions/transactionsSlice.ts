@@ -67,12 +67,12 @@ export const {
 
 export const transactionsReducer = slice.reducer;
 
-export const $transactions = (state: RootState) => state.transactions;
-export const $txs = createSelector(
-  $transactions,
+export const $transactionsData = (state: RootState) => state.transactions;
+export const $transactions = createSelector(
+  $transactionsData,
   (transactions) => transactions.txs
 );
 export const $txHistoryOpened = createSelector(
-  $transactions,
+  $transactionsData,
   (transactions) => transactions.txHistoryOpened
 );

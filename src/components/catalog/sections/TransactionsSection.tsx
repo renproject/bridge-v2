@@ -4,7 +4,7 @@ import { TransactionsGrid } from "../../transactions/TransactionsGrid";
 import { Section } from "../PresentationHelpers";
 
 export const TransactionsSection: FunctionComponent = () => {
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(true);
   const handleOpen = useCallback(() => {
     setOpened(true);
   }, []);

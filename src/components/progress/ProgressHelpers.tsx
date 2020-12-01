@@ -285,12 +285,14 @@ export type TransactionStatusIndicatorProps = {
   status: TransactionStatusType;
   chain: BridgeChain;
   confirmations?: number;
+  targetConfirmations?: number;
 };
 
 export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndicatorProps> = ({
   status,
   chain,
   confirmations,
+  targetConfirmations,
 }) => {
   const styles = useTransactionStatusIndicatorStyles();
   const Icon = resolveIcon(chain, status);
@@ -302,6 +304,7 @@ export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndi
             color="inherit"
             size={42}
             confirmations={confirmations}
+            targetConfirmations={targetConfirmations}
           >
             {Icon}
           </ProgressWithContent>

@@ -42,6 +42,7 @@ import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { db } from "../../../services/database/database";
 import {
   getChainConfig,
   getChainShortLabel,
@@ -71,6 +72,7 @@ import {
   createMintTransaction,
   preValidateMintTransaction,
 } from "../mintUtils";
+import { addTransaction } from "../../transactions/transactionsSlice";
 
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
@@ -81,7 +83,10 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const walletConnected = status === WalletStatus.CONNECTED;
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { amount, currency } = useSelector($mint);
-  const { chain } = useSelector($wallet);
+  const {
+    chain,
+    signatures: { signature },
+  } = useSelector($wallet);
   const network = useSelector($network);
   const exchangeRates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
@@ -153,15 +158,18 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const onMintTxCreated = useCallback(
     (tx) => {
       console.log("onMintTxCreated");
-      history.push({
-        pathname: paths.MINT_TRANSACTION,
-        search: "?" + createTxQueryString(tx),
-        state: {
-          txState: { newTx: true },
-        } as LocationTxState,
+      db.addTx(tx, account, signature).then(() => {
+        dispatch(addTransaction(tx));
+        history.push({
+          pathname: paths.MINT_TRANSACTION,
+          search: "?" + createTxQueryString(tx),
+          state: {
+            txState: { newTx: true },
+          } as LocationTxState,
+        });
       });
     },
-    [history]
+    [dispatch, history, account, signature]
   );
 
   const showAckError = !ackChecked && touched;
