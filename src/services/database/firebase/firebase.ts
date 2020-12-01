@@ -11,7 +11,7 @@ if (!env.FIREBASE_KEY) {
 firebase.initializeApp({
   apiKey: env.FIREBASE_KEY,
   authDomain: window.location.hostname,
-  projectId: "bridge-v2",
+  projectId: env.FIREBASE_PROJECT_ID,
 });
 
 require("firebase/firestore");
