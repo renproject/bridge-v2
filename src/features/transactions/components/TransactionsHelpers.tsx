@@ -207,23 +207,19 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   const {
     lockChainConfig,
     lockConfirmations,
-    lockTxHash,
     lockTxLink,
     lockTargetConfirmations,
     mintCurrencyConfig,
     mintChainConfig,
     mintTxLink,
-    meta: { status, nextAction },
+    meta: { status, actionLabel, actionChain },
   } = getLockAndMintParams(tx);
-  const chainSymbol = lockTxHash
-    ? mintChainConfig.symbol
-    : lockChainConfig.symbol;
 
   const { date, time } = getFormattedDateTime(tx.expiryTime - 24 * 3600);
 
   return (
     <>
-      <Debug it={tx} />
+      <Debug disable it={{ tx, params: getLockAndMintParams(tx) }} />
       <div className={styles.root}>
         <div className={styles.details}>
           <div className={styles.datetime}>
@@ -255,7 +251,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 color="primary"
                 className={styles.link}
               >
-                {nextAction}
+                {actionLabel}
               </Link>
             )}
             {mintTxLink && (
@@ -273,7 +269,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
         </div>
         <div className={styles.status}>
           <TransactionStatusIndicator
-            chain={chainSymbol}
+            chain={actionChain}
             status={status}
             confirmations={lockConfirmations}
             targetConfirmations={lockTargetConfirmations}

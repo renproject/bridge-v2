@@ -142,19 +142,21 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   }
   const meta: TxMeta = {
     status: TxEntryStatus.PENDING,
+    actionChain: BridgeChain.UNKNOWNC,
+    actionLabel: "",
   };
   if (lockTxHash) {
     if (mintTxHash) {
       meta.status = TxEntryStatus.COMPLETED;
-    } else if (lockConfirmations === lockTargetConfirmations) {
+    } else if (lockConfirmations >= lockTargetConfirmations) {
       meta.status = TxEntryStatus.ACTION_REQUIRED;
       meta.actionChain = mintChainConfig.symbol;
-      meta.nextAction = `Submit to ${mintChainConfig.full}`;
+      meta.actionLabel = `Submit to ${mintChainConfig.full}`;
     }
   } else {
     meta.status = TxEntryStatus.ACTION_REQUIRED;
     meta.actionChain = lockChainConfig.symbol;
-    meta.nextAction = `Deposit ${lockCurrencyConfig.short}`;
+    meta.actionLabel = `Deposit ${lockCurrencyConfig.short}`;
   }
   return {
     networkConfig,

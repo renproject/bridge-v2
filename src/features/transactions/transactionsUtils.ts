@@ -21,8 +21,8 @@ export enum TxEntryStatus {
 
 export type TxMeta = {
   status: TxEntryStatus;
-  actionChain?: BridgeChain;
-  nextAction?: string;
+  actionChain: BridgeChain;
+  actionLabel: string;
 };
 
 export enum TxType {
