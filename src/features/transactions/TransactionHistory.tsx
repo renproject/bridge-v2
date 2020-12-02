@@ -1,4 +1,5 @@
 import { Dialog } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
@@ -25,6 +26,13 @@ import {
 } from "./transactionsSlice";
 import { TxType } from "./transactionsUtils";
 
+const txSorter = (a: Partial<GatewaySession>, b: Partial<GatewaySession>) => {
+  if (a.expiryTime && b.expiryTime) {
+    return a.expiryTime - b.expiryTime;
+  }
+  return 0;
+};
+
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { account } = useSelectedChainWallet();
@@ -50,9 +58,13 @@ export const TransactionHistory: FunctionComponent = () => {
 
   useEffect(() => {
     if (user) {
-      db.getTxs(signature).then((txsData) => {
-        dispatch(setTransactions(txsData as Array<BridgeTransaction>));
-      });
+      db.getTxs(signature)
+        .then((txsData) => {
+          dispatch(
+            setTransactions(txsData.sort(txSorter) as Array<BridgeTransaction>)
+          );
+        })
+        .catch(console.error);
     }
   }, [dispatch, user, signature]);
 
