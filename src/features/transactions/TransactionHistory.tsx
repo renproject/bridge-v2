@@ -8,19 +8,14 @@ import React, {
 import { useDispatch, useSelector } from "react-redux";
 import { SimplePagination } from "../../components/pagination/SimplePagination";
 import {
-  TransactionEntry,
   TransactionsHeader,
   TransactionsPaginationWrapper,
   TransactionsStatusHeader,
 } from "../../components/transactions/TransactionsGrid";
 import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../services/database/database";
-import { BridgeChain } from "../../utils/assetConfigs";
 import { $walletSignatures, $walletUser, setUser } from "../wallet/walletSlice";
-import {
-  MintTransactionEntry,
-  MintTransactionEntryResolver,
-} from "./components/TransactionsHelpers";
+import { MintTransactionEntryResolver } from "./components/TransactionsHelpers";
 import {
   $transactions,
   $txHistoryOpened,
@@ -28,7 +23,7 @@ import {
   setTransactions,
   setTxHistoryOpened,
 } from "./transactionsSlice";
-import { TxEntryStatus, TxType } from "./transactionsUtils";
+import { TxType } from "./transactionsUtils";
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -65,37 +60,35 @@ export const TransactionHistory: FunctionComponent = () => {
     dispatch(setTxHistoryOpened(false));
   }, [dispatch]);
 
-  const pending = 3;
+  const all = txs.length;
 
   const [page, setPage] = useState(0);
   const handleChangePage = useCallback((event: unknown, newPage: number) => {
     setPage(newPage);
   }, []);
 
-  const itemsCount = 15;
+  const itemsCount = all;
   const itemsPerPage = 4;
 
   return (
-    <Dialog open={opened} maxWidth="sm" fullWidth onBackdropClick={handleClose}>
+    <Dialog
+      open={opened}
+      maxWidth="sm"
+      fullWidth
+      onBackdropClick={handleClose}
+      keepMounted
+    >
       <TransactionsHeader title="Transactions" />
-      <TransactionsStatusHeader title={`All (${pending})`} />
+      <TransactionsStatusHeader title={`All (${all})`} />
       <div>
         {txs.map((tx) => {
           if (tx.type === TxType.MINT) {
-            return <MintTransactionEntryResolver tx={tx} />;
+            return <MintTransactionEntryResolver key={tx.id} tx={tx} />;
           } else {
             return <span>Release</span>;
           }
         })}
       </div>
-      <TransactionsStatusHeader title={`Completed (${pending})`} />
-      <div>
-        <TransactionEntry
-          chain={BridgeChain.BSCC}
-          status={TxEntryStatus.COMPLETED}
-        />
-      </div>
-
       <TransactionsPaginationWrapper>
         <SimplePagination
           count={itemsCount}

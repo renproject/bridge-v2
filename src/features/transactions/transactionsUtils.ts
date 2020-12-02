@@ -11,6 +11,8 @@ import {
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
 
+export const mintUpdateableEvents = ["requestingSignature"];
+
 export enum TxEntryStatus {
   PENDING = "pending",
   ACTION_REQUIRED = "action_required",
@@ -19,6 +21,7 @@ export enum TxEntryStatus {
 
 export type TxMeta = {
   status: TxEntryStatus;
+  nextAction?: string;
 };
 
 export enum TxType {
@@ -66,6 +69,9 @@ const parseNumber = (value: any) => {
   }
   return Number(value);
 };
+
+export const cloneTx = (tx: GatewaySession) =>
+  JSON.parse(JSON.stringify(tx)) as GatewaySession;
 
 export const parseTxQueryString: (
   query: string

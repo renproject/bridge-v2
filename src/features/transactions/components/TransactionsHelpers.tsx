@@ -6,6 +6,8 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -22,8 +24,16 @@ import {
 import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
 import { Debug } from "../../../components/utils/Debug";
 import { usePaperTitle } from "../../../pages/MainPage";
+import { paths } from "../../../pages/routes";
+import { getFormattedDateTime } from "../../../utils/dates";
 import { getLockAndMintParams, useMintMachine } from "../../mint/mintUtils";
-import { TxEntryStatus } from "../transactionsUtils";
+import { setTxHistoryOpened } from "../transactionsSlice";
+import {
+  cloneTx,
+  createTxQueryString,
+  mintUpdateableEvents,
+  TxEntryStatus,
+} from "../transactionsUtils";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -154,8 +164,11 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
   tx,
   onAction,
 }) => {
-  const [initialTx] = useState(tx);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const [initialTx] = useState(cloneTx(tx)); // TODO: mint machine is mutating tx
   const [current, , service] = useMintMachine(initialTx);
+  console.log("rerendering");
   useEffect(
     () => () => {
       service.stop();
@@ -163,41 +176,63 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     [service]
   );
 
-  return <MintTransactionEntry tx={current.context.tx} onAction={onAction} />;
+  useEffect(() => {
+    if (mintUpdateableEvents.indexOf(current.value as string) > -1) {
+      console.log("saving here"); //TODO: update Tx in db
+    }
+  }, [current.value]);
+
+  useEffect(() => {
+    console.log(current.value);
+  }, [current.value]);
+
+  const handleNextAction = useCallback(() => {
+    history.push({
+      pathname: paths.MINT_TRANSACTION,
+      search: "?" + createTxQueryString(tx),
+    });
+    dispatch(setTxHistoryOpened(false));
+  }, [dispatch, history, tx]);
+
+  return (
+    <MintTransactionEntry tx={current.context.tx} onAction={handleNextAction} />
+  );
 };
 
 export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
+  onAction,
 }) => {
   const styles = useTransactionEntryStyles();
   const {
     lockChainConfig,
     lockConfirmations,
-    lockTxAmount,
     lockTxHash,
     lockTxLink,
     lockTargetConfirmations,
     mintCurrencyConfig,
     mintChainConfig,
-    mintTxHash,
     mintTxLink,
-    meta: { status },
+    meta: { status, nextAction },
   } = getLockAndMintParams(tx);
   const chainSymbol = lockTxHash
     ? mintChainConfig.symbol
     : lockChainConfig.symbol;
+
+  const { date, time } = getFormattedDateTime(tx.expiryTime - 24 * 3600);
+
   return (
     <>
       <Debug it={tx} />
       <div className={styles.root}>
         <div className={styles.details}>
           <div className={styles.datetime}>
-            <Chip size="small" label="04/02/20" className={styles.date} />
-            <Chip size="small" label="23:45:32 UTC" />
+            <Chip size="small" label={date} className={styles.date} />
+            <Chip size="small" label={time} />
           </div>
           <div className={styles.description}>
             <Typography variant="body2">
-              Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
+              Mint {tx.targetAmount} {mintCurrencyConfig.short} on{" "}
               {mintChainConfig.full}
             </Typography>
           </div>
@@ -213,14 +248,14 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 {lockChainConfig.full} transaction
               </Link>
             )}
-            {status === TxEntryStatus.ACTION_REQUIRED && (
+            {status === TxEntryStatus.ACTION_REQUIRED && onAction && (
               <Link
-                href={lockTxLink}
+                onClick={onAction}
                 target="_blank"
                 color="primary"
                 className={styles.link}
               >
-                {lockChainConfig.full} transaction
+                {nextAction}
               </Link>
             )}
             {mintTxLink && (

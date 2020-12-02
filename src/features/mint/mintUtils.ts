@@ -1,11 +1,11 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { GatewaySession, mintMachine } from "@renproject/ren-tx";
-import { useMachine } from "@xstate/react";
-import { useSelector } from "react-redux";
-import { env } from "../../constants/environmentVariables";
-import { getRenJs } from "../../services/renJs";
-import { lockChainMap, mintChainMap } from "../../services/rentx";
+import { RenNetwork } from '@renproject/interfaces'
+import { useMultiwallet } from '@renproject/multiwallet-ui'
+import { GatewaySession, mintMachine } from '@renproject/ren-tx'
+import { useMachine } from '@xstate/react'
+import { useSelector } from 'react-redux'
+import { env } from '../../constants/environmentVariables'
+import { getRenJs } from '../../services/renJs'
+import { lockChainMap, mintChainMap } from '../../services/rentx'
 import {
   BridgeChain,
   BridgeCurrency,
@@ -18,13 +18,9 @@ import {
   getCurrencyRentxSourceChain,
   getNetworkConfigByRentxName,
   toMintedCurrency,
-} from "../../utils/assetConfigs";
-import { $network } from "../network/networkSlice";
-import {
-  getChainExplorerLink,
-  TxEntryStatus,
-  TxMeta,
-} from "../transactions/transactionsUtils";
+} from '../../utils/assetConfigs'
+import { $network } from '../network/networkSlice'
+import { getChainExplorerLink, TxEntryStatus, TxMeta, } from '../transactions/transactionsUtils'
 
 type CreateMintTransactionParams = {
   amount: number;
@@ -142,15 +138,18 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   }
   const meta: TxMeta = {
     status: TxEntryStatus.PENDING,
+    nextAction: "",
   };
   if (lockTxHash) {
     if (mintTxHash) {
       meta.status = TxEntryStatus.COMPLETED;
     } else if (lockConfirmations === lockTargetConfirmations) {
       meta.status = TxEntryStatus.ACTION_REQUIRED;
+      meta.nextAction = `Submit to ${mintChainConfig.full}`;
     }
   } else {
     meta.status = TxEntryStatus.ACTION_REQUIRED;
+    meta.nextAction = `Deposit ${lockCurrencyConfig.short}`;
   }
   return {
     networkConfig,

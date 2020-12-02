@@ -1,22 +1,12 @@
-import {
-  CircularProgress,
-  CircularProgressProps,
-  fade,
-  styled,
-  SvgIconProps,
-  Theme,
-  Typography,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import CompletedIcon from "@material-ui/icons/Check";
-import DoneIcon from "@material-ui/icons/Done";
-import classNames from "classnames";
-import React, { FunctionComponent, ReactNode } from "react";
-import { TxEntryStatus } from "../../features/transactions/transactionsUtils";
-import { BridgeChain, getChainConfig } from "../../utils/assetConfigs";
-import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
-import { CenteringSpacedBox } from "../layout/LayoutHelpers";
-import { TransactionStatusType } from "../utils/types";
+import { CircularProgress, CircularProgressProps, fade, styled, Theme, Typography, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import CompletedIcon from '@material-ui/icons/Check'
+import DoneIcon from '@material-ui/icons/Done'
+import classNames from 'classnames'
+import React, { FunctionComponent, ReactNode } from 'react'
+import { TxEntryStatus } from '../../features/transactions/transactionsUtils'
+import { BridgeChain, getChainConfig } from '../../utils/assetConfigs'
+import { CenteringSpacedBox } from '../layout/LayoutHelpers'
 
 export const CenteredProgress: FunctionComponent<CircularProgressProps> = (
   props
