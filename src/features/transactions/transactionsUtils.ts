@@ -21,6 +21,7 @@ export enum TxEntryStatus {
 
 export type TxMeta = {
   status: TxEntryStatus;
+  actionChain?: BridgeChain;
   nextAction?: string;
 };
 
@@ -111,6 +112,9 @@ export const getChainExplorerLink = (
   network: BridgeNetwork,
   txId: string
 ) => {
+  if (!txId) {
+    return "";
+  }
   if (network === BridgeNetwork.TESTNET) {
     switch (chain) {
       case BridgeChain.ETHC:
