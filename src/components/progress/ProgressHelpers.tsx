@@ -12,7 +12,8 @@ import CompletedIcon from "@material-ui/icons/Check";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
-import { BridgeChain } from "../../utils/assetConfigs";
+import { TxEntryStatus } from "../../features/transactions/transactionsUtils";
+import { BridgeChain, getChainConfig } from "../../utils/assetConfigs";
 import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
 import { CenteringSpacedBox } from "../layout/LayoutHelpers";
 import { TransactionStatusType } from "../utils/types";
@@ -241,23 +242,6 @@ export const TransactionStatusCircleIndicator = styled("div")(({ theme }) => ({
   background: theme.palette.primary.main,
 }));
 
-const resolveIcon = (chain: BridgeChain, status: TransactionStatusType) => {
-  const shared = { color: "inherit" } as SvgIconProps;
-  if (status === "completed") {
-    return <CompletedIcon {...shared} fontSize="large" />;
-  }
-  switch (chain) {
-    case BridgeChain.BSCC:
-      return <BinanceChainIcon {...shared} fontSize="large" />;
-    case BridgeChain.BTCC:
-      return <BitcoinIcon {...shared} fontSize="large" />;
-    case BridgeChain.ETHC:
-      return <EthereumIcon {...shared} fontSize="large" />;
-    default:
-      return <EthereumIcon {...shared} fontSize="large" />;
-  }
-};
-
 const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
   root: {
     color: theme.palette.primary.main,
@@ -282,7 +266,7 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
 }));
 
 export type TransactionStatusIndicatorProps = {
-  status: TransactionStatusType;
+  status: TxEntryStatus;
   chain: BridgeChain;
   confirmations?: number;
   targetConfirmations?: number;
@@ -295,7 +279,10 @@ export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndi
   targetConfirmations,
 }) => {
   const styles = useTransactionStatusIndicatorStyles();
-  const Icon = resolveIcon(chain, status);
+  const StatusIcon =
+    status === TxEntryStatus.COMPLETED
+      ? CompletedIcon
+      : getChainConfig(chain).MainIcon;
   return (
     <div className={styles.root}>
       <div className={styles.iconWrapper}>
@@ -306,12 +293,14 @@ export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndi
             confirmations={confirmations}
             targetConfirmations={targetConfirmations}
           >
-            {Icon}
+            <StatusIcon fontSize="large" color="inherit" />
           </ProgressWithContent>
         </div>
       </div>
       <div className={styles.indicatorWrapper}>
-        {status === "submitted" && <TransactionStatusCircleIndicator />}
+        {status === TxEntryStatus.ACTION_REQUIRED && (
+          <TransactionStatusCircleIndicator />
+        )}
       </div>
     </div>
   );

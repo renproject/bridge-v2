@@ -20,8 +20,10 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
+import { Debug } from "../../../components/utils/Debug";
 import { usePaperTitle } from "../../../pages/MainPage";
-import { getLockAndMintParams } from "../../mint/mintUtils";
+import { getLockAndMintParams, useMintMachine } from "../../mint/mintUtils";
+import { TxEntryStatus } from "../transactionsUtils";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -135,6 +137,33 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
 
 type TransactionItemProps = {
   tx: GatewaySession;
+  onAction?: () => void;
+};
+
+export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
+  tx,
+}) => {
+  const { meta } = getLockAndMintParams(tx);
+  if (meta.status === TxEntryStatus.COMPLETED) {
+    return <MintTransactionEntry tx={tx} />;
+  }
+  return <MintTransactionEntryMachine tx={tx} />;
+};
+
+export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps> = ({
+  tx,
+  onAction,
+}) => {
+  const [initialTx] = useState(tx);
+  const [current, , service] = useMintMachine(initialTx);
+  useEffect(
+    () => () => {
+      service.stop();
+    },
+    [service]
+  );
+
+  return <MintTransactionEntry tx={current.context.tx} onAction={onAction} />;
 };
 
 export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
@@ -145,55 +174,77 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     lockChainConfig,
     lockConfirmations,
     lockTxAmount,
+    lockTxHash,
     lockTxLink,
     lockTargetConfirmations,
     mintCurrencyConfig,
     mintChainConfig,
+    mintTxHash,
     mintTxLink,
+    meta: { status },
   } = getLockAndMintParams(tx);
-  const chainSymbol = mintChainConfig.symbol;
+  const chainSymbol = lockTxHash
+    ? mintChainConfig.symbol
+    : lockChainConfig.symbol;
   return (
-    <div className={styles.root}>
-      <div className={styles.details}>
-        <div className={styles.datetime}>
-          <Chip size="small" label="04/02/20" className={styles.date} />
-          <Chip size="small" label="23:45:32 UTC" />
+    <>
+      <Debug it={tx} />
+      <div className={styles.root}>
+        <div className={styles.details}>
+          <div className={styles.datetime}>
+            <Chip size="small" label="04/02/20" className={styles.date} />
+            <Chip size="small" label="23:45:32 UTC" />
+          </div>
+          <div className={styles.description}>
+            <Typography variant="body2">
+              Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
+              {mintChainConfig.full}
+            </Typography>
+          </div>
+          <div className={styles.links}>
+            {lockTxLink && (
+              <Link
+                href={lockTxLink}
+                target="_blank"
+                external
+                color="primary"
+                className={styles.link}
+              >
+                {lockChainConfig.full} transaction
+              </Link>
+            )}
+            {status === TxEntryStatus.ACTION_REQUIRED && (
+              <Link
+                href={lockTxLink}
+                target="_blank"
+                color="primary"
+                className={styles.link}
+              >
+                {lockChainConfig.full} transaction
+              </Link>
+            )}
+            {mintTxLink && (
+              <Link
+                href={mintTxLink}
+                target="_blank"
+                external
+                color="primary"
+                className={styles.link}
+              >
+                {mintChainConfig.full} transaction
+              </Link>
+            )}
+          </div>
         </div>
-        <div className={styles.description}>
-          <Typography variant="body2">
-            Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
-            {mintChainConfig.full}
-          </Typography>
-        </div>
-        <div className={styles.links}>
-          <Link
-            href={lockTxLink}
-            target="_blank"
-            external
-            color="primary"
-            className={styles.link}
-          >
-            {lockChainConfig.full} transaction
-          </Link>
-          <Link
-            href={mintTxLink}
-            target="_blank"
-            external
-            color="primary"
-            className={styles.link}
-          >
-            {mintChainConfig.full} transaction
-          </Link>
+        <div className={styles.status}>
+          <TransactionStatusIndicator
+            chain={chainSymbol}
+            status={status}
+            confirmations={lockConfirmations}
+            targetConfirmations={lockTargetConfirmations}
+          />
         </div>
       </div>
-      <div className={styles.status}>
-        <TransactionStatusIndicator
-          chain={chainSymbol}
-          status={"completed"}
-          confirmations={lockConfirmations}
-          targetConfirmations={lockTargetConfirmations}
-        />
-      </div>
-    </div>
+    </>
   );
 };

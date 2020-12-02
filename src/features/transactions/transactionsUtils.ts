@@ -11,6 +11,16 @@ import {
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
 
+export enum TxEntryStatus {
+  PENDING = "pending",
+  ACTION_REQUIRED = "action_required",
+  COMPLETED = "completed",
+}
+
+export type TxMeta = {
+  status: TxEntryStatus;
+};
+
 export enum TxType {
   MINT = "mint",
   BURN = "burn",

@@ -18,16 +18,23 @@ import { db } from "../../services/database/database";
 import { BridgeChain } from "../../utils/assetConfigs";
 import { $walletSignatures, $walletUser, setUser } from "../wallet/walletSlice";
 import {
+  MintTransactionEntry,
+  MintTransactionEntryResolver,
+} from "./components/TransactionsHelpers";
+import {
+  $transactions,
   $txHistoryOpened,
   BridgeTransaction,
   setTransactions,
   setTxHistoryOpened,
 } from "./transactionsSlice";
+import { TxEntryStatus, TxType } from "./transactionsUtils";
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { account } = useSelectedChainWallet();
   const user = useSelector($walletUser);
+  const txs = useSelector($transactions);
   const { signature, rawSignature } = useSelector($walletSignatures);
   const opened = useSelector($txHistoryOpened);
 
@@ -59,7 +66,6 @@ export const TransactionHistory: FunctionComponent = () => {
   }, [dispatch]);
 
   const pending = 3;
-  const completed = 2;
 
   const [page, setPage] = useState(0);
   const handleChangePage = useCallback((event: unknown, newPage: number) => {
@@ -72,14 +78,24 @@ export const TransactionHistory: FunctionComponent = () => {
   return (
     <Dialog open={opened} maxWidth="sm" fullWidth onBackdropClick={handleClose}>
       <TransactionsHeader title="Transactions" />
-      <TransactionsStatusHeader title={`Pending (${pending})`} />
+      <TransactionsStatusHeader title={`All (${pending})`} />
       <div>
-        <TransactionEntry chain={BridgeChain.BSCC} status="submitted" />
+        {txs.map((tx) => {
+          if (tx.type === TxType.MINT) {
+            return <MintTransactionEntryResolver tx={tx} />;
+          } else {
+            return <span>Release</span>;
+          }
+        })}
       </div>
-      <TransactionsStatusHeader title={`Completed (${completed})`} />
+      <TransactionsStatusHeader title={`Completed (${pending})`} />
       <div>
-        <TransactionEntry chain={BridgeChain.BSCC} status="completed" />
+        <TransactionEntry
+          chain={BridgeChain.BSCC}
+          status={TxEntryStatus.COMPLETED}
+        />
       </div>
+
       <TransactionsPaginationWrapper>
         <SimplePagination
           count={itemsCount}

@@ -10,17 +10,21 @@ import {
   BridgeChain,
   BridgeCurrency,
   getChainConfig,
+  getChainConfigByRentxName,
   getChainRentxName,
   getCurrencyConfig,
   getCurrencyConfigByRentxName,
   getCurrencyRentxName,
   getCurrencyRentxSourceChain,
-  toMintedCurrency,
   getNetworkConfigByRentxName,
-  getChainConfigByRentxName,
+  toMintedCurrency,
 } from "../../utils/assetConfigs";
 import { $network } from "../network/networkSlice";
-import { getChainExplorerLink } from "../transactions/transactionsUtils";
+import {
+  getChainExplorerLink,
+  TxEntryStatus,
+  TxMeta,
+} from "../transactions/transactionsUtils";
 
 type CreateMintTransactionParams = {
   amount: number;
@@ -136,6 +140,18 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
         lockChainConfig.blockTime;
     }
   }
+  const meta: TxMeta = {
+    status: TxEntryStatus.PENDING,
+  };
+  if (lockTxHash) {
+    if (mintTxHash) {
+      meta.status = TxEntryStatus.COMPLETED;
+    } else if (lockConfirmations === lockTargetConfirmations) {
+      meta.status = TxEntryStatus.ACTION_REQUIRED;
+    }
+  } else {
+    meta.status = TxEntryStatus.ACTION_REQUIRED;
+  }
   return {
     networkConfig,
     mintCurrencyConfig,
@@ -151,5 +167,6 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     lockProcessingTime,
     lockTxAmount,
     suggestedAmount: Number(tx.suggestedAmount) / 1e8,
+    meta,
   };
 };

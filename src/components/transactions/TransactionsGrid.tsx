@@ -1,11 +1,12 @@
-import { Chip, styled, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { BridgeChain } from '../../utils/assetConfigs'
-import { Link } from '../links/Links'
-import { SimplePagination } from '../pagination/SimplePagination'
-import { TransactionStatusIndicator } from '../progress/ProgressHelpers'
-import { TransactionStatusType } from '../utils/types'
+import { Chip, styled, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { TxEntryStatus } from "../../features/transactions/transactionsUtils";
+import { BridgeChain } from "../../utils/assetConfigs";
+import { Link } from "../links/Links";
+import { SimplePagination } from "../pagination/SimplePagination";
+import { TransactionStatusIndicator } from "../progress/ProgressHelpers";
+import { TransactionStatusType } from "../utils/types";
 
 type TransactionType = "mint" | "release";
 
@@ -109,7 +110,7 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
 
 type TransactionEntryProps = {
   chain: BridgeChain;
-  status: TransactionStatusType;
+  status: TxEntryStatus;
   confirmations?: number;
 };
 
@@ -169,15 +170,24 @@ export const TransactionsGrid: FunctionComponent<any> = () => {
       <div>
         <TransactionEntry
           chain={BridgeChain.BTCC}
-          status="pending"
+          status={TxEntryStatus.COMPLETED}
           confirmations={2}
         />
-        <TransactionEntry chain={BridgeChain.BSCC} status="submitted" />
+        <TransactionEntry
+          chain={BridgeChain.BSCC}
+          status={TxEntryStatus.PENDING}
+        />
       </div>
       <TransactionsStatusHeader title={`Completed (${completed})`} />
       <div>
-        <TransactionEntry chain={BridgeChain.BTCC} status="completed" />
-        <TransactionEntry chain={BridgeChain.BSCC} status="completed" />
+        <TransactionEntry
+          chain={BridgeChain.BTCC}
+          status={TxEntryStatus.COMPLETED}
+        />
+        <TransactionEntry
+          chain={BridgeChain.BSCC}
+          status={TxEntryStatus.COMPLETED}
+        />
       </div>
       <TransactionsPaginationWrapper>
         <SimplePagination
