@@ -1,13 +1,13 @@
-import { Chip, styled, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { TxEntryStatus } from '../../features/transactions/transactionsUtils'
-import { BridgeChain } from '../../utils/assetConfigs'
-import { SmallActionButton } from '../buttons/Buttons'
-import { Link } from '../links/Links'
-import { SimplePagination } from '../pagination/SimplePagination'
-import { TransactionStatusIndicator } from '../progress/ProgressHelpers'
-import { TransactionStatusType } from '../utils/types'
+import { Chip, styled, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { TxEntryStatus } from "../../features/transactions/transactionsUtils";
+import { BridgeChain } from "../../utils/assetConfigs";
+import { SmallActionButton } from "../buttons/Buttons";
+import { Link } from "../links/Links";
+import { SimplePagination } from "../pagination/SimplePagination";
+import { TransactionStatusIndicator } from "../progress/ProgressHelpers";
+import { TransactionStatusType } from "../utils/types";
 
 type TransactionType = "mint" | "release";
 
@@ -88,9 +88,11 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
   },
-  details: {},
+  details: {
+    alignSelf: "flex-start",
+  },
   datetime: {},
   date: {
     marginRight: 6,

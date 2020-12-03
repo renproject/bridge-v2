@@ -11,6 +11,7 @@ import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
+  SmallActionButton,
 } from "../../../components/buttons/Buttons";
 import { EmptyIcon } from "../../../components/icons/RenIcons";
 import { PaperContent } from "../../../components/layout/Paper";
@@ -253,18 +254,6 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 Transaction expired
               </Typography>
             )}
-            {status === TxEntryStatus.ACTION_REQUIRED &&
-              actionChain === TxActionChain.LOCK &&
-              onAction && (
-                <Link
-                  onClick={onAction}
-                  target="_blank"
-                  color="primary"
-                  className={styles.link}
-                >
-                  Submit to {lockChainConfig.full}
-                </Link>
-              )}
             {lockTxLink && (
               <Link
                 href={lockTxLink}
@@ -276,18 +265,6 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 {lockChainConfig.full} transaction
               </Link>
             )}
-            {status === TxEntryStatus.ACTION_REQUIRED &&
-              actionChain === TxActionChain.MINT &&
-              onAction && (
-                <Link
-                  onClick={onAction}
-                  target="_blank"
-                  color="primary"
-                  className={styles.link}
-                >
-                  Submit to {mintChainConfig.full}
-                </Link>
-              )}
             {mintTxLink && (
               <Link
                 href={mintTxLink}
@@ -300,6 +277,13 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
               </Link>
             )}
           </div>
+        </div>
+        <div className={styles.actions}>
+          {status === TxEntryStatus.ACTION_REQUIRED && (
+            <SmallActionButton onClick={onAction}>
+              Finish mint
+            </SmallActionButton>
+          )}
         </div>
         <div className={styles.status}>
           <TransactionStatusIndicator
