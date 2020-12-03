@@ -1,27 +1,41 @@
-import { Button, Chip, styled, Typography, useTheme } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
-import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { EmptyCircleIcon, } from '../../../components/icons/RenIcons'
-import { PaperContent } from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
-import { NestedDrawer } from '../../../components/modals/BridgeModal'
+import { Button, Chip, styled, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { EmptyIcon } from "../../../components/icons/RenIcons";
+import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import { NestedDrawer } from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusIndicator,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { useTransactionEntryStyles } from '../../../components/transactions/TransactionsGrid'
-import { Debug } from '../../../components/utils/Debug'
-import { usePaperTitle } from '../../../pages/MainPage'
-import { paths } from '../../../pages/routes'
-import { getFormattedDateTime } from '../../../utils/dates'
-import { getLockAndMintParams, useMintMachine } from '../../mint/mintUtils'
-import { setTxHistoryOpened } from '../transactionsSlice'
-import { cloneTx, createTxQueryString, mintUpdateableEvents, TxActionChain, TxEntryStatus, } from '../transactionsUtils'
+} from "../../../components/progress/ProgressHelpers";
+import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
+import { Debug } from "../../../components/utils/Debug";
+import { usePaperTitle } from "../../../pages/MainPage";
+import { paths } from "../../../pages/routes";
+import { getFormattedDateTime } from "../../../utils/dates";
+import { getLockAndMintParams, useMintMachine } from "../../mint/mintUtils";
+import { setTxHistoryOpened } from "../transactionsSlice";
+import {
+  cloneTx,
+  createTxQueryString,
+  mintUpdateableEvents,
+  TxActionChain,
+  TxEntryStatus,
+} from "../transactionsUtils";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -143,6 +157,7 @@ export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProp
 }) => {
   const { meta } = getLockAndMintParams(tx);
   if (meta.status === TxEntryStatus.COMPLETED) {
+    console.log("rendering completed");
     return <MintTransactionEntry tx={tx} />;
   }
   return <MintTransactionEntryMachine tx={tx} />;
@@ -163,6 +178,9 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     },
     [service]
   );
+  useEffect(() => {
+    console.log("tx changed", current.context.tx);
+  }, [current.context.tx]);
 
   useEffect(() => {
     if (mintUpdateableEvents.indexOf(current.value as string) > -1) {
@@ -205,7 +223,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
 
   const { date, time } = getFormattedDateTime(tx.expiryTime - 24 * 3600);
 
-  let StatusIcon = EmptyCircleIcon; // TODO: change to empty icon
+  let StatusIcon = EmptyIcon;
   if (actionChain === TxActionChain.LOCK) {
     StatusIcon = lockChainConfig.MainIcon;
   } else if (actionChain === TxActionChain.RELEASE) {
@@ -228,6 +246,11 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             </Typography>
           </div>
           <div className={styles.links}>
+            {status === TxEntryStatus.EXPIRED && (
+              <Typography variant="body2" color="error">
+                Transaction expired
+              </Typography>
+            )}
             {status === TxEntryStatus.ACTION_REQUIRED &&
               actionChain === TxActionChain.LOCK &&
               onAction && (

@@ -17,6 +17,7 @@ export enum TxEntryStatus {
   PENDING = "pending",
   ACTION_REQUIRED = "action_required",
   COMPLETED = "completed",
+  EXPIRED = "expired",
 }
 
 export enum TxActionChain {
@@ -29,7 +30,7 @@ export enum TxActionChain {
 
 export type TxMeta = {
   status: TxEntryStatus;
-  actionChain: TxActionChain;
+  actionChain: TxActionChain; //TODO rename to TxPhase
 };
 
 export enum TxType {
@@ -76,6 +77,17 @@ const parseNumber = (value: any) => {
     return undefined;
   }
   return Number(value);
+};
+
+export const isTxExpired = (tx: GatewaySession) => {
+  if (tx.expiryTime) {
+    const difference = Date.now() - tx.expiryTime;
+    console.log(difference);
+    if (difference >= 24 * 3600) {
+      return true;
+    }
+  }
+  return false;
 };
 
 export const cloneTx = (tx: GatewaySession) =>

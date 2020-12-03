@@ -1,5 +1,5 @@
 import { SvgIcon, SvgIconProps } from "@material-ui/core";
-import { SvgIconComponent } from '@material-ui/icons'
+import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
 import { getScalingProps } from "../../utils/icons";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
@@ -16,6 +16,7 @@ import { ReactComponent as Btc } from "./../../assets/icons/btc-icon-nocolour.sv
 import { ReactComponent as Bitcoin } from "./../../assets/icons/btc-icon-only.svg";
 import { ReactComponent as BtcFull } from "./../../assets/icons/btc-icon.svg";
 import { ReactComponent as EmptyCircle } from "./../../assets/icons/empty-circle-icon.svg";
+import { ReactComponent as Empty } from "./../../assets/icons/empty-icon.svg";
 import { ReactComponent as DgbGrey } from "./../../assets/icons/dgb-icon-grey.svg";
 import { ReactComponent as Dgb } from "./../../assets/icons/dgb-icon-nocolour.svg";
 import { ReactComponent as DgbFull } from "./../../assets/icons/dgb-icon.svg";
@@ -52,10 +53,16 @@ import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.sv
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
 
-export type CustomSvgIconComponent = FunctionComponent<SvgIconProps> | SvgIconComponent;
+export type CustomSvgIconComponent =
+  | FunctionComponent<SvgIconProps>
+  | SvgIconComponent;
 
 export const EmptyCircleIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={EmptyCircle} {...props} />
+);
+
+export const EmptyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Empty} {...props} />
 );
 
 export const TxHistoryIcon: CustomSvgIconComponent = (props) => (

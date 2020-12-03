@@ -28,7 +28,7 @@ import { TxType } from "./transactionsUtils";
 
 const txSorter = (a: Partial<GatewaySession>, b: Partial<GatewaySession>) => {
   if (a.expiryTime && b.expiryTime) {
-    return a.expiryTime - b.expiryTime;
+    return b.expiryTime - a.expiryTime;
   }
   return 0;
 };

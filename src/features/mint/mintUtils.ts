@@ -22,6 +22,7 @@ import {
 import { $network } from "../network/networkSlice";
 import {
   getChainExplorerLink,
+  isTxExpired,
   TxActionChain,
   TxEntryStatus,
   TxMeta,
@@ -145,7 +146,9 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     status: TxEntryStatus.PENDING,
     actionChain: TxActionChain.NONE,
   };
-  if (lockTxHash) {
+  if (isTxExpired(tx)) {
+    meta.status = TxEntryStatus.EXPIRED;
+  } else if (lockTxHash) {
     if (mintTxHash) {
       meta.status = TxEntryStatus.COMPLETED;
     } else if (lockConfirmations >= lockTargetConfirmations) {
@@ -154,7 +157,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     }
   } else {
     meta.status = TxEntryStatus.ACTION_REQUIRED;
-    meta.actionChain = TxActionChain.RELEASE;
+    meta.actionChain = TxActionChain.LOCK;
   }
   return {
     networkConfig,
