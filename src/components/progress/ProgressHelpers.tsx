@@ -4,8 +4,7 @@ import CompletedIcon from '@material-ui/icons/Check'
 import DoneIcon from '@material-ui/icons/Done'
 import classNames from 'classnames'
 import React, { FunctionComponent, ReactNode } from 'react'
-import { TxEntryStatus } from '../../features/transactions/transactionsUtils'
-import { BridgeChain, getChainConfig } from '../../utils/assetConfigs'
+import { CustomSvgIconComponent } from '../icons/RenIcons'
 import { CenteringSpacedBox } from '../layout/LayoutHelpers'
 
 export const CenteredProgress: FunctionComponent<CircularProgressProps> = (
@@ -256,23 +255,19 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
 }));
 
 export type TransactionStatusIndicatorProps = {
-  status: TxEntryStatus;
-  chain: BridgeChain;
+  needsAction?: boolean;
+  Icon?: CustomSvgIconComponent;
   confirmations?: number;
   targetConfirmations?: number;
 };
 
 export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndicatorProps> = ({
-  status,
-  chain,
+  needsAction,
   confirmations,
   targetConfirmations,
+  Icon = CompletedIcon,
 }) => {
   const styles = useTransactionStatusIndicatorStyles();
-  const StatusIcon =
-    status === TxEntryStatus.COMPLETED
-      ? CompletedIcon
-      : getChainConfig(chain).MainIcon;
   return (
     <div className={styles.root}>
       <div className={styles.iconWrapper}>
@@ -283,14 +278,12 @@ export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndi
             confirmations={confirmations}
             targetConfirmations={targetConfirmations}
           >
-            <StatusIcon fontSize="large" color="inherit" />
+            <Icon fontSize="large" color="inherit" />
           </ProgressWithContent>
         </div>
       </div>
       <div className={styles.indicatorWrapper}>
-        {status === TxEntryStatus.ACTION_REQUIRED && (
-          <TransactionStatusCircleIndicator />
-        )}
+        {needsAction && <TransactionStatusCircleIndicator />}
       </div>
     </div>
   );

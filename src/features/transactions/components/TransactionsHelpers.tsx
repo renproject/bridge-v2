@@ -1,39 +1,27 @@
-import { Button, Chip, styled, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { PaperContent } from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
-import { NestedDrawer } from "../../../components/modals/BridgeModal";
+import { Button, Chip, styled, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { EmptyCircleIcon, } from '../../../components/icons/RenIcons'
+import { PaperContent } from '../../../components/layout/Paper'
+import { Link } from '../../../components/links/Links'
+import { NestedDrawer } from '../../../components/modals/BridgeModal'
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusIndicator,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
-import { Debug } from "../../../components/utils/Debug";
-import { usePaperTitle } from "../../../pages/MainPage";
-import { paths } from "../../../pages/routes";
-import { getFormattedDateTime } from "../../../utils/dates";
-import { getLockAndMintParams, useMintMachine } from "../../mint/mintUtils";
-import { setTxHistoryOpened } from "../transactionsSlice";
-import {
-  cloneTx,
-  createTxQueryString,
-  mintUpdateableEvents,
-  TxEntryStatus,
-} from "../transactionsUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { useTransactionEntryStyles } from '../../../components/transactions/TransactionsGrid'
+import { Debug } from '../../../components/utils/Debug'
+import { usePaperTitle } from '../../../pages/MainPage'
+import { paths } from '../../../pages/routes'
+import { getFormattedDateTime } from '../../../utils/dates'
+import { getLockAndMintParams, useMintMachine } from '../../mint/mintUtils'
+import { setTxHistoryOpened } from '../transactionsSlice'
+import { cloneTx, createTxQueryString, mintUpdateableEvents, TxActionChain, TxEntryStatus, } from '../transactionsUtils'
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -212,10 +200,17 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     mintCurrencyConfig,
     mintChainConfig,
     mintTxLink,
-    meta: { status, actionLabel, actionChain },
+    meta: { status, actionChain },
   } = getLockAndMintParams(tx);
 
   const { date, time } = getFormattedDateTime(tx.expiryTime - 24 * 3600);
+
+  let StatusIcon = EmptyCircleIcon; // TODO: change to empty icon
+  if (actionChain === TxActionChain.LOCK) {
+    StatusIcon = lockChainConfig.MainIcon;
+  } else if (actionChain === TxActionChain.RELEASE) {
+    StatusIcon = mintChainConfig.MainIcon;
+  }
 
   return (
     <>
@@ -233,6 +228,18 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             </Typography>
           </div>
           <div className={styles.links}>
+            {status === TxEntryStatus.ACTION_REQUIRED &&
+              actionChain === TxActionChain.LOCK &&
+              onAction && (
+                <Link
+                  onClick={onAction}
+                  target="_blank"
+                  color="primary"
+                  className={styles.link}
+                >
+                  Submit to {lockChainConfig.full}
+                </Link>
+              )}
             {lockTxLink && (
               <Link
                 href={lockTxLink}
@@ -244,16 +251,18 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 {lockChainConfig.full} transaction
               </Link>
             )}
-            {status === TxEntryStatus.ACTION_REQUIRED && onAction && (
-              <Link
-                onClick={onAction}
-                target="_blank"
-                color="primary"
-                className={styles.link}
-              >
-                {actionLabel}
-              </Link>
-            )}
+            {status === TxEntryStatus.ACTION_REQUIRED &&
+              actionChain === TxActionChain.MINT &&
+              onAction && (
+                <Link
+                  onClick={onAction}
+                  target="_blank"
+                  color="primary"
+                  className={styles.link}
+                >
+                  Submit to {mintChainConfig.full}
+                </Link>
+              )}
             {mintTxLink && (
               <Link
                 href={mintTxLink}
@@ -269,8 +278,8 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
         </div>
         <div className={styles.status}>
           <TransactionStatusIndicator
-            chain={actionChain}
-            status={status}
+            needsAction={status === TxEntryStatus.ACTION_REQUIRED}
+            Icon={StatusIcon}
             confirmations={lockConfirmations}
             targetConfirmations={lockTargetConfirmations}
           />

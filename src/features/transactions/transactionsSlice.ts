@@ -11,7 +11,7 @@ type TransactionsState = {
 
 let initialState: TransactionsState = {
   txs: [],
-  txHistoryOpened: true,
+  txHistoryOpened: false,
 };
 
 const slice = createSlice({

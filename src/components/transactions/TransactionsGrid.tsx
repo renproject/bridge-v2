@@ -143,8 +143,6 @@ export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
       </div>
       <div className={styles.status}>
         <TransactionStatusIndicator
-          chain={chain}
-          status={status}
           confirmations={confirmations}
         />
       </div>

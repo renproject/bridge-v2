@@ -22,6 +22,7 @@ import {
 import { $network } from "../network/networkSlice";
 import {
   getChainExplorerLink,
+  TxActionChain,
   TxEntryStatus,
   TxMeta,
 } from "../transactions/transactionsUtils";
@@ -142,21 +143,18 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   }
   const meta: TxMeta = {
     status: TxEntryStatus.PENDING,
-    actionChain: BridgeChain.UNKNOWNC,
-    actionLabel: "",
+    actionChain: TxActionChain.NONE,
   };
   if (lockTxHash) {
     if (mintTxHash) {
       meta.status = TxEntryStatus.COMPLETED;
     } else if (lockConfirmations >= lockTargetConfirmations) {
       meta.status = TxEntryStatus.ACTION_REQUIRED;
-      meta.actionChain = mintChainConfig.symbol;
-      meta.actionLabel = `Submit to ${mintChainConfig.full}`;
+      meta.actionChain = TxActionChain.MINT;
     }
   } else {
     meta.status = TxEntryStatus.ACTION_REQUIRED;
-    meta.actionChain = lockChainConfig.symbol;
-    meta.actionLabel = `Deposit ${lockCurrencyConfig.short}`;
+    meta.actionChain = TxActionChain.RELEASE;
   }
   return {
     networkConfig,

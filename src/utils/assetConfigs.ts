@@ -436,8 +436,8 @@ export const supportedRenNetworks = [
 
 export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
-  BridgeCurrency.BCH,
-  BridgeCurrency.DOGE,
+  // BridgeCurrency.BCH,
+  // BridgeCurrency.DOGE,
   BridgeCurrency.ZEC,
 ];
 
@@ -450,8 +450,8 @@ export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
 
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
-  BridgeCurrency.RENBCH,
-  BridgeCurrency.RENDOGE,
+  // BridgeCurrency.RENBCH,
+  // BridgeCurrency.RENDOGE,
   BridgeCurrency.RENZEC,
 ];
 

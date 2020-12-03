@@ -19,10 +19,17 @@ export enum TxEntryStatus {
   COMPLETED = "completed",
 }
 
+export enum TxActionChain {
+  LOCK = "lock",
+  MINT = "mint",
+  BURN = "burn",
+  RELEASE = "release",
+  NONE = "",
+}
+
 export type TxMeta = {
   status: TxEntryStatus;
-  actionChain: BridgeChain;
-  actionLabel: string;
+  actionChain: TxActionChain;
 };
 
 export enum TxType {
