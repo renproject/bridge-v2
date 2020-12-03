@@ -177,3 +177,16 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     meta,
   };
 };
+
+export enum DepositStates {
+  restoringDeposit = "restoringDeposit",
+  errorRestoring = "errorRestoring",
+  restoredDeposit = "restoredDeposit",
+  srcSettling = "srcSettling",
+  srcConfirmed = "srcConfirmed",
+  accepted = "accepted",
+  claiming = "claiming",
+  destInitiated = "destInitiated",
+  completed = "completed",
+  rejected = "rejected",
+}

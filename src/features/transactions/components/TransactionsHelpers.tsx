@@ -166,7 +166,6 @@ export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProp
 
 export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps> = ({
   tx,
-  onAction,
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -193,16 +192,21 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     console.log(current.value);
   }, [current.value]);
 
-  const handleNextAction = useCallback(() => {
+  const handleFinish = useCallback(() => {
     history.push({
       pathname: paths.MINT_TRANSACTION,
       search: "?" + createTxQueryString(tx),
+      state: {
+        txState: {
+          reloadTx: true,
+        },
+      },
     });
     dispatch(setTxHistoryOpened(false));
   }, [dispatch, history, tx]);
 
   return (
-    <MintTransactionEntry tx={current.context.tx} onAction={handleNextAction} />
+    <MintTransactionEntry tx={current.context.tx} onAction={handleFinish} />
   );
 };
 

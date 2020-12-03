@@ -51,6 +51,7 @@ export type TxConfigurationStepProps = {
 export type LocationTxState = {
   txState?: {
     newTx?: boolean;
+    reloadTx?: boolean;
   };
 };
 

@@ -119,8 +119,6 @@ type TransactionEntryProps = {
 };
 
 export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
-  chain,
-  status,
   confirmations,
 }) => {
   const styles = useTransactionEntryStyles();

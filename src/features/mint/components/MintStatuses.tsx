@@ -71,6 +71,8 @@ export const DepositTo: FunctionComponent<DepositToProps> = ({ tx }) => {
   const { color } = lockCurrencyConfig;
   const { MainIcon } = lockChainConfig;
 
+  useSetPaperTitle(`Send ${lockChainConfig.short}`);
+
   return (
     <>
       <ProgressWrapper>
