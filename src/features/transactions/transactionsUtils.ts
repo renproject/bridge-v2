@@ -82,7 +82,6 @@ const parseNumber = (value: any) => {
 export const isTxExpired = (tx: GatewaySession) => {
   if (tx.expiryTime) {
     const difference = Date.now() - tx.expiryTime;
-    console.log(difference);
     if (difference >= 24 * 3600) {
       return true;
     }

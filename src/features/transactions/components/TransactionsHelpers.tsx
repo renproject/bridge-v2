@@ -230,9 +230,11 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     StatusIcon = mintChainConfig.MainIcon;
   }
 
+  const params = getLockAndMintParams(tx);
   return (
     <>
-      <Debug disable it={{ tx, params: getLockAndMintParams(tx) }} />
+      <Debug wrapper it={{ tx, params }} />
+      <Debug disable it={{ meta: params.meta }} />
       <div className={styles.root}>
         <div className={styles.details}>
           <div className={styles.datetime}>

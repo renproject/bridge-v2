@@ -1,9 +1,18 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { makeStyles } from "@material-ui/core";
+import classNames from "classnames";
 
 const useStyles = makeStyles({
   root: {
     background: "lightgray",
+  },
+  wrapper: {
+    background: "gray",
+    height: 5,
+    overflow: "hidden",
+  },
+  wrapperEnabled: {
+    height: "auto",
   },
 });
 
@@ -13,6 +22,7 @@ type DebugProps = {
   it: any;
   force?: boolean;
   disable?: boolean;
+  wrapper?: boolean;
 };
 
 function replacer(name: any, val: any) {
@@ -22,20 +32,54 @@ function replacer(name: any, val: any) {
   return val;
 }
 
+type DebugWrapperProps = {
+  enabled: boolean;
+};
+
+const DebugWrapper: FunctionComponent<DebugWrapperProps> = ({
+  enabled,
+  children,
+}) => {
+  const classes = useStyles();
+  const [show, setShow] = useState(false);
+  const toggleShow = useCallback(() => {
+    setShow(!show);
+  }, [show]);
+  if (!enabled) {
+    return <>{children}</>;
+  }
+  const className = classNames(classes.wrapper, {
+    [classes.wrapperEnabled]: show,
+  });
+  return (
+    <div className={className} onClick={toggleShow}>
+      {children}
+    </div>
+  );
+};
+
 export const Debug: FunctionComponent<DebugProps> = ({
   it,
   force,
   disable,
+  wrapper,
   children,
 }) => {
   const classes = useStyles();
   const target = it || children;
   const show = !off || force;
+  const noClick = useCallback((event) => {
+    event.stopPropagation();
+  }, []);
   return show && !disable ? (
-    <pre className={classes.root}>{JSON.stringify(target, replacer, 2)}</pre>
+    <DebugWrapper enabled={!!wrapper}>
+      <pre className={classes.root} onClick={noClick}>
+        {JSON.stringify(target, replacer, 2)}
+      </pre>
+    </DebugWrapper>
   ) : null;
 };
 
-export const DebugProps: FunctionComponent<any> = (props) => (
+export const DebugComponentProps: FunctionComponent<any> = (props) => (
   <Debug it={props} />
 );

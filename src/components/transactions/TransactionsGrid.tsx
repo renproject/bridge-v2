@@ -1,12 +1,13 @@
-import { Chip, styled, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent, useCallback, useState } from "react";
-import { TxEntryStatus } from "../../features/transactions/transactionsUtils";
-import { BridgeChain } from "../../utils/assetConfigs";
-import { Link } from "../links/Links";
-import { SimplePagination } from "../pagination/SimplePagination";
-import { TransactionStatusIndicator } from "../progress/ProgressHelpers";
-import { TransactionStatusType } from "../utils/types";
+import { Chip, styled, Typography } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import React, { FunctionComponent, useCallback, useState } from 'react'
+import { TxEntryStatus } from '../../features/transactions/transactionsUtils'
+import { BridgeChain } from '../../utils/assetConfigs'
+import { SmallActionButton } from '../buttons/Buttons'
+import { Link } from '../links/Links'
+import { SimplePagination } from '../pagination/SimplePagination'
+import { TransactionStatusIndicator } from '../progress/ProgressHelpers'
+import { TransactionStatusType } from '../utils/types'
 
 type TransactionType = "mint" | "release";
 
@@ -105,6 +106,7 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
       marginRight: 0,
     },
   },
+  actions: {},
   status: {},
 }));
 
@@ -141,10 +143,11 @@ export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
           </Link>
         </div>
       </div>
+      <div className={styles.actions}>
+        <SmallActionButton>Submit</SmallActionButton>
+      </div>
       <div className={styles.status}>
-        <TransactionStatusIndicator
-          confirmations={confirmations}
-        />
+        <TransactionStatusIndicator confirmations={confirmations} />
       </div>
     </div>
   );
