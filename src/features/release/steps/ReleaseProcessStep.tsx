@@ -70,17 +70,19 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
 
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
   const chain = useSelector($chain);
   const rates = useSelector($exchangeRates);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+
   usePageTitle(getTxPageTitle(tx));
 
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
   }, [history]);
-
   const sourceChain = parsedTx?.sourceChain;
+
   useEffect(() => {
     if (sourceChain) {
       const bridgeChainConfig = getChainConfigByRentxName(sourceChain);
@@ -91,7 +93,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
-  const walletConnected = status === WalletStatus.CONNECTED;
 
   const { burnCurrencyConfig, releaseCurrencyConfig } = getBurnAndReleaseParams(
     tx

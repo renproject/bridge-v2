@@ -368,18 +368,28 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
   );
 };
 
-export const ActionButton: FunctionComponent<ButtonProps> = (props) => (
-  <Button
-    variant="contained"
-    size="large"
-    color="primary"
-    fullWidth
-    {...props}
-  />
-);
+const useActionButtonStyles = makeStyles({
+  root: { maxWidth: 320 },
+});
+
+export const ActionButton: FunctionComponent<ButtonProps> = ({ ...props }) => {
+  const styles = useActionButtonStyles();
+  return (
+    <Button
+      className={styles.root}
+      variant="contained"
+      size="large"
+      color="primary"
+      fullWidth
+      {...props}
+    />
+  );
+};
 
 export const ActionButtonWrapper = styled("div")(() => ({
   marginTop: 20,
+  display: "flex",
+  justifyContent: "center",
 }));
 
 const useSmallActionButtonStyles = makeStyles({

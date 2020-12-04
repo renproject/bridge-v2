@@ -15,5 +15,8 @@ export const typography: TypographyOptions = {
   },
   h6: {
     fontSize: 18
+  },
+  subtitle2: {
+    fontSize: 13
   }
 };

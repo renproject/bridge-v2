@@ -157,7 +157,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
         </Box>
       );
     },
-    [mode, styles, label]
+    [mode, styles, label, condensed]
   );
   return (
     <div>
@@ -214,7 +214,6 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
                     </Typography>
                     {mode !== "chain" && (
                       <Typography
-                        variant="subtitle2"
                         color="textSecondary"
                         className={styles.assetFullName}
                       >

@@ -33,11 +33,18 @@ const useTransactionsHeaderStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   header: {},
-  actions: {},
+  actions: {
+    display: "flex",
+    alignItems: "center",
+  },
+}));
+
+export const TransactionsContent = styled("div")(({ theme }) => ({
+  ...standardPaddings,
 }));
 
 type TransactionsHeaderProps = {
-  title: string;
+  title?: string;
 };
 
 export const TransactionsHeader: FunctionComponent<TransactionsHeaderProps> = ({
@@ -73,9 +80,11 @@ export const TransactionsStatusHeader: FunctionComponent<TransactionsHeaderProps
   const styles = useTransactionsStatusHeaderStyles();
   return (
     <div className={styles.root}>
-      <Typography variant="overline" className={styles.title}>
-        {title}
-      </Typography>
+      {title && (
+        <Typography variant="overline" className={styles.title}>
+          {title}
+        </Typography>
+      )}
     </div>
   );
 };

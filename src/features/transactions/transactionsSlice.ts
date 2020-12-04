@@ -6,11 +6,13 @@ export type BridgeTransaction = GatewaySession;
 
 type TransactionsState = {
   txs: Array<BridgeTransaction>;
+  txsPending: boolean;
   txHistoryOpened: boolean;
 };
 
 let initialState: TransactionsState = {
   txs: [],
+  txsPending: false,
   txHistoryOpened: false,
 };
 
@@ -20,6 +22,9 @@ const slice = createSlice({
   reducers: {
     setTxHistoryOpened(state, action: PayloadAction<boolean>) {
       state.txHistoryOpened = action.payload;
+    },
+    setTxsPending(state, action: PayloadAction<boolean>) {
+      state.txsPending = action.payload;
     },
     setTransactions(state, action: PayloadAction<Array<BridgeTransaction>>) {
       state.txs = action.payload;
@@ -58,6 +63,7 @@ const slice = createSlice({
 
 export const {
   setTxHistoryOpened,
+  setTxsPending,
   setTransactions,
   addTransaction,
   updateTransaction,

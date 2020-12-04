@@ -1,37 +1,34 @@
-import { Dialog } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AssetDropdown } from "../../components/dropdowns/AssetDropdown";
-import { SimplePagination } from "../../components/pagination/SimplePagination";
+import { Box, Dialog, Typography } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../components/buttons/Buttons'
+import { AssetDropdown } from '../../components/dropdowns/AssetDropdown'
+import { BigTopWrapper, BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../components/layout/LayoutHelpers'
+import { SimplePagination } from '../../components/pagination/SimplePagination'
+import { CenteredProgress, } from '../../components/progress/ProgressHelpers'
 import {
+  TransactionsContent,
   TransactionsHeader,
   TransactionsPaginationWrapper,
   TransactionsStatusHeader,
-} from "../../components/transactions/TransactionsGrid";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
-import { db } from "../../services/database/database";
-import { supportedMintDestinationChains } from "../../utils/assetConfigs";
+} from '../../components/transactions/TransactionsGrid'
+import { WalletStatus } from '../../components/utils/types'
+import { WalletConnectionProgress } from '../../components/wallet/WalletHelpers'
+import { useSelectedChainWallet } from '../../providers/multiwallet/multiwalletHooks'
+import { db } from '../../services/database/database'
+import { getChainConfig, supportedMintDestinationChains, } from '../../utils/assetConfigs'
+import { $wallet, $walletSignatures, setChain, setUser, setWalletPickerOpened, } from '../wallet/walletSlice'
+import { MintTransactionEntryResolver } from './components/TransactionsHelpers'
 import {
-  $wallet,
-  $walletSignatures,
-  setChain,
-  setUser,
-} from "../wallet/walletSlice";
-import { MintTransactionEntryResolver } from "./components/TransactionsHelpers";
-import {
-  $transactions,
+  $transactionsData,
   $txHistoryOpened,
   BridgeTransaction,
   setTransactions,
   setTxHistoryOpened,
-} from "./transactionsSlice";
-import { TxType } from "./transactionsUtils";
+  setTxsPending,
+} from './transactionsSlice'
+import { TxType } from './transactionsUtils'
 
 const txSorter = (a: Partial<GatewaySession>, b: Partial<GatewaySession>) => {
   if (a.expiryTime && b.expiryTime) {
@@ -42,14 +39,16 @@ const txSorter = (a: Partial<GatewaySession>, b: Partial<GatewaySession>) => {
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
-  const { account } = useSelectedChainWallet();
+  const { account, status } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, user } = useSelector($wallet);
-  const txs = useSelector($transactions);
+  const { txs, txsPending } = useSelector($transactionsData);
   const { signature, rawSignature } = useSelector($walletSignatures);
   const opened = useSelector($txHistoryOpened);
 
   useEffect(() => {
     if (account && signature && rawSignature) {
+      dispatch(setTxsPending(true));
       console.log("getting user");
       db.getUser(account.toLowerCase(), {
         signature,
@@ -70,10 +69,16 @@ export const TransactionHistory: FunctionComponent = () => {
           dispatch(
             setTransactions(txsData.sort(txSorter) as Array<BridgeTransaction>)
           );
+          dispatch(setTxsPending(false));
         })
         .catch(console.error);
     }
   }, [dispatch, user, signature]);
+
+  const chainConfig = getChainConfig(chain);
+  const handleWalletPickerOpen = useCallback(() => {
+    dispatch(setWalletPickerOpened(true));
+  }, [dispatch]);
 
   const handleChainChange = useCallback(
     (event) => {
@@ -96,6 +101,7 @@ export const TransactionHistory: FunctionComponent = () => {
   const itemsCount = all;
   const itemsPerPage = 4;
 
+  const showTransactions = walletConnected && !txsPending;
   return (
     <Dialog
       open={opened}
@@ -105,6 +111,9 @@ export const TransactionHistory: FunctionComponent = () => {
       keepMounted
     >
       <TransactionsHeader title="Transactions">
+        <Box mr={1}>
+          <Typography variant="subtitle2">Viewing: </Typography>
+        </Box>
         <AssetDropdown
           mode="chain"
           condensed
@@ -113,24 +122,64 @@ export const TransactionHistory: FunctionComponent = () => {
           onChange={handleChainChange}
         />
       </TransactionsHeader>
-      <TransactionsStatusHeader title={`All (${all})`} />
-      <div>
-        {txs.map((tx) => {
-          if (tx.type === TxType.MINT) {
-            return <MintTransactionEntryResolver key={tx.id} tx={tx} />;
-          } else {
-            return <span>Release</span>;
-          }
-        })}
-      </div>
-      <TransactionsPaginationWrapper>
-        <SimplePagination
-          count={itemsCount}
-          rowsPerPage={itemsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-        />
-      </TransactionsPaginationWrapper>
+      {(!walletConnected || txsPending) && (
+        <>
+          <TransactionsStatusHeader />
+          <TransactionsContent>
+            <BigTopWrapper>
+              {!walletConnected && (
+                <>
+                  <MediumWrapper>
+                    <Typography variant="body1" align="center">
+                      You must connect a wallet supporting {chainConfig.full} to
+                      view transactions
+                    </Typography>
+                  </MediumWrapper>
+                  <BigWrapper>
+                    <MediumWrapper>
+                      <CenteringSpacedBox>
+                        <WalletConnectionProgress />
+                      </CenteringSpacedBox>
+                    </MediumWrapper>
+                    <ActionButtonWrapper>
+                      <ActionButton onClick={handleWalletPickerOpen}>
+                        Connect Wallet
+                      </ActionButton>
+                    </ActionButtonWrapper>
+                  </BigWrapper>
+                </>
+              )}
+              {txsPending && (
+                <BigWrapper>
+                  <CenteredProgress color="primary" size={100} />
+                </BigWrapper>
+              )}
+            </BigTopWrapper>
+          </TransactionsContent>
+        </>
+      )}
+      {showTransactions && (
+        <>
+          <TransactionsStatusHeader title={`All (${all})`} />
+          <div>
+            {txs.map((tx) => {
+              if (tx.type === TxType.MINT) {
+                return <MintTransactionEntryResolver key={tx.id} tx={tx} />;
+              } else {
+                return <span>Release</span>;
+              }
+            })}
+          </div>
+          <TransactionsPaginationWrapper>
+            <SimplePagination
+              count={itemsCount}
+              rowsPerPage={itemsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+            />
+          </TransactionsPaginationWrapper>
+        </>
+      )}
     </Dialog>
   );
 };
