@@ -101,8 +101,12 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
     marginTop: 3,
     marginBottom: 3,
   },
+  descriptionLabel: {
+    fontSize: 15
+  },
   links: {},
   link: {
+    fontSize: 14,
     marginRight: 24,
     "&:last-child": {
       marginRight: 0,
@@ -130,7 +134,7 @@ export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
           <Chip size="small" label="23:45:32 UTC" />
         </div>
         <div className={styles.description}>
-          <Typography variant="body2">
+          <Typography variant="body2" className={styles.descriptionLabel}>
             Mint 0.9877 renBTC on Ethereum
           </Typography>
         </div>

@@ -34,8 +34,8 @@ import {
   cloneTx,
   createTxQueryString,
   mintUpdateableEvents,
-  TxPhase,
   TxEntryStatus,
+  TxPhase,
 } from "../transactionsUtils";
 
 export const ProcessingTimeWrapper = styled("div")({
@@ -230,9 +230,9 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
 
   let StatusIcon = EmptyIcon;
   if (phase === TxPhase.LOCK) {
-    StatusIcon = lockChainConfig.MainIcon;
+    StatusIcon = lockChainConfig.Icon;
   } else if (phase === TxPhase.MINT) {
-    StatusIcon = mintChainConfig.MainIcon;
+    StatusIcon = mintChainConfig.Icon;
   }
 
   const params = getLockAndMintParams(tx);
@@ -247,7 +247,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             <Chip size="small" label={time} />
           </div>
           <div className={styles.description}>
-            <Typography variant="body2">
+            <Typography variant="body2" className={styles.descriptionLabel}>
               Mint {tx.targetAmount} {mintCurrencyConfig.short} on{" "}
               {mintChainConfig.full}
             </Typography>
@@ -293,6 +293,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
           <TransactionStatusIndicator
             needsAction={status === TxEntryStatus.ACTION_REQUIRED}
             Icon={StatusIcon}
+            showConfirmations={phase === TxPhase.LOCK}
             confirmations={lockConfirmations}
             targetConfirmations={lockTargetConfirmations}
           />

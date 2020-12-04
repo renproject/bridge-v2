@@ -1,11 +1,18 @@
-import { CircularProgress, CircularProgressProps, fade, styled, Theme, Typography, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import CompletedIcon from '@material-ui/icons/Check'
-import DoneIcon from '@material-ui/icons/Done'
-import classNames from 'classnames'
-import React, { FunctionComponent, ReactNode } from 'react'
-import { CustomSvgIconComponent } from '../icons/RenIcons'
-import { CenteringSpacedBox } from '../layout/LayoutHelpers'
+import {
+  CircularProgress,
+  CircularProgressProps,
+  fade,
+  styled,
+  Theme,
+  Typography,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import CompletedIcon from "@material-ui/icons/Check";
+import DoneIcon from "@material-ui/icons/Done";
+import classNames from "classnames";
+import React, { FunctionComponent, ReactNode } from "react";
+import { CustomSvgIconComponent, EmptyIcon } from "../icons/RenIcons";
+import { CenteringSpacedBox } from "../layout/LayoutHelpers";
 
 export const CenteredProgress: FunctionComponent<CircularProgressProps> = (
   props
@@ -257,27 +264,30 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
 export type TransactionStatusIndicatorProps = {
   needsAction?: boolean;
   Icon?: CustomSvgIconComponent;
+  showConfirmations?: boolean;
   confirmations?: number;
   targetConfirmations?: number;
 };
 
 export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndicatorProps> = ({
   needsAction,
+  showConfirmations = true,
   confirmations,
   targetConfirmations,
-  Icon = CompletedIcon,
+  Icon = EmptyIcon,
 }) => {
   const styles = useTransactionStatusIndicatorStyles();
+  const confirmationProps = showConfirmations
+    ? {
+        confirmations,
+        targetConfirmations,
+      }
+    : {};
   return (
     <div className={styles.root}>
       <div className={styles.iconWrapper}>
         <div className={styles.iconCircle}>
-          <ProgressWithContent
-            color="inherit"
-            size={42}
-            confirmations={confirmations}
-            targetConfirmations={targetConfirmations}
-          >
+          <ProgressWithContent color="inherit" size={42} {...confirmationProps}>
             <Icon fontSize="large" color="inherit" />
           </ProgressWithContent>
         </div>
