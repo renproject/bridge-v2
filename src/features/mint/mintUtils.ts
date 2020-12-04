@@ -23,7 +23,7 @@ import { $network } from "../network/networkSlice";
 import {
   getChainExplorerLink,
   isTxExpired,
-  TxActionChain,
+  TxPhase,
   TxEntryStatus,
   TxMeta,
 } from "../transactions/transactionsUtils";
@@ -144,7 +144,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   }
   const meta: TxMeta = {
     status: TxEntryStatus.PENDING,
-    actionChain: TxActionChain.NONE,
+    phase: TxPhase.NONE,
   };
   if (isTxExpired(tx)) {
     meta.status = TxEntryStatus.EXPIRED;
@@ -153,11 +153,11 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
       meta.status = TxEntryStatus.COMPLETED;
     } else if (lockConfirmations >= lockTargetConfirmations) {
       meta.status = TxEntryStatus.ACTION_REQUIRED;
-      meta.actionChain = TxActionChain.MINT;
+      meta.phase = TxPhase.MINT;
     }
   } else {
     meta.status = TxEntryStatus.ACTION_REQUIRED;
-    meta.actionChain = TxActionChain.LOCK;
+    meta.phase = TxPhase.LOCK;
   }
   return {
     networkConfig,

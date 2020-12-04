@@ -34,7 +34,7 @@ import {
   cloneTx,
   createTxQueryString,
   mintUpdateableEvents,
-  TxActionChain,
+  TxPhase,
   TxEntryStatus,
 } from "../transactionsUtils";
 
@@ -223,15 +223,15 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     mintCurrencyConfig,
     mintChainConfig,
     mintTxLink,
-    meta: { status, actionChain },
+    meta: { status, phase },
   } = getLockAndMintParams(tx);
 
   const { date, time } = getFormattedDateTime(tx.expiryTime - 24 * 3600);
 
   let StatusIcon = EmptyIcon;
-  if (actionChain === TxActionChain.LOCK) {
+  if (phase === TxPhase.LOCK) {
     StatusIcon = lockChainConfig.MainIcon;
-  } else if (actionChain === TxActionChain.RELEASE) {
+  } else if (phase === TxPhase.MINT) {
     StatusIcon = mintChainConfig.MainIcon;
   }
 

@@ -20,7 +20,7 @@ export enum TxEntryStatus {
   EXPIRED = "expired",
 }
 
-export enum TxActionChain {
+export enum TxPhase {
   LOCK = "lock",
   MINT = "mint",
   BURN = "burn",
@@ -30,7 +30,7 @@ export enum TxActionChain {
 
 export type TxMeta = {
   status: TxEntryStatus;
-  actionChain: TxActionChain; //TODO rename to TxPhase
+  phase: TxPhase; //TODO rename to TxPhase
 };
 
 export enum TxType {
