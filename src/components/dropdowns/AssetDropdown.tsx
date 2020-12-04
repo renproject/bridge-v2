@@ -47,15 +47,21 @@ const iconStyles = {
   height: 32,
 };
 
+const useCondensedSelectStyles = makeStyles(() => ({
+  select: {
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+}));
+
 const useAssetDropdownStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     borderRadius: theme.shape.borderRadius,
     border: `1px solid ${theme.palette.divider}`,
   },
-  select: {
+  inputRoot: {
     width: "100%",
-    minHeight: 58,
   },
   supplementalText: {
     fontSize: 12,
@@ -91,7 +97,8 @@ type AssetDropdownProps = SelectProps & {
   mode: AssetDropdownMode;
   available?: Array<BridgeCurrency | BridgeChain>;
   balances?: Array<AssetBalance>;
-  label: string;
+  condensed?: boolean;
+  label?: string;
 };
 
 const getAssetData = (
@@ -115,11 +122,13 @@ const getAssetData = (
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   mode,
   available,
+  condensed = false,
   label,
   balances,
   ...rest
 }) => {
   const styles = useAssetDropdownStyles();
+  const condensedSelectClasses = useCondensedSelectStyles();
   const availabilityFilter = useMemo(
     () => createAvailabilityFilter(available),
     [available]
@@ -130,11 +139,13 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
       const { Icon, full, short } = getAssetData(selected);
       return (
         <Box display="flex" alignItems="center" width="100%">
-          <Box width="40%">
-            <Typography variant="body2" className={styles.supplementalText}>
-              {label}
-            </Typography>
-          </Box>
+          {!condensed && (
+            <Box width="40%">
+              <Typography variant="body2" className={styles.supplementalText}>
+                {label}
+              </Typography>
+            </Box>
+          )}
           <Box width="45px" display="flex" alignItems="center">
             <Icon className={styles.listIcon} />
           </Box>
@@ -152,7 +163,8 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
     <div>
       <Select
         variant="outlined"
-        className={styles.select}
+        className={condensed ? undefined : styles.inputRoot}
+        classes={condensed ? condensedSelectClasses : undefined}
         renderValue={valueRenderer}
         displayEmpty
         MenuProps={{

@@ -464,6 +464,7 @@ export const supportedLockCurrencies = [
   BridgeCurrency.ZEC,
 ];
 
+// TODO: should be the same
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
   BridgeChain.BSCC,

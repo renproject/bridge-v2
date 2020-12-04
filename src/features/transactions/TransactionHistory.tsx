@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AssetDropdown } from "../../components/dropdowns/AssetDropdown";
 import { SimplePagination } from "../../components/pagination/SimplePagination";
 import {
   TransactionsHeader,
@@ -15,7 +16,13 @@ import {
 } from "../../components/transactions/TransactionsGrid";
 import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../services/database/database";
-import { $walletSignatures, $walletUser, setUser } from "../wallet/walletSlice";
+import { supportedMintDestinationChains } from "../../utils/assetConfigs";
+import {
+  $wallet,
+  $walletSignatures,
+  setChain,
+  setUser,
+} from "../wallet/walletSlice";
 import { MintTransactionEntryResolver } from "./components/TransactionsHelpers";
 import {
   $transactions,
@@ -36,7 +43,7 @@ const txSorter = (a: Partial<GatewaySession>, b: Partial<GatewaySession>) => {
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { account } = useSelectedChainWallet();
-  const user = useSelector($walletUser);
+  const { chain, user } = useSelector($wallet);
   const txs = useSelector($transactions);
   const { signature, rawSignature } = useSelector($walletSignatures);
   const opened = useSelector($txHistoryOpened);
@@ -68,6 +75,13 @@ export const TransactionHistory: FunctionComponent = () => {
     }
   }, [dispatch, user, signature]);
 
+  const handleChainChange = useCallback(
+    (event) => {
+      dispatch(setChain(event.target.value));
+    },
+    [dispatch]
+  );
+
   const handleClose = useCallback(() => {
     dispatch(setTxHistoryOpened(false));
   }, [dispatch]);
@@ -90,7 +104,15 @@ export const TransactionHistory: FunctionComponent = () => {
       onBackdropClick={handleClose}
       keepMounted
     >
-      <TransactionsHeader title="Transactions" />
+      <TransactionsHeader title="Transactions">
+        <AssetDropdown
+          mode="chain"
+          condensed
+          available={supportedMintDestinationChains}
+          value={chain}
+          onChange={handleChainChange}
+        />
+      </TransactionsHeader>
       <TransactionsStatusHeader title={`All (${all})`} />
       <div>
         {txs.map((tx) => {

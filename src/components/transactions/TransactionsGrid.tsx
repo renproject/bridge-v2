@@ -28,7 +28,12 @@ const useTransactionsHeaderStyles = makeStyles((theme) => ({
     ...standardPaddings,
     paddingTop: 20,
     background: theme.customColors.greyHeaderBackground,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
+  header: {},
+  actions: {},
 }));
 
 type TransactionsHeaderProps = {
@@ -37,11 +42,13 @@ type TransactionsHeaderProps = {
 
 export const TransactionsHeader: FunctionComponent<TransactionsHeaderProps> = ({
   title,
+  children,
 }) => {
   const styles = useTransactionsHeaderStyles();
   return (
     <div className={styles.root}>
       <Typography variant="h6">{title}</Typography>
+      <div className={styles.actions}>{children}</div>
     </div>
   );
 };
@@ -102,7 +109,7 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
     marginBottom: 3,
   },
   title: {
-    fontSize: 15
+    fontSize: 15,
   },
   links: {},
   link: {
