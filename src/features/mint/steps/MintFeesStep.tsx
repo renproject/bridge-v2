@@ -44,7 +44,6 @@ import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getChainConfig,
-  getChainShortLabel,
   getCurrencyConfig,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
@@ -98,7 +97,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const { GreyIcon } = lockCurrencyConfig;
 
   const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
-  const targetNetworkLabel = getChainShortLabel(chain);
   const destinationChainConfig = getChainConfig(chain);
   const destinationChainNativeCurrencyConfig = getCurrencyConfig(
     destinationChainConfig.nativeCurrency
@@ -208,7 +206,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="To"
           labelTooltip={mintTooltips.to}
-          value={targetNetworkLabel}
+          value={destinationChainConfig.short}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>

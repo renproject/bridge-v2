@@ -157,6 +157,10 @@ export const BinanceChainColorIcon: CustomSvgIconComponent = (props) => {
   return <SvgIcon component={BinanceChainColor} {...props} />;
 };
 
+export const EthereumChainIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={EthereumIcon} {...props} />;
+};
+
 export const EthereumChainFullIcon: CustomSvgIconComponent = (props) => {
   return <SvgIcon component={EthereumChainFull} {...props} />;
 };

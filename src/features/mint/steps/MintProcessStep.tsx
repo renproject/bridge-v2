@@ -100,7 +100,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         setReloading(false);
       }, 1000);
     }
-  }, [txState, txState?.reloadTx, parsedTx]);
+  }, [history, location, txState, parsedTx]);
 
   useEffect(() => {
     console.log("tx changed", tx);

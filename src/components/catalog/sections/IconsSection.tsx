@@ -13,6 +13,7 @@ import {
   BchIcon,
   BinanceChainColorIcon,
   BinanceChainFullIcon,
+  BinanceChainIcon,
   BitcoinIcon,
   BitcoinInCircleIcon,
   BrowserNotificationsIcon,
@@ -31,6 +32,7 @@ import {
   EmptyCircleIcon,
   EthereumChainColorIcon,
   EthereumChainFullIcon,
+  EthereumChainIcon,
   EthereumIcon,
   FilFullIcon,
   FilGreyIcon,
@@ -79,13 +81,17 @@ export const IconsSection: FunctionComponent = () => {
         <WalletConnectIcon />
       </SeparationWrapper>
       <SeparationWrapper>
+        <BinanceChainFullIcon />
+        <EthereumChainFullIcon />
+        <WalletConnectFullIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
         <BinanceChainColorIcon />
         <EthereumChainColorIcon />
       </SeparationWrapper>
       <SeparationWrapper>
-        <BinanceChainFullIcon />
-        <EthereumChainFullIcon />
-        <WalletConnectFullIcon />
+        <BinanceChainIcon />
+        <EthereumChainIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BtcIcon />
