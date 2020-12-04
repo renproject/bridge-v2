@@ -278,12 +278,14 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
 
 type WalletConnectionStatusButtonProps = ButtonProps & {
   status: WalletConnectionStatusType;
+  wallet: BridgeWallet;
   account?: string;
 };
 
 export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionStatusButtonProps> = ({
   status,
   account,
+  wallet,
   ...rest
 }) => {
   const {
@@ -292,7 +294,10 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
     ...classes
   } = useWalletConnectionStatusButtonStyles();
 
-  const label = getWalletConnectionLabel(status);
+  const label =
+    status === WalletStatus.CONNECTED
+      ? getWalletConfig(wallet).short
+      : getWalletConnectionLabel(status);
   const trimmedAddress = trimAddress(account);
 
   return (

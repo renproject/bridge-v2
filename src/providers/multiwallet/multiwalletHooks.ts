@@ -3,12 +3,26 @@ import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { useSelector } from "react-redux";
 import { WalletConnectionStatusType } from "../../components/utils/types";
 import { $multiwalletChain } from "../../features/wallet/walletSlice";
+import { BridgeWallet } from "../../utils/assetConfigs";
 
 type WalletData = {
   account: string;
   status: WalletConnectionStatusType;
   targetNetwork: RenNetwork;
   provider: any;
+  symbol: BridgeWallet;
+};
+
+const resolveWallet = (provider: any) => {
+  if (provider?.isMetaMask) {
+    return BridgeWallet.METAMASKW;
+  } else if (
+    provider?.chainId === "0x61" ||
+    provider?.chainId.indexOf("Binance")
+  ) {
+    return BridgeWallet.BINANCESMARTW;
+  }
+  return BridgeWallet.UNKNOWNW;
 };
 
 type UseWallet = (chain: string) => WalletData;
@@ -19,12 +33,14 @@ export const useWallet: UseWallet = (chain) => {
   const { account = "", status = "disconnected" } =
     enabledChains?.[chain] || {};
   const provider = enabledChains?.[chain]?.provider;
+  const symbol = resolveWallet(provider);
   return {
     account,
     status,
     targetNetwork,
     provider,
     enabledChains,
+    symbol,
   } as WalletData;
 };
 

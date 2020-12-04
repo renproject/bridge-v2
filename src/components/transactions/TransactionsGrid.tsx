@@ -128,7 +128,12 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
       marginRight: 0,
     },
   },
-  actions: {},
+  actions: {
+    flexGrow: 1,
+    paddingRight: 20,
+    display: "flex",
+    justifyContent: "flex-end",
+  },
   status: {},
 }));
 
