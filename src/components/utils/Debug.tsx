@@ -8,11 +8,17 @@ const useStyles = makeStyles({
   },
   wrapper: {
     background: "gray",
-    height: 5,
     overflow: "hidden",
+    height: 5,
+    "&:hover": {
+      height: 10,
+    },
   },
   wrapperEnabled: {
     height: "auto",
+    "&:hover": {
+      height: "auto",
+    },
   },
 });
 
