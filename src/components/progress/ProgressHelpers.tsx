@@ -1,18 +1,10 @@
-import {
-  CircularProgress,
-  CircularProgressProps,
-  fade,
-  styled,
-  Theme,
-  Typography,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import CompletedIcon from "@material-ui/icons/Check";
-import DoneIcon from "@material-ui/icons/Done";
-import classNames from "classnames";
-import React, { FunctionComponent, ReactNode } from "react";
-import { CustomSvgIconComponent, EmptyIcon } from "../icons/RenIcons";
-import { CenteringSpacedBox } from "../layout/LayoutHelpers";
+import { CircularProgress, CircularProgressProps, fade, styled, Theme, Typography, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import DoneIcon from '@material-ui/icons/Done'
+import classNames from 'classnames'
+import React, { FunctionComponent, ReactNode } from 'react'
+import { CustomSvgIconComponent, EmptyIcon } from '../icons/RenIcons'
+import { CenteringSpacedBox } from '../layout/LayoutHelpers'
 
 export const CenteredProgress: FunctionComponent<CircularProgressProps> = (
   props

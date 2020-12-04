@@ -199,6 +199,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     },
     [dispatch, account, signature, current.value]
   );
+  console.log(handleTxUpdated);
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;

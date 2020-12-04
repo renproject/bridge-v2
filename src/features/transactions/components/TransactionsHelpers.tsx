@@ -247,7 +247,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             <Chip size="small" label={time} />
           </div>
           <div className={styles.description}>
-            <Typography variant="body2" className={styles.descriptionLabel}>
+            <Typography variant="body2" className={styles.title}>
               Mint {tx.targetAmount} {mintCurrencyConfig.short} on{" "}
               {mintChainConfig.full}
             </Typography>
@@ -264,6 +264,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 target="_blank"
                 external
                 color="primary"
+                underline="hover"
                 className={styles.link}
               >
                 {lockChainConfig.full} transaction
@@ -275,6 +276,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 target="_blank"
                 external
                 color="primary"
+                underline="hover"
                 className={styles.link}
               >
                 {mintChainConfig.full} transaction
