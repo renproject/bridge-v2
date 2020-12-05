@@ -69,6 +69,10 @@ export class FireBase<Transaction extends { id: string }>
       .update({ deleted: true });
   };
 
+  public getTx = async (tx: Transaction) => {
+    return this.db.collection("transactions").doc(tx.id).get();
+  };
+
   public getTxs = async (signature: string): Promise<Transaction[]> => {
     const fsDataSnapshot = await this.db
       .collection("transactions")

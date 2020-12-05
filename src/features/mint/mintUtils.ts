@@ -2,8 +2,10 @@ import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { GatewaySession, mintMachine } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
+import { db } from "../../services/database/database";
 import { getRenJs } from "../../services/renJs";
 import { lockChainMap, mintChainMap } from "../../services/rentx";
 import {
@@ -190,3 +192,14 @@ export enum DepositStates {
   completed = "completed",
   rejected = "rejected",
 }
+
+export const useMintTransactionPersistence = (
+  tx: GatewaySession,
+  state: DepositStates
+) => {
+  useEffect(() => {
+    db.getTx(tx).then((data) => {
+      console.log("data", data);
+    });
+  }, [tx, state]);
+};
