@@ -1,3 +1,4 @@
+import { GatewaySession } from "@renproject/ren-tx";
 import firebase from "firebase/app";
 import { env } from "../../../constants/environmentVariables";
 
@@ -18,6 +19,21 @@ require("firebase/firestore");
 
 const FIREBASE_AUTH_DOMAIN = `renproject.io`;
 
+type DbTimestamps = {
+  seconds: number;
+  nanoseconds: number;
+};
+
+export type DbMeta = {
+  state: string;
+};
+
+export type DbGatewaySession = GatewaySession & {
+  updated: DbTimestamps;
+  created: DbTimestamps;
+  meta: DbMeta;
+};
+
 export class FireBase<Transaction extends { id: string }>
   implements Database<Transaction> {
   private db: firebase.firestore.Firestore;
@@ -32,9 +48,15 @@ export class FireBase<Transaction extends { id: string }>
     fsSignature: string | null
   ) => {
     // add timestamps
-    const timestamp = firebase.firestore.Timestamp.fromDate(
+    const timestamps = firebase.firestore.Timestamp.fromDate(
       new Date(Date.now())
-    );
+    ) as DbTimestamps;
+
+    const dbTx = {
+      ...tx,
+      created: timestamps,
+      updated: timestamps,
+    };
 
     await this.db
       .collection("transactions")
@@ -43,22 +65,23 @@ export class FireBase<Transaction extends { id: string }>
         user: localWeb3Address.toLowerCase(),
         walletSignature: fsSignature,
         id: tx.id,
-        updated: timestamp,
-        data: JSON.stringify({ ...tx, created: timestamp, updated: timestamp }),
+        updated: timestamps,
+        data: JSON.stringify(dbTx),
       })
       .catch(console.error);
   };
 
   public updateTx = async (tx: Transaction) => {
-    const timestamp = firebase.firestore.Timestamp.fromDate(
+    const timestamps = firebase.firestore.Timestamp.fromDate(
       new Date(Date.now())
     );
+    const dbTx = { ...tx, updated: timestamps };
     await this.db
       .collection("transactions")
       .doc(tx.id)
       .update({
-        data: JSON.stringify({ ...tx, updated: timestamp }),
-        updated: timestamp,
+        data: JSON.stringify(dbTx),
+        updated: timestamps,
       });
   };
 
@@ -70,7 +93,19 @@ export class FireBase<Transaction extends { id: string }>
   };
 
   public getTx = async (tx: Transaction) => {
-    return this.db.collection("transactions").doc(tx.id).get();
+    return this.db
+      .collection("transactions")
+      .doc(tx.id)
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          if (data && !data.deleted) {
+            return JSON.parse(data.data);
+          }
+        }
+        throw new Error(`Tx: ${tx.id} not found`);
+      });
   };
 
   public getTxs = async (signature: string): Promise<Transaction[]> => {

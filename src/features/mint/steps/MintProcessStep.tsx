@@ -16,11 +16,9 @@ import { usePageTitle } from '../../../hooks/usePageTitle'
 import { usePaperTitle } from '../../../pages/MainPage'
 import { paths } from '../../../pages/routes'
 import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { db } from '../../../services/database/database'
 import { getChainConfigByRentxName, getCurrencyConfigByRentxName, } from '../../../utils/assetConfigs'
 import { TransactionFees } from '../../transactions/components/TransactionFees'
 import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
-import { addTransaction } from '../../transactions/transactionsSlice'
 import {
   createTxQueryString,
   getTxPageTitle,
@@ -28,15 +26,15 @@ import {
   TxType,
   useTxParam,
 } from '../../transactions/transactionsUtils'
-import { $chain, $walletSignatures, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
+import { $chain, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
 import {
   DepositAcceptedStatus,
   DepositConfirmationStatus,
-  DepositTo,
+  DepositToStatus,
   DestinationPendingStatus,
   DestinationReceivedStatus,
 } from '../components/MintStatuses'
-import { useMintMachine } from '../mintUtils'
+import { useMintMachine, useMintTransactionPersistence } from '../mintUtils'
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -150,21 +148,21 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
 }) => {
   const [current] = useMintMachine(tx);
-  const dispatch = useDispatch();
-  const { signature } = useSelector($walletSignatures);
-  const { account } = useSelectedChainWallet();
-
-  const handleTxUpdated = useCallback(
-    (tx) => {
-      if (current.value === "srcSettling") {
-        db.addTx(tx, account, signature).then(() => {
-          dispatch(addTransaction(tx));
-        });
-      }
-    },
-    [dispatch, account, signature, current.value]
-  );
-  console.log(handleTxUpdated);
+  // const dispatch = useDispatch();
+  // const { signature } = useSelector($walletSignatures);
+  // const { account } = useSelectedChainWallet();
+  //
+  // const handleTxUpdated = useCallback(
+  //   (tx) => {
+  //     if (current.value === "srcSettling") {
+  //       db.addTx(tx, account, signature).then(() => {
+  //         dispatch(addTransaction(tx));
+  //       });
+  //     }
+  //   },
+  //   [dispatch, account, signature, current.value]
+  // );
+  // console.log(handleTxUpdated);
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;
@@ -203,20 +201,20 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   return (
     <>
       {activeDeposit ? (
-        <DepositStatus
+        <MintTransactionDepositStatus
           tx={current.context.tx}
           deposit={activeDeposit.deposit}
           machine={activeDeposit.machine}
         />
       ) : (
-        <DepositTo tx={current.context.tx} />
+        <DepositToStatus tx={current.context.tx} />
       )}
       <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
     </>
   );
 };
 
-type DepositStatusProps = {
+type MintTransactionDepositStatusProps = {
   tx: GatewaySession;
   deposit: GatewayTransaction;
   machine: Actor<typeof depositMachine>;
@@ -224,7 +222,7 @@ type DepositStatusProps = {
 
 export const forceState = "srcConfirmed" as keyof DepositMachineSchema["states"];
 
-export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
+export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepositStatusProps> = ({
   tx,
   deposit,
   machine,
@@ -236,13 +234,13 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
     // setSubmitting(true);
   }, [machine]);
 
+  const state = machine?.state.value as keyof DepositMachineSchema["states"];
+  console.log("machine.state.value", state);
+  useMintTransactionPersistence(tx, state);
   if (!machine) {
     return <div>Transaction completed</div>;
   }
-  const stateValue = machine.state
-    .value as keyof DepositMachineSchema["states"];
-  console.log("machine.state.value", stateValue);
-  switch (stateValue) {
+  switch (state) {
     // switch (forceState) {
     case "srcSettling":
       return (
@@ -258,7 +256,7 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
         <DepositAcceptedStatus
           tx={tx}
           onSubmit={handleSubmitToDestinationChain}
-          submitting={stateValue === "claiming"}
+          submitting={state === "claiming"}
         />
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up

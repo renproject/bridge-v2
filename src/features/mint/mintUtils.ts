@@ -1,11 +1,16 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { GatewaySession, mintMachine } from "@renproject/ren-tx";
+import {
+  DepositMachineSchema,
+  GatewaySession,
+  mintMachine,
+} from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { db } from "../../services/database/database";
+import { DbGatewaySession } from "../../services/database/firebase/firebase";
 import { getRenJs } from "../../services/renJs";
 import { lockChainMap, mintChainMap } from "../../services/rentx";
 import {
@@ -193,13 +198,48 @@ export enum DepositStates {
   rejected = "rejected",
 }
 
+export const mintTxStateUpdateSequence = [
+  DepositStates.srcSettling,
+  DepositStates.srcConfirmed,
+  DepositStates.accepted,
+  DepositStates.claiming,
+  DepositStates.completed,
+];
+
+export const shouldUpdateMintTx = (
+  tx: GatewaySession | DbGatewaySession,
+  dbTx: DbGatewaySession,
+  state: string
+) => {
+  // update when the new state is next in sequence
+  // will prevent multiple updates in separate sessions
+  const dbState = dbTx.meta.state;
+  const dbStateIndex = mintTxStateUpdateSequence.indexOf(
+    dbState as DepositStates
+  );
+  const stateIndex = mintTxStateUpdateSequence.indexOf(state as DepositStates);
+  return stateIndex > dbStateIndex;
+};
+
 export const useMintTransactionPersistence = (
-  tx: GatewaySession,
-  state: DepositStates
+  tx: GatewaySession | DbGatewaySession,
+  state: keyof DepositMachineSchema["states"]
 ) => {
   useEffect(() => {
-    db.getTx(tx).then((data) => {
-      console.log("data", data);
-    });
+    if (!state) {
+      return;
+    }
+    db.getTx(tx)
+      .then((dbTx) => {
+        console.log("data", dbTx);
+        if (shouldUpdateMintTx(tx, dbTx, state)) {
+          db.updateTx(tx).then(() => {
+            console.log("updated", dbTx);
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Tx synchronization failed", err);
+      });
   }, [tx, state]);
 };

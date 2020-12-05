@@ -43,6 +43,7 @@ import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../../services/database/database";
+import { DbMeta } from "../../../services/database/firebase/firebase";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -70,6 +71,7 @@ import {
 import { $mint } from "../mintSlice";
 import {
   createMintTransaction,
+  DepositStates,
   preValidateMintTransaction,
 } from "../mintUtils";
 
@@ -156,7 +158,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const onMintTxCreated = useCallback(
     (tx) => {
       console.log("onMintTxCreated");
-      db.addTx(tx, account, signature).then(() => {
+      const meta: DbMeta = { state: DepositStates.srcSettling };
+      const dbTx = { ...tx, meta };
+      db.addTx(dbTx, account, signature).then(() => {
         dispatch(addTransaction(tx));
         history.push({
           pathname: paths.MINT_TRANSACTION,

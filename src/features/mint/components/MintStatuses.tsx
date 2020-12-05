@@ -48,7 +48,7 @@ export type DepositToProps = {
   tx: GatewaySession;
 };
 
-export const DepositTo: FunctionComponent<DepositToProps> = ({ tx }) => {
+export const DepositToStatus: FunctionComponent<DepositToProps> = ({ tx }) => {
   const [showQr, setShowQr] = useState(false);
   const toggleQr = useCallback(() => {
     setShowQr(!showQr);
