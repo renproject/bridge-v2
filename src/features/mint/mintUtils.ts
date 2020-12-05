@@ -185,7 +185,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   };
 };
 
-export enum DepositStates {
+export enum DepositState {
   restoringDeposit = "restoringDeposit",
   errorRestoring = "errorRestoring",
   restoredDeposit = "restoredDeposit",
@@ -199,11 +199,11 @@ export enum DepositStates {
 }
 
 export const mintTxStateUpdateSequence = [
-  DepositStates.srcSettling,
-  DepositStates.srcConfirmed,
-  DepositStates.accepted,
-  DepositStates.claiming,
-  DepositStates.completed,
+  DepositState.srcSettling,
+  DepositState.srcConfirmed,
+  DepositState.accepted,
+  DepositState.claiming,
+  DepositState.completed,
 ];
 
 export const shouldUpdateMintTx = (
@@ -213,11 +213,19 @@ export const shouldUpdateMintTx = (
 ) => {
   // update when the new state is next in sequence
   // will prevent multiple updates in separate sessions
-  const dbState = dbTx.meta.state;
+  const dbState = dbTx?.meta?.state;
+  if (!dbState) {
+    // update when no state
+    return true;
+  }
   const dbStateIndex = mintTxStateUpdateSequence.indexOf(
-    dbState as DepositStates
+    dbState as DepositState
   );
-  const stateIndex = mintTxStateUpdateSequence.indexOf(state as DepositStates);
+  const stateIndex = mintTxStateUpdateSequence.indexOf(state as DepositState);
+  if (stateIndex <= 0) {
+    //dont update for srcSettling or not supported states
+    return false;
+  }
   return stateIndex > dbStateIndex;
 };
 
@@ -226,6 +234,7 @@ export const useMintTransactionPersistence = (
   state: keyof DepositMachineSchema["states"]
 ) => {
   useEffect(() => {
+    console.log("tx/state", state);
     if (!state) {
       return;
     }
@@ -233,8 +242,9 @@ export const useMintTransactionPersistence = (
       .then((dbTx) => {
         console.log("data", dbTx);
         if (shouldUpdateMintTx(tx, dbTx, state)) {
-          db.updateTx(tx).then(() => {
-            console.log("updated", dbTx);
+          const newDbTx = { ...tx, meta: { state } };
+          db.updateTx(newDbTx).then(() => {
+            console.log("updated", newDbTx);
           });
         }
       })

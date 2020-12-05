@@ -54,7 +54,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   }, [history]);
 
   useEffect(() => {
-    console.log("tx state changed", txState?.reloadTx);
     if (txState?.reloadTx) {
       setTx(parsedTx as GatewaySession);
       setReloading(true);

@@ -57,7 +57,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
   const { fetchAssetBalance } = useFetchAssetBalance();
-  console.log("rerendering");
   const fetchAllBalances = useCallback(() => {
     // TODO: maybe hook?
     console.log("refetching");

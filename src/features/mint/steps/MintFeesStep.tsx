@@ -71,7 +71,7 @@ import {
 import { $mint } from "../mintSlice";
 import {
   createMintTransaction,
-  DepositStates,
+  DepositState,
   preValidateMintTransaction,
 } from "../mintUtils";
 
@@ -158,7 +158,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const onMintTxCreated = useCallback(
     (tx) => {
       console.log("onMintTxCreated");
-      const meta: DbMeta = { state: DepositStates.srcSettling };
+      const meta: DbMeta = { state: DepositState.srcSettling };
       const dbTx = { ...tx, meta };
       db.addTx(dbTx, account, signature).then(() => {
         dispatch(addTransaction(tx));

@@ -171,7 +171,6 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
   const history = useHistory();
   const [initialTx] = useState(cloneTx(tx)); // TODO: mint machine is mutating tx
   const [current, , service] = useMintMachine(initialTx);
-  console.log("rerendering");
   useEffect(
     () => () => {
       service.stop();
