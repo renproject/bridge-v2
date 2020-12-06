@@ -221,7 +221,7 @@ export const mintTxStateUpdateSequence = [
   DepositState.srcSettling,
   DepositState.srcConfirmed,
   DepositState.accepted,
-  DepositState.claiming,
+  DepositState.destInitiated,
   DepositState.completed,
 ];
 
@@ -263,7 +263,7 @@ export const useMintTransactionPersistence = (
         if (shouldUpdateMintTx(tx, dbTx, state)) {
           const newDbTx = { ...tx, meta: { state } };
           db.updateTx(newDbTx).then(() => {
-            console.log("updated", newDbTx);
+            console.log("updated", newDbTx, state);
           });
         }
       })

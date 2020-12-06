@@ -18,7 +18,13 @@ import {
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
 import { $network } from "../network/networkSlice";
-import { getChainExplorerLink } from "../transactions/transactionsUtils";
+import {
+  getChainExplorerLink,
+  getTxCreationTimestamp,
+  TxEntryStatus,
+  TxMeta,
+  TxPhase,
+} from "../transactions/transactionsUtils";
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
@@ -98,6 +104,11 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
         releaseTxHash
       ) || "";
   }
+  const meta: TxMeta = {
+    status: TxEntryStatus.PENDING,
+    phase: TxPhase.NONE,
+    createdTimestamp: getTxCreationTimestamp(tx),
+  };
 
   return {
     networkConfig,
@@ -109,6 +120,7 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     burnTxLink,
     releaseTxHash,
     releaseTxLink,
+    meta,
   };
 };
 
