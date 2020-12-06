@@ -22,9 +22,8 @@ import {
 } from "../../../components/buttons/Buttons";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import {
-  BigWrapper,
   CenteringSpacedBox,
-  MediumWrapper,
+  PaperSpacerWrapper,
 } from "../../../components/layout/LayoutHelpers";
 import {
   PaperActions,
@@ -77,11 +76,17 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const dispatch = useDispatch();
   const chain = useSelector($chain);
   const { status } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
   const { tx: parsedTx, txState } = useTxParam();
   const [reloading, setReloading] = useState(false);
   const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
   usePageTitle(getTxPageTitle(tx));
-  const [paperTitle] = usePaperTitle();
+  const [paperTitle, setPaperTitle] = usePaperTitle();
+  useEffect(() => {
+    if (!walletConnected) {
+      setPaperTitle("Resume Transaction");
+    }
+  }, [walletConnected, setPaperTitle]);
 
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
@@ -118,7 +123,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     history.replace({ ...location, state: undefined });
   }, [history, location]);
 
-  const walletConnected = status === WalletStatus.CONNECTED;
   const showTransactionStatus = !!tx && walletConnected;
   const feeCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
   const amount = Number(tx.targetAmount);
@@ -144,28 +148,32 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
           <MintTransactionStatus tx={tx} />
         )}
         {!walletConnected && (
-          <BigWrapper>
-            <MediumWrapper>
+          <>
+            <PaperSpacerWrapper>
               <CenteringSpacedBox>
                 <WalletConnectionProgress />
               </CenteringSpacedBox>
-            </MediumWrapper>
+            </PaperSpacerWrapper>
             <ActionButton onClick={handleWalletPickerOpen}>
               Connect Wallet
             </ActionButton>
-          </BigWrapper>
+          </>
         )}
       </PaperContent>
-      <Divider />
-      <PaperContent topPadding bottomPadding>
-        <TransactionFees
-          chain={chain}
-          amount={amount}
-          currency={feeCurrency}
-          type={TxType.MINT}
-        />
-        <Debug it={{ parsedTx, txState: txState }} />
-      </PaperContent>
+      {walletConnected && (
+        <>
+          <Divider />
+          <PaperContent topPadding bottomPadding>
+            <TransactionFees
+              chain={chain}
+              amount={amount}
+              currency={feeCurrency}
+              type={TxType.MINT}
+            />
+          </PaperContent>
+        </>
+      )}
+      <Debug it={{ parsedTx, txState: txState }} />
       {txState?.newTx && (
         <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
       )}

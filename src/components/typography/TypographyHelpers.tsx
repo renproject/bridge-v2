@@ -19,6 +19,7 @@ const useLabelWithValueStyles = makeStyles((theme) => ({
     marginBottom: 8,
   },
   labelWrapper: {
+    flexShrink: 0,
     color: theme.palette.grey[600],
   },
   labelTooltip: {
@@ -30,9 +31,12 @@ const useLabelWithValueStyles = makeStyles((theme) => ({
     verticalAlign: "middle",
   },
   valueWrapper: {
+    textAlign: "right",
     color: theme.palette.common.black,
   },
-  value: {},
+  value: {
+    whiteSpace: "nowrap",
+  },
   valueEquivalent: {
     color: theme.palette.grey[600],
     marginLeft: 4,

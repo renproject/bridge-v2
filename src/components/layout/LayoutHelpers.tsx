@@ -35,3 +35,8 @@ export const MediumTopWrapper = styled("div")({
 export const BigTopWrapper = styled("div")({
   marginTop: 40,
 });
+
+export const PaperSpacerWrapper = styled("div")({
+  marginTop: 40,
+  marginBottom: 40,
+});

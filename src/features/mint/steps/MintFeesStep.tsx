@@ -286,7 +286,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleConfirm}
-            disabled={showAckError || mintingInitialized}
+            disabled={showAckError || mintingInitialized || !walletConnected}
           >
             {!walletConnected
               ? "Connect Wallet"

@@ -87,7 +87,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
 
   if (status !== WalletStatus.CONNECTED) {
-    return <span>Connect a wallet to view fees</span>;
+    return null;
   }
   if (pending) {
     return <CenteredProgress />;

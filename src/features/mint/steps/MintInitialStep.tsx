@@ -126,7 +126,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleNextStep}
-            disabled={walletConnected && !canProceed}
+            disabled={!walletConnected || !canProceed}
           >
             {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>

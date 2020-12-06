@@ -8,15 +8,16 @@ export const typography: TypographyOptions = {
   },
   h1: {
     fontSize: 48,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   h5: {
-    fontSize: 22
+    fontSize: 22,
   },
   h6: {
-    fontSize: 18
+    fontSize: 18,
+    lineHeight: 1.4,
   },
   subtitle2: {
-    fontSize: 13
-  }
+    fontSize: 13,
+  },
 };
