@@ -1,9 +1,16 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { burnMachine, GatewaySession } from "@renproject/ren-tx";
+import {
+  burnMachine,
+  BurnMachineSchema,
+  GatewaySession,
+} from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
+import { db } from "../../services/database/database";
+import { DbGatewaySession } from "../../services/database/firebase/firebase";
 import { getRenJs } from "../../services/renJs";
 import { burnChainMap, releaseChainMap } from "../../services/rentx";
 import {
@@ -17,6 +24,11 @@ import {
   getNetworkConfigByRentxName,
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
+import {
+  DepositMachineSchemaState,
+  DepositState,
+  mintTxStateUpdateSequence,
+} from "../mint/mintUtils";
 import { $network } from "../network/networkSlice";
 import {
   getChainExplorerLink,
@@ -147,4 +159,70 @@ export const useBurnMachine = (burnTransaction: GatewaySession) => {
     },
     devTools: env.XSTATE_DEVTOOLS,
   });
+};
+
+type BurnMachineSchemaState = keyof BurnMachineSchema["states"];
+
+export enum BurnState {
+  restoring = "restoring",
+  created = "created",
+  createError = "createError",
+  srcSettling = "srcSettling",
+  srcConfirmed = "srcConfirmed",
+  destInitiated = "destInitiated", // We only care if the txHash has been issued by renVM
+}
+
+const releaseTxStateUpdateSequence = [
+  BurnState.created,
+  BurnState.srcSettling,
+  BurnState.srcConfirmed,
+  BurnState.destInitiated,
+];
+
+export const shouldUpdateReleaseTx = (
+  tx: GatewaySession | DbGatewaySession,
+  dbTx: DbGatewaySession,
+  state: string
+) => {
+  // update when the new state is next in sequence
+  // will prevent multiple updates in separate sessions
+  const dbState = dbTx?.meta?.state;
+  if (!dbState) {
+    // update when no state
+    return true;
+  }
+  const dbStateIndex = releaseTxStateUpdateSequence.indexOf(
+    dbState as BurnState
+  );
+  const stateIndex = releaseTxStateUpdateSequence.indexOf(state as BurnState);
+  if (stateIndex <= 0) {
+    //dont update for created (updated during creation) or not supported states
+    return false;
+  }
+  return stateIndex > dbStateIndex;
+};
+
+export const useReleaseTransactionPersistence = (
+  tx: GatewaySession | DbGatewaySession,
+  state: BurnMachineSchemaState
+) => {
+  useEffect(() => {
+    console.log("release tx/state", state);
+    if (!state) {
+      return;
+    }
+    db.getTx(tx)
+      .then((dbTx) => {
+        console.log("release data", dbTx);
+        if (shouldUpdateReleaseTx(tx, dbTx, state)) {
+          const newDbTx = { ...tx, meta: { state } };
+          db.updateTx(newDbTx).then(() => {
+            console.log("release updated", newDbTx, state);
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Tx synchronization failed", err);
+      });
+  }, [tx, state]);
 };

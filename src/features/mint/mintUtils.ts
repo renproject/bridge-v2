@@ -253,17 +253,17 @@ export const useMintTransactionPersistence = (
   state: DepositMachineSchemaState
 ) => {
   useEffect(() => {
-    console.log("tx/state", state);
+    console.log("mint tx/state", state);
     if (!state) {
       return;
     }
     db.getTx(tx)
       .then((dbTx) => {
-        console.log("data", dbTx);
+        console.log("mint data", dbTx);
         if (shouldUpdateMintTx(tx, dbTx, state)) {
           const newDbTx = { ...tx, meta: { state } };
           db.updateTx(newDbTx).then(() => {
-            console.log("updated", newDbTx, state);
+            console.log("mint updated", newDbTx, state);
           });
         }
       })
