@@ -1,14 +1,18 @@
-import { RenNetwork } from '@renproject/interfaces'
-import { useMultiwallet } from '@renproject/multiwallet-ui'
-import { burnMachine, BurnMachineSchema, GatewaySession, } from '@renproject/ren-tx'
-import { useMachine } from '@xstate/react'
-import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { env } from '../../constants/environmentVariables'
-import { db } from '../../services/database/database'
-import { DbGatewaySession } from '../../services/database/firebase/firebase'
-import { getRenJs } from '../../services/renJs'
-import { burnChainMap, releaseChainMap } from '../../services/rentx'
+import { RenNetwork } from "@renproject/interfaces";
+import { useMultiwallet } from "@renproject/multiwallet-ui";
+import {
+  burnMachine,
+  BurnMachineSchema,
+  GatewaySession,
+} from "@renproject/ren-tx";
+import { useMachine } from "@xstate/react";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { env } from "../../constants/environmentVariables";
+import { db } from "../../services/database/database";
+import { DbGatewaySession } from "../../services/database/firebase/firebase";
+import { getRenJs } from "../../services/renJs";
+import { burnChainMap, releaseChainMap } from "../../services/rentx";
 import {
   BridgeCurrency,
   getChainConfig,
@@ -19,15 +23,15 @@ import {
   getNetworkConfigByRentxName,
   toMintedCurrency,
   toReleasedCurrency,
-} from '../../utils/assetConfigs'
-import { $network } from '../network/networkSlice'
+} from "../../utils/assetConfigs";
+import { $network } from "../network/networkSlice";
 import {
   getChainExplorerLink,
   getTxCreationTimestamp,
   TxEntryStatus,
   TxMeta,
   TxPhase,
-} from '../transactions/transactionsUtils'
+} from "../transactions/transactionsUtils";
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
@@ -163,7 +167,7 @@ export enum BurnState {
   destInitiated = "destInitiated", // We only care if the txHash has been issued by renVM
 }
 
-const releaseTxStateUpdateSequence = [
+export const releaseTxStateUpdateSequence = [
   BurnState.created,
   BurnState.srcSettling,
   BurnState.srcConfirmed,
@@ -213,7 +217,7 @@ export const useReleaseTransactionPersistence = (
         }
       })
       .catch((err) => {
-        console.error("Tx synchronization failed", err);
+        // console.error("Tx synchronization failed", err);
       });
   }, [tx, state]);
 };

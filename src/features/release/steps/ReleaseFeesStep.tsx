@@ -1,42 +1,68 @@
-import { Divider, IconButton, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { Divider, IconButton, Typography } from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from '../../../components/typography/TypographyHelpers'
-import { WalletStatus } from '../../../components/utils/types'
-import { paths } from '../../../pages/routes'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { db } from '../../../services/database/database'
-import { DbMeta } from '../../../services/database/firebase/firebase'
-import { getChainConfig, getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { $exchangeRates } from '../../marketData/marketDataSlice'
-import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { $network } from '../../network/networkSlice'
-import { TransactionFees } from '../../transactions/components/TransactionFees'
-import { addTransaction } from '../../transactions/transactionsSlice'
+} from "../../../components/typography/TypographyHelpers";
+import { WalletStatus } from "../../../components/utils/types";
+import { paths } from "../../../pages/routes";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { db } from "../../../services/database/database";
+import { DbMeta } from "../../../services/database/firebase/firebase";
+import {
+  getChainConfig,
+  getCurrencyConfig,
+  toReleasedCurrency,
+} from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { $exchangeRates } from "../../marketData/marketDataSlice";
+import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
+import { $network } from "../../network/networkSlice";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
+import { addTransaction } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
-} from '../../transactions/transactionsUtils'
-import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
-import { BurnAndReleaseTransactionInitializer, releaseTooltips, } from '../components/ReleaseHelpers'
-import { $release, $releaseUsdAmount } from '../releaseSlice'
-import { BurnState, createReleaseTransaction, preValidateReleaseTransaction, } from '../releaseUtils'
+} from "../../transactions/transactionsUtils";
+import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
+import {
+  BurnAndReleaseTransactionInitializer,
+  releaseTooltips,
+} from "../components/ReleaseHelpers";
+import { $release, $releaseUsdAmount } from "../releaseSlice";
+import {
+  BurnState,
+  createReleaseTransaction,
+  preValidateReleaseTransaction,
+  releaseTxStateUpdateSequence,
+} from "../releaseUtils";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
@@ -102,7 +128,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const onReleaseTxCreated = useCallback(
     (tx) => {
       console.log("onReleaseTxCreated");
-      const meta: DbMeta = { state: BurnState.created };
+      const meta: DbMeta = { state: releaseTxStateUpdateSequence[0] };
       const dbTx = { ...tx, meta };
       db.addTx(dbTx, account, signature).then(() => {
         dispatch(addTransaction(tx));

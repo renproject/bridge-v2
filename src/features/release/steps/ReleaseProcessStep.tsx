@@ -40,6 +40,7 @@ import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwall
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
+import { useMintTransactionPersistence } from "../../mint/mintUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   BookmarkPageWarning,
@@ -60,7 +61,11 @@ import {
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
 } from "../components/ReleaseStatuses";
-import { getBurnAndReleaseParams, useBurnMachine } from "../releaseUtils";
+import {
+  getBurnAndReleaseParams,
+  useBurnMachine,
+  useReleaseTransactionPersistence,
+} from "../releaseUtils";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
@@ -209,10 +214,12 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     }
   }, [history, current.value, current.context.tx]);
 
-  console.log("current.value", current.value);
+  console.log("release current.value", current.value);
   console.log("ctx", current.context.tx);
   // const forceState = "srcConfirmed";
-  switch (current.value as keyof BurnMachineSchema["states"]) {
+  const state = current.value as keyof BurnMachineSchema["states"];
+  useReleaseTransactionPersistence(current.context.tx, state);
+  switch (state) {
     // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
       return (
