@@ -52,6 +52,9 @@ import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconn
 import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
+import CompletedIcon from "@material-ui/icons/Done";
+
+export { CompletedIcon };
 
 export type CustomSvgIconComponent =
   | FunctionComponent<SvgIconProps>

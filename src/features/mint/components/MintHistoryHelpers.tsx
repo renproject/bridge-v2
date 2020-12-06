@@ -8,7 +8,7 @@ import React, {
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { SmallActionButton } from "../../../components/buttons/Buttons";
-import { EmptyIcon } from "../../../components/icons/RenIcons";
+import { CompletedIcon, EmptyIcon } from "../../../components/icons/RenIcons";
 import { Link } from "../../../components/links/Links";
 import { TransactionStatusIndicator } from "../../../components/progress/ProgressHelpers";
 import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
@@ -101,7 +101,9 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   const { date, time } = getFormattedDateTime(createdTimestamp);
 
   let StatusIcon = EmptyIcon;
-  if (phase === TxPhase.LOCK) {
+  if (status === TxEntryStatus.COMPLETED) {
+    StatusIcon = CompletedIcon;
+  } else if (phase === TxPhase.LOCK) {
     StatusIcon = lockChainConfig.Icon;
   } else if (phase === TxPhase.MINT) {
     StatusIcon = mintChainConfig.Icon;

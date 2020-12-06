@@ -116,6 +116,16 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     phase: TxPhase.NONE,
     createdTimestamp: getTxCreationTimestamp(tx),
   };
+  if (burnTxHash) {
+    if (releaseTxHash) {
+      // burn and releaseTxHash present
+      meta.status = TxEntryStatus.COMPLETED;
+    }
+  } else {
+    // no burnTxHash - action required on burningChain
+    meta.status = TxEntryStatus.ACTION_REQUIRED;
+    meta.phase = TxPhase.BURN;
+  }
 
   return {
     networkConfig,

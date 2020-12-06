@@ -40,7 +40,6 @@ import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwall
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { useMintTransactionPersistence } from "../../mint/mintUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   BookmarkPageWarning,
@@ -231,10 +230,10 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
       );
     case "srcSettling":
       return <ReleaseProgressStatus tx={current.context.tx} pending />;
-    case "srcConfirmed":
-      return <ProgressStatus reason="Submitting to RenVM" />;
+    case "srcConfirmed": // return <ProgressStatus reason="Submitting to RenVM" />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={current.context.tx} />;
+    default:
+      return <ProgressStatus />;
   }
-  return <ProgressStatus />;
 };

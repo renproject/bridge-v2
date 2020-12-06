@@ -71,7 +71,6 @@ import {
 import { $mint } from "../mintSlice";
 import {
   createMintTransaction,
-  DepositState,
   mintTxStateUpdateSequence,
   preValidateMintTransaction,
 } from "../mintUtils";
@@ -219,7 +218,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="To"
           labelTooltip={mintTooltips.to}
-          value={destinationChainConfig.short}
+          value={destinationChainConfig.full}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>

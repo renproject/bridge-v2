@@ -58,7 +58,6 @@ import {
 } from "../components/ReleaseHelpers";
 import { $release, $releaseUsdAmount } from "../releaseSlice";
 import {
-  BurnState,
   createReleaseTransaction,
   preValidateReleaseTransaction,
   releaseTxStateUpdateSequence,
