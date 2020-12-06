@@ -36,7 +36,7 @@ import {
   getChainConfig,
   supportedMintDestinationChains,
 } from "../../utils/assetConfigs";
-import { MintTransactionEntryResolver } from "../mint/components/MintHelpers";
+import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
 import {
   $wallet,
   $walletSignatures,

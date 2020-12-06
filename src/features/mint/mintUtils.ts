@@ -242,7 +242,7 @@ export const shouldUpdateMintTx = (
   );
   const stateIndex = mintTxStateUpdateSequence.indexOf(state as DepositState);
   if (stateIndex <= 0) {
-    //dont update for srcSettling or not supported states
+    //dont update for srcSettling (updated during creation) or not supported states
     return false;
   }
   return stateIndex > dbStateIndex;
