@@ -1,9 +1,11 @@
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent } from "react";
 import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
-import { createStateContext } from "react-use";
 import { MainLayout } from "../components/layout/MainLayout";
-import { BridgePaperWrapper, BridgePurePaper } from '../components/layout/Paper'
+import {
+  BridgePaperWrapper,
+  BridgePurePaper,
+} from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
 import {
   useExchangeRates,
@@ -11,18 +13,8 @@ import {
 } from "../features/marketData/marketDataHooks";
 import { MintFlow } from "../features/mint/MintFlow";
 import { ReleaseFlow } from "../features/release/ReleaseFlow";
+import { PaperTitleProvider } from "../providers/TitleProviders";
 import { paths } from "./routes";
-
-const [usePaperTitle, PaperTitleProvider] = createStateContext("Transaction");
-
-export const useSetPaperTitle = (title: string) => {
-  const [, setTitle] = usePaperTitle();
-  useEffect(() => {
-    setTitle(title);
-  }, [title, setTitle]);
-};
-
-export { PaperTitleProvider, usePaperTitle };
 
 export const MainPage: FunctionComponent<RouteComponentProps> = ({
   history,

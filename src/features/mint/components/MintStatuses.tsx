@@ -29,7 +29,10 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { usePaperTitle, useSetPaperTitle } from "../../../pages/MainPage";
+import {
+  usePaperTitle,
+  useSetPaperTitle,
+} from "../../../providers/TitleProviders";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { orangeLight } from "../../../theme/colors";
@@ -67,12 +70,8 @@ export const DepositToStatus: FunctionComponent<DepositToProps> = ({ tx }) => {
         closeNotification(key);
       }
     };
-  }, [showNotification, tx.expiryTime]);
+  }, [showNotification, closeNotification, tx.expiryTime]);
 
-  // useEffect(() => () => closeNotification(alertKey), [
-  //   closeNotification,
-  //   alertKey,
-  // ]);
   const {
     lockCurrencyConfig,
     lockChainConfig,

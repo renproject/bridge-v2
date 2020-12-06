@@ -15,7 +15,7 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { useSetPaperTitle } from "../../../pages/MainPage";
+import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { paths } from "../../../pages/routes";
 import { getBurnAndReleaseParams } from "../releaseUtils";
 

@@ -1,15 +1,23 @@
-import { Button, styled, Typography, useTheme } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { PaperContent } from '../../../components/layout/Paper'
-import { NestedDrawer } from '../../../components/modals/BridgeModal'
+import { Button, styled, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { PaperContent } from "../../../components/layout/Paper";
+import { NestedDrawer } from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { usePaperTitle } from '../../../pages/MainPage'
+} from "../../../components/progress/ProgressHelpers";
+import { usePaperTitle } from "../../../providers/TitleProviders";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,

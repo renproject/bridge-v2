@@ -36,9 +36,9 @@ import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { usePageTitle } from "../../../hooks/usePageTitle";
-import { usePaperTitle } from "../../../pages/MainPage";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { usePaperTitle } from "../../../providers/TitleProviders";
 import {
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
