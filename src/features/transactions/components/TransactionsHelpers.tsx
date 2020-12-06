@@ -1,46 +1,15 @@
-import { Button, Chip, styled, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-  SmallActionButton,
-} from "../../../components/buttons/Buttons";
-import { EmptyIcon } from "../../../components/icons/RenIcons";
-import { PaperContent } from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
-import { NestedDrawer } from "../../../components/modals/BridgeModal";
+import { Button, styled, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { PaperContent } from '../../../components/layout/Paper'
+import { NestedDrawer } from '../../../components/modals/BridgeModal'
 import {
   ProgressWithContent,
   ProgressWrapper,
-  TransactionStatusIndicator,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
-import { Debug } from "../../../components/utils/Debug";
-import { usePaperTitle } from "../../../pages/MainPage";
-import { paths } from "../../../pages/routes";
-import { getFormattedDateTime } from "../../../utils/dates";
-import {
-  DepositMachineSchemaState,
-  getLockAndMintParams,
-  useMintMachine,
-  useMintTransactionPersistence,
-} from "../../mint/mintUtils";
-import { setTxHistoryOpened } from "../transactionsSlice";
-import {
-  cloneTx,
-  createTxQueryString,
-  TxEntryStatus,
-  TxPhase,
-} from "../transactionsUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { usePaperTitle } from '../../../pages/MainPage'
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,

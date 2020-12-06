@@ -1,18 +1,14 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import {
-  burnMachine,
-  BurnMachineSchema,
-  GatewaySession,
-} from "@renproject/ren-tx";
-import { useMachine } from "@xstate/react";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { env } from "../../constants/environmentVariables";
-import { db } from "../../services/database/database";
-import { DbGatewaySession } from "../../services/database/firebase/firebase";
-import { getRenJs } from "../../services/renJs";
-import { burnChainMap, releaseChainMap } from "../../services/rentx";
+import { RenNetwork } from '@renproject/interfaces'
+import { useMultiwallet } from '@renproject/multiwallet-ui'
+import { burnMachine, BurnMachineSchema, GatewaySession, } from '@renproject/ren-tx'
+import { useMachine } from '@xstate/react'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { env } from '../../constants/environmentVariables'
+import { db } from '../../services/database/database'
+import { DbGatewaySession } from '../../services/database/firebase/firebase'
+import { getRenJs } from '../../services/renJs'
+import { burnChainMap, releaseChainMap } from '../../services/rentx'
 import {
   BridgeCurrency,
   getChainConfig,
@@ -20,23 +16,18 @@ import {
   getCurrencyConfig,
   getCurrencyConfigByRentxName,
   getCurrencyRentxSourceChain,
-  toMintedCurrency,
   getNetworkConfigByRentxName,
+  toMintedCurrency,
   toReleasedCurrency,
-} from "../../utils/assetConfigs";
-import {
-  DepositMachineSchemaState,
-  DepositState,
-  mintTxStateUpdateSequence,
-} from "../mint/mintUtils";
-import { $network } from "../network/networkSlice";
+} from '../../utils/assetConfigs'
+import { $network } from '../network/networkSlice'
 import {
   getChainExplorerLink,
   getTxCreationTimestamp,
   TxEntryStatus,
   TxMeta,
   TxPhase,
-} from "../transactions/transactionsUtils";
+} from '../transactions/transactionsUtils'
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
@@ -136,6 +127,8 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   };
 };
 
+export type BurnMachineSchemaState = keyof BurnMachineSchema["states"];
+
 export const useBurnMachine = (burnTransaction: GatewaySession) => {
   const { enabledChains } = useMultiwallet();
   const network = useSelector($network);
@@ -160,8 +153,6 @@ export const useBurnMachine = (burnTransaction: GatewaySession) => {
     devTools: env.XSTATE_DEVTOOLS,
   });
 };
-
-type BurnMachineSchemaState = keyof BurnMachineSchema["states"];
 
 export enum BurnState {
   restoring = "restoring",

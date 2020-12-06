@@ -1,29 +1,24 @@
-import { Chip, Typography } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { SmallActionButton } from "../../../components/buttons/Buttons";
-import { EmptyIcon } from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
-import { TransactionStatusIndicator } from "../../../components/progress/ProgressHelpers";
-import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
-import { Debug } from "../../../components/utils/Debug";
-import { paths } from "../../../pages/routes";
-import { getFormattedDateTime } from "../../../utils/dates";
-import { TransactionItemProps } from "../../transactions/components/TransactionsHelpers";
-import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
+import { Chip, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { SmallActionButton } from '../../../components/buttons/Buttons'
+import { EmptyIcon } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
+import { TransactionStatusIndicator } from '../../../components/progress/ProgressHelpers'
+import { useTransactionEntryStyles } from '../../../components/transactions/TransactionsGrid'
+import { Debug } from '../../../components/utils/Debug'
+import { paths } from '../../../pages/routes'
+import { getFormattedDateTime } from '../../../utils/dates'
+import { TransactionItemProps } from '../../transactions/components/TransactionsHelpers'
+import { setTxHistoryOpened } from '../../transactions/transactionsSlice'
+import { cloneTx, createTxQueryString, TxEntryStatus, TxPhase, } from '../../transactions/transactionsUtils'
 import {
-  cloneTx,
-  createTxQueryString,
-  TxEntryStatus,
-  TxPhase,
-} from "../../transactions/transactionsUtils";
-import { getBurnAndReleaseParams, useBurnMachine } from "../releaseUtils";
+  BurnMachineSchemaState,
+  getBurnAndReleaseParams,
+  useBurnMachine,
+  useReleaseTransactionPersistence,
+} from '../releaseUtils'
 
 export const ReleaseTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
@@ -57,9 +52,11 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
     console.log("release cv", current.value);
   }, [current.value]);
 
+  useReleaseTransactionPersistence(tx, current.value as BurnMachineSchemaState);
+
   const handleFinish = useCallback(() => {
     history.push({
-      pathname: paths.MINT_TRANSACTION,
+      pathname: paths.RELEASE_TRANSACTION,
       search: "?" + createTxQueryString(tx),
       state: {
         txState: {

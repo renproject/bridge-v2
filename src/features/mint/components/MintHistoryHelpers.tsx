@@ -55,11 +55,11 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     [service]
   );
   useEffect(() => {
-    console.log("tx changed", current.context.tx);
+    console.log("mint tx changed", current.context.tx);
   }, [current.context.tx]);
 
   useEffect(() => {
-    console.log("cv", current.value);
+    console.log("mint cv", current.value);
   }, [current.value]);
 
   useMintTransactionPersistence(tx, current.value as DepositMachineSchemaState);

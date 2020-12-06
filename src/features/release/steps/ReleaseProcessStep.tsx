@@ -94,9 +94,11 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
 
-  const { burnCurrencyConfig, releaseCurrencyConfig } = getBurnAndReleaseParams(
-    tx
-  );
+  const {
+    burnCurrencyConfig,
+    burnChainConfig,
+    releaseCurrencyConfig,
+  } = getBurnAndReleaseParams(tx);
   const amount = Number(tx.targetAmount);
   const releaseCurrencyUsdRate = findExchangeRate(
     rates,
@@ -158,6 +160,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
             />
           }
         />
+        <LabelWithValue label="From" value={burnChainConfig.full} />
         <LabelWithValue label="To" value={tx.destAddress} />
         <SpacedDivider />
         <TransactionFees

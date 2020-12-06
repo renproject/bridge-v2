@@ -37,6 +37,7 @@ import {
   supportedMintDestinationChains,
 } from "../../utils/assetConfigs";
 import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
+import { ReleaseTransactionEntryResolver } from "../release/components/ReleaseHistoryHelpers";
 import {
   $wallet,
   $walletSignatures,
@@ -191,7 +192,11 @@ export const TransactionHistory: FunctionComponent = () => {
                   </ShowEntry>
                 );
               } else {
-                return <span>Release</span>;
+                return (
+                  <ShowEntry when={indexIsInCurrentPage}>
+                    <ReleaseTransactionEntryResolver key={tx.id} tx={tx} />
+                  </ShowEntry>
+                );
               }
             })}
           </div>
