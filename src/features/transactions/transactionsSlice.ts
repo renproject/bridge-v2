@@ -1,6 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GatewaySession } from "@renproject/ren-tx";
 import { RootState } from "../../store/rootReducer";
+import { txSorter } from "./transactionsUtils";
 
 export type BridgeTransaction = GatewaySession;
 
@@ -74,9 +75,9 @@ export const {
 export const transactionsReducer = slice.reducer;
 
 export const $transactionsData = (state: RootState) => state.transactions;
-export const $transactions = createSelector(
+export const $orderedTransactions = createSelector(
   $transactionsData,
-  (transactions) => transactions.txs
+  (transactions) => [...transactions.txs].sort(txSorter)
 );
 export const $txHistoryOpened = createSelector(
   $transactionsData,

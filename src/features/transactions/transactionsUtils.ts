@@ -30,7 +30,7 @@ export enum TxPhase {
 
 export type TxMeta = {
   status: TxEntryStatus;
-  phase: TxPhase; //TODO rename to TxPhase
+  phase: TxPhase;
 };
 
 export enum TxType {
@@ -88,6 +88,13 @@ export const isTxExpired = (tx: GatewaySession) => {
     }
   }
   return false;
+};
+
+export const txSorter = (a: Partial<GatewaySession>, b: Partial<GatewaySession>) => {
+  if (a.expiryTime && b.expiryTime) {
+    return b.expiryTime - a.expiryTime;
+  }
+  return 0;
 };
 
 export const cloneTx = (tx: GatewaySession) =>

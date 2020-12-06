@@ -1,48 +1,65 @@
-import { Box, Dialog, Typography } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../components/buttons/Buttons'
-import { AssetDropdown } from '../../components/dropdowns/AssetDropdown'
-import { BigTopWrapper, BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../components/layout/LayoutHelpers'
-import { SimplePagination } from '../../components/pagination/SimplePagination'
-import { CenteredProgress, } from '../../components/progress/ProgressHelpers'
+import { Box, Dialog, Typography } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../components/buttons/Buttons";
+import { AssetDropdown } from "../../components/dropdowns/AssetDropdown";
+import {
+  BigTopWrapper,
+  BigWrapper,
+  CenteringSpacedBox,
+  MediumWrapper,
+} from "../../components/layout/LayoutHelpers";
+import { SimplePagination } from "../../components/pagination/SimplePagination";
+import { CenteredProgress } from "../../components/progress/ProgressHelpers";
 import {
   TransactionsContent,
   TransactionsHeader,
   TransactionsPaginationWrapper,
   TransactionsStatusHeader,
-} from '../../components/transactions/TransactionsGrid'
-import { WalletStatus } from '../../components/utils/types'
-import { WalletConnectionProgress } from '../../components/wallet/WalletHelpers'
-import { useSelectedChainWallet } from '../../providers/multiwallet/multiwalletHooks'
-import { db } from '../../services/database/database'
-import { getChainConfig, supportedMintDestinationChains, } from '../../utils/assetConfigs'
-import { $wallet, $walletSignatures, setChain, setUser, setWalletPickerOpened, } from '../wallet/walletSlice'
-import { MintTransactionEntryResolver } from './components/TransactionsHelpers'
+} from "../../components/transactions/TransactionsGrid";
+import { WalletStatus } from "../../components/utils/types";
+import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
+import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
+import { db } from "../../services/database/database";
 import {
+  getChainConfig,
+  supportedMintDestinationChains,
+} from "../../utils/assetConfigs";
+import {
+  $wallet,
+  $walletSignatures,
+  setChain,
+  setUser,
+  setWalletPickerOpened,
+} from "../wallet/walletSlice";
+import { MintTransactionEntryResolver } from "./components/TransactionsHelpers";
+import {
+  $orderedTransactions,
   $transactionsData,
   $txHistoryOpened,
   BridgeTransaction,
   setTransactions,
   setTxHistoryOpened,
   setTxsPending,
-} from './transactionsSlice'
-import { TxType } from './transactionsUtils'
-
-const txSorter = (a: Partial<GatewaySession>, b: Partial<GatewaySession>) => {
-  if (a.expiryTime && b.expiryTime) {
-    return b.expiryTime - a.expiryTime;
-  }
-  return 0;
-};
+} from "./transactionsSlice";
+import { TxType } from "./transactionsUtils";
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { account, status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, user } = useSelector($wallet);
-  const { txs, txsPending } = useSelector($transactionsData);
+  const txs = useSelector($orderedTransactions);
+  const { txsPending } = useSelector($transactionsData);
   const { signature, rawSignature } = useSelector($walletSignatures);
   const opened = useSelector($txHistoryOpened);
 
@@ -66,9 +83,7 @@ export const TransactionHistory: FunctionComponent = () => {
     if (user) {
       db.getTxs(signature)
         .then((txsData) => {
-          dispatch(
-            setTransactions(txsData.sort(txSorter) as Array<BridgeTransaction>)
-          );
+          dispatch(setTransactions(txsData as Array<BridgeTransaction>));
           dispatch(setTxsPending(false));
         })
         .catch(console.error);
@@ -131,8 +146,7 @@ export const TransactionHistory: FunctionComponent = () => {
                 <>
                   <MediumWrapper>
                     <Typography variant="body1" align="center">
-                      You must connect a wallet supporting {chainConfig.full} to
-                      view transactions
+                      You must connect {chainConfig.full} to view transactions
                     </Typography>
                   </MediumWrapper>
                   <BigWrapper>

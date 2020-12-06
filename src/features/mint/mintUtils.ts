@@ -29,10 +29,10 @@ import {
 import { $network } from "../network/networkSlice";
 import {
   getChainExplorerLink,
-  isTxExpired,
   TxPhase,
   TxEntryStatus,
   TxMeta,
+  isTxExpired,
 } from "../transactions/transactionsUtils";
 
 type CreateMintTransactionParams = {
@@ -153,19 +153,31 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     status: TxEntryStatus.PENDING,
     phase: TxPhase.NONE,
   };
-  if (isTxExpired(tx)) {
-    meta.status = TxEntryStatus.EXPIRED;
-  } else if (lockTxHash) {
+  if (lockTxHash) {
+    // it has lockTxHash - there is deposit
     if (mintTxHash) {
+      // mint tx hash present - completed
       meta.status = TxEntryStatus.COMPLETED;
     } else if (lockConfirmations >= lockTargetConfirmations) {
+      //TODO: do I need lock checking
+      // no mint tx hash,
       meta.status = TxEntryStatus.ACTION_REQUIRED;
       meta.phase = TxPhase.MINT;
+      // expired in mint phase - no submission
+      if (isTxExpired(tx)) {
+        meta.status = TxEntryStatus.EXPIRED;
+      }
     }
   } else {
+    // no deposit
     meta.status = TxEntryStatus.ACTION_REQUIRED;
     meta.phase = TxPhase.LOCK;
+    // expired in lock phase - no deposit
+    if (isTxExpired(tx)) {
+      meta.status = TxEntryStatus.EXPIRED;
+    }
   }
+
   return {
     networkConfig,
     mintCurrencyConfig,
