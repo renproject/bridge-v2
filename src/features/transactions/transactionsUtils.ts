@@ -205,10 +205,10 @@ export const getTxPageTitle = (tx: GatewaySession) => {
   const amount = tx.targetAmount;
   const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
   const type = tx.type === TxType.MINT ? "Mint" : "Release";
-  const date = new Date(tx.expiryTime - 24 * 3600 * 1000).toISOString();
+  const date = new Date(getTxCreationTimestamp(tx)).toISOString();
 
   return `${type} - ${amount} ${asset} - ${date}`;
 };
 
-export const getCreationTimestamp = (tx: GatewaySession) =>
-  tx.expiryTime - 24 * 60 * 3600;
+export const getTxCreationTimestamp = (tx: GatewaySession) =>
+  tx.expiryTime - 24 * 3600 * 1000;

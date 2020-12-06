@@ -29,7 +29,7 @@ import {
 import { $network } from "../network/networkSlice";
 import {
   getChainExplorerLink,
-  getCreationTimestamp,
+  getTxCreationTimestamp,
   isTxExpired,
   TxEntryStatus,
   TxMeta,
@@ -153,7 +153,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   const meta: TxMeta = {
     status: TxEntryStatus.PENDING,
     phase: TxPhase.NONE,
-    createdTimestamp: getCreationTimestamp(tx),
+    createdTimestamp: getTxCreationTimestamp(tx),
   };
   if (lockTxHash) {
     // it has lockTxHash - there is deposit
@@ -202,6 +202,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   };
 };
 
+export type DepositMachineSchemaState = keyof DepositMachineSchema["states"];
+
 export enum DepositState {
   restoringDeposit = "restoringDeposit",
   errorRestoring = "errorRestoring",
@@ -248,7 +250,7 @@ export const shouldUpdateMintTx = (
 
 export const useMintTransactionPersistence = (
   tx: GatewaySession | DbGatewaySession,
-  state: keyof DepositMachineSchema["states"]
+  state: DepositMachineSchemaState
 ) => {
   useEffect(() => {
     console.log("tx/state", state);

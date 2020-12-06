@@ -28,7 +28,12 @@ import { Debug } from "../../../components/utils/Debug";
 import { usePaperTitle } from "../../../pages/MainPage";
 import { paths } from "../../../pages/routes";
 import { getFormattedDateTime } from "../../../utils/dates";
-import { getLockAndMintParams, useMintMachine } from "../../mint/mintUtils";
+import {
+  DepositMachineSchemaState,
+  getLockAndMintParams,
+  useMintMachine,
+  useMintTransactionPersistence,
+} from "../../mint/mintUtils";
 import { setTxHistoryOpened } from "../transactionsSlice";
 import {
   cloneTx,
@@ -183,6 +188,8 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
   useEffect(() => {
     console.log("cv", current.value);
   }, [current.value]);
+
+  useMintTransactionPersistence(tx, current.value as DepositMachineSchemaState);
 
   const handleFinish = useCallback(() => {
     history.push({
