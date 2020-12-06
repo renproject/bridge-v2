@@ -10,6 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import CopyIcon from "@material-ui/icons/FileCopyOutlined";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import classNames from "classnames";
+import MiddleEllipsis from "react-middle-ellipsis";
 import React, {
   FunctionComponent,
   useCallback,
@@ -30,6 +31,7 @@ import {
   QrCodeIcon,
   TxHistoryIcon,
 } from "../icons/RenIcons";
+import { Hide } from "../layout/LayoutHelpers";
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -189,11 +191,9 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
     maxWidth: 265,
   },
   contentValue: {
-    display: "block",
-    paddingRight: 20,
-    paddingLeft: 20,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    width: "100%",
+    paddingLeft: 9,
+    paddingRight: 9,
   },
   copy: {
     flexGrow: 0,
@@ -229,13 +229,58 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
             <span>Copied!</span>
           </Fade>
         )}
-        {!copied && <span className={styles.contentValue}>{content}</span>}
+        <Hide when={copied} className={styles.contentValue}>
+          <MiddleEllipsisCopy content={content} />
+        </Hide>
       </div>
       <div className={styles.copy}>
         <IconButton classes={iconClasses} onClick={handleClick}>
           <CopyIcon fontSize="inherit" />
         </IconButton>
       </div>
+    </div>
+  );
+};
+
+const useMiddleEllipsisCopyStyles = makeStyles({
+  root: {
+    width: "100%",
+    textAlign: "center",
+    "&:hover $hideForHover": {
+      display: "none",
+    },
+    "&:hover $showForHover": {
+      display: "block",
+    },
+  },
+  hideForHover: {
+    maxWidth: "100%",
+    display: "block",
+  },
+  showForHover: {
+    display: "none",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+});
+
+type MiddleEllipsisCopyProps = {
+  content: string;
+};
+const MiddleEllipsisCopy: FunctionComponent<MiddleEllipsisCopyProps> = ({
+  content,
+}) => {
+  const styles = useMiddleEllipsisCopyStyles();
+  return (
+    <div className={styles.root}>
+      <div className={styles.hideForHover}>
+        <MiddleEllipsis>
+          <span>{content}</span>
+        </MiddleEllipsis>
+      </div>
+      <div className={styles.showForHover}>{content}</div>
     </div>
   );
 };

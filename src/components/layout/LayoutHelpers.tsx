@@ -1,4 +1,6 @@
-import { styled } from "@material-ui/core/styles";
+import { makeStyles, styled } from "@material-ui/core/styles";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
 
 export const NarrowCenteredWrapper = styled("div")({
   marginLeft: "auto",
@@ -40,3 +42,24 @@ export const PaperSpacerWrapper = styled("div")({
   marginTop: 40,
   marginBottom: 40,
 });
+
+const useHideStyles = makeStyles({
+  hidden: {
+    display: "none",
+  },
+});
+type HideProps = {
+  when: boolean;
+  className?: string;
+};
+export const Hide: FunctionComponent<HideProps> = ({
+  when,
+  className,
+  children,
+}) => {
+  const styles = useHideStyles();
+  const resolvedClassName = classNames(className, {
+    [styles.hidden]: when,
+  });
+  return <div className={resolvedClassName}>{children}</div>;
+};
