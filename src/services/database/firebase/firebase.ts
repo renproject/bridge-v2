@@ -66,6 +66,7 @@ export class FireBase<Transaction extends { id: string }>
         walletSignature: fsSignature,
         id: tx.id,
         updated: timestamps,
+        createdSeconds: timestamps.seconds,
         data: JSON.stringify(dbTx),
       })
       .catch(console.error);

@@ -33,6 +33,7 @@ import {
   TxEntryStatus,
   TxMeta,
   isTxExpired,
+  getCreationTimestamp,
 } from "../transactions/transactionsUtils";
 
 type CreateMintTransactionParams = {
@@ -152,6 +153,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   const meta: TxMeta = {
     status: TxEntryStatus.PENDING,
     phase: TxPhase.NONE,
+    createdTimestamp: getCreationTimestamp(tx),
   };
   if (lockTxHash) {
     // it has lockTxHash - there is deposit

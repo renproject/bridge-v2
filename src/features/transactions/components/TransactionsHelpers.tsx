@@ -33,6 +33,7 @@ import { setTxHistoryOpened } from "../transactionsSlice";
 import {
   cloneTx,
   createTxQueryString,
+  getCreationTimestamp,
   mintUpdateableEvents,
   TxEntryStatus,
   TxPhase,
@@ -222,10 +223,10 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     mintCurrencyConfig,
     mintChainConfig,
     mintTxLink,
-    meta: { status, phase },
+    meta: { status, phase, createdTimestamp },
   } = getLockAndMintParams(tx);
 
-  const { date, time } = getFormattedDateTime(tx.expiryTime - 24 * 3600);
+  const { date, time } = getFormattedDateTime(createdTimestamp);
 
   let StatusIcon = EmptyIcon;
   if (phase === TxPhase.LOCK) {

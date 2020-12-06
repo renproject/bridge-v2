@@ -10,6 +10,7 @@ import {
   getCurrencyConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
+import { getFormattedDateTime } from "../../utils/dates";
 
 export const mintUpdateableEvents = ["requestingSignature"];
 
@@ -31,6 +32,7 @@ export enum TxPhase {
 export type TxMeta = {
   status: TxEntryStatus;
   phase: TxPhase;
+  createdTimestamp: number;
 };
 
 export enum TxType {
@@ -90,7 +92,10 @@ export const isTxExpired = (tx: GatewaySession) => {
   return false;
 };
 
-export const txSorter = (a: Partial<GatewaySession>, b: Partial<GatewaySession>) => {
+export const txSorter = (
+  a: Partial<GatewaySession>,
+  b: Partial<GatewaySession>
+) => {
   if (a.expiryTime && b.expiryTime) {
     return b.expiryTime - a.expiryTime;
   }
@@ -207,3 +212,6 @@ export const getTxPageTitle = (tx: GatewaySession) => {
 
   return `${type} - ${amount} ${asset} - ${date}`;
 };
+
+export const getCreationTimestamp = (tx: GatewaySession) =>
+  tx.expiryTime - 24 * 60 * 3600;
