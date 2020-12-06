@@ -48,10 +48,12 @@ const useHideStyles = makeStyles({
     display: "none",
   },
 });
+
 type HideProps = {
   when: boolean;
   className?: string;
 };
+
 export const Hide: FunctionComponent<HideProps> = ({
   when,
   className,

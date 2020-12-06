@@ -160,7 +160,12 @@ export const overrides = (palette: Palette): Overrides => {
     },
     MuiSnackbar: {
       anchorOriginTopRight: {
-        top: "64px!important",
+        top: "64px!important", //TODO: need to find a better way for spacing
+      },
+    },
+    SnackbarItem: {
+      collapseWrapper: {
+        border: "1px solid blue",
       },
     },
     MuiSvgIcon: {

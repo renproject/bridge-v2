@@ -53,16 +53,26 @@ export const DepositToStatus: FunctionComponent<DepositToProps> = ({ tx }) => {
   const toggleQr = useCallback(() => {
     setShowQr(!showQr);
   }, [showQr]);
-  const { showNotification } = useNotifications();
+  const { showNotification, closeNotification } = useNotifications();
   useEffect(() => {
     const time = Math.ceil((tx.expiryTime - Number(new Date())) / 1000 / 3600);
+    let key = 0;
     if (time > 0) {
-      showNotification(getAddressValidityMessage(time), {
+      key = showNotification(getAddressValidityMessage(time), {
         variant: "warning",
-      });
+      }) as number;
     }
+    return () => {
+      if (key) {
+        closeNotification(key);
+      }
+    };
   }, [showNotification, tx.expiryTime]);
 
+  // useEffect(() => () => closeNotification(alertKey), [
+  //   closeNotification,
+  //   alertKey,
+  // ]);
   const {
     lockCurrencyConfig,
     lockChainConfig,
