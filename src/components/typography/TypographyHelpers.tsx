@@ -20,6 +20,7 @@ const useLabelWithValueStyles = makeStyles((theme) => ({
   },
   labelWrapper: {
     flexShrink: 0,
+    maxWidth: "50%",
     color: theme.palette.grey[600],
   },
   labelTooltip: {
