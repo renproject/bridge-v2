@@ -36,6 +36,7 @@ import {
   getChainConfig,
   supportedMintDestinationChains,
 } from "../../utils/assetConfigs";
+import { MintTransactionEntryResolver } from "../mint/components/MintHelpers";
 import {
   $wallet,
   $walletSignatures,
@@ -43,7 +44,6 @@ import {
   setUser,
   setWalletPickerOpened,
 } from "../wallet/walletSlice";
-import { MintTransactionEntryResolver } from "./components/TransactionsHelpers";
 import {
   $orderedTransactions,
   $transactionsData,
