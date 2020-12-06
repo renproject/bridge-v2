@@ -10,9 +10,6 @@ import {
   getCurrencyConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
-import { getFormattedDateTime } from "../../utils/dates";
-
-export const mintUpdateableEvents = ["requestingSignature"];
 
 export enum TxEntryStatus {
   PENDING = "pending",

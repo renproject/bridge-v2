@@ -33,8 +33,6 @@ import { setTxHistoryOpened } from "../transactionsSlice";
 import {
   cloneTx,
   createTxQueryString,
-  getCreationTimestamp,
-  mintUpdateableEvents,
   TxEntryStatus,
   TxPhase,
 } from "../transactionsUtils";
@@ -183,13 +181,7 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
   }, [current.context.tx]);
 
   useEffect(() => {
-    if (mintUpdateableEvents.indexOf(current.value as string) > -1) {
-      console.log("saving here"); //TODO: update Tx in db
-    }
-  }, [current.value]);
-
-  useEffect(() => {
-    console.log(current.value);
+    console.log("cv", current.value);
   }, [current.value]);
 
   const handleFinish = useCallback(() => {
@@ -218,8 +210,8 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   const {
     lockChainConfig,
     lockConfirmations,
-    lockTxLink,
     lockTargetConfirmations,
+    lockTxLink,
     mintCurrencyConfig,
     mintChainConfig,
     mintTxLink,
@@ -253,8 +245,8 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             </Typography>
           </div>
           <div className={styles.links}>
-            {status === TxEntryStatus.EXPIRED && (
-              <Typography variant="body2" color="error">
+            {status === TxEntryStatus.EXPIRED && phase === TxPhase.LOCK && (
+              <Typography variant="body2" color="error" className={styles.link}>
                 Transaction expired
               </Typography>
             )}
@@ -269,6 +261,11 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
               >
                 {lockChainConfig.full} transaction
               </Link>
+            )}
+            {status === TxEntryStatus.EXPIRED && phase === TxPhase.MINT && (
+              <Typography variant="body2" color="error" className={styles.link}>
+                Transaction expired
+              </Typography>
             )}
             {mintTxLink && (
               <Link
@@ -290,6 +287,12 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
               Finish mint
             </SmallActionButton>
           )}
+          {status === TxEntryStatus.PENDING &&
+            lockConfirmations < lockTargetConfirmations && (
+              <Typography color="primary" variant="body2">
+                {lockConfirmations}/{lockTargetConfirmations} Confirmations
+              </Typography>
+            )}
         </div>
         <div className={styles.status}>
           <TransactionStatusIndicator

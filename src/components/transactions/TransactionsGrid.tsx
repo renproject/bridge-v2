@@ -123,6 +123,7 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
   links: {},
   link: {
     fontSize: 14,
+    display: "inline-block",
     marginRight: 24,
     "&:last-child": {
       marginRight: 0,

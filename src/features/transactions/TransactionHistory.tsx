@@ -1,5 +1,4 @@
 import { Box, Dialog, Typography } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
@@ -18,7 +17,10 @@ import {
   CenteringSpacedBox,
   MediumWrapper,
 } from "../../components/layout/LayoutHelpers";
-import { SimplePagination } from "../../components/pagination/SimplePagination";
+import {
+  ShowEntry,
+  SimplePagination,
+} from "../../components/pagination/SimplePagination";
 import { CenteredProgress } from "../../components/progress/ProgressHelpers";
 import {
   TransactionsContent,
@@ -176,9 +178,18 @@ export const TransactionHistory: FunctionComponent = () => {
         <>
           <TransactionsStatusHeader title={`All (${all})`} />
           <div>
-            {txs.map((tx) => {
+            {txs.map((tx, index) => {
+              const startIndex = page * itemsPerPage;
+              const endIndex = startIndex + itemsPerPage;
+              const indexIsInCurrentPage =
+                index >= startIndex && index < endIndex;
+
               if (tx.type === TxType.MINT) {
-                return <MintTransactionEntryResolver key={tx.id} tx={tx} />;
+                return (
+                  <ShowEntry when={indexIsInCurrentPage}>
+                    <MintTransactionEntryResolver key={tx.id} tx={tx} />
+                  </ShowEntry>
+                );
               } else {
                 return <span>Release</span>;
               }
