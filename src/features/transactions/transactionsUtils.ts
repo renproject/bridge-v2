@@ -218,7 +218,6 @@ export const getPaymentLink = (
   address: string,
   amount: number
 ) => {
-  // bitcoin://1ADDRESS?amount=0.1234
   const chainConfig = getChainConfig(chain);
   return `${chainConfig.rentxName}://${address}?amount=${amount}`;
 };
