@@ -212,3 +212,13 @@ export const getTxPageTitle = (tx: GatewaySession) => {
 
 export const getTxCreationTimestamp = (tx: GatewaySession) =>
   tx.expiryTime - 24 * 3600 * 1000;
+
+export const getPaymentLink = (
+  chain: BridgeChain,
+  address: string,
+  amount: number
+) => {
+  // bitcoin://1ADDRESS?amount=0.1234
+  const chainConfig = getChainConfig(chain);
+  return `${chainConfig.rentxName}://${address}?amount=${amount}`;
+};

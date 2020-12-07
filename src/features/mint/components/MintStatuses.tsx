@@ -40,7 +40,7 @@ import { orangeLight } from "../../../theme/colors";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
-import { TxType } from "../../transactions/transactionsUtils";
+import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { getLockAndMintParams } from "../mintUtils";
 
 const getAddressValidityMessage = (time: number) => {
@@ -110,7 +110,13 @@ export const DepositToStatus: FunctionComponent<DepositToProps> = ({ tx }) => {
             <CenteringSpacedBox>
               <Grow in={showQr}>
                 <BigQrCode>
-                  <QRCode value={tx.gatewayAddress} />
+                  <QRCode
+                    value={getPaymentLink(
+                      lockChainConfig.symbol,
+                      tx.gatewayAddress,
+                      suggestedAmount
+                    )}
+                  />
                 </BigQrCode>
               </Grow>
             </CenteringSpacedBox>
