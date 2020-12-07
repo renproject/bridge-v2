@@ -54,15 +54,9 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     },
     [service]
   );
-  useEffect(() => {
-    console.log("mint tx changed", current.context.tx);
-  }, [current.context.tx]);
 
-  useEffect(() => {
-    console.log("mint cv", current.value);
-  }, [current.value]);
-
-  useMintTransactionPersistence(tx, current.value as DepositMachineSchemaState);
+  const deposit = Object.values(current.context.depositMachines || {})[0]
+  useMintTransactionPersistence(current.context.tx, (deposit?.state.value || "") as DepositMachineSchemaState);
 
   const handleFinish = useCallback(() => {
     history.push({
