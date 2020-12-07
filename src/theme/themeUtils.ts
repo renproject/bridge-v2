@@ -24,12 +24,17 @@ export const getShadow = (
   spread = 0
 ) => `${x}px ${y}px ${blur}px ${spread}px ${fade(color, fadeLevel)}`;
 
-export const createPulseAnimation = (color: string, spread = 5) => {
+export const createPulseAnimation = (
+  color: string,
+  spread = 5,
+  animationName = "pulse"
+) => {
   const initialShadow = getShadow(color, 0.4, 0, 0, 0, 0);
   const throughShadow = getShadow(color, 0, 0, 0, 0, spread);
   const toShadow = getShadow(color, 0, 0, 0, 0, 0);
+  const keyframesName = `@keyframes ${animationName}`;
   const pulsingKeyframes = {
-    "@keyframes pulse": {
+    [keyframesName]: {
       "0%": {
         boxShadow: initialShadow,
       },
@@ -43,7 +48,7 @@ export const createPulseAnimation = (color: string, spread = 5) => {
   };
   const pulsingStyles = {
     boxShadow: initialShadow,
-    animation: "$pulse 2s infinite",
+    animation: `$${animationName} 2s infinite`,
   };
-  return { pulsingKeyframes, pulsingStyles };
+  return { pulsingKeyframes, pulsingStyles, keyframesName };
 };

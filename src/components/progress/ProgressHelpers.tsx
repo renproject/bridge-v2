@@ -60,6 +60,10 @@ const generateSections = (all: number) => {
   return sections;
 };
 
+// const useSectionAnimationStyles = makeStyles<Theme, any>(() => {
+//   const { pulsingKeyframes, pulsingStyles } = createPulseAnimation(color);
+// });
+
 const useSectionStyles = makeStyles<Theme, any>((theme) => {
   return {
     dynamicSection: (num: number) => {
@@ -71,51 +75,53 @@ const useSectionStyles = makeStyles<Theme, any>((theme) => {
 const useProgressWithContentStyles = makeStyles<
   Theme,
   ProgressWithContentProps
->((theme) => ({
-  root: {
-    display: "inline-flex",
-    position: "relative",
-    fontSize: ({ fontSize = "inherit" }) => fontSize,
-    color: ({ color = "inherit" }) => color,
-  },
-  rootBig: {
-    fontSize: 70,
-  },
-  rootMedium: {
-    fontSize: 24,
-  },
-  content: {
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    position: "absolute",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  progressHidden: {
-    visibility: "hidden",
-  },
-  sections: {
-    position: "relative",
-  },
-  section: {
-    position: "absolute",
-    color: ({ color }) => {
-      if (color !== "inherit") {
-        return fade(color, 0.2);
-      }
-      return theme.customColors.skyBlue;
+>((theme) => {
+  return {
+    root: {
+      display: "inline-flex",
+      position: "relative",
+      fontSize: ({ fontSize = "inherit" }) => fontSize,
+      color: ({ color = "inherit" }) => color,
     },
-    "& > svg": {
-      transformOrigin: "50% 50%",
+    rootBig: {
+      fontSize: 70,
     },
-  },
-  sectionCompleted: {
-    color: () => "inherit",
-  },
-}));
+    rootMedium: {
+      fontSize: 24,
+    },
+    content: {
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      position: "absolute",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    progressHidden: {
+      visibility: "hidden",
+    },
+    sections: {
+      position: "relative",
+    },
+    section: {
+      position: "absolute",
+      color: ({ color }) => {
+        if (color !== "inherit") {
+          return fade(color, 0.2);
+        }
+        return theme.customColors.skyBlue;
+      },
+      "& > svg": {
+        transformOrigin: "50% 50%",
+      },
+    },
+    sectionCompleted: {
+      color: () => "inherit",
+    },
+  };
+});
 
 export const ProgressWrapper = styled("div")({
   display: "flex",
