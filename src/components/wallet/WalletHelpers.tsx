@@ -263,14 +263,17 @@ const getWalletConnectionLabel = (status: WalletConnectionStatusType) => {
 
 const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
   root: {
+    backgroundColor: theme.palette.common.white,
     borderColor: theme.palette.divider,
     "&:hover": {
       borderColor: theme.palette.divider,
       backgroundColor: theme.palette.divider,
     },
   },
+  hoisted: {
+    zIndex: theme.zIndex.tooltip,
+  },
   indicator: {
-    // TODO: remove
     marginRight: 10,
   },
   account: { marginLeft: 20 },
@@ -279,6 +282,7 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
 type WalletConnectionStatusButtonProps = ButtonProps & {
   status: WalletConnectionStatusType;
   wallet: BridgeWallet;
+  hoisted?: boolean;
   account?: string;
 };
 
@@ -286,11 +290,14 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   status,
   account,
   wallet,
+  hoisted,
+  className,
   ...rest
 }) => {
   const {
     indicator: indicatorClassName,
     account: accountClassName,
+    hoisted: hoistedClassName,
     ...classes
   } = useWalletConnectionStatusButtonStyles();
 
@@ -299,9 +306,17 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
       ? getWalletConfig(wallet).short
       : getWalletConnectionLabel(status);
   const trimmedAddress = trimAddress(account);
-
+  const resolvedClassName = classNames(className, {
+    [hoistedClassName]: hoisted,
+  });
   return (
-    <Button variant="outlined" color="secondary" classes={classes} {...rest}>
+    <Button
+      className={resolvedClassName}
+      variant="outlined"
+      color="secondary"
+      classes={classes}
+      {...rest}
+    >
       <WalletConnectionIndicator
         status={status}
         className={indicatorClassName}

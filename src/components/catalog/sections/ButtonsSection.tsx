@@ -59,6 +59,7 @@ export const ButtonsSection: FunctionComponent = () => {
           <TxHistoryIconButton />
           <QrCodeIconButton />
           <TransactionHistoryMenuIconButton />
+          <TransactionHistoryMenuIconButton opened/>
         </SeparationWrapper>
         <SeparationWrapper>
           <CopyContentButton content="1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm" />

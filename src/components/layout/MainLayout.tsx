@@ -32,7 +32,10 @@ import { env } from "../../constants/environmentVariables";
 import { $network } from "../../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 import { TransactionHistory } from "../../features/transactions/TransactionHistory";
-import { setTxHistoryOpened } from "../../features/transactions/transactionsSlice";
+import {
+  $transactionsData,
+  setTxHistoryOpened,
+} from "../../features/transactions/transactionsSlice";
 import {
   $multiwalletChain,
   $walletPickerOpened,
@@ -153,6 +156,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   useSetNetworkFromParam();
   useBackgroundReplacer(variant);
   useWeb3Signatures();
+  const { txHistoryOpened } = useSelector($transactionsData);
   const { signature } = useSelector($walletSignatures);
   const { status, account, symbol } = useSelectedChainWallet();
 
@@ -173,9 +177,9 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
     }
   }, [width, theme.breakpoints]);
 
-  const handleTxHistoryClick = useCallback(() => {
-    dispatch(setTxHistoryOpened(true));
-  }, [dispatch]);
+  const handleTxHistoryToggle = useCallback(() => {
+    dispatch(setTxHistoryOpened(!txHistoryOpened));
+  }, [dispatch, txHistoryOpened]);
 
   const multiwalletChain = useSelector($multiwalletChain);
   const walletPickerOpen = useSelector($walletPickerOpened);
@@ -225,11 +229,13 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                   <>
                     <div className={styles.desktopMenu}>
                       <TransactionHistoryMenuIconButton
+                        opened={txHistoryOpened}
                         className={styles.desktopTxHistory}
-                        onClick={handleTxHistoryClick}
+                        onClick={handleTxHistoryToggle}
                       />
                       <WalletConnectionStatusButton
                         onClick={handleWalletPickerOpen}
+                        hoisted={txHistoryOpened}
                         status={status}
                         account={account}
                         wallet={symbol}
@@ -280,7 +286,8 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                 <ListItem divider className={styles.drawerListItem} button>
                   <div className={styles.drawerListItemIcon}>
                     <TransactionHistoryMenuIconButton
-                      onClick={handleTxHistoryClick}
+                      opened={txHistoryOpened}
+                      onClick={handleTxHistoryToggle}
                     />
                   </div>
                   <p>View Transactions</p>

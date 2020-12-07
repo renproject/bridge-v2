@@ -1,50 +1,26 @@
-import { Box, Dialog, Typography } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../components/buttons/Buttons";
-import { AssetDropdown } from "../../components/dropdowns/AssetDropdown";
-import {
-  BigTopWrapper,
-  BigWrapper,
-  CenteringSpacedBox,
-  MediumWrapper,
-} from "../../components/layout/LayoutHelpers";
-import {
-  ShowEntry,
-  SimplePagination,
-} from "../../components/pagination/SimplePagination";
-import { CenteredProgress } from "../../components/progress/ProgressHelpers";
+import { Box, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../components/buttons/Buttons'
+import { AssetDropdown } from '../../components/dropdowns/AssetDropdown'
+import { BigTopWrapper, BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../components/layout/LayoutHelpers'
+import { ShowEntry, SimplePagination, } from '../../components/pagination/SimplePagination'
+import { CenteredProgress } from '../../components/progress/ProgressHelpers'
 import {
   TransactionsContent,
   TransactionsHeader,
   TransactionsPaginationWrapper,
   TransactionsStatusHeader,
-} from "../../components/transactions/TransactionsGrid";
-import { WalletStatus } from "../../components/utils/types";
-import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
-import { db } from "../../services/database/database";
-import {
-  getChainConfig,
-  supportedMintDestinationChains,
-} from "../../utils/assetConfigs";
-import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
-import { ReleaseTransactionEntryResolver } from "../release/components/ReleaseHistoryHelpers";
-import {
-  $wallet,
-  $walletSignatures,
-  setChain,
-  setUser,
-  setWalletPickerOpened,
-} from "../wallet/walletSlice";
+} from '../../components/transactions/TransactionsGrid'
+import { WalletStatus } from '../../components/utils/types'
+import { WalletConnectionProgress } from '../../components/wallet/WalletHelpers'
+import { useSelectedChainWallet } from '../../providers/multiwallet/multiwalletHooks'
+import { db } from '../../services/database/database'
+import { getChainConfig, supportedMintDestinationChains, } from '../../utils/assetConfigs'
+import { MintTransactionEntryResolver } from '../mint/components/MintHistoryHelpers'
+import { ReleaseTransactionEntryResolver } from '../release/components/ReleaseHistoryHelpers'
+import { $wallet, $walletSignatures, setChain, setUser, setWalletPickerOpened, } from '../wallet/walletSlice'
+import { TransactionHistoryDialog } from './components/TransactionHistoryHelpers'
 import {
   $orderedTransactions,
   $transactionsData,
@@ -53,8 +29,8 @@ import {
   setTransactions,
   setTxHistoryOpened,
   setTxsPending,
-} from "./transactionsSlice";
-import { TxType } from "./transactionsUtils";
+} from './transactionsSlice'
+import { TxType } from './transactionsUtils'
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -121,10 +97,8 @@ export const TransactionHistory: FunctionComponent = () => {
 
   const showTransactions = walletConnected && !txsPending;
   return (
-    <Dialog
+    <TransactionHistoryDialog
       open={opened}
-      maxWidth="sm"
-      fullWidth
       onBackdropClick={handleClose}
       keepMounted
     >
@@ -210,6 +184,6 @@ export const TransactionHistory: FunctionComponent = () => {
           </TransactionsPaginationWrapper>
         </>
       )}
-    </Dialog>
+    </TransactionHistoryDialog>
   );
 };

@@ -9,6 +9,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import CopyIcon from "@material-ui/icons/FileCopyOutlined";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import CloseIcon from "@material-ui/icons/Close";
 import classNames from "classnames";
 import MiddleEllipsis from "react-middle-ellipsis";
 import React, {
@@ -378,7 +379,7 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   root: {
     color: theme.palette.secondary.light,
     border: `1px solid ${theme.palette.divider}`,
-    backgroundColor: "transparent",
+    backgroundColor: theme.palette.common.white,
     padding: 6,
     "&:hover": {
       backgroundColor: theme.palette.divider,
@@ -386,6 +387,9 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
         backgroundColor: "transparent",
       },
     },
+  },
+  hoisted: {
+    zIndex: theme.zIndex.tooltip,
   },
   label: {
     borderRadius: theme.shape.borderRadius,
@@ -397,18 +401,27 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   },
 }));
 
-type TransactionHistoryMenuIconButtonProps = IconButtonProps & {};
+type TransactionHistoryMenuIconButtonProps = IconButtonProps & {
+  opened?: boolean;
+};
 
-export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = (
-  props
-) => {
+export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = ({
+  opened,
+  className,
+  ...props
+}) => {
   const {
     icon: iconClassName,
+    hoisted: hoistedClassName,
     ...classes
   } = useTransactionHistoryIconButtonStyles();
+  const Icon = opened ? CloseIcon : TxHistoryIcon;
+  const resolvedClassName = classNames(className, {
+    [hoistedClassName]: opened,
+  });
   return (
-    <IconButton classes={classes} {...props}>
-      <TxHistoryIcon className={iconClassName} />
+    <IconButton className={resolvedClassName} classes={classes} {...props}>
+      <Icon className={iconClassName} />
     </IconButton>
   );
 };
