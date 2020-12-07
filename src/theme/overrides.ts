@@ -1,6 +1,5 @@
-import { fade } from "@material-ui/core";
-import { Palette } from "@material-ui/core/styles/createPalette";
-import { Overrides } from "@material-ui/core/styles/overrides";
+import { Palette } from '@material-ui/core/styles/createPalette'
+import { Overrides } from '@material-ui/core/styles/overrides'
 import {
   alertError,
   alertErrorBackground,
@@ -13,7 +12,8 @@ import {
   textDark,
   textDisabled,
   textLighter,
-} from "./colors";
+} from './colors'
+import { getShadow } from './themeUtils'
 
 export const overrides = (palette: Palette): Overrides => {
   return {
@@ -25,7 +25,7 @@ export const overrides = (palette: Palette): Overrides => {
       standardSuccess: {
         color: alertSuccess,
         backgroundColor: alertSuccessBackground,
-        boxShadow: `1px 1px 2px 0 ${fade(alertSuccess, 0.15)}`,
+        boxShadow: getShadow(alertSuccess),
         "& $icon": {
           color: alertSuccess,
         },
@@ -33,7 +33,7 @@ export const overrides = (palette: Palette): Overrides => {
       standardInfo: {
         color: alertInfo,
         backgroundColor: alertInfoBackground,
-        boxShadow: `1px 1px 2px 0 ${fade(alertInfo, 0.15)}`,
+        boxShadow: getShadow(alertInfo),
         "& $icon": {
           color: alertInfo,
         },
@@ -41,7 +41,7 @@ export const overrides = (palette: Palette): Overrides => {
       standardWarning: {
         color: alertWarning,
         backgroundColor: alertWarningBackground,
-        boxShadow: `1px 1px 2px 0 ${fade(alertWarning, 0.15)}`,
+        boxShadow: getShadow(alertWarning),
         "& $icon": {
           color: alertWarning,
         },
@@ -49,7 +49,7 @@ export const overrides = (palette: Palette): Overrides => {
       standardError: {
         color: alertError,
         backgroundColor: alertErrorBackground,
-        boxShadow: `1px 1px 2px 0 ${fade(alertError, 0.15)}`,
+        boxShadow: getShadow(alertError),
         "& $icon": {
           color: alertError,
         },

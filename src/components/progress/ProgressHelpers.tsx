@@ -10,6 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
+import { getShadow } from "../../theme/themeUtils";
 import { CustomSvgIconComponent, EmptyIcon } from "../icons/RenIcons";
 import { CenteringSpacedBox } from "../layout/LayoutHelpers";
 
@@ -230,6 +231,79 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
     </div>
   );
 };
+
+// export const createPulseAnimation = makeStyles((theme) => ({
+//   "@keyframes pulse": {
+//     from: {
+//       boxShadow: "0 0 0 0 rgba(204,169,44, 0.4)",
+//     },
+//     to: {
+//       boxShadow: "0 0 0 0 rgba(204,169,44, 0);",
+//     },
+//   },
+// }));
+
+export const createPulseAnimation = (color: string, spread = 5) => {
+  const initialShadow = getShadow(color, 0.4, 0, 0, 0, 0);
+  const throughShadow = getShadow(color, 0, 0, 0, 0, spread);
+  const toShadow = getShadow(color, 0, 0, 0, 0, 0);
+  const keyframes = {
+    "@keyframes pulse": {
+      "0%": {
+        boxShadow: initialShadow,
+      },
+      "70%": {
+        boxShadow: throughShadow,
+      },
+      "100%": {
+        boxShadow: toShadow,
+      },
+    },
+  };
+  return { keyframes, initialShadow };
+};
+
+export const usePulseIndicatorStyles = makeStyles((theme) => {
+  const color = theme.palette.primary.main;
+  const { keyframes, initialShadow } = createPulseAnimation(color);
+  return {
+    ...keyframes,
+    root: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      background: theme.palette.primary.main,
+    },
+    pulsing: {
+      boxShadow: initialShadow,
+      animation: "$pulse 2s infinite",
+    },
+  };
+});
+
+type PulseIndicatorProps = {
+  pulsing?: boolean;
+  className?: string;
+};
+
+export const PulseIndicator: FunctionComponent<PulseIndicatorProps> = ({
+  pulsing,
+  className,
+}) => {
+  const styles = usePulseIndicatorStyles();
+  const resolvedClassName = classNames(styles.root, className, {
+    [styles.pulsing]: pulsing,
+  });
+
+  return <div className={resolvedClassName} />;
+};
+
+export const ActionRequiredIndicator = styled("div")(({ theme }) => ({
+  width: 10,
+  height: 10,
+  borderRadius: 5,
+  background: theme.palette.primary.main,
+}));
 
 export const TransactionStatusCircleIndicator = styled("div")(({ theme }) => ({
   width: 10,

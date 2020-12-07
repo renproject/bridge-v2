@@ -230,6 +230,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                     <div className={styles.desktopMenu}>
                       <TransactionHistoryMenuIconButton
                         opened={txHistoryOpened}
+                        indicator
                         className={styles.desktopTxHistory}
                         onClick={handleTxHistoryToggle}
                       />

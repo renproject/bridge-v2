@@ -5,6 +5,7 @@ import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useTimeout } from "react-use";
+import { defaultShadow } from "../../theme/other";
 import {
   BridgeChainConfig,
   BridgeWallet,
@@ -265,6 +266,7 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.common.white,
     borderColor: theme.palette.divider,
+    boxShadow: defaultShadow,
     "&:hover": {
       borderColor: theme.palette.divider,
       backgroundColor: theme.palette.divider,

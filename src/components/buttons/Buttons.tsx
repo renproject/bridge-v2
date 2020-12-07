@@ -1,38 +1,17 @@
-import {
-  Button,
-  ButtonProps,
-  Fade,
-  IconButton,
-  IconButtonProps,
-  styled,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import CopyIcon from "@material-ui/icons/FileCopyOutlined";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import CloseIcon from "@material-ui/icons/Close";
-import classNames from "classnames";
-import MiddleEllipsis from "react-middle-ellipsis";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import {
-  blue,
-  graphiteLight,
-  gray,
-  grayLight,
-  skyBlue,
-  skyBlueLighter,
-} from "../../theme/colors";
-import { copyToClipboard } from "../../utils/copyToClipboard";
-import {
-  BrowserNotificationsIcon,
-  QrCodeIcon,
-  TxHistoryIcon,
-} from "../icons/RenIcons";
-import { Hide } from "../layout/LayoutHelpers";
+import { Button, ButtonProps, Fade, IconButton, IconButtonProps, styled, } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import CloseIcon from '@material-ui/icons/Close'
+import CopyIcon from '@material-ui/icons/FileCopyOutlined'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import MiddleEllipsis from 'react-middle-ellipsis'
+import { blue, graphiteLight, gray, grayLight, skyBlue, skyBlueLighter, } from '../../theme/colors'
+import { defaultShadow } from '../../theme/other'
+import { copyToClipboard } from '../../utils/copyToClipboard'
+import { BrowserNotificationsIcon, QrCodeIcon, TxHistoryIcon, } from '../icons/RenIcons'
+import { Hide } from '../layout/LayoutHelpers'
+import { PulseIndicator } from '../progress/ProgressHelpers'
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -377,10 +356,11 @@ export const BigQrCode = styled("div")(({ theme }) => ({
 
 const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   root: {
+    padding: 6,
     color: theme.palette.secondary.light,
     border: `1px solid ${theme.palette.divider}`,
     backgroundColor: theme.palette.common.white,
-    padding: 6,
+    boxShadow: defaultShadow,
     "&:hover": {
       backgroundColor: theme.palette.divider,
       "@media (hover: none)": {
@@ -388,13 +368,18 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
       },
     },
   },
-  hoisted: {
-    zIndex: theme.zIndex.tooltip,
-  },
   label: {
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.divider,
     padding: 3,
+  },
+  indicator: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+  },
+  hoisted: {
+    zIndex: theme.zIndex.tooltip,
   },
   icon: {
     fontSize: 20,
@@ -403,16 +388,19 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
 
 type TransactionHistoryMenuIconButtonProps = IconButtonProps & {
   opened?: boolean;
+  indicator?: boolean;
 };
 
 export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = ({
   opened,
+  indicator,
   className,
   ...props
 }) => {
   const {
     icon: iconClassName,
     hoisted: hoistedClassName,
+    indicator: indicatorClassname,
     ...classes
   } = useTransactionHistoryIconButtonStyles();
   const Icon = opened ? CloseIcon : TxHistoryIcon;
@@ -422,6 +410,7 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
   return (
     <IconButton className={resolvedClassName} classes={classes} {...props}>
       <Icon className={iconClassName} />
+      {indicator && <PulseIndicator className={indicatorClassname} pulsing />}
     </IconButton>
   );
 };

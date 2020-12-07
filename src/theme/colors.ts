@@ -43,6 +43,7 @@ export const backgroundWhite = "#FFFFFF";
 export const backgroundAlternative = "#FDFDFE";
 
 export const white = "#FFFFFF";
+export const black = "#001B3A";
 
 export const strokeDefault = "#DBE0E8";
 
