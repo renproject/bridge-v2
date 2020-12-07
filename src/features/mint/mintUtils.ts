@@ -7,7 +7,7 @@ import {
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { db } from "../../services/database/database";
 import { DbGatewaySession } from "../../services/database/firebase/firebase";
@@ -27,6 +27,7 @@ import {
   toMintedCurrency,
 } from "../../utils/assetConfigs";
 import { $network } from "../network/networkSlice";
+import { updateTransaction } from "../transactions/transactionsSlice";
 import {
   getChainExplorerLink,
   getTxCreationTimestamp,
@@ -252,6 +253,7 @@ export const useMintTransactionPersistence = (
   tx: GatewaySession | DbGatewaySession,
   state: DepositMachineSchemaState
 ) => {
+  const dispatch = useDispatch();
   useEffect(() => {
     console.log("mint tx/state", state);
     if (!state) {
@@ -264,11 +266,12 @@ export const useMintTransactionPersistence = (
           const newDbTx = { ...tx, meta: { state } };
           db.updateTx(newDbTx).then(() => {
             console.log("mint updated", newDbTx, state);
+            dispatch(updateTransaction(newDbTx));
           });
         }
       })
       .catch((err) => {
-        console.error("Tx synchronization failed", err);
+        console.warn("Mint Tx synchronization failed", err);
       });
-  }, [tx, state]);
+  }, [dispatch, tx, state]);
 };

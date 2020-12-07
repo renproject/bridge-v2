@@ -1,59 +1,27 @@
-import { Bitcoin } from "@renproject/chains-bitcoin";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import {
-  AssetDropdown,
-  AssetDropdownWrapper,
-} from "../../../components/dropdowns/AssetDropdown";
-import {
-  AddressInput,
-  AddressInputWrapper,
-} from "../../../components/inputs/AddressInput";
-import {
-  BigCurrencyInput,
-  BigCurrencyInputWrapper,
-} from "../../../components/inputs/BigCurrencyInput";
-import { PaperContent } from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
-import { WalletStatus } from "../../../components/utils/types";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { releaseChainClassMap, releaseChainMap } from "../../../services/rentx";
+import React, { FunctionComponent, useCallback, useEffect, useMemo, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
+import { AddressInput, AddressInputWrapper, } from '../../../components/inputs/AddressInput'
+import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
+import { PaperContent } from '../../../components/layout/Paper'
+import { Link } from '../../../components/links/Links'
+import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
+import { WalletStatus } from '../../../components/utils/types'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { releaseChainClassMap } from '../../../services/rentx'
 import {
   getChainConfig,
   getCurrencyConfig,
   supportedBurnChains,
   supportedReleaseCurrencies,
   toReleasedCurrency,
-} from "../../../utils/assetConfigs";
-import { $network } from "../../network/networkSlice";
-import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
-import {
-  $wallet,
-  addOrUpdateBalance,
-  setChain,
-  setWalletPickerOpened,
-} from "../../wallet/walletSlice";
-import {
-  getAssetBalance,
-  useFetchAssetBalance,
-} from "../../wallet/walletUtils";
-import {
-  $release,
-  $releaseUsdAmount,
-  setReleaseAddress,
-  setReleaseAmount,
-  setReleaseCurrency,
-} from "../releaseSlice";
+} from '../../../utils/assetConfigs'
+import { $network } from '../../network/networkSlice'
+import { TxConfigurationStepProps } from '../../transactions/transactionsUtils'
+import { $wallet, addOrUpdateBalance, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
+import { getAssetBalance, useFetchAssetBalance, } from '../../wallet/walletUtils'
+import { $release, $releaseUsdAmount, setReleaseAddress, setReleaseAmount, setReleaseCurrency, } from '../releaseSlice'
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -130,7 +98,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     if (ChainClass) {
       const chainInstance = ChainClass();
       return (address: any) => {
-        return chainInstance.utils.addressIsValid(address, "testnet");
+        return chainInstance.utils.addressIsValid(address, network);
       };
     }
     return () => true;

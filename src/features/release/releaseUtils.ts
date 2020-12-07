@@ -7,7 +7,7 @@ import {
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { db } from "../../services/database/database";
 import { DbGatewaySession } from "../../services/database/firebase/firebase";
@@ -25,6 +25,7 @@ import {
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
 import { $network } from "../network/networkSlice";
+import { updateTransaction } from "../transactions/transactionsSlice";
 import {
   getChainExplorerLink,
   getTxCreationTimestamp,
@@ -213,6 +214,7 @@ export const useReleaseTransactionPersistence = (
   tx: GatewaySession | DbGatewaySession,
   state: BurnMachineSchemaState
 ) => {
+  const dispatch = useDispatch();
   useEffect(() => {
     console.log("release tx/state", state);
     if (!state) {
@@ -225,11 +227,12 @@ export const useReleaseTransactionPersistence = (
           const newDbTx = { ...tx, meta: { state } };
           db.updateTx(newDbTx).then(() => {
             console.log("release updated", newDbTx, state);
+            dispatch(updateTransaction(newDbTx));
           });
         }
       })
       .catch((err) => {
-        // console.error("Tx synchronization failed", err);
+        console.warn("Release Tx synchronization failed", err);
       });
-  }, [tx, state]);
+  }, [dispatch, tx, state]);
 };
