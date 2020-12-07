@@ -55,8 +55,11 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     [service]
   );
 
-  const deposit = Object.values(current.context.depositMachines || {})[0]
-  useMintTransactionPersistence(current.context.tx, (deposit?.state.value || "") as DepositMachineSchemaState);
+  const deposit = Object.values(current.context.depositMachines || {})[0];
+  useMintTransactionPersistence(
+    current.context.tx,
+    (deposit?.state.value || "") as DepositMachineSchemaState
+  );
 
   const handleFinish = useCallback(() => {
     history.push({
@@ -160,7 +163,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
         <div className={styles.actions}>
           {status === TxEntryStatus.ACTION_REQUIRED && (
             <SmallActionButton onClick={onAction}>
-              Finish mint
+              {phase === TxPhase.LOCK ? "Continue" : "Finish"} mint
             </SmallActionButton>
           )}
           {status === TxEntryStatus.PENDING &&

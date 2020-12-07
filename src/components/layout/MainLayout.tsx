@@ -34,6 +34,7 @@ import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 import { TransactionHistory } from "../../features/transactions/TransactionHistory";
 import {
   $transactionsData,
+  $transactionsNeedsAction,
   setTxHistoryOpened,
 } from "../../features/transactions/transactionsSlice";
 import {
@@ -51,6 +52,7 @@ import { useWeb3Signatures } from "../../services/web3";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Debug } from "../utils/Debug";
+import { WalletStatus } from "../utils/types";
 import {
   useWalletPickerStyles,
   WalletConnectingInfo,
@@ -157,10 +159,10 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   useBackgroundReplacer(variant);
   useWeb3Signatures();
   const { txHistoryOpened } = useSelector($transactionsData);
-  const { signature } = useSelector($walletSignatures);
+  const txsNeedsAction = useSelector($transactionsNeedsAction);
   const { status, account, symbol } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
 
-  console.log(signature);
   // TODO: add firebase stuff here
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const handleMobileMenuClose = useCallback(() => {
@@ -211,7 +213,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const drawerId = "main-menu-mobile";
   const withMenu = variant !== "intro" && variant !== "about";
-
+  const showTxIndicator = walletConnected && txsNeedsAction;
   return (
     <Container maxWidth="lg">
       <Grid container item>
@@ -230,7 +232,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                     <div className={styles.desktopMenu}>
                       <TransactionHistoryMenuIconButton
                         opened={txHistoryOpened}
-                        indicator
+                        indicator={showTxIndicator}
                         className={styles.desktopTxHistory}
                         onClick={handleTxHistoryToggle}
                       />
