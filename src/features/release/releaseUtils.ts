@@ -103,7 +103,9 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   let releaseTxHash: string = "";
   let releaseTxLink: string = "";
   if (transaction && transaction.destTxHash) {
-    releaseTxHash = transaction.destTxHash;
+    releaseTxHash = Buffer.from(transaction.destTxHash, "base64").toString(
+      "hex"
+    );
     releaseTxLink =
       getChainExplorerLink(
         releaseChainConfig.symbol,
