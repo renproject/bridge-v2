@@ -1,4 +1,10 @@
-import React, { FunctionComponent, useCallback, useEffect } from "react";
+import { Bitcoin } from "@renproject/chains-bitcoin";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -21,6 +27,7 @@ import { Link } from "../../../components/links/Links";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { WalletStatus } from "../../../components/utils/types";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { releaseChainClassMap, releaseChainMap } from "../../../services/rentx";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -28,6 +35,7 @@ import {
   supportedReleaseCurrencies,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
+import { $network } from "../../network/networkSlice";
 import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
 import {
   $wallet,
@@ -54,6 +62,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const { status, account, provider } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, balances } = useSelector($wallet);
+  const network = useSelector($network);
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
   const { fetchAssetBalance } = useFetchAssetBalance();
@@ -112,13 +121,28 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
 
   const targetCurrency = toReleasedCurrency(currency);
   const currencyConfig = getCurrencyConfig(currency);
-  const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
-  const targetChainConfig = getChainConfig(targetCurrencyConfig.sourceChain);
+  const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
+  const validateAddress = useMemo(() => {
+    const ChainClass = (releaseChainClassMap as any)[
+      releaseChainConfig.rentxName
+    ];
+    if (ChainClass) {
+      const chainInstance = ChainClass();
+      return (address: any) => {
+        return chainInstance.utils.addressIsValid(address, "testnet");
+      };
+    }
+    return () => true;
+  }, [releaseChainConfig.rentxName, network]);
+
   //TODO check if balanceOK
+  const isAddressValid = validateAddress(address);
   const canProceed =
     balance !== null &&
     amount &&
     address &&
+    isAddressValid &&
     amount <= Number(balance) &&
     amount > 0;
 
@@ -173,7 +197,8 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       </AssetDropdownWrapper>
       <AddressInputWrapper>
         <AddressInput
-          placeholder={`Enter a Destination ${targetChainConfig.full} Address`}
+          error={!!address && !isAddressValid}
+          placeholder={`Enter a Destination ${releaseChainConfig.full} Address`}
           label="Releasing to"
           onChange={handleAddressChange}
           value={address}
