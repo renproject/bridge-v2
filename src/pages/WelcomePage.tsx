@@ -15,7 +15,7 @@ import { MainLayout } from "../components/layout/MainLayout";
 import { Link } from "../components/links/Links";
 import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
-import { usePageTitle } from "../hooks/usePageTitle";
+import { usePageTitle } from "../providers/TitleProviders";
 import { useNotifications } from "../providers/Notifications";
 import { paths } from "./routes";
 

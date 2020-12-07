@@ -4,7 +4,7 @@ import React, { FunctionComponent } from "react";
 import { RouteComponentProps } from "react-router";
 import { MainLayout } from "../components/layout/MainLayout";
 import { Link } from "../components/links/Links";
-import { usePageTitle } from "../hooks/usePageTitle";
+import { usePageTitle } from "../providers/TitleProviders";
 
 const useStyles = makeStyles((theme) => ({
   root: {

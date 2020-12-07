@@ -187,14 +187,14 @@ export const TransactionHistory: FunctionComponent = () => {
 
               if (tx.type === TxType.MINT) {
                 return (
-                  <ShowEntry when={indexIsInCurrentPage}>
-                    <MintTransactionEntryResolver key={tx.id} tx={tx} />
+                  <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
+                    <MintTransactionEntryResolver tx={tx} />
                   </ShowEntry>
                 );
               } else {
                 return (
-                  <ShowEntry when={indexIsInCurrentPage}>
-                    <ReleaseTransactionEntryResolver key={tx.id} tx={tx} />
+                  <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
+                    <ReleaseTransactionEntryResolver tx={tx} />
                   </ShowEntry>
                 );
               }

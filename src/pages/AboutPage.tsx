@@ -7,7 +7,7 @@ import { MainLayout } from "../components/layout/MainLayout";
 import { Link } from "../components/links/Links";
 import { MarkText } from "../components/typography/TypographyHelpers";
 import { links } from "../constants/constants";
-import { usePageTitle } from "../hooks/usePageTitle";
+import { usePageTitle } from "../providers/TitleProviders";
 
 const useStyles = makeStyles((theme) => ({
   root: {

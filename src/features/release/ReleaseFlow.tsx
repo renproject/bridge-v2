@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
-import { usePageTitle } from "../../hooks/usePageTitle";
+import { usePageTitle } from "../../providers/TitleProviders";
 import { paths } from "../../pages/routes";
 import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { TxConfigurationStep } from "../transactions/transactionsUtils";

@@ -1,5 +1,7 @@
-import { useEffect } from 'react'
-import { createStateContext } from 'react-use'
+import React, { FunctionComponent, useEffect } from "react";
+import { createStateContext } from "react-use";
+import { useTitle } from "react-use";
+import { appName } from "../constants/constants";
 
 const [usePaperTitle, PaperTitleProvider] = createStateContext("Transaction");
 
@@ -10,4 +12,34 @@ export const useSetPaperTitle = (title: string) => {
   }, [title, setTitle]);
 };
 
+const [useActionRequired, ActionRequiredProvider] = createStateContext(false);
+
+export const useSetActionRequired = (required: boolean) => {
+  const [, setActionRequired] = useActionRequired();
+  useEffect(() => {
+    setActionRequired(required);
+    return () => setActionRequired(false);
+  }, [setActionRequired, required]);
+};
+
+export const useStandardPageTitle = (title: string) =>
+  useTitle(`${title} - ${appName}`);
+
+export const usePageTitle = (title: string) => {
+  const [actionRequired] = useActionRequired();
+
+  useEffect(() => {
+    const baseTitle = `${title} - ${appName}`;
+    let newTitle = baseTitle;
+    if (actionRequired) {
+      newTitle = `Action required! - ${baseTitle}`;
+    }
+    document.title = newTitle;
+  }, [title, actionRequired]);
+};
+
 export { PaperTitleProvider, usePaperTitle };
+
+export const TitleProviders: FunctionComponent = ({ children }) => {
+  return <ActionRequiredProvider>{children}</ActionRequiredProvider>;
+};

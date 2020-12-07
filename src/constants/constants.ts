@@ -1,3 +1,5 @@
+export const appName = "RenBridge V2";
+
 export enum storageKeys {
   TERMS_AGREED = "termsAgreed",
   SIG_MAP = "sigMap",

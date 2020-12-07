@@ -1,25 +1,51 @@
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { AddressInput, AddressInputWrapper, } from '../../../components/inputs/AddressInput'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
-import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
-import { WalletStatus } from '../../../components/utils/types'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import React, { FunctionComponent, useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import {
+  AddressInput,
+  AddressInputWrapper,
+} from "../../../components/inputs/AddressInput";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { WalletStatus } from "../../../components/utils/types";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getChainConfig,
   getCurrencyConfig,
   supportedBurnChains,
   supportedReleaseCurrencies,
   toReleasedCurrency,
-} from '../../../utils/assetConfigs'
-import { TxConfigurationStepProps } from '../../transactions/transactionsUtils'
-import { $wallet, addOrUpdateBalance, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
-import { getAssetBalance, useFetchAssetBalance, } from '../../wallet/walletUtils'
-import { $release, $releaseUsdAmount, setReleaseAddress, setReleaseAmount, setReleaseCurrency, } from '../releaseSlice'
+} from "../../../utils/assetConfigs";
+import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
+import {
+  $wallet,
+  addOrUpdateBalance,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
+  getAssetBalance,
+  useFetchAssetBalance,
+} from "../../wallet/walletUtils";
+import {
+  $release,
+  $releaseUsdAmount,
+  setReleaseAddress,
+  setReleaseAmount,
+  setReleaseCurrency,
+} from "../releaseSlice";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -156,7 +182,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       <ActionButtonWrapper>
         <ActionButton
           onClick={handleNextStep}
-          disabled={walletConnected && !canProceed}
+          disabled={!walletConnected || !canProceed}
         >
           {walletConnected ? "Next" : "Connect Wallet"}
         </ActionButton>

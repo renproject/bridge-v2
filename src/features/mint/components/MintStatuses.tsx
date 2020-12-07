@@ -31,6 +31,7 @@ import {
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
 import {
   usePaperTitle,
+  useSetActionRequired,
   useSetPaperTitle,
 } from "../../../providers/TitleProviders";
 import { paths } from "../../../pages/routes";
@@ -211,6 +212,7 @@ export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps
   submitting,
 }) => {
   useSetPaperTitle("Submit");
+  useSetActionRequired(true);
   const theme = useTheme();
   const {
     lockCurrencyConfig,

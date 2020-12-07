@@ -15,7 +15,10 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { useSetPaperTitle } from "../../../providers/TitleProviders";
+import {
+  useSetActionRequired,
+  useSetPaperTitle,
+} from "../../../providers/TitleProviders";
 import { paths } from "../../../pages/routes";
 import { getBurnAndReleaseParams } from "../releaseUtils";
 
@@ -35,6 +38,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
   pending = false,
 }) => {
   useSetPaperTitle("Submit");
+  useSetActionRequired(true);
   const theme = useTheme();
   const { burnChainConfig, burnTxHash, burnTxLink } = getBurnAndReleaseParams(
     tx
