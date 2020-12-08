@@ -1,7 +1,6 @@
 import {
   CircularProgress,
   CircularProgressProps,
-  fade,
   styled,
   Theme,
   Typography,
@@ -10,7 +9,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
-import { createPulseAnimation, getShadow } from "../../theme/themeUtils";
+import {
+  createPulseAnimation,
+  createPulseOpacityAnimation,
+} from "../../theme/themeUtils";
 import { CustomSvgIconComponent, EmptyIcon } from "../icons/RenIcons";
 import { CenteringSpacedBox } from "../layout/LayoutHelpers";
 
@@ -72,10 +74,13 @@ const useSectionStyles = makeStyles<Theme, any>((theme) => {
   };
 });
 
+const defaultProgressWithContentSize = 166;
+
 const useProgressWithContentStyles = makeStyles<
   Theme,
   ProgressWithContentProps
 >((theme) => {
+  const { pulsingStyles, pulsingKeyframes } = createPulseOpacityAnimation();
   return {
     root: {
       display: "inline-flex",
@@ -109,16 +114,20 @@ const useProgressWithContentStyles = makeStyles<
       position: "absolute",
       color: ({ color }) => {
         if (color !== "inherit") {
-          return fade(color, 0.2);
+          return color;
         }
         return theme.customColors.skyBlue;
       },
+      opacity: 0.2,
       "& > svg": {
         transformOrigin: "50% 50%",
       },
     },
+    ...pulsingKeyframes,
+    sectionProcessing: pulsingStyles,
     sectionCompleted: {
-      color: () => "inherit",
+      color: "inherit",
+      opacity: 1,
     },
   };
 });
@@ -136,23 +145,21 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
   processing,
   confirmations,
   targetConfirmations = 6,
-  size = 166,
+  size = defaultProgressWithContentSize,
   fontSize = Math.floor(0.75 * size),
   children,
 }) => {
   const styles = useProgressWithContentStyles({
     color,
     fontSize,
+    size,
   });
   const sectionsStyles = useSectionStyles(targetConfirmations);
   const rootClassName = classNames(styles.root, {
     [styles.rootBig]: fontSize === "big",
     [styles.rootMedium]: fontSize === "medium",
   });
-  const shared = {
-    size,
-    thickness: 3,
-  };
+
   const margin = getSectionMargin(targetConfirmations);
   return (
     <div className={rootClassName}>
@@ -160,11 +167,15 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
         <div className={styles.sections}>
           {new Array(targetConfirmations).fill(true).map((_, index) => {
             const value = 100 / targetConfirmations - margin;
+            const completed = index < confirmations;
+            const processing = index === confirmations;
             const sectionClassName = classNames(
               styles.section,
               sectionsStyles.dynamicSection,
+              styles.sectionAnimated,
               {
-                [styles.sectionCompleted]: index < confirmations,
+                [styles.sectionCompleted]: completed,
+                [styles.sectionProcessing]: processing,
               }
             );
             return (
@@ -174,7 +185,8 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
                 variant="determinate"
                 value={value}
                 color="inherit"
-                {...shared}
+                size={size}
+                thickness={3}
               />
             );
           })}
@@ -184,7 +196,8 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
         variant={processing ? "indeterminate" : "determinate"}
         value={typeof confirmations !== "undefined" ? 0 : value}
         color="inherit"
-        {...shared}
+        size={size}
+        thickness={3}
       />
       <div className={styles.content}>{children}</div>
     </div>

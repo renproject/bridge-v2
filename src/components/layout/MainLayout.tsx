@@ -1,58 +1,33 @@
-import {
-  Container,
-  Divider,
-  Drawer,
-  Grid,
-  ListItem,
-  useTheme,
-} from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import CloseIcon from "@material-ui/icons/Close";
-import MenuIcon from "@material-ui/icons/Menu";
-import {
-  useMultiwallet,
-  WalletPickerModal,
-  WalletPickerProps,
-} from "@renproject/multiwallet-ui";
-import classNames from "classnames";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { useWindowSize } from "react-use";
-import { env } from "../../constants/environmentVariables";
-import { $network } from "../../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../../features/network/networkUtils";
-import { TransactionHistory } from "../../features/transactions/TransactionHistory";
+import { Container, Divider, Drawer, Grid, ListItem, useTheme, } from '@material-ui/core'
+import AppBar from '@material-ui/core/AppBar'
+import IconButton from '@material-ui/core/IconButton'
+import { makeStyles, Theme } from '@material-ui/core/styles'
+import Toolbar from '@material-ui/core/Toolbar'
+import CloseIcon from '@material-ui/icons/Close'
+import MenuIcon from '@material-ui/icons/Menu'
+import { useMultiwallet, WalletPickerModal, WalletPickerProps, } from '@renproject/multiwallet-ui'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
+import { env } from '../../constants/environmentVariables'
+import { $network } from '../../features/network/networkSlice'
+import { useSetNetworkFromParam } from '../../features/network/networkUtils'
+import { TransactionHistory } from '../../features/transactions/TransactionHistory'
 import {
   $transactionsData,
   $transactionsNeedsAction,
   setTxHistoryOpened,
-} from "../../features/transactions/transactionsSlice";
-import {
-  $multiwalletChain,
-  $walletPickerOpened,
-  $walletSignatures,
-  setWalletPickerOpened,
-} from "../../features/wallet/walletSlice";
-import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
-import {
-  useSelectedChainWallet,
-  useWallet,
-} from "../../providers/multiwallet/multiwalletHooks";
-import { useWeb3Signatures } from "../../services/web3";
-import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { Debug } from "../utils/Debug";
-import { WalletStatus } from "../utils/types";
+} from '../../features/transactions/transactionsSlice'
+import { $multiwalletChain, $walletPickerOpened, setWalletPickerOpened, } from '../../features/wallet/walletSlice'
+import { walletPickerModalConfig } from '../../providers/multiwallet/Multiwallet'
+import { useSelectedChainWallet, useWallet, } from '../../providers/multiwallet/multiwalletHooks'
+import { useWeb3Signatures } from '../../services/web3'
+import { TransactionHistoryMenuIconButton } from '../buttons/Buttons'
+import { RenBridgeLogoIcon } from '../icons/RenIcons'
+import { Debug } from '../utils/Debug'
+import { WalletStatus } from '../utils/types'
 import {
   useWalletPickerStyles,
   WalletConnectingInfo,
@@ -60,8 +35,8 @@ import {
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
-} from "../wallet/WalletHelpers";
-import { Footer } from "./Footer";
+} from '../wallet/WalletHelpers'
+import { Footer } from './Footer'
 
 const headerHeight = 82;
 const footerHeight = 45;
