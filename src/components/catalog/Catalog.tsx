@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { FunctionComponent, useCallback } from "react";
+import { useAlertFavicon } from "../../providers/Notifications";
 import { darkTheme, lightTheme } from "../../theme/theme";
 import { AssetDropdown } from "../dropdowns/AssetDropdown";
 import { BridgePurePaper, PaperContent } from "../layout/Paper";
@@ -36,6 +37,7 @@ enum TabPhase {
 
 export const Catalog: FunctionComponent = () => {
   const [tab, setTab] = React.useState(TabPhase.MINT);
+  useAlertFavicon(tab === TabPhase.MINT);
   const [theme, setTheme] = React.useState("light");
   const handleTabChange = useCallback((event, newValue) => {
     setTab(newValue);
