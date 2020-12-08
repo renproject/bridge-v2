@@ -1,74 +1,34 @@
-import { Divider, IconButton } from "@material-ui/core";
-import { BurnMachineSchema, GatewaySession } from "@renproject/ren-tx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps, useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import {
-  CenteringSpacedBox,
-  PaperSpacerWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import {
-  LabelWithValue,
-  SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { usePageTitle } from "../../../providers/TitleProviders";
-import { usePaperTitle } from "../../../providers/TitleProviders";
-import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
-import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
-import {
-  BookmarkPageWarning,
-  ProgressStatus,
-} from "../../transactions/components/TransactionsHelpers";
-import {
-  createTxQueryString,
-  getTxPageTitle,
-  TxType,
-  useTxParam,
-} from "../../transactions/transactionsUtils";
-import {
-  $chain,
-  setChain,
-  setWalletPickerOpened,
-} from "../../wallet/walletSlice";
-import {
-  ReleaseCompletedStatus,
-  ReleaseProgressStatus,
-} from "../components/ReleaseStatuses";
-import {
-  getBurnAndReleaseParams,
-  useBurnMachine,
-  useReleaseTransactionPersistence,
-} from "../releaseUtils";
+import { Divider, IconButton } from '@material-ui/core'
+import { BurnMachineSchema, GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
+import { ActionButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { CenteringSpacedBox, PaperSpacerWrapper, } from '../../../components/layout/LayoutHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { LabelWithValue, SpacedDivider, } from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from '../../../components/utils/types'
+import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
+import { paths } from '../../../pages/routes'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { usePageTitle, usePaperTitle } from '../../../providers/TitleProviders'
+import { getChainConfigByRentxName } from '../../../utils/assetConfigs'
+import { $exchangeRates } from '../../marketData/marketDataSlice'
+import { findExchangeRate } from '../../marketData/marketDataUtils'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
+import { ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
+import { createTxQueryString, getTxPageTitle, TxType, useTxParam, } from '../../transactions/transactionsUtils'
+import { $chain, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
+import { ReleaseCompletedStatus, ReleaseProgressStatus, } from '../components/ReleaseStatuses'
+import { getBurnAndReleaseParams, useBurnMachine, useReleaseTransactionPersistence, } from '../releaseUtils'
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
 ) => {
-  const { history, location } = props;
+  const { history } = props;
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
@@ -112,10 +72,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
     releaseCurrencyConfig.symbol
   );
   const amountUsd = amount * releaseCurrencyUsdRate;
-
-  const onBookmarkWarningClosed = useCallback(() => {
-    history.replace({ ...location, state: undefined });
-  }, [history, location]);
 
   return (
     <>
@@ -181,9 +137,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
             <Debug it={{ parsedTx, txState: txState }} />
           </PaperContent>
         </>
-      )}
-      {txState?.newTx && (
-        <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
       )}
     </>
   );

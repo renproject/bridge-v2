@@ -1,5 +1,5 @@
-import { Button } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useState } from 'react'
+import { Button } from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   BigQrCode,
   CopyContentButton,
@@ -8,9 +8,9 @@ import {
   TransactionDetailsButton,
   TransactionHistoryMenuIconButton,
   TxHistoryIconButton,
-} from '../../buttons/Buttons'
-import { QrCodeIcon } from '../../icons/RenIcons'
-import { Cartesian, Section, SeparationWrapper } from '../PresentationHelpers'
+} from "../../buttons/Buttons";
+import { QrCodeIcon } from "../../icons/RenIcons";
+import { Cartesian, Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const ButtonsSection: FunctionComponent = () => {
   const [settings, setSettings] = useState(false);
@@ -59,7 +59,6 @@ export const ButtonsSection: FunctionComponent = () => {
           <TxHistoryIconButton />
           <QrCodeIconButton />
           <TransactionHistoryMenuIconButton />
-          <TransactionHistoryMenuIconButton opened/>
         </SeparationWrapper>
         <SeparationWrapper>
           <CopyContentButton content="1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm" />

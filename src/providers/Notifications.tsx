@@ -1,12 +1,11 @@
 import {
+  OptionsObject,
   SnackbarProvider as NotistackSnackbarProvider,
+  useSnackbar as useDefaultSnackbar,
   VariantType,
-} from "notistack";
-import { FunctionComponent, ReactElement, useEffect, useMemo } from "react";
-import React from "react";
-import { NotificationMessage } from "../components/notifications/NotificationMessage";
-
-import { useSnackbar as useDefaultSnackbar, OptionsObject } from "notistack";
+} from 'notistack'
+import React, { FunctionComponent, ReactElement, useEffect, useMemo } from 'react'
+import { NotificationMessage } from '../components/notifications/NotificationMessage'
 
 type ExtendedVariantType = VariantType | "specialInfo";
 
@@ -73,7 +72,6 @@ const changeFavicons = (alert: boolean) => {
       link.type = "image/png";
       link.rel = "icon";
       link.href = href;
-      console.log("favicon chaining to", href);
     }
   }
 
@@ -84,7 +82,6 @@ const changeFavicons = (alert: boolean) => {
   if (link) {
     link.rel = "shortcut icon";
     link.href = href;
-    console.log("favicon chaining to", href);
   }
 };
 
