@@ -6,6 +6,7 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useTimeout } from "react-use";
 import { defaultShadow } from "../../theme/other";
+import { createPulseAnimation } from "../../theme/themeUtils";
 import {
   BridgeChainConfig,
   BridgeWallet,
@@ -209,26 +210,40 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   );
 };
 
-const useWalletConnectionIndicatorStyles = makeStyles((theme) => ({
-  root: {
-    width: 10,
-    height: 10,
-    borderRadius: 10,
-    backgroundColor: theme.palette.divider,
-  },
-  connected: {
-    backgroundColor: theme.palette.success.main,
-  },
-  wrongNetwork: {
-    backgroundColor: theme.palette.warning.main,
-  },
-  disconnected: {
-    backgroundColor: theme.palette.error.main,
-  },
-  connecting: {
-    backgroundColor: theme.palette.info.main,
-  },
-}));
+const createIndicatorClass = (className: string, color: string) => {
+  const { pulsingStyles, pulsingKeyframes } = createPulseAnimation(
+    color,
+    3,
+    className
+  );
+
+  return {
+    ...pulsingKeyframes,
+    [className]: {
+      ...pulsingStyles,
+      backgroundColor: color,
+    },
+  };
+};
+
+type WalletConnectionIndicatorStyles = Record<
+  "root" | "connected" | "disconnected" | "wrongNetwork" | "connecting",
+  string
+>;
+const useWalletConnectionIndicatorStyles = makeStyles((theme) => {
+  return {
+    root: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: theme.palette.divider,
+    },
+    ...createIndicatorClass("connected", theme.palette.success.main),
+    ...createIndicatorClass("disconnected", theme.palette.error.main),
+    ...createIndicatorClass("connecting", theme.palette.info.main),
+    ...createIndicatorClass("wrongNetwork", theme.palette.warning.main),
+  };
+});
 
 type WalletConnectionIndicatorProps = {
   status?: WalletConnectionStatusType;
@@ -239,7 +254,7 @@ export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndica
   status,
   className: classNameProp,
 }) => {
-  const styles = useWalletConnectionIndicatorStyles();
+  const styles = useWalletConnectionIndicatorStyles() as WalletConnectionIndicatorStyles;
   const className = classNames(styles.root, classNameProp, {
     [styles.connected]: status === WalletStatus.CONNECTED,
     [styles.wrongNetwork]: status === WalletStatus.WRONG_NETWORK,
