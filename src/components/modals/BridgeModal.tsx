@@ -2,7 +2,6 @@ import { Backdrop } from '@material-ui/core'
 import Dialog, { DialogProps } from '@material-ui/core/Dialog'
 import MuiDialogTitle, { DialogTitleProps, } from '@material-ui/core/DialogTitle'
 import IconButton from '@material-ui/core/IconButton'
-import Slide from '@material-ui/core/Slide'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close'
@@ -113,12 +112,10 @@ export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
 
   return (
     <Backdrop id="x" className={styles.backdrop} open={open}>
-      <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-        <BridgePurePaper className={styles.paper}>
-          <BridgeModalTitle onClose={onClose} title={title} />
-          {children}
-        </BridgePurePaper>
-      </Slide>
+      <BridgePurePaper className={styles.paper}>
+        <BridgeModalTitle onClose={onClose} title={title} />
+        {children}
+      </BridgePurePaper>
     </Backdrop>
   );
 };
