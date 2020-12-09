@@ -106,7 +106,7 @@ export const createShakeAnimation = (
     [keyframesName]: shakeKeyframesStyles,
   };
   const shakeStyles = {
-    animation: `$${animationName} 0.2s ease-in-out 2 both`,
+    animation: `$${animationName} 0.2s ease-in-out infinite`,
     transformOrigin: "50% 50%",
     transform: getRotate(0),
   };

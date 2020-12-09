@@ -4,8 +4,6 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useShakingStyles } from "../../theme/animationUtils";
 
-type BridgePaperProps = PaperContentProps & PaperProps;
-
 const useBridgePaperStyles = makeStyles((theme) => {
   return {
     root: {
@@ -29,11 +27,14 @@ export const BridgePurePaper: FunctionComponent<BridgePurePaperProps> = ({
   const classes = useBridgePaperStyles();
   const shakingStyles = useShakingStyles();
   const resolvedClassName = classNames(className, {
-    [shakingStyles.shaking]: !shaking,
+    [shakingStyles.shaking]: shaking,
   });
   return <Paper className={resolvedClassName} classes={classes} {...props} />;
 };
 
+type BridgePaperProps = PaperContentProps & BridgePurePaperProps;
+
+// deprecated - used only in catalog - remove gradually
 export const BridgePaper: FunctionComponent<BridgePaperProps> = ({
   topPadding,
   bottomPadding = true,
