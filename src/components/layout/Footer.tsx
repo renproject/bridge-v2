@@ -38,7 +38,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "flex",
       justifyContent: "space-between",
-      paddingTop: 20
+      paddingTop: 20,
+      paddingBottom: 20,
     },
   },
   rootMobile: {

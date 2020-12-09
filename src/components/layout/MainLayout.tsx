@@ -39,7 +39,7 @@ import {
 import { Footer } from './Footer'
 
 const headerHeight = 82;
-const footerHeight = 45;
+const footerHeight = 55;
 
 const useStyles = makeStyles((theme: Theme) => ({
   bodyWelcome: {
