@@ -1,26 +1,20 @@
-import { Box, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import React, { FunctionComponent, useCallback } from "react";
-import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { MetamaskFullIcon } from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
+import { Box, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { MetamaskFullIcon } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import {
-  useSetActionRequired,
-  useSetPaperTitle,
-} from "../../../providers/TitleProviders";
-import { paths } from "../../../pages/routes";
-import { getBurnAndReleaseParams } from "../releaseUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { paths } from '../../../pages/routes'
+import { useSetPaperTitle, } from '../../../providers/TitleProviders'
+import { getBurnAndReleaseParams } from '../releaseUtils'
 
 export const a = 1;
 
@@ -38,7 +32,6 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
   pending = false,
 }) => {
   useSetPaperTitle("Submit");
-  useSetActionRequired(true);
   const theme = useTheme();
   const { burnChainConfig, burnTxHash, burnTxLink } = getBurnAndReleaseParams(
     tx

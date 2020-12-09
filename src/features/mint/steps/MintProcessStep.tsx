@@ -189,21 +189,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
 }) => {
   const [current] = useMintMachine(tx);
-  // const dispatch = useDispatch();
-  // const { signature } = useSelector($walletSignatures);
-  // const { account } = useSelectedChainWallet();
-  //
-  // const handleTxUpdated = useCallback(
-  //   (tx) => {
-  //     if (current.value === "srcSettling") {
-  //       db.addTx(tx, account, signature).then(() => {
-  //         dispatch(addTransaction(tx));
-  //       });
-  //     }
-  //   },
-  //   [dispatch, account, signature, current.value]
-  // );
-  // console.log(handleTxUpdated);
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;

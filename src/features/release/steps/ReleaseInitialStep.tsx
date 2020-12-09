@@ -175,7 +175,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       <ActionButtonWrapper>
         <ActionButton
           onClick={handleNextStep}
-          disabled={!walletConnected || !canProceed}
+          disabled={!canProceed}
         >
           {walletConnected ? "Next" : "Connect Wallet"}
         </ActionButton>

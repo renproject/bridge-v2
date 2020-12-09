@@ -1,26 +1,47 @@
-import { Divider } from '@material-ui/core'
-import React, { FunctionComponent, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
-import { AssetInfo } from '../../../components/typography/TypographyHelpers'
-import { WalletStatus } from '../../../components/utils/types'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { Divider } from "@material-ui/core";
+import React, { FunctionComponent, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import { AssetInfo } from "../../../components/typography/TypographyHelpers";
+import { WalletStatus } from "../../../components/utils/types";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getCurrencyConfig,
   supportedLockCurrencies,
   supportedMintDestinationChains,
   toMintedCurrency,
-} from '../../../utils/assetConfigs'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
-import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
-import { $mint, $mintUsdAmount, setMintAmount, setMintCurrency, } from '../mintSlice'
+} from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import {
+  TxConfigurationStepProps,
+  TxType,
+} from "../../transactions/transactionsUtils";
+import {
+  $wallet,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
+  $mint,
+  $mintUsdAmount,
+  setMintAmount,
+  setMintCurrency,
+} from "../mintSlice";
 
 export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -29,7 +50,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
-  const { status} = useSelectedChainWallet();
+  const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
@@ -59,7 +80,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   );
 
   const canProceed = !!amount && amount > 0;
-  console.log(canProceed)
+  console.log(canProceed);
 
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
@@ -124,10 +145,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             />
           ))}
         <ActionButtonWrapper>
-          <ActionButton
-            onClick={handleNextStep}
-            disabled={!walletConnected || !canProceed}
-          >
+          <ActionButton onClick={handleNextStep} disabled={!canProceed}>
             {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>

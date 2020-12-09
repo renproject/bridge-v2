@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     "& input": {
       fontFamily: "inherit",
-      color: theme.palette.common.black,
+      color: theme.customColors.textDark,
     },
   },
   large: {
