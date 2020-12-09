@@ -93,6 +93,7 @@ export type PaperContentProps = {
   topPadding?: boolean;
   bottomPadding?: boolean;
   paddingVariant?: PaddingVariant;
+  className?: string;
 };
 
 export const PaperContent: FunctionComponent<PaperContentProps> = ({
@@ -100,15 +101,16 @@ export const PaperContent: FunctionComponent<PaperContentProps> = ({
   bottomPadding,
   darker,
   paddingVariant,
+  className,
   children,
 }) => {
   const styles = usePaperContentStyles({ paddingVariant: paddingVariant });
-  const className = classNames(styles.root, {
+  const resolvedClassName = classNames(styles.root, className, {
     [styles.top]: topPadding,
     [styles.bottom]: bottomPadding,
     [styles.darker]: darker,
   });
-  return <div className={className}>{children}</div>;
+  return <div className={resolvedClassName}>{children}</div>;
 };
 
 export const PaperHeader = styled("header")({

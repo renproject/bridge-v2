@@ -1,10 +1,11 @@
-import { Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { SvgIconComponent } from '@material-ui/icons'
-import React, { FunctionComponent } from 'react'
-import { CustomSvgIconComponent, } from './RenIcons'
+import { IconProps, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { SvgIconComponent } from "@material-ui/icons";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
+import { CustomSvgIconComponent } from "./RenIcons";
 
-const useStyles = makeStyles(() => ({
+const useIconWithLabelStyles = makeStyles(() => ({
   root: {
     display: "inline-flex",
     flexDirection: "column",
@@ -32,7 +33,7 @@ export const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
   label,
   Icon,
 }) => {
-  const styles = useStyles();
+  const styles = useIconWithLabelStyles();
   return (
     <span className={styles.root}>
       <span className={styles.icon}>
@@ -41,6 +42,49 @@ export const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
       <Typography variant="overline" className={styles.label}>
         {label}
       </Typography>
+    </span>
+  );
+};
+
+const useCircleIconStyles = makeStyles((theme) => ({
+  root: {
+    display: "inline-flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "50%",
+    padding: 3,
+    fontSize: 15,
+  },
+  solid: {
+    // fontSize: 66,
+    // height: 62,
+    // lineHeight: 1,
+    backgroundColor: theme.customColors.grayLight,
+  },
+  outlined: {
+    border: `1px solid ${theme.palette.grey["300"]}`,
+  },
+}));
+
+type CircleIconProps = IconProps & {
+  Icon: CustomSvgIconComponent | SvgIconComponent;
+  variant: "outlined" | "solid";
+};
+
+export const CircleIcon: FunctionComponent<CircleIconProps> = ({
+  Icon,
+  variant,
+}) => {
+  const styles = useCircleIconStyles();
+  const resolvedClassName = classNames(styles.root, {
+    [styles.solid]: variant === "solid",
+    [styles.outlined]: variant === "outlined",
+  });
+
+  return (
+    <span className={resolvedClassName}>
+      <Icon color="secondary" fontSize="inherit" />
     </span>
   );
 };

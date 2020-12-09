@@ -26,6 +26,8 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   title: {},
   customContentWrapper: {
     flexGrow: 1,
+    display: "flex",
+    alignItems: "center",
   },
   closeButtonWrapper: {},
   closeButton: {
@@ -122,13 +124,14 @@ export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
   open,
   onClose,
   title,
+  className,
   children,
 }) => {
   const styles = useNestedDrawerStyles();
-
+  const resolvedClassName = classNames(className, styles.paper);
   return (
     <Backdrop className={styles.backdrop} open={open}>
-      <BridgePurePaper className={styles.paper}>
+      <BridgePurePaper className={resolvedClassName}>
         {title && <BridgeModalTitle onClose={onClose} title={title} />}
         {children}
       </BridgePurePaper>

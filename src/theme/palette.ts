@@ -6,6 +6,7 @@ import {
   graphite,
   graphiteDark,
   graphiteLight,
+  grayLight,
   strokeDefault,
   textDark,
   textDisabled,
@@ -58,8 +59,10 @@ const basePalette = {
     contrastText: "rgba(0, 0, 0, 0.87)",
   },
   grey: {
-    "600": "#737478"
-  }
+    // "300": grayLight,
+    "600": "#737478",
+    "700": "#61616A"
+  },
 };
 
 export const lightPalette: Palette = createPalette({
