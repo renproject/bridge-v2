@@ -232,7 +232,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         />
       </PaperContent>
       <Divider />
-      <PaperContent topPadding bottomPadding>
+      <PaperContent darker topPadding bottomPadding>
         {walletConnected &&
           (pending ? (
             <CenteredProgress />

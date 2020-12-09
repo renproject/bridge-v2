@@ -163,7 +163,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       {walletConnected && (
         <>
           <Divider />
-          <PaperContent topPadding bottomPadding>
+          <PaperContent darker topPadding bottomPadding>
             <TransactionFees
               chain={chain}
               amount={amount}

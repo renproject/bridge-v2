@@ -214,7 +214,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         />
       </PaperContent>
       <Divider />
-      <PaperContent topPadding bottomPadding>
+      <PaperContent darker topPadding bottomPadding>
         {walletConnected &&
           (pending ? (
             <CenteredProgress />

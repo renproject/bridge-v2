@@ -128,7 +128,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         </AssetDropdownWrapper>
       </PaperContent>
       <Divider />
-      <PaperContent topPadding bottomPadding>
+      <PaperContent darker topPadding bottomPadding>
         {walletConnected &&
           (pending ? (
             <CenteredProgress />

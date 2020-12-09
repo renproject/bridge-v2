@@ -107,7 +107,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
       {walletConnected && (
         <>
           <Divider />
-          <PaperContent topPadding bottomPadding>
+          <PaperContent darker topPadding bottomPadding>
             <LabelWithValue
               label="Releasing"
               value={

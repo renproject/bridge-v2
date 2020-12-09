@@ -33,7 +33,7 @@ const SMALL_PADDING = 10;
 // const PADDING = 20;
 const BIG_PADDING = 40;
 
-const usePaperContentStyles = makeStyles({
+const usePaperContentStyles = makeStyles((theme) => ({
   root: {
     paddingLeft: BIG_PADDING,
     paddingRight: BIG_PADDING,
@@ -44,9 +44,13 @@ const usePaperContentStyles = makeStyles({
   bottom: {
     paddingBottom: BIG_PADDING,
   },
-});
+  darker: {
+    backgroundColor: theme.customColors.whiteDarker,
+  },
+}));
 
 export type PaperContentProps = {
+  darker?: boolean;
   topPadding?: boolean;
   bottomPadding?: boolean;
 };
@@ -54,10 +58,12 @@ export type PaperContentProps = {
 export const PaperContent: FunctionComponent<PaperContentProps> = ({
   topPadding,
   bottomPadding,
+  darker,
   children,
 }) => {
   const styles = usePaperContentStyles();
   const className = classNames(styles.root, {
+    [styles.darker]: darker,
     [styles.top]: topPadding,
     [styles.bottom]: bottomPadding,
   });
