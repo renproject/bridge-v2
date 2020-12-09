@@ -1,5 +1,6 @@
 import { Palette } from '@material-ui/core/styles/createPalette'
 import { Overrides } from '@material-ui/core/styles/overrides'
+import { getShadow } from './animationUtils'
 import {
   alertError,
   alertErrorBackground,
@@ -13,7 +14,6 @@ import {
   textDisabled,
   textLighter,
 } from './colors'
-import { getShadow } from './themeUtils'
 
 export const overrides = (palette: Palette): Overrides => {
   return {

@@ -9,10 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
-import {
-  createPulseAnimation,
-  createPulseOpacityAnimation,
-} from "../../theme/themeUtils";
+import { createPulseAnimation, createPulseOpacityAnimation } from '../../theme/animationUtils'
 import { CustomSvgIconComponent, EmptyIcon } from "../icons/RenIcons";
 import { CenteringSpacedBox } from "../layout/LayoutHelpers";
 

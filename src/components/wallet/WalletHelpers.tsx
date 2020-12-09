@@ -5,8 +5,8 @@ import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useTimeout } from "react-use";
+import { createPulseAnimation } from '../../theme/animationUtils'
 import { defaultShadow } from "../../theme/other";
-import { createPulseAnimation } from "../../theme/themeUtils";
 import {
   BridgeChainConfig,
   BridgeWallet,

@@ -1,6 +1,6 @@
 import { Breakpoints } from "@material-ui/core/styles/createBreakpoints";
 import { Shape } from "@material-ui/core/styles/shape";
-import { getShadow } from "./themeUtils";
+import { getShadow } from './animationUtils'
 
 export const shape: Partial<Shape> = {
   borderRadius: 20,
