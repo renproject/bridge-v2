@@ -111,7 +111,7 @@ export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
   const styles = useNestedDrawerStyles();
 
   return (
-    <Backdrop id="x" className={styles.backdrop} open={open}>
+    <Backdrop className={styles.backdrop} open={open}>
       <BridgePurePaper className={styles.paper}>
         <BridgeModalTitle onClose={onClose} title={title} />
         {children}
