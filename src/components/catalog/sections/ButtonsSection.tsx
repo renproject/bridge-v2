@@ -1,4 +1,4 @@
-import { Button } from "@material-ui/core";
+import { Box, Button } from '@material-ui/core'
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   BigQrCode,
@@ -78,6 +78,9 @@ export const ButtonsSection: FunctionComponent = () => {
             <QrCodeIcon fontSize="inherit" />
           </BigQrCode>
         </SeparationWrapper>
+        <Box maxWidth={200}>
+
+        </Box>
       </Section>
     </>
   );

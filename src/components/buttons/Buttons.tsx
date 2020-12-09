@@ -441,7 +441,7 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
 };
 
 const useActionButtonStyles = makeStyles({
-  root: { maxWidth: 320 },
+  root: { maxWidth: 360 },
 });
 
 export const ActionButton: FunctionComponent<ButtonProps> = ({ ...props }) => {

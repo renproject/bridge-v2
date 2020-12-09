@@ -55,14 +55,16 @@ export const BridgePaperWrapper = styled("div")({
 });
 
 const SMALL_PADDING = 10;
-// const DEFAULT_PADDING = 20;
+const MEDIUM_PADDING = 20;
 const BIG_PADDING = 40;
 
-const getPadding = (variant = "default") => {
+const getPadding = (variant: PaddingVariant = "big") => {
   switch (variant) {
     case "small":
       return SMALL_PADDING;
-    case "default":
+    case "medium":
+      return MEDIUM_PADDING;
+    case "big":
     default:
       return BIG_PADDING;
   }
@@ -70,41 +72,41 @@ const getPadding = (variant = "default") => {
 
 const usePaperContentStyles = makeStyles<Theme, PaperContentProps>((theme) => ({
   root: {
-    paddingLeft: ({ variant }) => getPadding(variant),
-    paddingRight: ({ variant }) => getPadding(variant),
+    paddingLeft: ({ paddingVariant }) => getPadding(paddingVariant),
+    paddingRight: ({ paddingVariant }) => getPadding(paddingVariant),
   },
   top: {
-    paddingTop: ({ variant }) => getPadding(variant),
+    paddingTop: ({ paddingVariant }) => getPadding(paddingVariant),
   },
   bottom: {
-    paddingBottom: ({ variant }) => getPadding(variant),
+    paddingBottom: ({ paddingVariant }) => getPadding(paddingVariant),
   },
   darker: {
     backgroundColor: theme.customColors.whiteDarker,
   },
 }));
 
-type PaddingVariant = "big" | "small" | "default";
+type PaddingVariant = "big" | "medium" | "small";
 
 export type PaperContentProps = {
   darker?: boolean;
   topPadding?: boolean;
   bottomPadding?: boolean;
-  variant?: PaddingVariant;
+  paddingVariant?: PaddingVariant;
 };
 
 export const PaperContent: FunctionComponent<PaperContentProps> = ({
   topPadding,
   bottomPadding,
   darker,
-  variant,
+  paddingVariant,
   children,
 }) => {
-  const styles = usePaperContentStyles({ variant });
+  const styles = usePaperContentStyles({ paddingVariant: paddingVariant });
   const className = classNames(styles.root, {
-    [styles.darker]: darker,
     [styles.top]: topPadding,
     [styles.bottom]: bottomPadding,
+    [styles.darker]: darker,
   });
   return <div className={className}>{children}</div>;
 };

@@ -59,7 +59,9 @@ export const BridgeModalTitle: FunctionComponent<BridgeModalTitleProps> = ({
           </Typography>
         </div>
       )}
-      {children && <div className={styles.customContentWrapper}>children</div>}
+      {children && (
+        <div className={styles.customContentWrapper}>{children}</div>
+      )}
       <div className={styles.closeButtonWrapper}>
         {onClose ? (
           <IconButton
