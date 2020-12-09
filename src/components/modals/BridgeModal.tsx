@@ -1,12 +1,15 @@
-import { Backdrop } from '@material-ui/core'
-import Dialog, { DialogProps } from '@material-ui/core/Dialog'
-import MuiDialogTitle, { DialogTitleProps, } from '@material-ui/core/DialogTitle'
-import IconButton from '@material-ui/core/IconButton'
-import { makeStyles } from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
-import CloseIcon from '@material-ui/icons/Close'
-import React, { FunctionComponent } from 'react'
-import { BridgePurePaper } from '../layout/Paper'
+import { Backdrop } from "@material-ui/core";
+import Dialog, { DialogProps } from "@material-ui/core/Dialog";
+import MuiDialogTitle, {
+  DialogTitleProps,
+} from "@material-ui/core/DialogTitle";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
+import { BridgePurePaper } from "../layout/Paper";
 
 export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   dialogTitle: {
@@ -21,6 +24,9 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
     textAlign: "center",
   },
   title: {},
+  customContentWrapper: {
+    flexGrow: 1,
+  },
   closeButtonWrapper: {},
   closeButton: {
     color: theme.palette.grey[600],
@@ -32,6 +38,8 @@ type BridgeModalTitleProps = DialogTitleProps & Pick<DialogProps, "onClose">;
 export const BridgeModalTitle: FunctionComponent<BridgeModalTitleProps> = ({
   title,
   onClose,
+  className,
+  children,
 }) => {
   const styles = useBridgeModalTitleStyles();
   const onCustomClose = () => {
@@ -40,12 +48,18 @@ export const BridgeModalTitle: FunctionComponent<BridgeModalTitleProps> = ({
     }
   };
   return (
-    <MuiDialogTitle disableTypography className={styles.dialogTitle}>
-      <div className={styles.titleWrapper}>
-        <Typography variant="body1" className={styles.title}>
-          {title}
-        </Typography>
-      </div>
+    <MuiDialogTitle
+      disableTypography
+      className={classNames(className, styles.dialogTitle)}
+    >
+      {title && (
+        <div className={styles.titleWrapper}>
+          <Typography variant="body1" className={styles.title}>
+            {title}
+          </Typography>
+        </div>
+      )}
+      {children && <div className={styles.customContentWrapper}>children</div>}
       <div className={styles.closeButtonWrapper}>
         {onClose ? (
           <IconButton
@@ -113,7 +127,7 @@ export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
   return (
     <Backdrop className={styles.backdrop} open={open}>
       <BridgePurePaper className={styles.paper}>
-        <BridgeModalTitle onClose={onClose} title={title} />
+        {title && <BridgeModalTitle onClose={onClose} title={title} />}
         {children}
       </BridgePurePaper>
     </Backdrop>

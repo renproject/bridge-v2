@@ -1,4 +1,4 @@
-import { Paper, PaperProps, styled } from "@material-ui/core";
+import { Paper, PaperProps, styled, Theme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
@@ -55,38 +55,52 @@ export const BridgePaperWrapper = styled("div")({
 });
 
 const SMALL_PADDING = 10;
-// const PADDING = 20;
+// const DEFAULT_PADDING = 20;
 const BIG_PADDING = 40;
 
-const usePaperContentStyles = makeStyles((theme) => ({
+const getPadding = (variant = "default") => {
+  switch (variant) {
+    case "small":
+      return SMALL_PADDING;
+    case "default":
+    default:
+      return BIG_PADDING;
+  }
+};
+
+const usePaperContentStyles = makeStyles<Theme, PaperContentProps>((theme) => ({
   root: {
-    paddingLeft: BIG_PADDING,
-    paddingRight: BIG_PADDING,
+    paddingLeft: ({ variant }) => getPadding(variant),
+    paddingRight: ({ variant }) => getPadding(variant),
   },
   top: {
-    paddingTop: BIG_PADDING,
+    paddingTop: ({ variant }) => getPadding(variant),
   },
   bottom: {
-    paddingBottom: BIG_PADDING,
+    paddingBottom: ({ variant }) => getPadding(variant),
   },
   darker: {
     backgroundColor: theme.customColors.whiteDarker,
   },
 }));
 
+type PaddingVariant = "big" | "small" | "default";
+
 export type PaperContentProps = {
   darker?: boolean;
   topPadding?: boolean;
   bottomPadding?: boolean;
+  variant?: PaddingVariant;
 };
 
 export const PaperContent: FunctionComponent<PaperContentProps> = ({
   topPadding,
   bottomPadding,
   darker,
+  variant,
   children,
 }) => {
-  const styles = usePaperContentStyles();
+  const styles = usePaperContentStyles({ variant });
   const className = classNames(styles.root, {
     [styles.darker]: darker,
     [styles.top]: topPadding,

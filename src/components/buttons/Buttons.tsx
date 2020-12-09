@@ -82,9 +82,9 @@ export const ToggleIconButton: FunctionComponent<ToggleIconButtonProps> = ({
   });
   const Icon = useMemo(() => {
     switch (variant) {
-      case "settings":
-        return BrowserNotificationsIcon;
       case "notifications":
+        return BrowserNotificationsIcon;
+      case "settings":
         return MoreVertIcon;
       default:
         return () => null;

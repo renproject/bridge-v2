@@ -1,28 +1,42 @@
+import { makeStyles } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   ActionButton,
   ActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import { PaperContent } from "../../../components/layout/Paper";
-import { NestedDrawer } from "../../../components/modals/BridgeModal";
+import {
+  BridgeModalTitle,
+  NestedDrawer,
+} from "../../../components/modals/BridgeModal";
 import { SpacedPaperContent } from "./TransactionsHelpers";
+
+const useTransactionMenuStyles = makeStyles((theme) => ({
+  modalTitle: {
+    padding: 20,
+  },
+}));
 
 type TransactionMenuProps = {
   open: boolean;
-  onClosed: () => void;
+  onClose: () => void;
 };
 
-export const TransactionMenuDrawer: FunctionComponent<TransactionMenuProps> = ({
+export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   open,
-  onClosed,
+  onClose,
 }) => {
+  const styles = useTransactionMenuStyles();
   const handleClose = useCallback(() => {
-    if (onClosed) {
-      onClosed();
+    if (onClose) {
+      onClose();
     }
-  }, [onClosed]);
+  }, [onClose]);
   return (
-    <NestedDrawer title="Transaction Menu" open={open} onClose={handleClose}>
+    <NestedDrawer open={open} onClose={handleClose}>
+      <BridgeModalTitle className={styles.modalTitle} onClose={handleClose}>
+        kurde
+      </BridgeModalTitle>
       <SpacedPaperContent topPadding bottomPadding>
         content
       </SpacedPaperContent>

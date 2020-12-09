@@ -44,6 +44,7 @@ import {
   getCurrencyConfigByRentxName,
 } from "../../../utils/assetConfigs";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
+import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import {
   BookmarkPageWarning,
   ProgressStatus,
@@ -79,7 +80,8 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const walletConnected = status === WalletStatus.CONNECTED;
   const { tx: parsedTx, txState } = useTxParam();
   const [reloading, setReloading] = useState(false);
-  const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession);
+
   usePageTitle(getTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
@@ -91,6 +93,14 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
   }, [history]);
+
+  const [menuOpened, setMenuOpened] = useState(true); //TODO: CRIT: false
+  const handleMenuClose = useCallback(() => {
+    setMenuOpened(false);
+  }, []);
+  const handleMenuOpen = useCallback(() => {
+    setMenuOpened(true);
+  }, []);
 
   useEffect(() => {
     if (txState?.reloadTx) {
@@ -138,8 +148,12 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         </PaperNav>
         <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
-          <ToggleIconButton variant="settings" />
           <ToggleIconButton variant="notifications" />
+          <ToggleIconButton
+            variant="settings"
+            onClick={handleMenuOpen}
+            pressed={menuOpened}
+          />
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
@@ -177,6 +191,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       {txState?.newTx && (
         <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
       )}
+      <TransactionMenu open={menuOpened} onClose={handleMenuClose} />
     </>
   );
 };
