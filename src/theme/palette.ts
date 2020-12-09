@@ -1,4 +1,4 @@
-import createPalette, { Palette } from "@material-ui/core/styles/createPalette";
+import createPalette, { Palette } from '@material-ui/core/styles/createPalette'
 import {
   blue,
   blueDark,
@@ -6,13 +6,12 @@ import {
   graphite,
   graphiteDark,
   graphiteLight,
-  grayLight,
   strokeDefault,
   textDark,
   textDisabled,
   textLighter,
   white,
-} from "./colors";
+} from './colors'
 
 const basePalette = {
   primary: {

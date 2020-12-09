@@ -6,13 +6,18 @@ import {
   MenuItem,
   MenuItemProps,
   Typography,
+  withStyles,
 } from "@material-ui/core";
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback } from "react";
+import { GatewaySession } from "@renproject/ren-tx";
+import classNames from "classnames";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
 import { CircleIcon } from "../../../components/icons/IconHelpers";
 import {
   AddIcon,
-  BitcoinIcon,
   CustomSvgIconComponent,
   DeleteIcon,
   TxSettingsIcon,
@@ -83,11 +88,15 @@ const useTransactionMenuStyles = makeStyles((theme) => ({
 type TransactionMenuProps = {
   open: boolean;
   onClose: () => void;
+  onDeleteTx: () => void;
+  tx: GatewaySession;
 };
 
 export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   open,
   onClose,
+  onDeleteTx,
+  tx,
 }) => {
   const styles = useTransactionMenuStyles();
   const handleClose = useCallback(() => {
@@ -95,32 +104,104 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
       onClose();
     }
   }, [onClose]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const handleConfirmClose = useCallback(() => {
+    setConfirmOpen(false);
+  }, []);
+  const handleDeleteWithConfirm = useCallback(() => {
+    setConfirmOpen(true);
+  }, []);
+
   return (
-    <NestedDrawer open={open} onClose={handleClose} className={styles.root}>
-      <BridgeModalTitle className={styles.modalTitle} onClose={handleClose}>
-        <ListItemIcon className={styles.titleIconWrapper}>
-          <CircleIcon Icon={TxSettingsIcon} fontSize="small" variant="solid" />
-        </ListItemIcon>
-        <Typography variant="inherit">Transaction Menu</Typography>
-      </BridgeModalTitle>
-      <div className={styles.menuItems}>
-        <TransactionMenuItem Icon={AddIcon} disabled>
-          Insert/update transaction
-        </TransactionMenuItem>
-        <TransactionMenuItem Icon={DeleteIcon}>
-          Delete transaction
-        </TransactionMenuItem>
-      </div>
-      <PaperContent paddingVariant="medium" className={styles.transferId}>
-        <Typography variant="inherit">
-          Transfer ID: TODO: CRIT: add here
+    <>
+      <NestedDrawer open={open} onClose={handleClose} className={styles.root}>
+        <BridgeModalTitle className={styles.modalTitle} onClose={handleClose}>
+          <ListItemIcon className={styles.titleIconWrapper}>
+            <CircleIcon
+              Icon={TxSettingsIcon}
+              fontSize="small"
+              variant="solid"
+            />
+          </ListItemIcon>
+          <Typography variant="inherit">Transaction Menu</Typography>
+        </BridgeModalTitle>
+        <div className={styles.menuItems}>
+          <TransactionMenuItem Icon={AddIcon} disabled>
+            Insert/update transaction
+          </TransactionMenuItem>
+          <TransactionMenuItem
+            Icon={DeleteIcon}
+            onClick={handleDeleteWithConfirm}
+          >
+            Delete transaction
+          </TransactionMenuItem>
+        </div>
+        <PaperContent paddingVariant="medium" className={styles.transferId}>
+          <Typography variant="inherit">Transfer ID: {tx.id}</Typography>
+        </PaperContent>
+        <Divider />
+        <PaperContent bottomPadding topPadding paddingVariant="medium">
+          <Button variant="outlined" size="small" disabled>
+            Report an Issue
+          </Button>
+        </PaperContent>
+      </NestedDrawer>
+      <ConfirmTransactionDeletion
+        open={confirmOpen}
+        onClose={handleConfirmClose}
+        onDeleteTx={onDeleteTx}
+      />
+    </>
+  );
+};
+
+type ConfirmTransactionDeletionProps = {
+  open: boolean;
+  onClose: () => void;
+  onDeleteTx: () => void;
+};
+
+const RedButton = withStyles((theme) => ({
+  root: {
+    color: theme.palette.error.main,
+  },
+}))(Button);
+
+export const ConfirmTransactionDeletion: FunctionComponent<ConfirmTransactionDeletionProps> = ({
+  open,
+  onClose,
+  onDeleteTx,
+}) => {
+  return (
+    <NestedDrawer title="Delete a Transaction" open={open} onClose={onClose}>
+      <PaperContent topPadding>
+        <Typography variant="h5" align="center" gutterBottom>
+          Are you sure?
+        </Typography>
+        <Typography
+          variant="body2"
+          align="center"
+          color="textSecondary"
+          gutterBottom
+        >
+          If you have already sent your assets you will lose them forever if you
+          remove the transaction.
         </Typography>
       </PaperContent>
-      <Divider />
-      <PaperContent bottomPadding topPadding paddingVariant="medium">
-        <Button variant="outlined" size="small">
-          Report an Issue
-        </Button>
+      <PaperContent bottomPadding>
+        <ActionButtonWrapper>
+          <RedButton
+            variant="text"
+            color="inherit"
+            startIcon={<DeleteIcon />}
+            onClick={onDeleteTx}
+          >
+            Remove Transaction
+          </RedButton>
+        </ActionButtonWrapper>
+        <ActionButtonWrapper>
+          <ActionButton onClick={onClose}>Cancel</ActionButton>
+        </ActionButtonWrapper>
       </PaperContent>
     </NestedDrawer>
   );

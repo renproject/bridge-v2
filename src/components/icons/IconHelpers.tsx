@@ -63,7 +63,7 @@ const useCircleIconStyles = makeStyles((theme) => ({
     backgroundColor: theme.customColors.grayLight,
   },
   outlined: {
-    border: `1px solid ${theme.palette.grey["300"]}`,
+    border: `1px solid ${theme.palette.grey["700"]}`,
   },
 }));
 

@@ -35,10 +35,11 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { usePageTitle } from "../../../providers/TitleProviders";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { usePaperTitle } from "../../../providers/TitleProviders";
+import { useNotifications } from "../../../providers/Notifications";
+import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
+import { db } from "../../../services/database/database";
 import {
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
@@ -49,6 +50,7 @@ import {
   BookmarkPageWarning,
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
+import { removeTransaction } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   getTxPageTitle,
@@ -75,6 +77,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   location,
 }) => {
   const dispatch = useDispatch();
+  const { showNotification } = useNotifications();
   const chain = useSelector($chain);
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
@@ -94,13 +97,22 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     history.goBack();
   }, [history]);
 
-  const [menuOpened, setMenuOpened] = useState(true); //TODO: CRIT: false
+  const [menuOpened, setMenuOpened] = useState(false);
   const handleMenuClose = useCallback(() => {
     setMenuOpened(false);
   }, []);
   const handleMenuOpen = useCallback(() => {
-    setMenuOpened(true);
-  }, []);
+    if (walletConnected) {
+      setMenuOpened(true);
+    }
+  }, [walletConnected]);
+  const handleDeleteTx = useCallback(() => {
+    db.deleteTx(tx).then(() => {
+      dispatch(removeTransaction(tx));
+      showNotification(`Transaction ${tx.id} deleted.`);
+      history.push(paths.MINT);
+    });
+  }, [dispatch, history, showNotification, tx]);
 
   useEffect(() => {
     if (txState?.reloadTx) {
@@ -191,7 +203,12 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       {txState?.newTx && (
         <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
       )}
-      <TransactionMenu open={menuOpened} onClose={handleMenuClose} />
+      <TransactionMenu
+        tx={tx}
+        open={menuOpened}
+        onClose={handleMenuClose}
+        onDeleteTx={handleDeleteTx}
+      />
     </>
   );
 };

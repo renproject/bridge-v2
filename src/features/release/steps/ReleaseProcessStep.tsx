@@ -85,8 +85,8 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         </PaperNav>
         <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
-          <ToggleIconButton variant="settings" />
           <ToggleIconButton variant="notifications" />
+          <ToggleIconButton variant="settings" />
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
