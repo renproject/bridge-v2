@@ -37,9 +37,7 @@ import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
-import { db } from "../../../services/database/database";
 import {
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
@@ -50,12 +48,12 @@ import {
   BookmarkPageWarning,
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
-import { removeTransaction } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   getTxPageTitle,
   parseTxQueryString,
   TxType,
+  useTransactionDeletion,
   useTxParam,
 } from "../../transactions/transactionsUtils";
 import {
@@ -77,7 +75,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   location,
 }) => {
   const dispatch = useDispatch();
-  const { showNotification } = useNotifications();
   const chain = useSelector($chain);
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
@@ -97,22 +94,12 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     history.goBack();
   }, [history]);
 
-  const [menuOpened, setMenuOpened] = useState(false);
-  const handleMenuClose = useCallback(() => {
-    setMenuOpened(false);
-  }, []);
-  const handleMenuOpen = useCallback(() => {
-    if (walletConnected) {
-      setMenuOpened(true);
-    }
-  }, [walletConnected]);
-  const handleDeleteTx = useCallback(() => {
-    db.deleteTx(tx).then(() => {
-      dispatch(removeTransaction(tx));
-      showNotification(`Transaction ${tx.id} deleted.`);
-      history.push(paths.MINT);
-    });
-  }, [dispatch, history, showNotification, tx]);
+  const {
+    menuOpened,
+    handleMenuOpen,
+    handleMenuClose,
+    handleDeleteTx,
+  } = useTransactionDeletion(tx);
 
   useEffect(() => {
     if (txState?.reloadTx) {

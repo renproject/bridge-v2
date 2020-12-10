@@ -1,13 +1,17 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { useSelector } from "react-redux";
-import { WalletConnectionStatusType } from "../../components/utils/types";
+import {
+  WalletConnectionStatusType,
+  WalletStatus,
+} from "../../components/utils/types";
 import { $multiwalletChain } from "../../features/wallet/walletSlice";
 import { BridgeWallet } from "../../utils/assetConfigs";
 
 type WalletData = {
   account: string;
   status: WalletConnectionStatusType;
+  walletConnected: boolean;
   targetNetwork: RenNetwork;
   provider: any;
   symbol: BridgeWallet;
@@ -37,6 +41,7 @@ export const useWallet: UseWallet = (chain) => {
   return {
     account,
     status,
+    walletConnected: status === WalletStatus.CONNECTED,
     targetNetwork,
     provider,
     enabledChains,
