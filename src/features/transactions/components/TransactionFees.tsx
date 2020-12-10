@@ -102,6 +102,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           <NumberFormatText
             value={renVMFeeAmount}
             spacedSuffix={currencyConfig.short}
+            decimalScale={8}
           />
         }
         valueEquivalent={

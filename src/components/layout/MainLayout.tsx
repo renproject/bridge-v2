@@ -1,40 +1,65 @@
-import { Button, Container, Divider, Drawer, Grid, ListItem, useTheme, } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
-import IconButton from '@material-ui/core/IconButton'
-import { makeStyles, Theme } from '@material-ui/core/styles'
-import Toolbar from '@material-ui/core/Toolbar'
-import CloseIcon from '@material-ui/icons/Close'
-import MenuIcon from '@material-ui/icons/Menu'
-import { useMultiwallet, WalletPickerModal, WalletPickerProps, } from '@renproject/multiwallet-ui'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
-import { env } from '../../constants/environmentVariables'
-import { $network } from '../../features/network/networkSlice'
-import { useSetNetworkFromParam } from '../../features/network/networkUtils'
-import { TransactionHistory } from '../../features/transactions/TransactionHistory'
+import {
+  Button,
+  Container,
+  Divider,
+  Drawer,
+  Grid,
+  ListItem,
+  useTheme,
+} from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import CloseIcon from "@material-ui/icons/Close";
+import MenuIcon from "@material-ui/icons/Menu";
+import {
+  useMultiwallet,
+  WalletPickerModal,
+  WalletPickerProps,
+} from "@renproject/multiwallet-ui";
+import classNames from "classnames";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { useWindowSize } from "react-use";
+import { env } from "../../constants/environmentVariables";
+import { $network } from "../../features/network/networkSlice";
+import { useSetNetworkFromParam } from "../../features/network/networkUtils";
+import { TransactionHistory } from "../../features/transactions/TransactionHistory";
 import {
   $transactionsData,
   $transactionsNeedsAction,
   setTxHistoryOpened,
-} from '../../features/transactions/transactionsSlice'
-import { $multiwalletChain, $walletPickerOpened, setWalletPickerOpened, } from '../../features/wallet/walletSlice'
-import { walletPickerModalConfig } from '../../providers/multiwallet/Multiwallet'
-import { useSelectedChainWallet, useWallet, } from '../../providers/multiwallet/multiwalletHooks'
-import { useWeb3Signatures } from '../../services/web3'
-import { TransactionHistoryMenuIconButton } from '../buttons/Buttons'
-import { RenBridgeLogoIcon } from '../icons/RenIcons'
-import { Debug } from '../utils/Debug'
+} from "../../features/transactions/transactionsSlice";
+import {
+  $multiwalletChain,
+  $walletPickerOpened,
+  setWalletPickerOpened,
+} from "../../features/wallet/walletSlice";
+import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
+import {
+  useSelectedChainWallet,
+  useWallet,
+} from "../../providers/multiwallet/multiwalletHooks";
+import { useWeb3Signatures } from "../../services/web3";
+import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
+import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Debug } from "../utils/Debug";
 import {
   useWalletPickerStyles,
   WalletConnectingInfo,
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
-} from '../wallet/WalletHelpers'
-import { Footer } from './Footer'
+} from "../wallet/WalletHelpers";
+import { Footer } from "./Footer";
 
 const headerHeight = 82;
 const footerHeight = 55;
@@ -76,6 +101,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   mobileMenuButton: {
     padding: "0 0",
+    minHeight: 40,
+    "&:hover": {
+      backgroundColor: "transparent", // list item handles hover styles
+    },
   },
   drawerLogo: {
     fontSize: 20,
@@ -260,29 +289,33 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                   </IconButton>
                 </div>
                 <Divider />
-                <ListItem divider className={styles.drawerListItem} button>
+                <ListItem
+                  divider
+                  className={styles.drawerListItem}
+                  button
+                  onClick={handleWalletPickerOpen}
+                >
                   <WalletConnectionStatusButton
-                    onClick={handleWalletPickerOpen}
+                    className={styles.mobileMenuButton}
                     mobile
                     status={status}
                     account={account}
                     wallet={symbol}
                   />
                 </ListItem>
-                <ListItem divider className={styles.drawerListItem} button>
-                  <div className={styles.drawerListItemIcon}>
-                    <Button
-                      className={styles.mobileMenuButton}
-                      onClick={handleTxHistoryToggle}
-                      component="div"
-                    >
-                      <TransactionHistoryMenuIconButton
-                        className={styles.mobileTxHistory}
-                        indicator={showTxIndicator}
-                      />
-                      <span>View Transactions</span>
-                    </Button>
-                  </div>
+                <ListItem
+                  divider
+                  className={styles.drawerListItem}
+                  button
+                  onClick={handleTxHistoryToggle}
+                >
+                  <Button className={styles.mobileMenuButton} component="div">
+                    <TransactionHistoryMenuIconButton
+                      className={styles.mobileTxHistory}
+                      indicator={showTxIndicator}
+                    />
+                    <span>View Transactions</span>
+                  </Button>
                 </ListItem>
                 <ListItem
                   className={classNames(

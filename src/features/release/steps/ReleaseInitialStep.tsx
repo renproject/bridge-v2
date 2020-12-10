@@ -1,27 +1,58 @@
-import React, { FunctionComponent, useCallback, useEffect, useMemo, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { AddressInput, AddressInputWrapper, } from '../../../components/inputs/AddressInput'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
-import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
-import { WalletStatus } from '../../../components/utils/types'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { releaseChainClassMap } from '../../../services/rentx'
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import {
+  AddressInput,
+  AddressInputWrapper,
+} from "../../../components/inputs/AddressInput";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { WalletStatus } from "../../../components/utils/types";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { releaseChainClassMap } from "../../../services/rentx";
 import {
   getChainConfig,
   getCurrencyConfig,
   supportedBurnChains,
   supportedReleaseCurrencies,
   toReleasedCurrency,
-} from '../../../utils/assetConfigs'
-import { $network } from '../../network/networkSlice'
-import { TxConfigurationStepProps } from '../../transactions/transactionsUtils'
-import { $wallet, addOrUpdateBalance, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
-import { getAssetBalance, useFetchAssetBalance, } from '../../wallet/walletUtils'
-import { $release, $releaseUsdAmount, setReleaseAddress, setReleaseAmount, setReleaseCurrency, } from '../releaseSlice'
+} from "../../../utils/assetConfigs";
+import { $network } from "../../network/networkSlice";
+import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
+import {
+  $wallet,
+  addOrUpdateBalance,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
+  getAssetBalance,
+  useFetchAssetBalance,
+} from "../../wallet/walletUtils";
+import {
+  $release,
+  $releaseUsdAmount,
+  setReleaseAddress,
+  setReleaseAmount,
+  setReleaseCurrency,
+} from "../releaseSlice";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -104,24 +135,23 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     return () => true;
   }, [releaseChainConfig.rentxName, network]);
 
-  //TODO check if balanceOK
   const isAddressValid = validateAddress(address);
-  const canProceed =
-    balance !== null &&
-    amount &&
-    address &&
-    isAddressValid &&
-    amount <= Number(balance) &&
-    amount > 0;
-
+  const hasAmountAndAddress = amount && address && isAddressValid && amount > 0;
+  const hasBalance = balance !== null && amount <= Number(balance);
+  let enabled;
+  if (walletConnected) {
+    enabled = hasAmountAndAddress && hasBalance;
+  } else {
+    enabled = hasAmountAndAddress;
+  }
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
       dispatch(setWalletPickerOpened(true));
     }
-    if (onNext && canProceed) {
+    if (onNext && hasAmountAndAddress && hasBalance) {
       onNext();
     }
-  }, [dispatch, onNext, canProceed, walletConnected]);
+  }, [dispatch, onNext, walletConnected, hasAmountAndAddress, hasBalance]);
   return (
     <PaperContent bottomPadding>
       <BigCurrencyInputWrapper>
@@ -173,10 +203,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         />
       </AddressInputWrapper>
       <ActionButtonWrapper>
-        <ActionButton
-          onClick={handleNextStep}
-          disabled={!canProceed}
-        >
+        <ActionButton onClick={handleNextStep} disabled={!enabled}>
           {walletConnected ? "Next" : "Connect Wallet"}
         </ActionButton>
       </ActionButtonWrapper>

@@ -1,4 +1,10 @@
-import { Button, ButtonProps, Typography, useTheme } from "@material-ui/core";
+import {
+  Button,
+  ButtonProps,
+  Theme,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
@@ -277,7 +283,7 @@ const getWalletConnectionLabel = (status: WalletConnectionStatusType) => {
   }
 };
 
-const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
+const useWalletConnectionStatusButtonStyles = makeStyles<Theme>((theme) => ({
   root: {
     backgroundColor: theme.palette.common.white,
     borderColor: theme.palette.divider,
@@ -294,8 +300,8 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
     marginRight: 10,
   },
   indicatorMobile: {
-    marginLeft: 8,
-    marginRight: 31,
+    marginLeft: 16,
+    marginRight: 30,
   },
   account: { marginLeft: 20 },
 }));
