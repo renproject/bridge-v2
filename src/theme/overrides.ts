@@ -1,6 +1,6 @@
-import { Palette } from '@material-ui/core/styles/createPalette'
-import { Overrides } from '@material-ui/core/styles/overrides'
-import { getShadow } from './animationUtils'
+import { Palette } from "@material-ui/core/styles/createPalette";
+import { Overrides } from "@material-ui/core/styles/overrides";
+import { getShadow } from "./animationUtils";
 import {
   alertError,
   alertErrorBackground,
@@ -13,7 +13,7 @@ import {
   textDark,
   textDisabled,
   textLighter,
-} from './colors'
+} from "./colors";
 
 export const overrides = (palette: Palette): Overrides => {
   return {
@@ -159,8 +159,8 @@ export const overrides = (palette: Palette): Overrides => {
       },
     },
     MuiSnackbar: {
-      anchorOriginTopRight: {
-        top: "64px!important", //TODO: need to find a better way for spacing
+      anchorOriginTopCenter: {
+        top: "-64px!important",
       },
     },
     SnackbarItem: {

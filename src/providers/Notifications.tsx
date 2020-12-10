@@ -3,9 +3,14 @@ import {
   SnackbarProvider as NotistackSnackbarProvider,
   useSnackbar as useDefaultSnackbar,
   VariantType,
-} from 'notistack'
-import React, { FunctionComponent, ReactElement, useEffect, useMemo } from 'react'
-import { NotificationMessage } from '../components/notifications/NotificationMessage'
+} from "notistack";
+import React, {
+  FunctionComponent,
+  ReactElement,
+  useEffect,
+  useMemo,
+} from "react";
+import { NotificationMessage } from "../components/notifications/NotificationMessage";
 
 type ExtendedVariantType = VariantType | "specialInfo";
 
@@ -48,6 +53,7 @@ export const NotificationsProvider: FunctionComponent = ({ children }) => (
       horizontal: "right",
     }}
     maxSnack={4}
+    domRoot={document.getElementById("notifications") || undefined}
     autoHideDuration={20000}
   >
     {children}

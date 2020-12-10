@@ -1,24 +1,20 @@
-import { Box, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import React, { FunctionComponent, useCallback, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { MetamaskFullIcon } from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
+import { Box, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { MetamaskFullIcon } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { paths } from "../../../pages/routes";
-import { useNotifications } from "../../../providers/Notifications";
-import { useSetPaperTitle } from "../../../providers/TitleProviders";
-import { getBurnAndReleaseParams } from "../releaseUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { paths } from '../../../pages/routes'
+import { useSetPaperTitle } from '../../../providers/TitleProviders'
+import { getBurnAndReleaseParams } from '../releaseUtils'
 
 export const a = 1;
 
@@ -108,6 +104,10 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
   const handleReturn = useCallback(() => {
     history.push(paths.RELEASE);
   }, [history]);
+  // const { showNotification } = useNotifications();
+  // useEffect(() => {
+  //
+  // }, []);
   return (
     <>
       <ProgressWrapper>
