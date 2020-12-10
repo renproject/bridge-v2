@@ -3,7 +3,6 @@ import queryString from "query-string";
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { WalletStatus } from "../../components/utils/types";
 import { paths } from "../../pages/routes";
 import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { useNotifications } from "../../providers/Notifications";
