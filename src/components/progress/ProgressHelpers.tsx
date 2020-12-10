@@ -4,6 +4,7 @@ import {
   styled,
   Theme,
   Typography,
+  useTheme,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
@@ -35,7 +36,7 @@ export const BigDoneIcon = styled(DoneIcon)({
 type ProgressIconSize = "big" | "medium" | number;
 
 type ProgressWithContentProps = {
-  color: string;
+  color?: string;
   incompleteSectionColor?: string;
   fontSize?: ProgressIconSize;
   processing?: boolean;
@@ -149,8 +150,9 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
   fontSize = Math.floor(0.75 * size),
   children,
 }) => {
+  const theme = useTheme();
   const styles = useProgressWithContentStyles({
-    color,
+    color: color || theme.palette.primary.main,
     fontSize,
     size,
   });

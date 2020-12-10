@@ -337,7 +337,6 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
   tx,
 }) => {
   useSetPaperTitle("Complete");
-  const theme = useTheme();
   const history = useHistory();
   const {
     lockCurrencyConfig,
@@ -360,7 +359,7 @@ export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedSta
   return (
     <>
       <ProgressWrapper>
-        <ProgressWithContent color={theme.palette.primary.main}>
+        <ProgressWithContent>
           <BigDoneIcon />
         </ProgressWithContent>
       </ProgressWrapper>
