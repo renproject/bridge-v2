@@ -5,7 +5,7 @@ import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useTimeout } from "react-use";
-import { createPulseAnimation } from '../../theme/animationUtils'
+import { createPulseAnimation } from "../../theme/animationUtils";
 import { defaultShadow } from "../../theme/other";
 import {
   BridgeChainConfig,
@@ -293,6 +293,10 @@ const useWalletConnectionStatusButtonStyles = makeStyles((theme) => ({
   indicator: {
     marginRight: 10,
   },
+  indicatorMobile: {
+    marginLeft: 8,
+    marginRight: 31,
+  },
   account: { marginLeft: 20 },
 }));
 
@@ -301,6 +305,7 @@ type WalletConnectionStatusButtonProps = ButtonProps & {
   wallet: BridgeWallet;
   hoisted?: boolean;
   account?: string;
+  mobile?: boolean;
 };
 
 export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionStatusButtonProps> = ({
@@ -309,10 +314,12 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   wallet,
   hoisted,
   className,
+  mobile,
   ...rest
 }) => {
   const {
     indicator: indicatorClassName,
+    indicatorMobile: indicatorMobileClassName,
     account: accountClassName,
     hoisted: hoistedClassName,
     ...classes
@@ -326,17 +333,18 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: hoisted,
   });
+  const buttonProps: any = mobile
+    ? {}
+    : {
+        variant: "outlined",
+        color: "secondary",
+        classes,
+      };
   return (
-    <Button
-      className={resolvedClassName}
-      variant="outlined"
-      color="secondary"
-      classes={classes}
-      {...rest}
-    >
+    <Button className={resolvedClassName} {...buttonProps} {...rest}>
       <WalletConnectionIndicator
         status={status}
-        className={indicatorClassName}
+        className={mobile ? indicatorMobileClassName : indicatorClassName}
       />
       <span>{label}</span>
       {trimmedAddress && (

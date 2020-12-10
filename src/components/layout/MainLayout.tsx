@@ -1,4 +1,4 @@
-import { Container, Divider, Drawer, Grid, ListItem, useTheme, } from '@material-ui/core'
+import { Button, Container, Divider, Drawer, Grid, ListItem, useTheme, } from '@material-ui/core'
 import AppBar from '@material-ui/core/AppBar'
 import IconButton from '@material-ui/core/IconButton'
 import { makeStyles, Theme } from '@material-ui/core/styles'
@@ -27,11 +27,9 @@ import { useWeb3Signatures } from '../../services/web3'
 import { TransactionHistoryMenuIconButton } from '../buttons/Buttons'
 import { RenBridgeLogoIcon } from '../icons/RenIcons'
 import { Debug } from '../utils/Debug'
-import { WalletStatus } from '../utils/types'
 import {
   useWalletPickerStyles,
   WalletConnectingInfo,
-  WalletConnectionIndicator,
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
@@ -67,11 +65,17 @@ const useStyles = makeStyles((theme: Theme) => ({
   desktopTxHistory: {
     marginRight: 20,
   },
+  mobileTxHistory: {
+    marginRight: 16,
+  },
   mobileMenu: {
     display: "flex",
     [theme.breakpoints.up("sm")]: {
       display: "none",
     },
+  },
+  mobileMenuButton: {
+    padding: "0 0",
   },
   drawerLogo: {
     fontSize: 20,
@@ -135,11 +139,9 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   useWeb3Signatures();
   const { txHistoryOpened } = useSelector($transactionsData);
   const txsNeedsAction = useSelector($transactionsNeedsAction);
-  const { status, account, symbol } = useSelectedChainWallet();
-  const walletConnected = status === WalletStatus.CONNECTED;
+  const { status, account, walletConnected, symbol } = useSelectedChainWallet();
 
-  // TODO: add firebase stuff here
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {
     setMobileMenuOpen(false);
   }, []);
@@ -249,26 +251,38 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
               >
                 <div className={styles.drawerHeader}>
                   <RenBridgeLogoIcon className={styles.drawerLogo} />
-                  <CloseIcon
+                  <IconButton
+                    aria-label="close"
                     className={styles.drawerClose}
                     onClick={handleMobileMenuClose}
-                  />
+                  >
+                    <CloseIcon />
+                  </IconButton>
                 </div>
                 <Divider />
                 <ListItem divider className={styles.drawerListItem} button>
-                  <div className={styles.drawerListItemIcon}>
-                    <WalletConnectionIndicator status={status} />
-                  </div>
-                  <p>Connect a Wallet</p>
+                  <WalletConnectionStatusButton
+                    onClick={handleWalletPickerOpen}
+                    mobile
+                    status={status}
+                    account={account}
+                    wallet={symbol}
+                  />
                 </ListItem>
                 <ListItem divider className={styles.drawerListItem} button>
                   <div className={styles.drawerListItemIcon}>
-                    <TransactionHistoryMenuIconButton
-                      opened={txHistoryOpened}
+                    <Button
+                      className={styles.mobileMenuButton}
                       onClick={handleTxHistoryToggle}
-                    />
+                      component="div"
+                    >
+                      <TransactionHistoryMenuIconButton
+                        className={styles.mobileTxHistory}
+                        indicator={showTxIndicator}
+                      />
+                      <span>View Transactions</span>
+                    </Button>
                   </div>
-                  <p>View Transactions</p>
                 </ListItem>
                 <ListItem
                   className={classNames(

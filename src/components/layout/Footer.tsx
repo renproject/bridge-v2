@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
       display: "flex",
       justifyContent: "space-between",
       paddingTop: 20,
-      paddingBottom: 20,
+      paddingBottom: 10,
     },
   },
   rootMobile: {
