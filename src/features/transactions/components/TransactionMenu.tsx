@@ -106,6 +106,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   }, [onClose]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const handleConfirmClose = useCallback(() => {
+    console.log("closing tx");
     setConfirmOpen(false);
   }, []);
   const handleDeleteWithConfirm = useCallback(() => {
@@ -146,9 +147,9 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
           </Button>
         </PaperContent>
       </NestedDrawer>
-      <ConfirmTransactionDeletion
+      <ConfirmTransactionDeletionDrawer
         open={confirmOpen}
-        onClose={handleConfirmClose}
+        onClose={handleConfirmClose as any}
         onDeleteTx={onDeleteTx}
       />
     </>
@@ -167,7 +168,7 @@ const RedButton = withStyles((theme) => ({
   },
 }))(Button);
 
-export const ConfirmTransactionDeletion: FunctionComponent<ConfirmTransactionDeletionProps> = ({
+export const ConfirmTransactionDeletionDrawer: FunctionComponent<ConfirmTransactionDeletionProps> = ({
   open,
   onClose,
   onDeleteTx,

@@ -1,15 +1,13 @@
-import { Backdrop } from "@material-ui/core";
-import Dialog, { DialogProps } from "@material-ui/core/Dialog";
-import MuiDialogTitle, {
-  DialogTitleProps,
-} from "@material-ui/core/DialogTitle";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
-import classNames from "classnames";
-import React, { FunctionComponent } from "react";
-import { BridgePurePaper } from "../layout/Paper";
+import { Backdrop } from '@material-ui/core'
+import Dialog, { DialogProps } from '@material-ui/core/Dialog'
+import MuiDialogTitle, { DialogTitleProps, } from '@material-ui/core/DialogTitle'
+import IconButton from '@material-ui/core/IconButton'
+import { makeStyles } from '@material-ui/core/styles'
+import Typography from '@material-ui/core/Typography'
+import CloseIcon from '@material-ui/icons/Close'
+import classNames from 'classnames'
+import React, { FunctionComponent } from 'react'
+import { BridgePurePaper } from '../layout/Paper'
 
 export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   dialogTitle: {
@@ -46,6 +44,7 @@ export const BridgeModalTitle: FunctionComponent<BridgeModalTitleProps> = ({
   const styles = useBridgeModalTitleStyles();
   const onCustomClose = () => {
     if (onClose) {
+      console.log("back");
       onClose({}, "backdropClick");
     }
   };
@@ -120,6 +119,10 @@ type NestedDrawerProps = DialogProps & {
   open: boolean;
 };
 
+const stopPropagation = (event: any) => {
+  event.stopPropagation();
+};
+
 export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
   open,
   onClose,
@@ -129,9 +132,10 @@ export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
 }) => {
   const styles = useNestedDrawerStyles();
   const resolvedClassName = classNames(className, styles.paper);
+
   return (
-    <Backdrop className={styles.backdrop} open={open}>
-      <BridgePurePaper className={resolvedClassName}>
+    <Backdrop className={styles.backdrop} open={open} onClick={onClose as any}>
+      <BridgePurePaper className={resolvedClassName} onClick={stopPropagation}>
         {title && <BridgeModalTitle onClose={onClose} title={title} />}
         {children}
       </BridgePurePaper>
