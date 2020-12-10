@@ -9,7 +9,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
-import { createPulseAnimation, createPulseOpacityAnimation } from '../../theme/animationUtils'
+import {
+  createPulseAnimation,
+  createPulseOpacityAnimation,
+} from "../../theme/animationUtils";
 import { CustomSvgIconComponent, EmptyIcon } from "../icons/RenIcons";
 import { CenteringSpacedBox } from "../layout/LayoutHelpers";
 
@@ -259,31 +262,35 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
 //   },
 // }));
 
-export const usePulseIndicatorStyles = makeStyles((theme) => {
-  const color = theme.palette.primary.main;
-  const { pulsingKeyframes, pulsingStyles } = createPulseAnimation(color);
-  return {
-    ...pulsingKeyframes,
-    root: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      background: theme.palette.primary.main,
-    },
-    pulsing: pulsingStyles,
-  };
-});
+export const usePulseIndicatorStyles = makeStyles<Theme, PulseIndicatorProps>(
+  (theme) => {
+    const color = theme.palette.primary.main;
+    const { pulsingKeyframes, pulsingStyles } = createPulseAnimation(color);
+    return {
+      ...pulsingKeyframes,
+      root: {
+        width: ({ size = 8 }) => size,
+        height: ({ size = 8 }) => size,
+        borderRadius: ({ size = 8 }) => size / 2,
+        background: theme.palette.primary.main,
+      },
+      pulsing: pulsingStyles,
+    };
+  }
+);
 
 type PulseIndicatorProps = {
   pulsing?: boolean;
+  size?: number;
   className?: string;
 };
 
 export const PulseIndicator: FunctionComponent<PulseIndicatorProps> = ({
   pulsing,
   className,
+  size = 8,
 }) => {
-  const styles = usePulseIndicatorStyles();
+  const styles = usePulseIndicatorStyles({ size });
   const resolvedClassName = classNames(styles.root, className, {
     [styles.pulsing]: pulsing,
   });
@@ -353,7 +360,7 @@ export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndi
         </div>
       </div>
       <div className={styles.indicatorWrapper}>
-        {needsAction && <TransactionStatusCircleIndicator />}
+        {needsAction && <PulseIndicator pulsing size={10} />}
       </div>
     </div>
   );
