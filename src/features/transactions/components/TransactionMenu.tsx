@@ -172,6 +172,11 @@ export const ConfirmTransactionDeletion: FunctionComponent<ConfirmTransactionDel
   onClose,
   onDeleteTx,
 }) => {
+  const [deleting, setDeleting] = useState(false);
+  const handleDeleteTx = useCallback(() => {
+    setDeleting(true);
+    onDeleteTx();
+  }, [onDeleteTx]);
   return (
     <NestedDrawer title="Delete a Transaction" open={open} onClose={onClose}>
       <PaperContent topPadding>
@@ -194,13 +199,16 @@ export const ConfirmTransactionDeletion: FunctionComponent<ConfirmTransactionDel
             variant="text"
             color="inherit"
             startIcon={<DeleteIcon />}
-            onClick={onDeleteTx}
+            onClick={handleDeleteTx}
+            disabled={deleting}
           >
-            Remove Transaction
+            {deleting ? "Removing..." : "Remove"} Transaction
           </RedButton>
         </ActionButtonWrapper>
         <ActionButtonWrapper>
-          <ActionButton onClick={onClose}>Cancel</ActionButton>
+          <ActionButton onClick={onClose} disabled={deleting}>
+            Cancel
+          </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
     </NestedDrawer>
