@@ -2116,26 +2116,6 @@
     send-crypto "0.2.25"
     wallet-address-validator "^0.2.4"
 
-"@renproject/chains-bitcoin@^2.0.0-y.0":
-  version "2.0.0-y.0"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-bitcoin/-/chains-bitcoin-2.0.0-y.0.tgz#0719adf3916fda34417d7e7f39234af1fbc9c2cb"
-  integrity sha512-KxPgeBVIRLmnzZt8auVhCI865UGCFessD+3+6wiZLYeXdoJMmLMCN8HiRv1r06D4J1co7T9egsAKy2dAFFmKdg==
-  dependencies:
-    "@renproject/interfaces" "^2.0.0-alpha.22"
-    "@renproject/rpc" "^2.0.0-y.0"
-    "@renproject/utils" "^2.0.0-y.0"
-    "@types/bs58" "^4.0.1"
-    "@types/node" ">=10"
-    bchaddrjs "^0.4.9"
-    bignumber.js "^9.0.1"
-    bitcore-lib "^8.22.2"
-    bitcore-lib-cash "^8.22.2"
-    bitcore-lib-dogecoin CoinSpace/bitcore-lib-dogecoin
-    bitcore-lib-zcash zcash-hackworks/bitcore-lib-zcash
-    bs58 "^4.0.1"
-    send-crypto "0.2.25"
-    wallet-address-validator "^0.2.4"
-
 "@renproject/chains-ethereum@^2.0.0-alpha.28":
   version "2.0.0-alpha.28"
   resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-2.0.0-alpha.28.tgz#16e72a9875ee8bfcc1fa0706f6094537eeda9e4b"
@@ -2174,7 +2154,7 @@
     web3-providers "^2.0.0-alpha.1"
     web3-utils "^2.0.0-alpha.1"
 
-"@renproject/chains-filecoin@^2.0.0-y.0":
+"@renproject/chains-filecoin@^2.0.0-alpha.28":
   version "2.0.0-y.0"
   resolved "https://registry.yarnpkg.com/@renproject/chains-filecoin/-/chains-filecoin-2.0.0-y.0.tgz#77f2760060ff30f6a5e3ea06f69e02263a57ea3e"
   integrity sha512-46XR74GHJLpYBEWA62c+LlnMwmMKl3PGKYm2eW5zgqu4vHHy0x/9WgMFuVk5Q06IboJgn4kd+VjjjM1UNC71dQ==
@@ -2215,15 +2195,15 @@
     bs58 "^4.0.1"
     wallet-address-validator "^0.2.4"
 
-"@renproject/chains@^2.0.0-alpha.27":
-  version "2.0.0-y.0"
-  resolved "https://registry.yarnpkg.com/@renproject/chains/-/chains-2.0.0-y.0.tgz#f3823a476119279bdef08e160bca54c7f69efe46"
-  integrity sha512-pPot5vZf0W+tl/j4aRo3QhVIiCQzGX+G105qDONZatBXiT80n5uEO/7CiQ3sIbUQ3lS1zmacTXaTeXCONrySSw==
+"@renproject/chains@2.0.0-alpha.28":
+  version "2.0.0-alpha.28"
+  resolved "https://registry.yarnpkg.com/@renproject/chains/-/chains-2.0.0-alpha.28.tgz#2c16d58f5b8452345cbcc83a3529f272d7e63e70"
+  integrity sha512-wwXPcMk5TIj5Sr0dA6OATKWGudj/UDsHS22Xw9IkrcNsZPjEZpgKMiq9LLVk5RmQL1qqVPeY6zzVpB7Urt9ALQ==
   dependencies:
-    "@renproject/chains-bitcoin" "^2.0.0-y.0"
-    "@renproject/chains-ethereum" "^2.0.0-y.0"
-    "@renproject/chains-filecoin" "^2.0.0-y.0"
-    "@renproject/interfaces" "^2.0.0-alpha.22"
+    "@renproject/chains-bitcoin" "^2.0.0-alpha.28"
+    "@renproject/chains-ethereum" "^2.0.0-alpha.28"
+    "@renproject/chains-filecoin" "^2.0.0-alpha.28"
+    "@renproject/interfaces" "^2.0.0-alpha.28"
     "@types/node" ">=10"
 
 "@renproject/fonts@^1.0.3-rc1":
@@ -2249,7 +2229,7 @@
     bignumber.js "^9.0.1"
     web3-core "^2.0.0-alpha.1"
 
-"@renproject/multiwallet-abstract-ethereum-connector@^2.0.0-alpha.28", "@renproject/multiwallet-abstract-ethereum-connector@^2.0.0-y.0":
+"@renproject/multiwallet-abstract-ethereum-connector@^2.0.0-alpha.28":
   version "2.0.0-y.0"
   resolved "https://registry.yarnpkg.com/@renproject/multiwallet-abstract-ethereum-connector/-/multiwallet-abstract-ethereum-connector-2.0.0-y.0.tgz#c28d6cb67d3a3d5055f1edacd49616a6bcb61d9e"
   integrity sha512-jkyNOD74KKP8Ay+BPJkit9VZMkoZbdd2ZAYmANtF/4OG48ddi+l9hmCUAqsYMdAZmnK1VhcHkTqUdmarFoLfIA==
@@ -4119,7 +4099,7 @@ bitcore-lib-cash@^8.22.2:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-"bitcore-lib-dogecoin@github:CoinSpace/bitcore-lib-dogecoin":
+bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin, "bitcore-lib-dogecoin@github:CoinSpace/bitcore-lib-dogecoin":
   version "8.1.2"
   resolved "https://codeload.github.com/CoinSpace/bitcore-lib-dogecoin/tar.gz/cf8b3f663d6f065c12a643d8eb7c9e7b7f516bf1"
   dependencies:
@@ -4131,7 +4111,7 @@ bitcore-lib-cash@^8.22.2:
     lodash "^4.17.15"
     scryptsy "^2.1.0"
 
-"bitcore-lib-zcash@github:zcash-hackworks/bitcore-lib-zcash":
+"bitcore-lib-zcash@github:zcash-hackworks/bitcore-lib-zcash", bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
   version "0.13.19"
   resolved "https://codeload.github.com/zcash-hackworks/bitcore-lib-zcash/tar.gz/e97ae1dd2e9f14d6076d5e5429c75d8965afa4ab"
   dependencies:
@@ -4155,9 +4135,9 @@ bitcore-lib@^8.22.2, bitcore-lib@^8.23.1:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-"bitgo-utxo-lib@git+https://github.com/ren-forks/bitgo-utxo-lib.git#7939387dda1199956fcb9d720a9493ce12cf013e":
+"bitgo-utxo-lib@https://github.com/ren-forks/bitgo-utxo-lib#7939387dda1199956fcb9d720a9493ce12cf013e":
   version "1.9.0"
-  resolved "git+https://github.com/ren-forks/bitgo-utxo-lib.git#7939387dda1199956fcb9d720a9493ce12cf013e"
+  resolved "https://github.com/ren-forks/bitgo-utxo-lib#7939387dda1199956fcb9d720a9493ce12cf013e"
   dependencies:
     bech32 "0.0.3"
     bigi "^1.4.0"

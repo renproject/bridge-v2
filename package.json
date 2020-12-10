@@ -9,7 +9,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@reduxjs/toolkit": "^1.4.0",
-    "@renproject/chains": "^2.0.0-alpha.27",
+    "@renproject/chains": "^2.0.0-alpha.28",
     "@renproject/chains-bitcoin": "^2.0.0-alpha.28",
     "@renproject/chains-ethereum": "^2.0.0-alpha.28",
     "@renproject/chains-terra": "^2.0.0-alpha.28",
