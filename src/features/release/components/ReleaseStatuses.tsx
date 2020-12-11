@@ -2,6 +2,7 @@ import { Box, Typography, useTheme } from '@material-ui/core'
 import { GatewaySession } from '@renproject/ren-tx'
 import React, { FunctionComponent, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
+import { useEffectOnce } from 'react-use'
 import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
 import { MetamaskFullIcon } from '../../../components/icons/RenIcons'
 import { Link } from '../../../components/links/Links'
@@ -13,7 +14,9 @@ import {
 } from '../../../components/progress/ProgressHelpers'
 import { Debug } from '../../../components/utils/Debug'
 import { paths } from '../../../pages/routes'
+import { useNotifications } from '../../../providers/Notifications'
 import { useSetPaperTitle } from '../../../providers/TitleProviders'
+import { useBrowserNotifications } from '../../notifications/notificationsUtils'
 import { getBurnAndReleaseParams } from '../releaseUtils'
 
 export const a = 1;
@@ -97,6 +100,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
   const history = useHistory();
   const {
     releaseChainConfig,
+    releaseCurrencyConfig,
     burnChainConfig,
     burnTxLink,
     releaseTxLink,
@@ -104,10 +108,22 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
   const handleReturn = useCallback(() => {
     history.push(paths.RELEASE);
   }, [history]);
-  // const { showNotification } = useNotifications();
-  // useEffect(() => {
-  //
-  // }, []);
+
+  const notificationMessage = `Successfully released ${tx.targetAmount} ${releaseCurrencyConfig.short} on ${releaseChainConfig.full}.`;
+  const { showNotification } = useNotifications();
+  const { showBrowserNotification } = useBrowserNotifications();
+  useEffectOnce(() => {
+    showNotification(
+      <span>
+        {notificationMessage}{" "}
+        <Link external href={releaseTxLink}>
+          View {releaseChainConfig.full} transaction
+        </Link>
+      </span>
+    );
+    showBrowserNotification(notificationMessage);
+  });
+
   return (
     <>
       <ProgressWrapper>

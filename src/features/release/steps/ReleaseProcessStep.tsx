@@ -38,6 +38,11 @@ import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
+import { BrowserNotificationsDrawer } from "../../notifications/components/NotificationsHelpers";
+import {
+  useBrowserNotifications,
+  useBrowserNotificationsConfirmation,
+} from "../../notifications/notificationsUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
@@ -95,6 +100,14 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
     handleDeleteTx,
   } = useTransactionDeletion(tx);
 
+  const {
+    modalOpened,
+    handleModalOpen,
+    handleModalClose,
+  } = useBrowserNotificationsConfirmation();
+
+  const { enabled, handleEnable } = useBrowserNotifications(handleModalClose);
+
   useEffect(() => {
     if (sourceChain) {
       const bridgeChainConfig = getChainConfigByRentxName(sourceChain);
@@ -130,7 +143,11 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         </PaperNav>
         <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
-          <ToggleIconButton variant="notifications" />
+          <ToggleIconButton
+            pressed={enabled}
+            variant="notifications"
+            onClick={handleModalOpen}
+          />
           <ToggleIconButton
             variant="settings"
             onClick={handleMenuOpen}
@@ -187,6 +204,11 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
           </PaperContent>
         </>
       )}
+      <BrowserNotificationsDrawer
+        open={modalOpened}
+        onClose={handleModalClose}
+        onEnable={handleEnable}
+      />
       <TransactionMenu
         tx={tx}
         open={menuOpened}
