@@ -60,7 +60,7 @@ export const createMintTransaction = ({
     type: "mint",
     network,
     sourceAsset: getCurrencyRentxName(currency),
-    sourceChain: getCurrencyRentxSourceChain(currency),
+    sourceChain: getCurrencyRentxSourceChain(currency), // TODO: it can be derived for minting
     destAddress,
     destChain: getChainRentxName(mintedCurrencyChain),
     targetAmount: Number(amount),

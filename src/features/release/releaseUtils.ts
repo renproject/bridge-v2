@@ -21,6 +21,7 @@ import {
   getCurrencyConfigByRentxName,
   getCurrencyRentxSourceChain,
   getNetworkConfigByRentxName,
+  RenChain,
   toMintedCurrency,
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
@@ -50,6 +51,7 @@ type CreateReleaseTransactionParams = {
   currency: BridgeCurrency;
   userAddress: string;
   destAddress: string;
+  sourceChain?: RenChain;
   network: RenNetwork;
 };
 
@@ -67,7 +69,7 @@ export const createReleaseTransaction = ({
     type: "burn",
     network,
     sourceAsset: sourceCurrencyConfig.rentxName,
-    sourceChain: getCurrencyRentxSourceChain(currency),
+    sourceChain: getCurrencyRentxSourceChain(currency), // TODO: pass sourceChain explicitly
     destAddress,
     destChain: getChainRentxName(sourceCurrencyConfig.sourceChain),
     targetAmount: Number(amount),

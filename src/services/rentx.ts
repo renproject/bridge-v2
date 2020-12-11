@@ -1,11 +1,25 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { BinanceSmartChain, Bitcoin, BitcoinCash, Dogecoin, Ethereum, Zcash, } from '@renproject/chains'
-import { RenNetwork } from '@renproject/interfaces'
-import { BurnMachineContext, GatewayMachineContext } from '@renproject/ren-tx'
-import { mapFees } from '../features/fees/feesUtils'
-import { BridgeCurrency, getChainConfig, getCurrencyConfig, RenChain, toReleasedCurrency, } from '../utils/assetConfigs'
-import { getRenJs } from './renJs'
+import {
+  BinanceSmartChain,
+  Bitcoin,
+  BitcoinCash,
+  Dogecoin,
+  Ethereum,
+  Zcash,
+} from "@renproject/chains";
+import { RenNetwork } from "@renproject/interfaces";
+import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
+import { mapFees } from "../features/fees/feesUtils";
+import {
+  BridgeCurrency,
+  getChainConfig,
+  getChainConfigByRentxName,
+  getCurrencyConfig,
+  RenChain,
+  toReleasedCurrency,
+} from "../utils/assetConfigs";
+import { getRenJs } from "./renJs";
 
 export const lockChainMap = {
   [RenChain.bitcoin]: () => Bitcoin(),
@@ -107,16 +121,20 @@ export const getBurnAndReleaseFees = (
   network: RenNetwork,
   chain: RenChain
 ) => {
-  const burnedCurrencyConfig = getCurrencyConfig(burnedCurrency);
-  const burnedCurrencyChain = getChainConfig(burnedCurrencyConfig.sourceChain);
+  const burnedCurrencyChain = getChainConfigByRentxName(chain);
   const releasedCurrency = toReleasedCurrency(burnedCurrency);
   const releasedCurrencyConfig = getCurrencyConfig(releasedCurrency);
   const releasedCurrencyChain = getChainConfig(
     releasedCurrencyConfig.sourceChain
   );
 
-  console.log(releasedCurrency);
-  const From = (burnChainClassMap as any)[burnedCurrencyChain.rentxName];
+  console.log(
+    releasedCurrency,
+    burnedCurrencyChain.rentxName,
+    releasedCurrencyChain.rentxName,
+    network
+  );
+  const From = (burnChainClassMap as any)[chain];
   const To = (releaseChainClassMap as any)[releasedCurrencyChain.rentxName];
   return getRenJs(network)
     .getFees({

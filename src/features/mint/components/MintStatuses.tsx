@@ -245,9 +245,9 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   const notificationMessage = `${maxConfirmations(
     lockConfirmations,
     lockTargetConfirmations
-  )}/${lockTargetConfirmations} confirmations, ready to submit to ${
-    mintChainConfig.full
-  }?`;
+  )}/${lockTargetConfirmations} confirmations, ready to submit ${
+    lockCurrencyConfig.short
+  } to ${mintChainConfig.full}?`;
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
   useEffectOnce(() => {
@@ -372,7 +372,10 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     mintTxLink,
     mintChainConfig,
   } = getLockAndMintParams(tx);
-  const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
+  const { fees, pending } = useFetchFees(
+    lockCurrencyConfig.symbol,
+    TxType.MINT
+  );
   const { conversionTotal } = getTransactionFees({
     amount: lockTxAmount,
     fees,
@@ -382,20 +385,33 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     history.push(paths.MINT);
   }, [history]);
 
-  const notificationMessage = `Successfully minted ${conversionTotal} ${mintCurrencyConfig.short} on ${mintChainConfig.full}.`;
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
-  useEffectOnce(() => {
-    showNotification(
-      <span>
-        {notificationMessage}{" "}
-        <Link external href={mintTxLink}>
-          View {mintChainConfig.full} transaction
-        </Link>
-      </span>
-    );
-    showBrowserNotification(notificationMessage);
-  });
+
+  const showNotifications = useCallback(() => {
+    if (!pending) {
+      const notificationMessage = `Successfully minted ${conversionTotal} ${mintCurrencyConfig.short} on ${mintChainConfig.full}.`;
+      showNotification(
+        <span>
+          {notificationMessage}{" "}
+          <Link external href={mintTxLink}>
+            View {mintChainConfig.full} transaction
+          </Link>
+        </span>
+      );
+      showBrowserNotification(notificationMessage);
+    }
+  }, [
+    showNotification,
+    showBrowserNotification,
+    pending,
+    conversionTotal,
+    mintChainConfig,
+    mintCurrencyConfig,
+    mintTxLink,
+  ]);
+
+  useEffect(showNotifications, [pending]);
 
   return (
     <>

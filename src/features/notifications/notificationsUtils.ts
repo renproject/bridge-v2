@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
-import { useLocation } from "react-use";
 
 export const useBrowserNotifications = (onEnabled = () => {}) => {
-  // const location = useLocation();
   let enabled = false;
   if ((window as any).Notification) {
     enabled = Notification.permission === "granted";
@@ -27,7 +25,7 @@ export const useBrowserNotifications = (onEnabled = () => {}) => {
     if ((window as any).Notification) {
       const notification = new Notification(message);
       notification.onclick = () => {
-        // window.open(location.href);
+        // window.open(location.href); // TODO: TBD: redirect here?
       };
     }
   }, []);
