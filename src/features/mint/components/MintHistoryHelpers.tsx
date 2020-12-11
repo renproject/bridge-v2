@@ -132,7 +132,6 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             {lockTxLink && (
               <Link
                 href={lockTxLink}
-                target="_blank"
                 external
                 color="primary"
                 underline="hover"
@@ -149,7 +148,6 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             {mintTxLink && (
               <Link
                 href={mintTxLink}
-                target="_blank"
                 external
                 color="primary"
                 underline="hover"

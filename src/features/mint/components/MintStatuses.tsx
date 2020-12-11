@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { useHistory } from "react-router-dom";
+import { useEffectOnce } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -39,6 +40,7 @@ import { useNotifications } from "../../../providers/Notifications";
 import { orangeLight } from "../../../theme/colors";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
+import { useBrowserNotifications } from "../../notifications/notificationsUtils";
 import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { getLockAndMintParams } from "../mintUtils";
@@ -358,6 +360,22 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   const handleReturn = useCallback(() => {
     history.push(paths.MINT);
   }, [history]);
+
+  const notificationMessage = `Successfully minted ${conversionTotal} ${mintCurrencyConfig.short} on ${mintChainConfig.full}.`;
+  const { showNotification } = useNotifications();
+  const { showBrowserNotification } = useBrowserNotifications();
+  useEffectOnce(() => {
+    showNotification(
+      <span>
+        {notificationMessage}{" "}
+        <Link external href={mintTxLink}>
+          View {mintChainConfig.full} transaction
+        </Link>
+      </span>
+    );
+    showBrowserNotification(notificationMessage);
+  });
+
   return (
     <>
       <ProgressWrapper>
@@ -382,7 +400,6 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
           variant="button"
           underline="hover"
           href={lockTxLink}
-          target="_blank"
         >
           {lockChainConfig.full} transaction
         </Link>
@@ -392,7 +409,6 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
           variant="button"
           underline="hover"
           href={mintTxLink}
-          target="_blank"
         >
           {mintChainConfig.full} transaction
         </Link>

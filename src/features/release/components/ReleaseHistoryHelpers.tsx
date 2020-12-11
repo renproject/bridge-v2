@@ -131,7 +131,6 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
             {burnTxLink && (
               <Link
                 href={burnTxLink}
-                target="_blank"
                 external
                 color="primary"
                 underline="hover"
@@ -143,7 +142,6 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
             {releaseTxLink && (
               <Link
                 href={releaseTxLink}
-                target="_blank"
                 external
                 color="primary"
                 underline="hover"

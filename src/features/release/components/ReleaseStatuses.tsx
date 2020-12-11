@@ -141,7 +141,6 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
           variant="button"
           underline="hover"
           href={releaseTxLink}
-          target="_blank"
         >
           {releaseChainConfig.full} transaction
         </Link>
@@ -151,7 +150,6 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
           variant="button"
           underline="hover"
           href={burnTxLink}
-          target="_blank"
         >
           {burnChainConfig.full} transaction
         </Link>

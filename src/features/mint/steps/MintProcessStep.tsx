@@ -1,58 +1,26 @@
-import { Divider, IconButton } from "@material-ui/core";
-import {
-  depositMachine,
-  DepositMachineSchema,
-  GatewaySession,
-  GatewayTransaction,
-} from "@renproject/ren-tx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps, useHistory } from "react-router-dom";
-import { useLocation } from "react-use";
-import { Actor } from "xstate";
-import {
-  ActionButton,
-  ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import {
-  CenteringSpacedBox,
-  PaperSpacerWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
-import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
-import {
-  getChainConfigByRentxName,
-  getCurrencyConfigByRentxName,
-} from "../../../utils/assetConfigs";
+import { Divider, IconButton } from '@material-ui/core'
+import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
+import { useLocation } from 'react-use'
+import { Actor } from 'xstate'
+import { ActionButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { CenteringSpacedBox, PaperSpacerWrapper, } from '../../../components/layout/LayoutHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from '../../../components/utils/types'
+import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
+import { paths } from '../../../pages/routes'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { usePageTitle, usePaperTitle } from '../../../providers/TitleProviders'
+import { getChainConfigByRentxName, getCurrencyConfigByRentxName, } from '../../../utils/assetConfigs'
 import { BrowserNotificationsDrawer } from '../../notifications/components/NotificationsHelpers'
-import {
-  useBrowserNotifications,
-  useBrowserNotificationsConfirmation,
-} from "../../notifications/notificationsUtils";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { TransactionMenu } from "../../transactions/components/TransactionMenu";
-import {
-  BookmarkPageWarning,
-  ProgressStatus,
-} from "../../transactions/components/TransactionsHelpers";
+import { useBrowserNotifications, useBrowserNotificationsConfirmation, } from '../../notifications/notificationsUtils'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
+import { TransactionMenu } from '../../transactions/components/TransactionMenu'
+import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
 import {
   createTxQueryString,
   getTxPageTitle,
@@ -60,20 +28,16 @@ import {
   TxType,
   useTransactionDeletion,
   useTxParam,
-} from "../../transactions/transactionsUtils";
+} from '../../transactions/transactionsUtils'
+import { $chain, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
 import {
-  $chain,
-  setChain,
-  setWalletPickerOpened,
-} from "../../wallet/walletSlice";
-import {
+  DestinationPendingStatus,
+  MintCompletedStatus,
   MintDepositAcceptedStatus,
   MintDepositConfirmationStatus,
   MintDepositToStatus,
-  DestinationPendingStatus,
-  MintCompletedStatus,
-} from "../components/MintStatuses";
-import { useMintMachine, useMintTransactionPersistence } from "../mintUtils";
+} from '../components/MintStatuses'
+import { useMintMachine, useMintTransactionPersistence } from '../mintUtils'
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
