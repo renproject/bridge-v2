@@ -210,6 +210,13 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
   );
 };
 
+const maxConfirmations = (actual: number, target: number) => {
+  if (actual > target) {
+    return target;
+  }
+  return actual;
+};
+
 type MintDepositAcceptedStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
@@ -235,7 +242,21 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
     mintChainConfig,
   } = getLockAndMintParams(tx);
 
+  const notificationMessage = `${maxConfirmations(
+    lockConfirmations,
+    lockTargetConfirmations
+  )}/${lockTargetConfirmations} confirmations, ready to submit to ${
+    mintChainConfig.full
+  }?`;
+  const { showNotification } = useNotifications();
+  const { showBrowserNotification } = useBrowserNotifications();
+  useEffectOnce(() => {
+    showNotification(notificationMessage);
+    showBrowserNotification(notificationMessage);
+  });
+
   const { MainIcon } = lockChainConfig;
+
   return (
     <>
       <ProgressWrapper>
