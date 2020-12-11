@@ -215,6 +215,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         onClose={handleMenuClose}
         onDeleteTx={handleDeleteTx}
       />
+      <Debug it={{ parsedTx, txState: txState }} />
     </>
   );
 };

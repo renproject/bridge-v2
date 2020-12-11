@@ -19,7 +19,7 @@ export const useBrowserNotifications = (onEnabled = () => {}) => {
         }
       });
     }
-  }, [Notification.permission, enabled, onEnabled]);
+  }, [enabled, onEnabled]);
 
   const showBrowserNotification = useCallback((message) => {
     new Notification(message);

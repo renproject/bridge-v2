@@ -48,11 +48,13 @@ const getAddressValidityMessage = (time: number) => {
   return `This Gateway Address is only valid for ${time} ${unit}. Do not send multiple deposits or deposit after ${time} ${unit}.`;
 };
 
-export type DepositToProps = {
+export type MintDepositToProps = {
   tx: GatewaySession;
 };
 
-export const DepositToStatus: FunctionComponent<DepositToProps> = ({ tx }) => {
+export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
+  tx,
+}) => {
   const [showQr, setShowQr] = useState(false);
   const toggleQr = useCallback(() => {
     setShowQr(!showQr);
@@ -146,11 +148,11 @@ export const DepositToStatus: FunctionComponent<DepositToProps> = ({ tx }) => {
   );
 };
 
-type DepositConfirmationStatusProps = {
+type MintDepositConfirmationStatusProps = {
   tx: GatewaySession;
 };
 
-export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationStatusProps> = ({
+export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirmationStatusProps> = ({
   tx,
 }) => {
   const [, setTitle] = usePaperTitle();
@@ -206,13 +208,13 @@ export const DepositConfirmationStatus: FunctionComponent<DepositConfirmationSta
   );
 };
 
-type DepositAcceptedStatusProps = {
+type MintDepositAcceptedStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
   submitting: boolean;
 };
 
-export const DepositAcceptedStatus: FunctionComponent<DepositAcceptedStatusProps> = ({
+export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedStatusProps> = ({
   tx,
   onSubmit = () => {},
   submitting,
@@ -329,11 +331,11 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
   );
 };
 
-type DestinationReceivedStatusProps = {
+type MintCompletedStatusProps = {
   tx: GatewaySession;
 };
 
-export const DestinationReceivedStatus: FunctionComponent<DestinationReceivedStatusProps> = ({
+export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = ({
   tx,
 }) => {
   useSetPaperTitle("Complete");

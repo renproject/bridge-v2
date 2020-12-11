@@ -42,6 +42,11 @@ import {
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
 } from "../../../utils/assetConfigs";
+import { BrowserNotificationsDrawer } from '../../notifications/components/NotificationsHelpers'
+import {
+  useBrowserNotifications,
+  useBrowserNotificationsConfirmation,
+} from "../../notifications/notificationsUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import {
@@ -62,11 +67,11 @@ import {
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
 import {
-  DepositAcceptedStatus,
-  DepositConfirmationStatus,
-  DepositToStatus,
+  MintDepositAcceptedStatus,
+  MintDepositConfirmationStatus,
+  MintDepositToStatus,
   DestinationPendingStatus,
-  DestinationReceivedStatus,
+  MintCompletedStatus,
 } from "../components/MintStatuses";
 import { useMintMachine, useMintTransactionPersistence } from "../mintUtils";
 
@@ -100,6 +105,14 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     handleMenuClose,
     handleDeleteTx,
   } = useTransactionDeletion(tx);
+
+  const {
+    modalOpened,
+    handleModalOpen,
+    handleModalClose,
+  } = useBrowserNotificationsConfirmation();
+
+  const { enabled, handleEnable } = useBrowserNotifications(handleModalClose);
 
   useEffect(() => {
     if (txState?.reloadTx) {
@@ -147,7 +160,11 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         </PaperNav>
         <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
-          <ToggleIconButton variant="notifications" />
+          <ToggleIconButton
+            pressed={enabled}
+            variant="notifications"
+            onClick={handleModalOpen}
+          />
           <ToggleIconButton
             variant="settings"
             onClick={handleMenuOpen}
@@ -186,16 +203,21 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
           </PaperContent>
         </>
       )}
-      <Debug it={{ parsedTx, txState: txState }} />
       {txState?.newTx && (
         <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
       )}
+      <BrowserNotificationsDrawer
+        open={modalOpened}
+        onClose={handleModalClose}
+        onEnable={handleEnable}
+      />
       <TransactionMenu
         tx={tx}
         open={menuOpened}
         onClose={handleMenuClose}
         onDeleteTx={handleDeleteTx}
       />
+      <Debug it={{ parsedTx, txState: txState }} />
     </>
   );
 };
@@ -252,7 +274,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           machine={activeDeposit.machine}
         />
       ) : (
-        <DepositToStatus tx={current.context.tx} />
+        <MintDepositToStatus tx={current.context.tx} />
       )}
       <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
     </>
@@ -288,13 +310,13 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   switch (state) {
     // switch (forceState) {
     case "srcSettling":
-      return <DepositConfirmationStatus tx={tx} />;
+      return <MintDepositConfirmationStatus tx={tx} />;
     case "srcConfirmed": // source sourceChain confirmations ok, but renVM still doesn't accept it
       return <ProgressStatus reason="Submitting to RenVM" />;
     case "claiming":
     case "accepted": // RenVM accepted it, it can be submitted to ethereum
       return (
-        <DepositAcceptedStatus
+        <MintDepositAcceptedStatus
           tx={tx}
           onSubmit={handleSubmitToDestinationChain}
           submitting={state === "claiming"}
@@ -302,7 +324,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up
       if (deposit.destTxHash) {
-        return <DestinationReceivedStatus tx={tx} />;
+        return <MintCompletedStatus tx={tx} />;
       } else {
         return (
           <DestinationPendingStatus
