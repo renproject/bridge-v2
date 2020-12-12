@@ -23,13 +23,12 @@ import {
   TxEntryStatus,
   TxPhase,
 } from "../../transactions/transactionsUtils";
-import { DepositMachineSchemaState, useMintMachine, useMintTransactionPersistence } from '../mintHooks'
 import {
-  getLockAndMintParams,
-  isMintTransactionCompleted,
-
-
-} from "../mintUtils";
+  DepositMachineSchemaState,
+  useMintMachine,
+  useMintTransactionPersistence,
+} from "../mintHooks";
+import { getLockAndMintParams, isMintTransactionCompleted } from "../mintUtils";
 
 export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
@@ -82,6 +81,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
   onAction,
 }) => {
+  console.log("rerendering");
   const styles = useTransactionEntryStyles();
   const {
     lockChainConfig,
