@@ -30,7 +30,7 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../progress/ProgressHelpers";
-import { Debug } from "../utils/Debug";
+import { Debug, DebugComponentProps } from '../utils/Debug'
 import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
@@ -187,13 +187,15 @@ export const WalletConnectionProgress: FunctionComponent = () => {
 export const WalletWrongNetworkInfo: WalletPickerProps<
   any,
   any
->["WrongNetworkInfo"] = ({ chain, targetNetwork, onClose }) => {
+>["WrongNetworkInfo"] = (props) => {
+  const { chain, targetNetwork, onClose } = props;
   console.log(targetNetwork);
   const theme = useTheme();
   const chainName = getChainConfigByRentxName(chain).full;
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
   return (
     <>
+      <DebugComponentProps {...props} />
       <BridgeModalTitle title="Wrong Network" onClose={onClose} />
       <PaperContent bottomPadding>
         <ProgressWrapper>

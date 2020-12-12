@@ -447,9 +447,16 @@ export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
 
 const unknownNetworkConfig = networksConfig[BridgeNetwork.UNKNOWN];
 
-export const getNetworkConfigByRentxName = (name: string) =>
-  Object.values(networksConfig).find((network) => network.rentxName === name) ||
-  unknownNetworkConfig;
+export const getNetworkConfigByRentxName = (name: string) => {
+  if (name.indexOf("testnet") > -1) {
+    return networksConfig[BridgeNetwork.TESTNET];
+  }
+  return (
+    Object.values(networksConfig).find(
+      (network) => network.rentxName === name
+    ) || unknownNetworkConfig
+  );
+};
 
 export const supportedRenNetworks = [
   RenNetwork.Mainnet,

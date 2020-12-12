@@ -21,12 +21,12 @@ import { useBrowserNotifications, useBrowserNotificationsConfirmation, } from '.
 import { TransactionFees } from '../../transactions/components/TransactionFees'
 import { TransactionMenu } from '../../transactions/components/TransactionMenu'
 import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
+import { useTransactionDeletion } from '../../transactions/transactionsHooks'
 import {
   createTxQueryString,
   getTxPageTitle,
   parseTxQueryString,
   TxType,
-  useTransactionDeletion,
   useTxParam,
 } from '../../transactions/transactionsUtils'
 import { $chain, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'

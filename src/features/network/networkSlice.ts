@@ -10,7 +10,7 @@ type WalletState = {
 const cachedTargetNetwork = localStorage.getItem("renNetwork");
 
 let initialState: WalletState = {
-  renNetwork: (cachedTargetNetwork || env.NETWORK) as RenNetwork,
+  renNetwork: RenNetwork.Testnet || (cachedTargetNetwork || env.NETWORK) as RenNetwork,
 };
 
 const slice = createSlice({

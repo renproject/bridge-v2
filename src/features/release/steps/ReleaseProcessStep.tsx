@@ -46,11 +46,11 @@ import {
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
+import { useTransactionDeletion } from '../../transactions/transactionsHooks'
 import {
   createTxQueryString,
   getTxPageTitle,
   TxType,
-  useTransactionDeletion,
   useTxParam,
 } from "../../transactions/transactionsUtils";
 import {
