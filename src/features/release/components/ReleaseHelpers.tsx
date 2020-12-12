@@ -1,6 +1,6 @@
 import { GatewaySession } from "@renproject/ren-tx";
 import { FunctionComponent, useEffect } from "react";
-import { useBurnMachine } from "../releaseUtils";
+import { useBurnMachine } from '../releaseHooks'
 
 export const releaseTooltips = {
   releasing: "The amount and asset you're releasing before fees are applied.",

@@ -224,8 +224,8 @@ export const getPaymentLink = (
   return `${chainConfig.rentxName}://${address}?amount=${amount}`;
 };
 
-// export const isTransactionCompleted = (tx: GatewaySession) => {
-//   return tx.type === TxType.MINT
-//     ? isMintTransactionCompleted(tx)
-//     : isReleaseTransactionCompleted(tx);
-// };
+export const isTransactionCompleted = (tx: GatewaySession) => {
+  return tx.type === TxType.MINT
+    ? isMintTransactionCompleted(tx)
+    : isReleaseTransactionCompleted(tx);
+};

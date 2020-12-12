@@ -60,11 +60,12 @@ import {
   BurnAndReleaseTransactionInitializer,
   releaseTooltips,
 } from "../components/ReleaseHelpers";
+import { releaseTxStateUpdateSequence } from '../releaseHooks'
 import { $release, $releaseUsdAmount } from "../releaseSlice";
 import {
   createReleaseTransaction,
   preValidateReleaseTransaction,
-  releaseTxStateUpdateSequence,
+
 } from "../releaseUtils";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({

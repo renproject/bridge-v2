@@ -37,7 +37,7 @@ import {
   MintDepositConfirmationStatus,
   MintDepositToStatus,
 } from '../components/MintStatuses'
-import { useMintMachine, useMintTransactionPersistence } from '../mintUtils'
+import { useMintMachine, useMintTransactionPersistence } from '../mintHooks'
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,

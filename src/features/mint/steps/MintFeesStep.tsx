@@ -39,8 +39,9 @@ import {
 import { useShakePaper } from '../../ui/uiUtils'
 import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
 import { getMintDynamicTooltips, mintTooltips, MintTransactionInitializer, } from '../components/MintHelpers'
+import { mintTxStateUpdateSequence } from '../mintHooks'
 import { $mint } from '../mintSlice'
-import { createMintTransaction, mintTxStateUpdateSequence, preValidateMintTransaction, } from '../mintUtils'
+import { createMintTransaction, preValidateMintTransaction, } from '../mintUtils'
 
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,

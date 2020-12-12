@@ -62,10 +62,11 @@ import {
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
 } from "../components/ReleaseStatuses";
+import { useBurnMachine, useReleaseTransactionPersistence } from '../releaseHooks'
 import {
   getBurnAndReleaseParams,
-  useBurnMachine,
-  useReleaseTransactionPersistence,
+
+
 } from "../releaseUtils";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (

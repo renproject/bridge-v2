@@ -23,12 +23,12 @@ import {
   TxEntryStatus,
   TxPhase,
 } from "../../transactions/transactionsUtils";
+import { DepositMachineSchemaState, useMintMachine, useMintTransactionPersistence } from '../mintHooks'
 import {
-  DepositMachineSchemaState,
   getLockAndMintParams,
   isMintTransactionCompleted,
-  useMintMachine,
-  useMintTransactionPersistence,
+
+
 } from "../mintUtils";
 
 export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({

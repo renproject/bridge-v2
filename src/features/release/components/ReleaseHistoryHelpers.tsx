@@ -23,12 +23,12 @@ import {
   TxEntryStatus,
   TxPhase,
 } from "../../transactions/transactionsUtils";
+import { BurnMachineSchemaState, useBurnMachine, useReleaseTransactionPersistence } from '../releaseHooks'
 import {
-  BurnMachineSchemaState,
   getBurnAndReleaseParams,
   isReleaseTransactionCompleted,
-  useBurnMachine,
-  useReleaseTransactionPersistence,
+
+
 } from "../releaseUtils";
 
 export const ReleaseTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({

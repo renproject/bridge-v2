@@ -1,7 +1,7 @@
 import { GatewaySession } from "@renproject/ren-tx";
 import { FunctionComponent, useEffect } from "react";
 import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
-import { useMintMachine } from "../mintUtils";
+import { useMintMachine } from '../mintHooks'
 
 export const mintTooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",
