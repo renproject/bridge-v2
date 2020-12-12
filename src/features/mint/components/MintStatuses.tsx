@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
@@ -44,6 +45,7 @@ import { useBrowserNotifications } from "../../notifications/notificationsUtils"
 import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { getLockAndMintParams } from "../mintUtils";
+import { resetMint } from "../mintSlice";
 
 const getAddressValidityMessage = (time: number) => {
   const unit = "hours";
@@ -362,6 +364,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   tx,
 }) => {
   useSetPaperTitle("Complete");
+  const dispatch = useDispatch();
   const history = useHistory();
   const {
     lockCurrencyConfig,
@@ -383,7 +386,8 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   });
   const handleReturn = useCallback(() => {
     history.push(paths.MINT);
-  }, [history]);
+    dispatch(resetMint());
+  }, [dispatch, history]);
 
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();

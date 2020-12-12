@@ -1,6 +1,7 @@
 import { Box, Typography, useTheme } from "@material-ui/core";
 import { GatewaySession } from "@renproject/ren-tx";
 import React, { FunctionComponent, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
@@ -19,6 +20,7 @@ import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { useBrowserNotifications } from "../../notifications/notificationsUtils";
+import { resetRelease } from "../releaseSlice";
 import { getBurnAndReleaseParams } from "../releaseUtils";
 
 export const a = 1;
@@ -103,6 +105,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
   tx,
 }) => {
   useSetPaperTitle("Completed");
+  const dispatch = useDispatch();
   const history = useHistory();
   const {
     releaseChainConfig,
@@ -113,7 +116,8 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
   } = getBurnAndReleaseParams(tx);
   const handleReturn = useCallback(() => {
     history.push(paths.RELEASE);
-  }, [history]);
+    dispatch(resetRelease());
+  }, [dispatch, history]);
 
   const notificationMessage = `Successfully released ${tx.targetAmount} ${releaseCurrencyConfig.short}`;
   const { showNotification } = useNotifications();

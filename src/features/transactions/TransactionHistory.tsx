@@ -123,7 +123,7 @@ export const TransactionHistory: FunctionComponent = () => {
                 <>
                   <MediumWrapper>
                     <Typography variant="body1" align="center">
-                      You must connect {chainConfig.full} to view transactions
+                      You must connect an {chainConfig.full} compatible wallet to view transactions
                     </Typography>
                   </MediumWrapper>
                   <BigWrapper>

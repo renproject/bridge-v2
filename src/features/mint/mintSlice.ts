@@ -24,13 +24,13 @@ const slice = createSlice({
     setMintAmount(state, action: PayloadAction<number>) {
       state.amount = action.payload;
     },
-    reset(state, action: PayloadAction<MintState | undefined>) {
+    resetMint(state, action: PayloadAction<MintState | undefined>) {
       state = action.payload || initialState;
     },
   },
 });
 
-export const { setMintCurrency, setMintAmount } = slice.actions;
+export const { setMintCurrency, setMintAmount, resetMint } = slice.actions;
 
 export const mintReducer = slice.reducer;
 
