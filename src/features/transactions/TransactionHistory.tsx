@@ -1,5 +1,5 @@
 import { Box, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ActionButton, ActionButtonWrapper, } from '../../components/buttons/Buttons'
 import { AssetDropdown } from '../../components/dropdowns/AssetDropdown'
@@ -30,7 +30,7 @@ import {
   setTxHistoryOpened,
   setTxsPending,
 } from './transactionsSlice'
-import { TxType } from './transactionsUtils'
+import { isTransactionCompleted, TxType } from './transactionsUtils'
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -96,6 +96,17 @@ export const TransactionHistory: FunctionComponent = () => {
   const itemsPerPage = 4;
 
   const showTransactions = walletConnected && !txsPending;
+
+  const { pendingTxsCount, completedTxsCount } = useMemo(() => {
+    const pendingTxsCount = allTransactions.filter(
+      (tx) => !isTransactionCompleted(tx)
+    ).length;
+    const completedTxsCount = allTransactions.filter((tx) =>
+      isTransactionCompleted(tx)
+    ).length;
+    return { pendingTxsCount, completedTxsCount };
+  }, [allTransactions]);
+
   return (
     <TransactionHistoryDialog
       open={opened}
@@ -123,7 +134,8 @@ export const TransactionHistory: FunctionComponent = () => {
                 <>
                   <MediumWrapper>
                     <Typography variant="body1" align="center">
-                      You must connect an {chainConfig.full} compatible wallet to view transactions
+                      You must connect an {chainConfig.full} compatible wallet
+                      to view transactions
                     </Typography>
                   </MediumWrapper>
                   <BigWrapper>
@@ -151,7 +163,6 @@ export const TransactionHistory: FunctionComponent = () => {
       )}
       {showTransactions && (
         <>
-          <TransactionsStatusHeader title={`All (${all})`} />
           <div>
             {allTransactions.map((tx, index) => {
               const startIndex = page * itemsPerPage;
@@ -159,15 +170,29 @@ export const TransactionHistory: FunctionComponent = () => {
               const indexIsInCurrentPage =
                 index >= startIndex && index < endIndex;
 
+              const isFirstShown = index === startIndex;
+              const isPreviousPending =
+                index > 0 &&
+                !isTransactionCompleted(allTransactions[index - 1]);
+              const showHeader = isFirstShown || isPreviousPending;
+              const isCurrentCompleted = isTransactionCompleted(tx);
+              const title = isCurrentCompleted
+                ? `Completed (${completedTxsCount})`
+                : `Pending (${pendingTxsCount})`;
+
+              const Header = <TransactionsStatusHeader title={title} />;
+
               if (tx.type === TxType.MINT) {
                 return (
                   <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
+                    {showHeader && Header}
                     <MintTransactionEntryResolver tx={tx} />
                   </ShowEntry>
                 );
               } else {
                 return (
                   <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
+                    {showHeader && Header}
                     <ReleaseTransactionEntryResolver tx={tx} />
                   </ShowEntry>
                 );

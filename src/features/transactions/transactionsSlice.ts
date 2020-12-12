@@ -1,9 +1,9 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GatewaySession } from "@renproject/ren-tx";
-import { RootState } from "../../store/rootReducer";
-import { getLockAndMintParams } from "../mint/mintUtils";
-import { getBurnAndReleaseParams } from "../release/releaseUtils";
-import { TxEntryStatus, txSorter, TxType } from "./transactionsUtils";
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { GatewaySession } from '@renproject/ren-tx'
+import { RootState } from '../../store/rootReducer'
+import { getLockAndMintParams } from '../mint/mintUtils'
+import { getBurnAndReleaseParams } from '../release/releaseUtils'
+import { txCompletedSorter, TxEntryStatus, TxType, } from './transactionsUtils'
 
 export type BridgeTransaction = GatewaySession;
 
@@ -79,7 +79,7 @@ export const transactionsReducer = slice.reducer;
 export const $transactionsData = (state: RootState) => state.transactions;
 export const $orderedTransactions = createSelector(
   $transactionsData,
-  (transactions) => [...transactions.txs].sort(txSorter)
+  (transactions) => [...transactions.txs].sort(txCompletedSorter)
 );
 export const $transactionsNeedsAction = createSelector(
   $transactionsData,

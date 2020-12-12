@@ -91,7 +91,18 @@ export const isTxExpired = (tx: GatewaySession) => {
   return false;
 };
 
-export const txSorter = (
+export const txCompletedSorter = (a: GatewaySession, b: GatewaySession) => {
+  const aCompleted = isTransactionCompleted(a);
+  const bCompleted = isTransactionCompleted(b);
+  if (aCompleted && !bCompleted) {
+    return 1;
+  } else if (!aCompleted && bCompleted) {
+    return -1;
+  }
+  return 0;
+};
+
+export const txExpirySorter = (
   a: Partial<GatewaySession>,
   b: Partial<GatewaySession>
 ) => {
