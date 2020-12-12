@@ -1,6 +1,6 @@
-import { GatewaySession } from '@renproject/ren-tx'
-import queryString from 'query-string'
-import { useLocation } from 'react-router-dom'
+import { GatewaySession } from "@renproject/ren-tx";
+import queryString from "query-string";
+import { useLocation } from "react-router-dom";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -8,8 +8,10 @@ import {
   getChainConfig,
   getCurrencyConfig,
   getCurrencyConfigByRentxName,
-} from '../../utils/assetConfigs'
-import { toPercent } from '../../utils/converters'
+} from "../../utils/assetConfigs";
+import { toPercent } from "../../utils/converters";
+import { isMintTransactionCompleted } from "../mint/mintUtils";
+import { isReleaseTransactionCompleted } from "../release/releaseUtils";
 
 export enum TxEntryStatus {
   PENDING = "pending",
@@ -222,3 +224,8 @@ export const getPaymentLink = (
   return `${chainConfig.rentxName}://${address}?amount=${amount}`;
 };
 
+// export const isTransactionCompleted = (tx: GatewaySession) => {
+//   return tx.type === TxType.MINT
+//     ? isMintTransactionCompleted(tx)
+//     : isReleaseTransactionCompleted(tx);
+// };

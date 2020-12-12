@@ -26,6 +26,7 @@ import {
 import {
   BurnMachineSchemaState,
   getBurnAndReleaseParams,
+  isReleaseTransactionCompleted,
   useBurnMachine,
   useReleaseTransactionPersistence,
 } from "../releaseUtils";
@@ -33,9 +34,7 @@ import {
 export const ReleaseTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
 }) => {
-  const { meta } = getBurnAndReleaseParams(tx);
-  if (meta.status === TxEntryStatus.COMPLETED) {
-    console.log("release rendering completed");
+  if (isReleaseTransactionCompleted(tx)) {
     return <ReleaseTransactionEntry tx={tx} />;
   }
   return <ReleaseTransactionEntryMachine tx={tx} />;

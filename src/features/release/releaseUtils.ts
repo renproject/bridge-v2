@@ -25,6 +25,7 @@ import {
   toMintedCurrency,
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
+import { getLockAndMintParams } from "../mint/mintUtils";
 import { $network } from "../network/networkSlice";
 import { updateTransaction } from "../transactions/transactionsSlice";
 import {
@@ -211,6 +212,11 @@ export const shouldUpdateReleaseTx = (
     return false;
   }
   return stateIndex > dbStateIndex;
+};
+
+export const isReleaseTransactionCompleted = (tx: GatewaySession) => {
+  const { meta } = getBurnAndReleaseParams(tx);
+  return meta.status === TxEntryStatus.COMPLETED;
 };
 
 export const useReleaseTransactionPersistence = (

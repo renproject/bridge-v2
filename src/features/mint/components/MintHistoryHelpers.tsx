@@ -26,6 +26,7 @@ import {
 import {
   DepositMachineSchemaState,
   getLockAndMintParams,
+  isMintTransactionCompleted,
   useMintMachine,
   useMintTransactionPersistence,
 } from "../mintUtils";
@@ -33,9 +34,7 @@ import {
 export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
 }) => {
-  const { meta } = getLockAndMintParams(tx);
-  if (meta.status === TxEntryStatus.COMPLETED) {
-    console.log("rendering completed");
+  if (isMintTransactionCompleted(tx)) {
     return <MintTransactionEntry tx={tx} />;
   }
   return <MintTransactionEntryMachine tx={tx} />;

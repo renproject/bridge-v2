@@ -37,7 +37,7 @@ export const TransactionHistory: FunctionComponent = () => {
   const { account, status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, user } = useSelector($wallet);
-  const txs = useSelector($orderedTransactions);
+  const allTransactions = useSelector($orderedTransactions);
   const { txsPending } = useSelector($transactionsData);
   const { signature, rawSignature } = useSelector($walletSignatures);
   const opened = useSelector($txHistoryOpened);
@@ -85,7 +85,7 @@ export const TransactionHistory: FunctionComponent = () => {
     dispatch(setTxHistoryOpened(false));
   }, [dispatch]);
 
-  const all = txs.length;
+  const all = allTransactions.length;
 
   const [page, setPage] = useState(0);
   const handleChangePage = useCallback((event: unknown, newPage: number) => {
@@ -153,7 +153,7 @@ export const TransactionHistory: FunctionComponent = () => {
         <>
           <TransactionsStatusHeader title={`All (${all})`} />
           <div>
-            {txs.map((tx, index) => {
+            {allTransactions.map((tx, index) => {
               const startIndex = page * itemsPerPage;
               const endIndex = startIndex + itemsPerPage;
               const indexIsInCurrentPage =

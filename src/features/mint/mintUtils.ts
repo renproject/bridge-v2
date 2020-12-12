@@ -249,6 +249,11 @@ export const shouldUpdateMintTx = (
   return stateIndex > dbStateIndex;
 };
 
+export const isMintTransactionCompleted = (tx: GatewaySession) => {
+  const { meta } = getLockAndMintParams(tx);
+  return meta.status === TxEntryStatus.COMPLETED;
+};
+
 export const useMintTransactionPersistence = (
   tx: GatewaySession | DbGatewaySession,
   state: DepositMachineSchemaState
