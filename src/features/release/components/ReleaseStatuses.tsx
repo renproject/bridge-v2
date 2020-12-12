@@ -1,23 +1,25 @@
-import { Box, Typography, useTheme } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import React, { FunctionComponent, useCallback } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useEffectOnce } from 'react-use'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { MetamaskFullIcon } from '../../../components/icons/RenIcons'
-import { Link } from '../../../components/links/Links'
+import { Box, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import React, { FunctionComponent, useCallback } from "react";
+import { useHistory } from "react-router-dom";
+import { useEffectOnce } from "react-use";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { Link } from "../../../components/links/Links";
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { Debug } from '../../../components/utils/Debug'
-import { paths } from '../../../pages/routes'
-import { useNotifications } from '../../../providers/Notifications'
-import { useSetPaperTitle } from '../../../providers/TitleProviders'
-import { useBrowserNotifications } from '../../notifications/notificationsUtils'
-import { getBurnAndReleaseParams } from '../releaseUtils'
+} from "../../../components/progress/ProgressHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
+import { useSetPaperTitle } from "../../../providers/TitleProviders";
+import { useBrowserNotifications } from "../../notifications/notificationsUtils";
+import { getBurnAndReleaseParams } from "../releaseUtils";
 
 export const a = 1;
 
@@ -36,9 +38,13 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
 }) => {
   useSetPaperTitle("Submit");
   const theme = useTheme();
-  const { burnChainConfig, burnTxHash, burnTxLink } = getBurnAndReleaseParams(
-    tx
-  );
+  const {
+    burnChainConfig,
+    releaseCurrencyConfig,
+    burnTxHash,
+    burnTxLink,
+  } = getBurnAndReleaseParams(tx);
+  const { MainIcon } = burnChainConfig;
 
   const handleSubmit = useCallback(() => {
     if (onSubmit) {
@@ -68,14 +74,14 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
               }
             />
           ) : (
-            <MetamaskFullIcon fontSize="inherit" color="inherit" />
+            <MainIcon fontSize="inherit" color="inherit" />
           )}
         </ProgressWithContent>
       </ProgressWrapper>
       {!pending && (
         <Typography variant="body1" align="center" gutterBottom>
-          To receive your BTC, submit a release transaction to Ethereum via your
-          Web3 Wallet.
+          To receive your {releaseCurrencyConfig.short}, submit a release
+          transaction to {burnChainConfig.full} via your Web3 Wallet.
         </Typography>
       )}
       <ActionButtonWrapper>
@@ -109,7 +115,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
     history.push(paths.RELEASE);
   }, [history]);
 
-  const notificationMessage = `Successfully released ${tx.targetAmount} ${releaseCurrencyConfig.short} on ${releaseChainConfig.full}.`;
+  const notificationMessage = `Successfully released ${tx.targetAmount} ${releaseCurrencyConfig.short}`;
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
   useEffectOnce(() => {

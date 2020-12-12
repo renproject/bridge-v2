@@ -16,10 +16,10 @@ import { burnChainMap, releaseChainMap } from "../../services/rentx";
 import {
   BridgeCurrency,
   getChainConfig,
+  getChainConfigByRentxName,
   getChainRentxName,
   getCurrencyConfig,
   getCurrencyConfigByRentxName,
-  getCurrencyRentxSourceChain,
   getNetworkConfigByRentxName,
   RenChain,
   toMintedCurrency,
@@ -51,7 +51,7 @@ type CreateReleaseTransactionParams = {
   currency: BridgeCurrency;
   userAddress: string;
   destAddress: string;
-  sourceChain?: RenChain;
+  sourceChain: RenChain;
   network: RenNetwork;
 };
 
@@ -60,6 +60,7 @@ export const createReleaseTransaction = ({
   currency,
   userAddress,
   destAddress,
+  sourceChain,
   network,
 }: CreateReleaseTransactionParams) => {
   const sourceCurrency = toReleasedCurrency(currency);
@@ -69,7 +70,7 @@ export const createReleaseTransaction = ({
     type: "burn",
     network,
     sourceAsset: sourceCurrencyConfig.rentxName,
-    sourceChain: getCurrencyRentxSourceChain(currency), // TODO: pass sourceChain explicitly
+    sourceChain: sourceChain, // TODO: pass sourceChain explicitly
     destAddress,
     destChain: getChainRentxName(sourceCurrencyConfig.sourceChain),
     targetAmount: Number(amount),
@@ -88,7 +89,7 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   const burnCurrencyConfig = getCurrencyConfig(
     toMintedCurrency(releaseCurrencyConfig.symbol)
   );
-  const burnChainConfig = getChainConfig(burnCurrencyConfig.sourceChain);
+  const burnChainConfig = getChainConfigByRentxName(tx.sourceChain);
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
 
   const transaction = Object.values(tx.transactions)[0];

@@ -51,7 +51,11 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
-import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
+import {
+  $multiwalletChain,
+  $wallet,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
 import {
   BurnAndReleaseTransactionInitializer,
   releaseTooltips,
@@ -77,6 +81,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     chain,
     signatures: { signature },
   } = useSelector($wallet);
+  const renChain = useSelector($multiwalletChain);
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
@@ -104,9 +109,10 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         currency: currency,
         destAddress: address,
         userAddress: account,
+        sourceChain: renChain,
         network: network,
       }),
-    [amount, currency, address, account, network]
+    [amount, currency, address, account, renChain, network]
   );
   const canInitializeReleasing = preValidateReleaseTransaction(tx);
 
