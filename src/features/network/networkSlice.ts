@@ -3,13 +3,13 @@ import { RenNetwork } from "@renproject/interfaces";
 import { env } from "../../constants/environmentVariables";
 import { RootState } from "../../store/rootReducer";
 
-type WalletState = {
+type NetworkState = {
   renNetwork: RenNetwork;
 };
 
 const cachedTargetNetwork = localStorage.getItem("renNetwork");
 
-let initialState: WalletState = {
+let initialState: NetworkState = {
   renNetwork: RenNetwork.Testnet || (cachedTargetNetwork || env.NETWORK) as RenNetwork,
 };
 

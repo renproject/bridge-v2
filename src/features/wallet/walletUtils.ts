@@ -1,6 +1,6 @@
 import { Ethereum } from "@renproject/chains";
 import { RenNetwork } from "@renproject/interfaces";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { mintChainClassMap } from "../../services/rentx";
@@ -31,8 +31,8 @@ export const useFetchBalances = () => {
     }
   }, [dispatch, walletConnected]);
 
-  const fetchAssetBalance = useMemo(
-    () => (asset: string) => {
+  const fetchAssetBalance = useCallback(
+    (asset: string) => {
       if (provider && account && walletConnected) {
         const chain = Chain(provider, network);
         return chain.getBalance(asset, account).then((balance: any) => {
