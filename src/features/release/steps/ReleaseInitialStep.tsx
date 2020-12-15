@@ -43,7 +43,7 @@ import {
 } from "../../wallet/walletSlice";
 import {
   getAssetBalance,
-  useFetchAssetBalance,
+  useFetchBalances,
 } from "../../wallet/walletUtils";
 import {
   $release,
@@ -62,7 +62,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const network = useSelector($network);
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
-  const { fetchAssetsBalances } = useFetchAssetBalance();
+  const { fetchAssetsBalances } = useFetchBalances();
   useEffect(() => {
     fetchAssetsBalances(supportedReleaseCurrencies);
   }, [fetchAssetsBalances]);
@@ -153,7 +153,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
                   {balance}
                 </Link>
               )}
-              {balance === null && <span>...</span>}
             </>
           }
         />

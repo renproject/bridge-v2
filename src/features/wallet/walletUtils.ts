@@ -17,7 +17,7 @@ import {
   resetBalances,
 } from "./walletSlice";
 
-export const useFetchAssetBalance = () => {
+export const useFetchBalances = () => {
   const dispatch = useDispatch();
   const bridgeChain = useSelector($chain);
   const { walletConnected, provider, account } = useSelectedChainWallet();

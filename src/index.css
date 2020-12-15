@@ -15,6 +15,11 @@ code {
     monospace;
 }
 
+#notifications > div {
+  position: fixed;
+  top: 78px;
+}
+
 .loader {
   position: absolute;
   top: 50vh;
