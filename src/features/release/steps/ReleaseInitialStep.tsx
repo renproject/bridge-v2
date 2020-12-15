@@ -1,57 +1,71 @@
-import React, { FunctionComponent, useCallback, useEffect, useMemo, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { AddressInput, AddressInputWrapper, } from '../../../components/inputs/AddressInput'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
-import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { releaseChainClassMap } from '../../../services/rentx'
+import { Fade } from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import {
+  AddressInput,
+  AddressInputWrapper,
+} from "../../../components/inputs/AddressInput";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { releaseChainClassMap } from "../../../services/rentx";
 import {
   getChainConfig,
   getCurrencyConfig,
   supportedBurnChains,
   supportedReleaseCurrencies,
   toReleasedCurrency,
-} from '../../../utils/assetConfigs'
-import { $network } from '../../network/networkSlice'
-import { TxConfigurationStepProps } from '../../transactions/transactionsUtils'
-import { $wallet, addOrUpdateBalance, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
-import { getAssetBalance, useFetchAssetBalance, } from '../../wallet/walletUtils'
-import { $release, $releaseUsdAmount, setReleaseAddress, setReleaseAmount, setReleaseCurrency, } from '../releaseSlice'
+} from "../../../utils/assetConfigs";
+import { $network } from "../../network/networkSlice";
+import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
+import {
+  $wallet,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
+  getAssetBalance,
+  useFetchAssetBalance,
+} from "../../wallet/walletUtils";
+import {
+  $release,
+  $releaseUsdAmount,
+  setReleaseAddress,
+  setReleaseAmount,
+  setReleaseCurrency,
+} from "../releaseSlice";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
 }) => {
   const dispatch = useDispatch();
-  const { walletConnected, account, provider } = useSelectedChainWallet();
+  const { walletConnected } = useSelectedChainWallet();
   const { chain, balances } = useSelector($wallet);
   const network = useSelector($network);
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
-  const { fetchAssetBalance } = useFetchAssetBalance();
-  const fetchAllBalances = useCallback(() => {
-    // TODO: maybe hook?
-    console.log("refetching");
-    for (const currencySymbol of supportedReleaseCurrencies) {
-      const sourceCurrencySymbol = toReleasedCurrency(currencySymbol);
-      fetchAssetBalance(sourceCurrencySymbol).then((balance: any) => {
-        if (balance === null) {
-          return;
-        }
-        dispatch(
-          addOrUpdateBalance({
-            symbol: currencySymbol,
-            balance,
-          })
-        );
-      });
-    }
-  }, [dispatch, fetchAssetBalance]);
-
-  useEffect(fetchAllBalances, [provider, account]);
+  const { fetchAssetsBalances } = useFetchAssetBalance();
+  useEffect(() => {
+    fetchAssetsBalances(supportedReleaseCurrencies);
+  }, [fetchAssetsBalances]);
 
   const usdAmount = useSelector($releaseUsdAmount);
   const handleChainChange = useCallback(
@@ -129,18 +143,21 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
           value={amount}
         />
       </BigCurrencyInputWrapper>
-      <LabelWithValue
-        label={`${currencyConfig.short} Balance`}
-        value={
-          <>
-            {balance !== null && walletConnected && (
-              <Link onClick={handleSetMaxBalance} color="primary">
-                {balance}
-              </Link>
-            )}
-          </>
-        }
-      />
+      <Fade in={walletConnected}>
+        <LabelWithValue
+          label={`${currencyConfig.short} Balance`}
+          value={
+            <>
+              {balance !== null && walletConnected && (
+                <Link onClick={handleSetMaxBalance} color="primary">
+                  {balance}
+                </Link>
+              )}
+              {balance === null && <span>...</span>}
+            </>
+          }
+        />
+      </Fade>
       <AssetDropdownWrapper>
         <AssetDropdown
           label="Chain"

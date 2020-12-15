@@ -1,24 +1,39 @@
-import { Ethereum } from '@renproject/chains'
-import { RenNetwork } from '@renproject/interfaces'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { WalletStatus } from '../../components/utils/types'
-import { useSelectedChainWallet } from '../../providers/multiwallet/multiwalletHooks'
-import { mintChainClassMap } from '../../services/rentx'
-import { BridgeCurrency, getChainConfig, } from '../../utils/assetConfigs'
-import { $network } from '../network/networkSlice'
-import { $chain, AssetBalance } from './walletSlice'
+import { Ethereum } from "@renproject/chains";
+import { RenNetwork } from "@renproject/interfaces";
+import { useCallback, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
+import { mintChainClassMap } from "../../services/rentx";
+import {
+  BridgeCurrency,
+  getChainConfig,
+  toReleasedCurrency,
+} from "../../utils/assetConfigs";
+import { $network } from "../network/networkSlice";
+import {
+  $chain,
+  addOrUpdateBalance,
+  AssetBalance,
+  resetBalances,
+} from "./walletSlice";
 
 export const useFetchAssetBalance = () => {
+  const dispatch = useDispatch();
   const bridgeChain = useSelector($chain);
-  const { status, provider, account } = useSelectedChainWallet();
+  const { walletConnected, provider, account } = useSelectedChainWallet();
   const bridgeChainConfig = getChainConfig(bridgeChain);
   const network = useSelector($network);
   const Chain = (mintChainClassMap as any)[bridgeChainConfig.rentxName];
 
+  useEffect(() => {
+    if (!walletConnected) {
+      dispatch(resetBalances());
+    }
+  }, [dispatch, walletConnected]);
+
   const fetchAssetBalance = useMemo(
     () => (asset: string) => {
-      if (provider && account && status === WalletStatus.CONNECTED) {
+      if (provider && account && walletConnected) {
         const chain = Chain(provider, network);
         return chain.getBalance(asset, account).then((balance: any) => {
           return balance.toNumber() / 100000000;
@@ -27,9 +42,35 @@ export const useFetchAssetBalance = () => {
         return Promise.resolve(null);
       }
     },
-    [Chain, account, network, provider, status]
+    [Chain, account, network, provider, walletConnected]
   );
-  return { fetchAssetBalance };
+
+  const fetchAssetsBalances = useCallback(
+    (currencySymbols) => {
+      console.log("refetching");
+      if (!walletConnected) {
+        return;
+      }
+      for (const currencySymbol of currencySymbols) {
+        const sourceCurrencySymbol = toReleasedCurrency(currencySymbol);
+        fetchAssetBalance(sourceCurrencySymbol).then((balance: any) => {
+          console.log("fab", balance);
+          if (balance === null) {
+            return;
+          }
+          dispatch(
+            addOrUpdateBalance({
+              symbol: currencySymbol,
+              balance,
+            })
+          );
+        });
+      }
+    },
+    [dispatch, fetchAssetBalance, walletConnected]
+  );
+
+  return { fetchAssetBalance, fetchAssetsBalances };
 };
 
 export const fetchAssetBalance = (

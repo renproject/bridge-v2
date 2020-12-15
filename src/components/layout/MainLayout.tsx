@@ -124,7 +124,7 @@ const useBackgroundReplacer = (variant: string | undefined) =>
     if (variant === "intro") {
       document.body.style.backgroundImage = "url(/background.svg)";
     } else {
-      document.body.style.backgroundImage = "";
+      document.body.style.backgroundImage = "none";
     }
   }, [variant]);
 

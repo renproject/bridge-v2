@@ -187,7 +187,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
                 {mode === "chain" ? "Blockchain" : "Asset"}
               </Typography>
             </Box>
-            {balances && (
+            {balances && balances.length > 0 && (
               <Box flexGrow={1} textAlign="right">
                 <Typography
                   variant="overline"

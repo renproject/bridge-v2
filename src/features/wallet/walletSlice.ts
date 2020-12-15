@@ -57,6 +57,9 @@ const slice = createSlice({
         state.balances.push(action.payload);
       }
     },
+    resetBalances(state) {
+      state.balances = [];
+    },
     setSignatures(
       state,
       action: PayloadAction<{ signature: string; rawSignature: string }>
@@ -71,6 +74,7 @@ export const {
   setChain,
   setWalletPickerOpened,
   addOrUpdateBalance,
+  resetBalances,
   setSignatures,
 } = slice.actions;
 

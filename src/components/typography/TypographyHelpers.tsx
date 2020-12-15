@@ -49,10 +49,11 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   labelTooltip,
   value,
   valueEquivalent,
+  ...rest
 }) => {
   const styles = useLabelWithValueStyles();
   return (
-    <div className={styles.root}>
+    <div className={styles.root} {...rest}>
       <div className={styles.labelWrapper}>
         {label}
         {labelTooltip && (
