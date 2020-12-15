@@ -10,7 +10,8 @@ type NetworkState = {
 const cachedTargetNetwork = localStorage.getItem("renNetwork");
 
 let initialState: NetworkState = {
-  renNetwork: RenNetwork.Testnet || (cachedTargetNetwork || env.NETWORK) as RenNetwork,
+  renNetwork:
+    RenNetwork.Testnet || ((cachedTargetNetwork || env.NETWORK) as RenNetwork),
 };
 
 const slice = createSlice({

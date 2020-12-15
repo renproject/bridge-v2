@@ -29,7 +29,7 @@ import {
   ZecGreyIcon,
   ZecIcon,
 } from "../components/icons/RenIcons";
-import { bitcoinOrange } from "../theme/colors";
+import { bitcoinCashGreen, bitcoinOrange } from "../theme/colors";
 
 // TODO: replace everywhere
 export enum RenChain {
@@ -75,6 +75,12 @@ export enum BridgeNetwork {
   UNKNOWN = "UNKNOWN",
 }
 
+export enum EthTestnet {
+  KOVAN = "Kovan",
+  RINKEBY = "Rinkeby",
+  UNKNOWNT = "Unknown",
+}
+
 export enum BridgeWallet {
   METAMASKW = "METAMASKW",
   WALLETCONNECTW = "WALLETCONNECTW",
@@ -110,6 +116,7 @@ export type CurrencyConfig = LabelsConfig &
     rentxName: string;
     destinationChains?: Array<BridgeChain>;
     bandchainSymbol?: string;
+    ethTestnet?: EthTestnet | null;
   };
 
 export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
@@ -141,12 +148,13 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     symbol: BridgeCurrency.BCH,
     short: "BCH",
     full: "Bitcoin Cash",
+    color: bitcoinCashGreen,
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
     Icon: BchIcon,
     MainIcon: BchFullIcon,
+    rentxName: "BCH",
     sourceChain: BridgeChain.BCHC,
-    rentxName: "bitcoinCash",
   },
   [BridgeCurrency.RENBCH]: {
     symbol: BridgeCurrency.RENBCH,
@@ -194,6 +202,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renDOGE",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DOGE,
+    ethTestnet: EthTestnet.RINKEBY,
   },
   [BridgeCurrency.ZEC]: {
     symbol: BridgeCurrency.ZEC,

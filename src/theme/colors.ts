@@ -23,6 +23,7 @@ export const orangeLight = "#FFB74D";
 export const orange = "#FF9800";
 export const orangeDark = "#F57C00";
 
+export const bitcoinCashGreen = "#6CC64B";
 export const greenLight = "#3CBC98";
 export const green = "#34A384";
 export const greenDark = "#2C8A6F";

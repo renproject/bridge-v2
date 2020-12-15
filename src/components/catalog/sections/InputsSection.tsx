@@ -2,7 +2,7 @@ import { Box, Checkbox, FormControlLabel, Typography } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useSelector } from 'react-redux'
 import { $ui } from "../../../features/ui/uiSlice";
-import { useShakePaper } from "../../../features/ui/uiUtils";
+import { useShakePaper } from "../../../features/ui/uiHooks";
 import { BitcoinInCircleIcon } from "../../icons/RenIcons";
 import { AddressInput } from "../../inputs/AddressInput";
 import { BigCurrencyInput } from "../../inputs/BigCurrencyInput";

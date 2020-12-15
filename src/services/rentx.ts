@@ -83,9 +83,9 @@ export const burnChainMap: BurnMachineContext["fromChainMap"] = {
     }) as any;
   },
   [RenChain.binanceSmartChain]: (context) => {
-    const { destChain, network } = context.tx;
+    const { network } = context.tx;
     const { providers } = context;
-    return new BinanceSmartChain(providers[destChain], network).Account({
+    return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
       address: context.tx.userAddress,
       value: context.tx.suggestedAmount,
     }) as any;

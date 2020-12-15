@@ -11,6 +11,7 @@ import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useTimeout } from "react-use";
+import { useNetworkName } from "../../features/ui/uiHooks";
 import { createPulseAnimation } from "../../theme/animationUtils";
 import { defaultShadow } from "../../theme/other";
 import {
@@ -30,7 +31,7 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../progress/ProgressHelpers";
-import { Debug, DebugComponentProps } from '../utils/Debug'
+import { Debug, DebugComponentProps } from "../utils/Debug";
 import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
@@ -191,6 +192,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const { chain, targetNetwork, onClose } = props;
   console.log(targetNetwork);
   const theme = useTheme();
+  const subNetworkName = useNetworkName();
   const chainName = getChainConfigByRentxName(chain).full;
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
   return (
@@ -209,9 +211,11 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
         </ProgressWrapper>
         <Typography variant="h5" align="center" gutterBottom>
           Switch to {chainName} {networkName}
+          {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
-          RenBridge requires you to connect to the {chainName} {networkName}
+          RenBridge requires you to connect to the {chainName} {networkName}{" "}
+          {subNetworkName}
         </Typography>
       </PaperContent>
     </>

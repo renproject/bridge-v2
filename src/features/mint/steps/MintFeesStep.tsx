@@ -36,7 +36,7 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from '../../transactions/transactionsUtils'
-import { useShakePaper } from '../../ui/uiUtils'
+import { useShakePaper } from '../../ui/uiHooks'
 import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
 import { getMintDynamicTooltips, mintTooltips, MintTransactionInitializer, } from '../components/MintHelpers'
 import { mintTxStateUpdateSequence } from '../mintHooks'
