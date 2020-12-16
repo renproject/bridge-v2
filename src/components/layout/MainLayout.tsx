@@ -38,7 +38,7 @@ import {
   $transactionsNeedsAction,
   setTxHistoryOpened,
 } from "../../features/transactions/transactionsSlice";
-import { useNetworkName } from "../../features/ui/uiHooks";
+import { useTestnetName } from "../../features/ui/uiHooks";
 import {
   $multiwalletChain,
   $walletPickerOpened,
@@ -217,7 +217,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const debugWallet = useWallet(multiwalletChain); //remove
   const debugMultiwallet = useMultiwallet(); //remove
-  const debugNetworkName = useNetworkName();
+  const debugNetworkName = useTestnetName();
 
   const drawerId = "main-menu-mobile";
   const withMenu = variant !== "intro" && variant !== "about";

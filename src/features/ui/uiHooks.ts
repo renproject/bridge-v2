@@ -7,7 +7,7 @@ import {
   BridgeChain,
   EthTestnet,
   getCurrencyConfig,
-  toReleasedCurrency,
+  toMintedCurrency,
 } from "../../utils/assetConfigs";
 import { $mintCurrency } from "../mint/mintSlice";
 import { $network } from "../network/networkSlice";
@@ -50,7 +50,7 @@ export const useLocationFlow = () => {
   return null;
 };
 
-export const useNetworkName = () => {
+export const useTestnetName = () => {
   const flow = useLocationFlow();
   const chain = useSelector($chain);
   const network = useSelector($network);
@@ -64,7 +64,8 @@ export const useNetworkName = () => {
     return "";
   }
   const renCurrency =
-    flow === "mint" ? toReleasedCurrency(mintCurrency) : releaseCurrency;
+    flow === "mint" ? toMintedCurrency(mintCurrency) : releaseCurrency;
   const currencyConfig = getCurrencyConfig(renCurrency);
+  console.log(currencyConfig);
   return currencyConfig.ethTestnet || EthTestnet.KOVAN;
 };

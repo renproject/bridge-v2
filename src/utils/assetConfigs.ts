@@ -476,7 +476,7 @@ export const supportedRenNetworks = [
 export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
   BridgeCurrency.BCH,
-  // BridgeCurrency.DOGE, // TODO: not supported by ethereum
+  BridgeCurrency.DOGE, // TODO: not supported by ethereum
   BridgeCurrency.ZEC,
 ];
 
