@@ -11,7 +11,7 @@ const cachedTargetNetwork = localStorage.getItem("renNetwork");
 
 let initialState: NetworkState = {
   renNetwork:
-    RenNetwork.Testnet || ((cachedTargetNetwork || env.NETWORK) as RenNetwork),
+    ((cachedTargetNetwork || env.NETWORK) as RenNetwork) || RenNetwork.Testnet,
 };
 
 const slice = createSlice({

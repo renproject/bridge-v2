@@ -7,12 +7,14 @@ import { RenChain } from "../../utils/assetConfigs";
 
 const networkMapping: Record<number, RenNetwork> = {
   1: RenNetwork.Mainnet,
-  4: RenNetwork.Testnet,
+  4: RenNetwork.TestnetVDot3,
   42: RenNetwork.Testnet,
 };
 
-export const ethNetworkToRenNetwork = (id: number): RenNetwork => {
-  return networkMapping[id];
+export const ethNetworkToRenNetwork = (id: string | number): RenNetwork => {
+  const index = Number(id);
+  console.log("maping", id, index);
+  return networkMapping[index];
 };
 
 export const walletPickerModalConfig = {
@@ -23,7 +25,7 @@ export const walletPickerModalConfig = {
         logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4s",
         connector: new EthereumInjectedConnector({
           debug: true,
-          // networkIdMapper: ethNetworkToRenNetwork,
+          networkIdMapper: ethNetworkToRenNetwork,
         }),
       }, //,
       // {

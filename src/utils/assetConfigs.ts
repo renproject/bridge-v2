@@ -117,6 +117,7 @@ export type CurrencyConfig = LabelsConfig &
     destinationChains?: Array<BridgeChain>;
     bandchainSymbol?: string;
     ethTestnet?: EthTestnet | null;
+    testNetworkVersion?: RenNetwork;
   };
 
 export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
@@ -203,6 +204,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DOGE,
     ethTestnet: EthTestnet.RINKEBY,
+    testNetworkVersion: RenNetwork.TestnetVDot3,
   },
   [BridgeCurrency.ZEC]: {
     symbol: BridgeCurrency.ZEC,
@@ -476,7 +478,7 @@ export const supportedRenNetworks = [
 export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
   BridgeCurrency.BCH,
-  BridgeCurrency.DOGE, // TODO: not supported by ethereum
+  // BridgeCurrency.DOGE, // TODO: not supported by kovan
   BridgeCurrency.ZEC,
 ];
 

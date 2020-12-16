@@ -59,7 +59,6 @@ export const getLockAndMintFees = (
   chain: RenChain
 ) => {
   const lockedCurrencyConfig = getCurrencyConfig(lockedCurrency);
-  console.log(lockedCurrency);
 
   const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);
 
@@ -70,7 +69,7 @@ export const getLockAndMintFees = (
     .getFees({
       asset: lockedCurrency,
       from: From(),
-      to: To(provider, network),
+      to: To(provider, network), // TODO: this should differentiate based on selected asset
     })
     .then(mapFees);
 };
