@@ -33,7 +33,7 @@ export const mintChainMap = {
     const { destAddress, destChain, network } = context.tx;
     const { providers } = context;
 
-    return Ethereum(providers[destChain], network).Account({
+    return Ethereum(providers[destChain], network).Account({ // providers.ethereum?
       address: destAddress,
     }) as any;
   },
@@ -41,7 +41,7 @@ export const mintChainMap = {
     const { destAddress, destChain, network } = context.tx;
     const { providers } = context;
 
-    return new BinanceSmartChain(providers[destChain], network).Account({
+    return new BinanceSmartChain(providers[destChain], network).Account({ // providers.binanceSmartChain?
       address: destAddress,
     }) as any;
   },

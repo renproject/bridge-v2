@@ -31,26 +31,25 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
+import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
 import {
   usePaperTitle,
   useSetActionRequired,
   useSetPaperTitle,
 } from "../../../providers/TitleProviders";
-import { paths } from "../../../pages/routes";
-import { useNotifications } from "../../../providers/Notifications";
 import { orangeLight } from "../../../theme/colors";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { useBrowserNotifications } from "../../notifications/notificationsUtils";
-import { ProcessingTimeWrapper } from "../../transactions/components/TransactionsHelpers";
+import {
+  HMSCountdown,
+  ProcessingTimeWrapper,
+} from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
-import { getLockAndMintParams } from "../mintUtils";
 import { resetMint } from "../mintSlice";
-
-const getAddressValidityMessage = (time: number) => {
-  const unit = "hours";
-  return `This Gateway Address is only valid for ${time} ${unit}. Do not send multiple deposits or deposit after ${time} ${unit}.`;
-};
+import { getLockAndMintParams } from "../mintUtils";
+import { AddressValidityMessage } from "./MintHelpers";
 
 export type MintDepositToProps = {
   tx: GatewaySession;
@@ -64,20 +63,26 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
     setShowQr(!showQr);
   }, [showQr]);
   const { showNotification, closeNotification } = useNotifications();
+  const [timeRemained] = useState(
+    Math.ceil(tx.expiryTime - Number(new Date()))
+  );
   useEffect(() => {
-    const time = Math.ceil((tx.expiryTime - Number(new Date())) / 1000 / 3600);
     let key = 0;
-    if (time > 0) {
-      key = showNotification(getAddressValidityMessage(time), {
-        variant: "warning",
-      }) as number;
+    if (timeRemained > 0) {
+      key = showNotification(
+        <AddressValidityMessage milliseconds={timeRemained} />,
+        {
+          variant: "warning",
+          persist: true,
+        }
+      ) as number;
     }
     return () => {
       if (key) {
         closeNotification(key);
       }
     };
-  }, [showNotification, closeNotification, tx.expiryTime]);
+  }, [showNotification, closeNotification, timeRemained]);
 
   const {
     lockCurrencyConfig,
@@ -144,6 +149,9 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
             minutes
           </Typography>
         )}
+        <Typography variant="caption">
+          Expires in: <HMSCountdown milliseconds={timeRemained} />
+        </Typography>
         <Box mt={2}>
           <QrCodeIconButton onClick={toggleQr} />
         </Box>
