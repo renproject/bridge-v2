@@ -37,6 +37,7 @@ import {
   getChainConfig,
   supportedMintDestinationChains,
 } from "../../utils/assetConfigs";
+import { isFirstVowel } from "../../utils/strings";
 import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
 import { ReleaseTransactionEntryResolver } from "../release/components/ReleaseHistoryHelpers";
 import {
@@ -160,8 +161,9 @@ export const TransactionHistory: FunctionComponent = () => {
                 <>
                   <MediumWrapper>
                     <Typography variant="body1" align="center">
-                      You must connect an {chainConfig.full} compatible wallet
-                      to view transactions
+                      Please connect{" "}
+                      {isFirstVowel(chainConfig.full) ? "an" : "a"}{" "}
+                      {chainConfig.full} compatible wallet to view transactions
                     </Typography>
                   </MediumWrapper>
                   <BigWrapper>

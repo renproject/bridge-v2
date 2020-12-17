@@ -17,16 +17,29 @@ export const Link: FunctionComponent<CustomLinkProps> = ({
   to,
   ...rest
 }) => {
+  const additionalParams =
+    target === "_blank"
+      ? {
+          noopener: true,
+          norefferer: true,
+        }
+      : {};
   if (to) {
     return (
-      <MuiLink component={RouterLink} to={to} target={target} {...rest}>
+      <MuiLink
+        component={RouterLink}
+        to={to}
+        target={target}
+        {...rest}
+        {...additionalParams}
+      >
         {children}
         {external && " ↗"}
       </MuiLink>
     );
   }
   return (
-    <MuiLink target={target} {...rest}>
+    <MuiLink target={target} {...rest} {...additionalParams}>
       {children}
       {external && " ↗"}
     </MuiLink>
