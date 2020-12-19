@@ -157,6 +157,10 @@ export const overrides = (palette: Palette): Overrides => {
           backgroundColor: "initial",
         },
       },
+      outlined: {
+        background: "white",
+        boxShadow: `0 0 3px 0 rgba(0,27,58,0.10)`,
+      },
     },
     MuiSnackbar: {
       anchorOriginTopCenter: {
