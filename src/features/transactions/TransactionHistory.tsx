@@ -16,8 +16,8 @@ import {
   BigTopWrapper,
   BigWrapper,
   CenteringSpacedBox,
-  MediumWrapper,
-} from "../../components/layout/LayoutHelpers";
+  MediumWrapper, PaperSpacerWrapper,
+} from '../../components/layout/LayoutHelpers'
 import {
   ShowEntry,
   SimplePagination,
@@ -228,6 +228,13 @@ export const TransactionHistory: FunctionComponent = () => {
               }
             })}
           </div>
+          {allTransactions.length === 0 && (
+            <PaperSpacerWrapper>
+              <Typography variant="body2" align="center" color="textSecondary">
+                You have no transactions...
+              </Typography>
+            </PaperSpacerWrapper>
+          )}
           <TransactionsPaginationWrapper>
             <SimplePagination
               count={itemsCount}

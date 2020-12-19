@@ -4,20 +4,16 @@ import React, { FunctionComponent } from "react";
 
 const useTransactionHistoryDialogStyles = makeStyles({
   paper: {
-    marginTop: 132 // 82,
+    marginTop: 0, // 82,
   },
+  container: {
+    paddingTop: 68
+  }
 });
 
 export const TransactionHistoryDialog: FunctionComponent<DialogProps> = (
   props
 ) => {
   const classes = useTransactionHistoryDialogStyles();
-  return (
-    <Dialog
-      maxWidth="sm"
-      fullWidth
-      classes={classes}
-      {...props}
-    />
-  );
+  return <Dialog maxWidth="sm" fullWidth classes={classes} {...props} />;
 };
