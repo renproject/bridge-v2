@@ -59,7 +59,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
   return (
     <>
       <ProgressWrapper>
-        <ProgressWithContent color={theme.customColors.skyBlue} processing>
+        <ProgressWithContent color={theme.customColors.skyBlue} processing={buttonSubmitting}>
           {pending ? (
             <TransactionStatusInfo
               status="Pending"
