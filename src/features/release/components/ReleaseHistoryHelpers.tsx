@@ -117,7 +117,7 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
           </div>
           <div className={styles.description}>
             <Typography variant="body2" className={styles.title}>
-              Release {tx.targetAmount} {releaseCurrencyConfig.short} on{" "}
+              Release {tx.targetAmount} {releaseCurrencyConfig.short} to{" "}
               {releaseChainConfig.full}
             </Typography>
           </div>

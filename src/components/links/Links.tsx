@@ -20,8 +20,7 @@ export const Link: FunctionComponent<CustomLinkProps> = ({
   const additionalParams =
     target === "_blank"
       ? {
-          noopener: true,
-          norefferer: true,
+          rel: "noopener noreferrer",
         }
       : {};
   if (to) {

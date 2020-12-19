@@ -440,7 +440,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         received!
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>Return</ActionButton>
+        <ActionButton onClick={handleReturn}>Back to start</ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link

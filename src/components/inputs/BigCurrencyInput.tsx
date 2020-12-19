@@ -1,6 +1,6 @@
 import { makeStyles, styled } from "@material-ui/core/styles";
 import classNames from "classnames";
-import React, { FunctionComponent, useRef } from "react";
+import React, { FunctionComponent, useEffect, useRef } from "react";
 import NumberFormat, { NumberFormatValues } from "react-number-format";
 import { generatePlaceholderStyles } from "../../theme/themeUtils";
 import { numberFormatOptions, toUsdFormat } from "../../utils/formatters";
@@ -66,13 +66,14 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
   placeholder = `0 ${symbol}`,
 }) => {
   const styles = useStyles();
+  const ref = useRef(null);
   const inputRef = useRef(null);
   const val = value ? String(value) : "";
   const handleChange: NumberChange = (formatValues) => {
     onChange(formatValues.value);
   };
 
-  const chars = val.replace(".", "") + " " + symbol
+  const chars = val.replace(".", "") + " " + symbol;
   let size = "large";
   if (chars.length > 10 && chars.length <= 12) {
     size = "medium";
@@ -92,13 +93,14 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
     <div className={rootClassName}>
       <NumberFormat
         value={val}
-        ref={inputRef}
+        ref={ref}
         {...numberFormatOptions}
         suffix={" " + symbol}
         onValueChange={handleChange}
         getInputRef={(input: any) => {
           inputRef.current = input;
         }}
+        autoFocus={true}
         className={styles.input}
         placeholder={placeholder}
       />

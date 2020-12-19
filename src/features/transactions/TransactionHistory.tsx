@@ -16,8 +16,9 @@ import {
   BigTopWrapper,
   BigWrapper,
   CenteringSpacedBox,
-  MediumWrapper, PaperSpacerWrapper,
-} from '../../components/layout/LayoutHelpers'
+  MediumWrapper,
+  PaperSpacerWrapper,
+} from "../../components/layout/LayoutHelpers";
 import {
   ShowEntry,
   SimplePagination,
@@ -192,41 +193,43 @@ export const TransactionHistory: FunctionComponent = () => {
       {showTransactions && (
         <>
           <div>
-            {allTransactions.map((tx, index) => {
-              const startIndex = page * itemsPerPage;
-              const endIndex = startIndex + itemsPerPage;
-              const indexIsInCurrentPage =
-                index >= startIndex && index < endIndex;
+            {allTransactions
+              .filter((tx) => tx.id === "tx-6447311180413120")
+              .map((tx, index) => {
+                const startIndex = page * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const indexIsInCurrentPage =
+                  index >= startIndex && index < endIndex;
 
-              const isFirstShown = index === startIndex;
-              const isPreviousDifferent =
-                index > 0 &&
-                isTransactionCompleted(tx) &&
-                !isTransactionCompleted(allTransactions[index - 1]);
-              const showHeader = isFirstShown || isPreviousDifferent;
-              const isCurrentCompleted = isTransactionCompleted(tx);
-              const title = isCurrentCompleted
-                ? `Completed (${completedTxsCount})`
-                : `Pending (${pendingTxsCount})`;
+                const isFirstShown = index === startIndex;
+                const isPreviousDifferent =
+                  index > 0 &&
+                  isTransactionCompleted(tx) &&
+                  !isTransactionCompleted(allTransactions[index - 1]);
+                const showHeader = isFirstShown || isPreviousDifferent;
+                const isCurrentCompleted = isTransactionCompleted(tx);
+                const title = isCurrentCompleted
+                  ? `Completed (${completedTxsCount})`
+                  : `Pending (${pendingTxsCount})`;
 
-              const Header = <TransactionsStatusHeader title={title} />;
+                const Header = <TransactionsStatusHeader title={title} />;
 
-              if (tx.type === TxType.MINT) {
-                return (
-                  <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
-                    {showHeader && Header}
-                    <MintTransactionEntryResolver tx={tx} />
-                  </ShowEntry>
-                );
-              } else {
-                return (
-                  <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
-                    {showHeader && Header}
-                    <ReleaseTransactionEntryResolver tx={tx} />
-                  </ShowEntry>
-                );
-              }
-            })}
+                if (tx.type === TxType.MINT) {
+                  return (
+                    <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
+                      {showHeader && Header}
+                      <MintTransactionEntryResolver tx={tx} />
+                    </ShowEntry>
+                  );
+                } else {
+                  return (
+                    <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
+                      {showHeader && Header}
+                      <ReleaseTransactionEntryResolver tx={tx} />
+                    </ShowEntry>
+                  );
+                }
+              })}
           </div>
           {allTransactions.length === 0 && (
             <PaperSpacerWrapper>

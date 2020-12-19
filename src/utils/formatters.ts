@@ -8,4 +8,5 @@ export const numberFormatOptions = {
   thousandSeparator: true,
   allowLeadingZeros: false,
   allowNegative: false,
+  allowedDecimalSeparators: [".", ","],
 };
