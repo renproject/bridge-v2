@@ -99,7 +99,7 @@ export const txCompletedSorter = (a: GatewaySession, b: GatewaySession) => {
   } else if (!aCompleted && bCompleted) {
     return -1;
   }
-  return 0;
+  return txExpirySorter(a, b);
 };
 
 export const txExpirySorter = (

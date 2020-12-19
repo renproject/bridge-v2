@@ -19,10 +19,10 @@ import { TransactionItemProps } from "../../transactions/components/Transactions
 import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
 import {
   cloneTx,
-  createTxQueryString,
+  createTxQueryString, isTransactionCompleted,
   TxEntryStatus,
   TxPhase,
-} from "../../transactions/transactionsUtils";
+} from '../../transactions/transactionsUtils'
 import {
   DepositMachineSchemaState,
   useMintMachine,
@@ -108,7 +108,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   const params = getLockAndMintParams(tx);
   return (
     <>
-      <Debug wrapper it={{ tx, params }} />
+      <Debug wrapper it={{ tx, params, completed: isTransactionCompleted(tx) }} />
       <Debug disable it={{ meta: params.meta }} />
       <div className={styles.root}>
         <div className={styles.details}>
