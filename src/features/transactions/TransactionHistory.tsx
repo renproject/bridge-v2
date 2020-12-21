@@ -194,7 +194,6 @@ export const TransactionHistory: FunctionComponent = () => {
         <>
           <div>
             {allTransactions
-              .filter((tx) => tx.id === "tx-6447311180413120")
               .map((tx, index) => {
                 const startIndex = page * itemsPerPage;
                 const endIndex = startIndex + itemsPerPage;
