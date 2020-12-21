@@ -17,8 +17,6 @@ firebase.initializeApp({
 
 require("firebase/firestore");
 
-const FIREBASE_AUTH_DOMAIN = `renproject.io`;
-
 type DbTimestamps = {
   seconds: number;
   nanoseconds: number;
@@ -134,7 +132,6 @@ export class FireBase<Transaction extends { id: string }>
   ) => {
     const user = await getFirebaseUser(
       address,
-      FIREBASE_AUTH_DOMAIN,
       signatures
     );
     return (
