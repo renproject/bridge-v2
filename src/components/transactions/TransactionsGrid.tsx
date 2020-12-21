@@ -121,6 +121,11 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
     fontSize: 15,
   },
   links: {},
+  expired: {
+    fontSize: 14,
+    display: "inline-block",
+    marginRight: 8,
+  },
   link: {
     fontSize: 14,
     display: "inline-block",

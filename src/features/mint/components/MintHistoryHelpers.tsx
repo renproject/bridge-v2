@@ -180,7 +180,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                   variant="body2"
                   color="textSecondary"
                   display="inline"
-                  className={styles.link}
+                  className={styles.expired}
                 >
                   <Tooltip title="This Gateway Address has expired. Gateway Addresses are only valid for 24 hours. If you have sent funds to this Gateway Address but have not submitted them to the destination chain then they are lost forever.">
                     <span>
