@@ -134,6 +134,7 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
 export type TransactionItemProps = {
   tx: GatewaySession;
   onAction?: () => void;
+  onRestart?: () => void;
 };
 
 type HMSCountdownProps = { milliseconds: number };

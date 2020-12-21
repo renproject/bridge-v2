@@ -1,4 +1,4 @@
-import { Chip, Typography } from "@material-ui/core";
+import { Chip, Tooltip, Typography } from "@material-ui/core";
 import React, {
   FunctionComponent,
   useCallback,
@@ -8,7 +8,11 @@ import React, {
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { SmallActionButton } from "../../../components/buttons/Buttons";
-import { CompletedIcon, EmptyIcon } from "../../../components/icons/RenIcons";
+import {
+  CompletedIcon,
+  EmptyIcon,
+  TooltipIcon,
+} from "../../../components/icons/RenIcons";
 import { Link } from "../../../components/links/Links";
 import { TransactionStatusIndicator } from "../../../components/progress/ProgressHelpers";
 import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
@@ -19,15 +23,18 @@ import { TransactionItemProps } from "../../transactions/components/Transactions
 import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
 import {
   cloneTx,
-  createTxQueryString, isTransactionCompleted,
+  createTxQueryString,
+  isTransactionCompleted,
   TxEntryStatus,
   TxPhase,
-} from '../../transactions/transactionsUtils'
+} from "../../transactions/transactionsUtils";
+import { setChain } from "../../wallet/walletSlice";
 import {
   DepositMachineSchemaState,
   useMintMachine,
   useMintTransactionPersistence,
 } from "../mintHooks";
+import { resetMint } from "../mintSlice";
 import { getLockAndMintParams, isMintTransactionCompleted } from "../mintUtils";
 
 export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
@@ -72,14 +79,39 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     dispatch(setTxHistoryOpened(false));
   }, [dispatch, history, tx]);
 
+  const handleRestart = useCallback(() => {
+    console.log("restarting...");
+    const {
+      lockCurrencyConfig,
+      mintChainConfig,
+      suggestedAmount,
+    } = getLockAndMintParams(tx);
+    dispatch(setTxHistoryOpened(false));
+    dispatch(
+      resetMint({
+        currency: lockCurrencyConfig.symbol,
+        amount: suggestedAmount,
+      })
+    );
+    dispatch(setChain(mintChainConfig.symbol));
+    history.push({
+      pathname: paths.MINT,
+    });
+  }, [dispatch, history, tx]);
+
   return (
-    <MintTransactionEntry tx={current.context.tx} onAction={handleFinish} />
+    <MintTransactionEntry
+      tx={current.context.tx}
+      onAction={handleFinish}
+      onRestart={handleRestart}
+    />
   );
 };
 
 export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
   onAction,
+  onRestart,
 }) => {
   console.log("rerendering");
   const styles = useTransactionEntryStyles();
@@ -108,7 +140,10 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   const params = getLockAndMintParams(tx);
   return (
     <>
-      <Debug wrapper it={{ tx, params, completed: isTransactionCompleted(tx) }} />
+      <Debug
+        wrapper
+        it={{ tx, params, completed: isTransactionCompleted(tx) }}
+      />
       <Debug disable it={{ meta: params.meta }} />
       <div className={styles.root}>
         <div className={styles.details}>
@@ -140,9 +175,33 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
               </Link>
             )}
             {status === TxEntryStatus.EXPIRED && phase === TxPhase.MINT && (
-              <Typography variant="body2" color="error" className={styles.link}>
-                Transaction expired
-              </Typography>
+              <>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  display="inline"
+                  className={styles.link}
+                >
+                  <Tooltip title="This Gateway Address has expired. Gateway Addresses are only valid for 24 hours. If you have sent funds to this Gateway Address but have not submitted them to the destination chain then they are lost forever.">
+                    <span>
+                      <TooltipIcon
+                        fontSize="inherit"
+                        color="inherit"
+                        className={styles.tooltipIcon}
+                      />
+                    </span>
+                  </Tooltip>
+                  Expired
+                </Typography>
+                <Link
+                  color="primary"
+                  underline="hover"
+                  className={styles.link}
+                  onClick={onRestart}
+                >
+                  Restart transaction
+                </Link>
+              </>
             )}
             {mintTxLink && (
               <Link

@@ -25,7 +25,12 @@ const slice = createSlice({
       state.amount = action.payload;
     },
     resetMint(state, action: PayloadAction<MintState | undefined>) {
-      state = action.payload || initialState;
+      if (action.payload) {
+        state.currency = action.payload.currency;
+        state.amount = action.payload.amount;
+      } else {
+        state = initialState;
+      }
     },
   },
 });

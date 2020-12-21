@@ -48,8 +48,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { status, account } = useSelectedChainWallet();
-  const walletConnected = status === WalletStatus.CONNECTED;
+  const { status, walletConnected, account } = useSelectedChainWallet();
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { amount, currency } = useSelector($mint);
   const {

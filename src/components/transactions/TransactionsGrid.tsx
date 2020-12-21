@@ -129,6 +129,11 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
       marginRight: 0,
     },
   },
+  tooltipIcon: {
+    fontSize: 15,
+    marginBottom: -2,
+    marginRight: 2,
+  },
   actions: {
     flexGrow: 1,
     paddingRight: 20,
