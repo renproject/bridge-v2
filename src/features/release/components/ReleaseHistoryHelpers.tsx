@@ -53,13 +53,6 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
     },
     [service]
   );
-  useEffect(() => {
-    console.log("release tx changed", current.context.tx);
-  }, [current.context.tx]);
-
-  useEffect(() => {
-    console.log("release cv", current.value);
-  }, [current.value]);
 
   useReleaseTransactionPersistence(tx, current.value as BurnMachineSchemaState);
 

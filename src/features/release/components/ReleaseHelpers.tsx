@@ -1,6 +1,6 @@
 import { GatewaySession } from "@renproject/ren-tx";
 import { FunctionComponent, useEffect } from "react";
-import { useBurnMachine } from '../releaseHooks'
+import { useBurnMachine } from "../releaseHooks";
 
 export const releaseTooltips = {
   releasing: "The amount and asset you're releasing before fees are applied.",
@@ -24,9 +24,7 @@ export const BurnAndReleaseTransactionInitializer: FunctionComponent<BurnAndRele
     },
     [service]
   );
-  console.log("burning initialized...", current.value);
   useEffect(() => {
-    console.log("current.context.tx", current.context.tx);
     if (onCreated && current.value === "created") {
       onCreated(current.context.tx);
     }

@@ -30,16 +30,6 @@ export const useShakePaper = (shake: boolean, timeout = 600) => {
   }, [dispatch, shake, timeout]);
 };
 
-// export const useFlow = (flow: FlowType) => {
-//   const dispatch = useDispatch();
-//   useEffect(() => {
-//     dispatch(setFlow(flow));
-//     return () => {
-//       dispatch(setFlow(null));
-//     };
-//   }, [dispatch, flow]);
-// };
-
 export const useLocationFlow = () => {
   const location = useLocation();
   if (location.pathname.indexOf(paths.MINT) > -1) {

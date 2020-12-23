@@ -14,7 +14,6 @@ import { mapFees } from "../features/fees/feesUtils";
 import {
   BridgeCurrency,
   getChainConfig,
-  getChainConfigByRentxName,
   getCurrencyConfig,
   RenChain,
   toReleasedCurrency,
@@ -33,7 +32,8 @@ export const mintChainMap = {
     const { destAddress, destChain, network } = context.tx;
     const { providers } = context;
 
-    return Ethereum(providers[destChain], network).Account({ // providers.ethereum?
+    return Ethereum(providers[destChain], network).Account({
+      // providers.ethereum?
       address: destAddress,
     }) as any;
   },
@@ -41,7 +41,8 @@ export const mintChainMap = {
     const { destAddress, destChain, network } = context.tx;
     const { providers } = context;
 
-    return new BinanceSmartChain(providers[destChain], network).Account({ // providers.binanceSmartChain?
+    return new BinanceSmartChain(providers[destChain], network).Account({
+      // providers.binanceSmartChain?
       address: destAddress,
     }) as any;
   },
@@ -62,7 +63,6 @@ export const getLockAndMintFees = (
 
   const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);
 
-  console.log(lockedCurrencyChain.rentxName, network);
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
   const To = (mintChainClassMap as any)[chain];
   return getRenJs(network)
@@ -120,19 +120,12 @@ export const getBurnAndReleaseFees = (
   network: RenNetwork,
   chain: RenChain
 ) => {
-  const burnedCurrencyChain = getChainConfigByRentxName(chain);
   const releasedCurrency = toReleasedCurrency(burnedCurrency);
   const releasedCurrencyConfig = getCurrencyConfig(releasedCurrency);
   const releasedCurrencyChain = getChainConfig(
     releasedCurrencyConfig.sourceChain
   );
 
-  console.log(
-    releasedCurrency,
-    burnedCurrencyChain.rentxName,
-    releasedCurrencyChain.rentxName,
-    network
-  );
   const From = (burnChainClassMap as any)[chain];
   const To = (releaseChainClassMap as any)[releasedCurrencyChain.rentxName];
   return getRenJs(network)
