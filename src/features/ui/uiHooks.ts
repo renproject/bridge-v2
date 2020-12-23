@@ -56,6 +56,5 @@ export const useTestnetName = () => {
   const renCurrency =
     flow === "mint" ? toMintedCurrency(mintCurrency) : releaseCurrency;
   const currencyConfig = getCurrencyConfig(renCurrency);
-  console.log(currencyConfig);
   return currencyConfig.ethTestnet || EthTestnet.KOVAN;
 };

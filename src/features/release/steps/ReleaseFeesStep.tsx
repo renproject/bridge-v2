@@ -133,7 +133,6 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const onReleaseTxCreated = useCallback(
     (tx) => {
-      console.log("onReleaseTxCreated");
       const meta: DbMeta = { state: releaseTxStateUpdateSequence[0] };
       const dbTx = { ...tx, meta };
       db.addTx(dbTx, account, signature).then(() => {

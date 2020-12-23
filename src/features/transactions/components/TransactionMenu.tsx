@@ -106,7 +106,6 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   }, [onClose]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const handleConfirmClose = useCallback(() => {
-    console.log("closing tx");
     setConfirmOpen(false);
   }, []);
   const handleDeleteWithConfirm = useCallback(() => {

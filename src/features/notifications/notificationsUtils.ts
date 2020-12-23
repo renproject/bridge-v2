@@ -7,7 +7,6 @@ export const useBrowserNotifications = (onEnabled = () => {}) => {
   }
 
   const handleEnable = useCallback(() => {
-    console.log("enabled", enabled);
     if (enabled) {
       if (onEnabled) {
         onEnabled();

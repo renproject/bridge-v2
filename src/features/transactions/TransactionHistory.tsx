@@ -73,13 +73,11 @@ export const TransactionHistory: FunctionComponent = () => {
   useEffect(() => {
     if (account && signature && rawSignature) {
       dispatch(setTxsPending(true));
-      console.log("getting user");
       db.getUser(account.toLowerCase(), {
         signature,
         rawSignature,
       })
         .then((userData) => {
-          console.log("authenticated", userData);
           dispatch(setUser(userData));
         })
         .catch(console.error);

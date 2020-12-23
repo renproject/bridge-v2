@@ -190,7 +190,6 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   any
 >["WrongNetworkInfo"] = (props) => {
   const { chain, targetNetwork, onClose } = props;
-  console.log(targetNetwork);
   const theme = useTheme();
   const subNetworkName = useTestnetName();
   const chainName = getChainConfigByRentxName(chain).full;

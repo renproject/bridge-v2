@@ -44,7 +44,6 @@ export const BridgeModalTitle: FunctionComponent<BridgeModalTitleProps> = ({
   const styles = useBridgeModalTitleStyles();
   const onCustomClose = () => {
     if (onClose) {
-      console.log("back");
       onClose({}, "backdropClick");
     }
   };

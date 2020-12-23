@@ -80,7 +80,6 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   );
 
   const canProceed = !!amount && amount > 0;
-  console.log(canProceed);
 
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {

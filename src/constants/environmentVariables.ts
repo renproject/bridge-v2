@@ -24,4 +24,4 @@ export const env = {
   XSTATE_DEVTOOLS,
 };
 
-console.log("env", env, process);
+console.debug("env", env, process);

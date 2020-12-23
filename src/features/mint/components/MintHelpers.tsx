@@ -33,10 +33,6 @@ export const MintTransactionInitializer: FunctionComponent<MintTransactionInitia
     [service]
   );
   useEffect(() => {
-    console.log(
-      current.context.tx.gatewayAddress,
-      !!current.context.tx.gatewayAddress
-    );
     if (onCreated && !!current.context.tx.gatewayAddress) {
       onCreated(current.context.tx);
     }

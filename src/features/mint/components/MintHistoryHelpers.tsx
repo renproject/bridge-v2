@@ -80,7 +80,6 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
   }, [dispatch, history, tx]);
 
   const handleRestart = useCallback(() => {
-    console.log("restarting...");
     const {
       lockCurrencyConfig,
       mintChainConfig,
@@ -113,7 +112,6 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   onAction,
   onRestart,
 }) => {
-  console.log("rerendering");
   const styles = useTransactionEntryStyles();
   const {
     lockChainConfig,

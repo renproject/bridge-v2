@@ -13,7 +13,6 @@ const networkMapping: Record<number, RenNetwork> = {
 
 export const ethNetworkToRenNetwork = (id: string | number): RenNetwork => {
   const index = Number(id);
-  console.log("maping", id, index);
   return networkMapping[index];
 };
 

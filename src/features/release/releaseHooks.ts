@@ -85,11 +85,9 @@ export const useReleaseTransactionPersistence = (
     }
     db.getTx(tx)
       .then((dbTx) => {
-        console.log('release data', dbTx)
         if (shouldUpdateReleaseTx(tx, dbTx, state)) {
           const newDbTx = { ...tx, meta: { state } }
           db.updateTx(newDbTx).then(() => {
-            console.log('release updated', newDbTx, state)
             dispatch(updateTransaction(newDbTx))
           })
         }

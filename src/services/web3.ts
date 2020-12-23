@@ -33,7 +33,6 @@ const getWeb3Signatures = async (
 
   if (!signature || !rawSignature) {
     // get unique wallet signature for database backup
-    console.log(web3.eth);
     if (chain === RenChain.ethereum) {
       rawSignature = await web3.eth.personal.sign(
         web3.utils.utf8ToHex(SIGN_MESSAGE),
@@ -69,7 +68,6 @@ export const useWeb3Signatures = () => {
   const { account } = useWallet(chain);
   const web3 = useWeb3();
   return useEffect(() => {
-    console.log("useWeb3Signatures regenrating", account, web3);
     if (account && web3) {
       getWeb3Signatures(account, web3, chain).then((signatures) => {
         dispatch(setSignatures(signatures));

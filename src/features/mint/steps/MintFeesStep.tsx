@@ -125,7 +125,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const onMintTxCreated = useCallback(
     (tx) => {
-      console.log("onMintTxCreated");
       const meta: DbMeta = { state: mintTxStateUpdateSequence[0] };
       const dbTx = { ...tx, meta };
       db.addTx(dbTx, account, signature).then(() => {

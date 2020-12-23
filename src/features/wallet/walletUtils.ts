@@ -47,14 +47,12 @@ export const useFetchBalances = () => {
 
   const fetchAssetsBalances = useCallback(
     (currencySymbols) => {
-      console.log("refetching");
       if (!walletConnected) {
         return;
       }
       for (const currencySymbol of currencySymbols) {
         const sourceCurrencySymbol = toReleasedCurrency(currencySymbol);
         fetchAssetBalance(sourceCurrencySymbol).then((balance: any) => {
-          console.log("fab", balance);
           if (balance === null) {
             return;
           }

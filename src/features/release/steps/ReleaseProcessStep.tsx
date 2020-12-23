@@ -252,8 +252,6 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     }
   }, [history, current.value, current.context.tx]);
 
-  console.log("release current.value", current.value);
-  console.log("ctx", current.context.tx);
   // const forceState = "srcConfirmed";
   const state = current.value as keyof BurnMachineSchema["states"];
   useReleaseTransactionPersistence(current.context.tx, state);
