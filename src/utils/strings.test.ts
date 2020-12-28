@@ -1,4 +1,4 @@
-import { trimAddress } from "./strings";
+import { isFirstVowel, trimAddress } from "./strings";
 
 const address = "0x1234567890abcdef";
 const shortAddress = "1234567890";
@@ -13,4 +13,10 @@ test("trims address in non standard way", () => {
 
 test("not trims non stanard address", () => {
   expect(trimAddress(shortAddress, 5)).toEqual(shortAddress);
+});
+
+test("detects first vowel", () => {
+  expect(isFirstVowel("")).toEqual(false);
+  expect(isFirstVowel("Ethereum")).toEqual(true);
+  expect(isFirstVowel("Binance")).toEqual(false);
 });

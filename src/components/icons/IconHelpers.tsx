@@ -1,23 +1,11 @@
-import { Typography } from "@material-ui/core";
+import { IconProps, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SvgIconComponent } from "@material-ui/icons";
+import classNames from "classnames";
 import React, { FunctionComponent } from "react";
-import { BridgeChain, BridgeCurrency } from '../../utils/assetConfigs'
-import {
-  BchGreyIcon,
-  BinanceChainIcon,
-  BitcoinIcon,
-  BtcGreyIcon,
-  CustomSvgIconComponent,
-  DgbGreyIcon,
-  DogeGreyIcon,
-  DotsFullIcon,
-  EthereumIcon,
-  ZecFullIcon,
-  ZecGreyIcon,
-} from "./RenIcons";
+import { CustomSvgIconComponent } from "./RenIcons";
 
-const useStyles = makeStyles(() => ({
+const useIconWithLabelStyles = makeStyles(() => ({
   root: {
     display: "inline-flex",
     flexDirection: "column",
@@ -45,7 +33,7 @@ export const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
   label,
   Icon,
 }) => {
-  const styles = useStyles();
+  const styles = useIconWithLabelStyles();
   return (
     <span className={styles.root}>
       <span className={styles.icon}>
@@ -58,44 +46,45 @@ export const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
   );
 };
 
-export const getCurrencyGreyIcon = (symbol: BridgeCurrency) => {
-  switch (symbol) {
-    case BridgeCurrency.BTC:
-      return BtcGreyIcon;
-    case BridgeCurrency.BCH:
-      return BchGreyIcon;
-    case BridgeCurrency.DOTS:
-      return DotsFullIcon; // add
-    case BridgeCurrency.DOGE:
-      return DogeGreyIcon;
-    case BridgeCurrency.ZEC:
-      return ZecGreyIcon;
-    case BridgeCurrency.RENBTC:
-      return BtcGreyIcon;
-    case BridgeCurrency.RENBCH:
-      return BchGreyIcon;
-    case BridgeCurrency.RENDOGE:
-      return DogeGreyIcon;
-    case BridgeCurrency.RENZEC:
-      return ZecGreyIcon;
-    case BridgeCurrency.RENDGB:
-      return DgbGreyIcon;
-    default:
-      return BtcGreyIcon;
-  }
+const useCircleIconStyles = makeStyles((theme) => ({
+  root: {
+    display: "inline-flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "50%",
+    padding: 3,
+    fontSize: 15,
+  },
+  solid: {
+    // fontSize: 66,
+    // height: 62,
+    // lineHeight: 1,
+    backgroundColor: theme.customColors.grayLight,
+  },
+  outlined: {
+    border: `1px solid ${theme.palette.grey["700"]}`,
+  },
+}));
+
+type CircleIconProps = IconProps & {
+  Icon: CustomSvgIconComponent | SvgIconComponent;
+  variant: "outlined" | "solid";
 };
 
-export const getChainIcon = (symbol: BridgeChain) => {
-  switch (symbol) {
-    case BridgeChain.BTCC:
-      return BitcoinIcon;
-    case BridgeChain.BSCC:
-      return BinanceChainIcon;
-    case BridgeChain.ETHC:
-      return EthereumIcon;
-    case BridgeChain.ZECC:
-      return ZecFullIcon; // TODO: add dedicated ZEC sourceChain icon
-    case BridgeChain.UNKNOWNC:
-      return BitcoinIcon;
-  }
+export const CircleIcon: FunctionComponent<CircleIconProps> = ({
+  Icon,
+  variant,
+}) => {
+  const styles = useCircleIconStyles();
+  const resolvedClassName = classNames(styles.root, {
+    [styles.solid]: variant === "solid",
+    [styles.outlined]: variant === "outlined",
+  });
+
+  return (
+    <span className={resolvedClassName}>
+      <Icon color="secondary" fontSize="inherit" />
+    </span>
+  );
 };

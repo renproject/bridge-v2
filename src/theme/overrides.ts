@@ -1,6 +1,6 @@
-import { fade } from '@material-ui/core'
-import { Palette } from '@material-ui/core/styles/createPalette'
-import { Overrides } from '@material-ui/core/styles/overrides'
+import { Palette } from "@material-ui/core/styles/createPalette";
+import { Overrides } from "@material-ui/core/styles/overrides";
+import { getShadow } from "./animationUtils";
 import {
   alertError,
   alertErrorBackground,
@@ -13,7 +13,7 @@ import {
   textDark,
   textDisabled,
   textLighter,
-} from './colors'
+} from "./colors";
 
 export const overrides = (palette: Palette): Overrides => {
   return {
@@ -25,7 +25,7 @@ export const overrides = (palette: Palette): Overrides => {
       standardSuccess: {
         color: alertSuccess,
         backgroundColor: alertSuccessBackground,
-        boxShadow: `1px 1px 2px 0 ${fade(alertSuccess, 0.15)}`,
+        boxShadow: getShadow(alertSuccess),
         "& $icon": {
           color: alertSuccess,
         },
@@ -33,7 +33,7 @@ export const overrides = (palette: Palette): Overrides => {
       standardInfo: {
         color: alertInfo,
         backgroundColor: alertInfoBackground,
-        boxShadow: `1px 1px 2px 0 ${fade(alertInfo, 0.15)}`,
+        boxShadow: getShadow(alertInfo),
         "& $icon": {
           color: alertInfo,
         },
@@ -41,7 +41,7 @@ export const overrides = (palette: Palette): Overrides => {
       standardWarning: {
         color: alertWarning,
         backgroundColor: alertWarningBackground,
-        boxShadow: `1px 1px 2px 0 ${fade(alertWarning, 0.15)}`,
+        boxShadow: getShadow(alertWarning),
         "& $icon": {
           color: alertWarning,
         },
@@ -49,7 +49,7 @@ export const overrides = (palette: Palette): Overrides => {
       standardError: {
         color: alertError,
         backgroundColor: alertErrorBackground,
-        boxShadow: `1px 1px 2px 0 ${fade(alertError, 0.15)}`,
+        boxShadow: getShadow(alertError),
         "& $icon": {
           color: alertError,
         },
@@ -157,6 +157,20 @@ export const overrides = (palette: Palette): Overrides => {
           backgroundColor: "initial",
         },
       },
+      outlined: {
+        background: "white",
+        boxShadow: `0 0 3px 0 rgba(0,27,58,0.10)`,
+      },
+    },
+    MuiSnackbar: {
+      anchorOriginTopCenter: {
+        top: "-64px!important",
+      },
+    },
+    SnackbarItem: {
+      collapseWrapper: {
+        border: "1px solid blue",
+      },
     },
     MuiSvgIcon: {
       root: {
@@ -192,6 +206,7 @@ export const overrides = (palette: Palette): Overrides => {
         borderRadius: 4,
         textAlign: "center",
         backgroundColor: palette.common.black,
+        fontSize: 11,
       },
     },
   } as Overrides;

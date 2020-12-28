@@ -1,41 +1,26 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { GatewaySession, mintMachine } from "@renproject/ren-tx";
-import { useMachine } from "@xstate/react";
-import { useSelector } from "react-redux";
-import { env } from "../../constants/environmentVariables";
-import { getRenJs } from "../../services/renJs";
-import { lockChainMap, mintChainMap } from "../../services/rentx";
+import { RenNetwork } from '@renproject/interfaces'
+import { GatewaySession, } from '@renproject/ren-tx'
 import {
   BridgeChain,
   BridgeCurrency,
   getChainConfig,
+  getChainConfigByRentxName,
   getChainRentxName,
   getCurrencyConfig,
   getCurrencyConfigByRentxName,
   getCurrencyRentxName,
   getCurrencyRentxSourceChain,
-  toMintedCurrency,
   getNetworkConfigByRentxName,
-  getChainConfigByRentxName,
-} from "../../utils/assetConfigs";
-import { $network } from "../network/networkSlice";
-import { getChainExplorerLink } from "../transactions/transactionsUtils";
-
-export const getMintTx: GatewaySession = {
-  id: "tx-" + Math.floor(Math.random() * 10 ** 16),
-  type: "mint",
-  sourceAsset: "btc",
-  sourceChain: "bitcoin",
-  network: "testnet",
-  destAddress: "",
-  destChain: "ethereum",
-  targetAmount: 1,
-  userAddress: "",
-  expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
-  transactions: {},
-  customParams: {},
-};
+  toMintedCurrency,
+} from '../../utils/assetConfigs'
+import {
+  getChainExplorerLink,
+  getTxCreationTimestamp,
+  isTxExpired,
+  TxEntryStatus,
+  TxMeta,
+  TxPhase,
+} from '../transactions/transactionsUtils'
 
 type CreateMintTransactionParams = {
   amount: number;
@@ -44,6 +29,7 @@ type CreateMintTransactionParams = {
   mintedCurrencyChain: BridgeChain;
   userAddress: string;
   destAddress: string;
+  network: RenNetwork;
 };
 
 export const createMintTransaction = ({
@@ -52,13 +38,14 @@ export const createMintTransaction = ({
   mintedCurrencyChain,
   userAddress,
   destAddress,
+  network,
 }: CreateMintTransactionParams) => {
   const tx: GatewaySession = {
     id: "tx-" + Math.floor(Math.random() * 10 ** 16),
     type: "mint",
-    network: env.NETWORK as RenNetwork,
+    network,
     sourceAsset: getCurrencyRentxName(currency),
-    sourceChain: getCurrencyRentxSourceChain(currency),
+    sourceChain: getCurrencyRentxSourceChain(currency), // TODO: it can be derived for minting
     destAddress,
     destChain: getChainRentxName(mintedCurrencyChain),
     targetAmount: Number(amount),
@@ -81,28 +68,6 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
   );
 };
 
-export const useMintMachine = (mintTransaction: GatewaySession) => {
-  const { enabledChains } = useMultiwallet();
-  const network = useSelector($network);
-  const providers = Object.entries(enabledChains).reduce(
-    (c, n) => ({
-      ...c,
-      [n[0]]: n[1].provider,
-    }),
-    {}
-  );
-  return useMachine(mintMachine, {
-    context: {
-      tx: mintTransaction,
-      providers,
-      sdk: getRenJs(network),
-      fromChainMap: lockChainMap,
-      toChainMap: mintChainMap,
-    },
-    devTools: env.XSTATE_DEVTOOLS,
-  });
-};
-
 export const getLockAndMintParams = (tx: GatewaySession) => {
   const networkConfig = getNetworkConfigByRentxName(tx.network);
   const lockCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
@@ -115,8 +80,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   const transaction = Object.values(tx.transactions)[0];
   let mintTxHash: string = "";
   let mintTxLink: string = "";
-  if (transaction && transaction.sourceTxHash) {
-    mintTxHash = transaction.sourceTxHash;
+  if (transaction && transaction.destTxHash) {
+    mintTxHash = transaction.destTxHash;
     mintTxLink =
       getChainExplorerLink(
         mintChainConfig.symbol,
@@ -149,6 +114,39 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
         lockChainConfig.blockTime;
     }
   }
+  const meta: TxMeta = {
+    status: TxEntryStatus.PENDING,
+    phase: TxPhase.NONE,
+    createdTimestamp: getTxCreationTimestamp(tx),
+  };
+  if (lockTxHash) {
+    // it has lockTxHash - there is deposit
+    if (mintTxHash) {
+      // mint tx hash present - completed
+      meta.status = TxEntryStatus.COMPLETED;
+    } else if (lockConfirmations >= lockTargetConfirmations) {
+      // no mint tx hash, but confirmations fulfilled
+      meta.status = TxEntryStatus.ACTION_REQUIRED;
+      meta.phase = TxPhase.MINT;
+      // expired in mint phase - no submission
+      if (isTxExpired(tx)) {
+        meta.status = TxEntryStatus.EXPIRED;
+      }
+    } else if (lockConfirmations < lockTargetConfirmations) {
+      // no mint tx hash, but awaiting confirmations
+      meta.status = TxEntryStatus.PENDING;
+      meta.phase = TxPhase.LOCK;
+    }
+  } else {
+    // no deposit
+    meta.status = TxEntryStatus.ACTION_REQUIRED;
+    meta.phase = TxPhase.LOCK;
+    // expired in lock phase - no deposit
+    if (isTxExpired(tx)) {
+      meta.status = TxEntryStatus.EXPIRED;
+    }
+  }
+
   return {
     networkConfig,
     mintCurrencyConfig,
@@ -164,5 +162,12 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     lockProcessingTime,
     lockTxAmount,
     suggestedAmount: Number(tx.suggestedAmount) / 1e8,
+    meta,
   };
 };
+
+export const isMintTransactionCompleted = (tx: GatewaySession) => {
+  const { meta } = getLockAndMintParams(tx);
+  return meta.status === TxEntryStatus.COMPLETED;
+};
+

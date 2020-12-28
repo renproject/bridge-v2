@@ -7,7 +7,7 @@ import { MainLayout } from "../components/layout/MainLayout";
 import { Link } from "../components/links/Links";
 import { MarkText } from "../components/typography/TypographyHelpers";
 import { links } from "../constants/constants";
-import { usePageTitle } from "../hooks/usePageTitle";
+import { usePageTitle } from "../providers/TitleProviders";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,7 +61,7 @@ export const AboutPage: FunctionComponent<RouteComponentProps> = () => {
           How does it work?
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          Using RenVM, a universal translator, it converts digita assets to the
+          Using RenVM, a universal translator, it converts digital assets to the
           format needed by its destination chain. For example, RenVM takes{" "}
           <MarkText color="orange">BTC</MarkText>, holds it, and then converts
           it to an <MarkText color="blue">ERC-20</MarkText> with a 1:1 ratio to

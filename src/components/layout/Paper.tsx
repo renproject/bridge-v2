@@ -1,63 +1,116 @@
-import { Paper, PaperProps, styled } from "@material-ui/core";
+import { Paper, PaperProps, styled, Theme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
+import { useShakingStyles } from "../../theme/animationUtils";
 
-type BridgePaperProps = PaperContentProps & PaperProps;
-
-export const BridgePurePaper = styled(Paper)({
-  maxWidth: 400,
-  margin: "0 auto",
-  position: "relative",
-  overflow: "hidden",
+const useBridgePaperStyles = makeStyles((theme) => {
+  return {
+    root: {
+      maxWidth: 400,
+      margin: "0 auto",
+      position: "relative",
+      overflow: "hidden",
+    },
+  };
 });
 
+type BridgePurePaperProps = PaperProps & {
+  shaking?: boolean;
+};
+
+export const BridgePurePaper: FunctionComponent<BridgePurePaperProps> = ({
+  shaking,
+  className,
+  ...props
+}) => {
+  const classes = useBridgePaperStyles();
+  const shakingStyles = useShakingStyles();
+  const resolvedClassName = classNames(className, {
+    [shakingStyles.shaking]: shaking,
+  });
+  return <Paper className={resolvedClassName} classes={classes} {...props} />;
+};
+
+type BridgePaperProps = PaperContentProps & BridgePurePaperProps;
+
+// deprecated - used only in catalog - remove gradually
 export const BridgePaper: FunctionComponent<BridgePaperProps> = ({
   topPadding,
   bottomPadding = true,
   children,
   ...rest
-}) => (
-  <BridgePurePaper {...rest}>
-    <PaperContent topPadding={topPadding} bottomPadding={bottomPadding}>
-      {children}
-    </PaperContent>
-  </BridgePurePaper>
-);
+}) => {
+  return (
+    <BridgePurePaper {...rest}>
+      <PaperContent topPadding={topPadding} bottomPadding={bottomPadding}>
+        {children}
+      </PaperContent>
+    </BridgePurePaper>
+  );
+};
 
-const SMALL_PADDING = 10;
-// const PADDING = 20;
-const BIG_PADDING = 40;
-
-const usePaperContentStyles = makeStyles({
-  root: {
-    paddingLeft: BIG_PADDING,
-    paddingRight: BIG_PADDING,
-  },
-  top: {
-    paddingTop: BIG_PADDING,
-  },
-  bottom: {
-    paddingBottom: BIG_PADDING,
-  },
+export const BridgePaperWrapper = styled("div")({
+  marginTop: 40,
 });
 
+const SMALL_PADDING = 10;
+const MEDIUM_PADDING = 20;
+const BIG_PADDING = 40;
+
+const getPadding = (variant: PaddingVariant = "big") => {
+  switch (variant) {
+    case "small":
+      return SMALL_PADDING;
+    case "medium":
+      return MEDIUM_PADDING;
+    case "big":
+    default:
+      return BIG_PADDING;
+  }
+};
+
+const usePaperContentStyles = makeStyles<Theme, PaperContentProps>((theme) => ({
+  root: {
+    paddingLeft: ({ paddingVariant }) => getPadding(paddingVariant),
+    paddingRight: ({ paddingVariant }) => getPadding(paddingVariant),
+  },
+  top: {
+    paddingTop: ({ paddingVariant }) => getPadding(paddingVariant),
+  },
+  bottom: {
+    paddingBottom: ({ paddingVariant }) => getPadding(paddingVariant),
+  },
+  darker: {
+    backgroundColor: theme.customColors.whiteDarker,
+  },
+}));
+
+type PaddingVariant = "big" | "medium" | "small";
+
 export type PaperContentProps = {
+  darker?: boolean;
   topPadding?: boolean;
   bottomPadding?: boolean;
+  paddingVariant?: PaddingVariant;
+  className?: string;
 };
 
 export const PaperContent: FunctionComponent<PaperContentProps> = ({
   topPadding,
   bottomPadding,
+  darker,
+  paddingVariant,
+  className,
   children,
 }) => {
-  const styles = usePaperContentStyles();
-  const className = classNames(styles.root, {
+  const styles = usePaperContentStyles({ paddingVariant: paddingVariant });
+  const resolvedClassName = classNames(styles.root, className, {
     [styles.top]: topPadding,
     [styles.bottom]: bottomPadding,
+    [styles.darker]: darker,
   });
-  return <div className={className}>{children}</div>;
+  return <div className={resolvedClassName}>{children}</div>;
 };
 
 export const PaperHeader = styled("header")({

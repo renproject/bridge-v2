@@ -13,13 +13,14 @@ import { AssetBalance } from "../../features/wallet/walletSlice";
 import { getAssetBalance } from "../../features/wallet/walletUtils";
 import {
   BridgeChain,
-  BridgeCurrency,
   BridgeChainConfig,
+  BridgeCurrency,
   chainsConfig,
   currenciesConfig,
   CurrencyConfig,
 } from "../../utils/assetConfigs";
 import { NumberFormatText } from "../formatting/NumberFormatText";
+import { EmptyCircleIcon } from "../icons/RenIcons";
 
 const getOptions = (mode: AssetDropdownMode) => {
   const options =
@@ -46,13 +47,20 @@ const iconStyles = {
   height: 32,
 };
 
+const useCondensedSelectStyles = makeStyles(() => ({
+  select: {
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+}));
+
 const useAssetDropdownStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     borderRadius: theme.shape.borderRadius,
     border: `1px solid ${theme.palette.divider}`,
   },
-  select: {
+  inputRoot: {
     width: "100%",
   },
   supplementalText: {
@@ -68,12 +76,13 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
     fontSize: 13,
   },
   assetFullName: {
-    fontSize: 10,
+    fontSize: 11,
   },
   balance: {
     fontSize: 12,
   },
   listSubheader: {
+    pointerEvents: "none",
     fontSize: 10,
     lineHeight: 1,
   },
@@ -88,17 +97,38 @@ type AssetDropdownProps = SelectProps & {
   mode: AssetDropdownMode;
   available?: Array<BridgeCurrency | BridgeChain>;
   balances?: Array<AssetBalance>;
-  label: string;
+  condensed?: boolean;
+  label?: string;
+};
+
+const getAssetData = (
+  selected: BridgeChainConfig | CurrencyConfig | undefined
+) => {
+  let full = "Select";
+  let short = "Select";
+  let Icon = EmptyCircleIcon;
+  if (selected) {
+    full = selected.full;
+    short = selected.short;
+    Icon = selected.MainIcon;
+  }
+  return {
+    full,
+    short,
+    Icon,
+  };
 };
 
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   mode,
   available,
+  condensed = false,
   label,
   balances,
   ...rest
 }) => {
   const styles = useAssetDropdownStyles();
+  const condensedSelectClasses = useCondensedSelectStyles();
   const availabilityFilter = useMemo(
     () => createAvailabilityFilter(available),
     [available]
@@ -106,36 +136,37 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   const valueRenderer = useMemo(
     () => (value: any) => {
       const selected = getOptionBySymbol(value, mode);
-      if (!selected) {
-        return <span>empty</span>;
-      }
-      const { MainIcon, full, short } = selected;
+      const { Icon, full, short } = getAssetData(selected);
       return (
         <Box display="flex" alignItems="center" width="100%">
-          <Box width="40%">
-            <Typography variant="body2" className={styles.supplementalText}>
-              {label}
-            </Typography>
-          </Box>
+          {!condensed && (
+            <Box width="40%">
+              <Typography variant="body2" className={styles.supplementalText}>
+                {label}
+              </Typography>
+            </Box>
+          )}
           <Box width="45px" display="flex" alignItems="center">
-            <MainIcon className={styles.listIcon} />
+            <Icon className={styles.listIcon} />
           </Box>
           <Box flexGrow={1}>
             <Typography variant="body2">
-              {mode === "chain" ? full : short}
+              {selected && mode === "chain" ? full : short}
             </Typography>
           </Box>
         </Box>
       );
     },
-    [mode, styles, label]
+    [mode, styles, label, condensed]
   );
   return (
     <div>
       <Select
         variant="outlined"
-        className={styles.select}
+        className={condensed ? undefined : styles.inputRoot}
+        classes={condensed ? condensedSelectClasses : undefined}
         renderValue={valueRenderer}
+        displayEmpty
         MenuProps={{
           anchorOrigin: {
             vertical: "bottom",
@@ -156,7 +187,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
                 {mode === "chain" ? "Blockchain" : "Asset"}
               </Typography>
             </Box>
-            {balances && (
+            {balances && balances.length > 0 && (
               <Box flexGrow={1} textAlign="right">
                 <Typography
                   variant="overline"
@@ -179,15 +210,16 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
                   </Box>
                   <Box flexGrow={1}>
                     <Typography variant="body1" className={styles.assetName}>
-                      {short}
+                      {mode === "chain" ? full : short}
                     </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      color="textSecondary"
-                      className={styles.assetFullName}
-                    >
-                      {full}
-                    </Typography>
+                    {mode !== "chain" && (
+                      <Typography
+                        color="textSecondary"
+                        className={styles.assetFullName}
+                      >
+                        {full}
+                      </Typography>
+                    )}
                   </Box>
                   {balances && (
                     <Box

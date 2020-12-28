@@ -1,9 +1,6 @@
-import { GatewaySession } from "@renproject/ren-tx";
-import {
-  createTxQueryString,
-  getTxPageTitle,
-  parseTxQueryString,
-} from "./transactionsUtils";
+import { GatewaySession } from '@renproject/ren-tx'
+import { BridgeChain } from '../../utils/assetConfigs'
+import { createTxQueryString, getPaymentLink, getTxPageTitle, parseTxQueryString, } from './transactionsUtils'
 
 const mintTx: GatewaySession = {
   customParams: undefined,
@@ -108,3 +105,10 @@ describe("pageTitle", () => {
     expect(title).toEqual("Release - 1 BTC - 2020-11-05T13:54:59.484Z");
   });
 });
+
+describe("paymentLinks", () => {
+  test("generates payment link", () => {
+    const result = getPaymentLink(BridgeChain.BTCC, "12345abcde", 0.1234);
+    expect(result).toEqual("bitcoin://12345abcde?amount=0.1234")
+  })
+})

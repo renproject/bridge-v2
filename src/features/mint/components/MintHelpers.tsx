@@ -1,7 +1,8 @@
 import { GatewaySession } from "@renproject/ren-tx";
-import { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
-import { useMintMachine } from "../mintUtils";
+import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
+import { useMintMachine } from "../mintHooks";
 
 export const mintTooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",
@@ -32,14 +33,24 @@ export const MintTransactionInitializer: FunctionComponent<MintTransactionInitia
     [service]
   );
   useEffect(() => {
-    console.log(
-      current.context.tx.gatewayAddress,
-      !!current.context.tx.gatewayAddress
-    );
     if (onCreated && !!current.context.tx.gatewayAddress) {
       onCreated(current.context.tx);
     }
   }, [onCreated, current.context.tx]);
 
   return null;
+};
+
+type AddressValidityMessageProps = { milliseconds: number };
+
+export const AddressValidityMessage: FunctionComponent<AddressValidityMessageProps> = ({
+  milliseconds,
+}) => {
+  return (
+    <span>
+      This Gateway Address is only valid for 24 hours, it expires in{" "}
+      <HMSCountdown milliseconds={milliseconds} /> Do not send multiple deposits
+      or deposit after it has expired.
+    </span>
+  );
 };

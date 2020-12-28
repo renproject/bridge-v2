@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { Catalog } from "../components/catalog/Catalog";
 import { MainLayout } from "../components/layout/MainLayout";
-import { usePageTitle } from "../hooks/usePageTitle";
+import { usePageTitle } from "../providers/TitleProviders";
 
 export const CatalogPage: FunctionComponent = () => {
   usePageTitle("Catalog");

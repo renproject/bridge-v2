@@ -5,9 +5,34 @@ import {
   BridgeChain,
   BridgeCurrency,
   BridgeNetwork,
+  getChainConfig,
+  getCurrencyConfig,
   getCurrencyConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
+import { isMintTransactionCompleted } from "../mint/mintUtils";
+import { isReleaseTransactionCompleted } from "../release/releaseUtils";
+
+export enum TxEntryStatus {
+  PENDING = "pending",
+  ACTION_REQUIRED = "action_required",
+  COMPLETED = "completed",
+  EXPIRED = "expired",
+}
+
+export enum TxPhase {
+  LOCK = "lock",
+  MINT = "mint",
+  BURN = "burn",
+  RELEASE = "release",
+  NONE = "",
+}
+
+export type TxMeta = {
+  status: TxEntryStatus;
+  phase: TxPhase;
+  createdTimestamp: number;
+};
 
 export enum TxType {
   MINT = "mint",
@@ -18,6 +43,7 @@ export enum TxConfigurationStep {
   INITIAL = "initial",
   FEES = "fees",
 }
+
 export type TxConfigurationStepProps = {
   onPrev?: () => void;
   onNext?: () => void;
@@ -26,6 +52,7 @@ export type TxConfigurationStepProps = {
 export type LocationTxState = {
   txState?: {
     newTx?: boolean;
+    reloadTx?: boolean;
   };
 };
 
@@ -53,6 +80,40 @@ const parseNumber = (value: any) => {
   }
   return Number(value);
 };
+
+export const isTxExpired = (tx: GatewaySession) => {
+  if (tx.expiryTime) {
+    const difference = Date.now() - tx.expiryTime;
+    if (difference >= 24 * 3600) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export const txCompletedSorter = (a: GatewaySession, b: GatewaySession) => {
+  const aCompleted = isTransactionCompleted(a);
+  const bCompleted = isTransactionCompleted(b);
+  if (aCompleted && !bCompleted) {
+    return 1;
+  } else if (!aCompleted && bCompleted) {
+    return -1;
+  }
+  return txExpirySorter(a, b);
+};
+
+export const txExpirySorter = (
+  a: Partial<GatewaySession>,
+  b: Partial<GatewaySession>
+) => {
+  if (a.expiryTime && b.expiryTime) {
+    return b.expiryTime - a.expiryTime;
+  }
+  return 0;
+};
+
+export const cloneTx = (tx: GatewaySession) =>
+  JSON.parse(JSON.stringify(tx)) as GatewaySession;
 
 export const parseTxQueryString: (
   query: string
@@ -84,14 +145,17 @@ const sochainTestnet = "https://sochain.com/tx/";
 const sochain = "https://sochain.com/tx/";
 const etherscanTestnet = "https://kovan.etherscan.io/tx/";
 const etherscan = "https://etherscan.io/tx/";
-const binanceTestnet = "https://testnet.bscscan.com/";
-const binance = "https://bscscan.com/";
+const binanceTestnet = "https://testnet.bscscan.com/tx/";
+const binance = "https://bscscan.com/tx/";
 
 export const getChainExplorerLink = (
   chain: BridgeChain,
   network: BridgeNetwork,
   txId: string
 ) => {
+  if (!txId) {
+    return "";
+  }
   if (network === BridgeNetwork.TESTNET) {
     switch (chain) {
       case BridgeChain.ETHC:
@@ -117,35 +181,36 @@ export const getChainExplorerLink = (
   }
 };
 
-type GetFeeToltipsArgs = {
+type GetFeeTooltipsArgs = {
   mintFee: number;
   releaseFee: number;
-  sourceCurrency?: BridgeCurrency;
-  destinationCurrency?: BridgeCurrency;
-  type: TxType;
+  sourceCurrency: BridgeCurrency;
+  chain: BridgeChain;
 };
 
 export const getFeeTooltips = ({
   mintFee,
   releaseFee,
   sourceCurrency,
-  destinationCurrency,
-  type,
-}: GetFeeToltipsArgs) => {
+  chain,
+}: GetFeeTooltipsArgs) => {
+  const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
+  const sourceCurrencyChainConfig = getChainConfig(
+    sourceCurrencyConfig.sourceChain
+  );
+  const renCurrencyChainConfig = getChainConfig(chain);
+  const renNativeChainCurrencyConfig = getCurrencyConfig(
+    renCurrencyChainConfig.nativeCurrency
+  );
+  // const destinationCurrencyConfig = getCurrencyConfig(renCurrencyChainConfig.s)
   return {
     renVmFee: `RenVM takes a ${toPercent(
       mintFee
     )}% fee per mint transaction and ${toPercent(
       releaseFee
     )}% per burn transaction. This is shared evenly between all active nodes in the decentralized network.`,
-    bitcoinMinerFee:
-      "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
-    estimatedEthFee:
-      "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
-    // estimatedReleasingChainFee:
-    //   "The fee required by BTC miners, to move BTC. This does not go RenVM or the Ren team.",
-    // estimatedMintingChainFee:
-    //   "The estimated cost to perform a transaction on the Ethereum network. This fee goes to Ethereum miners and is paid in ETH.",
+    sourceChainMinerFee: `The fee required by ${sourceCurrencyChainConfig.full} miners, to move ${sourceCurrencyConfig.short}. This does not go RenVM or the Ren team.`,
+    renCurrencyChainFee: `The estimated cost to perform a transaction on the ${renCurrencyChainConfig.full} network. This fee goes to ${renCurrencyChainConfig.short} miners and is paid in ${renNativeChainCurrencyConfig.short}.`,
   };
 };
 
@@ -153,7 +218,25 @@ export const getTxPageTitle = (tx: GatewaySession) => {
   const amount = tx.targetAmount;
   const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
   const type = tx.type === TxType.MINT ? "Mint" : "Release";
-  const date = new Date(tx.expiryTime - 24 * 3600 * 1000).toISOString();
+  const date = new Date(getTxCreationTimestamp(tx)).toISOString();
 
   return `${type} - ${amount} ${asset} - ${date}`;
+};
+
+export const getTxCreationTimestamp = (tx: GatewaySession) =>
+  tx.expiryTime - 24 * 3600 * 1000;
+
+export const getPaymentLink = (
+  chain: BridgeChain,
+  address: string,
+  amount: number
+) => {
+  const chainConfig = getChainConfig(chain);
+  return `${chainConfig.rentxName}://${address}?amount=${amount}`;
+};
+
+export const isTransactionCompleted = (tx: GatewaySession) => {
+  return tx.type === TxType.MINT
+    ? isMintTransactionCompleted(tx)
+    : isReleaseTransactionCompleted(tx);
 };

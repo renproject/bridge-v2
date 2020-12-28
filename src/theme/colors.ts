@@ -18,10 +18,12 @@ export const redLight = "#FF4545";
 export const red = "#E63E3E";
 export const redDark = "#BF3434";
 
+export const bitcoinOrange = "#FF9900";
 export const orangeLight = "#FFB74D";
 export const orange = "#FF9800";
 export const orangeDark = "#F57C00";
 
+export const bitcoinCashGreen = "#6CC64B";
 export const greenLight = "#3CBC98";
 export const green = "#34A384";
 export const greenDark = "#2C8A6F";
@@ -42,6 +44,8 @@ export const backgroundWhite = "#FFFFFF";
 export const backgroundAlternative = "#FDFDFE";
 
 export const white = "#FFFFFF";
+export const whiteDarker = "#FDFDFD";
+export const black = "#001B3A";
 
 export const strokeDefault = "#DBE0E8";
 

@@ -13,6 +13,7 @@ import {
   BchIcon,
   BinanceChainColorIcon,
   BinanceChainFullIcon,
+  BinanceChainIcon,
   BitcoinIcon,
   BitcoinInCircleIcon,
   BrowserNotificationsIcon,
@@ -28,8 +29,10 @@ import {
   DotsFullIcon,
   DotsGreyIcon,
   DotsIcon,
+  EmptyCircleIcon,
   EthereumChainColorIcon,
   EthereumChainFullIcon,
+  EthereumChainIcon,
   EthereumIcon,
   FilFullIcon,
   FilGreyIcon,
@@ -38,8 +41,10 @@ import {
   LunaGreyIcon,
   LunaIcon,
   MetamaskFoxIcon,
-  RenBridgeLogoIcon, RenLogoFullIcon,
-  RenLogoIcon, RenVMLogoIcon,
+  RenBridgeLogoIcon,
+  RenLogoFullIcon,
+  RenLogoIcon,
+  RenVMLogoIcon,
   SuccessIcon,
   TxSettingsIcon,
   WalletConnectFullIcon,
@@ -48,7 +53,7 @@ import {
   ZecFullIcon,
   ZecGreyIcon,
   ZecIcon,
-} from '../../icons/RenIcons'
+} from "../../icons/RenIcons";
 import { Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const IconsSection: FunctionComponent = () => {
@@ -68,6 +73,7 @@ export const IconsSection: FunctionComponent = () => {
         <MoreVertIcon />
         <WalletIcon />
         <SuccessIcon />
+        <EmptyCircleIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BitcoinIcon />
@@ -75,13 +81,17 @@ export const IconsSection: FunctionComponent = () => {
         <WalletConnectIcon />
       </SeparationWrapper>
       <SeparationWrapper>
+        <BinanceChainFullIcon />
+        <EthereumChainFullIcon />
+        <WalletConnectFullIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
         <BinanceChainColorIcon />
         <EthereumChainColorIcon />
       </SeparationWrapper>
       <SeparationWrapper>
-        <BinanceChainFullIcon />
-        <EthereumChainFullIcon />
-        <WalletConnectFullIcon />
+        <BinanceChainIcon />
+        <EthereumChainIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BtcIcon />

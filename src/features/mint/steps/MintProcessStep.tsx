@@ -1,55 +1,137 @@
-import { Divider, IconButton } from '@material-ui/core'
-import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/ren-tx'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch } from 'react-redux'
-import { RouteComponentProps, useHistory } from 'react-router-dom'
-import { useLocation } from 'react-use'
-import { Actor } from 'xstate'
-import { ActionButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { BigWrapper, CenteringSpacedBox, MediumWrapper, } from '../../../components/layout/LayoutHelpers'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { Debug } from '../../../components/utils/Debug'
-import { WalletStatus } from '../../../components/utils/types'
-import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
-import { usePageTitle } from '../../../hooks/usePageTitle'
-import { usePaperTitle } from '../../../pages/MainPage'
-import { paths } from '../../../pages/routes'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { getCurrencyConfigByRentxName, } from '../../../utils/assetConfigs'
-import { TransactionFees } from '../../transactions/components/TransactionFees'
-import { BookmarkPageWarning, ProgressStatus, } from '../../transactions/components/TransactionsHelpers'
+import { Divider, IconButton } from "@material-ui/core";
+import {
+  depositMachine,
+  DepositMachineSchema,
+  GatewaySession,
+  GatewayTransaction,
+} from "@renproject/ren-tx";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RouteComponentProps, useHistory } from "react-router-dom";
+import { useLocation } from "react-use";
+import { Actor } from "xstate";
+import {
+  ActionButton,
+  ToggleIconButton,
+} from "../../../components/buttons/Buttons";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import {
+  CenteringSpacedBox,
+  PaperSpacerWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { Debug } from "../../../components/utils/Debug";
+import { WalletStatus } from "../../../components/utils/types";
+import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { paths } from "../../../pages/routes";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
+import {
+  getChainConfigByRentxName,
+  getCurrencyConfigByRentxName,
+} from "../../../utils/assetConfigs";
+import { BrowserNotificationsDrawer } from "../../notifications/components/NotificationsHelpers";
+import {
+  useBrowserNotifications,
+  useBrowserNotificationsConfirmation,
+} from "../../notifications/notificationsUtils";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
+import { TransactionMenu } from "../../transactions/components/TransactionMenu";
+import {
+  BookmarkPageWarning,
+  ProgressStatus,
+} from "../../transactions/components/TransactionsHelpers";
+import { useTransactionDeletion } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getTxPageTitle,
   parseTxQueryString,
   TxType,
   useTxParam,
-} from '../../transactions/transactionsUtils'
-import { setWalletPickerOpened } from '../../wallet/walletSlice'
+} from "../../transactions/transactionsUtils";
 import {
-  DepositAcceptedStatus,
-  DepositConfirmationStatus,
-  DepositTo,
+  $chain,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
   DestinationPendingStatus,
-  DestinationReceivedStatus,
-} from '../components/MintStatuses'
-import { getLockAndMintParams, useMintMachine } from '../mintUtils'
+  MintCompletedStatus,
+  MintDepositAcceptedStatus,
+  MintDepositConfirmationStatus,
+  MintDepositToStatus,
+} from "../components/MintStatuses";
+import { useMintMachine, useMintTransactionPersistence } from "../mintHooks";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
   const dispatch = useDispatch();
+  const chain = useSelector($chain);
   const { status } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
   const { tx: parsedTx, txState } = useTxParam();
-  const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  const [reloading, setReloading] = useState(false);
+  const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession);
+
   usePageTitle(getTxPageTitle(tx));
-  const [paperTitle] = usePaperTitle();
+  const [paperTitle, setPaperTitle] = usePaperTitle();
+  useEffect(() => {
+    if (!walletConnected) {
+      setPaperTitle("Resume Transaction");
+    }
+  }, [walletConnected, setPaperTitle]);
 
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
   }, [history]);
+
+  const {
+    menuOpened,
+    handleMenuOpen,
+    handleMenuClose,
+    handleDeleteTx,
+  } = useTransactionDeletion(tx);
+
+  const {
+    modalOpened,
+    handleModalOpen,
+    handleModalClose,
+  } = useBrowserNotificationsConfirmation();
+
+  const { enabled, handleEnable } = useBrowserNotifications(handleModalClose);
+
+  useEffect(() => {
+    if (txState?.reloadTx) {
+      setTx(parsedTx as GatewaySession);
+      setReloading(true);
+      history.replace({ ...location, state: undefined });
+      setTimeout(() => {
+        setReloading(false);
+      }, 1000);
+    }
+  }, [history, location, txState, parsedTx]);
+
+  const destChain = parsedTx?.destChain;
+  useEffect(() => {
+    if (destChain) {
+      const bridgeChainConfig = getChainConfigByRentxName(destChain);
+      dispatch(setChain(bridgeChainConfig.symbol));
+    }
+  }, [dispatch, destChain]);
 
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
@@ -59,7 +141,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     history.replace({ ...location, state: undefined });
   }, [history, location]);
 
-  const walletConnected = status === WalletStatus.CONNECTED;
   const showTransactionStatus = !!tx && walletConnected;
   const feeCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
   const amount = Number(tx.targetAmount);
@@ -75,37 +156,64 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         </PaperNav>
         <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
-          <ToggleIconButton variant="settings" />
-          <ToggleIconButton variant="notifications" />
+          <ToggleIconButton
+            pressed={enabled}
+            variant="notifications"
+            onClick={handleModalOpen}
+          />
+          <ToggleIconButton
+            variant="settings"
+            onClick={handleMenuOpen}
+            pressed={menuOpened}
+          />
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
-        {showTransactionStatus && <MintTransactionStatus tx={tx} />}
+        {reloading && <ProgressStatus processing />}
+        {!reloading && showTransactionStatus && (
+          <MintTransactionStatus tx={tx} />
+        )}
         {!walletConnected && (
-          <BigWrapper>
-            <MediumWrapper>
+          <>
+            <PaperSpacerWrapper>
               <CenteringSpacedBox>
                 <WalletConnectionProgress />
               </CenteringSpacedBox>
-            </MediumWrapper>
+            </PaperSpacerWrapper>
             <ActionButton onClick={handleWalletPickerOpen}>
               Connect Wallet
             </ActionButton>
-          </BigWrapper>
+          </>
         )}
       </PaperContent>
-      <Divider />
-      <PaperContent topPadding bottomPadding>
-        <TransactionFees
-          amount={amount}
-          currency={feeCurrency}
-          type={TxType.MINT}
-        />
-        <Debug it={{ parsedTx, txState: txState }} />
-      </PaperContent>
+      {walletConnected && (
+        <>
+          <Divider />
+          <PaperContent darker topPadding bottomPadding>
+            <TransactionFees
+              chain={chain}
+              amount={amount}
+              currency={feeCurrency}
+              type={TxType.MINT}
+            />
+          </PaperContent>
+        </>
+      )}
       {txState?.newTx && (
         <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
       )}
+      <BrowserNotificationsDrawer
+        open={modalOpened}
+        onClose={handleModalClose}
+        onEnable={handleEnable}
+      />
+      <TransactionMenu
+        tx={tx}
+        open={menuOpened}
+        onClose={handleMenuClose}
+        onDeleteTx={handleDeleteTx}
+      />
+      <Debug it={{ parsedTx, txState: txState }} />
     </>
   );
 };
@@ -117,7 +225,6 @@ type MintTransactionStatusProps = {
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
 }) => {
-  console.log("rendering mts...");
   const [current] = useMintMachine(tx);
 
   const activeDeposit = useMemo<{
@@ -157,20 +264,20 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   return (
     <>
       {activeDeposit ? (
-        <DepositStatus
+        <MintTransactionDepositStatus
           tx={current.context.tx}
           deposit={activeDeposit.deposit}
           machine={activeDeposit.machine}
         />
       ) : (
-        <DepositTo tx={current.context.tx} />
+        <MintDepositToStatus tx={current.context.tx} />
       )}
       <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
     </>
   );
 };
 
-type DepositStatusProps = {
+type MintTransactionDepositStatusProps = {
   tx: GatewaySession;
   deposit: GatewayTransaction;
   machine: Actor<typeof depositMachine>;
@@ -178,50 +285,38 @@ type DepositStatusProps = {
 
 export const forceState = "srcConfirmed" as keyof DepositMachineSchema["states"];
 
-export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
+export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepositStatusProps> = ({
   tx,
   deposit,
   machine,
 }) => {
-  // const [submitting, setSubmitting] = useState(false);
   const handleSubmitToDestinationChain = useCallback(() => {
-    console.log("handling");
     machine.send({ type: "CLAIM" });
-    // setSubmitting(true);
   }, [machine]);
 
-  const { mintCurrencyConfig } = getLockAndMintParams(tx);
-  // TODO: add date here from reverse valid until
-  usePageTitle(`Minting - ${tx.targetAmount} ${mintCurrencyConfig.short}`);
-
+  const state = machine?.state.value as keyof DepositMachineSchema["states"];
+  useMintTransactionPersistence(tx, state);
   if (!machine) {
     return <div>Transaction completed</div>;
   }
-  const stateValue = machine.state
-    .value as keyof DepositMachineSchema["states"];
-  console.log("stv", stateValue);
-  switch (stateValue) {
+  switch (state) {
     // switch (forceState) {
     case "srcSettling":
-      return (
-        <>
-          <DepositConfirmationStatus tx={tx} />
-        </>
-      );
+      return <MintDepositConfirmationStatus tx={tx} />;
     case "srcConfirmed": // source sourceChain confirmations ok, but renVM still doesn't accept it
       return <ProgressStatus reason="Submitting to RenVM" />;
     case "claiming":
     case "accepted": // RenVM accepted it, it can be submitted to ethereum
       return (
-        <DepositAcceptedStatus
+        <MintDepositAcceptedStatus
           tx={tx}
           onSubmit={handleSubmitToDestinationChain}
-          submitting={stateValue === "claiming"}
+          submitting={state === "claiming"}
         />
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up
       if (deposit.destTxHash) {
-        return <DestinationReceivedStatus tx={tx} />;
+        return <MintCompletedStatus tx={tx} />;
       } else {
         return (
           <DestinationPendingStatus
@@ -231,7 +326,6 @@ export const DepositStatus: FunctionComponent<DepositStatusProps> = ({
           />
         );
       }
-
     case "restoringDeposit":
       return <ProgressStatus />;
     default:

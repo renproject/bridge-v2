@@ -12,22 +12,23 @@ import {
   ThemeProvider,
   Tooltip,
   Typography,
-} from '@material-ui/core'
-import React, { FunctionComponent, useCallback } from 'react'
-import { darkTheme, lightTheme } from '../../theme/theme'
-import { AssetDropdown } from '../dropdowns/AssetDropdown'
-import { BridgePurePaper, PaperContent } from '../layout/Paper'
-import { Debug } from '../utils/Debug'
-import { Cartesian, RandomText, Section } from './PresentationHelpers'
-import { ButtonsSection } from './sections/ButtonsSection'
-import { IconsSection } from './sections/IconsSection'
-import { InputsSection } from './sections/InputsSection'
-import { ModalsSection } from './sections/ModalsSection'
-import { NotificationsSection } from './sections/NotifciationsSection'
-import { PapersSection } from './sections/PapersSection'
-import { ProgressSection } from './sections/ProgressSection'
-import { TransactionsSection } from './sections/TransactionsSection'
-import { TypographyHelpersSection } from './sections/TypographyHelpersSection'
+} from "@material-ui/core";
+import React, { FunctionComponent, useCallback } from "react";
+import { useAlertFavicon } from "../../providers/Notifications";
+import { darkTheme, lightTheme } from "../../theme/theme";
+import { AssetDropdown } from "../dropdowns/AssetDropdown";
+import { BridgePurePaper, PaperContent } from "../layout/Paper";
+import { Debug } from "../utils/Debug";
+import { Cartesian, RandomText, Section } from "./PresentationHelpers";
+import { ButtonsSection } from "./sections/ButtonsSection";
+import { IconsSection } from "./sections/IconsSection";
+import { InputsSection } from "./sections/InputsSection";
+import { ModalsSection } from "./sections/ModalsSection";
+import { NotificationsSection } from "./sections/NotifciationsSection";
+import { PapersSection } from "./sections/PapersSection";
+import { ProgressSection } from "./sections/ProgressSection";
+import { TransactionsSection } from "./sections/TransactionsSection";
+import { TypographyHelpersSection } from "./sections/TypographyHelpersSection";
 
 enum TabPhase {
   MINT,
@@ -36,6 +37,7 @@ enum TabPhase {
 
 export const Catalog: FunctionComponent = () => {
   const [tab, setTab] = React.useState(TabPhase.MINT);
+  useAlertFavicon(tab === TabPhase.MINT);
   const [theme, setTheme] = React.useState("light");
   const handleTabChange = useCallback((event, newValue) => {
     setTab(newValue);
@@ -69,9 +71,25 @@ export const Catalog: FunctionComponent = () => {
                 <div>
                   <Box height={200}>
                     <Box pb={1}>
-                      <AssetDropdown mode="send" defaultValue="BTC" label="Send"/>
+                      <AssetDropdown
+                        mode="send"
+                        defaultValue="BTC"
+                        label="Send"
+                      />
                     </Box>
-                    <AssetDropdown mode="chain" defaultValue="ETHC" label="Destination Chain"/>
+                    <Box pb={1}>
+                      <AssetDropdown
+                        mode="chain"
+                        defaultValue="ETHC"
+                        label="Destination Chain"
+                      />
+                    </Box>
+                    <AssetDropdown
+                      condensed
+                      mode="chain"
+                      defaultValue="ETHC"
+                      label="Destination Chain"
+                    />
                   </Box>
                   <Button
                     variant="contained"
@@ -86,7 +104,11 @@ export const Catalog: FunctionComponent = () => {
               {tab === TabPhase.RELEASE && (
                 <div>
                   <Box height={200}>
-                    <AssetDropdown mode="receive" defaultValue="BCH" label="Receive"/>
+                    <AssetDropdown
+                      mode="receive"
+                      defaultValue="BCH"
+                      label="Receive"
+                    />
                   </Box>
                   <Button
                     variant="contained"

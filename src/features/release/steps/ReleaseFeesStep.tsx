@@ -1,38 +1,72 @@
-import { Divider, IconButton, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { Divider, IconButton, Typography } from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
   SpacedDivider,
-} from '../../../components/typography/TypographyHelpers'
-import { WalletStatus } from '../../../components/utils/types'
-import { paths } from '../../../pages/routes'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { getCurrencyConfig, toReleasedCurrency, } from '../../../utils/assetConfigs'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { $exchangeRates } from '../../marketData/marketDataSlice'
-import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { TransactionFees } from '../../transactions/components/TransactionFees'
+} from "../../../components/typography/TypographyHelpers";
+import { WalletStatus } from "../../../components/utils/types";
+import { paths } from "../../../pages/routes";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { db } from "../../../services/database/database";
+import { DbMeta } from "../../../services/database/firebase/firebase";
+import {
+  getChainConfig,
+  getCurrencyConfig,
+  toReleasedCurrency,
+} from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { $exchangeRates } from "../../marketData/marketDataSlice";
+import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
+import { $network } from "../../network/networkSlice";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
+import { addTransaction } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
-} from '../../transactions/transactionsUtils'
-import { setWalletPickerOpened } from '../../wallet/walletSlice'
-import { BurnAndReleaseTransactionInitializer, releaseTooltips, } from '../components/ReleaseHelpers'
-import { $release, $releaseUsdAmount } from '../releaseSlice'
-import { createReleaseTransaction, preValidateReleaseTransaction, } from '../releaseUtils'
+} from "../../transactions/transactionsUtils";
+import {
+  $multiwalletChain,
+  $wallet,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
+  BurnAndReleaseTransactionInitializer,
+  releaseTooltips,
+} from "../components/ReleaseHelpers";
+import { releaseTxStateUpdateSequence } from '../releaseHooks'
+import { $release, $releaseUsdAmount } from "../releaseSlice";
+import {
+  createReleaseTransaction,
+  preValidateReleaseTransaction,
+
+} from "../releaseUtils";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
@@ -43,6 +77,12 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const walletConnected = status === WalletStatus.CONNECTED;
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
+  const network = useSelector($network);
+  const {
+    chain,
+    signatures: { signature },
+  } = useSelector($wallet);
+  const renChain = useSelector($multiwalletChain);
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
@@ -53,6 +93,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   });
 
   const currencyConfig = getCurrencyConfig(currency);
+  const chainConfig = getChainConfig(chain);
   const destinationCurrency = toReleasedCurrency(currency);
   const destinationCurrencyUsdRate = findExchangeRate(
     rates,
@@ -69,8 +110,10 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         currency: currency,
         destAddress: address,
         userAddress: account,
+        sourceChain: renChain,
+        network: network,
       }),
-    [amount, currency, address, account]
+    [amount, currency, address, account, renChain, network]
   );
   const canInitializeReleasing = preValidateReleaseTransaction(tx);
 
@@ -88,18 +131,22 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [dispatch, canInitializeReleasing, walletConnected]);
 
-  const onBurnTxCreated = useCallback(
+  const onReleaseTxCreated = useCallback(
     (tx) => {
-      console.log("onReleaseTxCreated");
-      history.push({
-        pathname: paths.RELEASE_TRANSACTION,
-        search: "?" + createTxQueryString(tx),
-        state: {
-          txState: { newTx: true },
-        } as LocationTxState,
+      const meta: DbMeta = { state: releaseTxStateUpdateSequence[0] };
+      const dbTx = { ...tx, meta };
+      db.addTx(dbTx, account, signature).then(() => {
+        dispatch(addTransaction(tx));
+        history.push({
+          pathname: paths.RELEASE_TRANSACTION,
+          search: "?" + createTxQueryString(tx),
+          state: {
+            txState: { newTx: true },
+          } as LocationTxState,
+        });
       });
     },
-    [history]
+    [dispatch, history, account, signature]
   );
 
   return (
@@ -107,7 +154,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       {releasingInitialized && (
         <BurnAndReleaseTransactionInitializer
           initialTx={tx}
-          onCreated={onBurnTxCreated}
+          onCreated={onReleaseTxCreated}
         />
       )}
       <PaperHeader>
@@ -152,6 +199,11 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           }
         />
         <LabelWithValue
+          label="From"
+          labelTooltip={releaseTooltips.from}
+          value={chainConfig.full}
+        />
+        <LabelWithValue
           label="To"
           labelTooltip={releaseTooltips.to}
           value={address}
@@ -161,13 +213,14 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           Fees
         </Typography>
         <TransactionFees
+          chain={chain}
           amount={amount}
           currency={currency}
           type={TxType.BURN}
         />
       </PaperContent>
       <Divider />
-      <PaperContent topPadding bottomPadding>
+      <PaperContent darker topPadding bottomPadding>
         {walletConnected &&
           (pending ? (
             <CenteredProgress />

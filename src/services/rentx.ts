@@ -4,6 +4,7 @@ import {
   BinanceSmartChain,
   Bitcoin,
   BitcoinCash,
+  Dogecoin,
   Ethereum,
   Zcash,
 } from "@renproject/chains";
@@ -23,6 +24,7 @@ export const lockChainMap = {
   [RenChain.bitcoin]: () => Bitcoin(),
   [RenChain.zcash]: () => Zcash(),
   [RenChain.bitcoinCash]: () => BitcoinCash(),
+  [RenChain.dogecoin]: () => Dogecoin(),
 };
 
 export const mintChainMap = {
@@ -31,21 +33,24 @@ export const mintChainMap = {
     const { providers } = context;
 
     return Ethereum(providers[destChain], network).Account({
+      // providers.ethereum?
       address: destAddress,
-    });
+    }) as any;
   },
   [RenChain.binanceSmartChain]: (context: GatewayMachineContext) => {
     const { destAddress, destChain, network } = context.tx;
     const { providers } = context;
+
     return new BinanceSmartChain(providers[destChain], network).Account({
+      // providers.binanceSmartChain?
       address: destAddress,
-    });
+    }) as any;
   },
 };
 
 export const mintChainClassMap = {
-  [RenChain.binanceSmartChain]: BinanceSmartChain,
   [RenChain.ethereum]: Ethereum,
+  [RenChain.binanceSmartChain]: BinanceSmartChain,
 };
 
 export const getLockAndMintFees = (
@@ -55,6 +60,7 @@ export const getLockAndMintFees = (
   chain: RenChain
 ) => {
   const lockedCurrencyConfig = getCurrencyConfig(lockedCurrency);
+
   const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);
 
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
@@ -63,7 +69,7 @@ export const getLockAndMintFees = (
     .getFees({
       asset: lockedCurrency,
       from: From(),
-      to: To(provider, network),
+      to: To(provider, network), // TODO: this should differentiate based on selected asset
     })
     .then(mapFees);
 };
@@ -71,6 +77,14 @@ export const getLockAndMintFees = (
 export const burnChainMap: BurnMachineContext["fromChainMap"] = {
   [RenChain.ethereum]: (context) => {
     return Ethereum(context.providers.ethereum, context.tx.network).Account({
+      address: context.tx.userAddress,
+      value: context.tx.suggestedAmount,
+    }) as any;
+  },
+  [RenChain.binanceSmartChain]: (context) => {
+    const { network } = context.tx;
+    const { providers } = context;
+    return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
       address: context.tx.userAddress,
       value: context.tx.suggestedAmount,
     }) as any;
@@ -86,6 +100,12 @@ export const releaseChainMap: BurnMachineContext["toChainMap"] = {
   [RenChain.bitcoin]: (context) => {
     return Bitcoin().Address(context.tx.destAddress) as any;
   },
+  [RenChain.zcash]: (context) => {
+    return Zcash().Address(context.tx.destAddress) as any;
+  },
+  [RenChain.bitcoinCash]: (context) => {
+    return BitcoinCash().Address(context.tx.destAddress) as any;
+  },
 };
 
 export const releaseChainClassMap = {
@@ -100,16 +120,13 @@ export const getBurnAndReleaseFees = (
   network: RenNetwork,
   chain: RenChain
 ) => {
-  const burnedCurrencyConfig = getCurrencyConfig(burnedCurrency);
-  const burnedCurrencyChain = getChainConfig(burnedCurrencyConfig.sourceChain);
   const releasedCurrency = toReleasedCurrency(burnedCurrency);
   const releasedCurrencyConfig = getCurrencyConfig(releasedCurrency);
   const releasedCurrencyChain = getChainConfig(
     releasedCurrencyConfig.sourceChain
   );
 
-  console.log(releasedCurrency);
-  const From = (burnChainClassMap as any)[burnedCurrencyChain.rentxName];
+  const From = (burnChainClassMap as any)[chain];
   const To = (releaseChainClassMap as any)[releasedCurrencyChain.rentxName];
   return getRenJs(network)
     .getFees({

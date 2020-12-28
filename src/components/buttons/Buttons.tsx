@@ -1,12 +1,40 @@
-import { Button, ButtonProps, Fade, IconButton, IconButtonProps, styled, } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import CopyIcon from '@material-ui/icons/FileCopyOutlined'
-import MoreVertIcon from '@material-ui/icons/MoreVert'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
-import { blue, graphiteLight, gray, grayLight, skyBlue, skyBlueLighter, } from '../../theme/colors'
-import { copyToClipboard } from '../../utils/copyToClipboard'
-import { BrowserNotificationsIcon, QrCodeIcon, TxHistoryIcon, } from '../icons/RenIcons'
+import {
+  Button,
+  ButtonProps,
+  Fade,
+  IconButton,
+  IconButtonProps,
+  styled,
+} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import CloseIcon from "@material-ui/icons/Close";
+import CopyIcon from "@material-ui/icons/FileCopyOutlined";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import classNames from "classnames";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
+import MiddleEllipsis from "react-middle-ellipsis";
+import {
+  blue,
+  graphiteLight,
+  gray,
+  grayLight,
+  skyBlue,
+  skyBlueLighter,
+} from "../../theme/colors";
+import { defaultShadow } from "../../theme/other";
+import { copyToClipboard } from "../../utils/copyToClipboard";
+import {
+  BrowserNotificationsIcon,
+  QrCodeIcon,
+  TxHistoryIcon,
+} from "../icons/RenIcons";
+import { Hide } from "../layout/LayoutHelpers";
+import { PulseIndicator } from "../progress/ProgressHelpers";
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -54,9 +82,9 @@ export const ToggleIconButton: FunctionComponent<ToggleIconButtonProps> = ({
   });
   const Icon = useMemo(() => {
     switch (variant) {
-      case "settings":
-        return BrowserNotificationsIcon;
       case "notifications":
+        return BrowserNotificationsIcon;
+      case "settings":
         return MoreVertIcon;
       default:
         return () => null;
@@ -166,11 +194,9 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
     maxWidth: 265,
   },
   contentValue: {
-    display: "block",
-    paddingRight: 20,
-    paddingLeft: 20,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    width: "100%",
+    paddingLeft: 9,
+    paddingRight: 9,
   },
   copy: {
     flexGrow: 0,
@@ -206,13 +232,58 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
             <span>Copied!</span>
           </Fade>
         )}
-        {!copied && <span className={styles.contentValue}>{content}</span>}
+        <Hide when={copied} className={styles.contentValue}>
+          <MiddleEllipsisCopy content={content} />
+        </Hide>
       </div>
       <div className={styles.copy}>
         <IconButton classes={iconClasses} onClick={handleClick}>
           <CopyIcon fontSize="inherit" />
         </IconButton>
       </div>
+    </div>
+  );
+};
+
+const useMiddleEllipsisCopyStyles = makeStyles({
+  root: {
+    width: "100%",
+    textAlign: "center",
+    "&:hover $hideForHover": {
+      display: "none",
+    },
+    "&:hover $showForHover": {
+      display: "block",
+    },
+  },
+  hideForHover: {
+    maxWidth: "100%",
+    display: "block",
+  },
+  showForHover: {
+    display: "none",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+});
+
+type MiddleEllipsisCopyProps = {
+  content: string;
+};
+const MiddleEllipsisCopy: FunctionComponent<MiddleEllipsisCopyProps> = ({
+  content,
+}) => {
+  const styles = useMiddleEllipsisCopyStyles();
+  return (
+    <div className={styles.root}>
+      <div className={styles.hideForHover}>
+        <MiddleEllipsis>
+          <span>{content}</span>
+        </MiddleEllipsis>
+      </div>
+      <div className={styles.showForHover}>{content}</div>
     </div>
   );
 };
@@ -308,10 +379,11 @@ export const BigQrCode = styled("div")(({ theme }) => ({
 
 const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   root: {
+    padding: 6,
     color: theme.palette.secondary.light,
     border: `1px solid ${theme.palette.divider}`,
-    backgroundColor: "transparent",
-    padding: 6,
+    backgroundColor: theme.palette.common.white,
+    boxShadow: defaultShadow,
     "&:hover": {
       backgroundColor: theme.palette.divider,
       "@media (hover: none)": {
@@ -324,37 +396,89 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.divider,
     padding: 3,
   },
+  indicator: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+  },
+  hoisted: {
+    zIndex: theme.zIndex.tooltip,
+  },
   icon: {
     fontSize: 20,
   },
 }));
 
-type TransactionHistoryMenuIconButtonProps = IconButtonProps & {};
+type TransactionHistoryMenuIconButtonProps = IconButtonProps & {
+  opened?: boolean;
+  indicator?: boolean;
+};
 
-export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = (
-  props
-) => {
+export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = ({
+  opened,
+  indicator,
+  className,
+  ...props
+}) => {
   const {
     icon: iconClassName,
+    hoisted: hoistedClassName,
+    indicator: indicatorClassname,
     ...classes
   } = useTransactionHistoryIconButtonStyles();
+  const Icon = opened ? CloseIcon : TxHistoryIcon;
+  const resolvedClassName = classNames(className, {
+    [hoistedClassName]: opened,
+  });
   return (
-    <IconButton classes={classes} {...props}>
-      <TxHistoryIcon className={iconClassName} />
+    <IconButton className={resolvedClassName} classes={classes} {...props}>
+      <Icon className={iconClassName} />
+      {indicator && !opened && (
+        <PulseIndicator className={indicatorClassname} pulsing />
+      )}
     </IconButton>
   );
 };
 
-export const ActionButton: FunctionComponent<ButtonProps> = (props) => (
-  <Button
-    variant="contained"
-    size="large"
-    color="primary"
-    fullWidth
-    {...props}
-  />
-);
+const useActionButtonStyles = makeStyles({
+  root: { maxWidth: 360 },
+});
+
+export const ActionButton: FunctionComponent<ButtonProps> = ({ ...props }) => {
+  const styles = useActionButtonStyles();
+  return (
+    <Button
+      className={styles.root}
+      variant="contained"
+      size="large"
+      color="primary"
+      fullWidth
+      {...props}
+    />
+  );
+};
 
 export const ActionButtonWrapper = styled("div")(() => ({
   marginTop: 20,
+  display: "flex",
+  justifyContent: "center",
 }));
+
+const useSmallActionButtonStyles = makeStyles({
+  root: {
+    borderRadius: 8,
+  },
+});
+
+export const SmallActionButton: FunctionComponent<ButtonProps> = (props) => {
+  const classes = useSmallActionButtonStyles();
+  return (
+    <Button
+      classes={classes}
+      variant="contained"
+      size="small"
+      color="primary"
+      {...props}
+    />
+  );
+};

@@ -1,11 +1,13 @@
-import { Chip, styled, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { BridgeChain } from '../../utils/assetConfigs'
-import { Link } from '../links/Links'
-import { SimplePagination } from '../pagination/SimplePagination'
-import { TransactionStatusIndicator } from '../progress/ProgressHelpers'
-import { TransactionStatusType } from '../utils/types'
+import { Chip, styled, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { TxEntryStatus } from "../../features/transactions/transactionsUtils";
+import { BridgeChain } from "../../utils/assetConfigs";
+import { SmallActionButton } from "../buttons/Buttons";
+import { Link } from "../links/Links";
+import { SimplePagination } from "../pagination/SimplePagination";
+import { TransactionStatusIndicator } from "../progress/ProgressHelpers";
+import { TransactionStatusType } from "../utils/types";
 
 type TransactionType = "mint" | "release";
 
@@ -26,20 +28,34 @@ const useTransactionsHeaderStyles = makeStyles((theme) => ({
     ...standardPaddings,
     paddingTop: 20,
     background: theme.customColors.greyHeaderBackground,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  header: {},
+  actions: {
+    display: "flex",
+    alignItems: "center",
   },
 }));
 
+export const TransactionsContent = styled("div")(({ theme }) => ({
+  ...standardPaddings,
+}));
+
 type TransactionsHeaderProps = {
-  title: string;
+  title?: string;
 };
 
 export const TransactionsHeader: FunctionComponent<TransactionsHeaderProps> = ({
   title,
+  children,
 }) => {
   const styles = useTransactionsHeaderStyles();
   return (
     <div className={styles.root}>
       <Typography variant="h6">{title}</Typography>
+      <div className={styles.actions}>{children}</div>
     </div>
   );
 };
@@ -64,9 +80,11 @@ export const TransactionsStatusHeader: FunctionComponent<TransactionsHeaderProps
   const styles = useTransactionsStatusHeaderStyles();
   return (
     <div className={styles.root}>
-      <Typography variant="overline" className={styles.title}>
-        {title}
-      </Typography>
+      {title && (
+        <Typography variant="overline" className={styles.title}>
+          {title}
+        </Typography>
+      )}
     </div>
   );
 };
@@ -78,7 +96,7 @@ export const TransactionsPaginationWrapper = styled("div")(({ theme }) => ({
   backgroundColor: theme.customColors.greyHeaderBackground,
 }));
 
-const useTransactionEntryStyles = makeStyles((theme) => ({
+export const useTransactionEntryStyles = makeStyles((theme) => ({
   root: {
     ...standardPaddings,
     paddingTop: 18,
@@ -86,9 +104,11 @@ const useTransactionEntryStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
   },
-  details: {},
+  details: {
+    alignSelf: "flex-start",
+  },
   datetime: {},
   date: {
     marginRight: 6,
@@ -97,25 +117,44 @@ const useTransactionEntryStyles = makeStyles((theme) => ({
     marginTop: 3,
     marginBottom: 3,
   },
+  title: {
+    fontSize: 15,
+  },
   links: {},
+  expired: {
+    fontSize: 14,
+    display: "inline-block",
+    marginRight: 8,
+  },
   link: {
+    fontSize: 14,
+    display: "inline-block",
     marginRight: 24,
     "&:last-child": {
       marginRight: 0,
     },
+  },
+  tooltipIcon: {
+    fontSize: 15,
+    marginBottom: -2,
+    marginRight: 2,
+  },
+  actions: {
+    flexGrow: 1,
+    paddingRight: 20,
+    display: "flex",
+    justifyContent: "flex-end",
   },
   status: {},
 }));
 
 type TransactionEntryProps = {
   chain: BridgeChain;
-  status: TransactionStatusType;
+  status: TxEntryStatus;
   confirmations?: number;
 };
 
 export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
-  chain,
-  status,
   confirmations,
 }) => {
   const styles = useTransactionEntryStyles();
@@ -127,7 +166,7 @@ export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
           <Chip size="small" label="23:45:32 UTC" />
         </div>
         <div className={styles.description}>
-          <Typography variant="body2">
+          <Typography variant="body2" className={styles.title}>
             Mint 0.9877 renBTC on Ethereum
           </Typography>
         </div>
@@ -140,12 +179,11 @@ export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
           </Link>
         </div>
       </div>
+      <div className={styles.actions}>
+        <SmallActionButton>Submit</SmallActionButton>
+      </div>
       <div className={styles.status}>
-        <TransactionStatusIndicator
-          chain={chain}
-          status={status}
-          confirmations={confirmations}
-        />
+        <TransactionStatusIndicator confirmations={confirmations} />
       </div>
     </div>
   );
@@ -169,15 +207,24 @@ export const TransactionsGrid: FunctionComponent<any> = () => {
       <div>
         <TransactionEntry
           chain={BridgeChain.BTCC}
-          status="pending"
+          status={TxEntryStatus.COMPLETED}
           confirmations={2}
         />
-        <TransactionEntry chain={BridgeChain.BSCC} status="submitted" />
+        <TransactionEntry
+          chain={BridgeChain.BSCC}
+          status={TxEntryStatus.PENDING}
+        />
       </div>
       <TransactionsStatusHeader title={`Completed (${completed})`} />
       <div>
-        <TransactionEntry chain={BridgeChain.BTCC} status="completed" />
-        <TransactionEntry chain={BridgeChain.BSCC} status="completed" />
+        <TransactionEntry
+          chain={BridgeChain.BTCC}
+          status={TxEntryStatus.COMPLETED}
+        />
+        <TransactionEntry
+          chain={BridgeChain.BSCC}
+          status={TxEntryStatus.COMPLETED}
+        />
       </div>
       <TransactionsPaginationWrapper>
         <SimplePagination

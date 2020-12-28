@@ -140,3 +140,22 @@ export const SimplePagination: FunctionComponent<TablePaginationProps> = (
     />
   );
 };
+
+const useShowEntryStyles = makeStyles({
+  show: {},
+  hide: {
+    display: "none",
+  },
+});
+
+type ShowEntryProps = {
+  when: boolean;
+};
+
+export const ShowEntry: FunctionComponent<ShowEntryProps> = ({
+  when,
+  children,
+}) => {
+  const styles = useShowEntryStyles();
+  return <div className={when ? styles.show : styles.hide}>{children}</div>;
+};

@@ -15,9 +15,8 @@ import {
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import {
-  BigWrapper,
   CenteringSpacedBox,
-  MediumWrapper,
+  PaperSpacerWrapper,
 } from "../../../components/layout/LayoutHelpers";
 import {
   PaperActions,
@@ -33,64 +32,105 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { usePageTitle } from "../../../hooks/usePageTitle";
-import { usePaperTitle } from "../../../pages/MainPage";
 import { paths } from "../../../pages/routes";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
+import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
+import { BrowserNotificationsDrawer } from "../../notifications/components/NotificationsHelpers";
 import {
-  BookmarkPageWarning,
-  ProgressStatus,
-} from "../../transactions/components/TransactionsHelpers";
+  useBrowserNotifications,
+  useBrowserNotificationsConfirmation,
+} from "../../notifications/notificationsUtils";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
+import { TransactionMenu } from "../../transactions/components/TransactionMenu";
+import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
+import { useTransactionDeletion } from '../../transactions/transactionsHooks'
 import {
   createTxQueryString,
   getTxPageTitle,
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
-import { setWalletPickerOpened } from "../../wallet/walletSlice";
+import {
+  $chain,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
 import {
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
 } from "../components/ReleaseStatuses";
-import { getBurnAndReleaseParams, useBurnMachine } from "../releaseUtils";
+import { useBurnMachine, useReleaseTransactionPersistence } from '../releaseHooks'
+import {
+  getBurnAndReleaseParams,
+
+
+} from "../releaseUtils";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
 ) => {
-  const { history, location } = props;
-  const [paperTitle] = usePaperTitle();
-
+  const { history } = props;
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
+  const walletConnected = status === WalletStatus.CONNECTED;
+  const chain = useSelector($chain);
   const rates = useSelector($exchangeRates);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+
   usePageTitle(getTxPageTitle(tx));
+  const [paperTitle, setPaperTitle] = usePaperTitle();
+  useEffect(() => {
+    if (!walletConnected) {
+      setPaperTitle("Resume Transaction");
+    }
+  }, [walletConnected, setPaperTitle]);
 
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
   }, [history]);
+  const sourceChain = parsedTx?.sourceChain;
+
+  const {
+    menuOpened,
+    handleMenuOpen,
+    handleMenuClose,
+    handleDeleteTx,
+  } = useTransactionDeletion(tx);
+
+  const {
+    modalOpened,
+    handleModalOpen,
+    handleModalClose,
+  } = useBrowserNotificationsConfirmation();
+
+  const { enabled, handleEnable } = useBrowserNotifications(handleModalClose);
+
+  useEffect(() => {
+    if (sourceChain) {
+      const bridgeChainConfig = getChainConfigByRentxName(sourceChain);
+      dispatch(setChain(bridgeChainConfig.symbol));
+    }
+  }, [dispatch, sourceChain]);
+
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
-  const walletConnected = status === WalletStatus.CONNECTED;
 
-  const { burnCurrencyConfig, releaseCurrencyConfig } = getBurnAndReleaseParams(
-    tx
-  );
+  const {
+    burnCurrencyConfig,
+    burnChainConfig,
+    releaseCurrencyConfig,
+  } = getBurnAndReleaseParams(tx);
   const amount = Number(tx.targetAmount);
   const releaseCurrencyUsdRate = findExchangeRate(
     rates,
     releaseCurrencyConfig.symbol
   );
   const amountUsd = amount * releaseCurrencyUsdRate;
-
-  const onBookmarkWarningClosed = useCallback(() => {
-    history.replace({ ...location, state: undefined });
-  }, [history, location]);
 
   return (
     <>
@@ -104,56 +144,79 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         </PaperNav>
         <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
-          <ToggleIconButton variant="settings" />
-          <ToggleIconButton variant="notifications" />
+          <ToggleIconButton
+            pressed={enabled}
+            variant="notifications"
+            onClick={handleModalOpen}
+          />
+          <ToggleIconButton
+            variant="settings"
+            onClick={handleMenuOpen}
+            pressed={menuOpened}
+          />
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
         {walletConnected && <ReleaseTransactionStatus tx={tx} />}
         {!walletConnected && (
-          <BigWrapper>
-            <MediumWrapper>
+          <>
+            <PaperSpacerWrapper>
               <CenteringSpacedBox>
                 <WalletConnectionProgress />
               </CenteringSpacedBox>
-            </MediumWrapper>
+            </PaperSpacerWrapper>
             <ActionButton onClick={handleWalletPickerOpen}>
               Connect Wallet
             </ActionButton>
-          </BigWrapper>
+          </>
         )}
       </PaperContent>
-      <Divider />
-      <PaperContent topPadding bottomPadding>
-        <LabelWithValue
-          label="Releasing"
-          value={
-            <NumberFormatText
-              value={amount}
-              spacedSuffix={burnCurrencyConfig.short}
+      {walletConnected && (
+        <>
+          <Divider />
+          <PaperContent darker topPadding bottomPadding>
+            <LabelWithValue
+              label="Releasing"
+              value={
+                <NumberFormatText
+                  value={amount}
+                  spacedSuffix={burnCurrencyConfig.short}
+                />
+              }
+              valueEquivalent={
+                <NumberFormatText
+                  value={amountUsd}
+                  prefix="$"
+                  decimalScale={2}
+                  fixedDecimalScale
+                />
+              }
             />
-          }
-          valueEquivalent={
-            <NumberFormatText
-              value={amountUsd}
-              prefix="$"
-              decimalScale={2}
-              fixedDecimalScale
+            <LabelWithValue label="From" value={burnChainConfig.full} />
+            <LabelWithValue label="To" value={tx.destAddress} />
+            <SpacedDivider />
+            <TransactionFees
+              chain={chain}
+              amount={amount}
+              currency={burnCurrencyConfig.symbol}
+              type={TxType.BURN}
             />
-          }
-        />
-        <LabelWithValue label="To" value={tx.destAddress} />
-        <SpacedDivider />
-        <TransactionFees
-          amount={amount}
-          currency={burnCurrencyConfig.symbol}
-          type={TxType.BURN}
-        />
-        <Debug it={{ parsedTx, txState: txState }} />
-      </PaperContent>
-      {txState?.newTx && (
-        <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
+            <Debug it={{ parsedTx, txState: txState }} />
+          </PaperContent>
+        </>
       )}
+      <BrowserNotificationsDrawer
+        open={modalOpened}
+        onClose={handleModalClose}
+        onEnable={handleEnable}
+      />
+      <TransactionMenu
+        tx={tx}
+        open={menuOpened}
+        onClose={handleMenuClose}
+        onDeleteTx={handleDeleteTx}
+      />
+      <Debug it={{ parsedTx, txState: txState }} />
     </>
   );
 };
@@ -189,10 +252,10 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     }
   }, [history, current.value, current.context.tx]);
 
-  console.log("current.value", current.value);
-  console.log("ctx", current.context.tx);
   // const forceState = "srcConfirmed";
-  switch (current.value as keyof BurnMachineSchema["states"]) {
+  const state = current.value as keyof BurnMachineSchema["states"];
+  useReleaseTransactionPersistence(current.context.tx, state);
+  switch (state) {
     // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
       return (
@@ -204,10 +267,10 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
       );
     case "srcSettling":
       return <ReleaseProgressStatus tx={current.context.tx} pending />;
-    case "srcConfirmed":
-      return <ProgressStatus reason="Submitting to RenVM" />;
+    case "srcConfirmed": // return <ProgressStatus reason="Submitting to RenVM" />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={current.context.tx} />;
+    default:
+      return <ProgressStatus />;
   }
-  return <ProgressStatus />;
 };

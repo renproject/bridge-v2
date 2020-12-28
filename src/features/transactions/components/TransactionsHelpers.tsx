@@ -1,10 +1,12 @@
 import { Button, styled, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useState,
 } from "react";
+import { useInterval } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -16,7 +18,8 @@ import {
   ProgressWrapper,
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
-import { usePaperTitle } from "../../../pages/MainPage";
+import { usePaperTitle } from "../../../providers/TitleProviders";
+import { getFormattedHMS } from "../../../utils/dates";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -126,4 +129,24 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
       </ProgressWrapper>
     </>
   );
+};
+
+export type TransactionItemProps = {
+  tx: GatewaySession;
+  onAction?: () => void;
+  onRestart?: () => void;
+};
+
+type HMSCountdownProps = { milliseconds: number };
+
+export const HMSCountdown: FunctionComponent<HMSCountdownProps> = ({
+  milliseconds,
+}) => {
+  const [count, setCount] = React.useState(milliseconds);
+  useInterval(() => {
+    setCount((ms) => ms - 1000);
+  }, 1000);
+  const time = getFormattedHMS(count);
+
+  return <strong>{time}</strong>;
 };

@@ -6,6 +6,7 @@ import TelegramIcon from "@material-ui/icons/Telegram";
 import TwitterIcon from "@material-ui/icons/Twitter";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
+import { links } from "../../constants/constants";
 import { paths } from "../../pages/routes";
 import { CustomLinkProps, Link } from "../links/Links";
 
@@ -37,6 +38,8 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "flex",
       justifyContent: "space-between",
+      paddingTop: 20,
+      paddingBottom: 10,
     },
   },
   rootMobile: {
@@ -93,39 +96,44 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
     <footer className={rootClassName}>
       <ul className={styles.textLinks}>
         <li>
-          <FooterTextLink href="/">What is RenVM?</FooterTextLink>
+          <FooterTextLink to={paths.ABOUT} target="_blank">
+            About RenVM
+          </FooterTextLink>
         </li>
         <li>
-          <FooterTextLink to={paths.ABOUT}>About RenVM</FooterTextLink>
+          <FooterTextLink href={links.DOCS} target="_blank">
+            Docs
+          </FooterTextLink>
         </li>
         <li>
-          <FooterTextLink>Docs</FooterTextLink>
+          <FooterTextLink href={links.FAQ} target="_blank">
+            FAQs
+          </FooterTextLink>
         </li>
         <li>
-          <FooterTextLink>FAQs</FooterTextLink>
-        </li>
-        <li>
-          <FooterTextLink href="/">Wiki</FooterTextLink>
+          <FooterTextLink href={links.WIKI} target="_blank">
+            Wiki
+          </FooterTextLink>
         </li>
       </ul>
       <ul className={styles.iconLinks}>
         <li>
-          <FooterIconLink href="/">
+          <FooterIconLink href={links.SOCIAL_TWITTER} target="_blank">
             <TwitterIcon fontSize="inherit" />
           </FooterIconLink>
         </li>
         <li>
-          <FooterIconLink href="/">
+          <FooterIconLink href={links.SOCIAL_GITHUB} target="_blank">
             <GitHubIcon fontSize="inherit" />
           </FooterIconLink>
         </li>
         <li>
-          <FooterIconLink href="/">
+          <FooterIconLink href={links.SOCIAL_TELEGRAM} target="_blank">
             <TelegramIcon fontSize="inherit" />
           </FooterIconLink>
         </li>
         <li>
-          <FooterIconLink href="/">
+          <FooterIconLink href={links.SOCIAL_REDDIT} target="_blank">
             <RedditIcon fontSize="inherit" />
           </FooterIconLink>
         </li>

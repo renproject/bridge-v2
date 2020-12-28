@@ -6,9 +6,11 @@ import { Provider } from "react-redux";
 import "./index.css";
 import { MultiwalletProvider } from "./providers/multiwallet/Multiwallet";
 import { NotificationsProvider } from "./providers/Notifications";
+import { TitleProviders } from "./providers/TitleProviders";
 import * as serviceWorker from "./serviceWorker";
 import store from "./store/store";
 import { lightTheme } from "./theme/theme";
+import "./index.css";
 
 const render = () => {
   const App = require("./App").default;
@@ -16,9 +18,11 @@ const render = () => {
     <Provider store={store}>
       <MuiThemeProvider theme={lightTheme}>
         <MultiwalletProvider>
-          <NotificationsProvider>
-            <App />
-          </NotificationsProvider>
+          <TitleProviders>
+            <NotificationsProvider>
+              <App />
+            </NotificationsProvider>
+          </TitleProviders>
         </MultiwalletProvider>
       </MuiThemeProvider>
     </Provider>,

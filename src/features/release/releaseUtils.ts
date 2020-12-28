@@ -1,24 +1,24 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { burnMachine, GatewaySession } from "@renproject/ren-tx";
-import { useMachine } from "@xstate/react";
-import { useSelector } from 'react-redux'
-import { env } from "../../constants/environmentVariables";
-import { getRenJs } from "../../services/renJs";
-import { burnChainMap, releaseChainMap } from "../../services/rentx";
+import { RenNetwork } from '@renproject/interfaces'
+import { GatewaySession, } from '@renproject/ren-tx'
 import {
   BridgeCurrency,
   getChainConfig,
+  getChainConfigByRentxName,
   getChainRentxName,
   getCurrencyConfig,
   getCurrencyConfigByRentxName,
-  getCurrencyRentxSourceChain,
-  toMintedCurrency,
   getNetworkConfigByRentxName,
+  RenChain,
+  toMintedCurrency,
   toReleasedCurrency,
-} from "../../utils/assetConfigs";
-import { $network } from '../network/networkSlice'
-import { getChainExplorerLink } from "../transactions/transactionsUtils";
+} from '../../utils/assetConfigs'
+import {
+  getChainExplorerLink,
+  getTxCreationTimestamp,
+  TxEntryStatus,
+  TxMeta,
+  TxPhase,
+} from '../transactions/transactionsUtils'
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
@@ -36,6 +36,8 @@ type CreateReleaseTransactionParams = {
   currency: BridgeCurrency;
   userAddress: string;
   destAddress: string;
+  sourceChain: RenChain;
+  network: RenNetwork;
 };
 
 export const createReleaseTransaction = ({
@@ -43,15 +45,17 @@ export const createReleaseTransaction = ({
   currency,
   userAddress,
   destAddress,
+  sourceChain,
+  network,
 }: CreateReleaseTransactionParams) => {
   const sourceCurrency = toReleasedCurrency(currency);
   const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
   const tx: GatewaySession = {
     id: "tx-" + Math.floor(Math.random() * 10 ** 16),
     type: "burn",
-    network: env.NETWORK as RenNetwork,
+    network,
     sourceAsset: sourceCurrencyConfig.rentxName,
-    sourceChain: getCurrencyRentxSourceChain(currency),
+    sourceChain: sourceChain, // TODO: pass sourceChain explicitly
     destAddress,
     destChain: getChainRentxName(sourceCurrencyConfig.sourceChain),
     targetAmount: Number(amount),
@@ -70,7 +74,7 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   const burnCurrencyConfig = getCurrencyConfig(
     toMintedCurrency(releaseCurrencyConfig.symbol)
   );
-  const burnChainConfig = getChainConfig(burnCurrencyConfig.sourceChain);
+  const burnChainConfig = getChainConfigByRentxName(tx.sourceChain);
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
 
   const transaction = Object.values(tx.transactions)[0];
@@ -88,13 +92,30 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   let releaseTxHash: string = "";
   let releaseTxLink: string = "";
   if (transaction && transaction.destTxHash) {
-    releaseTxHash = transaction.destTxHash;
+    releaseTxHash = Buffer.from(transaction.destTxHash, "base64").toString(
+      "hex"
+    );
     releaseTxLink =
       getChainExplorerLink(
         releaseChainConfig.symbol,
         networkConfig.symbol,
         releaseTxHash
       ) || "";
+  }
+  const meta: TxMeta = {
+    status: TxEntryStatus.PENDING,
+    phase: TxPhase.NONE,
+    createdTimestamp: getTxCreationTimestamp(tx),
+  };
+  if (burnTxHash) {
+    if (releaseTxHash) {
+      // burn and releaseTxHash present
+      meta.status = TxEntryStatus.COMPLETED;
+    }
+  } else {
+    // no burnTxHash - action required on burningChain
+    meta.status = TxEntryStatus.ACTION_REQUIRED;
+    meta.phase = TxPhase.BURN;
   }
 
   return {
@@ -107,30 +128,12 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     burnTxLink,
     releaseTxHash,
     releaseTxLink,
+    meta,
   };
 };
 
-export const useBurnMachine = (burnTransaction: GatewaySession) => {
-  const { enabledChains } = useMultiwallet();
-  const network = useSelector($network);
-  const providers = Object.entries(enabledChains).reduce(
-    (c, n) => ({
-      ...c,
-      [n[0]]: n[1].provider,
-    }),
-    {}
-  );
-  return useMachine(burnMachine, {
-    context: {
-      tx: burnTransaction,
-      providers,
-      sdk: getRenJs(network),
-      fromChainMap: burnChainMap,
-      toChainMap: releaseChainMap,
-      // If we already have a transaction, we need to autoSubmit
-      // to check the tx status
-      autoSubmit: !!Object.values(burnTransaction.transactions)[0],
-    },
-    devTools: env.XSTATE_DEVTOOLS,
-  });
+export const isReleaseTransactionCompleted = (tx: GatewaySession) => {
+  const { meta } = getBurnAndReleaseParams(tx);
+  return meta.status === TxEntryStatus.COMPLETED;
 };
+

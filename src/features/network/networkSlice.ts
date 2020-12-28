@@ -3,14 +3,15 @@ import { RenNetwork } from "@renproject/interfaces";
 import { env } from "../../constants/environmentVariables";
 import { RootState } from "../../store/rootReducer";
 
-type WalletState = {
+type NetworkState = {
   renNetwork: RenNetwork;
 };
 
 const cachedTargetNetwork = localStorage.getItem("renNetwork");
 
-let initialState: WalletState = {
-  renNetwork: (cachedTargetNetwork || env.NETWORK) as RenNetwork,
+let initialState: NetworkState = {
+  renNetwork:
+    ((cachedTargetNetwork || env.NETWORK) as RenNetwork) || RenNetwork.Testnet,
 };
 
 const slice = createSlice({

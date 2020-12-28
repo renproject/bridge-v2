@@ -1,4 +1,5 @@
 import { SvgIcon, SvgIconProps } from "@material-ui/core";
+import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
 import { getScalingProps } from "../../utils/icons";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
@@ -14,6 +15,8 @@ import { ReactComponent as BtcGrey } from "./../../assets/icons/btc-icon-grey.sv
 import { ReactComponent as Btc } from "./../../assets/icons/btc-icon-nocolour.svg";
 import { ReactComponent as Bitcoin } from "./../../assets/icons/btc-icon-only.svg";
 import { ReactComponent as BtcFull } from "./../../assets/icons/btc-icon.svg";
+import { ReactComponent as EmptyCircle } from "./../../assets/icons/empty-circle-icon.svg";
+import { ReactComponent as Empty } from "./../../assets/icons/empty-icon.svg";
 import { ReactComponent as DgbGrey } from "./../../assets/icons/dgb-icon-grey.svg";
 import { ReactComponent as Dgb } from "./../../assets/icons/dgb-icon-nocolour.svg";
 import { ReactComponent as DgbFull } from "./../../assets/icons/dgb-icon.svg";
@@ -49,8 +52,23 @@ import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconn
 import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
+import CompletedIcon from "@material-ui/icons/Done";
+import AddIcon from "@material-ui/icons/Add";
+import DeleteIcon from "@material-ui/icons/Delete";
 
-export type CustomSvgIconComponent = FunctionComponent<SvgIconProps>;
+export { CompletedIcon, AddIcon, DeleteIcon };
+
+export type CustomSvgIconComponent =
+  | FunctionComponent<SvgIconProps>
+  | SvgIconComponent;
+
+export const EmptyCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={EmptyCircle} {...props} />
+);
+
+export const EmptyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Empty} {...props} />
+);
 
 export const TxHistoryIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={TxHistory} {...props} />
@@ -142,6 +160,10 @@ export const BinanceChainFullIcon: CustomSvgIconComponent = (props) => {
 
 export const BinanceChainColorIcon: CustomSvgIconComponent = (props) => {
   return <SvgIcon component={BinanceChainColor} {...props} />;
+};
+
+export const EthereumChainIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={EthereumIcon} {...props} />;
 };
 
 export const EthereumChainFullIcon: CustomSvgIconComponent = (props) => {

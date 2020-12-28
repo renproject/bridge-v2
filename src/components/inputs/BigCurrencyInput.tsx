@@ -1,9 +1,9 @@
-import { makeStyles, styled } from "@material-ui/core/styles";
-import classNames from "classnames";
-import React, { FunctionComponent, useRef } from "react";
-import NumberFormat, { NumberFormatValues } from "react-number-format";
-import { generatePlaceholderStyles } from "../../theme/themeUtils";
-import { numberFormatOptions, toUsdFormat } from "../../utils/formatters";
+import { makeStyles, styled } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import React, { FunctionComponent, useRef } from 'react'
+import NumberFormat, { NumberFormatValues } from 'react-number-format'
+import { generatePlaceholderStyles } from '../../theme/themeUtils'
+import { numberFormatOptions, toUsdFormat } from '../../utils/formatters'
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     "& input": {
       fontFamily: "inherit",
-      color: theme.palette.common.black,
+      color: theme.customColors.textDark,
     },
   },
   large: {
@@ -66,20 +66,20 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
   placeholder = `0 ${symbol}`,
 }) => {
   const styles = useStyles();
+  const ref = useRef(null);
   const inputRef = useRef(null);
   const val = value ? String(value) : "";
   const handleChange: NumberChange = (formatValues) => {
     onChange(formatValues.value);
   };
 
-  const chars = val.replace(".", "").replace(` ${symbol}`, "");
-
+  const chars = val.replace(".", "") + " " + symbol;
   let size = "large";
-  if (chars.length > 5 && chars.length <= 7) {
+  if (chars.length > 10 && chars.length <= 12) {
     size = "medium";
-  } else if (chars.length > 7 && chars.length <= 9) {
+  } else if (chars.length > 12 && chars.length <= 14) {
     size = "small";
-  } else if (chars.length > 9) {
+  } else if (chars.length > 14) {
     size = "smallest";
   }
 
@@ -93,13 +93,14 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
     <div className={rootClassName}>
       <NumberFormat
         value={val}
-        ref={inputRef}
+        ref={ref}
         {...numberFormatOptions}
         suffix={" " + symbol}
         onValueChange={handleChange}
         getInputRef={(input: any) => {
           inputRef.current = input;
         }}
+        autoFocus={true}
         className={styles.input}
         placeholder={placeholder}
       />

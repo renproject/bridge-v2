@@ -1,28 +1,36 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GatewaySession } from "@renproject/ren-tx";
-import { RootState } from "../../store/rootReducer";
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { GatewaySession } from '@renproject/ren-tx'
+import { RootState } from '../../store/rootReducer'
+import { getLockAndMintParams } from '../mint/mintUtils'
+import { getBurnAndReleaseParams } from '../release/releaseUtils'
+import { txCompletedSorter, TxEntryStatus, TxType, } from './transactionsUtils'
 
-type BridgeTransaction = GatewaySession;
+export type BridgeTransaction = GatewaySession;
 
 type TransactionsState = {
   txs: Array<BridgeTransaction>;
-  currentTx: BridgeTransaction | null;
+  txsPending: boolean;
+  txHistoryOpened: boolean;
 };
 
 let initialState: TransactionsState = {
   txs: [],
-  currentTx: null,
+  txsPending: false,
+  txHistoryOpened: false,
 };
 
 const slice = createSlice({
   name: "transactions",
   initialState,
   reducers: {
+    setTxHistoryOpened(state, action: PayloadAction<boolean>) {
+      state.txHistoryOpened = action.payload;
+    },
+    setTxsPending(state, action: PayloadAction<boolean>) {
+      state.txsPending = action.payload;
+    },
     setTransactions(state, action: PayloadAction<Array<BridgeTransaction>>) {
       state.txs = action.payload;
-    },
-    setCurrentTransaction(state, action: PayloadAction<BridgeTransaction>) {
-      state.currentTx = action.payload;
     },
     addTransaction(state, action: PayloadAction<BridgeTransaction>) {
       const existing =
@@ -57,8 +65,9 @@ const slice = createSlice({
 });
 
 export const {
+  setTxHistoryOpened,
+  setTxsPending,
   setTransactions,
-  setCurrentTransaction,
   addTransaction,
   updateTransaction,
   updateTransactionById,
@@ -67,16 +76,27 @@ export const {
 
 export const transactionsReducer = slice.reducer;
 
-export const $transactions = (state: RootState) => state.transactions;
-export const $txs = createSelector(
-  $transactions,
-  (transactions) => transactions.txs
+export const $transactionsData = (state: RootState) => state.transactions;
+export const $orderedTransactions = createSelector(
+  $transactionsData,
+  (transactions) => [...transactions.txs].sort(txCompletedSorter)
 );
-export const $currentTx = createSelector(
-  $transactions,
-  (transactions) => transactions.currentTx
+export const $transactionsNeedsAction = createSelector(
+  $transactionsData,
+  (transactions) => {
+    for (let tx of transactions.txs) {
+      const { meta } =
+        tx.type === TxType.MINT
+          ? getLockAndMintParams(tx)
+          : getBurnAndReleaseParams(tx);
+      if (meta.status === TxEntryStatus.ACTION_REQUIRED) {
+        return true;
+      }
+    }
+    return false;
+  }
 );
-
-// export const $currentTx = createSelector($txs, $currentTxId, (txs, id) =>
-//   txs.find((tx) => tx.id === id)
-// );
+export const $txHistoryOpened = createSelector(
+  $transactionsData,
+  (transactions) => transactions.txHistoryOpened
+);

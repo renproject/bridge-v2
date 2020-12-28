@@ -11,3 +11,4 @@ export const generatePlaceholderStyles = (color: string) => {
     "&::-ms-input-placeholder": placeholder, // Edge
   };
 };
+

@@ -1,28 +1,29 @@
 import {
   CircularProgress,
   CircularProgressProps,
-  fade,
   styled,
-  SvgIconProps,
   Theme,
   Typography,
+  useTheme,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import CompletedIcon from "@material-ui/icons/Check";
 import DoneIcon from "@material-ui/icons/Done";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
-import { BridgeChain } from "../../utils/assetConfigs";
-import { BinanceChainIcon, BitcoinIcon, EthereumIcon } from "../icons/RenIcons";
+import {
+  createPulseAnimation,
+  createPulseOpacityAnimation,
+} from "../../theme/animationUtils";
+import { CustomSvgIconComponent, EmptyIcon } from "../icons/RenIcons";
 import { CenteringSpacedBox } from "../layout/LayoutHelpers";
-import { TransactionStatusType } from "../utils/types";
 
-export const CenteredProgress: FunctionComponent<CircularProgressProps> = (
-  props
-) => {
+export const CenteredProgress: FunctionComponent<CircularProgressProps> = ({
+  size = 40,
+  ...props
+}) => {
   return (
     <CenteringSpacedBox>
-      <CircularProgress size={40} {...props} />
+      <CircularProgress size={size} {...props} />
     </CenteringSpacedBox>
   );
 };
@@ -35,7 +36,7 @@ export const BigDoneIcon = styled(DoneIcon)({
 type ProgressIconSize = "big" | "medium" | number;
 
 type ProgressWithContentProps = {
-  color: string;
+  color?: string;
   incompleteSectionColor?: string;
   fontSize?: ProgressIconSize;
   processing?: boolean;
@@ -62,7 +63,11 @@ const generateSections = (all: number) => {
   return sections;
 };
 
-const useSectionStyles = makeStyles<Theme, number>((theme) => {
+// const useSectionAnimationStyles = makeStyles<Theme, any>(() => {
+//   const { pulsingKeyframes, pulsingStyles } = createPulseAnimation(color);
+// });
+
+const useSectionStyles = makeStyles<Theme, any>((theme) => {
   return {
     dynamicSection: (num: number) => {
       return generateSections(num);
@@ -70,54 +75,63 @@ const useSectionStyles = makeStyles<Theme, number>((theme) => {
   };
 });
 
+const defaultProgressWithContentSize = 166;
+
 const useProgressWithContentStyles = makeStyles<
   Theme,
   ProgressWithContentProps
->((theme) => ({
-  root: {
-    display: "inline-flex",
-    position: "relative",
-    fontSize: ({ fontSize = "inherit" }) => fontSize,
-    color: ({ color = "inherit" }) => color,
-  },
-  rootBig: {
-    fontSize: 70,
-  },
-  rootMedium: {
-    fontSize: 24,
-  },
-  content: {
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    position: "absolute",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  progressHidden: {
-    visibility: "hidden",
-  },
-  sections: {
-    position: "relative",
-  },
-  section: {
-    position: "absolute",
-    color: ({ color }) => {
-      if (color !== "inherit") {
-        return fade(color, 0.2);
-      }
-      return theme.customColors.skyBlue;
+>((theme) => {
+  const { pulsingStyles, pulsingKeyframes } = createPulseOpacityAnimation();
+  return {
+    root: {
+      display: "inline-flex",
+      position: "relative",
+      fontSize: ({ fontSize = "inherit" }) => fontSize,
+      color: ({ color = "inherit" }) => color,
     },
-    "& > svg": {
-      transformOrigin: "50% 50%",
+    rootBig: {
+      fontSize: 70,
     },
-  },
-  sectionCompleted: {
-    color: () => "inherit",
-  },
-}));
+    rootMedium: {
+      fontSize: 24,
+    },
+    content: {
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      position: "absolute",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    progressHidden: {
+      visibility: "hidden",
+    },
+    sections: {
+      position: "relative",
+    },
+    section: {
+      position: "absolute",
+      color: ({ color }) => {
+        if (color !== "inherit") {
+          return color;
+        }
+        return theme.customColors.skyBlue;
+      },
+      opacity: 0.2,
+      "& > svg": {
+        transformOrigin: "50% 50%",
+      },
+    },
+    ...pulsingKeyframes,
+    sectionProcessing: pulsingStyles,
+    sectionCompleted: {
+      color: "inherit",
+      opacity: 1,
+    },
+  };
+});
 
 export const ProgressWrapper = styled("div")({
   display: "flex",
@@ -132,23 +146,22 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
   processing,
   confirmations,
   targetConfirmations = 6,
-  size = 166,
+  size = defaultProgressWithContentSize,
   fontSize = Math.floor(0.75 * size),
   children,
 }) => {
+  const theme = useTheme();
   const styles = useProgressWithContentStyles({
-    color,
+    color: color || theme.palette.primary.main,
     fontSize,
+    size,
   });
   const sectionsStyles = useSectionStyles(targetConfirmations);
   const rootClassName = classNames(styles.root, {
     [styles.rootBig]: fontSize === "big",
     [styles.rootMedium]: fontSize === "medium",
   });
-  const shared = {
-    size,
-    thickness: 3,
-  };
+
   const margin = getSectionMargin(targetConfirmations);
   return (
     <div className={rootClassName}>
@@ -156,31 +169,37 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
         <div className={styles.sections}>
           {new Array(targetConfirmations).fill(true).map((_, index) => {
             const value = 100 / targetConfirmations - margin;
+            const completed = index < confirmations;
+            const processing = index === confirmations;
             const sectionClassName = classNames(
               styles.section,
               sectionsStyles.dynamicSection,
+              styles.sectionAnimated,
               {
-                [styles.sectionCompleted]: index < confirmations,
+                [styles.sectionCompleted]: completed,
+                [styles.sectionProcessing]: processing,
               }
             );
             return (
               <CircularProgress
                 key={index}
                 className={sectionClassName}
-                variant="static"
+                variant="determinate"
                 value={value}
                 color="inherit"
-                {...shared}
+                size={size}
+                thickness={3}
               />
             );
           })}
         </div>
       )}
       <CircularProgress
-        variant={processing ? "indeterminate" : "static"}
+        variant={processing ? "indeterminate" : "determinate"}
         value={typeof confirmations !== "undefined" ? 0 : value}
         color="inherit"
-        {...shared}
+        size={size}
+        thickness={3}
       />
       <div className={styles.content}>{children}</div>
     </div>
@@ -234,29 +253,59 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
   );
 };
 
+// export const createPulseAnimation = makeStyles((theme) => ({
+//   "@keyframes pulse": {
+//     from: {
+//       boxShadow: "0 0 0 0 rgba(204,169,44, 0.4)",
+//     },
+//     to: {
+//       boxShadow: "0 0 0 0 rgba(204,169,44, 0);",
+//     },
+//   },
+// }));
+
+export const usePulseIndicatorStyles = makeStyles<Theme, PulseIndicatorProps>(
+  (theme) => {
+    const color = theme.palette.primary.main;
+    const { pulsingKeyframes, pulsingStyles } = createPulseAnimation(color);
+    return {
+      ...pulsingKeyframes,
+      root: {
+        width: ({ size = 8 }) => size,
+        height: ({ size = 8 }) => size,
+        borderRadius: ({ size = 8 }) => size / 2,
+        background: theme.palette.primary.main,
+      },
+      pulsing: pulsingStyles,
+    };
+  }
+);
+
+type PulseIndicatorProps = {
+  pulsing?: boolean;
+  size?: number;
+  className?: string;
+};
+
+export const PulseIndicator: FunctionComponent<PulseIndicatorProps> = ({
+  pulsing,
+  className,
+  size = 8,
+}) => {
+  const styles = usePulseIndicatorStyles({ size });
+  const resolvedClassName = classNames(styles.root, className, {
+    [styles.pulsing]: pulsing,
+  });
+
+  return <div className={resolvedClassName} />;
+};
+
 export const TransactionStatusCircleIndicator = styled("div")(({ theme }) => ({
   width: 10,
   height: 10,
   borderRadius: 5,
   background: theme.palette.primary.main,
 }));
-
-const resolveIcon = (chain: BridgeChain, status: TransactionStatusType) => {
-  const shared = { color: "inherit" } as SvgIconProps;
-  if (status === "completed") {
-    return <CompletedIcon {...shared} fontSize="large" />;
-  }
-  switch (chain) {
-    case BridgeChain.BSCC:
-      return <BinanceChainIcon {...shared} fontSize="large" />;
-    case BridgeChain.BTCC:
-      return <BitcoinIcon {...shared} fontSize="large" />;
-    case BridgeChain.ETHC:
-      return <EthereumIcon {...shared} fontSize="large" />;
-    default:
-      return <EthereumIcon {...shared} fontSize="large" />;
-  }
-};
 
 const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
   root: {
@@ -282,33 +331,38 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
 }));
 
 export type TransactionStatusIndicatorProps = {
-  status: TransactionStatusType;
-  chain: BridgeChain;
+  needsAction?: boolean;
+  Icon?: CustomSvgIconComponent;
+  showConfirmations?: boolean;
   confirmations?: number;
+  targetConfirmations?: number;
 };
 
 export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndicatorProps> = ({
-  status,
-  chain,
+  needsAction,
+  showConfirmations = true,
   confirmations,
+  targetConfirmations,
+  Icon = EmptyIcon,
 }) => {
   const styles = useTransactionStatusIndicatorStyles();
-  const Icon = resolveIcon(chain, status);
+  const confirmationProps = showConfirmations
+    ? {
+        confirmations,
+        targetConfirmations,
+      }
+    : {};
   return (
     <div className={styles.root}>
       <div className={styles.iconWrapper}>
         <div className={styles.iconCircle}>
-          <ProgressWithContent
-            color="inherit"
-            size={42}
-            confirmations={confirmations}
-          >
-            {Icon}
+          <ProgressWithContent color="inherit" size={42} {...confirmationProps}>
+            <Icon fontSize="large" color="inherit" />
           </ProgressWithContent>
         </div>
       </div>
       <div className={styles.indicatorWrapper}>
-        {status === "submitted" && <TransactionStatusCircleIndicator />}
+        {needsAction && <PulseIndicator pulsing size={10} />}
       </div>
     </div>
   );

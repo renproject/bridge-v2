@@ -19,7 +19,9 @@ const useLabelWithValueStyles = makeStyles((theme) => ({
     marginBottom: 8,
   },
   labelWrapper: {
-    color: theme.palette.grey[500],
+    flexShrink: 0,
+    maxWidth: "50%",
+    color: theme.palette.grey[600],
   },
   labelTooltip: {
     marginLeft: 4,
@@ -30,11 +32,14 @@ const useLabelWithValueStyles = makeStyles((theme) => ({
     verticalAlign: "middle",
   },
   valueWrapper: {
+    textAlign: "right",
     color: theme.palette.common.black,
   },
-  value: {},
+  value: {
+    whiteSpace: "nowrap",
+  },
   valueEquivalent: {
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[600],
     marginLeft: 4,
   },
 }));
@@ -44,10 +49,11 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   labelTooltip,
   value,
   valueEquivalent,
+  ...rest
 }) => {
   const styles = useLabelWithValueStyles();
   return (
-    <div className={styles.root}>
+    <div className={styles.root} {...rest}>
       <div className={styles.labelWrapper}>
         {label}
         {labelTooltip && (
@@ -99,7 +105,7 @@ const useReceivingAssetInfoStyle = makeStyles((theme) => ({
   },
   valueEquivalent: {
     fontSize: 13,
-    color: theme.palette.grey[500],
+    color: theme.palette.grey[600],
   },
 }));
 

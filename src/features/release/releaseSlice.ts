@@ -29,7 +29,7 @@ const slice = createSlice({
     setReleaseAddress(state, action: PayloadAction<string>) {
       state.address = action.payload;
     },
-    reset(state, action: PayloadAction<ReleaseState | undefined>) {
+    resetRelease(state, action: PayloadAction<ReleaseState | undefined>) {
       state = action.payload || initialState;
     },
   },
@@ -39,6 +39,7 @@ export const {
   setReleaseCurrency,
   setReleaseAmount,
   setReleaseAddress,
+  resetRelease
 } = slice.actions;
 
 export const releaseReducer = slice.reducer;
