@@ -440,13 +440,13 @@ export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
     symbol: BridgeNetwork.MAINNET,
     short: "MAINNET",
     full: "Mainnet",
-    rentxName: "mainnet",
+    rentxName: RenNetwork.Mainnet,
   },
   [BridgeNetwork.TESTNET]: {
     symbol: BridgeNetwork.TESTNET,
     short: "TESTNET",
     full: "Testnet",
-    rentxName: "testnet",
+    rentxName: RenNetwork.Testnet,
   },
   [BridgeNetwork.UNKNOWN]: {
     symbol: BridgeNetwork.UNKNOWN,
@@ -458,8 +458,10 @@ export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
 
 const unknownNetworkConfig = networksConfig[BridgeNetwork.UNKNOWN];
 
+export const isTestNetwork = (name: string) => name.indexOf("testnet") > -1;
+
 export const getNetworkConfigByRentxName = (name: string) => {
-  if (name.indexOf("testnet") > -1) {
+  if (isTestNetwork(name)) {
     return networksConfig[BridgeNetwork.TESTNET];
   }
   return (
@@ -478,11 +480,10 @@ export const supportedRenNetworks = [
 export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
   BridgeCurrency.BCH,
-  // BridgeCurrency.DOGE, // TODO: not supported by kovan
+  BridgeCurrency.DOGE,
   BridgeCurrency.ZEC,
 ];
 
-// TODO: should be the same
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
   BridgeChain.BSCC,
@@ -493,7 +494,7 @@ export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
   BridgeCurrency.RENBCH,
-  // BridgeCurrency.RENDOGE,
+  BridgeCurrency.RENDOGE,
   BridgeCurrency.RENZEC,
 ];
 

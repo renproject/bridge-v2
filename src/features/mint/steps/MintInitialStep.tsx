@@ -1,5 +1,5 @@
 import { Divider } from "@material-ui/core";
-import React, { FunctionComponent, useCallback } from "react";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -17,7 +17,6 @@ import {
 import { PaperContent } from "../../../components/layout/Paper";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { AssetInfo } from "../../../components/typography/TypographyHelpers";
-import { WalletStatus } from "../../../components/utils/types";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getCurrencyConfig,
@@ -50,8 +49,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
-  const { status } = useSelectedChainWallet();
-  const walletConnected = status === WalletStatus.CONNECTED;
+  const { walletConnected } = useSelectedChainWallet();
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
     amount,
@@ -78,6 +76,14 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
     },
     [dispatch]
   );
+
+  const renCurrency = toMintedCurrency(currency);
+  useEffect(() => {
+    const currencyConfig = getCurrencyConfig(renCurrency);
+    // check if current network is testnet
+    if(currencyConfig.testNetworkVersion) {
+    }
+  }, [dispatch, chain, renCurrency]);
 
   const canProceed = !!amount && amount > 0;
 

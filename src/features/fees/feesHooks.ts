@@ -7,7 +7,7 @@ import {
   getLockAndMintFees,
 } from "../../services/rentx";
 import { BridgeCurrency } from "../../utils/assetConfigs";
-import { $network } from "../network/networkSlice";
+import { $renNetwork } from "../network/networkSlice";
 import { TxType } from "../transactions/transactionsUtils";
 import { $multiwalletChain } from "../wallet/walletSlice";
 import { SimpleFee } from "./feesUtils";
@@ -16,7 +16,7 @@ const feesCache: Record<string, SimpleFee> = {};
 export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
   const multiwalletChain = useSelector($multiwalletChain);
   const { provider, status } = useWallet(multiwalletChain);
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const initialFees: SimpleFee = {
     mint: 0,
     burn: 0,
@@ -27,7 +27,7 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
   const [pending, setPending] = useState(true);
 
   useEffect(() => {
-    const cacheKey = `${currency}-${txType}`;
+    const cacheKey = `${currency}-${txType}-${network}`;
     if (provider && status === WalletStatus.CONNECTED) {
       if (feesCache[cacheKey]) {
         setFees(feesCache[cacheKey]);
@@ -35,13 +35,13 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
       } else {
         const fetchFees =
           txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
-        fetchFees(currency, provider, network, multiwalletChain).then(
-          (feeRates) => {
-            setPending(false);
+        fetchFees(currency, provider, network, multiwalletChain)
+          .then((feeRates) => {
             feesCache[cacheKey] = feeRates;
-            setFees(feeRates);
-          }
-        );
+            setFees(feesCache[cacheKey]);
+            setPending(false);
+          })
+          .catch(console.error);
       }
     }
   }, [currency, provider, status, network, txType, multiwalletChain]);

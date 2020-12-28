@@ -29,7 +29,7 @@ export const { setNetwork } = slice.actions;
 export const networkReducer = slice.reducer;
 
 export const $networkData = (state: RootState) => state.network;
-export const $network = createSelector(
+export const $renNetwork = createSelector(
   $networkData,
   (network) => network.renNetwork
 );

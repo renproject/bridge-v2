@@ -21,7 +21,7 @@ import {
 } from '../../../utils/assetConfigs'
 import { useFetchFees } from '../../fees/feesHooks'
 import { getTransactionFees } from '../../fees/feesUtils'
-import { $network } from '../../network/networkSlice'
+import { $renNetwork } from '../../network/networkSlice'
 import { TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
 import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
 import { getAssetBalance, useFetchBalances } from '../../wallet/walletUtils'
@@ -33,7 +33,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const dispatch = useDispatch();
   const { walletConnected } = useSelectedChainWallet();
   const { chain, balances } = useSelector($wallet);
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
   const { fetchAssetsBalances } = useFetchBalances();

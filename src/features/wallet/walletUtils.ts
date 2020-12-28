@@ -9,7 +9,7 @@ import {
   getChainConfig,
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
-import { $network } from "../network/networkSlice";
+import { $renNetwork } from "../network/networkSlice";
 import {
   $chain,
   addOrUpdateBalance,
@@ -22,7 +22,7 @@ export const useFetchBalances = () => {
   const bridgeChain = useSelector($chain);
   const { walletConnected, provider, account } = useSelectedChainWallet();
   const bridgeChainConfig = getChainConfig(bridgeChain);
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const Chain = (mintChainClassMap as any)[bridgeChainConfig.rentxName];
 
   useEffect(() => {

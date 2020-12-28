@@ -29,19 +29,18 @@ export const lockChainMap = {
 
 export const mintChainMap = {
   [RenChain.ethereum]: (context: GatewayMachineContext) => {
-    const { destAddress, destChain, network } = context.tx;
+    const { destAddress, network } = context.tx;
     const { providers } = context;
 
-    return Ethereum(providers[destChain], network).Account({
-      // providers.ethereum?
+    return Ethereum(providers.ethereum, network).Account({
       address: destAddress,
     }) as any;
   },
   [RenChain.binanceSmartChain]: (context: GatewayMachineContext) => {
-    const { destAddress, destChain, network } = context.tx;
+    const { destAddress, network } = context.tx;
     const { providers } = context;
 
-    return new BinanceSmartChain(providers[destChain], network).Account({
+    return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
       // providers.binanceSmartChain?
       address: destAddress,
     }) as any;
@@ -65,11 +64,16 @@ export const getLockAndMintFees = (
 
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
   const To = (mintChainClassMap as any)[chain];
-  return getRenJs(network)
+  // TODO: crit temp
+  let subnetwork = network;
+  if (lockedCurrency === BridgeCurrency.DOGE) {
+    subnetwork = RenNetwork.TestnetVDot3;
+  }
+  return getRenJs(subnetwork)
     .getFees({
       asset: lockedCurrency,
       from: From(),
-      to: To(provider, network), // TODO: this should differentiate based on selected asset
+      to: To(provider, subnetwork), // TODO: this should differentiate based on selected asset
     })
     .then(mapFees);
 };

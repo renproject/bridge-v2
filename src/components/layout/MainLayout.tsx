@@ -30,7 +30,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
-import { $network } from "../../features/network/networkSlice";
+import { $renNetwork } from "../../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 import { TransactionHistory } from "../../features/transactions/TransactionHistory";
 import {
@@ -192,7 +192,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const multiwalletChain = useSelector($multiwalletChain);
   const walletPickerOpen = useSelector($walletPickerOpened);
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const pickerClasses = useWalletPickerStyles();
   const handleWalletPickerClose = useCallback(() => {
     dispatch(setWalletPickerOpened(false));

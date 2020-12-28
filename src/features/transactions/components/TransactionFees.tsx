@@ -1,38 +1,25 @@
-import React, { FunctionComponent } from "react";
-import { useSelector } from "react-redux";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import React, { FunctionComponent } from 'react'
+import { useSelector } from 'react-redux'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from '../../../components/utils/types'
+import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
   BridgeChain,
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
   toReleasedCurrency,
-} from "../../../utils/assetConfigs";
-import { fromGwei } from "../../../utils/converters";
-import { useFetchFees } from "../../fees/feesHooks";
-import { BridgeFees, getTransactionFees } from "../../fees/feesUtils";
-import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
-import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
-import { getFeeTooltips, TxType } from "../transactionsUtils";
-
-export const getMintAndReleaseFees = (fees: BridgeFees) => {
-  const result = {
-    mint: 0,
-    release: 0,
-  };
-  if (fees && fees[0] && fees[0].ethereum) {
-    const chainFees = fees[0].ethereum;
-    result.mint = chainFees.min;
-    result.release = chainFees.burn;
-  }
-  return result;
-};
+} from '../../../utils/assetConfigs'
+import { fromGwei } from '../../../utils/converters'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
+import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
+import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
+import { getFeeTooltips, TxType } from '../transactionsUtils'
 
 type TransactionFeesProps = {
   type: TxType;
@@ -114,7 +101,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           />
         }
       />
-      <LabelWithValue //TODO: made dependant on the sourceChain
+      <LabelWithValue
         label={`${sourceCurrencyChainConfig.full} Miner Fee`}
         labelTooltip={tooltips.sourceChainMinerFee}
         value={

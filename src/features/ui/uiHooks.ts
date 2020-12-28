@@ -10,7 +10,7 @@ import {
   toMintedCurrency,
 } from "../../utils/assetConfigs";
 import { $mintCurrency } from "../mint/mintSlice";
-import { $network } from "../network/networkSlice";
+import { $renNetwork } from "../network/networkSlice";
 import { $releaseCurrency } from "../release/releaseSlice";
 import { $chain } from "../wallet/walletSlice";
 import { setPaperShaking } from "./uiSlice";
@@ -43,7 +43,7 @@ export const useLocationFlow = () => {
 export const useTestnetName = () => {
   const flow = useLocationFlow();
   const chain = useSelector($chain);
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const mintCurrency = useSelector($mintCurrency);
   const releaseCurrency = useSelector($releaseCurrency);
   if (
