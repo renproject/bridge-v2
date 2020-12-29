@@ -18,13 +18,13 @@ const slice = createSlice({
   name: "network",
   initialState,
   reducers: {
-    setNetwork(state, action: PayloadAction<RenNetwork>) {
+    setRenNetwork(state, action: PayloadAction<RenNetwork>) {
       state.renNetwork = action.payload;
     },
   },
 });
 
-export const { setNetwork } = slice.actions;
+export const { setRenNetwork } = slice.actions;
 
 export const networkReducer = slice.reducer;
 

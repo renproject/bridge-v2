@@ -22,6 +22,7 @@ import {
 import { useFetchFees } from '../../fees/feesHooks'
 import { getTransactionFees } from '../../fees/feesUtils'
 import { $renNetwork } from '../../network/networkSlice'
+import { useRenNetworkTracker } from '../../transactions/transactionsHooks'
 import { TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
 import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
 import { getAssetBalance, useFetchBalances } from '../../wallet/walletUtils'
@@ -36,6 +37,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const network = useSelector($renNetwork);
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
+  useRenNetworkTracker(currency);
   const { fetchAssetsBalances } = useFetchBalances();
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
   const { conversionTotal } = getTransactionFees({

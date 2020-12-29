@@ -35,6 +35,7 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
       } else {
         const fetchFees =
           txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
+        console.log("fetching fees", network);
         fetchFees(currency, provider, network, multiwalletChain)
           .then((feeRates) => {
             feesCache[cacheKey] = feeRates;

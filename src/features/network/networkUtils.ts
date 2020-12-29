@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { supportedRenNetworks } from "../../utils/assetConfigs";
-import { setNetwork } from "./networkSlice";
+import { setRenNetwork } from "./networkSlice";
 
 export const useSetNetworkFromParam = () => {
   const location = useLocation();
@@ -15,7 +15,7 @@ export const useSetNetworkFromParam = () => {
     const network = parsed.network as RenNetwork;
     if (network) {
       if (supportedRenNetworks.indexOf(network) > -1)
-        dispatch(setNetwork(parsed.network as RenNetwork));
+        dispatch(setRenNetwork(parsed.network as RenNetwork));
     }
   }, [dispatch, parsed.network]);
 };
