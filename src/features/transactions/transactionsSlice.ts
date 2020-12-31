@@ -1,9 +1,10 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { GatewaySession } from '@renproject/ren-tx'
-import { RootState } from '../../store/rootReducer'
-import { getLockAndMintParams } from '../mint/mintUtils'
-import { getBurnAndReleaseParams } from '../release/releaseUtils'
-import { txCompletedSorter, TxEntryStatus, TxType, } from './transactionsUtils'
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { GatewaySession } from "@renproject/ren-tx";
+import { RootState } from "../../store/rootReducer";
+import { getLockAndMintParams } from "../mint/mintUtils";
+import { $renNetwork } from "../network/networkSlice";
+import { getBurnAndReleaseParams } from "../release/releaseUtils";
+import { txCompletedSorter, TxEntryStatus, TxType } from "./transactionsUtils";
 
 export type BridgeTransaction = GatewaySession;
 
@@ -77,14 +78,26 @@ export const {
 export const transactionsReducer = slice.reducer;
 
 export const $transactionsData = (state: RootState) => state.transactions;
-export const $orderedTransactions = createSelector(
+export const $txHistoryOpened = createSelector(
   $transactionsData,
-  (transactions) => [...transactions.txs].sort(txCompletedSorter)
+  (transactions) => transactions.txHistoryOpened
+);
+
+export const $networkTransactions = createSelector(
+  $transactionsData,
+  $renNetwork,
+  (transactions, renNetwork) => {
+    return transactions.txs.filter((tx) => tx.network === renNetwork);
+  }
+);
+export const $orderedTransactions = createSelector(
+  $networkTransactions,
+  (txs) => [...txs].sort(txCompletedSorter)
 );
 export const $transactionsNeedsAction = createSelector(
-  $transactionsData,
-  (transactions) => {
-    for (let tx of transactions.txs) {
+  $networkTransactions,
+  (txs) => {
+    for (let tx of txs) {
       const { meta } =
         tx.type === TxType.MINT
           ? getLockAndMintParams(tx)
@@ -95,8 +108,4 @@ export const $transactionsNeedsAction = createSelector(
     }
     return false;
   }
-);
-export const $txHistoryOpened = createSelector(
-  $transactionsData,
-  (transactions) => transactions.txHistoryOpened
 );

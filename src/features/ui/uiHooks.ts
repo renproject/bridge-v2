@@ -43,13 +43,13 @@ export const useLocationFlow = () => {
 export const useTestnetName = () => {
   const flow = useLocationFlow();
   const chain = useSelector($chain);
-  const network = useSelector($renNetwork);
+  const renNetwork = useSelector($renNetwork);
   const mintCurrency = useSelector($mintCurrency);
   const releaseCurrency = useSelector($releaseCurrency);
   if (
     chain !== BridgeChain.ETHC ||
     flow == null ||
-    network === RenNetwork.Mainnet
+    renNetwork === RenNetwork.Mainnet
   ) {
     return "";
   }

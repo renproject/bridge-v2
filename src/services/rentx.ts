@@ -64,16 +64,12 @@ export const getLockAndMintFees = (
 
   const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
   const To = (mintChainClassMap as any)[chain];
-  // TODO: crit temp
-  let subnetwork = network;
-  if (lockedCurrency === BridgeCurrency.DOGE) {
-    subnetwork = RenNetwork.TestnetVDot3;
-  }
-  return getRenJs(subnetwork)
+
+  return getRenJs(network)
     .getFees({
       asset: lockedCurrency,
       from: From(),
-      to: To(provider, subnetwork), // TODO: this should differentiate based on selected asset
+      to: To(provider, network), // TODO: this should differentiate based on selected asset
     })
     .then(mapFees);
 };
@@ -110,12 +106,16 @@ export const releaseChainMap: BurnMachineContext["toChainMap"] = {
   [RenChain.bitcoinCash]: (context) => {
     return BitcoinCash().Address(context.tx.destAddress) as any;
   },
+  [RenChain.dogecoin]: (context) => {
+    return Dogecoin().Address(context.tx.destAddress) as any;
+  },
 };
 
 export const releaseChainClassMap = {
   [RenChain.bitcoin]: Bitcoin,
   [RenChain.zcash]: Zcash,
   [RenChain.bitcoinCash]: BitcoinCash,
+  [RenChain.dogecoin]: Dogecoin,
 };
 
 export const getBurnAndReleaseFees = (
