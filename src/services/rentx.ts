@@ -58,6 +58,7 @@ export const getLockAndMintFees = (
   network: RenNetwork,
   chain: RenChain
 ) => {
+  console.log(lockedCurrency, network, chain)
   const lockedCurrencyConfig = getCurrencyConfig(lockedCurrency);
 
   const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);

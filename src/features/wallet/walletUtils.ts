@@ -1,11 +1,21 @@
-import { RenNetwork } from '@renproject/interfaces'
-import { useCallback, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useSelectedChainWallet } from '../../providers/multiwallet/multiwalletHooks'
-import { mintChainClassMap } from '../../services/rentx'
-import { BridgeCurrency, getChainConfig, getCurrencyConfig, toReleasedCurrency, } from '../../utils/assetConfigs'
-import { $networks } from '../network/networkSlice'
-import { $chain, addOrUpdateBalance, AssetBalance, resetBalances, } from './walletSlice'
+import { RenNetwork } from "@renproject/interfaces";
+import { useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
+import { mintChainClassMap } from "../../services/rentx";
+import {
+  BridgeCurrency,
+  getChainConfig,
+  getCurrencyConfig,
+  toReleasedCurrency,
+} from "../../utils/assetConfigs";
+import { $networks } from "../network/networkSlice";
+import {
+  $chain,
+  addOrUpdateBalance,
+  AssetBalance,
+  resetBalances,
+} from "./walletSlice";
 
 export const isSupportedByCurrentNetwork = (
   currency: BridgeCurrency,
@@ -21,9 +31,15 @@ export const isSupportedByCurrentNetwork = (
 export const useFetchBalances = () => {
   const dispatch = useDispatch();
   const bridgeChain = useSelector($chain);
-  const { walletConnected, provider, account } = useSelectedChainWallet();
-  const bridgeChainConfig = getChainConfig(bridgeChain);
+  const {
+    walletConnected,
+    status,
+    provider,
+    account,
+    targetNetwork,
+  } = useSelectedChainWallet();
   const { renNetwork } = useSelector($networks);
+  const bridgeChainConfig = getChainConfig(bridgeChain);
   const Chain = (mintChainClassMap as any)[bridgeChainConfig.rentxName];
 
   useEffect(() => {
@@ -38,9 +54,10 @@ export const useFetchBalances = () => {
         provider &&
         account &&
         walletConnected &&
-        isSupportedByCurrentNetwork(currency, renNetwork)
+        isSupportedByCurrentNetwork(currency, renNetwork) &&
+        targetNetwork === renNetwork
       ) {
-        console.log("fetching", currency);
+        console.log("fetching", currency, renNetwork, targetNetwork, status);
         const chain = Chain(provider, renNetwork);
         return chain.getBalance(currency, account).then((balance: any) => {
           return balance.toNumber() / 100000000;
@@ -49,7 +66,15 @@ export const useFetchBalances = () => {
         return Promise.resolve(null);
       }
     },
-    [Chain, account, renNetwork, provider, walletConnected]
+    [
+      Chain,
+      account,
+      renNetwork,
+      provider,
+      walletConnected,
+      targetNetwork,
+      status,
+    ]
   );
 
   const fetchAssetsBalances = useCallback(
