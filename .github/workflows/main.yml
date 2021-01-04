@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ release/1.0.0 ]
+  pull_request:
+    branches: [ release/1.0.0 ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.1.0
+      - name: Install dependencies
+        run: yarn --network-concurrency 1
+      - name: Lint
+        run: yarn lint
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.0
+      - name: Install dependencies
+        run: yarn --network-concurrency 1
+      - name: Test
+        run: yarn test
+
