@@ -144,6 +144,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const styles = useStyles();
   const dispatch = useDispatch();
   useSetNetworkFromParam();
+  useSyncMultiwalletNetwork();
   useBackgroundReplacer(variant);
   useWeb3Signatures();
   const { txHistoryOpened } = useSelector($transactionsData);
@@ -193,7 +194,6 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
     };
     return options;
   }, [multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);
-  useSyncMultiwalletNetwork();
 
   const debugWallet = useWallet(multiwalletChain); //remove
   const debugMultiwallet = useMultiwallet(); //remove

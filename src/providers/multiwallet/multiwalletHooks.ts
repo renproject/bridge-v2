@@ -1,19 +1,11 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useDebounce } from "react-use";
-import {
-  WalletConnectionStatusType,
-  WalletStatus,
-} from "../../components/utils/types";
-import { $renNetwork } from "../../features/network/networkSlice";
-import {
-  $multiwalletChain,
-  $walletSyncing,
-  setSyncing,
-} from "../../features/wallet/walletSlice";
-import { BridgeWallet } from "../../utils/assetConfigs";
+import { RenNetwork } from '@renproject/interfaces'
+import { useMultiwallet } from '@renproject/multiwallet-ui'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { WalletConnectionStatusType, WalletStatus, } from '../../components/utils/types'
+import { $renNetwork } from '../../features/network/networkSlice'
+import { $multiwalletChain } from '../../features/wallet/walletSlice'
+import { BridgeWallet } from '../../utils/assetConfigs'
 
 type WalletData = {
   account: string;
@@ -50,6 +42,7 @@ export const useWallet: UseWallet = (chain) => {
     enabledChains?.[chain] || {};
   const provider = enabledChains?.[chain]?.provider;
   const symbol = resolveWallet(provider);
+
   return {
     account,
     status,
@@ -69,28 +62,12 @@ export const useSelectedChainWallet = () => {
 };
 
 export const useSyncMultiwalletNetwork = () => {
-  const {
-    targetNetwork,
-    setTargetNetwork,
-    walletConnected,
-  } = useSelectedChainWallet();
-  const dispatch = useDispatch();
+  const { targetNetwork, setTargetNetwork } = useSelectedChainWallet();
   const renNetwork = useSelector($renNetwork);
-  const walletSyncing = useSelector($walletSyncing);
   useEffect(() => {
     if (renNetwork !== targetNetwork) {
-      console.log("syncing multiwallet", renNetwork);
-      dispatch(setSyncing(true));
+      console.log("syncing multiwallet with network", renNetwork);
       setTargetNetwork(renNetwork);
     }
-  }, [dispatch, renNetwork, setTargetNetwork, targetNetwork]);
-  useDebounce(
-    () => {
-      if (walletConnected && walletSyncing) {
-        dispatch(setSyncing(false));
-      }
-    },
-    400,
-    [dispatch, walletSyncing, walletConnected]
-  );
+  }, [renNetwork, setTargetNetwork, targetNetwork]);
 };

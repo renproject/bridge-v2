@@ -16,7 +16,6 @@ export type AuthUser = null | {
 };
 
 type WalletState = {
-  syncing: boolean;
   chain: BridgeChain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
@@ -25,7 +24,6 @@ type WalletState = {
 };
 
 let initialState: WalletState = {
-  syncing: false,
   chain: BridgeChain.ETHC,
   pickerOpened: false,
   balances: [],
@@ -40,9 +38,6 @@ const slice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    setSyncing(state, action: PayloadAction<boolean>) {
-      state.syncing = action.payload;
-    },
     setUser(state, action: PayloadAction<AuthUser>) {
       state.user = action.payload;
     },
@@ -75,7 +70,6 @@ const slice = createSlice({
 });
 
 export const {
-  setSyncing,
   setUser,
   setChain,
   setWalletPickerOpened,
@@ -88,10 +82,6 @@ export const walletReducer = slice.reducer;
 
 export const $wallet = (state: RootState) => state.wallet;
 export const $chain = createSelector($wallet, (wallet) => wallet.chain);
-export const $walletSyncing = createSelector(
-  $wallet,
-  (wallet) => wallet.syncing
-);
 export const $walletPickerOpened = createSelector(
   $wallet,
   (wallet) => wallet.pickerOpened

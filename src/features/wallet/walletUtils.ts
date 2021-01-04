@@ -1,6 +1,7 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "react-use";
 import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { mintChainClassMap } from "../../services/rentx";
 import {
@@ -12,7 +13,6 @@ import {
 import { $renNetwork } from "../network/networkSlice";
 import {
   $chain,
-  $walletSyncing,
   addOrUpdateBalance,
   AssetBalance,
   resetBalances,
@@ -29,18 +29,11 @@ export const isSupportedByCurrentNetwork = (
   return true;
 };
 
-export const useFetchBalances = () => {
+export const useFetchBalances = (currencySymbols: Array<BridgeCurrency>) => {
   const dispatch = useDispatch();
   const bridgeChain = useSelector($chain);
-  const {
-    walletConnected,
-    status,
-    provider,
-    account,
-    targetNetwork,
-  } = useSelectedChainWallet();
+  const { walletConnected, provider, account } = useSelectedChainWallet();
   const renNetwork = useSelector($renNetwork);
-  const walletSyncing = useSelector($walletSyncing);
   const bridgeChainConfig = getChainConfig(bridgeChain);
   const Chain = (mintChainClassMap as any)[bridgeChainConfig.rentxName];
 
@@ -56,33 +49,24 @@ export const useFetchBalances = () => {
         provider &&
         account &&
         walletConnected &&
-        isSupportedByCurrentNetwork(currency, renNetwork) &&
-        targetNetwork === renNetwork &&
-        !walletSyncing
+        isSupportedByCurrentNetwork(currency, renNetwork)
       ) {
-        console.log("fetching", walletSyncing, currency, renNetwork, targetNetwork, status);
         const chain = Chain(provider, renNetwork);
-        return chain.getBalance(currency, account).then((balance: any) => {
-          return balance.toNumber() / 100000000;
-        });
+        return chain
+          .getBalance(currency, account)
+          .then((balance: any) => {
+            return balance.toNumber() / 100000000;
+          })
+          .catch(console.error);
       } else {
         return Promise.resolve(null);
       }
     },
-    [
-      Chain,
-      account,
-      renNetwork,
-      provider,
-      walletConnected,
-      targetNetwork,
-      status,
-      walletSyncing
-    ]
+    [Chain, account, renNetwork, provider, walletConnected]
   );
 
-  const fetchAssetsBalances = useCallback(
-    (currencySymbols) => {
+  useDebounce(
+    () => {
       if (!walletConnected) {
         return;
       }
@@ -101,10 +85,9 @@ export const useFetchBalances = () => {
         });
       }
     },
+    1000,
     [dispatch, fetchAssetBalance, walletConnected]
   );
-
-  return { fetchAssetBalance, fetchAssetsBalances };
 };
 
 export const getAssetBalance = (

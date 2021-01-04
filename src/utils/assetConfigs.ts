@@ -490,12 +490,6 @@ export const getNetworkConfigByRentxName = (name: string) => {
   );
 };
 
-export const supportedRenNetworks = [
-  RenNetwork.Mainnet,
-  RenNetwork.Testnet,
-  // RenNetwork.TestnetVDot3,
-];
-
 export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
   BridgeCurrency.BCH,

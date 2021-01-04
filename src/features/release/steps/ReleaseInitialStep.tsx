@@ -1,32 +1,64 @@
-import { Divider, Fade } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { AddressInput, AddressInputWrapper, } from '../../../components/inputs/AddressInput'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
-import { AssetInfo, LabelWithValue, } from '../../../components/typography/TypographyHelpers'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
-import { releaseChainClassMap } from '../../../services/rentx'
+import { Divider, Fade } from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import {
+  AddressInput,
+  AddressInputWrapper,
+} from "../../../components/inputs/AddressInput";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import {
+  AssetInfo,
+  LabelWithValue,
+} from "../../../components/typography/TypographyHelpers";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { releaseChainClassMap } from "../../../services/rentx";
 import {
   getChainConfig,
   getCurrencyConfig,
   supportedBurnChains,
   supportedReleaseCurrencies,
   toReleasedCurrency,
-} from '../../../utils/assetConfigs'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { $renNetwork } from '../../network/networkSlice'
-import { useRenNetworkTracker } from '../../transactions/transactionsHooks'
-import { TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
-import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
-import { getAssetBalance, useFetchBalances } from '../../wallet/walletUtils'
-import { $release, $releaseUsdAmount, setReleaseAddress, setReleaseAmount, setReleaseCurrency, } from '../releaseSlice'
+} from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { $renNetwork } from "../../network/networkSlice";
+import { useRenNetworkTracker } from "../../transactions/transactionsHooks";
+import {
+  TxConfigurationStepProps,
+  TxType,
+} from "../../transactions/transactionsUtils";
+import {
+  $wallet,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import { getAssetBalance, useFetchBalances } from "../../wallet/walletUtils";
+import {
+  $release,
+  $releaseUsdAmount,
+  setReleaseAddress,
+  setReleaseAmount,
+  setReleaseCurrency,
+} from "../releaseSlice";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -38,16 +70,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
   useRenNetworkTracker(currency);
-  const { fetchAssetsBalances } = useFetchBalances();
+  useFetchBalances(supportedReleaseCurrencies);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
   const { conversionTotal } = getTransactionFees({
     amount,
     type: TxType.BURN,
     fees,
   });
-  useEffect(() => {
-    fetchAssetsBalances(supportedReleaseCurrencies);
-  }, [fetchAssetsBalances]);
 
   const usdAmount = useSelector($releaseUsdAmount);
   const handleChainChange = useCallback(
