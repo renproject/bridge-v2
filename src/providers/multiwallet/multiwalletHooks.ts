@@ -1,13 +1,18 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "react-use";
 import {
   WalletConnectionStatusType,
   WalletStatus,
 } from "../../components/utils/types";
 import { $renNetwork } from "../../features/network/networkSlice";
-import { $multiwalletChain } from "../../features/wallet/walletSlice";
+import {
+  $multiwalletChain,
+  $walletSyncing,
+  setSyncing,
+} from "../../features/wallet/walletSlice";
 import { BridgeWallet } from "../../utils/assetConfigs";
 
 type WalletData = {
@@ -64,12 +69,28 @@ export const useSelectedChainWallet = () => {
 };
 
 export const useSyncMultiwalletNetwork = () => {
-  const { targetNetwork, setTargetNetwork } = useSelectedChainWallet();
+  const {
+    targetNetwork,
+    setTargetNetwork,
+    walletConnected,
+  } = useSelectedChainWallet();
+  const dispatch = useDispatch();
   const renNetwork = useSelector($renNetwork);
+  const walletSyncing = useSelector($walletSyncing);
   useEffect(() => {
     if (renNetwork !== targetNetwork) {
       console.log("syncing multiwallet", renNetwork);
+      dispatch(setSyncing(true));
       setTargetNetwork(renNetwork);
     }
-  }, [renNetwork, setTargetNetwork, targetNetwork]);
+  }, [dispatch, renNetwork, setTargetNetwork, targetNetwork]);
+  useDebounce(
+    () => {
+      if (walletConnected && walletSyncing) {
+        dispatch(setSyncing(false));
+      }
+    },
+    400,
+    [dispatch, walletSyncing, walletConnected]
+  );
 };

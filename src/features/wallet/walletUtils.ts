@@ -9,9 +9,10 @@ import {
   getCurrencyConfig,
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
-import { $networks } from "../network/networkSlice";
+import { $renNetwork } from "../network/networkSlice";
 import {
   $chain,
+  $walletSyncing,
   addOrUpdateBalance,
   AssetBalance,
   resetBalances,
@@ -38,7 +39,8 @@ export const useFetchBalances = () => {
     account,
     targetNetwork,
   } = useSelectedChainWallet();
-  const { renNetwork } = useSelector($networks);
+  const renNetwork = useSelector($renNetwork);
+  const walletSyncing = useSelector($walletSyncing);
   const bridgeChainConfig = getChainConfig(bridgeChain);
   const Chain = (mintChainClassMap as any)[bridgeChainConfig.rentxName];
 
@@ -55,9 +57,10 @@ export const useFetchBalances = () => {
         account &&
         walletConnected &&
         isSupportedByCurrentNetwork(currency, renNetwork) &&
-        targetNetwork === renNetwork
+        targetNetwork === renNetwork &&
+        !walletSyncing
       ) {
-        console.log("fetching", currency, renNetwork, targetNetwork, status);
+        console.log("fetching", walletSyncing, currency, renNetwork, targetNetwork, status);
         const chain = Chain(provider, renNetwork);
         return chain.getBalance(currency, account).then((balance: any) => {
           return balance.toNumber() / 100000000;
@@ -74,6 +77,7 @@ export const useFetchBalances = () => {
       walletConnected,
       targetNetwork,
       status,
+      walletSyncing
     ]
   );
 
