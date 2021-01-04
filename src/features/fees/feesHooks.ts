@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { WalletStatus } from "../../components/utils/types";
-import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
-import {
-  getBurnAndReleaseFees,
-  getLockAndMintFees,
-} from "../../services/rentx";
-import { BridgeCurrency } from "../../utils/assetConfigs";
-import { $network } from "../network/networkSlice";
-import { TxType } from "../transactions/transactionsUtils";
-import { $multiwalletChain } from "../wallet/walletSlice";
-import { SimpleFee } from "./feesUtils";
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { WalletStatus } from '../../components/utils/types'
+import { useWallet } from '../../providers/multiwallet/multiwalletHooks'
+import { getBurnAndReleaseFees, getLockAndMintFees, } from '../../services/rentx'
+import { BridgeCurrency } from '../../utils/assetConfigs'
+import { $network } from '../network/networkSlice'
+import { TxType } from '../transactions/transactionsUtils'
+import { $multiwalletChain } from '../wallet/walletSlice'
+import { SimpleFee } from './feesUtils'
 
 const feesCache: Record<string, SimpleFee> = {};
 export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
