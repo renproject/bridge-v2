@@ -2,34 +2,38 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RenNetwork } from "@renproject/interfaces";
 import { env } from "../../constants/environmentVariables";
 import { RootState } from "../../store/rootReducer";
+import { RenTargetNetwork } from "../../utils/assetConfigs";
 
 type NetworkState = {
   renNetwork: RenNetwork;
 };
 
-const cachedTargetNetwork = localStorage.getItem("renNetwork");
+const cachedTargetNetwork = localStorage.getItem("renTargetNetwork");
+
+const initialNetwork =
+  (((cachedTargetNetwork || env.NETWORK) as unknown) as RenTargetNetwork) ||
+  RenTargetNetwork.Testnet;
 
 let initialState: NetworkState = {
-  renNetwork:
-    ((cachedTargetNetwork || env.NETWORK) as RenNetwork) || RenNetwork.Testnet,
+  renNetwork: (initialNetwork as unknown) as RenNetwork,
 };
 
 const slice = createSlice({
   name: "network",
   initialState,
   reducers: {
-    setNetwork(state, action: PayloadAction<RenNetwork>) {
+    setRenNetwork(state, action: PayloadAction<RenNetwork>) {
       state.renNetwork = action.payload;
     },
   },
 });
 
-export const { setNetwork } = slice.actions;
+export const { setRenNetwork } = slice.actions;
 
 export const networkReducer = slice.reducer;
 
-export const $networkData = (state: RootState) => state.network;
-export const $network = createSelector(
+const $networkData = (state: RootState) => state.network;
+export const $renNetwork = createSelector(
   $networkData,
   (network) => network.renNetwork
 );

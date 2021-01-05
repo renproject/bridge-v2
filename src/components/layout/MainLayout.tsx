@@ -30,7 +30,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
-import { $network } from "../../features/network/networkSlice";
+import { RenNetworkSelector } from "../../features/network/components/NetworkHelpers";
+import { $renNetwork } from "../../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 import { TransactionHistory } from "../../features/transactions/TransactionHistory";
 import {
@@ -47,6 +48,7 @@ import {
 import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
 import {
   useSelectedChainWallet,
+  useSyncMultiwalletNetwork,
   useWallet,
 } from "../../providers/multiwallet/multiwalletHooks";
 import { useWeb3Signatures } from "../../services/web3";
@@ -165,6 +167,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const styles = useStyles();
   const dispatch = useDispatch();
   useSetNetworkFromParam();
+  useSyncMultiwalletNetwork();
   useBackgroundReplacer(variant);
   useWeb3Signatures();
   const { txHistoryOpened } = useSelector($transactionsData);
@@ -192,7 +195,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 
   const multiwalletChain = useSelector($multiwalletChain);
   const walletPickerOpen = useSelector($walletPickerOpened);
-  const network = useSelector($network);
+  const renNetwork = useSelector($renNetwork);
   const pickerClasses = useWalletPickerStyles();
   const handleWalletPickerClose = useCallback(() => {
     dispatch(setWalletPickerOpened(false));
@@ -202,7 +205,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   }, [dispatch]);
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
-      targetNetwork: network,
+      targetNetwork: renNetwork,
       chain: multiwalletChain,
       onClose: handleWalletPickerClose,
       pickerClasses,
@@ -213,7 +216,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
       config: walletPickerModalConfig,
     };
     return options;
-  }, [multiwalletChain, handleWalletPickerClose, pickerClasses, network]);
+  }, [multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);
 
   const debugWallet = useWallet(multiwalletChain); //remove
   const debugMultiwallet = useMultiwallet(); //remove
@@ -332,6 +335,9 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
           </header>
           <main className={styles.main}>
             {children}
+            <div>
+              <RenNetworkSelector />
+            </div>
             <Debug
               it={{ debugNetworkName, debugWallet, debugMultiwallet, env }}
             />

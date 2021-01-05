@@ -1,8 +1,7 @@
-import { Fade } from "@material-ui/core";
+import { Divider, Fade } from "@material-ui/core";
 import React, {
   FunctionComponent,
   useCallback,
-  useEffect,
   useMemo,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import {
   AssetDropdown,
   AssetDropdownWrapper,
 } from "../../../components/dropdowns/AssetDropdown";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import {
   AddressInput,
   AddressInputWrapper,
@@ -24,7 +24,11 @@ import {
 } from "../../../components/inputs/BigCurrencyInput";
 import { PaperContent } from "../../../components/layout/Paper";
 import { Link } from "../../../components/links/Links";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import {
+  AssetInfo,
+  LabelWithValue,
+} from "../../../components/typography/TypographyHelpers";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { releaseChainClassMap } from "../../../services/rentx";
 import {
@@ -34,17 +38,20 @@ import {
   supportedReleaseCurrencies,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
-import { $network } from "../../network/networkSlice";
-import { TxConfigurationStepProps } from "../../transactions/transactionsUtils";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { $renNetwork } from "../../network/networkSlice";
+import { useRenNetworkTracker } from "../../transactions/transactionsHooks";
+import {
+  TxConfigurationStepProps,
+  TxType,
+} from "../../transactions/transactionsUtils";
 import {
   $wallet,
   setChain,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
-import {
-  getAssetBalance,
-  useFetchBalances,
-} from "../../wallet/walletUtils";
+import { getAssetBalance, useFetchBalances } from "../../wallet/walletUtils";
 import {
   $release,
   $releaseUsdAmount,
@@ -59,13 +66,17 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const dispatch = useDispatch();
   const { walletConnected } = useSelectedChainWallet();
   const { chain, balances } = useSelector($wallet);
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const { currency, amount, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
-  const { fetchAssetsBalances } = useFetchBalances();
-  useEffect(() => {
-    fetchAssetsBalances(supportedReleaseCurrencies);
-  }, [fetchAssetsBalances]);
+  useRenNetworkTracker(currency);
+  useFetchBalances(supportedReleaseCurrencies);
+  const { fees, pending } = useFetchFees(currency, TxType.BURN);
+  const { conversionTotal } = getTransactionFees({
+    amount,
+    type: TxType.BURN,
+    fees,
+  });
 
   const usdAmount = useSelector($releaseUsdAmount);
   const handleChainChange = useCallback(
@@ -102,6 +113,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const targetCurrency = toReleasedCurrency(currency);
   const currencyConfig = getCurrencyConfig(currency);
   const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const { MainIcon } = releaseCurrencyConfig;
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
   const validateAddress = useMemo(() => {
     const ChainClass = (releaseChainClassMap as any)[
@@ -134,62 +146,82 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     }
   }, [dispatch, onNext, walletConnected, hasAmountAndAddress, hasBalance]);
   return (
-    <PaperContent bottomPadding>
-      <BigCurrencyInputWrapper>
-        <BigCurrencyInput
-          onChange={handleAmountChange}
-          symbol={currencyConfig.short}
-          usdValue={usdAmount}
-          value={amount}
-        />
-      </BigCurrencyInputWrapper>
-      <Fade in={walletConnected}>
-        <LabelWithValue
-          label={`${currencyConfig.short} Balance`}
-          value={
-            <>
-              {balance !== null && walletConnected && (
-                <Link onClick={handleSetMaxBalance} color="primary">
-                  {balance}
-                </Link>
-              )}
-            </>
-          }
-        />
-      </Fade>
-      <AssetDropdownWrapper>
-        <AssetDropdown
-          label="Chain"
-          mode="chain"
-          available={supportedBurnChains}
-          value={chain}
-          onChange={handleChainChange}
-        />
-      </AssetDropdownWrapper>
-      <AssetDropdownWrapper>
-        <AssetDropdown
-          label="Asset"
-          mode="send"
-          available={supportedReleaseCurrencies}
-          balances={balances}
-          value={currency}
-          onChange={handleCurrencyChange}
-        />
-      </AssetDropdownWrapper>
-      <AddressInputWrapper>
-        <AddressInput
-          error={!!address && !isAddressValid}
-          placeholder={`Enter a Destination ${releaseChainConfig.full} Address`}
-          label="Releasing to"
-          onChange={handleAddressChange}
-          value={address}
-        />
-      </AddressInputWrapper>
-      <ActionButtonWrapper>
-        <ActionButton onClick={handleNextStep} disabled={!enabled}>
-          {walletConnected ? "Next" : "Connect Wallet"}
-        </ActionButton>
-      </ActionButtonWrapper>
-    </PaperContent>
+    <>
+      <PaperContent>
+        <BigCurrencyInputWrapper>
+          <BigCurrencyInput
+            onChange={handleAmountChange}
+            symbol={currencyConfig.short}
+            usdValue={usdAmount}
+            value={amount}
+          />
+        </BigCurrencyInputWrapper>
+        <Fade in={walletConnected}>
+          <LabelWithValue
+            label={`${currencyConfig.short} Balance`}
+            value={
+              <>
+                {balance !== null && walletConnected && (
+                  <Link onClick={handleSetMaxBalance} color="primary">
+                    {balance}
+                  </Link>
+                )}
+              </>
+            }
+          />
+        </Fade>
+        <AssetDropdownWrapper>
+          <AssetDropdown
+            label="Chain"
+            mode="chain"
+            available={supportedBurnChains}
+            value={chain}
+            onChange={handleChainChange}
+          />
+        </AssetDropdownWrapper>
+        <AssetDropdownWrapper>
+          <AssetDropdown
+            label="Asset"
+            mode="send"
+            available={supportedReleaseCurrencies}
+            balances={balances}
+            value={currency}
+            onChange={handleCurrencyChange}
+          />
+        </AssetDropdownWrapper>
+        <AddressInputWrapper>
+          <AddressInput
+            error={!!address && !isAddressValid}
+            placeholder={`Enter a Destination ${releaseChainConfig.full} Address`}
+            label="Releasing to"
+            onChange={handleAddressChange}
+            value={address}
+          />
+        </AddressInputWrapper>
+      </PaperContent>
+      <Divider />
+      <PaperContent darker topPadding bottomPadding>
+        {walletConnected &&
+          (pending ? (
+            <CenteredProgress />
+          ) : (
+            <AssetInfo
+              label="Receiving:"
+              value={
+                <NumberFormatText
+                  value={conversionTotal}
+                  spacedSuffix={releaseCurrencyConfig.short}
+                />
+              }
+              Icon={<MainIcon fontSize="inherit" />}
+            />
+          ))}
+        <ActionButtonWrapper>
+          <ActionButton onClick={handleNextStep} disabled={!enabled}>
+            {walletConnected ? "Next" : "Connect Wallet"}
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </>
   );
 };

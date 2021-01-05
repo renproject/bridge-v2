@@ -1,47 +1,26 @@
-import { Divider } from "@material-ui/core";
-import React, { FunctionComponent, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import {
-  AssetDropdown,
-  AssetDropdownWrapper,
-} from "../../../components/dropdowns/AssetDropdown";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import {
-  BigCurrencyInput,
-  BigCurrencyInputWrapper,
-} from "../../../components/inputs/BigCurrencyInput";
-import { PaperContent } from "../../../components/layout/Paper";
-import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
-import { AssetInfo } from "../../../components/typography/TypographyHelpers";
-import { WalletStatus } from "../../../components/utils/types";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import { Divider } from '@material-ui/core'
+import React, { FunctionComponent, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
+import { PaperContent } from '../../../components/layout/Paper'
+import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { AssetInfo } from '../../../components/typography/TypographyHelpers'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
   getCurrencyConfig,
   supportedLockCurrencies,
   supportedMintDestinationChains,
   toMintedCurrency,
-} from "../../../utils/assetConfigs";
-import { useFetchFees } from "../../fees/feesHooks";
-import { getTransactionFees } from "../../fees/feesUtils";
-import {
-  TxConfigurationStepProps,
-  TxType,
-} from "../../transactions/transactionsUtils";
-import {
-  $wallet,
-  setChain,
-  setWalletPickerOpened,
-} from "../../wallet/walletSlice";
-import {
-  $mint,
-  $mintUsdAmount,
-  setMintAmount,
-  setMintCurrency,
-} from "../mintSlice";
+} from '../../../utils/assetConfigs'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
+import { useRenNetworkTracker } from '../../transactions/transactionsHooks'
+import { TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
+import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
+import { $mint, $mintUsdAmount, setMintAmount, setMintCurrency, } from '../mintSlice'
 
 export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -50,8 +29,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const { currency, amount } = useSelector($mint);
   const { chain } = useSelector($wallet);
-  const { status } = useSelectedChainWallet();
-  const walletConnected = status === WalletStatus.CONNECTED;
+  const { walletConnected } = useSelectedChainWallet();
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
     amount,
@@ -78,6 +56,9 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
     },
     [dispatch]
   );
+
+  const renCurrency = toMintedCurrency(currency);
+  useRenNetworkTracker(renCurrency);
 
   const canProceed = !!amount && amount > 0;
 

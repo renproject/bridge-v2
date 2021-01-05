@@ -27,7 +27,7 @@ import { useFetchFees } from '../../fees/feesHooks'
 import { getTransactionFees } from '../../fees/feesUtils'
 import { $exchangeRates } from '../../marketData/marketDataSlice'
 import { findExchangeRate } from '../../marketData/marketDataUtils'
-import { $network } from '../../network/networkSlice'
+import { $renNetwork } from '../../network/networkSlice'
 import { TransactionFees } from '../../transactions/components/TransactionFees'
 import { addTransaction } from '../../transactions/transactionsSlice'
 import {
@@ -55,7 +55,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     chain,
     signatures: { signature },
   } = useSelector($wallet);
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const exchangeRates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);

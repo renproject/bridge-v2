@@ -69,6 +69,13 @@ export enum BridgeChain {
   UNKNOWNC = "UNKNOWNC",
 }
 
+// export type RenTargetNetwork = RenNetwork.Mainnet | RenNetwork.Testnet;
+
+export enum RenTargetNetwork {
+  Mainnet = RenNetwork.Mainnet,
+  Testnet = RenNetwork.Testnet,
+}
+
 export enum BridgeNetwork {
   MAINNET = "MAINNET",
   TESTNET = "TESTNET",
@@ -118,7 +125,11 @@ export type CurrencyConfig = LabelsConfig &
     bandchainSymbol?: string;
     ethTestnet?: EthTestnet | null;
     testNetworkVersion?: RenNetwork;
+    networks?: Array<RenNetwork>;
   };
+
+const standardNetworks = [RenNetwork.Testnet, RenNetwork.Mainnet];
+const vDot3Networks = [RenNetwork.TestnetVDot3, RenNetwork.MainnetVDot3];
 
 export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
   [BridgeCurrency.BTC]: {
@@ -132,6 +143,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: BtcFullIcon,
     rentxName: "btc",
     sourceChain: BridgeChain.BTCC,
+    networks: standardNetworks,
   },
   [BridgeCurrency.RENBTC]: {
     symbol: BridgeCurrency.RENBTC,
@@ -144,6 +156,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renBTC",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BTC,
+    networks: standardNetworks,
   },
   [BridgeCurrency.BCH]: {
     symbol: BridgeCurrency.BCH,
@@ -156,6 +169,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: BchFullIcon,
     rentxName: "BCH",
     sourceChain: BridgeChain.BCHC,
+    networks: standardNetworks,
   },
   [BridgeCurrency.RENBCH]: {
     symbol: BridgeCurrency.RENBCH,
@@ -168,6 +182,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renBCH",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BCH,
+    networks: standardNetworks,
   },
   [BridgeCurrency.DOTS]: {
     symbol: BridgeCurrency.DOTS,
@@ -191,6 +206,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: DogeFullIcon,
     sourceChain: BridgeChain.DOGC,
     rentxName: "doge",
+    networks: vDot3Networks,
   },
   [BridgeCurrency.RENDOGE]: {
     symbol: BridgeCurrency.RENDOGE,
@@ -205,6 +221,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     bandchainSymbol: BridgeCurrency.DOGE,
     ethTestnet: EthTestnet.RINKEBY,
     testNetworkVersion: RenNetwork.TestnetVDot3,
+    networks: vDot3Networks,
   },
   [BridgeCurrency.ZEC]: {
     symbol: BridgeCurrency.ZEC,
@@ -216,6 +233,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: ZecFullIcon,
     rentxName: "zec",
     sourceChain: BridgeChain.ZECC,
+    networks: standardNetworks,
   },
   [BridgeCurrency.RENZEC]: {
     symbol: BridgeCurrency.RENZEC,
@@ -228,6 +246,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renZEC",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.ZEC,
+    networks: standardNetworks,
   },
   [BridgeCurrency.DGB]: {
     symbol: BridgeCurrency.DGB,
@@ -440,13 +459,13 @@ export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
     symbol: BridgeNetwork.MAINNET,
     short: "MAINNET",
     full: "Mainnet",
-    rentxName: "mainnet",
+    rentxName: RenNetwork.Mainnet,
   },
   [BridgeNetwork.TESTNET]: {
     symbol: BridgeNetwork.TESTNET,
     short: "TESTNET",
     full: "Testnet",
-    rentxName: "testnet",
+    rentxName: RenNetwork.Testnet,
   },
   [BridgeNetwork.UNKNOWN]: {
     symbol: BridgeNetwork.UNKNOWN,
@@ -458,8 +477,10 @@ export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
 
 const unknownNetworkConfig = networksConfig[BridgeNetwork.UNKNOWN];
 
+export const isTestNetwork = (name: string) => name.indexOf("testnet") > -1;
+
 export const getNetworkConfigByRentxName = (name: string) => {
-  if (name.indexOf("testnet") > -1) {
+  if (isTestNetwork(name)) {
     return networksConfig[BridgeNetwork.TESTNET];
   }
   return (
@@ -469,20 +490,13 @@ export const getNetworkConfigByRentxName = (name: string) => {
   );
 };
 
-export const supportedRenNetworks = [
-  RenNetwork.Mainnet,
-  RenNetwork.Testnet,
-  // RenNetwork.TestnetVDot3,
-];
-
 export const supportedLockCurrencies = [
   BridgeCurrency.BTC,
   BridgeCurrency.BCH,
-  // BridgeCurrency.DOGE, // TODO: not supported by kovan
+  BridgeCurrency.DOGE,
   BridgeCurrency.ZEC,
 ];
 
-// TODO: should be the same
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
   BridgeChain.BSCC,
@@ -493,7 +507,7 @@ export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
   BridgeCurrency.RENBCH,
-  // BridgeCurrency.RENDOGE,
+  BridgeCurrency.RENDOGE,
   BridgeCurrency.RENZEC,
 ];
 
