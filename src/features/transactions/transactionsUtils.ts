@@ -240,3 +240,7 @@ export const isTransactionCompleted = (tx: GatewaySession) => {
     ? isMintTransactionCompleted(tx)
     : isReleaseTransactionCompleted(tx);
 };
+
+export const isMinimalAmount = (amount: number, receiving: number) => {
+  return receiving / (amount - receiving) >= 3;
+};

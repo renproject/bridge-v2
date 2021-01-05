@@ -43,9 +43,10 @@ import { getTransactionFees } from "../../fees/feesUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { useRenNetworkTracker } from "../../transactions/transactionsHooks";
 import {
+  isMinimalAmount,
   TxConfigurationStepProps,
   TxType,
-} from "../../transactions/transactionsUtils";
+} from '../../transactions/transactionsUtils'
 import {
   $wallet,
   setChain,
@@ -129,22 +130,23 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   }, [releaseChainConfig.rentxName, network]);
 
   const isAddressValid = validateAddress(address);
-  const hasAmountAndAddress = amount && address && isAddressValid && amount > 0;
+  const basicCondition = amount && address && isAddressValid && amount > 0 && !pending && isMinimalAmount(amount, conversionTotal);
+
   const hasBalance = balance !== null && amount <= Number(balance);
   let enabled;
   if (walletConnected) {
-    enabled = hasAmountAndAddress && hasBalance;
+    enabled = basicCondition && hasBalance;
   } else {
-    enabled = hasAmountAndAddress;
+    enabled = basicCondition;
   }
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
       dispatch(setWalletPickerOpened(true));
     }
-    if (onNext && hasAmountAndAddress && hasBalance) {
+    if (onNext && basicCondition && hasBalance) {
       onNext();
     }
-  }, [dispatch, onNext, walletConnected, hasAmountAndAddress, hasBalance]);
+  }, [dispatch, onNext, walletConnected, basicCondition, hasBalance]);
   return (
     <>
       <PaperContent>
