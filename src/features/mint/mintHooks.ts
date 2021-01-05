@@ -12,12 +12,12 @@ import { db } from "../../services/database/database";
 import { DbGatewaySession } from "../../services/database/firebase/firebase";
 import { getRenJs } from "../../services/renJs";
 import { lockChainMap, mintChainMap } from "../../services/rentx";
-import { $network } from "../network/networkSlice";
+import { $renNetwork } from "../network/networkSlice";
 import { updateTransaction } from "../transactions/transactionsSlice";
 
 export const useMintMachine = (mintTransaction: GatewaySession) => {
   const { enabledChains } = useMultiwallet();
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const providers = Object.entries(enabledChains).reduce(
     (c, n) => ({
       ...c,

@@ -184,7 +184,7 @@ export const TransactionHistory: FunctionComponent = () => {
                   <CenteredProgress color="primary" size={100} />
                 </BigWrapper>
               )}
-            </BigTopWrapper>Tr
+            </BigTopWrapper>
           </TransactionsContent>
         </>
       )}

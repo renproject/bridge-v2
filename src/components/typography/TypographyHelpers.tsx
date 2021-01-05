@@ -84,6 +84,7 @@ const useReceivingAssetInfoStyle = makeStyles((theme) => ({
     alignItems: "center",
   },
   label: {
+    width: "35%",
     fontSize: 12,
   },
   icon: {
@@ -91,7 +92,7 @@ const useReceivingAssetInfoStyle = makeStyles((theme) => ({
     paddingRight: 20,
     display: "flex",
     alignItems: "center",
-    fontSize: 30,
+    fontSize: 33,
   },
   valueWrapper: {
     flexGrow: 2,

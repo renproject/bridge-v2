@@ -42,7 +42,7 @@ import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
-import { $network } from "../../network/networkSlice";
+import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { addTransaction } from "../../transactions/transactionsSlice";
 import {
@@ -77,7 +77,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const walletConnected = status === WalletStatus.CONNECTED;
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
-  const network = useSelector($network);
+  const network = useSelector($renNetwork);
   const {
     chain,
     signatures: { signature },

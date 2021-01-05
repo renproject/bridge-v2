@@ -1,20 +1,20 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { useSelector } from "react-redux";
-import {
-  WalletConnectionStatusType,
-  WalletStatus,
-} from "../../components/utils/types";
-import { $multiwalletChain } from "../../features/wallet/walletSlice";
-import { BridgeWallet } from "../../utils/assetConfigs";
+import { RenNetwork } from '@renproject/interfaces'
+import { useMultiwallet } from '@renproject/multiwallet-ui'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { WalletConnectionStatusType, WalletStatus, } from '../../components/utils/types'
+import { $renNetwork } from '../../features/network/networkSlice'
+import { $multiwalletChain } from '../../features/wallet/walletSlice'
+import { BridgeWallet } from '../../utils/assetConfigs'
 
 type WalletData = {
   account: string;
   status: WalletConnectionStatusType;
   walletConnected: boolean;
-  targetNetwork: RenNetwork;
   provider: any;
   symbol: BridgeWallet;
+  targetNetwork: RenNetwork;
+  setTargetNetwork: (n: RenNetwork) => void;
 };
 
 const resolveWallet = (provider: any) => {
@@ -31,25 +31,43 @@ const resolveWallet = (provider: any) => {
 
 type UseWallet = (chain: string) => WalletData;
 
-// TODO: change status to walletStatus
 export const useWallet: UseWallet = (chain) => {
-  const { enabledChains, targetNetwork } = useMultiwallet();
+  const {
+    enabledChains,
+    targetNetwork,
+    activateConnector,
+    setTargetNetwork,
+  } = useMultiwallet();
   const { account = "", status = "disconnected" } =
     enabledChains?.[chain] || {};
   const provider = enabledChains?.[chain]?.provider;
   const symbol = resolveWallet(provider);
+
   return {
     account,
     status,
     walletConnected: status === WalletStatus.CONNECTED,
-    targetNetwork,
     provider,
-    enabledChains,
     symbol,
+    targetNetwork,
+    enabledChains,
+    activateConnector,
+    setTargetNetwork,
   } as WalletData;
 };
 
 export const useSelectedChainWallet = () => {
   const multiwalletChain = useSelector($multiwalletChain);
   return useWallet(multiwalletChain);
+};
+
+export const useSyncMultiwalletNetwork = () => {
+  const { targetNetwork, setTargetNetwork } = useSelectedChainWallet();
+  const renNetwork = useSelector($renNetwork);
+  useEffect(() => {
+    if (renNetwork !== targetNetwork) {
+      console.log("syncing multiwallet with network", renNetwork);
+      setTargetNetwork(renNetwork);
+    }
+  }, [renNetwork, setTargetNetwork, targetNetwork]);
 };

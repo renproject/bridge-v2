@@ -8,13 +8,13 @@ import { db } from '../../services/database/database'
 import { DbGatewaySession } from '../../services/database/firebase/firebase'
 import { getRenJs } from '../../services/renJs'
 import { burnChainMap, releaseChainMap } from '../../services/rentx'
-import { $network } from '../network/networkSlice'
+import { $renNetwork } from '../network/networkSlice'
 import { updateTransaction } from '../transactions/transactionsSlice'
 
 export type BurnMachineSchemaState = keyof BurnMachineSchema['states'];
 export const useBurnMachine = (burnTransaction: GatewaySession) => {
   const { enabledChains } = useMultiwallet()
-  const network = useSelector($network)
+  const network = useSelector($renNetwork)
   const providers = Object.entries(enabledChains).reduce(
     (c, n) => ({
       ...c,
