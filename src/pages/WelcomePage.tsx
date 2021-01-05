@@ -62,7 +62,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   useEffect(() => {
     showNotification(
       <Typography variant="caption">
-        RenVM is new technology and{" "}
+        RenVM is new technology, and{" "}
         <Link
           href={links.SECURITY_AUDITS}
           target="_blank"
