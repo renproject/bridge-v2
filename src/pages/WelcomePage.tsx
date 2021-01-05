@@ -72,7 +72,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           security audits
         </Link>{" "}
         don't completely eliminate risks. Please don’t supply assets you can’t
-        afford to lose
+        afford to lose.
       </Typography>,
       {
         variant: "specialInfo",
