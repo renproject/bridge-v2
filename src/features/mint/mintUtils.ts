@@ -85,7 +85,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     mintTxLink =
       getChainExplorerLink(
         mintChainConfig.symbol,
-        networkConfig.symbol,
+        tx.network,
         transaction.destTxHash || ""
       ) || "";
   }
@@ -102,7 +102,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
       lockTxLink =
         getChainExplorerLink(
           lockChainConfig.symbol,
-          networkConfig.symbol,
+          tx.network,
           lockTxHash
         ) || "";
     }

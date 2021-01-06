@@ -52,29 +52,6 @@ export const mintChainClassMap = {
   [RenChain.binanceSmartChain]: BinanceSmartChain,
 };
 
-export const getLockAndMintFees = (
-  lockedCurrency: BridgeCurrency,
-  provider: any,
-  network: RenNetwork,
-  chain: RenChain
-) => {
-  console.log(lockedCurrency, network, chain)
-  const lockedCurrencyConfig = getCurrencyConfig(lockedCurrency);
-
-  const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);
-
-  const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
-  const To = (mintChainClassMap as any)[chain];
-
-  return getRenJs(network)
-    .getFees({
-      asset: lockedCurrency,
-      from: From(),
-      to: To(provider, network), // TODO: this should differentiate based on selected asset
-    })
-    .then(mapFees);
-};
-
 export const burnChainMap: BurnMachineContext["fromChainMap"] = {
   [RenChain.ethereum]: (context) => {
     return Ethereum(context.providers.ethereum, context.tx.network).Account({
@@ -119,6 +96,8 @@ export const releaseChainClassMap = {
   [RenChain.dogecoin]: Dogecoin,
 };
 
+export const chainsClassMap = { ...burnChainClassMap, ...releaseChainClassMap };
+
 export const getBurnAndReleaseFees = (
   burnedCurrency: BridgeCurrency,
   provider: any,
@@ -138,6 +117,29 @@ export const getBurnAndReleaseFees = (
       asset: releasedCurrency,
       from: From(provider, network),
       to: To(),
+    })
+    .then(mapFees);
+};
+
+export const getLockAndMintFees = (
+  lockedCurrency: BridgeCurrency,
+  provider: any,
+  network: RenNetwork,
+  chain: RenChain
+) => {
+  console.log(lockedCurrency, network, chain);
+  const lockedCurrencyConfig = getCurrencyConfig(lockedCurrency);
+
+  const lockedCurrencyChain = getChainConfig(lockedCurrencyConfig.sourceChain);
+
+  const From = (lockChainMap as any)[lockedCurrencyChain.rentxName];
+  const To = (mintChainClassMap as any)[chain];
+
+  return getRenJs(network)
+    .getFees({
+      asset: lockedCurrency,
+      from: From(),
+      to: To(provider, network), // TODO: this should differentiate based on selected asset
     })
     .then(mapFees);
 };
