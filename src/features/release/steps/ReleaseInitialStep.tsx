@@ -1,9 +1,5 @@
 import { Divider, Fade } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { FunctionComponent, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -46,7 +42,7 @@ import {
   isMinimalAmount,
   TxConfigurationStepProps,
   TxType,
-} from '../../transactions/transactionsUtils'
+} from "../../transactions/transactionsUtils";
 import {
   $wallet,
   setChain,
@@ -130,7 +126,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   }, [releaseChainConfig.rentxName, network]);
 
   const isAddressValid = validateAddress(address);
-  const basicCondition = amount && address && isAddressValid && amount > 0 && !pending && isMinimalAmount(amount, conversionTotal);
+  const basicCondition =
+    amount &&
+    address &&
+    isAddressValid &&
+    amount > 0 &&
+    !pending &&
+    isMinimalAmount(amount, conversionTotal);
 
   const hasBalance = balance !== null && amount <= Number(balance);
   let enabled;
@@ -219,7 +221,10 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             />
           ))}
         <ActionButtonWrapper>
-          <ActionButton onClick={handleNextStep} disabled={!enabled}>
+          <ActionButton
+            onClick={handleNextStep}
+            disabled={walletConnected ? !enabled : false}
+          >
             {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>

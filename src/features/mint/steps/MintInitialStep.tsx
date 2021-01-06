@@ -31,7 +31,7 @@ import {
   isMinimalAmount,
   TxConfigurationStepProps,
   TxType,
-} from '../../transactions/transactionsUtils'
+} from "../../transactions/transactionsUtils";
 import {
   $wallet,
   setChain,
@@ -82,7 +82,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const renCurrency = toMintedCurrency(currency);
   useRenNetworkTracker(renCurrency);
 
-  const canProceed =
+  const enabled =
     !!amount &&
     amount > 0 &&
     !pending &&
@@ -92,11 +92,11 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
     if (!walletConnected) {
       dispatch(setWalletPickerOpened(true));
     } else {
-      if (onNext && canProceed) {
+      if (onNext && enabled) {
         onNext();
       }
     }
-  }, [dispatch, onNext, walletConnected, canProceed]);
+  }, [dispatch, onNext, walletConnected, enabled]);
 
   const mintedCurrencySymbol = toMintedCurrency(currency);
   const mintedCurrencyConfig = getCurrencyConfig(mintedCurrencySymbol);
@@ -150,7 +150,10 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             />
           ))}
         <ActionButtonWrapper>
-          <ActionButton onClick={handleNextStep} disabled={!canProceed}>
+          <ActionButton
+            onClick={handleNextStep}
+            disabled={walletConnected ? !enabled : false}
+          >
             {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>
