@@ -13,6 +13,7 @@ import {
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
 import {
+  base64ToHex,
   getChainExplorerLink,
   getTxCreationTimestamp,
   TxEntryStatus,
@@ -92,9 +93,7 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   let releaseTxHash: string = "";
   let releaseTxLink: string = "";
   if (transaction && transaction.destTxHash) {
-    releaseTxHash = Buffer.from(transaction.destTxHash, "base64").toString(
-      "hex"
-    );
+    releaseTxHash = base64ToHex(transaction.destTxHash);
     releaseTxLink =
       getChainExplorerLink(
         releaseChainConfig.symbol,

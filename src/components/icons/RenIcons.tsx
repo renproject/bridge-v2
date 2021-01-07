@@ -55,8 +55,9 @@ import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
 import CompletedIcon from "@material-ui/icons/Done";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
+import WarningIcon from '@material-ui/icons/Warning';
 
-export { CompletedIcon, AddIcon, DeleteIcon };
+export { CompletedIcon, AddIcon, DeleteIcon, WarningIcon };
 
 export type CustomSvgIconComponent =
   | FunctionComponent<SvgIconProps>
