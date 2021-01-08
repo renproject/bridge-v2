@@ -45,6 +45,7 @@ import { useBrowserNotifications } from "../../notifications/notificationsUtils"
 import {
   HMSCountdown,
   ProcessingTimeWrapper,
+  SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { resetMint } from "../mintSlice";
@@ -231,6 +232,7 @@ type MintDepositAcceptedStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
   submitting: boolean;
+  submittingError: boolean;
 };
 
 export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedStatusProps> = ({
@@ -266,6 +268,10 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   });
 
   const { MainIcon } = lockChainConfig;
+
+  const handleResubmit = useCallback(() => {
+    console.log("todo");
+  }, []);
 
   return (
     <>
@@ -304,6 +310,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           link={lockTxLink}
         />
       </ActionButtonWrapper>
+      <SubmitErrorDialog open={true} onAction={handleResubmit} />
     </>
   );
 };

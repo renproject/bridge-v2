@@ -27,7 +27,9 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
   },
-  closeButtonWrapper: {},
+  closeButtonWrapper: {
+    minWidth: 30,
+  },
   closeButton: {
     color: theme.palette.grey[600],
   },

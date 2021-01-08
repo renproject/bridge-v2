@@ -299,12 +299,14 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   if (!machine) {
     return <div>Transaction completed</div>;
   }
+  console.log(state);
   switch (state) {
     // switch (forceState) {
     case "srcSettling":
       return <MintDepositConfirmationStatus tx={tx} />;
     case "srcConfirmed": // source sourceChain confirmations ok, but renVM still doesn't accept it
       return <ProgressStatus reason="Submitting to RenVM" />;
+    case "errorSubmitting":
     case "claiming":
     case "accepted": // RenVM accepted it, it can be submitted to ethereum
       return (
@@ -312,6 +314,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
           tx={tx}
           onSubmit={handleSubmitToDestinationChain}
           submitting={state === "claiming"}
+          submittingError={state === "errorSubmitting"}
         />
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up
