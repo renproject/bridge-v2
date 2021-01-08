@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps, useHistory } from "react-router-dom";
+import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
 import {
   ActionButton,
   ToggleIconButton,
@@ -46,7 +46,7 @@ import {
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
-import { useTransactionDeletion } from '../../transactions/transactionsHooks'
+import { useTransactionDeletion } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getTxPageTitle,
@@ -62,24 +62,24 @@ import {
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
 } from "../components/ReleaseStatuses";
-import { useBurnMachine, useReleaseTransactionPersistence } from '../releaseHooks'
 import {
-  getBurnAndReleaseParams,
-
-
-} from "../releaseUtils";
+  useBurnMachine,
+  useReleaseTransactionPersistence,
+} from "../releaseHooks";
+import { getBurnAndReleaseParams } from "../releaseUtils";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   props
 ) => {
-  const { history } = props;
+  const { history, location } = props;
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
   const chain = useSelector($chain);
   const rates = useSelector($exchangeRates);
+  const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
-  const [tx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
 
   usePageTitle(getTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
@@ -88,6 +88,17 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
       setPaperTitle("Resume Transaction");
     }
   }, [walletConnected, setPaperTitle]);
+
+  useEffect(() => {
+    if (txState?.reloadTx) {
+      setTx(parsedTx as GatewaySession);
+      setReloading(true);
+      history.replace({ ...location, state: undefined });
+      setTimeout(() => {
+        setReloading(false);
+      }, 1000);
+    }
+  }, [history, location, txState, parsedTx]);
 
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
@@ -157,7 +168,8 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
         </PaperActions>
       </PaperHeader>
       <PaperContent bottomPadding>
-        {walletConnected && <ReleaseTransactionStatus tx={tx} />}
+        {reloading && <ProgressStatus processing />}
+        {walletConnected && !reloading && <ReleaseTransactionStatus tx={tx} />}
         {!walletConnected && (
           <>
             <PaperSpacerWrapper>
@@ -229,6 +241,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   tx,
 }) => {
   const history = useHistory();
+  const location = useLocation();
   const [current, send, service] = useBurnMachine(tx);
   useEffect(
     () => () => {
@@ -238,10 +251,24 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   );
 
   const [submitting, setSubmitting] = useState(false);
+  const [timeoutError, setTimeoutError] = useState(false);
   const handleSubmit = useCallback(() => {
     setSubmitting(true);
     send({ type: "SUBMIT" });
+    setTimeout(() => {
+      setTimeoutError(true);
+    }, 60000);
   }, [send]);
+  const handleReload = useCallback(() => {
+    history.replace({
+      ...location,
+      state: {
+        txState: {
+          reloadTx: true,
+        },
+      },
+    });
+  }, [history, location]);
 
   useEffect(() => {
     if (current.value === "srcSettling") {
@@ -252,21 +279,33 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     }
   }, [history, current.value, current.context.tx]);
 
-  // const forceState = "srcConfirmed";
+  // const forceState = "errorBurning";
   const state = current.value as keyof BurnMachineSchema["states"];
+  console.log(state);
   useReleaseTransactionPersistence(current.context.tx, state);
   switch (state) {
-    // switch (forceState as keyof BurnMachineSchema["states"]) {
+  // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
       return (
         <ReleaseProgressStatus
           tx={tx}
           onSubmit={handleSubmit}
           submitting={submitting}
+          submittingError={timeoutError}
+          onReload={handleReload}
         />
       );
+    case "errorBurning":
+    case "errorReleasing":
     case "srcSettling":
-      return <ReleaseProgressStatus tx={current.context.tx} pending />;
+      return (
+        <ReleaseProgressStatus
+          tx={current.context.tx}
+          pending
+          generalError={state !== "srcSettling"}
+          onReload={handleReload}
+        />
+      );
     case "srcConfirmed": // return <ProgressStatus reason="Submitting to RenVM" />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={current.context.tx} />;

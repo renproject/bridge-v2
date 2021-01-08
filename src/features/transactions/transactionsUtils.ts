@@ -215,10 +215,16 @@ export const isTransactionCompleted = (tx: GatewaySession) => {
     : isReleaseTransactionCompleted(tx);
 };
 
-export const isMinimalAmount = (amount: number, receiving: number) => {
-  return receiving / (amount - receiving) >= 3;
+export const isMinimalAmount = (
+  amount: number,
+  receiving: number,
+  type: TxType
+) => {
+  if (type === TxType.BURN) {
+    return true;
+  }
+  return receiving / amount >= 0.5;
 };
 
-// @ts-ignore
-window.Buffer = Buffer;
-export const base64ToHex = (hash: string) => Buffer.from(hash, "base64").toString("hex");
+export const base64ToHex = (hash: string) =>
+  Buffer.from(hash, "base64").toString("hex");

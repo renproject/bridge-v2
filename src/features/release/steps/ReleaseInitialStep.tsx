@@ -132,7 +132,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     isAddressValid &&
     amount > 0 &&
     !pending &&
-    isMinimalAmount(amount, conversionTotal);
+    isMinimalAmount(amount, conversionTotal, TxType.BURN);
 
   const hasBalance = balance !== null && amount <= Number(balance);
   let enabled;

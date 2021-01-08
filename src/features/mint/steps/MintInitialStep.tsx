@@ -86,7 +86,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
     !!amount &&
     amount > 0 &&
     !pending &&
-    isMinimalAmount(amount, conversionTotal);
+    isMinimalAmount(amount, conversionTotal, TxType.MINT);
 
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {

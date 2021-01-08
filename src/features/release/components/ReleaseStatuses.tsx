@@ -20,6 +20,10 @@ import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { useBrowserNotifications } from "../../notifications/notificationsUtils";
+import {
+  GeneralErrorDialog,
+  SubmitErrorDialog,
+} from "../../transactions/components/TransactionsHelpers";
 import { resetRelease } from "../releaseSlice";
 import { getBurnAndReleaseParams } from "../releaseUtils";
 
@@ -28,6 +32,9 @@ export const a = 1;
 type ReleaseProgressStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
+  onReload?: () => void;
+  submittingError?: boolean;
+  generalError?: boolean;
   submitting?: boolean;
   pending?: boolean;
 };
@@ -35,7 +42,10 @@ type ReleaseProgressStatusProps = {
 export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps> = ({
   tx,
   onSubmit,
+  onReload,
   submitting = false,
+  submittingError,
+  generalError,
   pending = false,
 }) => {
   useSetPaperTitle("Submit");
@@ -59,7 +69,10 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
   return (
     <>
       <ProgressWrapper>
-        <ProgressWithContent color={theme.customColors.skyBlue} processing={buttonSubmitting}>
+        <ProgressWithContent
+          color={theme.customColors.skyBlue}
+          processing={buttonSubmitting}
+        >
           {pending ? (
             <TransactionStatusInfo
               status="Pending"
@@ -92,6 +105,8 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
           {buttonSubmitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
+      <SubmitErrorDialog open={Boolean(submittingError)} onAction={onReload} />
+      <GeneralErrorDialog open={Boolean(generalError)} onAction={onReload} />
     </>
   );
 };
