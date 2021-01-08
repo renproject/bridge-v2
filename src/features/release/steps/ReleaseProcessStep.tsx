@@ -279,7 +279,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     }
   }, [history, current.value, current.context.tx]);
 
-  // const forceState = "errorBurning";
+  // const forceState = "errorReleasing";
   const state = current.value as keyof BurnMachineSchema["states"];
   console.log(state);
   useReleaseTransactionPersistence(current.context.tx, state);
