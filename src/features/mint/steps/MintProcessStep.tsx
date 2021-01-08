@@ -13,8 +13,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps, useHistory } from "react-router-dom";
-import { useLocation } from "react-use";
+import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
 import { Actor } from "xstate";
 import {
   ActionButton,
@@ -290,9 +289,21 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   deposit,
   machine,
 }) => {
+  const history = useHistory();
+  const location = useLocation();
   const handleSubmitToDestinationChain = useCallback(() => {
     machine.send({ type: "CLAIM" });
   }, [machine]);
+  const handleReload = useCallback(() => {
+    history.replace({
+      ...location,
+      state: {
+        txState: {
+          reloadTx: true,
+        },
+      },
+    });
+  }, [history, location]);
 
   const state = machine?.state.value as keyof DepositMachineSchema["states"];
   useMintTransactionPersistence(tx, state);
@@ -313,6 +324,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         <MintDepositAcceptedStatus
           tx={tx}
           onSubmit={handleSubmitToDestinationChain}
+          onReload={handleReload}
           submitting={state === "claiming"}
           submittingError={state === "errorSubmitting"}
         />

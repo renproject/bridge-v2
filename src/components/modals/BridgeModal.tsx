@@ -1,13 +1,15 @@
-import { Backdrop } from '@material-ui/core'
-import Dialog, { DialogProps } from '@material-ui/core/Dialog'
-import MuiDialogTitle, { DialogTitleProps, } from '@material-ui/core/DialogTitle'
-import IconButton from '@material-ui/core/IconButton'
-import { makeStyles } from '@material-ui/core/styles'
-import Typography from '@material-ui/core/Typography'
-import CloseIcon from '@material-ui/icons/Close'
-import classNames from 'classnames'
-import React, { FunctionComponent } from 'react'
-import { BridgePurePaper } from '../layout/Paper'
+import { Backdrop } from "@material-ui/core";
+import Dialog, { DialogProps } from "@material-ui/core/Dialog";
+import MuiDialogTitle, {
+  DialogTitleProps,
+} from "@material-ui/core/DialogTitle";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
+import { BridgePurePaper } from "../layout/Paper";
 
 export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   dialogTitle: {
@@ -84,9 +86,10 @@ export const BridgeModal: FunctionComponent<DialogProps> = ({
   open,
   onClose,
   children,
+  maxWidth,
 }) => {
   return (
-    <Dialog onClose={onClose} open={open}>
+    <Dialog onClose={onClose} open={open} maxWidth={maxWidth}>
       <BridgeModalTitle onClose={onClose} title={title} />
       {children}
     </Dialog>

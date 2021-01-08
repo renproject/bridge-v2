@@ -231,6 +231,7 @@ const maxConfirmations = (actual: number, target: number) => {
 type MintDepositAcceptedStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
+  onReload?: () => void;
   submitting: boolean;
   submittingError: boolean;
 };
@@ -238,7 +239,9 @@ type MintDepositAcceptedStatusProps = {
 export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedStatusProps> = ({
   tx,
   onSubmit = () => {},
+  onReload,
   submitting,
+  submittingError,
 }) => {
   useSetPaperTitle("Submit");
   useSetActionRequired(true);
@@ -268,10 +271,6 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   });
 
   const { MainIcon } = lockChainConfig;
-
-  const handleResubmit = useCallback(() => {
-    console.log("todo");
-  }, []);
 
   return (
     <>
@@ -310,7 +309,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           link={lockTxLink}
         />
       </ActionButtonWrapper>
-      <SubmitErrorDialog open={true} onAction={handleResubmit} />
+      <SubmitErrorDialog open={submittingError} onAction={onReload} />
     </>
   );
 };

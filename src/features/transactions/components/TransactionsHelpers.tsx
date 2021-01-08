@@ -172,7 +172,7 @@ const ErrorIconWrapper = styled("div")(({ theme }) => ({
 }));
 
 type ErrorWithActionProps = DialogProps & {
-  onAction: () => void;
+  onAction?: () => void;
   reason?: string;
   actionText?: string;
 };
@@ -185,7 +185,7 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   children,
 }) => {
   return (
-    <BridgeModal open={open} title="Error" maxWidth="sm">
+    <BridgeModal open={open} title="Error" maxWidth="xs">
       <SpacedPaperContent>
         <ErrorIconWrapper>
           <WarningIcon fontSize="inherit" color="inherit" />
@@ -229,7 +229,7 @@ export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = (
     <span>
       Please ensure you have this page bookmarked before refreshing. If this
       error persists, please{" "}
-      <Link external to={links.BUGS_LOG} color="primary" underline="hover">
+      <Link external href={links.BUGS_LOG} color="primary" underline="hover">
         submit a bug here
       </Link>
       .
