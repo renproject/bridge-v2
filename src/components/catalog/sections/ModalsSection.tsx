@@ -1,10 +1,20 @@
-import { Box, Button, DialogActions, DialogContent, Typography, } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { ActionButton } from '../../buttons/Buttons'
-import { Link } from '../../links/Links'
-import { BridgeModal } from '../../modals/BridgeModal'
-import { DotStepper } from '../../navigation/DotStepper'
-import { RandomText, Section } from '../PresentationHelpers'
+import {
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  Typography,
+} from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import {
+  GeneralErrorDialog,
+  SubmitErrorDialog,
+} from "../../../features/transactions/components/TransactionsHelpers";
+import { ActionButton } from "../../buttons/Buttons";
+import { Link } from "../../links/Links";
+import { BridgeModal } from "../../modals/BridgeModal";
+import { DotStepper } from "../../navigation/DotStepper";
+import { RandomText, Section } from "../PresentationHelpers";
 
 export const ModalsSection: FunctionComponent = () => {
   const [simpleOpened, setSimpleOpened] = useState(false);
@@ -113,6 +123,8 @@ export const ModalsSection: FunctionComponent = () => {
           activeStep={activeStep}
         />
       </BridgeModal>
+      <SubmitErrorDialog open={true} onAction={() => {}} />
+      <GeneralErrorDialog open={false} onAction={() => {}} />
     </Section>
   );
 };

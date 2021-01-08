@@ -78,7 +78,7 @@ export const AboutPage: FunctionComponent<RouteComponentProps> = () => {
         </Typography>
         <Typography variant="body1" className={styles.description}>
           RenVM holds on to your assets when they are on other blockchains.
-          RenVM is new technology and{" "}
+          RenVM is new technology, and{" "}
           <Link external href={links.SECURITY_AUDITS}>
             security audits
           </Link>{" "}

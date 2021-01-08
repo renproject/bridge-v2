@@ -156,11 +156,6 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             </Typography>
           </div>
           <div className={styles.links}>
-            {status === TxEntryStatus.EXPIRED && phase === TxPhase.LOCK && (
-              <Typography variant="body2" color="error" className={styles.link}>
-                Transaction expired
-              </Typography>
-            )}
             {lockTxLink && (
               <Link
                 href={lockTxLink}
@@ -172,7 +167,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 {lockChainConfig.full} transaction
               </Link>
             )}
-            {status === TxEntryStatus.EXPIRED && phase === TxPhase.MINT && (
+            {status === TxEntryStatus.EXPIRED && (
               <>
                 <Typography
                   variant="body2"

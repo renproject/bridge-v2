@@ -8,6 +8,7 @@ import {
   BchFullIcon,
   BtcFullIcon,
   DogeFullIcon,
+  WarningIcon,
   ZecFullIcon,
 } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
@@ -52,6 +53,9 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
   },
+  warningIcon: {
+    marginBottom: -5,
+  },
 }));
 export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -62,7 +66,8 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   useEffect(() => {
     showNotification(
       <Typography variant="caption">
-        RenVM is new technology and{" "}
+        <WarningIcon fontSize="small" className={styles.warningIcon} /> RenVM is
+        new technology, and{" "}
         <Link
           href={links.SECURITY_AUDITS}
           target="_blank"
@@ -83,7 +88,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         },
       }
     );
-  }, [showNotification]);
+  }, [showNotification, styles.warningIcon]);
   const handleAgree = useCallback(() => {
     localStorage.setItem(storageKeys.TERMS_AGREED, "1");
     history.replace(paths.HOME);
@@ -96,8 +101,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           Transfer assets between blockchains
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          An easy, safe, and permissionless way to bridge cross-chain assets
-          between blockchains.
+          An easy way to bridge cross-chain assets between blockchains.
         </Typography>
         <Typography variant="body1" className={styles.continuation}>
           To continue, read and agree to the{" "}
@@ -130,10 +134,10 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
                 <IconWithLabel label="BCH" Icon={BchFullIcon} />
               </li>
               <li>
-                <IconWithLabel label="DOGE" Icon={DogeFullIcon} />
+                <IconWithLabel label="ZEC" Icon={ZecFullIcon} />
               </li>
               <li>
-                <IconWithLabel label="ZEC" Icon={ZecFullIcon} />
+                <IconWithLabel label="DOGE" Icon={DogeFullIcon} />
               </li>
             </UnstyledList>
           </div>

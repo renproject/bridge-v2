@@ -46,6 +46,7 @@ export enum DepositState {
   srcConfirmed = "srcConfirmed",
   accepted = "accepted",
   claiming = "claiming",
+  errorSubmitting = "errorSubmitting",
   destInitiated = "destInitiated",
   completed = "completed",
   rejected = "rejected",

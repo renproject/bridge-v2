@@ -96,8 +96,8 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
     <footer className={rootClassName}>
       <ul className={styles.textLinks}>
         <li>
-          <FooterTextLink to={paths.ABOUT} target="_blank">
-            About RenVM
+          <FooterTextLink to={paths.ABOUT}>
+            About
           </FooterTextLink>
         </li>
         <li>

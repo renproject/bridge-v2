@@ -49,7 +49,7 @@ export const AddressValidityMessage: FunctionComponent<AddressValidityMessagePro
   return (
     <span>
       This Gateway Address is only valid for 24 hours, it expires in{" "}
-      <HMSCountdown milliseconds={milliseconds} /> Do not send multiple deposits
+      <HMSCountdown milliseconds={milliseconds} />. Do not send multiple deposits
       or deposit after it has expired.
     </span>
   );

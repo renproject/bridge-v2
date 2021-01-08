@@ -1,9 +1,5 @@
 import { Divider, Fade } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { FunctionComponent, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -43,6 +39,7 @@ import { getTransactionFees } from "../../fees/feesUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { useRenNetworkTracker } from "../../transactions/transactionsHooks";
 import {
+  isMinimalAmount,
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
@@ -129,22 +126,29 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   }, [releaseChainConfig.rentxName, network]);
 
   const isAddressValid = validateAddress(address);
-  const hasAmountAndAddress = amount && address && isAddressValid && amount > 0;
+  const basicCondition =
+    amount &&
+    address &&
+    isAddressValid &&
+    amount > 0 &&
+    !pending &&
+    isMinimalAmount(amount, conversionTotal, TxType.BURN);
+
   const hasBalance = balance !== null && amount <= Number(balance);
   let enabled;
   if (walletConnected) {
-    enabled = hasAmountAndAddress && hasBalance;
+    enabled = basicCondition && hasBalance;
   } else {
-    enabled = hasAmountAndAddress;
+    enabled = basicCondition;
   }
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
       dispatch(setWalletPickerOpened(true));
     }
-    if (onNext && hasAmountAndAddress && hasBalance) {
+    if (onNext && basicCondition && hasBalance) {
       onNext();
     }
-  }, [dispatch, onNext, walletConnected, hasAmountAndAddress, hasBalance]);
+  }, [dispatch, onNext, walletConnected, basicCondition, hasBalance]);
   return (
     <>
       <PaperContent>
@@ -217,7 +221,10 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             />
           ))}
         <ActionButtonWrapper>
-          <ActionButton onClick={handleNextStep} disabled={!enabled}>
+          <ActionButton
+            onClick={handleNextStep}
+            disabled={walletConnected ? !enabled : false}
+          >
             {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>

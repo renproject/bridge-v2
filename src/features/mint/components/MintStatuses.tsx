@@ -45,6 +45,7 @@ import { useBrowserNotifications } from "../../notifications/notificationsUtils"
 import {
   HMSCountdown,
   ProcessingTimeWrapper,
+  SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { resetMint } from "../mintSlice";
@@ -230,13 +231,17 @@ const maxConfirmations = (actual: number, target: number) => {
 type MintDepositAcceptedStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
+  onReload?: () => void;
   submitting: boolean;
+  submittingError: boolean;
 };
 
 export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedStatusProps> = ({
   tx,
   onSubmit = () => {},
+  onReload,
   submitting,
+  submittingError,
 }) => {
   useSetPaperTitle("Submit");
   useSetActionRequired(true);
@@ -304,6 +309,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           link={lockTxLink}
         />
       </ActionButtonWrapper>
+      <SubmitErrorDialog open={submittingError} onAction={onReload} />
     </>
   );
 };

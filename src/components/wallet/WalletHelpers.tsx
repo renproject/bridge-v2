@@ -107,6 +107,14 @@ export const WalletEntryButton: WalletPickerProps<
   );
 };
 
+export const WalletChainLabel: WalletPickerProps<
+  any,
+  any
+>["WalletChainLabel"] = ({ chain }) => {
+  const chainConfig = getChainConfigByRentxName(chain);
+  return <span>{chainConfig.full}</span>;
+};
+
 const getLabels = (
   chainConfig: BridgeChainConfig,
   walletConfig: BridgeWalletConfig

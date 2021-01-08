@@ -5,64 +5,53 @@ import {
   Drawer,
   Grid,
   ListItem,
+  Menu,
+  MenuItem,
+  Typography,
   useTheme,
-} from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import CloseIcon from "@material-ui/icons/Close";
-import MenuIcon from "@material-ui/icons/Menu";
-import {
-  useMultiwallet,
-  WalletPickerModal,
-  WalletPickerProps,
-} from "@renproject/multiwallet-ui";
-import classNames from "classnames";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { useWindowSize } from "react-use";
-import { env } from "../../constants/environmentVariables";
-import { RenNetworkSelector } from "../../features/network/components/NetworkHelpers";
-import { $renNetwork } from "../../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../../features/network/networkUtils";
-import { TransactionHistory } from "../../features/transactions/TransactionHistory";
+} from '@material-ui/core'
+import AppBar from '@material-ui/core/AppBar'
+import IconButton from '@material-ui/core/IconButton'
+import { makeStyles, Theme } from '@material-ui/core/styles'
+import Toolbar from '@material-ui/core/Toolbar'
+import CloseIcon from '@material-ui/icons/Close'
+import MenuIcon from '@material-ui/icons/Menu'
+import { useMultiwallet, WalletPickerModal, WalletPickerProps, } from '@renproject/multiwallet-ui'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
+import { env } from '../../constants/environmentVariables'
+import { $renNetwork } from '../../features/network/networkSlice'
+import { useSetNetworkFromParam } from '../../features/network/networkUtils'
+import { TransactionHistory } from '../../features/transactions/TransactionHistory'
 import {
   $transactionsData,
   $transactionsNeedsAction,
   setTxHistoryOpened,
-} from "../../features/transactions/transactionsSlice";
-import { useTestnetName } from "../../features/ui/uiHooks";
-import {
-  $multiwalletChain,
-  $walletPickerOpened,
-  setWalletPickerOpened,
-} from "../../features/wallet/walletSlice";
-import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
+} from '../../features/transactions/transactionsSlice'
+import { useTestnetName } from '../../features/ui/uiHooks'
+import { $multiwalletChain, $walletPickerOpened, setWalletPickerOpened, } from '../../features/wallet/walletSlice'
+import { walletPickerModalConfig } from '../../providers/multiwallet/Multiwallet'
 import {
   useSelectedChainWallet,
   useSyncMultiwalletNetwork,
   useWallet,
-} from "../../providers/multiwallet/multiwalletHooks";
-import { useWeb3Signatures } from "../../services/web3";
-import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { Debug } from "../utils/Debug";
+} from '../../providers/multiwallet/multiwalletHooks'
+import { useWeb3Signatures } from '../../services/web3'
+import { TransactionHistoryMenuIconButton } from '../buttons/Buttons'
+import { RenBridgeLogoIcon } from '../icons/RenIcons'
+import { Debug } from '../utils/Debug'
 import {
   useWalletPickerStyles,
+  WalletChainLabel,
   WalletConnectingInfo,
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
-} from "../wallet/WalletHelpers";
-import { Footer } from "./Footer";
+} from '../wallet/WalletHelpers'
+import { Footer } from './Footer'
 
 const headerHeight = 82;
 const footerHeight = 55;
@@ -172,7 +161,13 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   useWeb3Signatures();
   const { txHistoryOpened } = useSelector($transactionsData);
   const txsNeedsAction = useSelector($transactionsNeedsAction);
-  const { status, account, walletConnected, symbol } = useSelectedChainWallet();
+  const {
+    status,
+    account,
+    walletConnected,
+    deactivateConnector,
+    symbol,
+  } = useSelectedChainWallet();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {
@@ -197,12 +192,30 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   const walletPickerOpen = useSelector($walletPickerOpened);
   const renNetwork = useSelector($renNetwork);
   const pickerClasses = useWalletPickerStyles();
+  const [
+    walletMenuAnchor,
+    setWalletMenuAnchor,
+  ] = React.useState<null | HTMLElement>(null);
   const handleWalletPickerClose = useCallback(() => {
     dispatch(setWalletPickerOpened(false));
   }, [dispatch]);
-  const handleWalletPickerOpen = useCallback(() => {
-    dispatch(setWalletPickerOpened(true));
-  }, [dispatch]);
+  const handleWalletMenuClose = useCallback(() => {
+    setWalletMenuAnchor(null);
+  }, []);
+  const handleWalletButtonClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (walletConnected) {
+        setWalletMenuAnchor(event.currentTarget);
+      } else {
+        dispatch(setWalletPickerOpened(true));
+      }
+    },
+    [dispatch, walletConnected]
+  );
+  const handleDisconnectWallet = useCallback(() => {
+    deactivateConnector();
+    handleWalletMenuClose();
+  }, [deactivateConnector, handleWalletMenuClose]);
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
       targetNetwork: renNetwork,
@@ -213,6 +226,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
       ConnectingInfo: WalletConnectingInfo,
       WrongNetworkInfo: WalletWrongNetworkInfo,
       WalletEntryButton,
+      WalletChainLabel,
       config: walletPickerModalConfig,
     };
     return options;
@@ -248,7 +262,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                         onClick={handleTxHistoryToggle}
                       />
                       <WalletConnectionStatusButton
-                        onClick={handleWalletPickerOpen}
+                        onClick={handleWalletButtonClick}
                         hoisted={txHistoryOpened}
                         status={status}
                         account={account}
@@ -298,7 +312,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                   divider
                   className={styles.drawerListItem}
                   button
-                  onClick={handleWalletPickerOpen}
+                  onClick={handleWalletButtonClick}
                 >
                   <WalletConnectionStatusButton
                     className={styles.mobileMenuButton}
@@ -332,12 +346,23 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                 </ListItem>
               </Drawer>
             )}
+            <Menu
+              id="wallet-menu"
+              getContentAnchorEl={null}
+              anchorEl={walletMenuAnchor}
+              keepMounted
+              open={Boolean(walletMenuAnchor)}
+              onClose={handleWalletMenuClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
+            >
+              <MenuItem onClick={handleDisconnectWallet}>
+                <Typography color="error">Disconnect wallet</Typography>
+              </MenuItem>
+            </Menu>
           </header>
           <main className={styles.main}>
             {children}
-            <div>
-              <RenNetworkSelector />
-            </div>
             <Debug
               it={{ debugNetworkName, debugWallet, debugMultiwallet, env }}
             />

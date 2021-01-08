@@ -1,10 +1,11 @@
+import { RenNetwork } from "@renproject/interfaces";
 import { GatewaySession } from "@renproject/ren-tx";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
+import { chainsClassMap } from "../../services/rentx";
 import {
   BridgeChain,
   BridgeCurrency,
-  BridgeNetwork,
   getChainConfig,
   getCurrencyConfig,
   getCurrencyConfigByRentxName,
@@ -141,44 +142,18 @@ export const parseTxQueryString: (
   };
 };
 
-const sochainTestnet = "https://sochain.com/tx/";
-const sochain = "https://sochain.com/tx/";
-const etherscanTestnet = "https://kovan.etherscan.io/tx/";
-const etherscan = "https://etherscan.io/tx/";
-const binanceTestnet = "https://testnet.bscscan.com/tx/";
-const binance = "https://bscscan.com/tx/";
-
 export const getChainExplorerLink = (
   chain: BridgeChain,
-  network: BridgeNetwork,
+  network: RenNetwork | "testnet" | "mainnet",
   txId: string
 ) => {
   if (!txId) {
     return "";
   }
-  if (network === BridgeNetwork.TESTNET) {
-    switch (chain) {
-      case BridgeChain.ETHC:
-        return etherscanTestnet + txId;
-      case BridgeChain.BSCC:
-        return binanceTestnet + txId;
-      case BridgeChain.BTCC:
-        return sochainTestnet + "BTCTEST/" + txId;
-      case BridgeChain.ZECC:
-        return sochainTestnet + "ZECTEST/" + txId;
-    }
-  } else if (network === BridgeNetwork.MAINNET) {
-    switch (chain) {
-      case BridgeChain.ETHC:
-        return etherscan + txId;
-      case BridgeChain.BSCC:
-        return binance + txId;
-      case BridgeChain.BTCC:
-        return sochain + "BTC/" + txId;
-      case BridgeChain.ZECC:
-        return sochain + "ZEC/" + txId;
-    }
-  }
+  const chainConfig = getChainConfig(chain);
+  return (chainsClassMap as any)[
+    chainConfig.rentxName
+  ].utils.transactionExplorerLink(txId, network);
 };
 
 type GetFeeTooltipsArgs = {
@@ -202,7 +177,6 @@ export const getFeeTooltips = ({
   const renNativeChainCurrencyConfig = getCurrencyConfig(
     renCurrencyChainConfig.nativeCurrency
   );
-  // const destinationCurrencyConfig = getCurrencyConfig(renCurrencyChainConfig.s)
   return {
     renVmFee: `RenVM takes a ${toPercent(
       mintFee
@@ -240,3 +214,17 @@ export const isTransactionCompleted = (tx: GatewaySession) => {
     ? isMintTransactionCompleted(tx)
     : isReleaseTransactionCompleted(tx);
 };
+
+export const isMinimalAmount = (
+  amount: number,
+  receiving: number,
+  type: TxType
+) => {
+  if (type === TxType.BURN) {
+    return true;
+  }
+  return receiving / amount >= 0.5;
+};
+
+export const base64ToHex = (hash: string) =>
+  Buffer.from(hash, "base64").toString("hex");

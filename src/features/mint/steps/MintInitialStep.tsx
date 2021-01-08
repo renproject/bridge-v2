@@ -1,26 +1,48 @@
-import { Divider } from '@material-ui/core'
-import React, { FunctionComponent, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
-import { AssetInfo } from '../../../components/typography/TypographyHelpers'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import { Divider } from "@material-ui/core";
+import React, { FunctionComponent, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from "../../../components/dropdowns/AssetDropdown";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import { PaperContent } from "../../../components/layout/Paper";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import { AssetInfo } from "../../../components/typography/TypographyHelpers";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   getCurrencyConfig,
   supportedLockCurrencies,
   supportedMintDestinationChains,
   toMintedCurrency,
-} from '../../../utils/assetConfigs'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { useRenNetworkTracker } from '../../transactions/transactionsHooks'
-import { TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
-import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
-import { $mint, $mintUsdAmount, setMintAmount, setMintCurrency, } from '../mintSlice'
+} from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { useRenNetworkTracker } from "../../transactions/transactionsHooks";
+import {
+  isMinimalAmount,
+  TxConfigurationStepProps,
+  TxType,
+} from "../../transactions/transactionsUtils";
+import {
+  $wallet,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
+  $mint,
+  $mintUsdAmount,
+  setMintAmount,
+  setMintCurrency,
+} from "../mintSlice";
 
 export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -60,20 +82,23 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const renCurrency = toMintedCurrency(currency);
   useRenNetworkTracker(renCurrency);
 
-  const canProceed = !!amount && amount > 0;
+  const enabled =
+    !!amount &&
+    amount > 0 &&
+    !pending &&
+    isMinimalAmount(amount, conversionTotal, TxType.MINT);
 
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
       dispatch(setWalletPickerOpened(true));
     } else {
-      if (onNext && canProceed) {
+      if (onNext && enabled) {
         onNext();
       }
     }
-  }, [dispatch, onNext, walletConnected, canProceed]);
+  }, [dispatch, onNext, walletConnected, enabled]);
 
   const mintedCurrencySymbol = toMintedCurrency(currency);
-  // TODO: get from config
   const mintedCurrencyConfig = getCurrencyConfig(mintedCurrencySymbol);
   const { GreyIcon } = mintedCurrencyConfig;
 
@@ -125,7 +150,10 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             />
           ))}
         <ActionButtonWrapper>
-          <ActionButton onClick={handleNextStep} disabled={!canProceed}>
+          <ActionButton
+            onClick={handleNextStep}
+            disabled={walletConnected ? !enabled : false}
+          >
             {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>

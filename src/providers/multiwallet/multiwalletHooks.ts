@@ -1,20 +1,21 @@
-import { RenNetwork } from '@renproject/interfaces'
-import { useMultiwallet } from '@renproject/multiwallet-ui'
-import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { WalletConnectionStatusType, WalletStatus, } from '../../components/utils/types'
-import { $renNetwork } from '../../features/network/networkSlice'
-import { $multiwalletChain } from '../../features/wallet/walletSlice'
-import { BridgeWallet } from '../../utils/assetConfigs'
+import { useMultiwallet } from "@renproject/multiwallet-ui";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import {
+  WalletConnectionStatusType,
+  WalletStatus,
+} from "../../components/utils/types";
+import { $renNetwork } from "../../features/network/networkSlice";
+import { $multiwalletChain } from "../../features/wallet/walletSlice";
+import { BridgeWallet } from "../../utils/assetConfigs";
 
-type WalletData = {
+type WalletData = ReturnType<typeof useMultiwallet> & {
   account: string;
   status: WalletConnectionStatusType;
   walletConnected: boolean;
   provider: any;
   symbol: BridgeWallet;
-  targetNetwork: RenNetwork;
-  setTargetNetwork: (n: RenNetwork) => void;
+  deactivateConnector: () => void;
 };
 
 const resolveWallet = (provider: any) => {
@@ -42,6 +43,9 @@ export const useWallet: UseWallet = (chain) => {
     enabledChains?.[chain] || {};
   const provider = enabledChains?.[chain]?.provider;
   const symbol = resolveWallet(provider);
+  const emptyFn = () => {};
+  const deactivateConnector =
+    enabledChains[chain]?.connector.deactivate || emptyFn;
 
   return {
     account,
@@ -53,6 +57,7 @@ export const useWallet: UseWallet = (chain) => {
     enabledChains,
     activateConnector,
     setTargetNetwork,
+    deactivateConnector,
   } as WalletData;
 };
 
