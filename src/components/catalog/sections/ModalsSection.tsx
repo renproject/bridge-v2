@@ -123,7 +123,7 @@ export const ModalsSection: FunctionComponent = () => {
           activeStep={activeStep}
         />
       </BridgeModal>
-      <SubmitErrorDialog open={true} onAction={() => {}} />
+      <SubmitErrorDialog open={false} onAction={() => {}} />
       <GeneralErrorDialog open={false} onAction={() => {}} />
     </Section>
   );

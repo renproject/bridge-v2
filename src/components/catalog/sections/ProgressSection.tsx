@@ -50,7 +50,7 @@ export const ProgressSection: FunctionComponent = () => {
               {step !== 2 ? (
                 <TransactionStatusInfo
                   address="0x7a36479806342F7a1d663fF43A0D340b733FA764"
-                  chain="Ethereum"
+                  chain="Binance Smart Chain"
                 />
               ) : (
                 <BigDoneIcon />
