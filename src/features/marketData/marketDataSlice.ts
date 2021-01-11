@@ -1,25 +1,15 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../../store/rootReducer'
-import { AnyBlockGasPrices, ExchangeRate, } from './marketDataUtils'
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../store/rootReducer";
+import { ExchangeRate, GasPrice } from "./marketDataUtils";
 
 type MarketDataState = {
   exchangeRates: Array<ExchangeRate>;
-  gasPrices: AnyBlockGasPrices;
-};
-
-const initialGasPrices: AnyBlockGasPrices = {
-  health: false,
-  blockNumber: 0,
-  blockTime: 0,
-  fast: 0,
-  instant: 0,
-  slow: 0,
-  standard: 0,
+  gasPrices: Array<GasPrice>;
 };
 
 let initialState: MarketDataState = {
   exchangeRates: [],
-  gasPrices: initialGasPrices,
+  gasPrices: [],
 };
 
 const slice = createSlice({
@@ -29,7 +19,7 @@ const slice = createSlice({
     setExchangeRates(state, action: PayloadAction<Array<ExchangeRate>>) {
       state.exchangeRates = action.payload;
     },
-    setGasPrices(state, action: PayloadAction<AnyBlockGasPrices>) {
+    setGasPrices(state, action: PayloadAction<Array<GasPrice>>) {
       state.gasPrices = action.payload;
     },
   },

@@ -5,7 +5,7 @@ import {
   BridgeCurrency,
   currenciesConfig,
   getCurrencyConfigByBandchainSymbol,
-} from '../../utils/assetConfigs'
+} from "../../utils/assetConfigs";
 
 // move to assetConfig
 const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
@@ -55,6 +55,11 @@ export type ExchangeRate = {
   rate: number;
 };
 
+export type GasPrice = {
+  chain: string;
+  standard: number;
+};
+
 export const fetchMarketDataRates = async () => {
   return getBandchain()
     .getReferenceData(referencePairs)
@@ -66,7 +71,7 @@ export const findExchangeRate = (
   base: BridgeCurrency,
   quote = USD_SYMBOL
 ) => {
-  const baseBandchainSymbol = mapToBandchainCurrencySymbol(base)
+  const baseBandchainSymbol = mapToBandchainCurrencySymbol(base);
   const rateEntry = exchangeRates.find(
     (entry) => entry.pair === getPair(baseBandchainSymbol, quote)
   );
@@ -83,9 +88,14 @@ export type AnyBlockGasPrices = {
   instant: number;
 };
 
-export const fetchMarketDataGasPrices = () =>
+export const fetchEthMarketDataGasPrices = () =>
   fetch(env.GAS_FEE_ENDPOINT)
     .then((response) => response.json())
     .then((data: AnyBlockGasPrices) => {
       return data;
     });
+
+export const findGasPrice = (gasPrices: Array<GasPrice>, chain: string) => {
+  const gasEntry = gasPrices.find((entry) => entry.chain === chain);
+  return gasEntry?.standard || 0;
+};

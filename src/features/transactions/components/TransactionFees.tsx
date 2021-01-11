@@ -1,25 +1,29 @@
-import React, { FunctionComponent } from 'react'
-import { useSelector } from 'react-redux'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
-import { LabelWithValue } from '../../../components/typography/TypographyHelpers'
-import { Debug } from '../../../components/utils/Debug'
-import { WalletStatus } from '../../../components/utils/types'
-import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
+import React, { FunctionComponent } from "react";
+import { useSelector } from "react-redux";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import { WalletStatus } from "../../../components/utils/types";
+import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
+import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   BridgeChain,
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
   toReleasedCurrency,
-} from '../../../utils/assetConfigs'
-import { fromGwei } from '../../../utils/converters'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
-import { findExchangeRate, USD_SYMBOL } from '../../marketData/marketDataUtils'
-import { getFeeTooltips, TxType } from '../transactionsUtils'
+} from "../../../utils/assetConfigs";
+import { fromGwei } from "../../../utils/converters";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
+import {
+  findExchangeRate,
+  findGasPrice,
+  USD_SYMBOL,
+} from "../../marketData/marketDataUtils";
+import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {
   type: TxType;
@@ -39,9 +43,12 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const exchangeRates = useSelector($exchangeRates);
   const gasPrices = useSelector($gasPrices);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);
-  const ethUsdRate = findExchangeRate(
+  const gasPrice = findGasPrice(gasPrices, chain);
+  const targetChainConfig = getChainConfig(chain);
+
+  const targetChainCurrencyUsdRate = findExchangeRate(
     exchangeRates,
-    BridgeCurrency.ETH,
+    targetChainConfig.nativeCurrency,
     USD_SYMBOL
   );
   const amountUsd = amount * currencyUsdRate;
@@ -60,7 +67,6 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const sourceCurrencyChainConfig = getChainConfig(
     sourceCurrencyConfig.sourceChain
   );
-  const renCurrencyChainConfig = getChainConfig(chain);
 
   const tooltips = getFeeTooltips({
     mintFee: fees.mint / 10000,
@@ -69,9 +75,9 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     chain,
   });
 
-  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrices.standard);
-  const targetNetworkFeeUsd = fromGwei(feeInGwei) * ethUsdRate;
-  const targetNetworkFeeLabel = `${feeInGwei} Gwei`;
+  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice);
+  const targetChainFeeUsd = fromGwei(feeInGwei) * targetChainCurrencyUsdRate;
+  const targetChainFeeLabel = `${feeInGwei} Gwei`;
 
   if (status !== WalletStatus.CONNECTED) {
     return null;
@@ -120,12 +126,12 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue
-        label={`Esti. ${renCurrencyChainConfig.full} Fee`}
+        label={`Esti. ${targetChainConfig.full} Fee`}
         labelTooltip={tooltips.renCurrencyChainFee}
-        value={targetNetworkFeeLabel}
+        value={targetChainFeeLabel}
         valueEquivalent={
           <NumberFormatText
-            value={targetNetworkFeeUsd}
+            value={targetChainFeeUsd}
             prefix="$"
             decimalScale={2}
             fixedDecimalScale
