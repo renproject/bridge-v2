@@ -27,6 +27,7 @@ import {
 } from "../../../components/layout/Paper";
 import {
   LabelWithValue,
+  MiddleEllipsisText,
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
@@ -91,7 +92,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
 
   useEffect(() => {
     if (txState?.reloadTx) {
-      console.log('reloading')
+      console.log("reloading");
       setTx(parsedTx as GatewaySession);
       setReloading(true);
       history.replace({ ...location, state: undefined });
@@ -206,7 +207,10 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
               }
             />
             <LabelWithValue label="From" value={burnChainConfig.full} />
-            <LabelWithValue label="To" value={tx.destAddress} />
+            <LabelWithValue
+              label="To"
+              value={<MiddleEllipsisText>{tx.destAddress}</MiddleEllipsisText>}
+            />
             <SpacedDivider />
             <TransactionFees
               chain={chain}
@@ -286,7 +290,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   console.log(state);
   useReleaseTransactionPersistence(current.context.tx, state);
   switch (state) {
-  // switch (forceState as keyof BurnMachineSchema["states"]) {
+    // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
       return (
         <ReleaseProgressStatus

@@ -126,7 +126,7 @@ export const ModalsSection: FunctionComponent = () => {
       </BridgeModal>
       <SubmitErrorDialog open={false} onAction={() => {}} />
       <GeneralErrorDialog open={false} onAction={() => {}} />
-      <ExpiredErrorDialog open={true} onAction={() => {}} />
+      <ExpiredErrorDialog open={false} onAction={() => {}} />
     </Section>
   );
 };

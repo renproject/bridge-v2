@@ -26,6 +26,7 @@ import {
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
+  MiddleEllipsisText,
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { WalletStatus } from "../../../components/utils/types";
@@ -60,12 +61,11 @@ import {
   BurnAndReleaseTransactionInitializer,
   releaseTooltips,
 } from "../components/ReleaseHelpers";
-import { releaseTxStateUpdateSequence } from '../releaseHooks'
+import { releaseTxStateUpdateSequence } from "../releaseHooks";
 import { $release, $releaseUsdAmount } from "../releaseSlice";
 import {
   createReleaseTransaction,
   preValidateReleaseTransaction,
-
 } from "../releaseUtils";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
@@ -206,7 +206,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="To"
           labelTooltip={releaseTooltips.to}
-          value={address}
+          value={<MiddleEllipsisText>{address}</MiddleEllipsisText>}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>

@@ -1,11 +1,16 @@
-import { Box, Divider, Typography } from '@material-ui/core'
-import React, { FunctionComponent } from 'react'
-import { BitcoinInCircleIcon } from '../../icons/RenIcons'
-import { BridgePaper } from '../../layout/Paper'
-import { AssetInfo, LabelWithValue } from '../../typography/TypographyHelpers'
-import { Section } from '../PresentationHelpers'
+import { Box, Divider, Typography } from "@material-ui/core";
+import React, { FunctionComponent } from "react";
+import { BitcoinInCircleIcon } from "../../icons/RenIcons";
+import { BridgePaper } from "../../layout/Paper";
+import {
+  AssetInfo,
+  LabelWithValue,
+  MiddleEllipsisText,
+} from "../../typography/TypographyHelpers";
+import { Section } from "../PresentationHelpers";
 
 export const TypographyHelpersSection: FunctionComponent = () => {
+  const address = "0x13123131241241241241212312314124124123412414124141000000";
   return (
     <Section header="Typography Helpers">
       <BridgePaper>
@@ -19,6 +24,11 @@ export const TypographyHelpersSection: FunctionComponent = () => {
           valueEquivalent="10,131.65 USD"
         />
         <LabelWithValue label="To" value="Ethereum" />
+        <LabelWithValue
+          label="Address"
+          value={<MiddleEllipsisText>{address}</MiddleEllipsisText>}
+        />
+
         <Box mb={1}>
           <Divider />
         </Box>
