@@ -596,3 +596,16 @@ export const getWalletConfig = (symbol: BridgeWallet) =>
 export const getWalletConfigByRentxName = (name: string) =>
   Object.values(walletsConfig).find((wallet) => wallet.rentxName === name) ||
   unknownWalletConfig;
+
+// FIXME: hacky, lets not have two different enums for the same things (supported networks)
+// Maybe we should raise the enum into ren-js, just like we have RenNetwork
+export const bridgeChainToRenChain = (bridgeChain: BridgeChain): RenChain => {
+  switch (bridgeChain) {
+    case BridgeChain.ETHC:
+      return RenChain.ethereum;
+    case BridgeChain.BSCC:
+      return RenChain.binanceSmartChain;
+    default:
+      return RenChain.unknown;
+  }
+};

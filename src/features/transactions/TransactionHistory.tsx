@@ -35,6 +35,7 @@ import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers"
 import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../services/database/database";
 import {
+  bridgeChainToRenChain,
   getChainConfig,
   supportedMintDestinationChains,
 } from "../../utils/assetConfigs";
@@ -88,7 +89,18 @@ export const TransactionHistory: FunctionComponent = () => {
     if (user) {
       db.getTxs(account)
         .then((txsData) => {
-          dispatch(setTransactions(txsData as Array<BridgeTransaction>));
+          // Only load txs for the correct chain, in case the address is valid on multiple chains
+          // (this will happen when using metamask for both bsc and eth)
+          dispatch(
+            setTransactions(
+              (txsData as Array<BridgeTransaction>).filter(
+                (x) =>
+                  // FIXME: remove the split between "BridgeChain" and "RenChain"
+                  x.sourceChain === bridgeChainToRenChain(chain) ||
+                  x.destChain === bridgeChainToRenChain(chain)
+              )
+            )
+          );
           dispatch(setTxsPending(false));
         })
         .catch(console.error);

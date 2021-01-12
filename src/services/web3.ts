@@ -33,7 +33,13 @@ const getWeb3Signatures = async (
 
   if (!signature || !rawSignature) {
     // get unique wallet signature for database backup
-    if (chain === RenChain.ethereum) {
+    if (
+      chain === RenChain.ethereum ||
+      // signing is actually based on wallet, not chain,
+      // so use this style if the provider is eth
+      // TODO: move signing functionality into multiwallet?
+      (web3.currentProvider as any).connection.isMetaMask
+    ) {
       rawSignature = await web3.eth.personal.sign(
         web3.utils.utf8ToHex(SIGN_MESSAGE),
         addressLowerCase,
@@ -69,6 +75,7 @@ export const useWeb3Signatures = () => {
   const web3 = useWeb3();
   return useEffect(() => {
     if (account && web3) {
+      // FIXME: handle any errors thrown here
       getWeb3Signatures(account, web3, chain).then((signatures) => {
         dispatch(setSignatures(signatures));
       });

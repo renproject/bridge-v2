@@ -66,13 +66,23 @@ export const useTxParam = () => {
 };
 
 export const createTxQueryString = (tx: GatewaySession) => {
-  const { customParams, transactions, ...sanitized } = tx;
+  const { customParams, transactions, ...sanitized } = tx as any;
 
-  return queryString.stringify({
+  // These were broken previously and should not be part of the tx object
+  delete sanitized.meta;
+  delete sanitized.created;
+  delete sanitized.updated;
+
+  const stringResult = queryString.stringify({
     ...sanitized,
     customParams: JSON.stringify(customParams),
     transactions: JSON.stringify(transactions),
   } as any);
+
+  if (stringResult.includes("[object Object]")) {
+    throw new Error("Failed to serialize tx");
+  }
+  return stringResult;
 };
 
 const parseNumber = (value: any) => {
