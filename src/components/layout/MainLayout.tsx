@@ -25,7 +25,7 @@ import { useWindowSize } from 'react-use'
 import { env } from '../../constants/environmentVariables'
 import { $renNetwork } from '../../features/network/networkSlice'
 import { useSetNetworkFromParam } from '../../features/network/networkUtils'
-import { TransactionHistory } from '../../features/transactions/TransactionHistory'
+// import { TransactionHistory } from '../../features/transactions/TransactionHistory'
 import {
   $transactionsData,
   $transactionsNeedsAction,
@@ -367,7 +367,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
               it={{ debugNetworkName, debugWallet, debugMultiwallet, env }}
             />
           </main>
-          <TransactionHistory />
+          {/*<TransactionHistory />*/}
           <Footer />
         </Container>
       </Grid>

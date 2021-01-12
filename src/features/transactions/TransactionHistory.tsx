@@ -105,7 +105,7 @@ export const TransactionHistory: FunctionComponent = () => {
         })
         .catch(console.error);
     }
-  }, [dispatch, user, account]);
+  }, [dispatch, user, account, chain]);
 
   const chainConfig = getChainConfig(chain);
   const handleWalletPickerOpen = useCallback(() => {
