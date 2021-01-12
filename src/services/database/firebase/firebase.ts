@@ -67,7 +67,7 @@ export class FireBase<Transaction extends { id: string }>
         createdSeconds: timestamps.seconds,
         data: JSON.stringify(dbTx),
       })
-      .catch(console.error);
+      .catch((e) => console.error("failed to track tx", e));
   };
 
   public updateTx = async (tx: Transaction) => {
@@ -75,20 +75,30 @@ export class FireBase<Transaction extends { id: string }>
       new Date(Date.now())
     );
     const dbTx = { ...tx, updated: timestamps };
-    await this.db
-      .collection("transactions")
-      .doc(tx.id)
-      .update({
-        data: JSON.stringify(dbTx),
-        updated: timestamps,
-      });
+    try {
+      await this.db
+        .collection("transactions")
+        .doc(tx.id)
+        .update({
+          data: JSON.stringify(dbTx),
+          updated: timestamps,
+        });
+    } catch (e) {
+      console.error("failed to update", e);
+      throw e;
+    }
   };
 
   public deleteTx = async (tx: Transaction) => {
-    await this.db
-      .collection("transactions")
-      .doc(tx.id)
-      .update({ deleted: true });
+    try {
+      await this.db
+        .collection("transactions")
+        .doc(tx.id)
+        .update({ deleted: true });
+    } catch (e) {
+      console.error("failed to delete", e);
+      throw e;
+    }
   };
 
   public getTx = async (tx: Transaction) => {
@@ -104,36 +114,40 @@ export class FireBase<Transaction extends { id: string }>
           }
         }
         throw new Error(`Tx: ${tx.id} not found`);
+      })
+      .catch((e) => {
+        console.error("Failed to get tx", e);
+        throw e;
       });
   };
 
-  public getTxs = async (signature: string): Promise<Transaction[]> => {
-    const fsDataSnapshot = await this.db
-      .collection("transactions")
-      .where("walletSignature", "==", signature)
-      .get();
-
-    const fsTransactions: Transaction[] = [];
-    if (!fsDataSnapshot.empty) {
-      fsDataSnapshot.forEach((doc: any) => {
-        const data = doc.data();
-        if (data.deleted) return;
-        const tx: Transaction = JSON.parse(data.data);
-        fsTransactions.push(tx);
-      });
+  public getTxs = async (uid: string): Promise<Transaction[]> => {
+    try {
+      const fsDataSnapshot = await this.db
+        .collection("transactions")
+        .where("user", "==", uid.toLowerCase())
+        .get();
+      const fsTransactions: Transaction[] = [];
+      if (!fsDataSnapshot.empty) {
+        fsDataSnapshot.forEach((doc: any) => {
+          const data = doc.data();
+          if (data.deleted) return;
+          const tx: Transaction = JSON.parse(data.data);
+          fsTransactions.push(tx);
+        });
+      }
+      return fsTransactions;
+    } catch (e) {
+      console.error("failed to fetch txs", e);
+      throw e;
     }
-
-    return fsTransactions;
   };
 
   public getUser = async (
     address: string,
     signatures: { signature: string; rawSignature: string }
   ) => {
-    const user = await getFirebaseUser(
-      address,
-      signatures
-    );
+    const user = await getFirebaseUser(address, signatures);
     return (
       user && {
         uid: user.uid,
