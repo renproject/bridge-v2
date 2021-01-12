@@ -1,4 +1,4 @@
-import { Divider } from "@material-ui/core";
+import { Divider, Typography } from "@material-ui/core";
 import React, { FunctionComponent, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,6 +16,7 @@ import {
 } from "../../../components/inputs/BigCurrencyInput";
 import { PaperContent } from "../../../components/layout/Paper";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { AssetInfo } from "../../../components/typography/TypographyHelpers";
 import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
@@ -82,11 +83,13 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const renCurrency = toMintedCurrency(currency);
   useRenNetworkTracker(renCurrency);
 
-  const enabled =
-    !!amount &&
-    amount > 0 &&
-    !pending &&
-    isMinimalAmount(amount, conversionTotal, TxType.MINT);
+  const hasMinimalAmount = isMinimalAmount(
+    amount,
+    conversionTotal,
+    TxType.MINT
+  );
+  const basicCondition = !!amount && amount > 0 && !pending;
+  const enabled = basicCondition && hasMinimalAmount;
 
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
@@ -111,6 +114,16 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             symbol={currency}
             usdValue={currencyUsdValue}
             value={amount}
+            errorText={
+              basicCondition && !hasMinimalAmount ? (
+                <span>
+                  Amount to low{" "}
+                  <TooltipWithIcon title="After fees have been applied, the amount you will receive is too little." />
+                </span>
+              ) : (
+                ""
+              )
+            }
           />
         </BigCurrencyInputWrapper>
         <AssetDropdownWrapper>

@@ -1,9 +1,11 @@
-import { makeStyles, styled } from '@material-ui/core/styles'
-import classNames from 'classnames'
-import React, { FunctionComponent, useRef } from 'react'
-import NumberFormat, { NumberFormatValues } from 'react-number-format'
-import { generatePlaceholderStyles } from '../../theme/themeUtils'
-import { numberFormatOptions, toUsdFormat } from '../../utils/formatters'
+import { Typography } from "@material-ui/core";
+import { makeStyles, styled } from "@material-ui/core/styles";
+import classNames from "classnames";
+import React, { FunctionComponent, ReactNode, useRef } from "react";
+import NumberFormat, { NumberFormatValues } from "react-number-format";
+import { generatePlaceholderStyles } from "../../theme/themeUtils";
+import { numberFormatOptions, toUsdFormat } from "../../utils/formatters";
+import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -11,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     "& input": {
       fontFamily: "inherit",
-      color: theme.customColors.textDark,
     },
   },
   large: {
@@ -40,7 +41,15 @@ const useStyles = makeStyles((theme) => ({
     outline: "none",
     textAlign: "center",
     border: "0px solid transparent",
+    color: theme.customColors.textDark,
     ...generatePlaceholderStyles(theme.customColors.grayPlaceholder),
+  },
+  inputError: {
+    color: theme.palette.error.main,
+  },
+  errorText: {
+    marginTop: -8,
+    marginBottom: 10,
   },
   equivalent: {
     marginTop: 0,
@@ -56,6 +65,7 @@ type BigCurrencyInputProps = {
   usdValue: string | number;
   value: string | number;
   placeholder?: string;
+  errorText?: string | ReactNode;
 };
 
 export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
@@ -63,6 +73,7 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
   symbol,
   usdValue,
   value,
+  errorText = "",
   placeholder = `0 ${symbol}`,
 }) => {
   const styles = useStyles();
@@ -89,6 +100,9 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
     [styles.small]: size === "small",
     [styles.smallest]: size === "smallest",
   });
+  const inputClassName = classNames(styles.input, {
+    [styles.inputError]: Boolean(errorText),
+  });
   return (
     <div className={rootClassName}>
       <NumberFormat
@@ -101,10 +115,19 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
           inputRef.current = input;
         }}
         autoFocus={true}
-        className={styles.input}
+        className={inputClassName}
         placeholder={placeholder}
       />
-
+      {errorText && (
+        <Typography
+          variant="body2"
+          color="error"
+          gutterBottom
+          className={styles.errorText}
+        >
+          {errorText}
+        </Typography>
+      )}
       {<p className={styles.equivalent}>= {toUsdFormat(usdValue)}</p>}
     </div>
   );

@@ -1,15 +1,10 @@
-import { Box, Grow, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import QRCode from "qrcode.react";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { useEffectOnce } from "react-use";
+import { Box, Grow, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import QRCode from 'qrcode.react'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { useEffectOnce } from 'react-use'
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -17,41 +12,34 @@ import {
   CopyContentButton,
   QrCodeIconButton,
   TransactionDetailsButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import {
-  CenteringSpacedBox,
-  MediumWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import { Link } from "../../../components/links/Links";
+} from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { CenteringSpacedBox, MediumWrapper, SmallWrapper, } from '../../../components/layout/LayoutHelpers'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { paths } from "../../../pages/routes";
-import { useNotifications } from "../../../providers/Notifications";
-import {
-  usePaperTitle,
-  useSetActionRequired,
-  useSetPaperTitle,
-} from "../../../providers/TitleProviders";
-import { orangeLight } from "../../../theme/colors";
-import { useFetchFees } from "../../fees/feesHooks";
-import { getTransactionFees } from "../../fees/feesUtils";
-import { useBrowserNotifications } from "../../notifications/notificationsUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { BigAssetAmount, } from '../../../components/typography/TypographyHelpers'
+import { paths } from '../../../pages/routes'
+import { useNotifications } from '../../../providers/Notifications'
+import { usePaperTitle, useSetActionRequired, useSetPaperTitle, } from '../../../providers/TitleProviders'
+import { orangeLight } from '../../../theme/colors'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
+import { useBrowserNotifications } from '../../notifications/notificationsUtils'
 import {
   ExpiredErrorDialog,
   HMSCountdown,
   ProcessingTimeWrapper,
   SubmitErrorDialog,
-} from "../../transactions/components/TransactionsHelpers";
-import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
-import { resetMint } from "../mintSlice";
-import { getLockAndMintParams } from "../mintUtils";
-import { AddressValidityMessage } from "./MintHelpers";
+} from '../../transactions/components/TransactionsHelpers'
+import { getPaymentLink, TxType } from '../../transactions/transactionsUtils'
+import { resetMint } from '../mintSlice'
+import { getLockAndMintParams } from '../mintUtils'
+import { AddressValidityMessage } from './MintHelpers'
 
 export type MintDepositToProps = {
   tx: GatewaySession;
@@ -205,17 +193,21 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
           <MainIcon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        {lockConfirmations} of {lockTargetConfirmations} confirmations
-      </Typography>
-      <BigAssetAmount
-        value={
-          <NumberFormatText
-            value={lockTxAmount}
-            spacedSuffix={lockCurrencyConfig.short}
-          />
-        }
-      />
+      <SmallWrapper>
+        <Typography variant="body1" align="center">
+          {lockConfirmations} of {lockTargetConfirmations} confirmations
+        </Typography>
+      </SmallWrapper>
+      <MediumWrapper>
+        <BigAssetAmount
+          value={
+            <NumberFormatText
+              value={lockTxAmount}
+              spacedSuffix={lockCurrencyConfig.short}
+            />
+          }
+        />
+      </MediumWrapper>
       <TransactionDetailsButton
         chain={lockChainConfig.short}
         address={lockTxHash}
