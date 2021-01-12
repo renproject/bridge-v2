@@ -243,7 +243,7 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
       <Typography variant="body1" className={styles.status} align="center">
         {status}
       </Typography>
-      {chain && <Typography variant="body1">{chain} Tx:</Typography>}
+      {chain && <Typography variant="body1" align="center">{chain} Tx:</Typography>}
       {address && (
         <Typography variant="body1" className={styles.txLink}>
           <span>{address}</span>
