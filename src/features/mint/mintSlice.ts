@@ -29,7 +29,7 @@ const slice = createSlice({
         state.currency = action.payload.currency;
         state.amount = action.payload.amount;
       } else {
-        state = initialState;
+        state.amount = initialState.amount;
       }
     },
   },

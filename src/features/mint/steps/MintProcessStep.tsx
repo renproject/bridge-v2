@@ -73,6 +73,7 @@ import {
   MintDepositToStatus,
 } from "../components/MintStatuses";
 import { useMintMachine, useMintTransactionPersistence } from "../mintHooks";
+import { resetMint } from "../mintSlice";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -143,6 +144,17 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const showTransactionStatus = !!tx && walletConnected;
   const feeCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
   const amount = Number(tx.targetAmount);
+
+  const handleRestart = useCallback(() => {
+    dispatch(
+      resetMint({
+        amount: amount,
+        currency: feeCurrency,
+      })
+    );
+    history.push(paths.MINT);
+  }, [dispatch, amount, feeCurrency, history]);
+
   return (
     <>
       <PaperHeader>
@@ -170,7 +182,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       <PaperContent bottomPadding>
         {reloading && <ProgressStatus processing />}
         {!reloading && showTransactionStatus && (
-          <MintTransactionStatus tx={tx} />
+          <MintTransactionStatus tx={tx} onRestart={handleRestart} />
         )}
         {!walletConnected && (
           <>
@@ -219,12 +231,20 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 
 type MintTransactionStatusProps = {
   tx: GatewaySession;
+  onRestart: () => void;
 };
 
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
+  onRestart,
 }) => {
-  const [current] = useMintMachine(tx);
+  const [current, , service] = useMintMachine(tx);
+  useEffect(
+    () => () => {
+      service.stop();
+    },
+    [service]
+  );
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;
@@ -269,7 +289,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           machine={activeDeposit.machine}
         />
       ) : (
-        <MintDepositToStatus tx={current.context.tx} />
+        <MintDepositToStatus tx={current.context.tx} onRestart={onRestart} />
       )}
       <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
     </>

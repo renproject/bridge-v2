@@ -12,6 +12,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useHistory } from "react-router-dom";
 import { useInterval } from "react-use";
 import {
   ActionButton,
@@ -30,6 +31,7 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { links } from "../../../constants/constants";
+import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS } from "../../../utils/dates";
 
@@ -172,12 +174,14 @@ const ErrorIconWrapper = styled("div")(({ theme }) => ({
 }));
 
 type ErrorWithActionProps = DialogProps & {
+  title?: string;
   onAction?: () => void;
   reason?: string;
   actionText?: string;
 };
 
 export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
+  title = "Error",
   open,
   reason = "",
   actionText = "",
@@ -185,7 +189,7 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   children,
 }) => {
   return (
-    <BridgeModal open={open} title="Error" maxWidth="xs">
+    <BridgeModal open={open} title={title} maxWidth="xs">
       <SpacedPaperContent>
         <ErrorIconWrapper>
           <WarningIcon fontSize="inherit" color="inherit" />
@@ -193,7 +197,12 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
         <Typography variant="h5" align="center" gutterBottom>
           {reason}
         </Typography>
-        <Typography color="textSecondary" align="center" gutterBottom>
+        <Typography
+          color="textSecondary"
+          align="center"
+          gutterBottom
+          component="div"
+        >
           {children}
         </Typography>
       </SpacedPaperContent>
@@ -236,3 +245,31 @@ export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = (
     </span>
   </ErrorDialog>
 );
+
+export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
+  props
+) => {
+  const history = useHistory();
+  const goToHome = useCallback(() => {
+    history.push(paths.HOME);
+  }, [history]);
+
+  return (
+    <ErrorDialog
+      title="Expired"
+      reason="This transaction has expired"
+      actionText="Restart transaction"
+      {...props}
+    >
+      <span>
+        Transaction expires after 24 hours. Restart the transaction and start
+        again.
+      </span>
+      <ActionButtonWrapper>
+        <Button variant="text" color="inherit" onClick={goToHome}>
+          Back to home
+        </Button>
+      </ActionButtonWrapper>
+    </ErrorDialog>
+  );
+};

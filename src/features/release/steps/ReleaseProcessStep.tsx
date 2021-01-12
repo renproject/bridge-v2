@@ -91,6 +91,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
 
   useEffect(() => {
     if (txState?.reloadTx) {
+      console.log('reloading')
       setTx(parsedTx as GatewaySession);
       setReloading(true);
       history.replace({ ...location, state: undefined });
@@ -245,6 +246,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   const [current, send, service] = useBurnMachine(tx);
   useEffect(
     () => () => {
+      console.info("stopping tx machine");
       service.stop();
     },
     [service]
@@ -257,7 +259,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     send({ type: "SUBMIT" });
     setTimeout(() => {
       setTimeoutError(true);
-    }, 60000);
+    }, 10000);
   }, [send]);
   const handleReload = useCallback(() => {
     history.replace({

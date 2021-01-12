@@ -43,6 +43,7 @@ import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { useBrowserNotifications } from "../../notifications/notificationsUtils";
 import {
+  ExpiredErrorDialog,
   HMSCountdown,
   ProcessingTimeWrapper,
   SubmitErrorDialog,
@@ -54,10 +55,12 @@ import { AddressValidityMessage } from "./MintHelpers";
 
 export type MintDepositToProps = {
   tx: GatewaySession;
+  onRestart: () => void;
 };
 
 export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   tx,
+  onRestart,
 }) => {
   const [showQr, setShowQr] = useState(false);
   const toggleQr = useCallback(() => {
@@ -151,12 +154,18 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
           </Typography>
         )}
         <Typography variant="caption">
-          Expires in: <HMSCountdown milliseconds={timeRemained} />
+          {timeRemained > 0 && (
+            <span>
+              Expires in: <HMSCountdown milliseconds={timeRemained} />
+            </span>
+          )}
+          {timeRemained <= 0 && <span>Expired</span>}
         </Typography>
         <Box mt={2}>
           <QrCodeIconButton onClick={toggleQr} />
         </Box>
       </Box>
+      {timeRemained <= 0 && <ExpiredErrorDialog open onAction={onRestart} />}
     </>
   );
 };

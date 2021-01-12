@@ -4,8 +4,8 @@ import {
   Fade,
   IconButton,
   IconButtonProps,
-  styled,
-} from "@material-ui/core";
+  styled, withStyles,
+} from '@material-ui/core'
 import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import CopyIcon from "@material-ui/icons/FileCopyOutlined";
@@ -482,3 +482,9 @@ export const SmallActionButton: FunctionComponent<ButtonProps> = (props) => {
     />
   );
 };
+
+export const RedButton = withStyles((theme) => ({
+  root: {
+    color: theme.palette.error.main,
+  },
+}))(Button);
