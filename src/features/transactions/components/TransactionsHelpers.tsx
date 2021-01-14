@@ -329,7 +329,7 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
     <WarningDialog
       title="Warning"
       reason="Different account detected"
-      mainActionText="Connect a different account"
+      mainActionText="Connect a different wallet"
       alternativeActionText="Continue anyway"
       {...props}
     >
@@ -345,7 +345,7 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
           {trimAddress(address, 5)}
         </Link>
         ). If you do not have access to the connected account you will not be
-        able to access the {currency}.
+        able to access the {currency}. Please switch account in your wallet.
       </span>
     </WarningDialog>
   );
