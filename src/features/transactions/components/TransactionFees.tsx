@@ -1,34 +1,26 @@
-import React, { FunctionComponent } from "react";
-import { useSelector } from "react-redux";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BridgePaper } from "../../../components/layout/Paper";
-import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
-import {
-  LabelWithValue,
-  MiddleEllipsisText,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
+import React, { FunctionComponent } from 'react'
+import { useSelector } from 'react-redux'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { LabelWithValue, } from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from '../../../components/utils/types'
+import { MINT_GAS_UNIT_COST } from '../../../constants/constants'
+import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
   BridgeChain,
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
   toReleasedCurrency,
-} from "../../../utils/assetConfigs";
-import { fromGwei } from "../../../utils/converters";
-import { trimAddress } from "../../../utils/strings";
-import { useFetchFees } from "../../fees/feesHooks";
-import { getTransactionFees } from "../../fees/feesUtils";
-import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
-import {
-  findExchangeRate,
-  findGasPrice,
-  USD_SYMBOL,
-} from "../../marketData/marketDataUtils";
-import { getFeeTooltips, TxType } from "../transactionsUtils";
+} from '../../../utils/assetConfigs'
+import { fromGwei } from '../../../utils/converters'
+import { trimAddress } from '../../../utils/strings'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
+import { $exchangeRates, $gasPrices } from '../../marketData/marketDataSlice'
+import { findExchangeRate, findGasPrice, USD_SYMBOL, } from '../../marketData/marketDataUtils'
+import { getFeeTooltips, TxType } from '../transactionsUtils'
 
 type TransactionFeesProps = {
   type: TxType;

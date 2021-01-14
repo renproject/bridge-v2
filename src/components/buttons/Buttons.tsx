@@ -4,8 +4,9 @@ import {
   Fade,
   IconButton,
   IconButtonProps,
-  styled, withStyles,
-} from '@material-ui/core'
+  styled,
+  withStyles,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import CopyIcon from "@material-ui/icons/FileCopyOutlined";
@@ -306,7 +307,7 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
     display: "flex",
     maxWidth: "100%",
   },
-  chain: {
+  label: {
     flexGrow: 0,
     color: theme.palette.common.black,
     whiteSpace: "nowrap",
@@ -340,22 +341,31 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
 }));
 
 type TransactionDetailsButton = ButtonProps & {
-  chain: string;
+  label: string;
   address: string;
+  isTx?: boolean;
   link?: string;
 };
 
 export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButton> = ({
-  chain,
+  label,
   address,
+  isTx = true,
   link = "",
 }) => {
   const styles = useTransactionDetailsButtonStyles();
 
   return (
-    <Button className={styles.button} href={link} target="_blank">
+    <Button
+      className={styles.button}
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       <span className={styles.wrapper}>
-        <span className={styles.chain}>{chain} Tx: </span>{" "}
+        <span className={styles.label}>
+          {label} {isTx ? "Tx: " : ""}
+        </span>{" "}
         <span className={styles.addressWrapper} data-address={address}>
           <span className={styles.address}>{address}</span>
         </span>

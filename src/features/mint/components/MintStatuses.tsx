@@ -1,15 +1,10 @@
-import { Box, Grow, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import QRCode from "qrcode.react";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { useEffectOnce } from "react-use";
+import { Box, Grow, Typography, useTheme } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import QRCode from 'qrcode.react'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { useEffectOnce } from 'react-use'
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -17,43 +12,40 @@ import {
   CopyContentButton,
   QrCodeIconButton,
   TransactionDetailsButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+} from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
 import {
+  BigTopWrapper,
   CenteringSpacedBox,
   MediumWrapper,
   SmallWrapper,
-} from "../../../components/layout/LayoutHelpers";
-import { Link } from "../../../components/links/Links";
+} from '../../../components/layout/LayoutHelpers'
+import { Link } from '../../../components/links/Links'
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
-import { paths } from "../../../pages/routes";
-import { useNotifications } from "../../../providers/Notifications";
-import {
-  usePaperTitle,
-  useSetActionRequired,
-  useSetPaperTitle,
-} from "../../../providers/TitleProviders";
-import { orangeLight } from "../../../theme/colors";
-import { trimAddress } from "../../../utils/strings";
-import { useFetchFees } from "../../fees/feesHooks";
-import { getTransactionFees } from "../../fees/feesUtils";
-import { useBrowserNotifications } from "../../notifications/notificationsUtils";
+} from '../../../components/progress/ProgressHelpers'
+import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
+import { paths } from '../../../pages/routes'
+import { useNotifications } from '../../../providers/Notifications'
+import { usePaperTitle, useSetActionRequired, useSetPaperTitle, } from '../../../providers/TitleProviders'
+import { orangeLight } from '../../../theme/colors'
+import { trimAddress } from '../../../utils/strings'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
+import { useBrowserNotifications } from '../../notifications/notificationsUtils'
 import {
   ExpiredErrorDialog,
   HMSCountdown,
   ProcessingTimeWrapper,
   SubmitErrorDialog,
-} from "../../transactions/components/TransactionsHelpers";
-import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
-import { resetMint } from "../mintSlice";
-import { getLockAndMintParams } from "../mintUtils";
-import { AddressValidityMessage } from "./MintHelpers";
+} from '../../transactions/components/TransactionsHelpers'
+import { getPaymentLink, TxType } from '../../transactions/transactionsUtils'
+import { resetMint } from '../mintSlice'
+import { getLockAndMintParams } from '../mintUtils'
+import { AddressValidityMessage } from './MintHelpers'
 
 export type MintDepositToProps = {
   tx: GatewaySession;
@@ -94,6 +86,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
     lockCurrencyConfig,
     lockChainConfig,
     suggestedAmount,
+    mintAddressLink,
   } = getLockAndMintParams(tx);
   const { color } = lockCurrencyConfig;
   const { MainIcon } = lockChainConfig;
@@ -166,10 +159,14 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
         <Box mt={2}>
           <QrCodeIconButton onClick={toggleQr} />
         </Box>
-        <TransactionDetailsButton
-          chain="Receiving address:"
-          address={trimAddress(tx.userAddress, 5)}
-        />
+        <BigTopWrapper>
+          <TransactionDetailsButton
+            label="Recipient address"
+            isTx={false}
+            address={trimAddress(tx.userAddress, 5)}
+            link={mintAddressLink}
+          />
+        </BigTopWrapper>
       </Box>
       {timeRemained <= 0 && <ExpiredErrorDialog open onAction={onRestart} />}
     </>
@@ -227,7 +224,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
         />
       </MediumWrapper>
       <TransactionDetailsButton
-        chain={lockChainConfig.short}
+        label={lockChainConfig.short}
         address={lockTxHash}
         link={lockTxLink}
       />
@@ -323,7 +320,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       </ActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
-          chain={lockChainConfig.short}
+          label={lockChainConfig.short}
           address={lockTxHash}
           link={lockTxLink}
         />
@@ -380,7 +377,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
       </ActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
-          chain={lockChainConfig.symbol}
+          label={lockChainConfig.symbol}
           address={lockTxHash}
           link={lockTxLink}
         />
