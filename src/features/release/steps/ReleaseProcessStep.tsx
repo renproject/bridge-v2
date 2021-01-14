@@ -263,7 +263,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     send({ type: "SUBMIT" });
     setTimeout(() => {
       setTimeoutError(true);
-    }, 10000);
+    }, 60000);
   }, [send]);
   const handleReload = useCallback(() => {
     history.replace({
