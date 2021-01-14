@@ -161,7 +161,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
         </Box>
         <BigTopWrapper>
           <TransactionDetailsButton
-            label="Recipient address"
+            label="Recipient Address"
             isTx={false}
             address={trimAddress(tx.userAddress, 5)}
             link={mintAddressLink}
