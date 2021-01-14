@@ -49,6 +49,7 @@ import {
   getCurrencyConfig,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
+import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
@@ -217,6 +218,11 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           label="To"
           labelTooltip={mintTooltips.to}
           value={destinationChainConfig.full}
+        />
+        <LabelWithValue
+          label="Recipient Address"
+          labelTooltip={mintTooltips.recipientAddress}
+          value={trimAddress(tx.userAddress, 5)}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
