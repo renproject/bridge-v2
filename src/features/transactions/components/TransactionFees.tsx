@@ -1,8 +1,12 @@
 import React, { FunctionComponent } from "react";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { BridgePaper } from "../../../components/layout/Paper";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import {
+  LabelWithValue,
+  MiddleEllipsisText,
+} from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
@@ -15,6 +19,7 @@ import {
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
+import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
@@ -30,6 +35,7 @@ type TransactionFeesProps = {
   currency: BridgeCurrency;
   amount: number;
   chain: BridgeChain;
+  address?: string; // FIXME make obligatory
 };
 
 export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
@@ -37,6 +43,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   currency,
   type,
   chain,
+  address,
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
@@ -138,6 +145,13 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           />
         }
       />
+      {address && (
+        <LabelWithValue
+          label="Recipient Address"
+          labelTooltip="The wallet that will receive the minted assets."
+          value={trimAddress(address, 5)}
+        />
+      )}
     </>
   );
 };

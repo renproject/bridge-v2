@@ -206,6 +206,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
               amount={amount}
               currency={feeCurrency}
               type={TxType.MINT}
+              address={tx.userAddress}
             />
           </PaperContent>
         </>
