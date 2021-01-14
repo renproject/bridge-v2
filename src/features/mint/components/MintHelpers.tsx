@@ -1,10 +1,8 @@
-import { GatewaySession } from "@renproject/ren-tx";
-import React, { FunctionComponent, useEffect } from "react";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
-import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
-import { trimAddress } from "../../../utils/strings";
-import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
-import { useMintMachine } from "../mintHooks";
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useEffect } from 'react'
+import { BridgeChainConfig, CurrencyConfig } from '../../../utils/assetConfigs'
+import { HMSCountdown } from '../../transactions/components/TransactionsHelpers'
+import { useMintMachine } from '../mintHooks'
 
 export const mintTooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",

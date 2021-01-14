@@ -1,39 +1,23 @@
-import {
-  Button,
-  DialogProps,
-  styled,
-  Typography,
-  useTheme,
-} from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useHistory } from "react-router-dom";
-import { useInterval } from "react-use";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { WarningIcon } from "../../../components/icons/RenIcons";
-import { PaperContent } from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
-import {
-  BridgeModal,
-  NestedDrawer,
-} from "../../../components/modals/BridgeModal";
+import { Button, DialogProps, styled, Typography, useTheme, } from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
+import { useHistory } from 'react-router-dom'
+import { useInterval } from 'react-use'
+import { ActionButton, ActionButtonWrapper, RedButton, } from '../../../components/buttons/Buttons'
+import { SpecialAlertIcon, WarningIcon, } from '../../../components/icons/RenIcons'
+import { PaperContent } from '../../../components/layout/Paper'
+import { Link } from '../../../components/links/Links'
+import { BridgeModal, NestedDrawer, } from '../../../components/modals/BridgeModal'
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { links } from "../../../constants/constants";
-import { paths } from "../../../pages/routes";
-import { usePaperTitle } from "../../../providers/TitleProviders";
-import { getFormattedHMS } from "../../../utils/dates";
+} from '../../../components/progress/ProgressHelpers'
+import { links } from '../../../constants/constants'
+import { paths } from '../../../pages/routes'
+import { usePaperTitle } from '../../../providers/TitleProviders'
+import { getFormattedHMS } from '../../../utils/dates'
+import { trimAddress } from '../../../utils/strings'
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -271,5 +255,98 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
         </Button>
       </ActionButtonWrapper>
     </ErrorDialog>
+  );
+};
+
+type WarningWithActionsProps = DialogProps & {
+  title?: string;
+  onMainAction?: () => void;
+  onAlternativeAction?: () => void;
+  reason?: string;
+  mainActionText?: string;
+  alternativeActionText?: string;
+};
+
+export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
+  title = "Warning",
+  open,
+  reason = "",
+  mainActionText = "",
+  onMainAction,
+  alternativeActionText = "",
+  onAlternativeAction,
+  children,
+}) => {
+  return (
+    <BridgeModal open={open} title={title} maxWidth="xs">
+      <SpacedPaperContent>
+        <ErrorIconWrapper>
+          <SpecialAlertIcon fontSize="inherit" color="inherit" />
+        </ErrorIconWrapper>
+        <Typography variant="h5" align="center" gutterBottom>
+          {reason}
+        </Typography>
+        <Typography
+          color="textSecondary"
+          align="center"
+          gutterBottom
+          component="div"
+        >
+          {children}
+        </Typography>
+      </SpacedPaperContent>
+      <PaperContent bottomPadding>
+        <ActionButtonWrapper>
+          <RedButton
+            variant="text"
+            color="inherit"
+            onClick={onAlternativeAction}
+          >
+            {alternativeActionText}
+          </RedButton>
+        </ActionButtonWrapper>
+        <ActionButtonWrapper>
+          <ActionButton onClick={onMainAction}>{mainActionText}</ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </BridgeModal>
+  );
+};
+
+type WrongAddressWarningDialog = WarningWithActionsProps & {
+  address: string;
+  addressExplorerLink: string;
+  currency: string;
+};
+
+export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDialog> = ({
+  address,
+  addressExplorerLink,
+  currency,
+  ...props
+}) => {
+  return (
+    <WarningDialog
+      title="Warning"
+      reason="Different account detected"
+      mainActionText="Connect a different account"
+      alternativeActionText="Continue anyway"
+      {...props}
+    >
+      <span>
+        This transaction was created with a different account to the current
+        account (
+        <Link
+          external
+          href={addressExplorerLink}
+          color="primary"
+          underline="hover"
+        >
+          {trimAddress(address, 5)}
+        </Link>
+        ). If you do not have access to the connected account you will not be
+        able to access the {currency}.
+      </span>
+    </WarningDialog>
   );
 };

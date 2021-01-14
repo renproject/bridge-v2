@@ -41,6 +41,7 @@ import {
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
 } from "../../../utils/assetConfigs";
+import { $renNetwork } from "../../network/networkSlice";
 import { BrowserNotificationsDrawer } from "../../notifications/components/NotificationsHelpers";
 import {
   useBrowserNotifications,
@@ -51,10 +52,12 @@ import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import {
   BookmarkPageWarning,
   ProgressStatus,
+  WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
 import { useTransactionDeletion } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
+  getAddressExplorerLink,
   getTxPageTitle,
   parseTxQueryString,
   TxType,
@@ -74,6 +77,7 @@ import {
 } from "../components/MintStatuses";
 import { useMintMachine, useMintTransactionPersistence } from "../mintHooks";
 import { resetMint } from "../mintSlice";
+import { getLockAndMintParams } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -240,12 +244,38 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   onRestart,
 }) => {
   const [current, , service] = useMintMachine(tx);
+  const dispatch = useDispatch();
+  const currentTx = current.context.tx;
+  const chain = useSelector($chain);
+  const renNetwork = useSelector($renNetwork);
+  const { account } = useSelectedChainWallet();
   useEffect(
     () => () => {
       service.stop();
     },
     [service]
   );
+
+  const [wrongAddressDialogOpened, setWrongAddressDialogOpened] = useState(
+    false
+  );
+  const handleCloseWrongAddressDialog = useCallback(() => {
+    setWrongAddressDialogOpened(false);
+  }, []);
+  const handleOpenWalletPicker = useCallback(() => {
+    dispatch(setWalletPickerOpened(true));
+  }, [dispatch]);
+  useEffect(() => {
+    if (
+      account &&
+      currentTx.userAddress &&
+      account.toLowerCase() !== currentTx.userAddress.toLowerCase()
+    ) {
+      setWrongAddressDialogOpened(true);
+    } else {
+      setWrongAddressDialogOpened(false);
+    }
+  }, [account, currentTx.userAddress]);
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;
@@ -281,17 +311,31 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, [location, activeDeposit, current.context.tx, history]);
 
+  const { mintCurrencyConfig } = getLockAndMintParams(currentTx);
+  const accountExplorerLink = getAddressExplorerLink(
+    chain,
+    renNetwork,
+    account
+  );
   return (
     <>
       {activeDeposit ? (
         <MintTransactionDepositStatus
-          tx={current.context.tx}
+          tx={currentTx}
           deposit={activeDeposit.deposit}
           machine={activeDeposit.machine}
         />
       ) : (
-        <MintDepositToStatus tx={current.context.tx} onRestart={onRestart} />
+        <MintDepositToStatus tx={currentTx} onRestart={onRestart} />
       )}
+      <WrongAddressWarningDialog
+        open={wrongAddressDialogOpened}
+        address={account}
+        addressExplorerLink={accountExplorerLink}
+        currency={mintCurrencyConfig.short}
+        onMainAction={handleOpenWalletPicker}
+        onAlternativeAction={handleCloseWrongAddressDialog}
+      />
       <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
     </>
   );
