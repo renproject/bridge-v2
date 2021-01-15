@@ -390,7 +390,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
   [BridgeChain.DOGC]: {
     symbol: BridgeChain.DOGC,
     short: "DOGE",
-    full: "Dogecoin Chain",
+    full: "Dogecoin",
     FullIcon: DogeFullIcon,
     GreyIcon: DogeGreyIcon,
     Icon: DogeIcon,
