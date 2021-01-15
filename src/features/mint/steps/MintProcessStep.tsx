@@ -244,7 +244,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   onRestart,
 }) => {
   const [current, , service] = useMintMachine(tx);
-  const dispatch = useDispatch();
   const currentTx = current.context.tx;
   const chain = useSelector($chain);
   const renNetwork = useSelector($renNetwork);
@@ -262,9 +261,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const handleCloseWrongAddressDialog = useCallback(() => {
     setWrongAddressDialogOpened(false);
   }, []);
-  const handleOpenWalletPicker = useCallback(() => {
-    dispatch(setWalletPickerOpened(true));
-  }, [dispatch]);
+
   useEffect(() => {
     if (
       account &&
@@ -333,7 +330,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         address={account}
         addressExplorerLink={accountExplorerLink}
         currency={mintCurrencyConfig.short}
-        onMainAction={handleOpenWalletPicker}
         onAlternativeAction={handleCloseWrongAddressDialog}
       />
       <Debug it={{ contextTx: current.context.tx, activeDeposit }} />

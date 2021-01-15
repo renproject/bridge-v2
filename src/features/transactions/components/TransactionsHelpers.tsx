@@ -297,6 +297,7 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   onAlternativeAction,
   children,
 }) => {
+  const showMainAction = onMainAction && mainActionText;
   return (
     <BridgeModal open={open} title={title} maxWidth="xs">
       <SpacedPaperContent>
@@ -325,9 +326,11 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
             {alternativeActionText}
           </RedButton>
         </ActionButtonWrapper>
-        <ActionButtonWrapper>
-          <ActionButton onClick={onMainAction}>{mainActionText}</ActionButton>
-        </ActionButtonWrapper>
+        {showMainAction && (
+          <ActionButtonWrapper>
+            <ActionButton onClick={onMainAction}>{mainActionText}</ActionButton>
+          </ActionButtonWrapper>
+        )}
       </PaperContent>
     </BridgeModal>
   );
@@ -347,9 +350,7 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
 }) => {
   return (
     <WarningDialog
-      title="Warning"
       reason="Different account detected"
-      mainActionText="Connect a different wallet"
       alternativeActionText="Continue anyway"
       {...props}
     >
@@ -366,6 +367,24 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
         </Link>
         ). If you do not have access to the connected account you will not be
         able to access the {currency}. Please switch account in your wallet.
+      </span>
+    </WarningDialog>
+  );
+};
+
+export const SignInWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
+  ...props
+}) => {
+  return (
+    <WarningDialog
+      reason="Allow RenBridge to backup transactions"
+      mainActionText="Sign & allow to continue"
+      {...props}
+    >
+      <span>
+        To continue, you must sign with your wallet to allow RenBridge to backup
+        your transactions. This allows you to resume a transaction if you close
+        your web browser mid-transaction.
       </span>
     </WarningDialog>
   );
