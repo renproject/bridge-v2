@@ -295,13 +295,21 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
     backgroundColor: theme.customColors.skyBlueLighter,
     maxWidth: "100%",
-    padding: `12px 20px 11px 20px`,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 12,
+    paddingBottom: 11,
     "&:hover": {
       backgroundColor: theme.customColors.skyBlueLight,
       "@media (hover: none)": {
         backgroundColor: "transparent",
       },
     },
+  },
+  buttonSmall: {
+    fontSize: 12,
+    paddingTop: 7,
+    paddingBottom: 5,
   },
   wrapper: {
     display: "flex",
@@ -318,20 +326,6 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
     display: "flex",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    // userSelect: "all",
-    // "&::after": { // experimental
-    //   color: "red",
-    //   display: "inline-flex",
-    //   marginLeft: 0,
-    //   // position: "absolute",
-    //   // right: 0,
-    //   // display: "none",
-    //   content: "attr(data-address)",
-    //   textAlign: "right",
-    //   direction: "rtl",
-    //   overflow: "hidden",
-    //   // width: "50%",
-    // },
   },
   address: {
     maxWidth: "100%",
@@ -352,12 +346,16 @@ export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButto
   address,
   isTx = true,
   link = "",
+  size,
 }) => {
   const styles = useTransactionDetailsButtonStyles();
 
+  const buttonClassName = classNames(styles.button, {
+    [styles.buttonSmall]: size === "small",
+  });
   return (
     <Button
-      className={styles.button}
+      className={buttonClassName}
       href={link}
       target="_blank"
       rel="noopener noreferrer"
