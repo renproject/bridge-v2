@@ -1,13 +1,11 @@
 import {
   Button,
   DialogProps,
-  makeStyles,
   styled,
   Typography,
   useTheme,
 } from "@material-ui/core";
 import { GatewaySession } from "@renproject/ren-tx";
-import classNames from "classnames";
 import React, {
   FunctionComponent,
   useCallback,
@@ -27,7 +25,7 @@ import {
 } from "../../../components/icons/RenIcons";
 import {
   PaperContent,
-  PaperContentProps,
+  SpacedPaperContent,
 } from "../../../components/layout/Paper";
 import { Link } from "../../../components/links/Links";
 import {
@@ -49,30 +47,6 @@ export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
   marginBottom: 5,
 });
-
-const useSpacedContentStyles = makeStyles({
-  root: {
-    minHeight: 200,
-  },
-  rootSmaller: {
-    minHeight: 130,
-  },
-});
-
-type SpacedPaperContentProps = PaperContentProps & {
-  smaller?: boolean;
-};
-
-export const SpacedPaperContent: FunctionComponent<SpacedPaperContentProps> = ({
-  smaller,
-  ...rest
-}) => {
-  const styles = useSpacedContentStyles();
-  const className = classNames(styles.root, {
-    [styles.rootSmaller]: smaller,
-  });
-  return <PaperContent className={className} {...rest} />;
-};
 
 type BookmarkPageWarningProps = {
   onClosed?: () => void;

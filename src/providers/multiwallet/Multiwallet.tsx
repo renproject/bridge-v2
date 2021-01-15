@@ -8,8 +8,7 @@ import {
   ActionButton,
   ActionButtonWrapper,
 } from "../../components/buttons/Buttons";
-import { PaperContent } from "../../components/layout/Paper";
-import { SpacedPaperContent } from "../../features/transactions/components/TransactionsHelpers";
+import { PaperContent, SpacedPaperContent } from '../../components/layout/Paper'
 import { RenChain } from "../../utils/assetConfigs";
 
 const networkMapping: Record<number, RenNetwork> = {
