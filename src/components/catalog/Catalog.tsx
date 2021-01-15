@@ -6,6 +6,7 @@ import {
   Divider,
   FormControlLabel,
   Link,
+  styled,
   Switch,
   Tab,
   Tabs,
@@ -34,6 +35,16 @@ enum TabPhase {
   MINT,
   RELEASE,
 }
+
+const border = "1px solid blue";
+const StandardTypography = styled(Typography)({
+  border,
+});
+
+const ArialTypography = styled(Typography)({
+  fontFamily: "Arial",
+  border,
+});
 
 export const Catalog: FunctionComponent = () => {
   const [tab, setTab] = React.useState(TabPhase.MINT);
@@ -149,6 +160,26 @@ export const Catalog: FunctionComponent = () => {
               ],
             }}
           />
+          <span>Inline placement</span>
+          <div>
+            <StandardTypography variant="h1" display="inline">
+              jeke
+            </StandardTypography>{" "}
+            <ArialTypography variant="h1" display="inline">
+              ekej
+            </ArialTypography>
+          </div>
+          <span>FlexBox positioning with alignItems=center</span>
+          <div>
+            <Box display="flex" alignItems="center">
+              <StandardTypography variant="h1" display="inline">
+                jeke
+              </StandardTypography>{" "}
+              <ArialTypography variant="h1" display="inline">
+                ekej
+              </ArialTypography>
+            </Box>
+          </div>
         </Section>
         <InputsSection />
         <TypographyHelpersSection />
