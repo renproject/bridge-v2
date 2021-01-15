@@ -1,4 +1,4 @@
-const locale = "en-US";
+const timeFormatLocale = "en-US";
 
 const timeZone = "UTC";
 
@@ -14,8 +14,8 @@ export const timeOptions: Intl.DateTimeFormatOptions = {
 
 export const getFormattedDateTime = (timestamp: number) => {
   const dateObject = new Date(timestamp);
-  const date = dateObject.toLocaleDateString(locale, dateOptions);
-  const time = dateObject.toLocaleTimeString(locale, timeOptions);
+  const date = dateObject.toLocaleDateString(navigator.language, dateOptions);
+  const time = dateObject.toLocaleTimeString(timeFormatLocale, timeOptions);
   return { date, time };
 };
 

@@ -1,5 +1,5 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession } from "@renproject/ren-tx";
+import { RenNetwork } from '@renproject/interfaces'
+import { GatewaySession } from '@renproject/ren-tx'
 import {
   BridgeCurrency,
   getChainConfig,
@@ -11,16 +11,15 @@ import {
   RenChain,
   toMintedCurrency,
   toReleasedCurrency,
-} from "../../utils/assetConfigs";
+} from '../../utils/assetConfigs'
 import {
-  base64ToHex,
   getAddressExplorerLink,
   getChainExplorerLink,
   getTxCreationTimestamp,
   TxEntryStatus,
   TxMeta,
   TxPhase,
-} from "../transactions/transactionsUtils";
+} from '../transactions/transactionsUtils'
 
 export const preValidateReleaseTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
