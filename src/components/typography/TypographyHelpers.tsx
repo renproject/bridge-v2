@@ -2,6 +2,7 @@ import { Divider, Typography } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
+import MiddleEllipsis from "react-middle-ellipsis";
 import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
 type LabelWithValueProps = {
@@ -32,6 +33,8 @@ const useLabelWithValueStyles = makeStyles((theme) => ({
     verticalAlign: "middle",
   },
   valueWrapper: {
+    flexGrow: 1,
+    overflow: "hidden",
     textAlign: "right",
     color: theme.palette.common.black,
   },
@@ -200,4 +203,18 @@ export const MarkText: FunctionComponent<MarkTextProps> = ({
     [styles.grey]: color === "grey",
   });
   return <span className={className}>{children}</span>;
+};
+
+const MiddleEllipsisWrapper = styled("div")({
+  maxWidth: "100%",
+  display: "block",
+});
+export const MiddleEllipsisText: FunctionComponent = ({ children }) => {
+  return (
+    <MiddleEllipsisWrapper>
+      <MiddleEllipsis>
+        <span>{children}</span>
+      </MiddleEllipsis>
+    </MiddleEllipsisWrapper>
+  );
 };

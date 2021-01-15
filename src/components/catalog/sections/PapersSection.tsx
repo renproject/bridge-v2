@@ -45,7 +45,7 @@ const CurrencyReceivedContent: FunctionComponent = () => {
         </Link>
       </Box>
       <TransactionDetailsButton
-        chain="BNC"
+        label="BNC"
         address="0x7a36479806342F7a1d663fF43A0D340b733FA764"
       />
     </PaperContent>

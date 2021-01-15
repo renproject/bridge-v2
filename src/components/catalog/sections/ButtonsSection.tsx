@@ -64,12 +64,12 @@ export const ButtonsSection: FunctionComponent = () => {
           <CopyContentButton content="1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm" />
           <CopyContentButton content="" />
           <TransactionDetailsButton
-            chain="ETH"
+            label="ETH"
             address="0x7a36479806342F7a1d663fF43A0D340b733FA764"
           />
           <br />
           <TransactionDetailsButton
-            chain="BTC"
+            label="BTC"
             address="1LU14szcGuMwxVNet1rm"
           />
         </SeparationWrapper>

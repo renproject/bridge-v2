@@ -1,12 +1,13 @@
-import { GatewaySession } from "@renproject/ren-tx";
-import React, { FunctionComponent, useEffect } from "react";
-import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
-import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
-import { useMintMachine } from "../mintHooks";
+import { GatewaySession } from '@renproject/ren-tx'
+import React, { FunctionComponent, useEffect } from 'react'
+import { BridgeChainConfig, CurrencyConfig } from '../../../utils/assetConfigs'
+import { HMSCountdown } from '../../transactions/components/TransactionsHelpers'
+import { useMintMachine } from '../mintHooks'
 
 export const mintTooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",
   to: "The blockchain you’re sending the asset to.",
+  recipientAddress: "The wallet that will receive the minted assets.",
 };
 
 export const getMintDynamicTooltips = (
@@ -49,8 +50,8 @@ export const AddressValidityMessage: FunctionComponent<AddressValidityMessagePro
   return (
     <span>
       This Gateway Address is only valid for 24 hours, it expires in{" "}
-      <HMSCountdown milliseconds={milliseconds} />. Do not send multiple deposits
-      or deposit after it has expired.
+      <HMSCountdown milliseconds={milliseconds} />. Do not send multiple
+      deposits or deposit after it has expired.
     </span>
   );
 };

@@ -35,7 +35,8 @@ const slice = createSlice({
         state.amount = action.payload.amount;
         state.address = action.payload.address;
       } else {
-        state = initialState;
+        state.amount = initialState.amount;
+        state.address = initialState.address;
       }
     },
   },

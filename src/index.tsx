@@ -3,7 +3,7 @@ import "@renproject/fonts/index.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { inspect } from "@xstate/inspect";
+// import { inspect } from "@xstate/inspect";
 import "./index.css";
 import { MultiwalletProvider } from "./providers/multiwallet/Multiwallet";
 import { NotificationsProvider } from "./providers/Notifications";
@@ -13,12 +13,12 @@ import store from "./store/store";
 import { lightTheme } from "./theme/theme";
 import "./index.css";
 
-process.env.NODE_ENV !== "production" &&
-  inspect({
-    // options
-    // url: 'https://statecharts.io/inspect', // (default)
-    iframe: false, // open in new window
-  });
+// process.env.NODE_ENV !== "production" &&
+//   inspect({
+//     // options
+//     // url: 'https://statecharts.io/inspect', // (default)
+//     iframe: false, // open in new window
+//   });
 
 const render = () => {
   const App = require("./App").default;

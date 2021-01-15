@@ -1,5 +1,5 @@
-import { RenNetwork } from '@renproject/interfaces'
-import { GatewaySession, } from '@renproject/ren-tx'
+import { RenNetwork } from "@renproject/interfaces";
+import { GatewaySession } from "@renproject/ren-tx";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -12,15 +12,16 @@ import {
   getCurrencyRentxSourceChain,
   getNetworkConfigByRentxName,
   toMintedCurrency,
-} from '../../utils/assetConfigs'
+} from "../../utils/assetConfigs";
 import {
+  getAddressExplorerLink,
   getChainExplorerLink,
   getTxCreationTimestamp,
   isTxExpired,
   TxEntryStatus,
   TxMeta,
   TxPhase,
-} from '../transactions/transactionsUtils'
+} from "../transactions/transactionsUtils";
 
 type CreateMintTransactionParams = {
   amount: number;
@@ -76,6 +77,11 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
   );
   const lockChainConfig = getChainConfig(lockCurrencyConfig.sourceChain);
   const mintChainConfig = getChainConfigByRentxName(tx.destChain);
+  const mintAddressLink = getAddressExplorerLink(
+    mintChainConfig.symbol,
+    tx.network,
+    tx.userAddress
+  );
 
   const transaction = Object.values(tx.transactions)[0];
   let mintTxHash: string = "";
@@ -100,11 +106,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     if (transaction.rawSourceTx) {
       lockTxHash = transaction.rawSourceTx.transaction.txHash;
       lockTxLink =
-        getChainExplorerLink(
-          lockChainConfig.symbol,
-          tx.network,
-          lockTxHash
-        ) || "";
+        getChainExplorerLink(lockChainConfig.symbol, tx.network, lockTxHash) ||
+        "";
     }
     lockConfirmations = transaction.sourceTxConfs;
     if (transaction.sourceTxConfTarget) {
@@ -153,6 +156,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     lockCurrencyConfig,
     mintChainConfig,
     lockChainConfig,
+    mintAddressLink,
     mintTxHash,
     mintTxLink,
     lockTxHash,
@@ -168,6 +172,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
 
 export const isMintTransactionCompleted = (tx: GatewaySession) => {
   const { meta } = getLockAndMintParams(tx);
-  return meta.status === TxEntryStatus.COMPLETED;
+  return (
+    meta.status === TxEntryStatus.COMPLETED ||
+    tx.expiryTime < new Date().getTime()
+  );
 };
-

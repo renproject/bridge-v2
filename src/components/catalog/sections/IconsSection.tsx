@@ -45,6 +45,7 @@ import {
   RenLogoFullIcon,
   RenLogoIcon,
   RenVMLogoIcon,
+  SpecialAlertIcon,
   SuccessIcon,
   TxSettingsIcon,
   WalletConnectFullIcon,
@@ -73,6 +74,7 @@ export const IconsSection: FunctionComponent = () => {
         <MoreVertIcon />
         <WalletIcon />
         <SuccessIcon />
+        <SpecialAlertIcon />
         <EmptyCircleIcon />
       </SeparationWrapper>
       <SeparationWrapper>

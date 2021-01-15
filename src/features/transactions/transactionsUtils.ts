@@ -166,6 +166,20 @@ export const getChainExplorerLink = (
   ].utils.transactionExplorerLink(txId, network);
 };
 
+export const getAddressExplorerLink = (
+  chain: BridgeChain,
+  network: RenNetwork | "testnet" | "mainnet",
+  address: string
+) => {
+  if (!address) {
+    return "";
+  }
+  const chainConfig = getChainConfig(chain);
+  return (chainsClassMap as any)[
+    chainConfig.rentxName
+  ].utils.addressExplorerLink(address, network);
+};
+
 type GetFeeTooltipsArgs = {
   mintFee: number;
   releaseFee: number;

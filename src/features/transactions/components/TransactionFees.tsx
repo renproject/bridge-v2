@@ -15,6 +15,7 @@ import {
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
+import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
@@ -23,6 +24,7 @@ import {
   findGasPrice,
   USD_SYMBOL,
 } from "../../marketData/marketDataUtils";
+import { mintTooltips } from "../../mint/components/MintHelpers";
 import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {
@@ -30,6 +32,7 @@ type TransactionFeesProps = {
   currency: BridgeCurrency;
   amount: number;
   chain: BridgeChain;
+  address?: string; // FIXME make obligatory
 };
 
 export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
@@ -37,6 +40,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   currency,
   type,
   chain,
+  address,
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
@@ -138,6 +142,13 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           />
         }
       />
+      {address && (
+        <LabelWithValue
+          label="Recipient Address"
+          labelTooltip={mintTooltips.recipientAddress}
+          value={trimAddress(address, 5)}
+        />
+      )}
     </>
   );
 };

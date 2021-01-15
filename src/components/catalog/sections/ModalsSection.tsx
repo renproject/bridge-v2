@@ -7,6 +7,7 @@ import {
 } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
+  ExpiredErrorDialog,
   GeneralErrorDialog,
   SubmitErrorDialog,
 } from "../../../features/transactions/components/TransactionsHelpers";
@@ -125,6 +126,7 @@ export const ModalsSection: FunctionComponent = () => {
       </BridgeModal>
       <SubmitErrorDialog open={false} onAction={() => {}} />
       <GeneralErrorDialog open={false} onAction={() => {}} />
+      <ExpiredErrorDialog open={false} onAction={() => {}} />
     </Section>
   );
 };

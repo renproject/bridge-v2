@@ -14,6 +14,7 @@ import {
 } from "../../utils/assetConfigs";
 import {
   base64ToHex,
+  getAddressExplorerLink,
   getChainExplorerLink,
   getTxCreationTimestamp,
   TxEntryStatus,
@@ -93,14 +94,19 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   let releaseTxHash: string = "";
   let releaseTxLink: string = "";
   if (transaction && transaction.destTxHash) {
-    releaseTxHash = base64ToHex(transaction.destTxHash);
     releaseTxLink =
       getChainExplorerLink(
         releaseChainConfig.symbol,
         tx.network,
-        releaseTxHash
+        transaction.destTxHash
       ) || "";
   }
+  const releaseAddressLink = getAddressExplorerLink(
+    releaseChainConfig.symbol,
+    tx.network,
+    tx.destAddress
+  );
+
   const meta: TxMeta = {
     status: TxEntryStatus.PENDING,
     phase: TxPhase.NONE,
@@ -127,11 +133,12 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     burnTxLink,
     releaseTxHash,
     releaseTxLink,
+    releaseAddressLink,
     meta,
   };
 };
 
 export const isReleaseTransactionCompleted = (tx: GatewaySession) => {
-  const { meta } = getBurnAndReleaseParams(tx);
-  return meta.status === TxEntryStatus.COMPLETED;
+  const transaction = Object.values(tx.transactions)[0];
+  return !!(transaction?.renVMHash || transaction?.destTxHash);
 };

@@ -128,6 +128,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
     burnChainConfig,
     burnTxLink,
     releaseTxLink,
+    releaseAddressLink,
   } = getBurnAndReleaseParams(tx);
   const handleReturn = useCallback(() => {
     history.push(paths.RELEASE);
@@ -165,9 +166,9 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
           color="primary"
           variant="button"
           underline="hover"
-          href={releaseTxLink}
+          href={releaseTxLink || releaseAddressLink}
         >
-          {releaseChainConfig.full} transaction
+          {releaseChainConfig.full} {releaseTxLink ? "transaction" : "address"}
         </Link>
         <Link
           external

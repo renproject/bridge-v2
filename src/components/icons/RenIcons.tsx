@@ -43,6 +43,7 @@ import { ReactComponent as RenLogo3F } from "./../../assets/icons/ren-logo-3f.sv
 import { ReactComponent as RenVMLogo } from "./../../assets/icons/renvm-logo.svg";
 import { ReactComponent as RenBridgeLogo } from "./../../assets/icons/renbridge-logo.svg";
 import { ReactComponent as Success } from "./../../assets/icons/success-icon.svg";
+import { ReactComponent as SpecialAlert } from "./../../assets/icons/specialalert-icon.svg";
 import { ReactComponent as Tooltip } from "./../../assets/icons/tooltip.svg";
 import { ReactComponent as TxHistory } from "./../../assets/icons/tx-history.svg";
 import { ReactComponent as TxSettings } from "./../../assets/icons/tx-settings.svg";
@@ -55,7 +56,7 @@ import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
 import CompletedIcon from "@material-ui/icons/Done";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
-import WarningIcon from '@material-ui/icons/Warning';
+import WarningIcon from "@material-ui/icons/Warning";
 
 export { CompletedIcon, AddIcon, DeleteIcon, WarningIcon };
 
@@ -93,6 +94,10 @@ export const BackArrowIcon: CustomSvgIconComponent = (props) => (
 
 export const SuccessIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Success} {...props} />
+);
+
+export const SpecialAlertIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={SpecialAlert} {...props} />
 );
 
 export const QrCodeIcon: CustomSvgIconComponent = (props) => (
