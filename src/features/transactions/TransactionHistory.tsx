@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -42,6 +43,7 @@ import {
 import { isFirstVowel } from "../../utils/strings";
 import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
 import { ReleaseTransactionEntryResolver } from "../release/components/ReleaseHistoryHelpers";
+import { useWalletAuthentication } from "../wallet/walletHooks";
 import {
   $wallet,
   $walletSignatures,
@@ -50,6 +52,7 @@ import {
   setWalletPickerOpened,
 } from "../wallet/walletSlice";
 import { TransactionHistoryDialog } from "./components/TransactionHistoryHelpers";
+import { SignInWarningDialog } from "./components/TransactionsHelpers";
 import {
   $orderedTransactions,
   $transactionsData,
@@ -64,6 +67,7 @@ import { isTransactionCompleted, TxType } from "./transactionsUtils";
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { account, status } = useSelectedChainWallet();
+  const { isAuthenticated, authenticate } = useWalletAuthentication();
   const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, user } = useSelector($wallet);
   const allTransactions = useSelector($orderedTransactions);
@@ -86,7 +90,7 @@ export const TransactionHistory: FunctionComponent = () => {
   }, [dispatch, account, signature, rawSignature]);
 
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated && user) {
       db.getTxs(account)
         .then((txsData) => {
           // Only load txs for the correct chain, in case the address is valid on multiple chains
@@ -105,7 +109,7 @@ export const TransactionHistory: FunctionComponent = () => {
         })
         .catch(console.error);
     }
-  }, [dispatch, user, account, chain]);
+  }, [dispatch, isAuthenticated, user, account, chain]);
 
   const chainConfig = getChainConfig(chain);
   const handleWalletPickerOpen = useCallback(() => {
@@ -242,7 +246,7 @@ export const TransactionHistory: FunctionComponent = () => {
           {allTransactions.length === 0 && (
             <PaperSpacerWrapper>
               <Typography variant="body2" align="center" color="textSecondary">
-                You have no transactions...
+                You have no transactions with this account.
               </Typography>
             </PaperSpacerWrapper>
           )}
@@ -256,6 +260,29 @@ export const TransactionHistory: FunctionComponent = () => {
           </TransactionsPaginationWrapper>
         </>
       )}
+      <AuthGuard enabled={opened} />
     </TransactionHistoryDialog>
+  );
+};
+
+type AuthGuardProps = {
+  enabled?: boolean;
+};
+
+export const AuthGuard: FunctionComponent<AuthGuardProps> = ({
+  enabled = false,
+}) => {
+  const { isAuthenticated, authenticate } = useWalletAuthentication();
+  const [opened, setOpened] = useState(false);
+  useDebounce(
+    () => {
+      setOpened(!isAuthenticated);
+    },
+    5000,
+    [isAuthenticated]
+  );
+
+  return (
+    <SignInWarningDialog open={enabled && opened} onMainAction={authenticate} />
   );
 };

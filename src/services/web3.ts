@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Web3 from "web3";
 import { storageKeys } from "../constants/constants";
@@ -68,17 +68,29 @@ const useWeb3 = () => {
   return useMemo(() => new Web3(provider), [provider]);
 };
 
-export const useWeb3Signatures = () => {
+export const useSignatures = () => {
   const dispatch = useDispatch();
   const chain = useSelector($multiwalletChain);
   const { account } = useWallet(chain);
   const web3 = useWeb3();
-  return useEffect(() => {
+  const getSignatures = useCallback(() => {
     if (account && web3) {
-      // FIXME: handle any errors thrown here
-      getWeb3Signatures(account, web3, chain).then((signatures) => {
-        dispatch(setSignatures(signatures));
-      });
+      getWeb3Signatures(account, web3, chain)
+        .then((signatures) => {
+          dispatch(setSignatures(signatures));
+        })
+        .catch(console.error);
     }
   }, [dispatch, chain, account, web3]);
+
+  return { getSignatures };
+};
+
+export const useWeb3Signatures = () => {
+  const { getSignatures } = useSignatures();
+  useEffect(() => {
+    getSignatures();
+  }, [getSignatures]);
+
+  return { getSignatures };
 };
