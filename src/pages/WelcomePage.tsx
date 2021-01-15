@@ -1,4 +1,4 @@
-import { Container, Typography } from "@material-ui/core";
+import { Container, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { RouteComponentProps } from "react-router";
@@ -53,10 +53,12 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
   },
-  warningIcon: {
-    marginBottom: -5,
-  },
 }));
+
+const AdjustedWarningIcon = styled(WarningIcon)({
+  marginBottom: -5,
+});
+
 export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
@@ -66,8 +68,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   useEffect(() => {
     showNotification(
       <Typography variant="caption">
-        <WarningIcon fontSize="small" className={styles.warningIcon} /> RenVM is
-        new technology, and{" "}
+        <AdjustedWarningIcon fontSize="small" /> RenVM is new technology, and{" "}
         <Link
           href={links.SECURITY_AUDITS}
           target="_blank"
@@ -88,7 +89,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         },
       }
     );
-  }, [showNotification, styles.warningIcon]);
+  }, [showNotification]);
   const handleAgree = useCallback(() => {
     localStorage.setItem(storageKeys.TERMS_AGREED, "1");
     history.replace(paths.HOME);

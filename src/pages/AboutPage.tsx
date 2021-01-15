@@ -68,7 +68,7 @@ export const AboutPage: FunctionComponent<RouteComponentProps> = () => {
           ensure your <MarkText color="grey">renBTC</MarkText> is always backed
           by the same amount of <MarkText color="orange">BTC</MarkText>. Find
           out more{" "}
-          <Link external href="/todo">
+          <Link external href={links.WIKI}>
             here
           </Link>
           .

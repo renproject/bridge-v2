@@ -1,5 +1,10 @@
-import { Paper, PaperProps, styled, Theme } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import {
+  makeStyles,
+  Paper,
+  PaperProps,
+  styled,
+  Theme,
+} from "@material-ui/core";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useShakingStyles } from "../../theme/animationUtils";
@@ -147,3 +152,27 @@ export const PaperTitle = styled("div")({
   textAlign: "center",
   width: "100%",
 });
+
+const useSpacedContentStyles = makeStyles({
+  root: {
+    minHeight: 200,
+  },
+  rootSmaller: {
+    minHeight: 130,
+  },
+});
+
+type SpacedPaperContentProps = PaperContentProps & {
+  smaller?: boolean;
+};
+
+export const SpacedPaperContent: FunctionComponent<SpacedPaperContentProps> = ({
+  smaller,
+  ...rest
+}) => {
+  const styles = useSpacedContentStyles();
+  const className = classNames(styles.root, {
+    [styles.rootSmaller]: smaller,
+  });
+  return <PaperContent className={className} {...rest} />;
+};
