@@ -87,7 +87,6 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
     burnTxLink,
     releaseCurrencyConfig,
     releaseChainConfig,
-    releaseTxLink,
     releaseAddressLink,
     meta: { status, phase, createdTimestamp },
   } = getBurnAndReleaseParams(tx);
