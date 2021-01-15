@@ -2829,10 +2829,10 @@
     axios "^0.20.0"
     immutable "^4.0.0-rc.12"
 
-"@renproject/ren-tx@^2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.0.6.tgz#03124460cebc9bdb4e1ce1d1d6cb54024edbacc8"
-  integrity sha512-WoBhq1jhYDEE7LL3xB/6Twnq8Tvtb5RXz5/cBQ6KuPW6d1pFHj9lhoNyYY0RQzRJIcQ/Wt7EtwMd+3broi1X6A==
+"@renproject/ren-tx@^2.0.7-alpha.1":
+  version "2.0.7-alpha.1"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.0.7-alpha.1.tgz#5243a30ac072f26a75339fcfcbffca0eb0f05642"
+  integrity sha512-uAovu3nFJ2s5zYbAPGzlHn6eVwlKeLZGMjmagRvCCdLj12xgwFcAnkwDISlfqDAo8POtA4XfDFqU9cmjB7cXRA==
   dependencies:
     bignumber.js "^9.0.1"
 

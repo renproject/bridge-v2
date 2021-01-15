@@ -172,5 +172,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
 
 export const isMintTransactionCompleted = (tx: GatewaySession) => {
   const { meta } = getLockAndMintParams(tx);
-  return meta.status === TxEntryStatus.COMPLETED;
+  return (
+    meta.status === TxEntryStatus.COMPLETED ||
+    tx.expiryTime < new Date().getTime()
+  );
 };
