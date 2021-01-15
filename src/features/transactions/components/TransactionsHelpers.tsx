@@ -1,32 +1,78 @@
-import { Button, DialogProps, styled, Typography, useTheme, } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useInterval } from 'react-use'
-import { ActionButton, ActionButtonWrapper, RedButton, } from '../../../components/buttons/Buttons'
-import { SpecialAlertIcon, WarningIcon, } from '../../../components/icons/RenIcons'
-import { PaperContent } from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
-import { BridgeModal, NestedDrawer, } from '../../../components/modals/BridgeModal'
+import {
+  Button,
+  DialogProps,
+  makeStyles,
+  styled,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import classNames from "classnames";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useHistory } from "react-router-dom";
+import { useInterval } from "react-use";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+  RedButton,
+} from "../../../components/buttons/Buttons";
+import {
+  SpecialAlertIcon,
+  WarningIcon,
+} from "../../../components/icons/RenIcons";
+import {
+  PaperContent,
+  PaperContentProps,
+} from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import {
+  BridgeModal,
+  NestedDrawer,
+} from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { links } from '../../../constants/constants'
-import { paths } from '../../../pages/routes'
-import { usePaperTitle } from '../../../providers/TitleProviders'
-import { getFormattedHMS } from '../../../utils/dates'
-import { trimAddress } from '../../../utils/strings'
+} from "../../../components/progress/ProgressHelpers";
+import { links } from "../../../constants/constants";
+import { paths } from "../../../pages/routes";
+import { usePaperTitle } from "../../../providers/TitleProviders";
+import { getFormattedHMS } from "../../../utils/dates";
+import { trimAddress } from "../../../utils/strings";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
   marginBottom: 5,
 });
 
-export const SpacedPaperContent = styled(PaperContent)({
-  minHeight: 200,
+const useSpacedContentStyles = makeStyles({
+  root: {
+    minHeight: 200,
+  },
+  rootSmaller: {
+    minHeight: 130,
+  },
 });
+
+type SpacedPaperContentProps = PaperContentProps & {
+  smaller?: boolean;
+};
+
+export const SpacedPaperContent: FunctionComponent<SpacedPaperContentProps> = ({
+  smaller,
+  ...rest
+}) => {
+  const styles = useSpacedContentStyles();
+  const className = classNames(styles.root, {
+    [styles.rootSmaller]: smaller,
+  });
+  return <PaperContent className={className} {...rest} />;
+};
 
 type BookmarkPageWarningProps = {
   onClosed?: () => void;
@@ -44,7 +90,7 @@ export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = 
   }, [onClosed]);
   return (
     <NestedDrawer title="Warning" open={open} onClose={handleClose}>
-      <SpacedPaperContent topPadding bottomPadding>
+      <SpacedPaperContent topPadding bottomPadding smaller>
         <Typography variant="h5" align="center" gutterBottom>
           Bookmark this page
         </Typography>
