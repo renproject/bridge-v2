@@ -127,7 +127,7 @@ type ProgressStatusProps = {
 };
 
 export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
-  reason = "Loading...",
+  reason = "",
   processing = true,
 }) => {
   const theme = useTheme();
