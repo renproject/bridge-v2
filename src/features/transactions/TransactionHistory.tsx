@@ -67,7 +67,7 @@ import { isTransactionCompleted, TxType } from "./transactionsUtils";
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { account, status } = useSelectedChainWallet();
-  const { isAuthenticated, authenticate } = useWalletAuthentication();
+  const { isAuthenticated } = useWalletAuthentication();
   const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, user } = useSelector($wallet);
   const allTransactions = useSelector($orderedTransactions);
@@ -282,6 +282,7 @@ export const AuthGuard: FunctionComponent<AuthGuardProps> = ({
     [isAuthenticated]
   );
 
+  //TODO: make singleton, or put open flag in redux store
   return (
     <SignInWarningDialog open={enabled && opened} onMainAction={authenticate} />
   );
