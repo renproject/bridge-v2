@@ -19,16 +19,19 @@ import { TransactionItemProps } from "../../transactions/components/Transactions
 import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
 import {
   cloneTx,
-  createTxQueryString, isTransactionCompleted,
+  createTxQueryString,
+  isTransactionCompleted,
   TxEntryStatus,
   TxPhase,
-} from '../../transactions/transactionsUtils'
-import { BurnMachineSchemaState, useBurnMachine, useReleaseTransactionPersistence } from '../releaseHooks'
+} from "../../transactions/transactionsUtils";
+import {
+  BurnMachineSchemaState,
+  useBurnMachine,
+  useReleaseTransactionPersistence,
+} from "../releaseHooks";
 import {
   getBurnAndReleaseParams,
   isReleaseTransactionCompleted,
-
-
 } from "../releaseUtils";
 
 export const ReleaseTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
@@ -85,6 +88,7 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
     releaseCurrencyConfig,
     releaseChainConfig,
     releaseTxLink,
+    releaseAddressLink,
     meta: { status, phase, createdTimestamp },
   } = getBurnAndReleaseParams(tx);
 
@@ -100,7 +104,10 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
   const params = getBurnAndReleaseParams(tx);
   return (
     <>
-      <Debug wrapper it={{ tx, params, completed: isTransactionCompleted(tx) }} />
+      <Debug
+        wrapper
+        it={{ tx, params, completed: isTransactionCompleted(tx) }}
+      />
       <Debug disable it={{ meta: params.meta }} />
       <div className={styles.root}>
         <div className={styles.details}>
@@ -131,15 +138,15 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
                 {burnChainConfig.full} transaction
               </Link>
             )}
-            {releaseTxLink && (
+            {releaseAddressLink && (
               <Link
-                href={releaseTxLink}
+                href={releaseAddressLink}
                 external
                 color="primary"
                 underline="hover"
                 className={styles.link}
               >
-                {releaseChainConfig.full} transaction
+                {releaseChainConfig.full} address
               </Link>
             )}
           </div>
