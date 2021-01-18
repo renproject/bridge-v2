@@ -465,11 +465,12 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
+        You received
         <NumberFormatText
           value={conversionTotal}
           spacedSuffix={mintCurrencyConfig.short}
-        />{" "}
-        received!
+        />
+        !
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={handleReturn}>Back to start</ActionButton>
