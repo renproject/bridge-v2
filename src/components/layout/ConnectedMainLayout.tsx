@@ -67,7 +67,6 @@ import {
 } from "./MainLayout";
 
 export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
-  variant,
   children,
 }) => {
   const styles = useMainLayoutStyles();
@@ -266,7 +265,6 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   );
   return (
     <MainLayout
-      variant={variant}
       ToolbarMenu={ToolbarMenu}
       DrawerMenu={DrawerMenu}
       WalletMenu={WalletMenu}

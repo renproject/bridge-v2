@@ -39,7 +39,7 @@ export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
   const styles = useStyles();
 
   return (
-    <MainLayout variant="about">
+    <MainLayout>
       <Container maxWidth="md" className={styles.root}>
         <Typography
           align="center"

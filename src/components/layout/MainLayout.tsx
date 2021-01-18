@@ -88,17 +88,17 @@ export const useMainLayoutStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const useBackgroundReplacer = (variant: string | undefined) =>
+const useBackgroundReplacer = (withBackground: boolean) =>
   useEffect(() => {
-    if (variant === "intro") {
+    if (withBackground) {
       document.body.style.backgroundImage = "url(/background.svg)";
     } else {
       document.body.style.backgroundImage = "none";
     }
-  }, [variant]);
+  }, [withBackground]);
 
 export type MainLayoutVariantProps = {
-  variant?: "intro" | "about";
+  withBackground?: boolean;
 };
 
 type MainLayoutProps = MainLayoutVariantProps & {
@@ -108,14 +108,14 @@ type MainLayoutProps = MainLayoutVariantProps & {
 };
 
 export const MainLayout: FunctionComponent<MainLayoutProps> = ({
-  variant,
+  withBackground,
   ToolbarMenu = "",
   DrawerMenu,
   WalletMenu,
   children,
 }) => {
   const styles = useMainLayoutStyles();
-  useBackgroundReplacer(variant);
+  useBackgroundReplacer(Boolean(withBackground));
 
   return (
     <Container maxWidth="lg">

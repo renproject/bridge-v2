@@ -1,18 +1,24 @@
-import { Container, styled, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
-import { RouteComponentProps } from 'react-router'
-import { ActionButton } from '../components/buttons/Buttons'
-import { IconWithLabel } from '../components/icons/IconHelpers'
-import { BchFullIcon, BtcFullIcon, DogeFullIcon, WarningIcon, ZecFullIcon, } from '../components/icons/RenIcons'
-import { NarrowCenteredWrapper } from '../components/layout/LayoutHelpers'
-import { MainLayout } from '../components/layout/MainLayout'
-import { Link } from '../components/links/Links'
-import { UnstyledList } from '../components/typography/TypographyHelpers'
-import { links, storageKeys } from '../constants/constants'
-import { useNotifications } from '../providers/Notifications'
-import { usePageTitle } from '../providers/TitleProviders'
-import { paths } from './routes'
+import { Container, styled, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
+import { RouteComponentProps } from "react-router";
+import { ActionButton } from "../components/buttons/Buttons";
+import { IconWithLabel } from "../components/icons/IconHelpers";
+import {
+  BchFullIcon,
+  BtcFullIcon,
+  DogeFullIcon,
+  WarningIcon,
+  ZecFullIcon,
+} from "../components/icons/RenIcons";
+import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
+import { MainLayout } from "../components/layout/MainLayout";
+import { Link } from "../components/links/Links";
+import { UnstyledList } from "../components/typography/TypographyHelpers";
+import { links, storageKeys } from "../constants/constants";
+import { useNotifications } from "../providers/Notifications";
+import { usePageTitle } from "../providers/TitleProviders";
+import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -90,7 +96,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   }, [history]);
 
   return (
-    <MainLayout variant="intro">
+    <MainLayout withBackground>
       <Container maxWidth="sm">
         <Typography variant="h1" className={styles.heading}>
           Transfer assets between blockchains

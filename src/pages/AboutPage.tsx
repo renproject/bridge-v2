@@ -1,13 +1,13 @@
-import { Container, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import React, { FunctionComponent } from 'react'
-import { RouteComponentProps } from 'react-router'
-import { RenLogoFullIcon, RenVMLogoIcon } from '../components/icons/RenIcons'
-import { MainLayout } from '../components/layout/MainLayout'
-import { Link } from '../components/links/Links'
-import { MarkText } from '../components/typography/TypographyHelpers'
-import { links } from '../constants/constants'
-import { usePageTitle } from '../providers/TitleProviders'
+import { Container, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import React, { FunctionComponent } from "react";
+import { RouteComponentProps } from "react-router";
+import { RenLogoFullIcon, RenVMLogoIcon } from "../components/icons/RenIcons";
+import { MainLayout } from "../components/layout/MainLayout";
+import { Link } from "../components/links/Links";
+import { MarkText } from "../components/typography/TypographyHelpers";
+import { links } from "../constants/constants";
+import { usePageTitle } from "../providers/TitleProviders";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,7 +45,7 @@ export const AboutPage: FunctionComponent<RouteComponentProps> = () => {
   const styles = useStyles();
 
   return (
-    <MainLayout variant="about">
+    <MainLayout>
       <Container maxWidth="sm" className={styles.root}>
         <Typography variant="h2" component="h1" className={styles.heading}>
           What is RenBridge?
