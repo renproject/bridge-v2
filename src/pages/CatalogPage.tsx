@@ -3,7 +3,7 @@ import { Catalog } from "../components/catalog/Catalog";
 import { ConnectedMainLayout } from "../components/layout/ConnectedMainLayout";
 import { usePageTitle } from "../providers/TitleProviders";
 
-export const CatalogPage: FunctionComponent = () => {
+const CatalogPage: FunctionComponent = () => {
   usePageTitle("Catalog");
   return (
     <ConnectedMainLayout>
@@ -11,3 +11,5 @@ export const CatalogPage: FunctionComponent = () => {
     </ConnectedMainLayout>
   );
 };
+
+export default CatalogPage;
