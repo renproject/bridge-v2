@@ -12,7 +12,6 @@ import { signWithBinanceChain } from "../../services/wallets/bsc";
 import { BridgeWallet, RenChain } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
 import {
-  $authRequired,
   $multiwalletChain,
   $walletUser,
   setAuthRequired,

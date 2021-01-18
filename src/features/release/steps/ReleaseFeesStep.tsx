@@ -29,7 +29,6 @@ import {
   MiddleEllipsisText,
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
-import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
 import { db } from "../../../services/database/database";
 import { DbMeta } from "../../../services/database/firebase/firebase";
