@@ -70,9 +70,15 @@ export const TransactionHistory: FunctionComponent = () => {
   const { txsPending } = useSelector($transactionsData);
   const opened = useSelector($txHistoryOpened);
 
+  // useEffect(() => {
+  //   dispatch(setTxsPending(true));
+  // }, [isAuthenticated]);
+
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!isAuthenticated) {
       dispatch(setTxsPending(true));
+    }
+    if (isAuthenticated) {
       db.getTxs(account)
         .then((txsData) => {
           // Only load txs for the correct chain, in case the address is valid on multiple chains
