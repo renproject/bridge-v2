@@ -18,7 +18,7 @@ import { $ui } from "../features/ui/uiSlice";
 import { PaperTitleProvider } from "../providers/TitleProviders";
 import { paths } from "./routes";
 
-export const MainPage: FunctionComponent<RouteComponentProps> = ({
+const MainPage: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
@@ -46,3 +46,5 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
     </>
   );
 };
+
+export default MainPage;

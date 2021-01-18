@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 25,
   },
 }));
-export const AboutPage: FunctionComponent<RouteComponentProps> = () => {
+const AboutPage: FunctionComponent<RouteComponentProps> = () => {
   usePageTitle("About");
   const styles = useStyles();
 
@@ -98,3 +98,5 @@ export const AboutPage: FunctionComponent<RouteComponentProps> = () => {
     </MainLayout>
   );
 };
+
+export default AboutPage;
