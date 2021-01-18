@@ -372,7 +372,7 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   );
 };
 
-export const SignInWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
+export const AuthWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   ...props
 }) => {
   return (
@@ -389,4 +389,3 @@ export const SignInWarningDialog: FunctionComponent<WarningWithActionsProps> = (
     </WarningDialog>
   );
 };
-

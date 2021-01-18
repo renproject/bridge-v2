@@ -29,6 +29,7 @@ import { useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
 import { $renNetwork } from "../../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../../features/network/networkUtils";
+import { AuthWarningDialog } from "../../features/transactions/components/TransactionsHelpers";
 // import { TransactionHistory } from '../../features/transactions/TransactionHistory'
 import {
   $transactionsData,
@@ -270,6 +271,7 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WalletMenu={WalletMenu}
     >
       {children}
+      <AuthWarningDialog open={walletConnected} />
       <Debug it={{ debugNetworkName, debugWallet, debugMultiwallet, env }} />
     </MainLayout>
   );
