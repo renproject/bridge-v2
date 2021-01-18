@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
-import { MainLayout } from "../components/layout/MainLayout";
+import { ConnectedMainLayout } from "../components/layout/ConnectedMainLayout";
 import {
   BridgePaperWrapper,
   BridgePurePaper,
@@ -33,7 +33,7 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
   const { paperShaking } = useSelector($ui);
   return (
     <>
-      <MainLayout>
+      <ConnectedMainLayout>
         <PaperTitleProvider>
           <BridgePaperWrapper>
             <BridgePurePaper shaking={paperShaking}>
@@ -42,7 +42,7 @@ export const MainPage: FunctionComponent<RouteComponentProps> = ({
             </BridgePurePaper>
           </BridgePaperWrapper>
         </PaperTitleProvider>
-      </MainLayout>
+      </ConnectedMainLayout>
     </>
   );
 };

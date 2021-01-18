@@ -1,13 +1,13 @@
 import React, { FunctionComponent } from "react";
 import { Catalog } from "../components/catalog/Catalog";
-import { MainLayout } from "../components/layout/MainLayout";
+import { ConnectedMainLayout } from "../components/layout/ConnectedMainLayout";
 import { usePageTitle } from "../providers/TitleProviders";
 
 export const CatalogPage: FunctionComponent = () => {
   usePageTitle("Catalog");
   return (
-    <MainLayout>
+    <ConnectedMainLayout>
       <Catalog />
-    </MainLayout>
+    </ConnectedMainLayout>
   );
 };

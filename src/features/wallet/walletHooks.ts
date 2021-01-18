@@ -1,23 +1,14 @@
-import { useMultiwallet } from "@renproject/multiwallet-ui";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useDebounce } from "react-use";
-import Web3 from "web3";
-import {
-  WalletConnectionStatusType,
-  WalletStatus,
-} from "../../components/utils/types";
-import { storageKeys } from "../../constants/constants";
-import { signWithBinanceChain } from "../../services/wallets/bsc";
-import { BridgeWallet, RenChain } from "../../utils/assetConfigs";
-import { $renNetwork } from "../network/networkSlice";
-import { SignInWarningDialog } from "../transactions/components/TransactionsHelpers";
-import {
-  $multiwalletChain,
-  $walletUser,
-  setAuthAlertOpened,
-  setSignatures,
-} from "./walletSlice";
+import { useMultiwallet } from '@renproject/multiwallet-ui'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useDebounce } from 'react-use'
+import Web3 from 'web3'
+import { WalletConnectionStatusType, WalletStatus, } from '../../components/utils/types'
+import { storageKeys } from '../../constants/constants'
+import { signWithBinanceChain } from '../../services/wallets/bsc'
+import { BridgeWallet, RenChain } from '../../utils/assetConfigs'
+import { $renNetwork } from '../network/networkSlice'
+import { $multiwalletChain, $walletUser, setAuthAlertOpened, setSignatures, } from './walletSlice'
 
 type WalletData = ReturnType<typeof useMultiwallet> & {
   account: string;
@@ -135,6 +126,7 @@ const getWeb3Signatures = async (
   }
   return { signature, rawSignature };
 };
+
 // TODO TBD: cache for more wallet providers?
 const useWeb3 = () => {
   const { provider } = useSelectedChainWallet();
@@ -179,7 +171,7 @@ export const useAuthentication = () => {
 
 export const useAuthGuard = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, authenticate } = useAuthentication();
+  const { isAuthenticated } = useAuthentication();
   useDebounce(
     () => {
       dispatch(setAuthAlertOpened(!isAuthenticated));

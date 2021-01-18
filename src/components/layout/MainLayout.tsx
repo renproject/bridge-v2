@@ -24,6 +24,7 @@ import {
 import classNames from "classnames";
 import React, {
   FunctionComponent,
+  ReactNode,
   useCallback,
   useEffect,
   useMemo,
@@ -47,8 +48,8 @@ import {
   useSelectedChainWallet,
   useSyncMultiwalletNetwork,
   useWallet,
-  useWeb3Signatures
-} from '../../features/wallet/walletHooks'
+  useWeb3Signatures,
+} from "../../features/wallet/walletHooks";
 import {
   $multiwalletChain,
   $walletPickerOpened,
@@ -162,98 +163,21 @@ const useBackgroundReplacer = (variant: string | undefined) =>
 
 type MainLayoutProps = {
   variant?: "intro" | "about";
+  ToolbarMenu: ReactNode | "";
+  DrawerMenu: ReactNode | "";
+  WalletMenu: ReactNode | "";
 };
 
 export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   variant,
+  ToolbarMenu = "",
+  DrawerMenu,
+  WalletMenu,
   children,
 }) => {
   const styles = useStyles();
-  const dispatch = useDispatch();
   useBackgroundReplacer(variant);
-  useSetNetworkFromParam();
-  useSyncMultiwalletNetwork();
-  useWeb3Signatures();
-  const { txHistoryOpened } = useSelector($transactionsData);
-  const txsNeedsAction = useSelector($transactionsNeedsAction);
-  const {
-    status,
-    account,
-    walletConnected,
-    deactivateConnector,
-    symbol,
-  } = useSelectedChainWallet();
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
-  const handleMobileMenuClose = useCallback(() => {
-    setMobileMenuOpen(false);
-  }, []);
-  const handleMobileMenuOpen = useCallback(() => {
-    setMobileMenuOpen(true);
-  }, []);
-  const { width } = useWindowSize();
-  const theme = useTheme();
-  useEffect(() => {
-    if (width > theme.breakpoints.values["sm"]) {
-      setMobileMenuOpen(false);
-    }
-  }, [width, theme.breakpoints]);
-
-  const handleTxHistoryToggle = useCallback(() => {
-    dispatch(setTxHistoryOpened(!txHistoryOpened));
-  }, [dispatch, txHistoryOpened]);
-
-  const multiwalletChain = useSelector($multiwalletChain);
-  const walletPickerOpen = useSelector($walletPickerOpened);
-  const renNetwork = useSelector($renNetwork);
-  const pickerClasses = useWalletPickerStyles();
-  const [
-    walletMenuAnchor,
-    setWalletMenuAnchor,
-  ] = React.useState<null | HTMLElement>(null);
-  const handleWalletPickerClose = useCallback(() => {
-    dispatch(setWalletPickerOpened(false));
-  }, [dispatch]);
-  const handleWalletMenuClose = useCallback(() => {
-    setWalletMenuAnchor(null);
-  }, []);
-  const handleWalletButtonClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (walletConnected) {
-        setWalletMenuAnchor(event.currentTarget);
-      } else {
-        dispatch(setWalletPickerOpened(true));
-      }
-    },
-    [dispatch, walletConnected]
-  );
-  const handleDisconnectWallet = useCallback(() => {
-    deactivateConnector();
-    handleWalletMenuClose();
-  }, [deactivateConnector, handleWalletMenuClose]);
-  const walletPickerOptions = useMemo(() => {
-    const options: WalletPickerProps<any, any> = {
-      targetNetwork: renNetwork,
-      chain: multiwalletChain,
-      onClose: handleWalletPickerClose,
-      pickerClasses,
-      // DefaultInfo: DebugComponentProps,
-      ConnectingInfo: WalletConnectingInfo,
-      WrongNetworkInfo: WalletWrongNetworkInfo,
-      WalletEntryButton,
-      WalletChainLabel,
-      config: walletPickerModalConfig,
-    };
-    return options;
-  }, [multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);
-
-  const debugWallet = useWallet(multiwalletChain); //remove
-  const debugMultiwallet = useMultiwallet(); //remove
-  const debugNetworkName = useTestnetName();
-
-  const drawerId = "main-menu-mobile";
-  const withMenu = variant !== "intro" && variant !== "about";
-  const showTxIndicator = walletConnected && txsNeedsAction;
   return (
     <Container maxWidth="lg">
       <Grid container item>
@@ -267,121 +191,13 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
                   </Link>
                 </div>
                 <div className={styles.grow} />
-                {withMenu && (
-                  <>
-                    <div className={styles.desktopMenu}>
-                      <TransactionHistoryMenuIconButton
-                        opened={txHistoryOpened}
-                        indicator={showTxIndicator}
-                        className={styles.desktopTxHistory}
-                        onClick={handleTxHistoryToggle}
-                      />
-                      <WalletConnectionStatusButton
-                        onClick={handleWalletButtonClick}
-                        hoisted={txHistoryOpened}
-                        status={status}
-                        account={account}
-                        wallet={symbol}
-                      />
-                      <WalletPickerModal
-                        open={walletPickerOpen}
-                        options={walletPickerOptions}
-                      />
-                    </div>
-                    <div className={styles.mobileMenu}>
-                      <IconButton
-                        aria-label="show more"
-                        aria-controls={drawerId}
-                        aria-haspopup="true"
-                        onClick={handleMobileMenuOpen}
-                        color="inherit"
-                      >
-                        <MenuIcon />
-                      </IconButton>
-                    </div>
-                  </>
-                )}
+                {ToolbarMenu}
               </Toolbar>
             </AppBar>
-            {withMenu && (
-              <Drawer
-                anchor="right"
-                id={drawerId}
-                keepMounted
-                open={mobileMenuOpen}
-                onClose={handleMobileMenuClose}
-                PaperProps={{ className: styles.drawerPaper }}
-              >
-                <div className={styles.drawerHeader}>
-                  <RenBridgeLogoIcon className={styles.drawerLogo} />
-                  <IconButton
-                    aria-label="close"
-                    className={styles.drawerClose}
-                    onClick={handleMobileMenuClose}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </div>
-                <Divider />
-                <ListItem
-                  divider
-                  className={styles.drawerListItem}
-                  button
-                  onClick={handleWalletButtonClick}
-                >
-                  <WalletConnectionStatusButton
-                    className={styles.mobileMenuButton}
-                    mobile
-                    status={status}
-                    account={account}
-                    wallet={symbol}
-                  />
-                </ListItem>
-                <ListItem
-                  divider
-                  className={styles.drawerListItem}
-                  button
-                  onClick={handleTxHistoryToggle}
-                >
-                  <Button className={styles.mobileMenuButton} component="div">
-                    <TransactionHistoryMenuIconButton
-                      className={styles.mobileTxHistory}
-                      indicator={showTxIndicator}
-                    />
-                    <span>View Transactions</span>
-                  </Button>
-                </ListItem>
-                <ListItem
-                  className={classNames(
-                    styles.drawerListItem,
-                    styles.drawerFooterListItem
-                  )}
-                >
-                  <Footer mobile />
-                </ListItem>
-              </Drawer>
-            )}
-            <Menu
-              id="wallet-menu"
-              getContentAnchorEl={null}
-              anchorEl={walletMenuAnchor}
-              keepMounted
-              open={Boolean(walletMenuAnchor)}
-              onClose={handleWalletMenuClose}
-              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-              transformOrigin={{ vertical: "top", horizontal: "left" }}
-            >
-              <MenuItem onClick={handleDisconnectWallet}>
-                <Typography color="error">Disconnect wallet</Typography>
-              </MenuItem>
-            </Menu>
+            {DrawerMenu}
+            {WalletMenu}
           </header>
-          <main className={styles.main}>
-            {children}
-            <Debug
-              it={{ debugNetworkName, debugWallet, debugMultiwallet, env }}
-            />
-          </main>
+          <main className={styles.main}>{children}</main>
           <TransactionHistory />
           <Footer />
         </Container>
