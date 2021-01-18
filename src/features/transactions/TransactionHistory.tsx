@@ -42,7 +42,10 @@ import {
 import { isFirstVowel } from "../../utils/strings";
 import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
 import { ReleaseTransactionEntryResolver } from "../release/components/ReleaseHistoryHelpers";
-import { useSelectedChainWallet, useWalletAuthentication } from '../wallet/walletHooks'
+import {
+  useSelectedChainWallet,
+  useAuthentication,
+} from "../wallet/walletHooks";
 import {
   $wallet,
   $walletSignatures,
@@ -66,7 +69,7 @@ import { isTransactionCompleted, TxType } from "./transactionsUtils";
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
   const { account, status } = useSelectedChainWallet();
-  const { isAuthenticated } = useWalletAuthentication();
+  const { isAuthenticated } = useAuthentication();
   const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, user } = useSelector($wallet);
   const allTransactions = useSelector($orderedTransactions);
@@ -259,30 +262,7 @@ export const TransactionHistory: FunctionComponent = () => {
           </TransactionsPaginationWrapper>
         </>
       )}
-      <AuthGuard enabled={opened} />
     </TransactionHistoryDialog>
   );
 };
 
-type AuthGuardProps = {
-  enabled?: boolean;
-};
-
-export const AuthGuard: FunctionComponent<AuthGuardProps> = ({
-  enabled = false,
-}) => {
-  const { isAuthenticated, authenticate } = useWalletAuthentication();
-  const [opened, setOpened] = useState(false);
-  useDebounce(
-    () => {
-      setOpened(!isAuthenticated);
-    },
-    5000,
-    [isAuthenticated]
-  );
-
-  //TODO: make singleton, or put open flag in redux store
-  return (
-    <SignInWarningDialog open={enabled && opened} onMainAction={authenticate} />
-  );
-};

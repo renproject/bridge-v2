@@ -170,9 +170,9 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
 }) => {
   const styles = useStyles();
   const dispatch = useDispatch();
+  useBackgroundReplacer(variant);
   useSetNetworkFromParam();
   useSyncMultiwalletNetwork();
-  useBackgroundReplacer(variant);
   useWeb3Signatures();
   const { txHistoryOpened } = useSelector($transactionsData);
   const txsNeedsAction = useSelector($transactionsNeedsAction);

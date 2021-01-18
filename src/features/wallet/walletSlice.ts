@@ -15,25 +15,30 @@ export type AuthUser = null | {
   uid: string;
 };
 
+export type AuthSignatures = {
+  signature: string;
+  rawSignature: string;
+};
+
 type WalletState = {
   chain: BridgeChain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
-  authDialogOpened: boolean;
-  signatures: { signature: string; rawSignature: string };
+  signatures: AuthSignatures;
   user: AuthUser;
+  authAlertOpened: boolean;
 };
 
 let initialState: WalletState = {
   chain: BridgeChain.ETHC,
   pickerOpened: false,
   balances: [],
-  authDialogOpened: false,
   signatures: {
     signature: "",
     rawSignature: "",
   },
   user: null,
+  authAlertOpened: false,
 };
 
 const slice = createSlice({
@@ -62,11 +67,11 @@ const slice = createSlice({
     resetBalances(state) {
       state.balances = [];
     },
-    setSignatures(
-      state,
-      action: PayloadAction<{ signature: string; rawSignature: string }>
-    ) {
+    setSignatures(state, action: PayloadAction<AuthSignatures>) {
       state.signatures = action.payload;
+    },
+    setAuthAlertOpened(state, action: PayloadAction<boolean>) {
+      state.authAlertOpened = action.payload;
     },
   },
 });
@@ -78,6 +83,7 @@ export const {
   addOrUpdateBalance,
   resetBalances,
   setSignatures,
+  setAuthAlertOpened,
 } = slice.actions;
 
 export const walletReducer = slice.reducer;

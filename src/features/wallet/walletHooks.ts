@@ -1,6 +1,7 @@
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "react-use";
 import Web3 from "web3";
 import {
   WalletConnectionStatusType,
@@ -10,7 +11,13 @@ import { storageKeys } from "../../constants/constants";
 import { signWithBinanceChain } from "../../services/wallets/bsc";
 import { BridgeWallet, RenChain } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
-import { $multiwalletChain, $walletUser, setSignatures } from "./walletSlice";
+import { SignInWarningDialog } from "../transactions/components/TransactionsHelpers";
+import {
+  $multiwalletChain,
+  $walletUser,
+  setAuthAlertOpened,
+  setSignatures,
+} from "./walletSlice";
 
 type WalletData = ReturnType<typeof useMultiwallet> & {
   account: string;
@@ -161,11 +168,23 @@ export const useWeb3Signatures = () => {
   return { getSignatures };
 };
 
-export const useWalletAuthentication = () => {
+export const useAuthentication = () => {
   const { account } = useSelectedChainWallet();
   const user = useSelector($walletUser);
   const { getSignatures } = useSignatures();
   const isAuthenticated = user !== null && account === user.uid;
 
   return { isAuthenticated, authenticate: getSignatures };
+};
+
+export const useAuthGuard = () => {
+  const dispatch = useDispatch();
+  const { isAuthenticated, authenticate } = useAuthentication();
+  useDebounce(
+    () => {
+      dispatch(setAuthAlertOpened(!isAuthenticated));
+    },
+    2000,
+    [isAuthenticated]
+  );
 };
