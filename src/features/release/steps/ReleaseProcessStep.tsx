@@ -53,7 +53,10 @@ import {
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
-import { useSelectedChainWallet } from '../../wallet/walletHooks'
+import {
+  useAuthRequired,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import {
   $chain,
   setChain,
@@ -69,10 +72,11 @@ import {
 } from "../releaseHooks";
 import { getBurnAndReleaseParams } from "../releaseUtils";
 
-export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
-  props
-) => {
-  const { history, location } = props;
+export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
+  history,
+  location,
+}) => {
+  useAuthRequired(true);
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;

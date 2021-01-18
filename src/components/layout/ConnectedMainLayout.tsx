@@ -99,7 +99,7 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
 
       setAuthWarningOpened(shouldAuthWarningOpened);
     },
-    4000, // the authentication process takes a few seconds
+    1000, // the authentication process takes a few seconds
     [walletConnected, isAuthenticated, authRequired, txHistoryOpened]
   );
   // const authWarningOpened =

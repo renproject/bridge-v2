@@ -32,7 +32,6 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
@@ -62,7 +61,10 @@ import {
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
-import { useSelectedChainWallet } from '../../wallet/walletHooks'
+import {
+  useAuthRequired,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import {
   $chain,
   setChain,
@@ -83,10 +85,10 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
+  useAuthRequired(true);
   const dispatch = useDispatch();
   const chain = useSelector($chain);
-  const { status } = useSelectedChainWallet();
-  const walletConnected = status === WalletStatus.CONNECTED;
+  const { walletConnected } = useSelectedChainWallet();
   const { tx: parsedTx, txState } = useTxParam();
   const [reloading, setReloading] = useState(false);
   const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession);

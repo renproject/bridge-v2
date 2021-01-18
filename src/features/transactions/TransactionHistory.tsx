@@ -75,6 +75,9 @@ export const TransactionHistory: FunctionComponent = () => {
   // }, [isAuthenticated]);
 
   useEffect(() => {
+    if (!walletConnected) {
+      return;
+    }
     if (!isAuthenticated) {
       dispatch(setTxsPending(true));
     }
@@ -97,7 +100,7 @@ export const TransactionHistory: FunctionComponent = () => {
         })
         .catch(console.error);
     }
-  }, [dispatch, isAuthenticated, user, account, chain]);
+  }, [dispatch, walletConnected, isAuthenticated, user, account, chain]);
 
   const chainConfig = getChainConfig(chain);
   const handleWalletPickerOpen = useCallback(() => {

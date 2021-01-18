@@ -51,7 +51,10 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
-import { useSelectedChainWallet } from '../../wallet/walletHooks'
+import {
+  useAuthRequired,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import {
   $multiwalletChain,
   $wallet,
@@ -71,10 +74,10 @@ import {
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
+  useAuthRequired(true);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { status, account } = useSelectedChainWallet();
-  const walletConnected = status === WalletStatus.CONNECTED;
+  const { account, walletConnected } = useSelectedChainWallet();
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
   const network = useSelector($renNetwork);

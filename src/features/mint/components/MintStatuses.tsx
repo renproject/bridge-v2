@@ -465,7 +465,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
-        You received
+        You received{" "}
         <NumberFormatText
           value={conversionTotal}
           spacedSuffix={mintCurrencyConfig.short}

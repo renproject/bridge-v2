@@ -188,15 +188,12 @@ export const useAuthentication = () => {
   return { isAuthenticated, authenticate: getSignatures };
 };
 
-export const useAuthRequired = (newAuthRequired: boolean) => {
+export const useAuthRequired = (authRequired: boolean) => {
   const dispatch = useDispatch();
-  const authRequired = useSelector($authRequired);
   useEffect(() => {
-    if (authRequired !== newAuthRequired) {
-      dispatch(setAuthRequired(newAuthRequired));
-    }
+    dispatch(setAuthRequired(authRequired));
     return () => {
       dispatch(setAuthRequired(false));
     };
-  }, [dispatch, authRequired, newAuthRequired]);
+  }, [dispatch, authRequired]);
 };

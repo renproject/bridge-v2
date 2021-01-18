@@ -63,7 +63,10 @@ import {
   TxType,
 } from "../../transactions/transactionsUtils";
 import { useShakePaper } from "../../ui/uiHooks";
-import { useSelectedChainWallet } from '../../wallet/walletHooks'
+import {
+  useAuthRequired,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   getMintDynamicTooltips,
@@ -80,6 +83,7 @@ import {
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
+  useAuthRequired(true);
   const dispatch = useDispatch();
   const history = useHistory();
   const { status, walletConnected, account } = useSelectedChainWallet();
@@ -125,7 +129,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     setAckChecked(event.target.checked);
   }, []);
   useShakePaper(showAckError);
-
   const tx = useMemo(
     () =>
       createMintTransaction({
