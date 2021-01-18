@@ -1,78 +1,17 @@
-import {
-  Button,
-  Container,
-  Divider,
-  Drawer,
-  Grid,
-  ListItem,
-  Menu,
-  MenuItem,
-  Typography,
-  useTheme,
-} from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import CloseIcon from "@material-ui/icons/Close";
-import MenuIcon from "@material-ui/icons/Menu";
-import {
-  useMultiwallet,
-  WalletPickerModal,
-  WalletPickerProps,
-} from "@renproject/multiwallet-ui";
-import classNames from "classnames";
-import React, {
-  FunctionComponent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { useWindowSize } from "react-use";
-import { env } from "../../constants/environmentVariables";
-import { $renNetwork } from "../../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../../features/network/networkUtils";
-import { TransactionHistory } from "../../features/transactions/TransactionHistory";
-// import { TransactionHistory } from '../../features/transactions/TransactionHistory'
-import {
-  $transactionsData,
-  $transactionsNeedsAction,
-  setTxHistoryOpened,
-} from "../../features/transactions/transactionsSlice";
-import { useTestnetName } from "../../features/ui/uiHooks";
-import {
-  useSelectedChainWallet,
-  useSyncMultiwalletNetwork,
-  useWallet,
-  useWeb3Signatures,
-} from "../../features/wallet/walletHooks";
-import {
-  $multiwalletChain,
-  $walletPickerOpened,
-  setWalletPickerOpened,
-} from "../../features/wallet/walletSlice";
-import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
-import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { Debug } from "../utils/Debug";
-import {
-  useWalletPickerStyles,
-  WalletChainLabel,
-  WalletConnectingInfo,
-  WalletConnectionStatusButton,
-  WalletEntryButton,
-  WalletWrongNetworkInfo,
-} from "../wallet/WalletHelpers";
-import { Footer } from "./Footer";
+import { Container, Grid, } from '@material-ui/core'
+import AppBar from '@material-ui/core/AppBar'
+import { makeStyles, Theme } from '@material-ui/core/styles'
+import Toolbar from '@material-ui/core/Toolbar'
+import React, { FunctionComponent, ReactNode, useEffect, } from 'react'
+import { Link } from 'react-router-dom'
+import { TransactionHistory } from '../../features/transactions/TransactionHistory'
+import { RenBridgeLogoIcon } from '../icons/RenIcons'
+import { Footer } from './Footer'
 
 const headerHeight = 82;
 const footerHeight = 55;
 
-const useStyles = makeStyles((theme: Theme) => ({
+export const useMainLayoutStyles = makeStyles((theme: Theme) => ({
   bodyWelcome: {
     backgroundImage: "url(/background.svg)",
   },
@@ -175,7 +114,7 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
   WalletMenu,
   children,
 }) => {
-  const styles = useStyles();
+  const styles = useMainLayoutStyles();
   useBackgroundReplacer(variant);
 
   return (
