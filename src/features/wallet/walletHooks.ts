@@ -1,14 +1,23 @@
-import { useMultiwallet } from '@renproject/multiwallet-ui'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useDebounce } from 'react-use'
-import Web3 from 'web3'
-import { WalletConnectionStatusType, WalletStatus, } from '../../components/utils/types'
-import { storageKeys } from '../../constants/constants'
-import { signWithBinanceChain } from '../../services/wallets/bsc'
-import { BridgeWallet, RenChain } from '../../utils/assetConfigs'
-import { $renNetwork } from '../network/networkSlice'
-import { $multiwalletChain, $walletUser, setAuthAlertOpened, setSignatures, } from './walletSlice'
+import { useMultiwallet } from "@renproject/multiwallet-ui";
+import { useCallback, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useDebounce } from "react-use";
+import Web3 from "web3";
+import {
+  WalletConnectionStatusType,
+  WalletStatus,
+} from "../../components/utils/types";
+import { storageKeys } from "../../constants/constants";
+import { signWithBinanceChain } from "../../services/wallets/bsc";
+import { BridgeWallet, RenChain } from "../../utils/assetConfigs";
+import { $renNetwork } from "../network/networkSlice";
+import {
+  $authRequired,
+  $multiwalletChain,
+  $walletUser,
+  setAuthRequired,
+  setSignatures,
+} from "./walletSlice";
 
 type WalletData = ReturnType<typeof useMultiwallet> & {
   account: string;
@@ -169,14 +178,16 @@ export const useAuthentication = () => {
   return { isAuthenticated, authenticate: getSignatures };
 };
 
-export const useAuthGuard = () => {
+export const useAuthRequired = (newAuthRequired: boolean) => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useAuthentication();
+  const authRequired = useSelector($authRequired);
   useDebounce(
     () => {
-      dispatch(setAuthAlertOpened(!isAuthenticated));
+      if (authRequired !== newAuthRequired) {
+        dispatch(setAuthRequired(newAuthRequired));
+      }
     },
     2000,
-    [isAuthenticated]
+    [authRequired]
   );
 };

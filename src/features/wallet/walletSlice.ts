@@ -26,7 +26,7 @@ type WalletState = {
   balances: Array<AssetBalance>;
   signatures: AuthSignatures;
   user: AuthUser;
-  authAlertOpened: boolean;
+  authRequired: boolean;
 };
 
 let initialState: WalletState = {
@@ -38,7 +38,7 @@ let initialState: WalletState = {
     rawSignature: "",
   },
   user: null,
-  authAlertOpened: false,
+  authRequired: false,
 };
 
 const slice = createSlice({
@@ -70,8 +70,8 @@ const slice = createSlice({
     setSignatures(state, action: PayloadAction<AuthSignatures>) {
       state.signatures = action.payload;
     },
-    setAuthAlertOpened(state, action: PayloadAction<boolean>) {
-      state.authAlertOpened = action.payload;
+    setAuthRequired(state, action: PayloadAction<boolean>) {
+      state.authRequired = action.payload;
     },
   },
 });
@@ -83,7 +83,7 @@ export const {
   addOrUpdateBalance,
   resetBalances,
   setSignatures,
-  setAuthAlertOpened,
+  setAuthRequired,
 } = slice.actions;
 
 export const walletReducer = slice.reducer;
@@ -103,3 +103,7 @@ export const $walletSignatures = createSelector(
   (wallet) => wallet.signatures
 );
 export const $walletUser = createSelector($wallet, (wallet) => wallet.user);
+export const $authRequired = createSelector(
+  $wallet,
+  (wallet) => wallet.authRequired
+);

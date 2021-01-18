@@ -4,7 +4,6 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import React, { FunctionComponent, ReactNode, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { TransactionHistory } from "../../features/transactions/TransactionHistory";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Footer } from "./Footer";
 
@@ -137,7 +136,6 @@ export const MainLayout: FunctionComponent<MainLayoutProps> = ({
             {WalletMenu}
           </header>
           <main className={styles.main}>{children}</main>
-          <TransactionHistory />
           <Footer />
         </Container>
       </Grid>

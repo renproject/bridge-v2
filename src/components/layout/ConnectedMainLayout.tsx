@@ -30,7 +30,7 @@ import { env } from "../../constants/environmentVariables";
 import { $renNetwork } from "../../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 import { AuthWarningDialog } from "../../features/transactions/components/TransactionsHelpers";
-// import { TransactionHistory } from '../../features/transactions/TransactionHistory'
+import { TransactionHistory } from "../../features/transactions/TransactionHistory";
 import {
   $transactionsData,
   $transactionsNeedsAction,
@@ -38,12 +38,14 @@ import {
 } from "../../features/transactions/transactionsSlice";
 import { useTestnetName } from "../../features/ui/uiHooks";
 import {
+  useAuthentication,
   useSelectedChainWallet,
   useSyncMultiwalletNetwork,
   useWallet,
   useWeb3Signatures,
 } from "../../features/wallet/walletHooks";
 import {
+  $authRequired,
   $multiwalletChain,
   $walletPickerOpened,
   setWalletPickerOpened,
@@ -75,8 +77,7 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   useSetNetworkFromParam();
   useSyncMultiwalletNetwork();
   useWeb3Signatures();
-  const { txHistoryOpened } = useSelector($transactionsData);
-  const txsNeedsAction = useSelector($transactionsNeedsAction);
+  const { authenticate } = useAuthentication();
   const {
     status,
     account,
@@ -84,6 +85,11 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     deactivateConnector,
     symbol,
   } = useSelectedChainWallet();
+  const { txHistoryOpened } = useSelector($transactionsData);
+  const txsNeedsAction = useSelector($transactionsNeedsAction);
+  const authRequired = useSelector($authRequired);
+
+  const authWarningOpened = walletConnected && authRequired;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {
@@ -271,7 +277,8 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WalletMenu={WalletMenu}
     >
       {children}
-      <AuthWarningDialog open={walletConnected} />
+      <TransactionHistory />
+      <AuthWarningDialog open={authWarningOpened} onMainAction={authenticate} />
       <Debug it={{ debugNetworkName, debugWallet, debugMultiwallet, env }} />
     </MainLayout>
   );
