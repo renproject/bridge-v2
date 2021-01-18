@@ -2,7 +2,7 @@ import { Container, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
 import { RouteComponentProps } from "react-router";
-import { ConnectedMainLayout } from "../components/layout/ConnectedMainLayout";
+import { MainLayout } from "../components/layout/MainLayout";
 import { Link } from "../components/links/Links";
 import { usePageTitle } from "../providers/TitleProviders";
 
@@ -39,7 +39,7 @@ export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
   const styles = useStyles();
 
   return (
-    <ConnectedMainLayout variant="about">
+    <MainLayout variant="about">
       <Container maxWidth="md" className={styles.root}>
         <Typography
           align="center"
@@ -79,6 +79,6 @@ export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
           if you believe there is an issue
         </Typography>
       </Container>
-    </ConnectedMainLayout>
+    </MainLayout>
   );
 };

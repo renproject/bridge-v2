@@ -1,33 +1,56 @@
-import { Button, Divider, Drawer, ListItem, Menu, MenuItem, Typography, useTheme, } from '@material-ui/core'
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
-import MenuIcon from '@material-ui/icons/Menu'
-import { useMultiwallet, WalletPickerModal, WalletPickerProps, } from '@renproject/multiwallet-ui'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useWindowSize } from 'react-use'
-import { env } from '../../constants/environmentVariables'
-import { $renNetwork } from '../../features/network/networkSlice'
-import { useSetNetworkFromParam } from '../../features/network/networkUtils'
+import {
+  Button,
+  Divider,
+  Drawer,
+  ListItem,
+  Menu,
+  MenuItem,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import MenuIcon from "@material-ui/icons/Menu";
+import {
+  useMultiwallet,
+  WalletPickerModal,
+  WalletPickerProps,
+} from "@renproject/multiwallet-ui";
+import classNames from "classnames";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useWindowSize } from "react-use";
+import { env } from "../../constants/environmentVariables";
+import { $renNetwork } from "../../features/network/networkSlice";
+import { useSetNetworkFromParam } from "../../features/network/networkUtils";
 // import { TransactionHistory } from '../../features/transactions/TransactionHistory'
 import {
   $transactionsData,
   $transactionsNeedsAction,
   setTxHistoryOpened,
-} from '../../features/transactions/transactionsSlice'
-import { useTestnetName } from '../../features/ui/uiHooks'
+} from "../../features/transactions/transactionsSlice";
+import { useTestnetName } from "../../features/ui/uiHooks";
 import {
   useSelectedChainWallet,
   useSyncMultiwalletNetwork,
   useWallet,
   useWeb3Signatures,
-} from '../../features/wallet/walletHooks'
-import { $multiwalletChain, $walletPickerOpened, setWalletPickerOpened, } from '../../features/wallet/walletSlice'
-import { walletPickerModalConfig } from '../../providers/multiwallet/Multiwallet'
-import { TransactionHistoryMenuIconButton } from '../buttons/Buttons'
-import { RenBridgeLogoIcon } from '../icons/RenIcons'
-import { Debug } from '../utils/Debug'
+} from "../../features/wallet/walletHooks";
+import {
+  $multiwalletChain,
+  $walletPickerOpened,
+  setWalletPickerOpened,
+} from "../../features/wallet/walletSlice";
+import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
+import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
+import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Debug } from "../utils/Debug";
 import {
   useWalletPickerStyles,
   WalletChainLabel,
@@ -35,30 +58,20 @@ import {
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
-} from '../wallet/WalletHelpers'
-import { Footer } from './Footer'
-import { MainLayout, useMainLayoutStyles } from './MainLayout'
+} from "../wallet/WalletHelpers";
+import { Footer } from "./Footer";
+import {
+  MainLayout,
+  MainLayoutVariantProps,
+  useMainLayoutStyles,
+} from "./MainLayout";
 
-const useBackgroundReplacer = (variant: string | undefined) =>
-  useEffect(() => {
-    if (variant === "intro") {
-      document.body.style.backgroundImage = "url(/background.svg)";
-    } else {
-      document.body.style.backgroundImage = "none";
-    }
-  }, [variant]);
-
-type MainLayoutProps = {
-  variant?: "intro" | "about";
-};
-
-export const ConnectedMainLayout: FunctionComponent<MainLayoutProps> = ({
+export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   variant,
   children,
 }) => {
   const styles = useMainLayoutStyles();
   const dispatch = useDispatch();
-  useBackgroundReplacer(variant);
   useSetNetworkFromParam();
   useSyncMultiwalletNetwork();
   useWeb3Signatures();
@@ -253,6 +266,7 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutProps> = ({
   );
   return (
     <MainLayout
+      variant={variant}
       ToolbarMenu={ToolbarMenu}
       DrawerMenu={DrawerMenu}
       WalletMenu={WalletMenu}

@@ -1,20 +1,17 @@
-import { Container, Grid, } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
-import { makeStyles, Theme } from '@material-ui/core/styles'
-import Toolbar from '@material-ui/core/Toolbar'
-import React, { FunctionComponent, ReactNode, useEffect, } from 'react'
-import { Link } from 'react-router-dom'
-import { TransactionHistory } from '../../features/transactions/TransactionHistory'
-import { RenBridgeLogoIcon } from '../icons/RenIcons'
-import { Footer } from './Footer'
+import { Container, Grid } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import React, { FunctionComponent, ReactNode, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { TransactionHistory } from "../../features/transactions/TransactionHistory";
+import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Footer } from "./Footer";
 
 const headerHeight = 82;
 const footerHeight = 55;
 
 export const useMainLayoutStyles = makeStyles((theme: Theme) => ({
-  bodyWelcome: {
-    backgroundImage: "url(/background.svg)",
-  },
   grow: {
     minHeight: headerHeight,
     flexGrow: 1,
@@ -100,11 +97,14 @@ const useBackgroundReplacer = (variant: string | undefined) =>
     }
   }, [variant]);
 
-type MainLayoutProps = {
+export type MainLayoutVariantProps = {
   variant?: "intro" | "about";
-  ToolbarMenu: ReactNode | "";
-  DrawerMenu: ReactNode | "";
-  WalletMenu: ReactNode | "";
+};
+
+type MainLayoutProps = MainLayoutVariantProps & {
+  ToolbarMenu?: ReactNode | "";
+  DrawerMenu?: ReactNode | "";
+  WalletMenu?: ReactNode | "";
 };
 
 export const MainLayout: FunctionComponent<MainLayoutProps> = ({
