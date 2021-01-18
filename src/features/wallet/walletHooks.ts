@@ -1,13 +1,13 @@
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useDebounce } from "react-use";
 import Web3 from "web3";
 import {
   WalletConnectionStatusType,
   WalletStatus,
 } from "../../components/utils/types";
 import { storageKeys } from "../../constants/constants";
+import { db } from "../../services/database/database";
 import { signWithBinanceChain } from "../../services/wallets/bsc";
 import { BridgeWallet, RenChain } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
@@ -17,6 +17,7 @@ import {
   $walletUser,
   setAuthRequired,
   setSignatures,
+  setUser,
 } from "./walletSlice";
 
 type WalletData = ReturnType<typeof useMultiwallet> & {
@@ -87,7 +88,7 @@ export const useSyncMultiwalletNetwork = () => {
   }, [renNetwork, setTargetNetwork, targetNetwork]);
 };
 
-const SIGN_MESSAGE = "Allow RenBridge to back up transactions";
+const SIGN_MESSAGE = "Signing in to Ren Bridge";
 
 const getWeb3Signatures = async (
   address: string,
@@ -114,12 +115,14 @@ const getWeb3Signatures = async (
       // TODO: move signing functionality into multiwallet?
       (web3.currentProvider as any).connection.isMetaMask
     ) {
+      console.log("signing");
       rawSignature = await web3.eth.personal.sign(
         web3.utils.utf8ToHex(SIGN_MESSAGE),
         addressLowerCase,
         ""
       );
     } else if (chain === RenChain.binanceSmartChain) {
+      console.log("signing bsc");
       rawSignature = await signWithBinanceChain(SIGN_MESSAGE);
     }
 
@@ -148,10 +151,17 @@ export const useSignatures = () => {
   const { account } = useWallet(chain);
   const web3 = useWeb3();
   const getSignatures = useCallback(() => {
+    console.log("reauth");
     if (account && web3) {
       getWeb3Signatures(account, web3, chain)
         .then((signatures) => {
           dispatch(setSignatures(signatures));
+          console.log("account", account);
+          db.getUser(account.toLowerCase(), signatures)
+            .then((userData) => {
+              dispatch(setUser(userData));
+            })
+            .catch(console.error);
         })
         .catch(console.error);
     }
@@ -181,13 +191,12 @@ export const useAuthentication = () => {
 export const useAuthRequired = (newAuthRequired: boolean) => {
   const dispatch = useDispatch();
   const authRequired = useSelector($authRequired);
-  useDebounce(
-    () => {
-      if (authRequired !== newAuthRequired) {
-        dispatch(setAuthRequired(newAuthRequired));
-      }
-    },
-    2000,
-    [authRequired]
-  );
+  useEffect(() => {
+    if (authRequired !== newAuthRequired) {
+      dispatch(setAuthRequired(newAuthRequired));
+    }
+    return () => {
+      dispatch(setAuthRequired(false));
+    };
+  }, [dispatch, authRequired, newAuthRequired]);
 };

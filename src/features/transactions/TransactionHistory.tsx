@@ -1,33 +1,55 @@
-import { Box, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../components/buttons/Buttons'
-import { AssetDropdown } from '../../components/dropdowns/AssetDropdown'
+import { Box, Typography } from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../components/buttons/Buttons";
+import { AssetDropdown } from "../../components/dropdowns/AssetDropdown";
 import {
   BigTopWrapper,
   BigWrapper,
   CenteringSpacedBox,
   MediumWrapper,
   PaperSpacerWrapper,
-} from '../../components/layout/LayoutHelpers'
-import { ShowEntry, SimplePagination, } from '../../components/pagination/SimplePagination'
-import { CenteredProgress } from '../../components/progress/ProgressHelpers'
+} from "../../components/layout/LayoutHelpers";
+import {
+  ShowEntry,
+  SimplePagination,
+} from "../../components/pagination/SimplePagination";
+import { CenteredProgress } from "../../components/progress/ProgressHelpers";
 import {
   TransactionsContent,
   TransactionsHeader,
   TransactionsPaginationWrapper,
   TransactionsStatusHeader,
-} from '../../components/transactions/TransactionsGrid'
-import { WalletStatus } from '../../components/utils/types'
-import { WalletConnectionProgress } from '../../components/wallet/WalletHelpers'
-import { db } from '../../services/database/database'
-import { bridgeChainToRenChain, getChainConfig, supportedMintDestinationChains, } from '../../utils/assetConfigs'
-import { isFirstVowel } from '../../utils/strings'
-import { MintTransactionEntryResolver } from '../mint/components/MintHistoryHelpers'
-import { ReleaseTransactionEntryResolver } from '../release/components/ReleaseHistoryHelpers'
-import { useAuthentication, useSelectedChainWallet, } from '../wallet/walletHooks'
-import { $wallet, $walletSignatures, setChain, setUser, setWalletPickerOpened, } from '../wallet/walletSlice'
-import { TransactionHistoryDialog } from './components/TransactionHistoryHelpers'
+} from "../../components/transactions/TransactionsGrid";
+import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
+import { db } from "../../services/database/database";
+import {
+  bridgeChainToRenChain,
+  getChainConfig,
+  supportedMintDestinationChains,
+} from "../../utils/assetConfigs";
+import { isFirstVowel } from "../../utils/strings";
+import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
+import { ReleaseTransactionEntryResolver } from "../release/components/ReleaseHistoryHelpers";
+import {
+  useAuthentication,
+  useSelectedChainWallet,
+} from "../wallet/walletHooks";
+import {
+  $wallet,
+  setChain,
+  setWalletPickerOpened,
+} from "../wallet/walletSlice";
+import { TransactionHistoryDialog } from "./components/TransactionHistoryHelpers";
 import {
   $orderedTransactions,
   $transactionsData,
@@ -36,36 +58,21 @@ import {
   setTransactions,
   setTxHistoryOpened,
   setTxsPending,
-} from './transactionsSlice'
-import { isTransactionCompleted, TxType } from './transactionsUtils'
+} from "./transactionsSlice";
+import { isTransactionCompleted, TxType } from "./transactionsUtils";
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
-  const { account, status } = useSelectedChainWallet();
+  const { account, walletConnected } = useSelectedChainWallet();
   const { isAuthenticated } = useAuthentication();
-  const walletConnected = status === WalletStatus.CONNECTED;
   const { chain, user } = useSelector($wallet);
   const allTransactions = useSelector($orderedTransactions);
   const { txsPending } = useSelector($transactionsData);
-  const { signature, rawSignature } = useSelector($walletSignatures);
   const opened = useSelector($txHistoryOpened);
 
   useEffect(() => {
-    if (account && signature && rawSignature) {
+    if (isAuthenticated) {
       dispatch(setTxsPending(true));
-      db.getUser(account.toLowerCase(), {
-        signature,
-        rawSignature,
-      })
-        .then((userData) => {
-          dispatch(setUser(userData));
-        })
-        .catch(console.error);
-    }
-  }, [dispatch, account, signature, rawSignature]);
-
-  useEffect(() => {
-    if (isAuthenticated && user) {
       db.getTxs(account)
         .then((txsData) => {
           // Only load txs for the correct chain, in case the address is valid on multiple chains
@@ -238,4 +245,3 @@ export const TransactionHistory: FunctionComponent = () => {
     </TransactionHistoryDialog>
   );
 };
-

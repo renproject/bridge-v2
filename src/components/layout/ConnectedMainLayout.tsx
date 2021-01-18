@@ -25,7 +25,7 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useWindowSize } from "react-use";
+import { useDebounce, useWindowSize } from "react-use";
 import { env } from "../../constants/environmentVariables";
 import { $renNetwork } from "../../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../../features/network/networkUtils";
@@ -77,7 +77,7 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   useSetNetworkFromParam();
   useSyncMultiwalletNetwork();
   useWeb3Signatures();
-  const { authenticate } = useAuthentication();
+  const { authenticate, isAuthenticated } = useAuthentication();
   const {
     status,
     account,
@@ -87,9 +87,23 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   } = useSelectedChainWallet();
   const { txHistoryOpened } = useSelector($transactionsData);
   const txsNeedsAction = useSelector($transactionsNeedsAction);
-  const authRequired = useSelector($authRequired);
 
-  const authWarningOpened = walletConnected && authRequired;
+  const authRequired = useSelector($authRequired);
+  const [authWarningOpened, setAuthWarningOpened] = useState(false);
+  useDebounce(
+    () => {
+      const shouldAuthWarningOpened =
+        walletConnected &&
+        !isAuthenticated &&
+        (authRequired || txHistoryOpened);
+
+      setAuthWarningOpened(shouldAuthWarningOpened);
+    },
+    4000, // the authentication process takes a few seconds
+    [walletConnected, isAuthenticated, authRequired, txHistoryOpened]
+  );
+  // const authWarningOpened =
+  //   walletConnected && !isAuthenticated && (authRequired || txHistoryOpened);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {
@@ -279,7 +293,7 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       {children}
       <TransactionHistory />
       <AuthWarningDialog open={authWarningOpened} onMainAction={authenticate} />
-      <Debug it={{ debugNetworkName, debugWallet, debugMultiwallet, env }} />
+      <Debug it={{ isAuthenticated, debugNetworkName, debugWallet, debugMultiwallet, env }} />
     </MainLayout>
   );
 };
