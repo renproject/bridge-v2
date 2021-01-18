@@ -44,17 +44,17 @@ import {
 } from "../../features/transactions/transactionsSlice";
 import { useTestnetName } from "../../features/ui/uiHooks";
 import {
+  useSelectedChainWallet,
+  useSyncMultiwalletNetwork,
+  useWallet,
+  useWeb3Signatures
+} from '../../features/wallet/walletHooks'
+import {
   $multiwalletChain,
   $walletPickerOpened,
   setWalletPickerOpened,
 } from "../../features/wallet/walletSlice";
 import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
-import {
-  useSelectedChainWallet,
-  useSyncMultiwalletNetwork,
-  useWallet,
-} from "../../providers/multiwallet/multiwalletHooks";
-import { useWeb3Signatures } from "../../services/web3";
 import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
 import { RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Debug } from "../utils/Debug";

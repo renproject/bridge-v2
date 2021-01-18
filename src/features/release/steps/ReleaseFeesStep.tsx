@@ -31,7 +31,6 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../../services/database/database";
 import { DbMeta } from "../../../services/database/firebase/firebase";
 import {
@@ -52,6 +51,7 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
+import { useSelectedChainWallet } from '../../wallet/walletHooks'
 import {
   $multiwalletChain,
   $wallet,

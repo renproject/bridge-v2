@@ -34,7 +34,6 @@ import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
@@ -54,6 +53,7 @@ import {
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
+import { useSelectedChainWallet } from '../../wallet/walletHooks'
 import {
   $chain,
   setChain,

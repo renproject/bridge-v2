@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDebounce } from "react-use";
-import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
 import {
   getBurnAndReleaseFees,
   getLockAndMintFees,
@@ -9,6 +8,7 @@ import {
 import { BridgeCurrency } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
 import { TxType } from "../transactions/transactionsUtils";
+import { useWallet } from '../wallet/walletHooks'
 import { $multiwalletChain } from "../wallet/walletSlice";
 import { isSupportedByCurrentNetwork } from "../wallet/walletUtils";
 import { SimpleFee } from "./feesUtils";

@@ -6,7 +6,6 @@ import { LabelWithValue } from "../../../components/typography/TypographyHelpers
 import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -25,6 +24,7 @@ import {
   USD_SYMBOL,
 } from "../../marketData/marketDataUtils";
 import { mintTooltips } from "../../mint/components/MintHelpers";
+import { useSelectedChainWallet } from '../../wallet/walletHooks'
 import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {

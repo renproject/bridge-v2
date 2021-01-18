@@ -19,6 +19,7 @@ type WalletState = {
   chain: BridgeChain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
+  authDialogOpened: boolean;
   signatures: { signature: string; rawSignature: string };
   user: AuthUser;
 };
@@ -27,6 +28,7 @@ let initialState: WalletState = {
   chain: BridgeChain.ETHC,
   pickerOpened: false,
   balances: [],
+  authDialogOpened: false,
   signatures: {
     signature: "",
     rawSignature: "",

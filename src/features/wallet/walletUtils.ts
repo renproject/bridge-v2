@@ -2,7 +2,6 @@ import { RenNetwork } from "@renproject/interfaces";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "react-use";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { mintChainClassMap } from "../../services/rentx";
 import {
   BridgeCurrency,
@@ -11,6 +10,7 @@ import {
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
+import { useSelectedChainWallet } from './walletHooks'
 import {
   $chain,
   addOrUpdateBalance,

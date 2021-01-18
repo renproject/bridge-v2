@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { paths } from "../../pages/routes";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { useNotifications } from "../../providers/Notifications";
 import { db } from "../../services/database/database";
 import {
@@ -13,6 +12,7 @@ import {
   isTestNetwork,
 } from "../../utils/assetConfigs";
 import { $renNetwork, setRenNetwork } from "../network/networkSlice";
+import { useSelectedChainWallet } from '../wallet/walletHooks'
 import { $wallet } from "../wallet/walletSlice";
 import { removeTransaction } from "./transactionsSlice";
 import { TxType } from "./transactionsUtils";

@@ -41,7 +41,6 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../../services/database/database";
 import { DbMeta } from "../../../services/database/firebase/firebase";
 import {
@@ -64,6 +63,7 @@ import {
   TxType,
 } from "../../transactions/transactionsUtils";
 import { useShakePaper } from "../../ui/uiHooks";
+import { useSelectedChainWallet } from '../../wallet/walletHooks'
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   getMintDynamicTooltips,

@@ -33,7 +33,6 @@ import {
 } from "../../components/transactions/TransactionsGrid";
 import { WalletStatus } from "../../components/utils/types";
 import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../services/database/database";
 import {
   bridgeChainToRenChain,
@@ -43,7 +42,7 @@ import {
 import { isFirstVowel } from "../../utils/strings";
 import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
 import { ReleaseTransactionEntryResolver } from "../release/components/ReleaseHistoryHelpers";
-import { useWalletAuthentication } from "../wallet/walletHooks";
+import { useSelectedChainWallet, useWalletAuthentication } from '../wallet/walletHooks'
 import {
   $wallet,
   $walletSignatures,
