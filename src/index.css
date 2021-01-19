@@ -6,8 +6,13 @@ body {
   min-height: 100vh;
   background-color: #f2f2f2;
   background-image: url("/background.svg");
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: 50% 50%;
+  transition: all 1s linear;
+}
+
+.bodyNoBackground {
+  background-size: 500% 500%;
 }
 
 code {

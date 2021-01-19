@@ -1,11 +1,11 @@
-import { Container, Grid } from "@material-ui/core";
-import AppBar from "@material-ui/core/AppBar";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import Toolbar from "@material-ui/core/Toolbar";
-import React, { FunctionComponent, ReactNode, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { Footer } from "./Footer";
+import { Container, Grid } from '@material-ui/core'
+import AppBar from '@material-ui/core/AppBar'
+import { makeStyles, Theme } from '@material-ui/core/styles'
+import Toolbar from '@material-ui/core/Toolbar'
+import React, { FunctionComponent, ReactNode, useEffect, } from 'react'
+import { Link } from 'react-router-dom'
+import { RenBridgeLogoIcon } from '../icons/RenIcons'
+import { Footer } from './Footer'
 
 const headerHeight = 82;
 const footerHeight = 55;
@@ -87,12 +87,13 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const noBackgroundClassName = "bodyNoBackground";
 const useBackgroundReplacer = (withBackground: boolean) =>
   useEffect(() => {
     if (withBackground) {
-      document.body.style.backgroundImage = "url(/background.svg)";
+      document.body.classList.remove(noBackgroundClassName);
     } else {
-      document.body.style.backgroundImage = "none";
+      document.body.classList.add(noBackgroundClassName);
     }
   }, [withBackground]);
 
