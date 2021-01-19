@@ -69,13 +69,6 @@ export enum BridgeChain {
   UNKNOWNC = "UNKNOWNC",
 }
 
-// export type RenTargetNetwork = RenNetwork.Mainnet | RenNetwork.Testnet;
-
-export enum RenTargetNetwork {
-  Mainnet = RenNetwork.Mainnet,
-  Testnet = RenNetwork.Testnet,
-}
-
 export enum BridgeNetwork {
   MAINNET = "MAINNET",
   TESTNET = "TESTNET",
@@ -136,7 +129,6 @@ export type CurrencyConfig = LabelsConfig &
     networkMappings: ChainToNetworkMappings;
     ethTestnet?: EthTestnet | null; // TODO: remove
     testNetworkVersion?: RenNetwork; // TODO: remove
-    networks?: Array<RenNetwork>; // TODO: remove
   };
 
 const networkMappingLegacy: NetworkMapping = {
@@ -174,7 +166,6 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: BtcFullIcon,
     rentxName: "btc",
     sourceChain: BridgeChain.BTCC,
-    networks: standardNetworks,
     networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.RENBTC]: {
@@ -201,7 +192,6 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: BchFullIcon,
     rentxName: "BCH",
     sourceChain: BridgeChain.BCHC,
-    networks: standardNetworks,
     networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.RENBCH]: {
@@ -215,7 +205,6 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renBCH",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BCH,
-    networks: standardNetworks,
     networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.DOTS]: {
@@ -241,7 +230,6 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: DogeFullIcon,
     sourceChain: BridgeChain.DOGC,
     rentxName: "doge",
-    networks: vDot3Networks,
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.RENDOGE]: {
@@ -257,7 +245,6 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     bandchainSymbol: BridgeCurrency.DOGE,
     ethTestnet: EthTestnet.RINKEBY,
     testNetworkVersion: RenNetwork.TestnetVDot3,
-    networks: vDot3Networks,
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.ZEC]: {
@@ -270,7 +257,6 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: ZecFullIcon,
     rentxName: "zec",
     sourceChain: BridgeChain.ZECC,
-    networks: standardNetworks,
     networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.RENZEC]: {
@@ -284,7 +270,6 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renZEC",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.ZEC,
-    networks: standardNetworks,
     networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.DGB]: {

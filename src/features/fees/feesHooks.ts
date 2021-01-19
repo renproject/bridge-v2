@@ -39,6 +39,7 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
           setFees(feesCache[cacheKey]);
           setPending(false);
         } else {
+          setPending(true);
           const fetchFees =
             txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
           fetchFees(currency, provider, renNetwork, multiwalletChain)
