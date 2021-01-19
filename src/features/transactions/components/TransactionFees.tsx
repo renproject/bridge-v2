@@ -2,7 +2,10 @@ import React, { FunctionComponent } from "react";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import {
+  LabelWithValue,
+  MiddleEllipsisText,
+} from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { MINT_GAS_UNIT_COST } from "../../../constants/constants";
@@ -14,7 +17,6 @@ import {
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
-import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
@@ -24,7 +26,7 @@ import {
   USD_SYMBOL,
 } from "../../marketData/marketDataUtils";
 import { mintTooltips } from "../../mint/components/MintHelpers";
-import { useSelectedChainWallet } from '../../wallet/walletHooks'
+import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {
@@ -32,7 +34,7 @@ type TransactionFeesProps = {
   currency: BridgeCurrency;
   amount: number;
   chain: BridgeChain;
-  address?: string; // FIXME make obligatory
+  address?: string;
 };
 
 export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
@@ -146,7 +148,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         <LabelWithValue
           label="Recipient Address"
           labelTooltip={mintTooltips.recipientAddress}
-          value={trimAddress(address, 5)}
+          value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
         />
       )}
     </>

@@ -1,84 +1,48 @@
-import {
-  Checkbox,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-  Typography,
-} from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
-import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../components/layout/Paper";
-import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
-import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { Checkbox, Divider, FormControl, FormControlLabel, FormLabel, IconButton, Typography, } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useMemo, useState, } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
+import { CheckboxWrapper } from '../../../components/inputs/InputHelpers'
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
+import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
 import {
   AssetInfo,
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
+  MiddleEllipsisText,
   SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { paths } from "../../../pages/routes";
-import { db } from "../../../services/database/database";
-import { DbMeta } from "../../../services/database/firebase/firebase";
-import {
-  getChainConfig,
-  getCurrencyConfig,
-  toMintedCurrency,
-} from "../../../utils/assetConfigs";
-import { trimAddress } from "../../../utils/strings";
-import { useFetchFees } from "../../fees/feesHooks";
-import { getTransactionFees } from "../../fees/feesUtils";
-import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { $renNetwork } from "../../network/networkSlice";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { addTransaction } from "../../transactions/transactionsSlice";
+} from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from '../../../components/utils/types'
+import { paths } from '../../../pages/routes'
+import { db } from '../../../services/database/database'
+import { DbMeta } from '../../../services/database/firebase/firebase'
+import { getChainConfig, getCurrencyConfig, toMintedCurrency, } from '../../../utils/assetConfigs'
+import { useFetchFees } from '../../fees/feesHooks'
+import { getTransactionFees } from '../../fees/feesUtils'
+import { $exchangeRates } from '../../marketData/marketDataSlice'
+import { findExchangeRate } from '../../marketData/marketDataUtils'
+import { $renNetwork } from '../../network/networkSlice'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
+import { addTransaction } from '../../transactions/transactionsSlice'
 import {
   createTxQueryString,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
-} from "../../transactions/transactionsUtils";
-import { useShakePaper } from "../../ui/uiHooks";
-import {
-  useAuthRequired,
-  useSelectedChainWallet,
-} from "../../wallet/walletHooks";
-import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
-import {
-  getMintDynamicTooltips,
-  mintTooltips,
-  MintTransactionInitializer,
-} from "../components/MintHelpers";
-import { mintTxStateUpdateSequence } from "../mintHooks";
-import { $mint } from "../mintSlice";
-import {
-  createMintTransaction,
-  preValidateMintTransaction,
-} from "../mintUtils";
+} from '../../transactions/transactionsUtils'
+import { useShakePaper } from '../../ui/uiHooks'
+import { useAuthRequired, useSelectedChainWallet, } from '../../wallet/walletHooks'
+import { $wallet, setWalletPickerOpened } from '../../wallet/walletSlice'
+import { getMintDynamicTooltips, mintTooltips, MintTransactionInitializer, } from '../components/MintHelpers'
+import { mintTxStateUpdateSequence } from '../mintHooks'
+import { $mint } from '../mintSlice'
+import { createMintTransaction, preValidateMintTransaction, } from '../mintUtils'
 
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
@@ -225,7 +189,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="Recipient Address"
           labelTooltip={mintTooltips.recipientAddress}
-          value={trimAddress(tx.userAddress, 5)}
+          value={<MiddleEllipsisText hoverable>{tx.userAddress}</MiddleEllipsisText>}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>

@@ -182,7 +182,7 @@ export const useAuthentication = () => {
   const { account } = useSelectedChainWallet();
   const user = useSelector($walletUser);
   const { getSignatures } = useSignatures();
-  const isAuthenticated = user !== null && account === user.uid;
+  const isAuthenticated = user !== null && account.toLowerCase() === user.uid;
 
   return { isAuthenticated, authenticate: getSignatures };
 };
