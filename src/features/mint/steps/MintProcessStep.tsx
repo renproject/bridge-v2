@@ -283,7 +283,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         closeNotification(key);
       }
     };
-  }, [showNotification, closeNotification]);
+  }, [showNotification, closeNotification, transactionsCount]);
 
   const [wrongAddressDialogOpened, setWrongAddressDialogOpened] = useState(
     false
