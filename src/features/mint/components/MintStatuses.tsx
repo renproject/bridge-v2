@@ -54,7 +54,7 @@ import {
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { resetMint } from "../mintSlice";
 import { getLockAndMintParams } from "../mintUtils";
-import { AddressValidityMessage } from "./MintHelpers";
+import { AddressValidityMessage, MultipleDepositsMessage } from "./MintHelpers";
 
 export type MintDepositToProps = {
   tx: GatewaySession;
@@ -201,7 +201,9 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
     lockTargetConfirmations,
     lockProcessingTime,
   } = getLockAndMintParams(tx);
+
   const { MainIcon } = lockChainConfig;
+
   const confirmed = lockConfirmations === lockTargetConfirmations;
   useEffect(() => {
     setTitle(confirmed ? "Confirmed" : "Confirming");

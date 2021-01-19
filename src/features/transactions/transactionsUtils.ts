@@ -33,6 +33,7 @@ export type TxMeta = {
   status: TxEntryStatus;
   phase: TxPhase;
   createdTimestamp: number;
+  transactionsCount: number;
 };
 
 export enum TxType {

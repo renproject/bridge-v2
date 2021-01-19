@@ -110,6 +110,7 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     status: TxEntryStatus.PENDING,
     phase: TxPhase.NONE,
     createdTimestamp: getTxCreationTimestamp(tx),
+    transactionsCount: 1,
   };
   if (burnTxHash) {
     if (transaction.renVMHash || transaction.destTxHash) {

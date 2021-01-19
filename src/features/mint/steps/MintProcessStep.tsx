@@ -33,7 +33,9 @@ import {
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { featureFlags } from "../../../constants/featureFlags";
 import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import {
   getChainConfigByRentxName,
@@ -70,6 +72,7 @@ import {
   setChain,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
+import { MultipleDepositsMessage } from "../components/MintHelpers";
 import {
   DestinationPendingStatus,
   MintCompletedStatus,
@@ -257,6 +260,31 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     [service]
   );
 
+  const {
+    meta: { transactionsCount },
+  } = getLockAndMintParams(currentTx);
+  const { showNotification, closeNotification } = useNotifications();
+  useEffect(() => {
+    let key = 0;
+    if (transactionsCount > 1 && featureFlags.enableMultipleDeposits) {
+      key = showNotification(
+        <MultipleDepositsMessage
+          total={transactionsCount}
+          onLinkClick={() => {}}
+        />,
+        {
+          variant: "warning",
+          persist: true,
+        }
+      ) as number;
+    }
+    return () => {
+      if (key) {
+        closeNotification(key);
+      }
+    };
+  }, [showNotification, closeNotification]);
+
   const [wrongAddressDialogOpened, setWrongAddressDialogOpened] = useState(
     false
   );
@@ -380,6 +408,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
       return <MintDepositConfirmationStatus tx={tx} />;
     case "srcConfirmed": // source sourceChain confirmations ok, but renVM still doesn't accept it
       return <ProgressStatus reason="Submitting to RenVM" />;
+    case "errorAccepting":
     case "errorSubmitting":
     case "claiming":
     case "accepted": // RenVM accepted it, it can be submitted to ethereum
@@ -389,7 +418,9 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
           onSubmit={handleSubmitToDestinationChain}
           onReload={handleReload}
           submitting={state === "claiming"}
-          submittingError={state === "errorSubmitting"}
+          submittingError={
+            state === "errorSubmitting" || state === "errorAccepting"
+          }
         />
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up

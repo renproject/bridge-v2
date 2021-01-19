@@ -69,7 +69,7 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
   );
 };
 
-export const getLockAndMintParams = (tx: GatewaySession) => {
+export const getLockAndMintParams = (tx: GatewaySession, txIndex = 0) => {
   const networkConfig = getNetworkConfigByRentxName(tx.network);
   const lockCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const mintCurrencyConfig = getCurrencyConfig(
@@ -83,7 +83,8 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     tx.userAddress
   );
 
-  const transaction = Object.values(tx.transactions)[0];
+  const transactions = Object.values(tx.transactions);
+  const transaction = transactions[txIndex];
   let mintTxHash: string = "";
   let mintTxLink: string = "";
   if (transaction && transaction.destTxHash) {
@@ -121,6 +122,7 @@ export const getLockAndMintParams = (tx: GatewaySession) => {
     status: TxEntryStatus.PENDING,
     phase: TxPhase.NONE,
     createdTimestamp: getTxCreationTimestamp(tx),
+    transactionsCount: transactions.length,
   };
   if (lockTxHash) {
     // it has lockTxHash - there is deposit
