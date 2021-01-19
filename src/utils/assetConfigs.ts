@@ -95,6 +95,16 @@ export enum BridgeWallet {
   UNKNOWNW = "UNKNOWNW",
 }
 
+export type NetworkMapping = {
+  testnet: RenNetwork;
+  mainnet: RenNetwork;
+};
+
+export type ChainToNetworkMappings = Record<
+  RenChain.ethereum | RenChain.binanceSmartChain | string,
+  NetworkMapping
+>;
+
 const unknownLabel = "unknown";
 
 export type LabelsConfig = {
@@ -123,10 +133,31 @@ export type CurrencyConfig = LabelsConfig &
     rentxName: string;
     destinationChains?: Array<BridgeChain>;
     bandchainSymbol?: string;
-    ethTestnet?: EthTestnet | null;
-    testNetworkVersion?: RenNetwork;
-    networks?: Array<RenNetwork>;
+    networkMappings: ChainToNetworkMappings;
+    ethTestnet?: EthTestnet | null; // TODO: remove
+    testNetworkVersion?: RenNetwork; // TODO: remove
+    networks?: Array<RenNetwork>; // TODO: remove
   };
+
+const networkMappingLegacy: NetworkMapping = {
+  mainnet: RenNetwork.Mainnet,
+  testnet: RenNetwork.Testnet,
+};
+
+const networkMappingVDot3: NetworkMapping = {
+  mainnet: RenNetwork.MainnetVDot3,
+  testnet: RenNetwork.TestnetVDot3,
+};
+
+const oldNetworkMappings: ChainToNetworkMappings = {
+  [RenChain.ethereum]: networkMappingLegacy,
+  [RenChain.binanceSmartChain]: networkMappingVDot3,
+};
+
+const newNetworkMappings: ChainToNetworkMappings = {
+  [RenChain.ethereum]: networkMappingVDot3,
+  [RenChain.binanceSmartChain]: networkMappingVDot3,
+};
 
 const standardNetworks = [RenNetwork.Testnet, RenNetwork.Mainnet];
 const vDot3Networks = [RenNetwork.TestnetVDot3, RenNetwork.MainnetVDot3];
@@ -144,6 +175,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "btc",
     sourceChain: BridgeChain.BTCC,
     networks: standardNetworks,
+    networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.RENBTC]: {
     symbol: BridgeCurrency.RENBTC,
@@ -156,7 +188,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renBTC",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BTC,
-    networks: standardNetworks,
+    networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.BCH]: {
     symbol: BridgeCurrency.BCH,
@@ -170,6 +202,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "BCH",
     sourceChain: BridgeChain.BCHC,
     networks: standardNetworks,
+    networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.RENBCH]: {
     symbol: BridgeCurrency.RENBCH,
@@ -183,6 +216,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BCH,
     networks: standardNetworks,
+    networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.DOTS]: {
     symbol: BridgeCurrency.DOTS,
@@ -195,6 +229,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     sourceChain: BridgeChain.UNKNOWNC, // TODO:
     rentxName: "dots",
     bandchainSymbol: "DOT",
+    networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.DOGE]: {
     symbol: BridgeCurrency.DOGE,
@@ -207,6 +242,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     sourceChain: BridgeChain.DOGC,
     rentxName: "doge",
     networks: vDot3Networks,
+    networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.RENDOGE]: {
     symbol: BridgeCurrency.RENDOGE,
@@ -222,6 +258,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     ethTestnet: EthTestnet.RINKEBY,
     testNetworkVersion: RenNetwork.TestnetVDot3,
     networks: vDot3Networks,
+    networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.ZEC]: {
     symbol: BridgeCurrency.ZEC,
@@ -234,6 +271,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "zec",
     sourceChain: BridgeChain.ZECC,
     networks: standardNetworks,
+    networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.RENZEC]: {
     symbol: BridgeCurrency.RENZEC,
@@ -247,6 +285,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.ZEC,
     networks: standardNetworks,
+    networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.DGB]: {
     symbol: BridgeCurrency.DGB,
@@ -258,6 +297,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: DgbFullIcon,
     sourceChain: BridgeChain.UNKNOWNC, // TODO:
     rentxName: "DGB",
+    networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.RENDGB]: {
     symbol: BridgeCurrency.RENDGB,
@@ -270,6 +310,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renDGB",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DGB,
+    networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.ETH]: {
     symbol: BridgeCurrency.ETH,
@@ -281,6 +322,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: BtcFullIcon,
     rentxName: "eth",
     sourceChain: BridgeChain.ETHC,
+    networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.BNB]: {
     symbol: BridgeCurrency.BNB,
@@ -292,6 +334,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: BtcFullIcon,
     rentxName: "eth",
     sourceChain: BridgeChain.ETHC,
+    networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.UNKNOWN]: {
     symbol: BridgeCurrency.UNKNOWN,
@@ -303,6 +346,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     MainIcon: NotSetIcon,
     rentxName: "unknown",
     sourceChain: BridgeChain.UNKNOWNC,
+    networkMappings: newNetworkMappings,
   },
 };
 
@@ -477,10 +521,12 @@ export const networksConfig: Record<BridgeNetwork, NetworkConfig> = {
 
 const unknownNetworkConfig = networksConfig[BridgeNetwork.UNKNOWN];
 
-export const isTestNetwork = (name: string) => name.indexOf("testnet") > -1;
+export const isTestnetNetwork = (name: string) => name.indexOf("testnet") > -1;
+
+export const isMainnetNetwork = (name: string) => name.indexOf("mainnet") > -1;
 
 export const getNetworkConfigByRentxName = (name: string) => {
-  if (isTestNetwork(name)) {
+  if (isTestnetNetwork(name)) {
     return networksConfig[BridgeNetwork.TESTNET];
   }
   return (
