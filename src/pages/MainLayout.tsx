@@ -12,6 +12,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
 import {
+  MultiwalletProvider,
   useMultiwallet,
   WalletPickerModal,
   WalletPickerProps,
@@ -26,34 +27,34 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce, useWindowSize } from "react-use";
-import { env } from "../../constants/environmentVariables";
-import { $renNetwork } from "../../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../../features/network/networkUtils";
-import { AuthWarningDialog } from "../../features/transactions/components/TransactionsHelpers";
-import { TransactionHistory } from "../../features/transactions/TransactionHistory";
+import { env } from "../constants/environmentVariables";
+import { $renNetwork } from "../features/network/networkSlice";
+import { useSetNetworkFromParam } from "../features/network/networkUtils";
+import { AuthWarningDialog } from "../features/transactions/components/TransactionsHelpers";
+import { TransactionHistory } from "../features/transactions/TransactionHistory";
 import {
   $transactionsData,
   $transactionsNeedsAction,
   setTxHistoryOpened,
-} from "../../features/transactions/transactionsSlice";
-import { useTestnetName } from "../../features/ui/uiHooks";
+} from "../features/transactions/transactionsSlice";
+import { useTestnetName } from "../features/ui/uiHooks";
 import {
   useAuthentication,
   useSelectedChainWallet,
   useSyncMultiwalletNetwork,
   useWallet,
   useWeb3Signatures,
-} from "../../features/wallet/walletHooks";
+} from "../features/wallet/walletHooks";
 import {
   $authRequired,
   $multiwalletChain,
   $walletPickerOpened,
   setWalletPickerOpened,
-} from "../../features/wallet/walletSlice";
-import { walletPickerModalConfig } from "../../providers/multiwallet/Multiwallet";
-import { TransactionHistoryMenuIconButton } from "../buttons/Buttons";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
-import { Debug } from "../utils/Debug";
+} from "../features/wallet/walletSlice";
+import { walletPickerModalConfig } from "../providers/multiwallet/Multiwallet";
+import { TransactionHistoryMenuIconButton } from "../components/buttons/Buttons";
+import { RenBridgeLogoIcon } from "../components/icons/RenIcons";
+import { Debug } from "../components/utils/Debug";
 import {
   useWalletPickerStyles,
   WalletChainLabel,
@@ -61,18 +62,18 @@ import {
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
-} from "../wallet/WalletHelpers";
-import { Footer } from "./Footer";
+} from "../components/wallet/WalletHelpers";
+import { Footer } from "../components/layout/Footer";
 import {
   MobileLayout,
   MainLayoutVariantProps,
-  useMainLayoutStyles,
-} from "./MobileLayout";
+  useMobileLayoutStyles,
+} from "../components/layout/MobileLayout";
 
-export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
+export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
 }) => {
-  const styles = useMainLayoutStyles();
+  const styles = useMobileLayoutStyles();
   const dispatch = useDispatch();
   useSetNetworkFromParam();
   useSyncMultiwalletNetwork();
@@ -293,7 +294,21 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       {children}
       <TransactionHistory />
       <AuthWarningDialog open={authWarningOpened} onMainAction={authenticate} />
-      <Debug it={{ isAuthenticated, debugNetworkName, debugWallet, debugMultiwallet, env }} />
+      <Debug
+        it={{
+          isAuthenticated,
+          debugNetworkName,
+          debugWallet,
+          debugMultiwallet,
+          env,
+        }}
+      />
     </MobileLayout>
   );
 };
+
+export const ConnectedMainLayout: FunctionComponent = ({ children }) => (
+  <MultiwalletProvider>
+    <MainLayout>{children}</MainLayout>
+  </MultiwalletProvider>
+);

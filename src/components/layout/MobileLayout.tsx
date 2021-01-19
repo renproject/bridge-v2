@@ -10,7 +10,7 @@ import { Footer } from "./Footer";
 const headerHeight = 82;
 const footerHeight = 55;
 
-export const useMainLayoutStyles = makeStyles((theme: Theme) => ({
+export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
   grow: {
     minHeight: headerHeight,
     flexGrow: 1,
@@ -113,7 +113,7 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
   WalletMenu,
   children,
 }) => {
-  const styles = useMainLayoutStyles();
+  const styles = useMobileLayoutStyles();
   useBackgroundReplacer(Boolean(withBackground));
 
   return (

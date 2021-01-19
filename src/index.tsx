@@ -1,17 +1,15 @@
-import { MuiThemeProvider } from "@material-ui/core";
-import "@renproject/fonts/index.css";
-import React from "react";
-import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
+import { MuiThemeProvider } from '@material-ui/core'
+import '@renproject/fonts/index.css'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
 // import { inspect } from "@xstate/inspect";
-import "./index.css";
-import { MultiwalletProvider } from "./providers/multiwallet/Multiwallet";
-import { NotificationsProvider } from "./providers/Notifications";
-import { TitleProviders } from "./providers/TitleProviders";
-import * as serviceWorker from "./serviceWorker";
-import store from "./store/store";
-import { lightTheme } from "./theme/theme";
-import "./index.css";
+import './index.css'
+import { NotificationsProvider } from './providers/Notifications'
+import { TitleProviders } from './providers/TitleProviders'
+import * as serviceWorker from './serviceWorker'
+import store from './store/store'
+import { lightTheme } from './theme/theme'
 
 // process.env.NODE_ENV !== "production" &&
 //   inspect({
@@ -25,13 +23,11 @@ const render = () => {
   ReactDOM.render(
     <Provider store={store}>
       <MuiThemeProvider theme={lightTheme}>
-        <MultiwalletProvider>
-          <TitleProviders>
-            <NotificationsProvider>
-              <App />
-            </NotificationsProvider>
-          </TitleProviders>
-        </MultiwalletProvider>
+        <TitleProviders>
+          <NotificationsProvider>
+            <App />
+          </NotificationsProvider>
+        </TitleProviders>
       </MuiThemeProvider>
     </Provider>,
     document.getElementById("root")
