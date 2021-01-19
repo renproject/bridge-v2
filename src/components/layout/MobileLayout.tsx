@@ -100,13 +100,13 @@ export type MainLayoutVariantProps = {
   withBackground?: boolean;
 };
 
-type MainLayoutProps = MainLayoutVariantProps & {
+type MobileLayoutProps = MainLayoutVariantProps & {
   ToolbarMenu?: ReactNode | "";
   DrawerMenu?: ReactNode | "";
   WalletMenu?: ReactNode | "";
 };
 
-export const MainLayout: FunctionComponent<MainLayoutProps> = ({
+export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
   withBackground,
   ToolbarMenu = "",
   DrawerMenu,

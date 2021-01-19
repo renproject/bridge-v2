@@ -64,10 +64,10 @@ import {
 } from "../wallet/WalletHelpers";
 import { Footer } from "./Footer";
 import {
-  MainLayout,
+  MobileLayout,
   MainLayoutVariantProps,
   useMainLayoutStyles,
-} from "./MainLayout";
+} from "./MobileLayout";
 
 export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
@@ -285,7 +285,7 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     </Menu>
   );
   return (
-    <MainLayout
+    <MobileLayout
       ToolbarMenu={ToolbarMenu}
       DrawerMenu={DrawerMenu}
       WalletMenu={WalletMenu}
@@ -294,6 +294,6 @@ export const ConnectedMainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       <TransactionHistory />
       <AuthWarningDialog open={authWarningOpened} onMainAction={authenticate} />
       <Debug it={{ isAuthenticated, debugNetworkName, debugWallet, debugMultiwallet, env }} />
-    </MainLayout>
+    </MobileLayout>
   );
 };

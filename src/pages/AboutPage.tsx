@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
 import { RouteComponentProps } from "react-router";
 import { RenLogoFullIcon, RenVMLogoIcon } from "../components/icons/RenIcons";
-import { MainLayout } from "../components/layout/MainLayout";
+import { MobileLayout } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
 import { MarkText } from "../components/typography/TypographyHelpers";
 import { links } from "../constants/constants";
@@ -45,7 +45,7 @@ const AboutPage: FunctionComponent<RouteComponentProps> = () => {
   const styles = useStyles();
 
   return (
-    <MainLayout>
+    <MobileLayout>
       <Container maxWidth="sm" className={styles.root}>
         <Typography variant="h2" component="h1" className={styles.heading}>
           What is RenBridge?
@@ -95,7 +95,7 @@ const AboutPage: FunctionComponent<RouteComponentProps> = () => {
           </span>
         </div>
       </Container>
-    </MainLayout>
+    </MobileLayout>
   );
 };
 
