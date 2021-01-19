@@ -189,7 +189,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="Recipient Address"
           labelTooltip={mintTooltips.recipientAddress}
-          value={<MiddleEllipsisText>{tx.userAddress}</MiddleEllipsisText>}
+          value={<MiddleEllipsisText hoverable>{tx.userAddress}</MiddleEllipsisText>}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>

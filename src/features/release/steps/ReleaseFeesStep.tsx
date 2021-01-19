@@ -208,7 +208,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="To"
           labelTooltip={releaseTooltips.to}
-          value={<MiddleEllipsisText>{address}</MiddleEllipsisText>}
+          value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>

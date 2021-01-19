@@ -213,7 +213,11 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
             <LabelWithValue label="From" value={burnChainConfig.full} />
             <LabelWithValue
               label="To"
-              value={<MiddleEllipsisText>{tx.destAddress}</MiddleEllipsisText>}
+              value={
+                <MiddleEllipsisText hoverable>
+                  {tx.destAddress}
+                </MiddleEllipsisText>
+              }
             />
             <SpacedDivider />
             <TransactionFees
