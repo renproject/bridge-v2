@@ -1,9 +1,9 @@
-import { RenNetwork } from '@renproject/interfaces'
-import { BinanceSmartChainInjectedConnector } from '@renproject/multiwallet-binancesmartchain-injected-connector'
-import { EthereumInjectedConnector } from '@renproject/multiwallet-ethereum-injected-connector'
-import { MultiwalletProvider as RenMultiwalletProvider } from '@renproject/multiwallet-ui'
-import React, { FunctionComponent } from 'react'
-import { RenChain } from '../../utils/assetConfigs'
+import { RenNetwork } from "@renproject/interfaces";
+import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
+import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
+import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
+import React, { FunctionComponent } from "react";
+import { RenChain } from "../../utils/assetConfigs";
 
 const networkMapping: Record<number, RenNetwork> = {
   1: RenNetwork.Mainnet,

@@ -151,9 +151,6 @@ const newNetworkMappings: ChainToNetworkMappings = {
   [RenChain.binanceSmartChain]: networkMappingVDot3,
 };
 
-const standardNetworks = [RenNetwork.Testnet, RenNetwork.Mainnet];
-const vDot3Networks = [RenNetwork.TestnetVDot3, RenNetwork.MainnetVDot3];
-
 export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
   [BridgeCurrency.BTC]: {
     symbol: BridgeCurrency.BTC,
