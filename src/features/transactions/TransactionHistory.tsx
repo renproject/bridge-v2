@@ -51,6 +51,7 @@ import {
 } from "../wallet/walletSlice";
 import { TransactionHistoryDialog } from "./components/TransactionHistoryHelpers";
 import {
+  $currentTxId,
   $orderedTransactions,
   $transactionsData,
   $txHistoryOpened,
@@ -69,10 +70,7 @@ export const TransactionHistory: FunctionComponent = () => {
   const allTransactions = useSelector($orderedTransactions);
   const { txsPending } = useSelector($transactionsData);
   const opened = useSelector($txHistoryOpened);
-
-  // useEffect(() => {
-  //   dispatch(setTxsPending(true));
-  // }, [isAuthenticated]);
+  const activeTxId = useSelector($currentTxId);
 
   useEffect(() => {
     if (!walletConnected) {
@@ -221,14 +219,20 @@ export const TransactionHistory: FunctionComponent = () => {
                 return (
                   <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
                     {showHeader && Header}
-                    <MintTransactionEntryResolver tx={tx} />
+                    <MintTransactionEntryResolver
+                      tx={tx}
+                      isActive={activeTxId === tx.id}
+                    />
                   </ShowEntry>
                 );
               } else {
                 return (
                   <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
                     {showHeader && Header}
-                    <ReleaseTransactionEntryResolver tx={tx} />
+                    <ReleaseTransactionEntryResolver
+                      tx={tx}
+                      isActive={activeTxId === tx.id}
+                    />
                   </ShowEntry>
                 );
               }

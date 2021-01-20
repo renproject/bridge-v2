@@ -29,7 +29,7 @@ import { $exchangeRates } from '../../marketData/marketDataSlice'
 import { findExchangeRate } from '../../marketData/marketDataUtils'
 import { $renNetwork } from '../../network/networkSlice'
 import { TransactionFees } from '../../transactions/components/TransactionFees'
-import { addTransaction } from '../../transactions/transactionsSlice'
+import { addTransaction, setCurrentTxId, } from '../../transactions/transactionsSlice'
 import {
   createTxQueryString,
   LocationTxState,
@@ -129,6 +129,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       const meta: DbMeta = { state: mintTxStateUpdateSequence[0] };
       const dbTx = { ...tx, meta };
       db.addTx(dbTx, account, signature).then(() => {
+        dispatch(setCurrentTxId(tx.id));
         dispatch(addTransaction(tx));
         history.push({
           pathname: paths.MINT_TRANSACTION,
@@ -189,7 +190,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="Recipient Address"
           labelTooltip={mintTooltips.recipientAddress}
-          value={<MiddleEllipsisText hoverable>{tx.userAddress}</MiddleEllipsisText>}
+          value={
+            <MiddleEllipsisText hoverable>{tx.userAddress}</MiddleEllipsisText>
+          }
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>

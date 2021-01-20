@@ -46,7 +46,7 @@ import {
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
-import { useTransactionDeletion } from "../../transactions/transactionsHooks";
+import { useSetCurrentTxId, useTransactionDeletion } from '../../transactions/transactionsHooks'
 import {
   createTxQueryString,
   getTxPageTitle,
@@ -85,6 +85,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  useSetCurrentTxId(tx.id);
 
   usePageTitle(getTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();

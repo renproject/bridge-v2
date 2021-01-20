@@ -43,7 +43,10 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { addTransaction } from "../../transactions/transactionsSlice";
+import {
+  addTransaction,
+  setCurrentTxId,
+} from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   LocationTxState,
@@ -138,6 +141,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       const meta: DbMeta = { state: releaseTxStateUpdateSequence[0] };
       const dbTx = { ...tx, meta };
       db.addTx(dbTx, account, signature).then(() => {
+        dispatch(setCurrentTxId(tx.id));
         dispatch(addTransaction(tx));
         history.push({
           pathname: paths.RELEASE_TRANSACTION,

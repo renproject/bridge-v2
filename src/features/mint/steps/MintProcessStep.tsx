@@ -54,7 +54,10 @@ import {
   ProgressStatus,
   WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
-import { useTransactionDeletion } from "../../transactions/transactionsHooks";
+import {
+  useSetCurrentTxId,
+  useTransactionDeletion,
+} from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getAddressExplorerLink,
@@ -95,6 +98,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const { tx: parsedTx, txState } = useTxParam();
   const [reloading, setReloading] = useState(false);
   const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession);
+  useSetCurrentTxId(tx.id);
 
   usePageTitle(getTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
