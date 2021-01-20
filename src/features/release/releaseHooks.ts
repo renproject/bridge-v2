@@ -83,7 +83,7 @@ export const shouldUpdateReleaseTx = (
   }
   return (
     stateIndex > dbStateIndex ||
-    stateIndex == releaseTxStateUpdateSequence.length - 1
+    stateIndex === releaseTxStateUpdateSequence.length - 1
   );
 };
 export const useReleaseTransactionPersistence = (
