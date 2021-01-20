@@ -75,7 +75,10 @@ import {
   setChain,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
-import { MultipleDepositsMessage } from "../components/MintHelpers";
+import {
+  DepositWrapper,
+  MultipleDepositsMessage,
+} from "../components/MintHelpers";
 import {
   DestinationPendingStatus,
   MintCompletedStatus,
@@ -83,6 +86,7 @@ import {
   MintDepositConfirmationStatus,
   MintDepositToStatus,
 } from "../components/MintStatuses";
+import { DepositNextButton, DepositPrevButton } from '../components/MultipleDepositsHelpers'
 import { useMintMachine, useMintTransactionPersistence } from "../mintHooks";
 import { resetMint } from "../mintSlice";
 import { getLockAndMintParams } from "../mintUtils";
@@ -351,11 +355,15 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   return (
     <>
       {activeDeposit ? (
-        <MintTransactionDepositStatus
-          tx={currentTx}
-          deposit={activeDeposit.deposit}
-          machine={activeDeposit.machine}
-        />
+        <DepositWrapper>
+          <MintTransactionDepositStatus
+            tx={currentTx}
+            deposit={activeDeposit.deposit}
+            machine={activeDeposit.machine}
+          />
+          <DepositPrevButton />
+          <DepositNextButton />
+        </DepositWrapper>
       ) : (
         <MintDepositToStatus tx={currentTx} onRestart={onRestart} />
       )}

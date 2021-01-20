@@ -57,8 +57,17 @@ import CompletedIcon from "@material-ui/icons/Done";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import WarningIcon from "@material-ui/icons/Warning";
+import NavigatePrevIcon from "@material-ui/icons/NavigateBefore";
+import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 
-export { CompletedIcon, AddIcon, DeleteIcon, WarningIcon };
+export {
+  CompletedIcon,
+  AddIcon,
+  DeleteIcon,
+  WarningIcon,
+  NavigatePrevIcon,
+  NavigateNextIcon,
+};
 
 export type CustomSvgIconComponent =
   | FunctionComponent<SvgIconProps>

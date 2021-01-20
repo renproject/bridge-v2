@@ -1,3 +1,4 @@
+import { styled } from "@material-ui/core";
 import { GatewaySession } from "@renproject/ren-tx";
 import React, { FunctionComponent, useEffect } from "react";
 import { Link } from "../../../components/links/Links";
@@ -22,6 +23,12 @@ type MintTransactionInitializerProps = {
   initialTx: GatewaySession;
   onCreated?: (tx: GatewaySession) => void;
 };
+
+export const DepositWrapper = styled("div")({
+  position: "relative",
+  border: "1px solid lightblue",
+  // zIndex: 0
+});
 
 export const MintTransactionInitializer: FunctionComponent<MintTransactionInitializerProps> = ({
   initialTx,
