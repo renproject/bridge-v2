@@ -143,12 +143,16 @@ const networkMappingVDot3: NetworkMapping = {
 
 const oldNetworkMappings: ChainToNetworkMappings = {
   [RenChain.ethereum]: networkMappingLegacy,
-  [RenChain.binanceSmartChain]: networkMappingVDot3,
+  // BinanceSmartChain only has 1 network for testnet/mainnet
+  // so vDot3 is equavelent to "legacy" mappings
+  [RenChain.binanceSmartChain]: networkMappingLegacy,
 };
 
 const newNetworkMappings: ChainToNetworkMappings = {
   [RenChain.ethereum]: networkMappingVDot3,
-  [RenChain.binanceSmartChain]: networkMappingVDot3,
+  // BinanceSmartChain only has 1 network for testnet/mainnet
+  // so vDot3 is equavelent to "legacy" mappings
+  [RenChain.binanceSmartChain]: networkMappingLegacy,
 };
 
 export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
