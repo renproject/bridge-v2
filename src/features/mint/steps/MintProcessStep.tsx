@@ -405,9 +405,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
             onClick={handleNext}
             disabled={currentIndex === total - 1}
           />
-          <span>
-            {currentHash} {currentIndex}
-          </span>
         </DepositWrapper>
       ) : (
         <MintDepositToStatus tx={currentTx} onRestart={onRestart} />
