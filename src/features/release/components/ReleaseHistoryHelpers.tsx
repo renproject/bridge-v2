@@ -1,38 +1,25 @@
-import { Chip, Typography } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { SmallActionButton } from "../../../components/buttons/Buttons";
-import { CompletedIcon, EmptyIcon } from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
-import { TransactionStatusIndicator } from "../../../components/progress/ProgressHelpers";
-import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
-import { Debug } from "../../../components/utils/Debug";
-import { paths } from "../../../pages/routes";
-import { getFormattedDateTime } from "../../../utils/dates";
-import { TransactionItemProps } from "../../transactions/components/TransactionsHelpers";
-import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
+import { Chip, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useEffect, } from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { SmallActionButton } from '../../../components/buttons/Buttons'
+import { CompletedIcon, EmptyIcon } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
+import { TransactionStatusIndicator } from '../../../components/progress/ProgressHelpers'
+import { useTransactionEntryStyles } from '../../../components/transactions/TransactionsGrid'
+import { Debug } from '../../../components/utils/Debug'
+import { paths } from '../../../pages/routes'
+import { getFormattedDateTime } from '../../../utils/dates'
+import { TransactionItemProps } from '../../transactions/components/TransactionsHelpers'
+import { setTxHistoryOpened } from '../../transactions/transactionsSlice'
 import {
-  cloneTx,
   createTxQueryString,
   isTransactionCompleted,
   TxEntryStatus,
   TxPhase,
-} from "../../transactions/transactionsUtils";
-import {
-  BurnMachineSchemaState,
-  useBurnMachine,
-  useReleaseTransactionPersistence,
-} from "../releaseHooks";
-import {
-  getBurnAndReleaseParams,
-  isReleaseTransactionCompleted,
-} from "../releaseUtils";
+} from '../../transactions/transactionsUtils'
+import { BurnMachineSchemaState, useBurnMachine, useReleaseTransactionPersistence, } from '../releaseHooks'
+import { getBurnAndReleaseParams, isReleaseTransactionCompleted, } from '../releaseUtils'
 
 export const ReleaseTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
@@ -48,8 +35,7 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [initialTx] = useState(cloneTx(tx)); // TODO: release machine is mutating tx
-  const [current, , service] = useBurnMachine(initialTx);
+  const [current, , service] = useBurnMachine(tx);
   useEffect(
     () => () => {
       service.stop();
