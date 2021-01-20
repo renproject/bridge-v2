@@ -1,33 +1,42 @@
-import { Chip, Tooltip, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useEffect, } from 'react'
-import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { SmallActionButton } from '../../../components/buttons/Buttons'
-import { CompletedIcon, EmptyIcon, TooltipIcon, } from '../../../components/icons/RenIcons'
-import { Link } from '../../../components/links/Links'
-import { TransactionStatusIndicator } from '../../../components/progress/ProgressHelpers'
-import { useTransactionEntryStyles } from '../../../components/transactions/TransactionsGrid'
-import { Debug } from '../../../components/utils/Debug'
-import { paths } from '../../../pages/routes'
-import { getFormattedDateTime } from '../../../utils/dates'
-import { TransactionItemProps } from '../../transactions/components/TransactionsHelpers'
-import { setTxHistoryOpened } from '../../transactions/transactionsSlice'
+import { Chip, Tooltip, Typography } from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { SmallActionButton } from "../../../components/buttons/Buttons";
+import {
+  CompletedIcon,
+  EmptyIcon,
+  TooltipIcon,
+} from "../../../components/icons/RenIcons";
+import { Link } from "../../../components/links/Links";
+import { TransactionStatusIndicator } from "../../../components/progress/ProgressHelpers";
+import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
+import { Debug } from "../../../components/utils/Debug";
+import { paths } from "../../../pages/routes";
+import { getFormattedDateTime } from "../../../utils/dates";
+import { TransactionItemProps } from "../../transactions/components/TransactionsHelpers";
+import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   isTransactionCompleted,
   TxEntryStatus,
   TxPhase,
-} from '../../transactions/transactionsUtils'
-import { setChain } from '../../wallet/walletSlice'
-import { DepositMachineSchemaState, useMintMachine, useMintTransactionPersistence, } from '../mintHooks'
-import { resetMint } from '../mintSlice'
-import { getLockAndMintParams, isMintTransactionCompleted } from '../mintUtils'
+} from "../../transactions/transactionsUtils";
+import { setChain } from "../../wallet/walletSlice";
+import {
+  DepositMachineSchemaState,
+  useMintMachine,
+  useMintTransactionPersistence,
+} from "../mintHooks";
+import { resetMint } from "../mintSlice";
+import { getLockAndMintParams, isMintTransactionCompleted } from "../mintUtils";
 
 export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
+  isActive,
 }) => {
-  if (isMintTransactionCompleted(tx)) {
-    return <MintTransactionEntry tx={tx} />;
+  if (isMintTransactionCompleted(tx) || isActive) {
+    return <MintTransactionEntry tx={tx} isActive />;
   }
   return <MintTransactionEntryMachine tx={tx} />;
 };
@@ -94,6 +103,7 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
 
 export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
+  isActive,
   onAction,
   onRestart,
 }) => {
@@ -195,12 +205,18 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
           </div>
         </div>
         <div className={styles.actions}>
-          {status === TxEntryStatus.ACTION_REQUIRED && (
+          {isActive && (
+            <Typography color="primary" variant="body2">
+              Currently viewing
+            </Typography>
+          )}
+          {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
             <SmallActionButton onClick={onAction}>
               {phase === TxPhase.LOCK ? "Continue" : "Finish"} mint
             </SmallActionButton>
           )}
-          {status === TxEntryStatus.PENDING &&
+          {!isActive &&
+            status === TxEntryStatus.PENDING &&
             lockConfirmations < lockTargetConfirmations && (
               <Typography color="primary" variant="body2">
                 {lockConfirmations}/{lockTargetConfirmations} Confirmations

@@ -1,17 +1,26 @@
-import { RenNetwork } from '@renproject/interfaces'
-import { GatewaySession } from '@renproject/ren-tx'
-import { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { paths } from '../../pages/routes'
-import { useNotifications } from '../../providers/Notifications'
-import { db } from '../../services/database/database'
-import { BridgeCurrency, getCurrencyConfig, isMainnetNetwork, isTestnetNetwork, } from '../../utils/assetConfigs'
-import { $renNetwork, setRenNetwork } from '../network/networkSlice'
-import { useSelectedChainWallet } from '../wallet/walletHooks'
-import { $multiwalletChain } from '../wallet/walletSlice'
-import { removeTransaction } from './transactionsSlice'
-import { TxType } from './transactionsUtils'
+import { RenNetwork } from "@renproject/interfaces";
+import { GatewaySession } from "@renproject/ren-tx";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { paths } from "../../pages/routes";
+import { useNotifications } from "../../providers/Notifications";
+import { db } from "../../services/database/database";
+import {
+  BridgeCurrency,
+  getCurrencyConfig,
+  isMainnetNetwork,
+  isTestnetNetwork,
+} from "../../utils/assetConfigs";
+import { $renNetwork, setRenNetwork } from "../network/networkSlice";
+import { useSelectedChainWallet } from "../wallet/walletHooks";
+import { $multiwalletChain } from "../wallet/walletSlice";
+import {
+  $currentTxId,
+  removeTransaction,
+  setCurrentTxId,
+} from "./transactionsSlice";
+import { TxType } from "./transactionsUtils";
 
 export const useTransactionDeletion = (tx: GatewaySession) => {
   const dispatch = useDispatch();
@@ -58,4 +67,14 @@ export const useRenNetworkTracker = (currency: BridgeCurrency) => {
       dispatch(setRenNetwork(newNetwork));
     }
   }, [dispatch, renChain, currency, renNetwork]);
+};
+
+export const useSetCurrentTxId = (id: string) => {
+  const dispatch = useDispatch();
+  const currentId = useSelector($currentTxId);
+  useEffect(() => {
+    if (id !== currentId) {
+      dispatch(setCurrentTxId(id));
+    }
+  }, [dispatch, id, currentId]);
 };
