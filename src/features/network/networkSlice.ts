@@ -2,7 +2,6 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RenNetwork } from "@renproject/interfaces";
 import { env } from "../../constants/environmentVariables";
 import { RootState } from "../../store/rootReducer";
-import { RenTargetNetwork } from "../../utils/assetConfigs";
 
 type NetworkState = {
   renNetwork: RenNetwork;
@@ -11,8 +10,8 @@ type NetworkState = {
 const cachedTargetNetwork = localStorage.getItem("renTargetNetwork");
 
 const initialNetwork =
-  (((cachedTargetNetwork || env.NETWORK) as unknown) as RenTargetNetwork) ||
-  RenTargetNetwork.Testnet;
+  (((cachedTargetNetwork || env.NETWORK) as unknown) as RenNetwork) ||
+  RenNetwork.Testnet;
 
 let initialState: NetworkState = {
   renNetwork: (initialNetwork as unknown) as RenNetwork,

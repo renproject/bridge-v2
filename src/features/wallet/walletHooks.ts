@@ -87,7 +87,7 @@ export const useSyncMultiwalletNetwork = () => {
   }, [renNetwork, setTargetNetwork, targetNetwork]);
 };
 
-const SIGN_MESSAGE = "Signing in to Ren Bridge";
+const SIGN_MESSAGE = "Allow RenBridge to back up transactions";
 
 const getWeb3Signatures = async (
   address: string,

@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
-  usePageTitle("About");
+  usePageTitle("Not Found");
   const styles = useStyles();
 
   return (

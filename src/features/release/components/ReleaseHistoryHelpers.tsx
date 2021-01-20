@@ -57,7 +57,10 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
     [service]
   );
 
-  useReleaseTransactionPersistence(tx, current.value as BurnMachineSchemaState);
+  useReleaseTransactionPersistence(
+    current.context.tx,
+    current.value as BurnMachineSchemaState
+  );
 
   const handleFinish = useCallback(() => {
     history.push({
