@@ -1,7 +1,6 @@
 import { styled } from "@material-ui/core";
 import { GatewaySession } from "@renproject/ren-tx";
 import React, { FunctionComponent, useEffect } from "react";
-import { Link } from "../../../components/links/Links";
 import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 import { useMintMachine } from "../mintHooks";
@@ -64,24 +63,12 @@ export const AddressValidityMessage: FunctionComponent<AddressValidityMessagePro
   );
 };
 
-type MultipleDepositsMessageProps = {
-  total: number;
-  onLinkClick: () => void;
-};
-
-export const MultipleDepositsMessage: FunctionComponent<MultipleDepositsMessageProps> = ({
-  total,
-  onLinkClick,
-}) => {
+export const MultipleDepositsMessage: FunctionComponent = () => {
   return (
     <span>
-      RenBridge has detected {total} deposits to the same gateway address.
-      You'll need to submit {total > 2 ? "all of them" : "both"} to the
-      destination chain via your web3 wallet.
-      <br />
-      <Link external onClick={onLinkClick}>
-        View Transaction
-      </Link>
+      RenBridge has detected another deposit to the same gateway address. It
+      will require an additional submission to to the destination chain via your
+      web3 wallet.
     </span>
   );
 };

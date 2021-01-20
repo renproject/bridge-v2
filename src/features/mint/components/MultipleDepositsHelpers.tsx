@@ -1,4 +1,4 @@
-import { ButtonProps, makeStyles, styled } from "@material-ui/core";
+import { ButtonBase, ButtonProps, makeStyles, styled } from "@material-ui/core";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import {
@@ -9,13 +9,15 @@ import {
 const useBigNavButtonStyles = makeStyles((theme) => ({
   root: {
     color: theme.palette.primary.main,
-    fontSize: 140,
-    transition: "all .4 ease-in",
+    fontSize: 90,
+    transition: "all 1s",
     display: "inline-flex",
     border: "1px solid lightblue",
+    cursor: "pointer",
   },
   disabled: {
     opacity: 0.2,
+    cursor: "default",
   },
   hidden: {
     display: "none",
@@ -38,32 +40,32 @@ export const BigNavButton: FunctionComponent<BigNavButtonProps> = ({
     [styles.disabled]: disabled,
     [styles.hidden]: hidden,
   });
-  const Icon = direction === "next" ? NavigatePrevIcon : NavigateNextIcon;
+  const Icon = direction === "prev" ? NavigatePrevIcon : NavigateNextIcon;
   return (
-    <div className={rootClassName} onClick={onClick as any}>
+    <ButtonBase className={rootClassName} disabled={disabled} onClick={onClick}>
       <Icon fontSize="inherit" />
-    </div>
+    </ButtonBase>
   );
 };
 
-export const BigPrevButton: FunctionComponent<
-  Omit<BigNavButtonProps, "direction">
-> = (props) => <BigNavButton direction="prev" {...props} />;
+export const BigPrevButton: FunctionComponent<ButtonProps> = (props) => (
+  <BigNavButton direction="prev" {...props} />
+);
 
-export const BigNextButton: FunctionComponent<
-  Omit<BigNavButtonProps, "direction">
-> = (props) => <BigNavButton direction="next" {...props} />;
+export const BigNextButton: FunctionComponent<ButtonProps> = (props) => (
+  <BigNavButton direction="next" {...props} />
+);
 
-const offsetTop = 40;
-const offsetHorizontal = -20;
+const offsetTop = 56;
+const offsetHorizontal = -42;
 export const DepositPrevButton = styled(BigPrevButton)({
   position: "absolute",
   top: offsetTop,
-  right: offsetHorizontal,
+  left: offsetHorizontal,
 });
 
 export const DepositNextButton = styled(BigNextButton)({
   position: "absolute",
   top: offsetTop,
-  left: offsetHorizontal,
+  right: offsetHorizontal,
 });

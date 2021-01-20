@@ -37,6 +37,8 @@ import { ReactComponent as Luna } from "./../../assets/icons/luna-icon-nocolour.
 import { ReactComponent as LunaFull } from "./../../assets/icons/luna-icon.svg";
 import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox.svg";
 import { ReactComponent as MetamaskFull } from "./../../assets/icons/metamask-icon-colour.svg";
+import { ReactComponent as NavigateNext } from "./../../assets/icons/chevron-icon-right.svg";
+import { ReactComponent as NavigatePrev } from "./../../assets/icons/chevron-icon-left.svg";
 import { ReactComponent as QrCode } from "./../../assets/icons/qr-code.svg";
 import { ReactComponent as RenLogo } from "./../../assets/icons/ren-logo.svg";
 import { ReactComponent as RenLogo3F } from "./../../assets/icons/ren-logo-3f.svg";
@@ -53,21 +55,13 @@ import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconn
 import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
+
 import CompletedIcon from "@material-ui/icons/Done";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import WarningIcon from "@material-ui/icons/Warning";
-import NavigatePrevIcon from "@material-ui/icons/NavigateBefore";
-import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 
-export {
-  CompletedIcon,
-  AddIcon,
-  DeleteIcon,
-  WarningIcon,
-  NavigatePrevIcon,
-  NavigateNextIcon,
-};
+export { CompletedIcon, AddIcon, DeleteIcon, WarningIcon };
 
 export type CustomSvgIconComponent =
   | FunctionComponent<SvgIconProps>
@@ -99,6 +93,14 @@ export const WalletIcon: CustomSvgIconComponent = (props) => (
 
 export const BackArrowIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BackArrow} {...props} />
+);
+
+export const NavigatePrevIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={NavigatePrev} {...props} />
+);
+
+export const NavigateNextIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={NavigateNext} {...props} />
 );
 
 export const SuccessIcon: CustomSvgIconComponent = (props) => (

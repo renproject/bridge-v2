@@ -86,7 +86,10 @@ import {
   MintDepositConfirmationStatus,
   MintDepositToStatus,
 } from "../components/MintStatuses";
-import { DepositNextButton, DepositPrevButton } from '../components/MultipleDepositsHelpers'
+import {
+  DepositNextButton,
+  DepositPrevButton,
+} from "../components/MultipleDepositsHelpers";
 import { useMintMachine, useMintTransactionPersistence } from "../mintHooks";
 import { resetMint } from "../mintSlice";
 import { getLockAndMintParams } from "../mintUtils";
@@ -252,6 +255,38 @@ type MintTransactionStatusProps = {
   onRestart: () => void;
 };
 
+const useDepositPagination = (
+  tx: GatewaySession,
+  depositSourceHash: string
+) => {
+  const transactions = tx.transactions;
+  const hashes = Object.keys(transactions).sort();
+  const total = hashes.length;
+  const initial = depositSourceHash || total > 0 ? hashes[0] : "";
+  const [currentHash, setCurrentHash] = useState(initial);
+
+  const currentIndex = hashes.indexOf(currentHash);
+  const nextIndex =
+    total > 0 && currentIndex + 1 < total ? currentIndex + 1 : 0;
+  const nextHash = hashes[nextIndex];
+  const prevIndex = total > 0 && currentIndex - 1 >= 0 ? currentIndex - 1 : 0;
+  const prevHash = hashes[prevIndex];
+
+  const handleNext = useCallback(() => {
+    setCurrentHash(nextHash);
+  }, [nextHash]);
+  const handlePrev = useCallback(() => {
+    setCurrentHash(prevHash);
+  }, [prevHash]);
+  return {
+    currentHash,
+    currentIndex,
+    handleNext,
+    handlePrev,
+    total,
+  };
+};
+
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
   onRestart,
@@ -269,29 +304,28 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   );
 
   const {
-    meta: { transactionsCount },
-  } = getLockAndMintParams(currentTx);
+    currentHash,
+    currentIndex,
+    total,
+    handlePrev,
+    handleNext,
+  } = useDepositPagination(currentTx, ""); // TODO: add depositSourceHash from tx params
+
   const { showNotification, closeNotification } = useNotifications();
   useEffect(() => {
     let key = 0;
-    if (transactionsCount > 1 && featureFlags.enableMultipleDeposits) {
-      key = showNotification(
-        <MultipleDepositsMessage
-          total={transactionsCount}
-          onLinkClick={() => {}}
-        />,
-        {
-          variant: "warning",
-          persist: true,
-        }
-      ) as number;
+    if (total > 1 && featureFlags.enableMultipleDeposits) {
+      key = showNotification(<MultipleDepositsMessage />, {
+        variant: "warning",
+        persist: true,
+      }) as number;
     }
     return () => {
       if (key) {
         closeNotification(key);
       }
     };
-  }, [showNotification, closeNotification, transactionsCount]);
+  }, [showNotification, closeNotification, total]);
 
   const [wrongAddressDialogOpened, setWrongAddressDialogOpened] = useState(
     false
@@ -319,11 +353,13 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     if (!current.context.tx.transactions) {
       return null;
     }
-    const deposit = Object.values(current.context.tx.transactions)[0];
+    const deposit = Object.values(current.context.tx.transactions)[
+      currentIndex
+    ];
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];
     return { deposit, machine };
-  }, [current.context]);
+  }, [currentIndex, current.context]);
 
   // In order to enable quick restoration, we need to persist the deposit transaction
   // We persist via querystring, so lets check if the transaction is present
@@ -334,7 +370,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   useEffect(() => {
     if (!location.search) return;
     const queryTx = parseTxQueryString(location.search);
-    const deposit = Object.values(queryTx?.transactions || {})[0];
+    const deposit = Object.values(queryTx?.transactions || {})[currentIndex];
     // If we have detected a deposit, but there is no deposit in the querystring
     // update the queryString to have the deposit
     // TODO: to enable quick resume, we may want to ask users to update their bookmarks
@@ -344,7 +380,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         search: "?" + createTxQueryString(current.context.tx),
       });
     }
-  }, [location, activeDeposit, current.context.tx, history]);
+  }, [currentIndex, location, activeDeposit, current.context.tx, history]);
 
   const { mintCurrencyConfig } = getLockAndMintParams(currentTx);
   const accountExplorerLink = getAddressExplorerLink(
@@ -361,8 +397,17 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
             deposit={activeDeposit.deposit}
             machine={activeDeposit.machine}
           />
-          <DepositPrevButton />
-          <DepositNextButton />
+          <DepositPrevButton
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+          />
+          <DepositNextButton
+            onClick={handleNext}
+            disabled={currentIndex === total - 1}
+          />
+          <span>
+            {currentHash} {currentIndex}
+          </span>
         </DepositWrapper>
       ) : (
         <MintDepositToStatus tx={currentTx} onRestart={onRestart} />
