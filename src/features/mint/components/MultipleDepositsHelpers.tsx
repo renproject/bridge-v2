@@ -12,8 +12,10 @@ const useBigNavButtonStyles = makeStyles((theme) => ({
     fontSize: 90,
     transition: "all 1s",
     display: "inline-flex",
-    border: "1px solid lightblue",
     cursor: "pointer",
+    "&:hover": {
+      color: theme.palette.primary.dark,
+    },
   },
   disabled: {
     opacity: 0.2,
@@ -56,7 +58,7 @@ export const BigNextButton: FunctionComponent<ButtonProps> = (props) => (
   <BigNavButton direction="next" {...props} />
 );
 
-const offsetTop = 56;
+const offsetTop = 38;
 const offsetHorizontal = -42;
 export const DepositPrevButton = styled(BigPrevButton)({
   position: "absolute",

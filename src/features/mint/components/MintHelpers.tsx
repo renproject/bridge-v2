@@ -25,8 +25,6 @@ type MintTransactionInitializerProps = {
 
 export const DepositWrapper = styled("div")({
   position: "relative",
-  border: "1px solid lightblue",
-  // zIndex: 0
 });
 
 export const MintTransactionInitializer: FunctionComponent<MintTransactionInitializerProps> = ({

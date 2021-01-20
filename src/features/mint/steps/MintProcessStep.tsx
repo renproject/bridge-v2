@@ -397,14 +397,18 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
             deposit={activeDeposit.deposit}
             machine={activeDeposit.machine}
           />
-          <DepositPrevButton
-            onClick={handlePrev}
-            disabled={currentIndex === 0}
-          />
-          <DepositNextButton
-            onClick={handleNext}
-            disabled={currentIndex === total - 1}
-          />
+          {total > 1 && (
+            <>
+              <DepositPrevButton
+                onClick={handlePrev}
+                disabled={currentIndex === 0}
+              />
+              <DepositNextButton
+                onClick={handleNext}
+                disabled={currentIndex === total - 1}
+              />
+            </>
+          )}
         </DepositWrapper>
       ) : (
         <MintDepositToStatus tx={currentTx} onRestart={onRestart} />
