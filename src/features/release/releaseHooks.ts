@@ -78,7 +78,13 @@ export const shouldUpdateReleaseTx = (
     //dont update for created (updated during creation) or not supported states
     return false;
   }
-  return stateIndex > dbStateIndex;
+  if (JSON.stringify(dbTx) === JSON.stringify(tx)) {
+    return false;
+  }
+  return (
+    stateIndex > dbStateIndex ||
+    stateIndex == releaseTxStateUpdateSequence.length - 1
+  );
 };
 export const useReleaseTransactionPersistence = (
   tx: GatewaySession | DbGatewaySession,
