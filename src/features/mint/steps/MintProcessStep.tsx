@@ -33,7 +33,6 @@ import {
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { featureFlags } from "../../../constants/featureFlags";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
@@ -260,10 +259,16 @@ const useDepositPagination = (
   depositSourceHash: string
 ) => {
   const transactions = tx.transactions;
+  console.log("recalc", transactions);
   const hashes = Object.keys(transactions).sort();
   const total = hashes.length;
+  if (total) {
+    debugger;
+  }
+  // FIXME: initial is "" at the begining
   const initial = depositSourceHash || total > 0 ? hashes[0] : "";
   const [currentHash, setCurrentHash] = useState(initial);
+  console.log("currentHas", currentHash);
 
   const currentIndex = hashes.indexOf(currentHash);
   const nextIndex =
@@ -292,7 +297,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   onRestart,
 }) => {
   const [current, , service] = useMintMachine(tx);
-  const currentTx = current.context.tx;
   const chain = useSelector($chain);
   const renNetwork = useSelector($renNetwork);
   const { account } = useSelectedChainWallet();
@@ -304,17 +308,17 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   );
 
   const {
-    currentHash,
     currentIndex,
+    currentHash,
     total,
     handlePrev,
     handleNext,
-  } = useDepositPagination(currentTx, ""); // TODO: add depositSourceHash from tx params
+  } = useDepositPagination(current.context.tx, ""); // TODO: add depositSourceHash from tx params
 
   const { showNotification, closeNotification } = useNotifications();
   useEffect(() => {
     let key = 0;
-    if (total > 1 && featureFlags.enableMultipleDeposits) {
+    if (total > 1) {
       key = showNotification(<MultipleDepositsMessage />, {
         variant: "warning",
         persist: true,
@@ -337,14 +341,14 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   useEffect(() => {
     if (
       account &&
-      currentTx.userAddress &&
-      account.toLowerCase() !== currentTx.userAddress.toLowerCase()
+      current.context.tx.userAddress &&
+      account.toLowerCase() !== current.context.tx.userAddress.toLowerCase()
     ) {
       setWrongAddressDialogOpened(true);
     } else {
       setWrongAddressDialogOpened(false);
     }
-  }, [account, currentTx.userAddress]);
+  }, [account, current.context.tx.userAddress]);
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;
@@ -382,7 +386,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, [currentIndex, location, activeDeposit, current.context.tx, history]);
 
-  const { mintCurrencyConfig } = getLockAndMintParams(currentTx);
+  const { mintCurrencyConfig } = getLockAndMintParams(current.context.tx);
   const accountExplorerLink = getAddressExplorerLink(
     chain,
     renNetwork,
@@ -393,7 +397,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       {activeDeposit ? (
         <DepositWrapper>
           <MintTransactionDepositStatus
-            tx={currentTx}
+            tx={current.context.tx}
             deposit={activeDeposit.deposit}
             machine={activeDeposit.machine}
           />
@@ -411,7 +415,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           )}
         </DepositWrapper>
       ) : (
-        <MintDepositToStatus tx={currentTx} onRestart={onRestart} />
+        <MintDepositToStatus tx={current.context.tx} onRestart={onRestart} />
       )}
       <WrongAddressWarningDialog
         open={wrongAddressDialogOpened}
@@ -420,7 +424,15 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         currency={mintCurrencyConfig.short}
         onAlternativeAction={handleCloseWrongAddressDialog}
       />
-      <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
+      <Debug
+        it={{
+          contextTx: current.context.tx,
+          activeDeposit,
+          total,
+          currentIndex,
+          currentHash,
+        }}
+      />
     </>
   );
 };

@@ -79,7 +79,7 @@ export const overrides = (palette: Palette): Overrides => {
         minWidth: 320,
       },
       paperWidthSm: {
-        // maxWidth: 420,
+        maxWidth: 680,
       },
     },
     MuiDialogActions: {

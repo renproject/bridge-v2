@@ -1,35 +1,28 @@
-import { Chip, Tooltip, Typography } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { SmallActionButton } from "../../../components/buttons/Buttons";
-import {
-  CompletedIcon,
-  EmptyIcon,
-  TooltipIcon,
-} from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
-import { TransactionStatusIndicator } from "../../../components/progress/ProgressHelpers";
-import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
-import { Debug } from "../../../components/utils/Debug";
-import { paths } from "../../../pages/routes";
-import { getFormattedDateTime } from "../../../utils/dates";
-import { TransactionItemProps } from "../../transactions/components/TransactionsHelpers";
-import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
+import { Chip, styled, Tooltip, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { SmallActionButton } from '../../../components/buttons/Buttons'
+import { CompletedIcon, EmptyIcon, TooltipIcon, } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
+import { SimplestPagination, } from '../../../components/pagination/SimplePagination'
+import { TransactionStatusIndicator } from '../../../components/progress/ProgressHelpers'
+import { useTransactionEntryStyles, } from '../../../components/transactions/TransactionsGrid'
+import { Debug } from '../../../components/utils/Debug'
+import { paths } from '../../../pages/routes'
+import { getFormattedDateTime } from '../../../utils/dates'
+import { TransactionItemProps } from '../../transactions/components/TransactionsHelpers'
+import { setTxHistoryOpened } from '../../transactions/transactionsSlice'
 import {
   createTxQueryString,
   isTransactionCompleted,
   TxEntryStatus,
   TxPhase,
-} from "../../transactions/transactionsUtils";
-import { setChain } from "../../wallet/walletSlice";
-import {
-  DepositMachineSchemaState,
-  useMintMachine,
-  useMintTransactionPersistence,
-} from "../mintHooks";
-import { resetMint } from "../mintSlice";
-import { getLockAndMintParams, isMintTransactionCompleted } from "../mintUtils";
+} from '../../transactions/transactionsUtils'
+import { setChain } from '../../wallet/walletSlice'
+import { DepositMachineSchemaState, useMintMachine, useMintTransactionPersistence, } from '../mintHooks'
+import { resetMint } from '../mintSlice'
+import { getLockAndMintParams, isMintTransactionCompleted } from '../mintUtils'
 
 export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
@@ -101,6 +94,11 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
   );
 };
 
+const WarningChip = styled(Chip)(({ theme }) => ({
+  color: theme.customColors.alertWarning,
+  backgroundColor: theme.customColors.alertWarningBackground,
+}));
+
 export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
   isActive,
@@ -116,7 +114,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     mintCurrencyConfig,
     mintChainConfig,
     mintTxLink,
-    meta: { status, phase, createdTimestamp },
+    meta: { status, phase, createdTimestamp, transactionsCount },
   } = getLockAndMintParams(tx);
 
   const { date, time } = getFormattedDateTime(createdTimestamp);
@@ -130,6 +128,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     StatusIcon = mintChainConfig.Icon;
   }
 
+  const handlePageChange = useCallback(() => {}, []);
   const params = getLockAndMintParams(tx);
   return (
     <>
@@ -142,7 +141,23 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
         <div className={styles.details}>
           <div className={styles.datetime}>
             <Chip size="small" label={date} className={styles.date} />
-            <Chip size="small" label={time} />
+            <Chip size="small" label={time} className={styles.time} />
+            {transactionsCount > 1 && (
+              <div className={styles.multiple}>
+                <WarningChip
+                  size="small"
+                  className={styles.multipleLabel}
+                  label="Multiple deposits"
+                />
+                <SimplestPagination
+                  className={styles.multiplePagination}
+                  count={transactionsCount}
+                  rowsPerPage={1}
+                  page={1}
+                  onChangePage={handlePageChange}
+                />
+              </div>
+            )}
           </div>
           <div className={styles.description}>
             <Typography variant="body2" className={styles.title}>
