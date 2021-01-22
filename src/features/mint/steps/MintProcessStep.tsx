@@ -91,7 +91,7 @@ import {
 } from "../components/MultipleDepositsHelpers";
 import { useMintMachine, useMintTransactionPersistence } from "../mintHooks";
 import { resetMint } from "../mintSlice";
-import { getLockAndMintParams } from "../mintUtils";
+import { depositSorter, getLockAndMintParams } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -258,24 +258,21 @@ const useDepositPagination = (
   tx: GatewaySession,
   depositSourceHash: string
 ) => {
-  const transactions = tx.transactions;
-  console.log("recalc", transactions);
-  const hashes = Object.keys(transactions).sort();
-  const total = hashes.length;
-  if (total) {
-    debugger;
-  }
+  const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
+  console.log("recalc", tx.transactions);
+  const orderedHashes = sortedDeposits.map((deposit) => deposit.sourceTxHash);
+  const total = orderedHashes.length;
   // FIXME: initial is "" at the begining
-  const initial = depositSourceHash || total > 0 ? hashes[0] : "";
+  const initial = depositSourceHash || total > 0 ? orderedHashes[0] : "";
   const [currentHash, setCurrentHash] = useState(initial);
-  console.log("currentHas", currentHash);
+  console.log("currentHash", currentHash);
 
-  const currentIndex = hashes.indexOf(currentHash);
+  const currentIndex = orderedHashes.indexOf(currentHash);
   const nextIndex =
     total > 0 && currentIndex + 1 < total ? currentIndex + 1 : 0;
-  const nextHash = hashes[nextIndex];
+  const nextHash = orderedHashes[nextIndex];
   const prevIndex = total > 0 && currentIndex - 1 >= 0 ? currentIndex - 1 : 0;
-  const prevHash = hashes[prevIndex];
+  const prevHash = orderedHashes[prevIndex];
 
   const handleNext = useCallback(() => {
     setCurrentHash(nextHash);
@@ -357,13 +354,11 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     if (!current.context.tx.transactions) {
       return null;
     }
-    const deposit = Object.values(current.context.tx.transactions)[
-      currentIndex
-    ];
+    const deposit = current.context.tx.transactions[currentHash];
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];
     return { deposit, machine };
-  }, [currentIndex, current.context]);
+  }, [currentHash, current.context]);
 
   // In order to enable quick restoration, we need to persist the deposit transaction
   // We persist via querystring, so lets check if the transaction is present
@@ -374,7 +369,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   useEffect(() => {
     if (!location.search) return;
     const queryTx = parseTxQueryString(location.search);
-    const deposit = Object.values(queryTx?.transactions || {})[currentIndex];
+    const deposit = (queryTx?.transactions || {})[currentHash];
     // If we have detected a deposit, but there is no deposit in the querystring
     // update the queryString to have the deposit
     // TODO: to enable quick resume, we may want to ask users to update their bookmarks
@@ -384,9 +379,12 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         search: "?" + createTxQueryString(current.context.tx),
       });
     }
-  }, [currentIndex, location, activeDeposit, current.context.tx, history]);
+  }, [currentHash, location, activeDeposit, current.context.tx, history]);
 
-  const { mintCurrencyConfig } = getLockAndMintParams(current.context.tx);
+  const { mintCurrencyConfig } = getLockAndMintParams(
+    current.context.tx,
+    currentHash
+  );
   const accountExplorerLink = getAddressExplorerLink(
     chain,
     renNetwork,
@@ -400,6 +398,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
             tx={current.context.tx}
             deposit={activeDeposit.deposit}
             machine={activeDeposit.machine}
+            depositHash={currentHash}
           />
           {total > 1 && (
             <>
@@ -426,6 +425,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       />
       <Debug
         it={{
+          pagination: { currentIndex, currentHash, total },
           contextTx: current.context.tx,
           activeDeposit,
           total,
@@ -441,14 +441,16 @@ type MintTransactionDepositStatusProps = {
   tx: GatewaySession;
   deposit: GatewayTransaction;
   machine: Actor<typeof depositMachine>;
+  depositHash: string;
 };
 
-export const forceState = "srcConfirmed" as keyof DepositMachineSchema["states"];
+export const forceState = "srcSettling" as keyof DepositMachineSchema["states"];
 
 export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepositStatusProps> = ({
   tx,
   deposit,
   machine,
+  depositHash,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -472,10 +474,12 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     return <div>Transaction completed</div>;
   }
   console.log(state);
-  switch (state) {
-    // switch (forceState) {
+  // switch (state) {
+    switch (forceState) {
     case "srcSettling":
-      return <MintDepositConfirmationStatus tx={tx} />;
+      return (
+        <MintDepositConfirmationStatus tx={tx} depositHash={depositHash} />
+      );
     case "srcConfirmed": // source sourceChain confirmations ok, but renVM still doesn't accept it
       return <ProgressStatus reason="Submitting to RenVM" />;
     case "errorAccepting":
@@ -487,6 +491,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
           tx={tx}
           onSubmit={handleSubmitToDestinationChain}
           onReload={handleReload}
+          depositHash={depositHash}
           submitting={state === "claiming"}
           submittingError={
             state === "errorSubmitting" || state === "errorAccepting"
@@ -495,12 +500,13 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up
       if (deposit.destTxHash) {
-        return <MintCompletedStatus tx={tx} />;
+        return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
       } else {
         return (
           <DestinationPendingStatus
             tx={tx}
             onSubmit={handleSubmitToDestinationChain}
+            depositHash={depositHash}
             submitting={true}
           />
         );

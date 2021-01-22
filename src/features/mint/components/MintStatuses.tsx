@@ -1,10 +1,15 @@
-import { Box, Grow, Typography, useTheme } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import QRCode from 'qrcode.react'
-import React, { FunctionComponent, useCallback, useEffect, useState, } from 'react'
-import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { useEffectOnce } from 'react-use'
+import { Box, Grow, Typography, useTheme } from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import QRCode from "qrcode.react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useEffectOnce } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -12,40 +17,44 @@ import {
   CopyContentButton,
   QrCodeIconButton,
   TransactionDetailsButton,
-} from '../../../components/buttons/Buttons'
-import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+} from "../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import {
   BigTopWrapper,
   CenteringSpacedBox,
   MediumWrapper,
   SmallWrapper,
-} from '../../../components/layout/LayoutHelpers'
-import { Link } from '../../../components/links/Links'
+} from "../../../components/layout/LayoutHelpers";
+import { Link } from "../../../components/links/Links";
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { BigAssetAmount } from '../../../components/typography/TypographyHelpers'
-import { paths } from '../../../pages/routes'
-import { useNotifications } from '../../../providers/Notifications'
-import { usePaperTitle, useSetActionRequired, useSetPaperTitle, } from '../../../providers/TitleProviders'
-import { orangeLight } from '../../../theme/colors'
-import { trimAddress } from '../../../utils/strings'
-import { useFetchFees } from '../../fees/feesHooks'
-import { getTransactionFees } from '../../fees/feesUtils'
-import { useBrowserNotifications } from '../../notifications/notificationsUtils'
+} from "../../../components/progress/ProgressHelpers";
+import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
+import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
+import {
+  usePaperTitle,
+  useSetActionRequired,
+  useSetPaperTitle,
+} from "../../../providers/TitleProviders";
+import { orangeLight } from "../../../theme/colors";
+import { trimAddress } from "../../../utils/strings";
+import { useFetchFees } from "../../fees/feesHooks";
+import { getTransactionFees } from "../../fees/feesUtils";
+import { useBrowserNotifications } from "../../notifications/notificationsUtils";
 import {
   ExpiredErrorDialog,
   HMSCountdown,
   ProcessingTimeWrapper,
   SubmitErrorDialog,
-} from '../../transactions/components/TransactionsHelpers'
-import { getPaymentLink, TxType } from '../../transactions/transactionsUtils'
-import { resetMint } from '../mintSlice'
-import { getLockAndMintParams } from '../mintUtils'
-import { AddressValidityMessage } from './MintHelpers'
+} from "../../transactions/components/TransactionsHelpers";
+import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
+import { resetMint } from "../mintSlice";
+import { getLockAndMintParams } from "../mintUtils";
+import { AddressValidityMessage } from "./MintHelpers";
 
 export type MintDepositToProps = {
   tx: GatewaySession;
@@ -176,10 +185,12 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
 
 type MintDepositConfirmationStatusProps = {
   tx: GatewaySession;
+  depositHash: string;
 };
 
 export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirmationStatusProps> = ({
   tx,
+  depositHash,
 }) => {
   const [, setTitle] = usePaperTitle();
   const {
@@ -191,7 +202,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
     lockConfirmations,
     lockTargetConfirmations,
     lockProcessingTime,
-  } = getLockAndMintParams(tx);
+  } = getLockAndMintParams(tx, depositHash);
 
   const { MainIcon } = lockChainConfig;
 
@@ -253,6 +264,7 @@ type MintDepositAcceptedStatusProps = {
   onReload?: () => void;
   submitting: boolean;
   submittingError: boolean;
+  depositHash: string;
 };
 
 export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedStatusProps> = ({
@@ -261,6 +273,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   onReload,
   submitting,
   submittingError,
+  depositHash,
 }) => {
   useSetPaperTitle("Submit");
   useSetActionRequired(true);
@@ -274,7 +287,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
     lockConfirmations,
     lockTargetConfirmations,
     mintChainConfig,
-  } = getLockAndMintParams(tx);
+  } = getLockAndMintParams(tx, depositHash);
 
   const notificationMessage = `${maxConfirmations(
     lockConfirmations,
@@ -337,12 +350,14 @@ type DestinationPendingStatusProps = {
   tx: GatewaySession;
   onSubmit?: () => void;
   submitting: boolean;
+  depositHash: string;
 };
 
 export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatusProps> = ({
   tx,
   onSubmit = () => {},
   submitting,
+  depositHash,
 }) => {
   const theme = useTheme();
   const {
@@ -353,7 +368,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
     lockTxLink,
     mintTxHash,
     mintChainConfig,
-  } = getLockAndMintParams(tx);
+  } = getLockAndMintParams(tx, depositHash);
 
   return (
     <>
@@ -391,10 +406,12 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 
 type MintCompletedStatusProps = {
   tx: GatewaySession;
+  depositHash: string;
 };
 
 export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = ({
   tx,
+  depositHash,
 }) => {
   useSetPaperTitle("Complete");
   const dispatch = useDispatch();
@@ -407,7 +424,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     lockTxAmount,
     mintTxLink,
     mintChainConfig,
-  } = getLockAndMintParams(tx);
+  } = getLockAndMintParams(tx, depositHash);
   const { fees, pending } = useFetchFees(
     lockCurrencyConfig.symbol,
     TxType.MINT

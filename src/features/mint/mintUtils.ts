@@ -1,5 +1,5 @@
 import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession } from "@renproject/ren-tx";
+import { GatewaySession, GatewayTransaction } from "@renproject/ren-tx";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -69,7 +69,17 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
   );
 };
 
-export const getLockAndMintParams = (tx: GatewaySession, txIndex = 0) => {
+export const depositSorter = (a: GatewayTransaction, b: GatewayTransaction) => {
+  const aConf = a.sourceTxConfs || 0;
+  const bConf = b.sourceTxConfs || 0;
+  // deposit with more confirmations is first
+  return aConf - bConf;
+};
+
+export const getLockAndMintParams = (
+  tx: GatewaySession,
+  depositSourceHash = ""
+) => {
   const networkConfig = getNetworkConfigByRentxName(tx.network);
   const lockCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const mintCurrencyConfig = getCurrencyConfig(
@@ -83,8 +93,15 @@ export const getLockAndMintParams = (tx: GatewaySession, txIndex = 0) => {
     tx.userAddress
   );
 
-  const transactions = Object.values(tx.transactions);
-  const transaction = transactions[txIndex];
+  const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
+  let transaction = null;
+  if (sortedDeposits.length) {
+    if (depositSourceHash) {
+      transaction = tx.transactions[depositSourceHash];
+    } else {
+      transaction = sortedDeposits[0];
+    }
+  }
   let mintTxHash: string = "";
   let mintTxLink: string = "";
   if (transaction && transaction.destTxHash) {
@@ -122,7 +139,7 @@ export const getLockAndMintParams = (tx: GatewaySession, txIndex = 0) => {
     status: TxEntryStatus.PENDING,
     phase: TxPhase.NONE,
     createdTimestamp: getTxCreationTimestamp(tx),
-    transactionsCount: transactions.length,
+    transactionsCount: sortedDeposits.length,
   };
   if (lockTxHash) {
     // it has lockTxHash - there is deposit
