@@ -89,9 +89,13 @@ import {
   DepositNextButton,
   DepositPrevButton,
 } from "../components/MultipleDepositsHelpers";
-import { useMintMachine, useMintTransactionPersistence } from "../mintHooks";
+import {
+  useDepositPagination,
+  useMintMachine,
+  useMintTransactionPersistence,
+} from "../mintHooks";
 import { resetMint } from "../mintSlice";
-import { depositSorter, getLockAndMintParams } from "../mintUtils";
+import { getLockAndMintParams } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -252,41 +256,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 type MintTransactionStatusProps = {
   tx: GatewaySession;
   onRestart: () => void;
-};
-
-const useDepositPagination = (
-  tx: GatewaySession,
-  depositSourceHash: string
-) => {
-  const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
-  console.log("recalc", tx.transactions);
-  const orderedHashes = sortedDeposits.map((deposit) => deposit.sourceTxHash);
-  const total = orderedHashes.length;
-  // FIXME: initial is "" at the begining
-  const initial = depositSourceHash || total > 0 ? orderedHashes[0] : "";
-  const [currentHash, setCurrentHash] = useState(initial);
-  console.log("currentHash", currentHash);
-
-  const currentIndex = orderedHashes.indexOf(currentHash);
-  const nextIndex =
-    total > 0 && currentIndex + 1 < total ? currentIndex + 1 : 0;
-  const nextHash = orderedHashes[nextIndex];
-  const prevIndex = total > 0 && currentIndex - 1 >= 0 ? currentIndex - 1 : 0;
-  const prevHash = orderedHashes[prevIndex];
-
-  const handleNext = useCallback(() => {
-    setCurrentHash(nextHash);
-  }, [nextHash]);
-  const handlePrev = useCallback(() => {
-    setCurrentHash(prevHash);
-  }, [prevHash]);
-  return {
-    currentHash,
-    currentIndex,
-    handleNext,
-    handlePrev,
-    total,
-  };
 };
 
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
@@ -475,7 +444,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   }
   console.log(state);
   // switch (state) {
-    switch (forceState) {
+  switch (forceState) {
     case "srcSettling":
       return (
         <MintDepositConfirmationStatus tx={tx} depositHash={depositHash} />

@@ -5,7 +5,7 @@ import {
   mintMachine,
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { db } from "../../services/database/database";
@@ -15,6 +15,7 @@ import { lockChainMap, mintChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
 import { updateTransaction } from "../transactions/transactionsSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
+import { depositSorter } from "./mintUtils";
 
 export const useMintMachine = (mintTransaction: GatewaySession) => {
   const tx = cloneTx(mintTransaction);
@@ -83,6 +84,7 @@ export const shouldUpdateMintTx = (
   }
   return stateIndex > dbStateIndex;
 };
+
 export const useMintTransactionPersistence = (
   tx: GatewaySession | DbGatewaySession,
   state: DepositMachineSchemaState
@@ -106,4 +108,39 @@ export const useMintTransactionPersistence = (
         console.warn("Mint Tx synchronization failed", err);
       });
   }, [dispatch, tx, state]);
+};
+
+export const useDepositPagination = (
+  tx: GatewaySession,
+  depositSourceHash = ""
+) => {
+  const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
+  console.log("recalc", tx.transactions);
+  const orderedHashes = sortedDeposits.map((deposit) => deposit.sourceTxHash);
+  const total = orderedHashes.length;
+  // FIXME: initial is "" at the begining
+  const initial = depositSourceHash || total > 0 ? orderedHashes[0] : "";
+  const [currentHash, setCurrentHash] = useState(initial);
+  console.log("currentHash", currentHash);
+
+  const currentIndex = orderedHashes.indexOf(currentHash);
+  const nextIndex =
+    total > 0 && currentIndex + 1 < total ? currentIndex + 1 : 0;
+  const nextHash = orderedHashes[nextIndex];
+  const prevIndex = total > 0 && currentIndex - 1 >= 0 ? currentIndex - 1 : 0;
+  const prevHash = orderedHashes[prevIndex];
+
+  const handleNext = useCallback(() => {
+    setCurrentHash(nextHash);
+  }, [nextHash]);
+  const handlePrev = useCallback(() => {
+    setCurrentHash(prevHash);
+  }, [prevHash]);
+  return {
+    currentHash,
+    currentIndex,
+    handleNext,
+    handlePrev,
+    total,
+  };
 };

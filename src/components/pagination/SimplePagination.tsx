@@ -1,12 +1,17 @@
-import { Box, TablePagination, TablePaginationProps, useTheme, } from '@material-ui/core'
-import IconButton from '@material-ui/core/IconButton'
-import { makeStyles } from '@material-ui/core/styles'
-import FirstPageIcon from '@material-ui/icons/FirstPage'
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
-import LastPageIcon from '@material-ui/icons/LastPage'
-import React, { FunctionComponent } from 'react'
-import { NavigateNextIcon, NavigatePrevIcon } from '../icons/RenIcons'
+import {
+  Box,
+  TablePagination,
+  TablePaginationProps,
+  useTheme,
+} from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "@material-ui/core/styles";
+import FirstPageIcon from "@material-ui/icons/FirstPage";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import LastPageIcon from "@material-ui/icons/LastPage";
+import React, { FunctionComponent } from "react";
+import { NavigateNextIcon, NavigatePrevIcon } from "../icons/RenIcons";
 
 const useSimplePaginationActionsStyles = makeStyles((theme) => ({
   root: {
@@ -203,7 +208,7 @@ const simplestDisplayedRows = ({
 }: {
   count: number;
   page: number;
-}) => `${page} of ${count}`;
+}) => `${page + 1} of ${count}`;
 
 const useSimplestPaginationStyles = makeStyles((theme) => ({
   toolbar: {

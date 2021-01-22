@@ -1,28 +1,37 @@
-import { Chip, styled, Tooltip, Typography } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { SmallActionButton } from '../../../components/buttons/Buttons'
-import { CompletedIcon, EmptyIcon, TooltipIcon, } from '../../../components/icons/RenIcons'
-import { Link } from '../../../components/links/Links'
-import { SimplestPagination, } from '../../../components/pagination/SimplePagination'
-import { TransactionStatusIndicator } from '../../../components/progress/ProgressHelpers'
-import { useTransactionEntryStyles, } from '../../../components/transactions/TransactionsGrid'
-import { Debug } from '../../../components/utils/Debug'
-import { paths } from '../../../pages/routes'
-import { getFormattedDateTime } from '../../../utils/dates'
-import { TransactionItemProps } from '../../transactions/components/TransactionsHelpers'
-import { setTxHistoryOpened } from '../../transactions/transactionsSlice'
+import { Chip, styled, Tooltip, Typography } from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { SmallActionButton } from "../../../components/buttons/Buttons";
+import {
+  CompletedIcon,
+  EmptyIcon,
+  TooltipIcon,
+} from "../../../components/icons/RenIcons";
+import { Link } from "../../../components/links/Links";
+import { SimplestPagination } from "../../../components/pagination/SimplePagination";
+import { TransactionStatusIndicator } from "../../../components/progress/ProgressHelpers";
+import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
+import { Debug } from "../../../components/utils/Debug";
+import { paths } from "../../../pages/routes";
+import { getFormattedDateTime } from "../../../utils/dates";
+import { TransactionItemProps } from "../../transactions/components/TransactionsHelpers";
+import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   isTransactionCompleted,
   TxEntryStatus,
   TxPhase,
-} from '../../transactions/transactionsUtils'
-import { setChain } from '../../wallet/walletSlice'
-import { DepositMachineSchemaState, useMintMachine, useMintTransactionPersistence, } from '../mintHooks'
-import { resetMint } from '../mintSlice'
-import { getLockAndMintParams, isMintTransactionCompleted } from '../mintUtils'
+} from "../../transactions/transactionsUtils";
+import { setChain } from "../../wallet/walletSlice";
+import {
+  DepositMachineSchemaState,
+  useDepositPagination,
+  useMintMachine,
+  useMintTransactionPersistence,
+} from "../mintHooks";
+import { resetMint } from "../mintSlice";
+import { getLockAndMintParams, isMintTransactionCompleted } from "../mintUtils";
 
 export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
@@ -84,23 +93,33 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   const dispatch = useDispatch();
   const history = useHistory();
   const styles = useTransactionEntryStyles();
+
+  const {
+    handleNext,
+    handlePrev,
+    currentIndex,
+    currentHash,
+    total,
+  } = useDepositPagination(tx);
+
   const {
     lockChainConfig,
     lockConfirmations,
     lockTargetConfirmations,
     lockTxLink,
+    lockTxAmount,
     mintCurrencyConfig,
     mintChainConfig,
     mintTxLink,
     meta: { status, phase, createdTimestamp, transactionsCount },
-  } = getLockAndMintParams(tx);
+  } = getLockAndMintParams(tx, currentHash);
 
   const handleRestart = useCallback(() => {
     const {
       lockCurrencyConfig,
       mintChainConfig,
       suggestedAmount,
-    } = getLockAndMintParams(tx);
+    } = getLockAndMintParams(tx, currentHash);
     dispatch(setTxHistoryOpened(false));
     dispatch(
       resetMint({
@@ -125,15 +144,27 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     StatusIcon = mintChainConfig.Icon;
   }
 
-  const handlePageChange = useCallback(() => {}, []);
-  const params = getLockAndMintParams(tx);
+  const handlePageChange = useCallback(
+    (event: any, newPage: number) => {
+      console.log("pge");
+      newPage > currentIndex ? handleNext() : handlePrev();
+    },
+    [currentIndex, handleNext, handlePrev]
+  );
+
+  const params = getLockAndMintParams(tx, currentHash);
   return (
     <>
       <Debug
         wrapper
-        it={{ tx, params, completed: isTransactionCompleted(tx) }}
+        it={{
+          currentHash,
+          currentIndex,
+          tx,
+          params,
+          completed: isTransactionCompleted(tx),
+        }}
       />
-      <Debug disable it={{ meta: params.meta }} />
       <div className={styles.root}>
         <div className={styles.details}>
           <div className={styles.datetime}>
@@ -148,9 +179,9 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                 />
                 <SimplestPagination
                   className={styles.multiplePagination}
-                  count={transactionsCount}
+                  count={total}
                   rowsPerPage={1}
-                  page={1}
+                  page={currentIndex}
                   onChangePage={handlePageChange}
                 />
               </div>
@@ -158,8 +189,8 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
           </div>
           <div className={styles.description}>
             <Typography variant="body2" className={styles.title}>
-              Mint {tx.targetAmount} {mintCurrencyConfig.short} on{" "}
-              {mintChainConfig.full}
+              Mint {lockTxAmount || tx.targetAmount} {mintCurrencyConfig.short}{" "}
+              on {mintChainConfig.full}
             </Typography>
           </div>
           <div className={styles.links}>
