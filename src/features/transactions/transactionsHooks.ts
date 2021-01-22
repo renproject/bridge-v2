@@ -4,17 +4,22 @@ import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { paths } from "../../pages/routes";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { useNotifications } from "../../providers/Notifications";
 import { db } from "../../services/database/database";
 import {
   BridgeCurrency,
   getCurrencyConfig,
-  isTestNetwork,
+  isMainnetNetwork,
+  isTestnetNetwork,
 } from "../../utils/assetConfigs";
 import { $renNetwork, setRenNetwork } from "../network/networkSlice";
-import { $wallet } from "../wallet/walletSlice";
-import { removeTransaction } from "./transactionsSlice";
+import { useSelectedChainWallet } from "../wallet/walletHooks";
+import { $multiwalletChain } from "../wallet/walletSlice";
+import {
+  $currentTxId,
+  removeTransaction,
+  setCurrentTxId,
+} from "./transactionsSlice";
 import { TxType } from "./transactionsUtils";
 
 export const useTransactionDeletion = (tx: GatewaySession) => {
@@ -45,17 +50,31 @@ export const useTransactionDeletion = (tx: GatewaySession) => {
 
 export const useRenNetworkTracker = (currency: BridgeCurrency) => {
   const dispatch = useDispatch();
-  const { chain } = useSelector($wallet);
+  const renChain = useSelector($multiwalletChain);
   const renNetwork = useSelector($renNetwork);
   useEffect(() => {
     const currencyConfig = getCurrencyConfig(currency);
-    // check if current network is testnet // TODO: do we need to check chain?
-    if (isTestNetwork(renNetwork)) {
-      const testNetwork =
-        currencyConfig.testNetworkVersion || RenNetwork.Testnet;
-      if (renNetwork !== testNetwork) {
-        dispatch(setRenNetwork(testNetwork));
-      }
+    const networkMapping = currencyConfig.networkMappings[renChain];
+    let newNetwork: RenNetwork | null = null;
+    if (isTestnetNetwork(renNetwork)) {
+      newNetwork = networkMapping.testnet;
+    } else if (isMainnetNetwork(renNetwork)) {
+      newNetwork = networkMapping.mainnet;
+    } else {
+      console.error(`Unknown network ${newNetwork}`);
     }
-  }, [dispatch, chain, currency, renNetwork]);
+    if (newNetwork && renNetwork !== newNetwork) {
+      dispatch(setRenNetwork(newNetwork));
+    }
+  }, [dispatch, renChain, currency, renNetwork]);
+};
+
+export const useSetCurrentTxId = (id: string) => {
+  const dispatch = useDispatch();
+  const currentId = useSelector($currentTxId);
+  useEffect(() => {
+    if (id !== currentId) {
+      dispatch(setCurrentTxId(id));
+    }
+  }, [dispatch, id, currentId]);
 };

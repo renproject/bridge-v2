@@ -9,7 +9,6 @@ import { PaperContent } from '../../../components/layout/Paper'
 import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
 import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
 import { AssetInfo } from '../../../components/typography/TypographyHelpers'
-import { useSelectedChainWallet } from '../../../providers/multiwallet/multiwalletHooks'
 import {
   getCurrencyConfig,
   supportedLockCurrencies,
@@ -20,6 +19,7 @@ import { useFetchFees } from '../../fees/feesHooks'
 import { getTransactionFees } from '../../fees/feesUtils'
 import { useRenNetworkTracker } from '../../transactions/transactionsHooks'
 import { isMinimalAmount, TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
+import { useSelectedChainWallet } from '../../wallet/walletHooks'
 import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
 import { $mint, $mintUsdAmount, setMintAmount, setMintCurrency, } from '../mintSlice'
 

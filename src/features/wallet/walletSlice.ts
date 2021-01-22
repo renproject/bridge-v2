@@ -15,12 +15,18 @@ export type AuthUser = null | {
   uid: string;
 };
 
+export type AuthSignatures = {
+  signature: string;
+  rawSignature: string;
+};
+
 type WalletState = {
   chain: BridgeChain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
-  signatures: { signature: string; rawSignature: string };
+  signatures: AuthSignatures;
   user: AuthUser;
+  authRequired: boolean;
 };
 
 let initialState: WalletState = {
@@ -32,6 +38,7 @@ let initialState: WalletState = {
     rawSignature: "",
   },
   user: null,
+  authRequired: false,
 };
 
 const slice = createSlice({
@@ -60,11 +67,11 @@ const slice = createSlice({
     resetBalances(state) {
       state.balances = [];
     },
-    setSignatures(
-      state,
-      action: PayloadAction<{ signature: string; rawSignature: string }>
-    ) {
+    setSignatures(state, action: PayloadAction<AuthSignatures>) {
       state.signatures = action.payload;
+    },
+    setAuthRequired(state, action: PayloadAction<boolean>) {
+      state.authRequired = action.payload;
     },
   },
 });
@@ -76,6 +83,7 @@ export const {
   addOrUpdateBalance,
   resetBalances,
   setSignatures,
+  setAuthRequired,
 } = slice.actions;
 
 export const walletReducer = slice.reducer;
@@ -95,3 +103,7 @@ export const $walletSignatures = createSelector(
   (wallet) => wallet.signatures
 );
 export const $walletUser = createSelector($wallet, (wallet) => wallet.user);
+export const $authRequired = createSelector(
+  $wallet,
+  (wallet) => wallet.authRequired
+);

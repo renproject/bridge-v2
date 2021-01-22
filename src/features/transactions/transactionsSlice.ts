@@ -12,12 +12,14 @@ type TransactionsState = {
   txs: Array<BridgeTransaction>;
   txsPending: boolean;
   txHistoryOpened: boolean;
+  currentTxId: string;
 };
 
 let initialState: TransactionsState = {
   txs: [],
   txsPending: false,
   txHistoryOpened: false,
+  currentTxId: "",
 };
 
 const slice = createSlice({
@@ -26,6 +28,9 @@ const slice = createSlice({
   reducers: {
     setTxHistoryOpened(state, action: PayloadAction<boolean>) {
       state.txHistoryOpened = action.payload;
+    },
+    setCurrentTxId(state, action: PayloadAction<string>) {
+      state.currentTxId = action.payload;
     },
     setTxsPending(state, action: PayloadAction<boolean>) {
       state.txsPending = action.payload;
@@ -47,7 +52,6 @@ const slice = createSlice({
       }
     },
     updateTransactionById(
-      // TODO: optional
       state,
       action: PayloadAction<{ id: string; transaction: BridgeTransaction }>
     ) {
@@ -67,6 +71,7 @@ const slice = createSlice({
 
 export const {
   setTxHistoryOpened,
+  setCurrentTxId,
   setTxsPending,
   setTransactions,
   addTransaction,
@@ -82,7 +87,10 @@ export const $txHistoryOpened = createSelector(
   $transactionsData,
   (transactions) => transactions.txHistoryOpened
 );
-
+export const $currentTxId = createSelector(
+  $transactionsData,
+  (transactions) => transactions.currentTxId
+);
 export const $networkTransactions = createSelector(
   $transactionsData,
   $renNetwork,
@@ -94,6 +102,8 @@ export const $orderedTransactions = createSelector(
   $networkTransactions,
   (txs) => [...txs].sort(txCompletedSorter)
 );
+
+//TODO: move this one to separate file to simplify up store dependencies (chunks)
 export const $transactionsNeedsAction = createSelector(
   $networkTransactions,
   (txs) => {

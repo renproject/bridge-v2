@@ -12,12 +12,12 @@ import {
   ZecFullIcon,
 } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
-import { MainLayout } from "../components/layout/MainLayout";
+import { MobileLayout } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
 import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
-import { usePageTitle } from "../providers/TitleProviders";
 import { useNotifications } from "../providers/Notifications";
+import { usePageTitle } from "../providers/TitleProviders";
 import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
@@ -96,7 +96,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   }, [history]);
 
   return (
-    <MainLayout variant="intro">
+    <MobileLayout withBackground>
       <Container maxWidth="sm">
         <Typography variant="h1" className={styles.heading}>
           Transfer assets between blockchains
@@ -144,6 +144,6 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           </div>
         </NarrowCenteredWrapper>
       </Container>
-    </MainLayout>
+    </MobileLayout>
   );
 };

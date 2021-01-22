@@ -1,10 +1,5 @@
 import { Chip, Typography } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { SmallActionButton } from "../../../components/buttons/Buttons";
@@ -18,7 +13,6 @@ import { getFormattedDateTime } from "../../../utils/dates";
 import { TransactionItemProps } from "../../transactions/components/TransactionsHelpers";
 import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
 import {
-  cloneTx,
   createTxQueryString,
   isTransactionCompleted,
   TxEntryStatus,
@@ -36,9 +30,10 @@ import {
 
 export const ReleaseTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
+  isActive,
 }) => {
-  if (isReleaseTransactionCompleted(tx)) {
-    return <ReleaseTransactionEntry tx={tx} />;
+  if (isReleaseTransactionCompleted(tx) || isActive) {
+    return <ReleaseTransactionEntry tx={tx} isActive={isActive} />;
   }
   return <ReleaseTransactionEntryMachine tx={tx} />;
 };
@@ -48,8 +43,7 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [initialTx] = useState(cloneTx(tx)); // TODO: release machine is mutating tx
-  const [current, , service] = useBurnMachine(initialTx);
+  const [current, , service] = useBurnMachine(tx);
   useEffect(
     () => () => {
       service.stop();
@@ -57,7 +51,10 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
     [service]
   );
 
-  useReleaseTransactionPersistence(tx, current.value as BurnMachineSchemaState);
+  useReleaseTransactionPersistence(
+    current.context.tx,
+    current.value as BurnMachineSchemaState
+  );
 
   const handleFinish = useCallback(() => {
     history.push({
@@ -80,6 +77,7 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
 export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
   onAction,
+  isActive,
 }) => {
   const styles = useTransactionEntryStyles();
   const {
@@ -151,7 +149,12 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
           </div>
         </div>
         <div className={styles.actions}>
-          {status === TxEntryStatus.ACTION_REQUIRED && (
+          {isActive && (
+            <Typography color="primary" variant="body2">
+              Currently viewing
+            </Typography>
+          )}
+          {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
             <SmallActionButton onClick={onAction}>
               Finish release
             </SmallActionButton>

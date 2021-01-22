@@ -1,10 +1,5 @@
 import { Chip, Tooltip, Typography } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { SmallActionButton } from "../../../components/buttons/Buttons";
@@ -22,7 +17,6 @@ import { getFormattedDateTime } from "../../../utils/dates";
 import { TransactionItemProps } from "../../transactions/components/TransactionsHelpers";
 import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
 import {
-  cloneTx,
   createTxQueryString,
   isTransactionCompleted,
   TxEntryStatus,
@@ -39,9 +33,10 @@ import { getLockAndMintParams, isMintTransactionCompleted } from "../mintUtils";
 
 export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
+  isActive,
 }) => {
-  if (isMintTransactionCompleted(tx)) {
-    return <MintTransactionEntry tx={tx} />;
+  if (isMintTransactionCompleted(tx) || isActive) {
+    return <MintTransactionEntry tx={tx} isActive={isActive} />;
   }
   return <MintTransactionEntryMachine tx={tx} />;
 };
@@ -51,8 +46,7 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [initialTx] = useState(cloneTx(tx)); // TODO: mint machine is mutating tx
-  const [current, , service] = useMintMachine(initialTx);
+  const [current, , service] = useMintMachine(tx);
   useEffect(
     () => () => {
       service.stop();
@@ -109,6 +103,7 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
 
 export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
+  isActive,
   onAction,
   onRestart,
 }) => {
@@ -210,12 +205,18 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
           </div>
         </div>
         <div className={styles.actions}>
-          {status === TxEntryStatus.ACTION_REQUIRED && (
+          {isActive && (
+            <Typography color="primary" variant="body2">
+              Currently viewing
+            </Typography>
+          )}
+          {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
             <SmallActionButton onClick={onAction}>
               {phase === TxPhase.LOCK ? "Continue" : "Finish"} mint
             </SmallActionButton>
           )}
-          {status === TxEntryStatus.PENDING &&
+          {!isActive &&
+            status === TxEntryStatus.PENDING &&
             lockConfirmations < lockTargetConfirmations && (
               <Typography color="primary" variant="body2">
                 {lockConfirmations}/{lockTargetConfirmations} Confirmations

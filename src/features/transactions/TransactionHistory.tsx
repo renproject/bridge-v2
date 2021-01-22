@@ -30,9 +30,7 @@ import {
   TransactionsPaginationWrapper,
   TransactionsStatusHeader,
 } from "../../components/transactions/TransactionsGrid";
-import { WalletStatus } from "../../components/utils/types";
 import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../services/database/database";
 import {
   bridgeChainToRenChain,
@@ -43,14 +41,17 @@ import { isFirstVowel } from "../../utils/strings";
 import { MintTransactionEntryResolver } from "../mint/components/MintHistoryHelpers";
 import { ReleaseTransactionEntryResolver } from "../release/components/ReleaseHistoryHelpers";
 import {
+  useAuthentication,
+  useSelectedChainWallet,
+} from "../wallet/walletHooks";
+import {
   $wallet,
-  $walletSignatures,
   setChain,
-  setUser,
   setWalletPickerOpened,
 } from "../wallet/walletSlice";
 import { TransactionHistoryDialog } from "./components/TransactionHistoryHelpers";
 import {
+  $currentTxId,
   $orderedTransactions,
   $transactionsData,
   $txHistoryOpened,
@@ -63,30 +64,22 @@ import { isTransactionCompleted, TxType } from "./transactionsUtils";
 
 export const TransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
-  const { account, status } = useSelectedChainWallet();
-  const walletConnected = status === WalletStatus.CONNECTED;
+  const { account, walletConnected } = useSelectedChainWallet();
+  const { isAuthenticated } = useAuthentication();
   const { chain, user } = useSelector($wallet);
   const allTransactions = useSelector($orderedTransactions);
   const { txsPending } = useSelector($transactionsData);
-  const { signature, rawSignature } = useSelector($walletSignatures);
   const opened = useSelector($txHistoryOpened);
+  const activeTxId = useSelector($currentTxId);
 
   useEffect(() => {
-    if (account && signature && rawSignature) {
-      dispatch(setTxsPending(true));
-      db.getUser(account.toLowerCase(), {
-        signature,
-        rawSignature,
-      })
-        .then((userData) => {
-          dispatch(setUser(userData));
-        })
-        .catch(console.error);
+    if (!walletConnected) {
+      return;
     }
-  }, [dispatch, account, signature, rawSignature]);
-
-  useEffect(() => {
-    if (user) {
+    if (!isAuthenticated) {
+      dispatch(setTxsPending(true));
+    }
+    if (isAuthenticated) {
       db.getTxs(account)
         .then((txsData) => {
           // Only load txs for the correct chain, in case the address is valid on multiple chains
@@ -105,7 +98,7 @@ export const TransactionHistory: FunctionComponent = () => {
         })
         .catch(console.error);
     }
-  }, [dispatch, user, account, chain]);
+  }, [dispatch, walletConnected, isAuthenticated, user, account, chain]);
 
   const chainConfig = getChainConfig(chain);
   const handleWalletPickerOpen = useCallback(() => {
@@ -226,14 +219,20 @@ export const TransactionHistory: FunctionComponent = () => {
                 return (
                   <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
                     {showHeader && Header}
-                    <MintTransactionEntryResolver tx={tx} />
+                    <MintTransactionEntryResolver
+                      tx={tx}
+                      isActive={activeTxId === tx.id}
+                    />
                   </ShowEntry>
                 );
               } else {
                 return (
                   <ShowEntry when={indexIsInCurrentPage} key={tx.id}>
                     {showHeader && Header}
-                    <ReleaseTransactionEntryResolver tx={tx} />
+                    <ReleaseTransactionEntryResolver
+                      tx={tx}
+                      isActive={activeTxId === tx.id}
+                    />
                   </ShowEntry>
                 );
               }
@@ -242,7 +241,7 @@ export const TransactionHistory: FunctionComponent = () => {
           {allTransactions.length === 0 && (
             <PaperSpacerWrapper>
               <Typography variant="body2" align="center" color="textSecondary">
-                You have no transactions...
+                You have no transactions with this account.
               </Typography>
             </PaperSpacerWrapper>
           )}

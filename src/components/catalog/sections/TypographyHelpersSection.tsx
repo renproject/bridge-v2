@@ -28,7 +28,14 @@ export const TypographyHelpersSection: FunctionComponent = () => {
           label="Address"
           value={<MiddleEllipsisText>{address}</MiddleEllipsisText>}
         />
-
+        <LabelWithValue
+          label="Recipient address"
+          value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
+        />
+        <LabelWithValue
+          label="Recipient address"
+          value={<MiddleEllipsisText>{address}</MiddleEllipsisText>}
+        />
         <Box mb={1}>
           <Divider />
         </Box>

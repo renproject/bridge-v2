@@ -29,9 +29,7 @@ import {
   MiddleEllipsisText,
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
-import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { db } from "../../../services/database/database";
 import { DbMeta } from "../../../services/database/firebase/firebase";
 import {
@@ -45,13 +43,20 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { addTransaction } from "../../transactions/transactionsSlice";
+import {
+  addTransaction,
+  setCurrentTxId,
+} from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
+import {
+  useAuthRequired,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import {
   $multiwalletChain,
   $wallet,
@@ -71,10 +76,10 @@ import {
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
+  useAuthRequired(true);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { status, account } = useSelectedChainWallet();
-  const walletConnected = status === WalletStatus.CONNECTED;
+  const { account, walletConnected } = useSelectedChainWallet();
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
   const network = useSelector($renNetwork);
@@ -136,6 +141,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       const meta: DbMeta = { state: releaseTxStateUpdateSequence[0] };
       const dbTx = { ...tx, meta };
       db.addTx(dbTx, account, signature).then(() => {
+        dispatch(setCurrentTxId(tx.id));
         dispatch(addTransaction(tx));
         history.push({
           pathname: paths.RELEASE_TRANSACTION,
@@ -206,7 +212,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <LabelWithValue
           label="To"
           labelTooltip={releaseTooltips.to}
-          value={<MiddleEllipsisText>{address}</MiddleEllipsisText>}
+          value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>

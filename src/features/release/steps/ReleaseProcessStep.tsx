@@ -34,7 +34,6 @@ import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { paths } from "../../../pages/routes";
-import { useSelectedChainWallet } from "../../../providers/multiwallet/multiwalletHooks";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
@@ -47,13 +46,17 @@ import {
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
-import { useTransactionDeletion } from "../../transactions/transactionsHooks";
+import { useSetCurrentTxId, useTransactionDeletion } from '../../transactions/transactionsHooks'
 import {
   createTxQueryString,
   getTxPageTitle,
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
+import {
+  useAuthRequired,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import {
   $chain,
   setChain,
@@ -69,10 +72,11 @@ import {
 } from "../releaseHooks";
 import { getBurnAndReleaseParams } from "../releaseUtils";
 
-export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
-  props
-) => {
-  const { history, location } = props;
+export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
+  history,
+  location,
+}) => {
+  useAuthRequired(true);
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
@@ -81,6 +85,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  useSetCurrentTxId(tx.id);
 
   usePageTitle(getTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
@@ -209,7 +214,11 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = (
             <LabelWithValue label="From" value={burnChainConfig.full} />
             <LabelWithValue
               label="To"
-              value={<MiddleEllipsisText>{tx.destAddress}</MiddleEllipsisText>}
+              value={
+                <MiddleEllipsisText hoverable>
+                  {tx.destAddress}
+                </MiddleEllipsisText>
+              }
             />
             <SpacedDivider />
             <TransactionFees

@@ -205,16 +205,59 @@ export const MarkText: FunctionComponent<MarkTextProps> = ({
   return <span className={className}>{children}</span>;
 };
 
+export const useMiddleEllipsisTextStyles = makeStyles({
+  root: {
+    // width: "100%",
+    "&:hover $hideForHover": {
+      display: "none",
+    },
+    "&:hover $showForHover": {
+      display: "block",
+    },
+  },
+  hideForHover: {
+    maxWidth: "100%",
+    display: "block",
+  },
+  showForHover: {
+    display: "none",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    paddingLeft: 15,
+  },
+});
+
 const MiddleEllipsisWrapper = styled("div")({
   maxWidth: "100%",
   display: "block",
 });
-export const MiddleEllipsisText: FunctionComponent = ({ children }) => {
+
+type MiddleEllipsisTextProps = {
+  hoverable?: boolean;
+};
+export const MiddleEllipsisText: FunctionComponent<MiddleEllipsisTextProps> = ({
+  hoverable,
+  children,
+}) => {
+  const styles = useMiddleEllipsisTextStyles();
   return (
     <MiddleEllipsisWrapper>
-      <MiddleEllipsis>
-        <span>{children}</span>
-      </MiddleEllipsis>
+      {!hoverable && (
+        <MiddleEllipsis>
+          <span>{children}</span>
+        </MiddleEllipsis>
+      )}
+      {hoverable && (
+        <div className={styles.root}>
+          <div className={styles.showForHover}>{children}</div>
+          <div className={styles.hideForHover}>
+            {" "}
+            <MiddleEllipsis>
+              <span>{children}</span>
+            </MiddleEllipsis>
+          </div>
+        </div>
+      )}
     </MiddleEllipsisWrapper>
   );
 };

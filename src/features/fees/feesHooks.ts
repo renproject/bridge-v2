@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDebounce } from "react-use";
-import { useWallet } from "../../providers/multiwallet/multiwalletHooks";
 import {
   getBurnAndReleaseFees,
   getLockAndMintFees,
@@ -9,6 +8,7 @@ import {
 import { BridgeCurrency } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
 import { TxType } from "../transactions/transactionsUtils";
+import { useWallet } from "../wallet/walletHooks";
 import { $multiwalletChain } from "../wallet/walletSlice";
 import { isSupportedByCurrentNetwork } from "../wallet/walletUtils";
 import { SimpleFee } from "./feesUtils";
@@ -33,12 +33,13 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
       if (
         provider &&
         walletConnected &&
-        isSupportedByCurrentNetwork(currency, renNetwork)
+        isSupportedByCurrentNetwork(currency, renNetwork, multiwalletChain)
       ) {
         if (feesCache[cacheKey]) {
           setFees(feesCache[cacheKey]);
           setPending(false);
         } else {
+          setPending(true);
           const fetchFees =
             txType === TxType.MINT ? getLockAndMintFees : getBurnAndReleaseFees;
           fetchFees(currency, provider, renNetwork, multiwalletChain)

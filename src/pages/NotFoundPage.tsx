@@ -2,7 +2,7 @@ import { Container, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
 import { RouteComponentProps } from "react-router";
-import { MainLayout } from "../components/layout/MainLayout";
+import { MobileLayout } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
 import { usePageTitle } from "../providers/TitleProviders";
 
@@ -35,11 +35,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
-  usePageTitle("About");
+  usePageTitle("Not Found");
   const styles = useStyles();
 
   return (
-    <MainLayout variant="about">
+    <MobileLayout>
       <Container maxWidth="md" className={styles.root}>
         <Typography
           align="center"
@@ -79,6 +79,6 @@ export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
           if you believe there is an issue
         </Typography>
       </Container>
-    </MainLayout>
+    </MobileLayout>
   );
 };

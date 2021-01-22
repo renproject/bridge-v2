@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { AppLoader } from "./components/progress/AppLoader";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
 import { WelcomePage } from "./pages/WelcomePage";
@@ -18,20 +19,7 @@ const mainPagePaths = [
 function App() {
   return (
     <Router>
-      <Suspense
-        fallback={
-          <div id="root">
-            <div className="loader">
-              <div className="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-              </div>
-            </div>
-          </div>
-        }
-      >
+      <Suspense fallback={<AppLoader />}>
         <Switch>
           <Route exact path={paths.WELCOME} component={WelcomePage} />
           <Route exact path={paths.CATALOG} component={CatalogPage} />

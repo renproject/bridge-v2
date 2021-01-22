@@ -2,15 +2,16 @@ import { RenNetwork } from "@renproject/interfaces";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useDebounce } from "react-use";
-import { useSelectedChainWallet } from "../../providers/multiwallet/multiwalletHooks";
 import { mintChainClassMap } from "../../services/rentx";
 import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
+  RenChain,
   toReleasedCurrency,
 } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
+import { useSelectedChainWallet } from "./walletHooks";
 import {
   $chain,
   addOrUpdateBalance,
@@ -20,11 +21,15 @@ import {
 
 export const isSupportedByCurrentNetwork = (
   currency: BridgeCurrency,
-  renNetwork: RenNetwork
+  renNetwork: RenNetwork,
+  chain: RenChain
 ) => {
   const currencyConfig = getCurrencyConfig(currency);
-  if (currencyConfig.networks) {
-    return currencyConfig.networks.indexOf(renNetwork) > -1;
+  if (currencyConfig.networkMappings) {
+    const chainMapping = currencyConfig.networkMappings[chain];
+    return (
+      chainMapping.testnet === renNetwork || chainMapping.mainnet === renNetwork
+    );
   }
   return true;
 };
@@ -49,7 +54,11 @@ export const useFetchBalances = (currencySymbols: Array<BridgeCurrency>) => {
         provider &&
         account &&
         walletConnected &&
-        isSupportedByCurrentNetwork(currency, renNetwork)
+        isSupportedByCurrentNetwork(
+          currency,
+          renNetwork,
+          bridgeChainConfig.rentxName
+        )
       ) {
         const chain = Chain(provider, renNetwork);
         return chain
@@ -62,7 +71,14 @@ export const useFetchBalances = (currencySymbols: Array<BridgeCurrency>) => {
         return Promise.resolve(null);
       }
     },
-    [Chain, account, renNetwork, provider, walletConnected]
+    [
+      Chain,
+      account,
+      renNetwork,
+      provider,
+      walletConnected,
+      bridgeChainConfig.rentxName,
+    ]
   );
 
   useDebounce(

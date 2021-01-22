@@ -14,8 +14,10 @@ import { getRenJs } from "../../services/renJs";
 import { lockChainMap, mintChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
 import { updateTransaction } from "../transactions/transactionsSlice";
+import { cloneTx } from "../transactions/transactionsUtils";
 
 export const useMintMachine = (mintTransaction: GatewaySession) => {
+  const tx = cloneTx(mintTransaction);
   const { enabledChains } = useMultiwallet();
   const network = useSelector($renNetwork);
   const providers = Object.entries(enabledChains).reduce(
@@ -27,7 +29,7 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
   );
   return useMachine(mintMachine, {
     context: {
-      tx: mintTransaction,
+      tx,
       providers,
       sdk: getRenJs(network),
       fromChainMap: lockChainMap,
