@@ -153,7 +153,6 @@ export type TransactionItemProps = {
   tx: GatewaySession;
   isActive?: boolean;
   onAction?: () => void;
-  onRestart?: () => void;
 };
 
 type HMSCountdownProps = { milliseconds: number };

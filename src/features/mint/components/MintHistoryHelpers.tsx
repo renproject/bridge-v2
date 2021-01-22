@@ -66,6 +66,35 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     dispatch(setTxHistoryOpened(false));
   }, [dispatch, history, tx]);
 
+  return (
+    <MintTransactionEntry tx={current.context.tx} onAction={handleFinish} />
+  );
+};
+
+const WarningChip = styled(Chip)(({ theme }) => ({
+  color: theme.customColors.alertWarning,
+  backgroundColor: theme.customColors.alertWarningBackground,
+}));
+
+export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
+  tx,
+  isActive,
+  onAction,
+}) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const styles = useTransactionEntryStyles();
+  const {
+    lockChainConfig,
+    lockConfirmations,
+    lockTargetConfirmations,
+    lockTxLink,
+    mintCurrencyConfig,
+    mintChainConfig,
+    mintTxLink,
+    meta: { status, phase, createdTimestamp, transactionsCount },
+  } = getLockAndMintParams(tx);
+
   const handleRestart = useCallback(() => {
     const {
       lockCurrencyConfig,
@@ -84,38 +113,6 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
       pathname: paths.MINT,
     });
   }, [dispatch, history, tx]);
-
-  return (
-    <MintTransactionEntry
-      tx={current.context.tx}
-      onAction={handleFinish}
-      onRestart={handleRestart}
-    />
-  );
-};
-
-const WarningChip = styled(Chip)(({ theme }) => ({
-  color: theme.customColors.alertWarning,
-  backgroundColor: theme.customColors.alertWarningBackground,
-}));
-
-export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
-  tx,
-  isActive,
-  onAction,
-  onRestart,
-}) => {
-  const styles = useTransactionEntryStyles();
-  const {
-    lockChainConfig,
-    lockConfirmations,
-    lockTargetConfirmations,
-    lockTxLink,
-    mintCurrencyConfig,
-    mintChainConfig,
-    mintTxLink,
-    meta: { status, phase, createdTimestamp, transactionsCount },
-  } = getLockAndMintParams(tx);
 
   const { date, time } = getFormattedDateTime(createdTimestamp);
 
@@ -200,7 +197,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
                   color="primary"
                   underline="hover"
                   className={styles.link}
-                  onClick={onRestart}
+                  onClick={handleRestart}
                 >
                   Restart transaction
                 </Link>
