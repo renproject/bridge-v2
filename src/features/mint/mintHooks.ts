@@ -1,12 +1,15 @@
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   DepositMachineSchema,
+  GatewayMachineContext,
+  GatewayMachineEvent,
   GatewaySession,
   mintMachine,
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Interpreter, State } from "xstate";
 import { env } from "../../constants/environmentVariables";
 import { db } from "../../services/database/database";
 import { DbGatewaySession } from "../../services/database/firebase/firebase";
@@ -27,7 +30,7 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     }),
     {}
   );
-  return useMachine(mintMachine, {
+  const machineHook = useMachine(mintMachine, {
     context: {
       tx,
       providers,
@@ -37,6 +40,10 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     },
     devTools: env.XSTATE_DEVTOOLS,
   });
+
+  useMintTransactionPersistence(machineHook[2]);
+
+  return machineHook;
 };
 export type DepositMachineSchemaState = keyof DepositMachineSchema["states"];
 
@@ -83,27 +90,36 @@ export const shouldUpdateMintTx = (
   }
   return stateIndex > dbStateIndex;
 };
+
 export const useMintTransactionPersistence = (
-  tx: GatewaySession | DbGatewaySession,
-  state: DepositMachineSchemaState
+  service: Interpreter<GatewayMachineContext, any, GatewayMachineEvent>
 ) => {
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (!state) {
-      return;
-    }
-    db.getTx(tx)
-      .then((dbTx) => {
-        if (shouldUpdateMintTx(tx, dbTx, state)) {
-          const newDbTx = { ...tx, meta: { state } };
-          db.updateTx(newDbTx).then(() => {
-            console.debug("mint updated", newDbTx, state);
-            dispatch(updateTransaction(newDbTx));
-          });
+  const sub = useCallback(
+    async (state: State<GatewayMachineContext, GatewayMachineEvent, any>) => {
+      const tx = state.context.tx;
+      try {
+        // DEPOSIT_UPDATE should be a safe event to update the db on
+        if ((state.event.type = "DEPOSIT_UPDATE")) {
+          // no more meta status -
+          // this would not have worked with multiple deposits anyhow
+          const newDbTx = { ...tx };
+          await db.updateTx(newDbTx);
+          dispatch(updateTransaction(newDbTx));
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.warn("Mint Tx synchronization failed", err);
-      });
-  }, [dispatch, tx, state]);
+      }
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    service.subscribe(sub);
+    return () => {
+      service.off(sub);
+    };
+  }, [dispatch, service, sub]);
+
+  service.subscribe();
 };
