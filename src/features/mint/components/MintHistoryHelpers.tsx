@@ -29,7 +29,7 @@ export const MintTransactionEntryResolver: FunctionComponent<TransactionItemProp
   isActive,
 }) => {
   if (isMintTransactionCompleted(tx) || isActive) {
-    return <MintTransactionEntry tx={tx} isActive />;
+    return <MintTransactionEntry tx={tx} isActive={isActive} />;
   }
   return <MintTransactionEntryMachine tx={tx} />;
 };

@@ -33,7 +33,7 @@ export const ReleaseTransactionEntryResolver: FunctionComponent<TransactionItemP
   isActive,
 }) => {
   if (isReleaseTransactionCompleted(tx) || isActive) {
-    return <ReleaseTransactionEntry tx={tx} isActive />;
+    return <ReleaseTransactionEntry tx={tx} isActive={isActive} />;
   }
   return <ReleaseTransactionEntryMachine tx={tx} />;
 };
@@ -151,7 +151,7 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
         <div className={styles.actions}>
           {isActive && (
             <Typography color="primary" variant="body2">
-              Currently viewed
+              Currently viewing
             </Typography>
           )}
           {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
