@@ -70,13 +70,16 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
   }, [dispatch, history, tx]);
 
   return (
-    <ReleaseTransactionEntry tx={current.context.tx} onAction={handleFinish} />
+    <ReleaseTransactionEntry
+      tx={current.context.tx}
+      onContinue={handleFinish}
+    />
   );
 };
 
 export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
-  onAction,
+  onContinue,
   isActive,
 }) => {
   const styles = useTransactionEntryStyles();
@@ -97,6 +100,12 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
   } else if (phase === TxPhase.BURN) {
     StatusIcon = burnChainConfig.Icon;
   }
+
+  const handleContinue = useCallback(() => {
+    if (onContinue) {
+      onContinue();
+    }
+  }, [onContinue]);
 
   const params = getBurnAndReleaseParams(tx);
   return (
@@ -155,7 +164,7 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
             </Typography>
           )}
           {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
-            <SmallActionButton onClick={onAction}>
+            <SmallActionButton onClick={handleContinue}>
               Finish release
             </SmallActionButton>
           )}

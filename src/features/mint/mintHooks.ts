@@ -118,9 +118,13 @@ export const useDepositPagination = (
   console.log("recalc", tx.transactions);
   const orderedHashes = sortedDeposits.map((deposit) => deposit.sourceTxHash);
   const total = orderedHashes.length;
-  // FIXME: initial is "" at the begining
+  // TODO: FIXME: depositSourceHash may not be in tx object at the moment of resolving (machine is running),
   const initial = depositSourceHash || total > 0 ? orderedHashes[0] : "";
+  console.log("initial", initial);
   const [currentHash, setCurrentHash] = useState(initial);
+  useEffect(() => {
+    setCurrentHash(initial);
+  }, [initial]);
   console.log("currentHash", currentHash);
 
   const currentIndex = orderedHashes.indexOf(currentHash);

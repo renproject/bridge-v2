@@ -127,9 +127,13 @@ export const txExpirySorter = (
 export const cloneTx = (tx: GatewaySession) =>
   JSON.parse(JSON.stringify(tx)) as GatewaySession;
 
+type ParsedGatewaySession = GatewaySession & {
+  depositHash?: string;
+};
+
 export const parseTxQueryString: (
   query: string
-) => Partial<GatewaySession> | null = (query: string) => {
+) => Partial<ParsedGatewaySession> | null = (query: string) => {
   const parsed = queryString.parse(query);
   if (!parsed) {
     return null;

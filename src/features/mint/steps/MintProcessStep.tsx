@@ -205,7 +205,11 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       <PaperContent bottomPadding>
         {reloading && <ProgressStatus processing />}
         {!reloading && showTransactionStatus && (
-          <MintTransactionStatus tx={tx} onRestart={handleRestart} />
+          <MintTransactionStatus
+            tx={tx}
+            onRestart={handleRestart}
+            depositHash={parsedTx?.depositHash || ""}
+          />
         )}
         {!walletConnected && (
           <>
@@ -256,10 +260,12 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 type MintTransactionStatusProps = {
   tx: GatewaySession;
   onRestart: () => void;
+  depositHash?: string;
 };
 
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
+  depositHash = "",
   onRestart,
 }) => {
   const [current, , service] = useMintMachine(tx);
@@ -279,7 +285,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     total,
     handlePrev,
     handleNext,
-  } = useDepositPagination(current.context.tx, ""); // TODO: add depositSourceHash from tx params
+  } = useDepositPagination(current.context.tx, depositHash);
 
   const { showNotification, closeNotification } = useNotifications();
   useEffect(() => {
@@ -394,6 +400,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       />
       <Debug
         it={{
+          depositHash,
           pagination: { currentIndex, currentHash, total },
           contextTx: current.context.tx,
           activeDeposit,

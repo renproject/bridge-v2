@@ -62,21 +62,25 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     (deposit?.state.value || "") as DepositMachineSchemaState
   );
 
-  const handleFinish = useCallback(() => {
-    history.push({
-      pathname: paths.MINT_TRANSACTION,
-      search: "?" + createTxQueryString(tx),
-      state: {
-        txState: {
-          reloadTx: true,
+  const handleFinish = useCallback(
+    (depositHash = "") => {
+      const txWithDepositHash = { ...tx, depositHash };
+      history.push({
+        pathname: paths.MINT_TRANSACTION,
+        search: "?" + createTxQueryString(txWithDepositHash),
+        state: {
+          txState: {
+            reloadTx: true,
+          },
         },
-      },
-    });
-    dispatch(setTxHistoryOpened(false));
-  }, [dispatch, history, tx]);
+      });
+      dispatch(setTxHistoryOpened(false));
+    },
+    [dispatch, history, tx]
+  );
 
   return (
-    <MintTransactionEntry tx={current.context.tx} onAction={handleFinish} />
+    <MintTransactionEntry tx={current.context.tx} onContinue={handleFinish} />
   );
 };
 
@@ -88,7 +92,7 @@ const WarningChip = styled(Chip)(({ theme }) => ({
 export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
   isActive,
-  onAction,
+  onContinue,
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -131,7 +135,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     history.push({
       pathname: paths.MINT,
     });
-  }, [dispatch, history, tx]);
+  }, [dispatch, history, tx, currentHash]);
 
   const { date, time } = getFormattedDateTime(createdTimestamp);
 
@@ -151,6 +155,12 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     },
     [currentIndex, handleNext, handlePrev]
   );
+
+  const handleContinue = useCallback(() => {
+    if (onContinue) {
+      onContinue(currentHash);
+    }
+  }, [currentHash, onContinue]);
 
   const params = getLockAndMintParams(tx, currentHash);
   return (
@@ -254,7 +264,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
             </Typography>
           )}
           {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
-            <SmallActionButton onClick={onAction}>
+            <SmallActionButton onClick={handleContinue}>
               {phase === TxPhase.LOCK ? "Continue" : "Finish"} mint
             </SmallActionButton>
           )}
