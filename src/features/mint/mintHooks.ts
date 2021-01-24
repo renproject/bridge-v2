@@ -100,15 +100,20 @@ export const useMintTransactionPersistence = (
       const tx = state.context.tx;
       try {
         // DEPOSIT_UPDATE should be a safe event to update the db on
-        if ((state.event.type = "DEPOSIT_UPDATE")) {
+        if (
+          state.event.type === "DEPOSIT_UPDATE" &&
+          state.value === "listening"
+        ) {
           // no more meta status -
           // this would not have worked with multiple deposits anyhow
-          const newDbTx = { ...tx };
+          // Also clone prevents throwing serialization errors during dispatch
+          // which breaks the event loop and prevents txs from processing
+          const newDbTx = cloneTx(tx);
           await db.updateTx(newDbTx);
           dispatch(updateTransaction(newDbTx));
         }
       } catch (err) {
-        console.warn("Mint Tx synchronization failed", err);
+        console.warn("Mint Tx synchronization failed", err, tx);
       }
     },
     [dispatch]
