@@ -50,6 +50,7 @@ import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import {
   BookmarkPageWarning,
+  ExpiredErrorDialog,
   ProgressStatus,
   WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
@@ -347,7 +348,11 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     if (currentAmount) {
       onActiveAmountChange(currentAmount / 10 ** 8);
     }
-  }, [currentAmount]);
+  }, [currentAmount, onActiveAmountChange]);
+
+  const [timeRemained] = useState(
+    Math.ceil(tx.expiryTime - Number(new Date()))
+  );
 
   // In order to enable quick restoration, we need to persist the deposit transaction
   // We persist via querystring, so lets check if the transaction is present
@@ -403,8 +408,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           )}
         </DepositWrapper>
       ) : (
-        <MintDepositToStatus tx={current.context.tx} onRestart={onRestart} />
+        <MintDepositToStatus tx={current.context.tx} />
       )}
+      {timeRemained <= 0 && <ExpiredErrorDialog open onAction={onRestart} />}
       <WrongAddressWarningDialog
         open={wrongAddressDialogOpened}
         address={account}
@@ -465,8 +471,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     return <div>Transaction completed</div>;
   }
   console.log(depositHash, state);
-  // switch (state) {
-  switch (forceState) {
+  switch (state) {
     case "srcSettling":
       return (
         <MintDepositConfirmationStatus tx={tx} depositHash={depositHash} />
