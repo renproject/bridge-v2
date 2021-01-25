@@ -366,8 +366,9 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
         >
           {trimAddress(address, 5)}
         </Link>
-        ). If you do not have access to the connected account you will not be
-        able to access the {currency}. Please switch account in your wallet.
+        ). If you do not have access to the account that created the
+        transaction, you will not be able to access the {currency}. Please
+        switch account in your wallet.
       </span>
     </WarningDialog>
   );
