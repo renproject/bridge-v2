@@ -142,8 +142,9 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
     showNotification(
       <span>
         {notificationMessage}{" "}
-        <Link external href={releaseTxLink}>
-          View {releaseChainConfig.full} transaction
+        <Link external href={releaseTxLink || releaseAddressLink}>
+          View {releaseChainConfig.full}{" "}
+          {releaseTxLink ? "transaction" : "address"}
         </Link>
       </span>
     );
