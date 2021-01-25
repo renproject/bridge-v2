@@ -12,10 +12,12 @@ import { signWithBinanceChain } from "../../services/wallets/bsc";
 import { BridgeWallet, RenChain } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
 import {
+  $isAuthenticating,
   $multiwalletChain,
   $walletUser,
   setAuthRequired,
   setSignatures,
+  settingUser,
   setUser,
 } from "./walletSlice";
 
@@ -156,6 +158,7 @@ export const useSignatures = () => {
         const signatures = await getWeb3Signatures(account, web3, chain);
         dispatch(setSignatures(signatures));
         console.debug("account", account);
+        dispatch(settingUser());
         const userData = await db.getUser(account.toLowerCase(), signatures);
         dispatch(setUser(userData));
       } catch (error) {
@@ -180,10 +183,12 @@ export const useWeb3Signatures = () => {
 export const useAuthentication = () => {
   const { account } = useSelectedChainWallet();
   const user = useSelector($walletUser);
+  const isAuthenticating = useSelector($isAuthenticating);
   const { getSignatures } = useSignatures();
+  console.log(account, user);
   const isAuthenticated = user !== null && account.toLowerCase() === user.uid;
 
-  return { isAuthenticated, authenticate: getSignatures };
+  return { isAuthenticated, isAuthenticating, authenticate: getSignatures };
 };
 
 export const useAuthRequired = (authRequired: boolean) => {
