@@ -148,6 +148,11 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     }
   }, [history, location, txState, parsedTx]);
 
+  const [activeAmount, setActiveAmount] = useState(Number(tx.targetAmount));
+  const handleActiveAmountChange = useCallback((newAmount: number) => {
+    setActiveAmount(newAmount);
+  }, []);
+
   const destChain = parsedTx?.destChain;
   useEffect(() => {
     if (destChain) {
@@ -166,17 +171,16 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 
   const showTransactionStatus = !!tx && walletConnected;
   const feeCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
-  const amount = Number(tx.targetAmount);
 
   const handleRestart = useCallback(() => {
     dispatch(
       resetMint({
-        amount: amount,
+        amount: activeAmount,
         currency: feeCurrency,
       })
     );
     history.push(paths.MINT);
-  }, [dispatch, amount, feeCurrency, history]);
+  }, [dispatch, activeAmount, feeCurrency, history]);
 
   return (
     <>
@@ -209,6 +213,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
             tx={tx}
             onRestart={handleRestart}
             depositHash={parsedTx?.depositHash || ""}
+            onActiveAmountChange={handleActiveAmountChange}
           />
         )}
         {!walletConnected && (
@@ -230,7 +235,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
           <PaperContent darker topPadding bottomPadding>
             <TransactionFees
               chain={chain}
-              amount={amount}
+              amount={activeAmount}
               currency={feeCurrency}
               type={TxType.MINT}
               address={tx.userAddress}
@@ -261,12 +266,14 @@ type MintTransactionStatusProps = {
   tx: GatewaySession;
   onRestart: () => void;
   depositHash?: string;
+  onActiveAmountChange: (amount: number) => void;
 };
 
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
   depositHash = "",
   onRestart,
+  onActiveAmountChange,
 }) => {
   const [current, , service] = useMintMachine(tx);
   const chain = useSelector($chain);
@@ -335,6 +342,13 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     return { deposit, machine };
   }, [currentHash, current.context]);
 
+  const currentAmount = activeDeposit?.deposit.sourceTxAmount;
+  useEffect(() => {
+    if (currentAmount) {
+      onActiveAmountChange(currentAmount / 10 ** 8);
+    }
+  }, [currentAmount]);
+
   // In order to enable quick restoration, we need to persist the deposit transaction
   // We persist via querystring, so lets check if the transaction is present
   // and update otherwise
@@ -399,14 +413,15 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         onAlternativeAction={handleCloseWrongAddressDialog}
       />
       <Debug
+        disable
         it={{
           depositHash,
-          pagination: { currentIndex, currentHash, total },
-          contextTx: current.context.tx,
-          activeDeposit,
-          total,
-          currentIndex,
-          currentHash,
+          // pagination: { currentIndex, currentHash, total },
+          // contextTx: current.context.tx,
+          // activeDeposit,
+          // total,
+          // currentIndex,
+          // currentHash,
         }}
       />
     </>
@@ -449,7 +464,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   if (!machine) {
     return <div>Transaction completed</div>;
   }
-  console.log(state);
+  console.log(depositHash, state);
   // switch (state) {
   switch (forceState) {
     case "srcSettling":

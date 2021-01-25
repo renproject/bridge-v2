@@ -97,7 +97,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
 
   useEffect(() => {
     if (txState?.reloadTx) {
-      console.log("reloading");
       setTx(parsedTx as GatewaySession);
       setReloading(true);
       history.replace({ ...location, state: undefined });

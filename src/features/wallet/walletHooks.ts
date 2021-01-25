@@ -81,7 +81,7 @@ export const useSyncMultiwalletNetwork = () => {
   const renNetwork = useSelector($renNetwork);
   useEffect(() => {
     if (renNetwork !== targetNetwork) {
-      console.log("syncing multiwallet with network", renNetwork);
+      console.info("syncing multiwallet with network", renNetwork);
       setTargetNetwork(renNetwork);
     }
   }, [renNetwork, setTargetNetwork, targetNetwork]);
@@ -114,14 +114,13 @@ const getWeb3Signatures = async (
       // TODO: move signing functionality into multiwallet?
       (web3.currentProvider as any).connection.isMetaMask
     ) {
-      console.log("signing");
+      console.info("signing");
       rawSignature = await web3.eth.personal.sign(
         web3.utils.utf8ToHex(SIGN_MESSAGE),
         addressLowerCase,
         ""
       );
     } else if (chain === RenChain.binanceSmartChain) {
-      console.log("signing bsc");
       rawSignature = await signWithBinanceChain(SIGN_MESSAGE);
     }
 
@@ -155,7 +154,7 @@ export const useSignatures = () => {
       getWeb3Signatures(account, web3, chain)
         .then((signatures) => {
           dispatch(setSignatures(signatures));
-          console.log("account", account);
+          console.info("account", account);
           db.getUser(account.toLowerCase(), signatures)
             .then((userData) => {
               dispatch(setUser(userData));

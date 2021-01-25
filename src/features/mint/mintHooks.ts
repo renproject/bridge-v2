@@ -120,12 +120,11 @@ export const useDepositPagination = (
   const total = orderedHashes.length;
   // TODO: FIXME: depositSourceHash may not be in tx object at the moment of resolving (machine is running),
   const initial = depositSourceHash || total > 0 ? orderedHashes[0] : "";
-  console.log("initial", initial);
+  console.log("initial hash", initial);
   const [currentHash, setCurrentHash] = useState(initial);
   useEffect(() => {
     setCurrentHash(initial);
   }, [initial]);
-  console.log("currentHash", currentHash);
 
   const currentIndex = orderedHashes.indexOf(currentHash);
   const nextIndex =

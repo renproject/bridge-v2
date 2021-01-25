@@ -150,7 +150,6 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
 
   const handlePageChange = useCallback(
     (event: any, newPage: number) => {
-      console.log("pge");
       newPage > currentIndex ? handleNext() : handlePrev();
     },
     [currentIndex, handleNext, handlePrev]
