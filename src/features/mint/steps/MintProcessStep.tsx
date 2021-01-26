@@ -445,8 +445,8 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
           />
         );
       }
-    // case "restoringDeposit":
-    // return <ProgressStatus />;
+    case "restoringDeposit":
+      return <ProgressStatus reason="Restoring deposit" />;
     default:
       return <ProgressStatus reason={machine.state.value} />;
   }

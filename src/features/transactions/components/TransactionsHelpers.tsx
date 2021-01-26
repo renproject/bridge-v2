@@ -281,11 +281,13 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
 
 type WarningWithActionsProps = DialogProps & {
   title?: string;
-  onMainAction?: () => void;
-  onAlternativeAction?: () => void;
   reason?: string;
+  onMainAction?: () => void;
   mainActionText?: string;
+  mainActionDisabled?: boolean;
+  onAlternativeAction?: () => void;
   alternativeActionText?: string;
+  alternativeActionDisabled?: boolean;
 };
 
 export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
@@ -294,8 +296,10 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   reason = "",
   mainActionText = "",
   onMainAction,
+  mainActionDisabled,
   alternativeActionText = "",
   onAlternativeAction,
+  alternativeActionDisabled,
   children,
 }) => {
   const showMainAction = onMainAction && mainActionText;
@@ -323,13 +327,16 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
             variant="text"
             color="inherit"
             onClick={onAlternativeAction}
+            disabled={alternativeActionDisabled}
           >
             {alternativeActionText}
           </RedButton>
         </ActionButtonWrapper>
         {showMainAction && (
           <ActionButtonWrapper>
-            <ActionButton onClick={onMainAction}>{mainActionText}</ActionButton>
+            <ActionButton onClick={onMainAction} disabled={mainActionDisabled}>
+              {mainActionText}
+            </ActionButton>
           </ActionButtonWrapper>
         )}
       </PaperContent>
@@ -366,8 +373,9 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
         >
           {trimAddress(address, 5)}
         </Link>
-        ). If you do not have access to the connected account you will not be
-        able to access the {currency}. Please switch account in your wallet.
+        ). If you do not have access to the account that created the
+        transaction, you will not be able to access the {currency}. Please
+        switch account in your wallet.
       </span>
     </WarningDialog>
   );
