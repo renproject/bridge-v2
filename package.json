@@ -20,7 +20,7 @@
     "@renproject/multiwallet-ethereum-walletconnect-connector": "^2.0.6",
     "@renproject/multiwallet-ui": "^2.0.6",
     "@renproject/ren": "^2.0.7",
-    "@renproject/ren-tx": "../ren-js/packages/lib/ren-tx/",
+    "@renproject/ren-tx": "^2.0.7-alpha.6",
     "@renproject/rpc": "^2.0.7",
     "@renproject/utils": "^2.0.6",
     "@testing-library/jest-dom": "^4.2.4",

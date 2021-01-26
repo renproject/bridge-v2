@@ -185,7 +185,6 @@ export const useAuthentication = () => {
   const user = useSelector($walletUser);
   const isAuthenticating = useSelector($isAuthenticating);
   const { getSignatures } = useSignatures();
-  console.log(account, user);
   const isAuthenticated = user !== null && account.toLowerCase() === user.uid;
 
   return { isAuthenticated, isAuthenticating, authenticate: getSignatures };
