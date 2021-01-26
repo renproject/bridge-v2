@@ -1,12 +1,17 @@
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   burnMachine,
+  BurnMachineContext,
+  BurnMachineEvent,
   BurnMachineSchema,
+  GatewayMachineContext,
+  GatewayMachineEvent,
   GatewaySession,
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Interpreter, State } from "xstate";
 import { env } from "../../constants/environmentVariables";
 import { db } from "../../services/database/database";
 import { DbGatewaySession } from "../../services/database/firebase/firebase";
@@ -86,6 +91,7 @@ export const shouldUpdateReleaseTx = (
     stateIndex === releaseTxStateUpdateSequence.length - 1
   );
 };
+
 export const useReleaseTransactionPersistence = (
   tx: GatewaySession | DbGatewaySession,
   state: BurnMachineSchemaState
@@ -109,3 +115,41 @@ export const useReleaseTransactionPersistence = (
       });
   }, [dispatch, tx, state]);
 };
+//
+// export const useNewReleaseTransactionPersistence = (
+//   service: Interpreter<BurnMachineContext, any, BurnMachineEvent>
+// ) => {
+//   const dispatch = useDispatch();
+//   const sub = useCallback(
+//     async (state: State<BurnMachineContext, BurnMachineEvent>) => {
+//       const tx = state.context.tx;
+//       try {
+//         // TODO: which event should we listen to?
+//         if (
+//           state.event.type === "CREATED" &&
+//           state.value === "listening"
+//         ) {
+//           // no more meta status -
+//           // this would not have worked with multiple deposits anyhow
+//           // Also clone prevents throwing serialization errors during dispatch
+//           // which breaks the event loop and prevents txs from processing
+//           const newDbTx = cloneTx(tx);
+//           await db.updateTx(newDbTx);
+//           dispatch(updateTransaction(newDbTx));
+//         }
+//       } catch (err) {
+//         console.warn("Release Tx synchronization failed", err, tx);
+//       }
+//     },
+//     [dispatch]
+//   );
+//
+//   useEffect(() => {
+//     service.subscribe(sub);
+//     return () => {
+//       service.off(sub);
+//     };
+//   }, [dispatch, service, sub]);
+//
+//   service.subscribe();
+// };
