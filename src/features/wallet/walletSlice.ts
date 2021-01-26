@@ -26,6 +26,7 @@ type WalletState = {
   balances: Array<AssetBalance>;
   signatures: AuthSignatures;
   user: AuthUser;
+  settingUser: boolean;
   authRequired: boolean;
 };
 
@@ -38,6 +39,7 @@ let initialState: WalletState = {
     rawSignature: "",
   },
   user: null,
+  settingUser: false,
   authRequired: false,
 };
 
@@ -45,7 +47,11 @@ const slice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
+    settingUser(state) {
+      state.settingUser = true;
+    },
     setUser(state, action: PayloadAction<AuthUser>) {
+      state.settingUser = false;
       state.user = action.payload;
     },
     setChain(state, action: PayloadAction<BridgeChain>) {
@@ -78,6 +84,7 @@ const slice = createSlice({
 
 export const {
   setUser,
+  settingUser,
   setChain,
   setWalletPickerOpened,
   addOrUpdateBalance,
@@ -102,7 +109,12 @@ export const $walletSignatures = createSelector(
   $wallet,
   (wallet) => wallet.signatures
 );
+
 export const $walletUser = createSelector($wallet, (wallet) => wallet.user);
+export const $isAuthenticating = createSelector(
+  $wallet,
+  (wallet) => wallet.settingUser
+);
 export const $authRequired = createSelector(
   $wallet,
   (wallet) => wallet.authRequired

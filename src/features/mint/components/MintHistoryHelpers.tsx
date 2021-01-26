@@ -56,28 +56,44 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     [service]
   );
 
-  const deposit = Object.values(current.context.depositMachines || {})[0];
-  useMintTransactionPersistence(
-    current.context.tx,
-    (deposit?.state.value || "") as DepositMachineSchemaState
-  );
-
-  const handleFinish = useCallback(
-    (depositHash = "") => {
-      const txWithDepositHash = { ...tx, depositHash };
-      history.push({
-        pathname: paths.MINT_TRANSACTION,
-        search: "?" + createTxQueryString(txWithDepositHash),
-        state: {
-          txState: {
-            reloadTx: true,
-          },
+  // const deposit = Object.values(current.context.depositMachines || {})[0];
+  // all machines are automatically persisted
+  /* useMintTransactionPersistence(
+   *   current.context.tx,
+   *   (deposit?.state.value || "") as DepositMachineSchemaState
+   * );
+   */
+  const handleFinish = useCallback(() => {
+    history.push({
+      pathname: paths.MINT_TRANSACTION,
+      search: "?" + createTxQueryString(tx),
+      state: {
+        txState: {
+          reloadTx: true,
         },
-      });
-      dispatch(setTxHistoryOpened(false));
-    },
-    [dispatch, history, tx]
-  );
+      },
+    });
+    dispatch(setTxHistoryOpened(false));
+  }, [dispatch, history, tx]);
+
+  const handleRestart = useCallback(() => {
+    const {
+      lockCurrencyConfig,
+      mintChainConfig,
+      suggestedAmount,
+    } = getLockAndMintParams(tx);
+    dispatch(setTxHistoryOpened(false));
+    dispatch(
+      resetMint({
+        currency: lockCurrencyConfig.symbol,
+        amount: suggestedAmount,
+      })
+    );
+    dispatch(setChain(mintChainConfig.symbol));
+    history.push({
+      pathname: paths.MINT,
+    });
+  }, [dispatch, history, tx]);
 
   return (
     <MintTransactionEntry tx={current.context.tx} onContinue={handleFinish} />

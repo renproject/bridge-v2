@@ -12,10 +12,12 @@ import { signWithBinanceChain } from "../../services/wallets/bsc";
 import { BridgeWallet, RenChain } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
 import {
+  $isAuthenticating,
   $multiwalletChain,
   $walletUser,
   setAuthRequired,
   setSignatures,
+  settingUser,
   setUser,
 } from "./walletSlice";
 
@@ -148,20 +150,20 @@ export const useSignatures = () => {
   const chain = useSelector($multiwalletChain);
   const { account } = useWallet(chain);
   const web3 = useWeb3();
-  const getSignatures = useCallback(() => {
-    console.log("reauth");
+  const getSignatures = useCallback(async () => {
+    console.debug("reauth");
     if (account && web3) {
-      getWeb3Signatures(account, web3, chain)
-        .then((signatures) => {
-          dispatch(setSignatures(signatures));
-          console.info("account", account);
-          db.getUser(account.toLowerCase(), signatures)
-            .then((userData) => {
-              dispatch(setUser(userData));
-            })
-            .catch(console.error);
-        })
-        .catch(console.error);
+      try {
+        const signatures = await getWeb3Signatures(account, web3, chain);
+        dispatch(setSignatures(signatures));
+        console.debug("account", account);
+        dispatch(settingUser());
+        const userData = await db.getUser(account.toLowerCase(), signatures);
+        dispatch(setUser(userData));
+      } catch (error) {
+        // FIXME: dispatch some error here to handle in UI
+        console.error(error);
+      }
     }
   }, [dispatch, chain, account, web3]);
 
@@ -180,10 +182,11 @@ export const useWeb3Signatures = () => {
 export const useAuthentication = () => {
   const { account } = useSelectedChainWallet();
   const user = useSelector($walletUser);
+  const isAuthenticating = useSelector($isAuthenticating);
   const { getSignatures } = useSignatures();
   const isAuthenticated = user !== null && account.toLowerCase() === user.uid;
 
-  return { isAuthenticated, authenticate: getSignatures };
+  return { isAuthenticated, isAuthenticating, authenticate: getSignatures };
 };
 
 export const useAuthRequired = (authRequired: boolean) => {

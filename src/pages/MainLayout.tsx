@@ -78,7 +78,11 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   useSetNetworkFromParam();
   useSyncMultiwalletNetwork();
   useWeb3Signatures();
-  const { authenticate, isAuthenticated } = useAuthentication();
+  const {
+    authenticate,
+    isAuthenticated,
+    isAuthenticating,
+  } = useAuthentication();
   const {
     status,
     account,
@@ -96,6 +100,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       const shouldAuthWarningOpened =
         walletConnected &&
         !isAuthenticated &&
+        !isAuthenticating &&
         (authRequired || txHistoryOpened);
 
       setAuthWarningOpened(shouldAuthWarningOpened);
@@ -139,6 +144,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const handleWalletMenuClose = useCallback(() => {
     setWalletMenuAnchor(null);
   }, []);
+
   const handleWalletButtonClick = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       if (walletConnected) {
@@ -149,6 +155,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     },
     [dispatch, walletConnected]
   );
+
   const handleDisconnectWallet = useCallback(() => {
     deactivateConnector();
     handleWalletMenuClose();

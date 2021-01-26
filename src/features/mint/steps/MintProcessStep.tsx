@@ -454,6 +454,13 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   const handleSubmitToDestinationChain = useCallback(() => {
     machine.send({ type: "CLAIM" });
   }, [machine]);
+
+  // User confirms that they have recieved their mint
+  // TODO: decide if this is neccessary
+  const handleAcknowledge = useCallback(() => {
+    machine.send({ type: "ACKNOWLEDGE" });
+  }, [machine]);
+
   const handleReload = useCallback(() => {
     history.replace({
       ...location,
@@ -466,7 +473,6 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   }, [history, location]);
 
   const state = machine?.state.value as keyof DepositMachineSchema["states"];
-  useMintTransactionPersistence(tx, state);
   if (!machine) {
     return <div>Transaction completed</div>;
   }
@@ -495,6 +501,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         />
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up
+    case "completed":
       if (deposit.destTxHash) {
         return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
       } else {
@@ -508,7 +515,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         );
       }
     case "restoringDeposit":
-      return <ProgressStatus />;
+      return <ProgressStatus reason="Restoring deposit" />;
     default:
       return <ProgressStatus reason={machine.state.value} />;
   }
