@@ -321,7 +321,10 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
           onReload={handleReload}
         />
       );
-    case "srcConfirmed": // return <ProgressStatus reason="Submitting to RenVM" />;
+    case "srcConfirmed":
+      return <ProgressStatus reason="Submitting to RenVM" />;
+    case "accepted":
+      return <ProgressStatus reason="Releasing from RenVM" />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={current.context.tx} />;
     default:
