@@ -67,26 +67,6 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     dispatch(setTxHistoryOpened(false));
   }, [dispatch, history, tx]);
 
-  const handleRestart = useCallback(() => {
-    const {
-      lockCurrencyConfig,
-      mintChainConfig,
-      suggestedAmount,
-    } = getLockAndMintParams(tx);
-    dispatch(setTxHistoryOpened(false));
-    dispatch(
-      resetMint({
-        currency: lockCurrencyConfig.symbol,
-        amount: suggestedAmount,
-      })
-    );
-    dispatch(setChain(mintChainConfig.symbol));
-    history.push({
-      pathname: paths.MINT,
-    });
-  }, [dispatch, history, tx]);
-
-  console.log(handleRestart);
   return (
     <MintTransactionEntry tx={current.context.tx} onContinue={handleFinish}/>
   );
