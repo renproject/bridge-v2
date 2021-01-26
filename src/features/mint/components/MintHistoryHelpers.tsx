@@ -54,12 +54,13 @@ export const MintTransactionEntryMachine: FunctionComponent<TransactionItemProps
     [service]
   );
 
-  const deposit = Object.values(current.context.depositMachines || {})[0];
-  useMintTransactionPersistence(
-    current.context.tx,
-    (deposit?.state.value || "") as DepositMachineSchemaState
-  );
-
+  // const deposit = Object.values(current.context.depositMachines || {})[0];
+  // all machines are automatically persisted
+  /* useMintTransactionPersistence(
+   *   current.context.tx,
+   *   (deposit?.state.value || "") as DepositMachineSchemaState
+   * );
+   */
   const handleFinish = useCallback(() => {
     history.push({
       pathname: paths.MINT_TRANSACTION,
