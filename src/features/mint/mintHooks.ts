@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Interpreter, State } from "xstate";
 import { env } from "../../constants/environmentVariables";
 import { db } from "../../services/database/database";
-import { DbGatewaySession } from "../../services/database/firebase/firebase";
 import { getRenJs } from "../../services/renJs";
 import { lockChainMap, mintChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
@@ -46,51 +45,8 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
 
   return machineHook;
 };
+
 export type DepositMachineSchemaState = keyof DepositMachineSchema["states"];
-
-export enum DepositState {
-  restoringDeposit = "restoringDeposit",
-  errorRestoring = "errorRestoring",
-  restoredDeposit = "restoredDeposit",
-  srcSettling = "srcSettling",
-  srcConfirmed = "srcConfirmed",
-  accepted = "accepted",
-  claiming = "claiming",
-  errorSubmitting = "errorSubmitting",
-  destInitiated = "destInitiated",
-  completed = "completed",
-  rejected = "rejected",
-}
-
-export const mintTxStateUpdateSequence = [
-  DepositState.srcSettling,
-  DepositState.srcConfirmed,
-  DepositState.accepted,
-  DepositState.destInitiated,
-  DepositState.completed,
-];
-export const shouldUpdateMintTx = (
-  tx: GatewaySession | DbGatewaySession,
-  dbTx: DbGatewaySession,
-  state: string
-) => {
-  // update when the new state is next in sequence
-  // will prevent multiple updates in separate sessions
-  const dbState = dbTx?.meta?.state;
-  if (!dbState) {
-    // update when no state
-    return true;
-  }
-  const dbStateIndex = mintTxStateUpdateSequence.indexOf(
-    dbState as DepositState
-  );
-  const stateIndex = mintTxStateUpdateSequence.indexOf(state as DepositState);
-  if (stateIndex <= 0) {
-    //dont update for srcSettling (updated during creation) or not supported states
-    return false;
-  }
-  return stateIndex > dbStateIndex;
-};
 
 export const useMintTransactionPersistence = (
   service: Interpreter<GatewayMachineContext, any, GatewayMachineEvent>
@@ -135,12 +91,9 @@ export const useDepositPagination = (
   depositSourceHash = ""
 ) => {
   const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
-  console.log("recalc", tx.transactions);
   const orderedHashes = sortedDeposits.map((deposit) => deposit.sourceTxHash);
   const total = orderedHashes.length;
-  // TODO: FIXME: depositSourceHash may not be in tx object at the moment of resolving (machine is running),
   const initial = depositSourceHash || total > 0 ? orderedHashes[0] : "";
-  console.log("initial hash", initial);
   const [currentHash, setCurrentHash] = useState(initial);
   useEffect(() => {
     setCurrentHash(initial);

@@ -76,6 +76,7 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
 export const depositSorter = (a: GatewayTransaction, b: GatewayTransaction) => {
   const aConf = a.sourceTxConfs || 0;
   const bConf = b.sourceTxConfs || 0;
+  // TODO: FIXME find a better way for sorting deposits
   // deposit with more confirmations is first
   return aConf - bConf;
 };
@@ -145,6 +146,7 @@ export const getLockAndMintParams = (
     createdTimestamp: getTxCreationTimestamp(tx),
     transactionsCount: sortedDeposits.length,
   };
+
   if (lockTxHash) {
     // it has lockTxHash - there is deposit
     if (mintTxHash) {
@@ -162,6 +164,9 @@ export const getLockAndMintParams = (
       // no mint tx hash, but awaiting confirmations
       meta.status = TxEntryStatus.PENDING;
       meta.phase = TxPhase.LOCK;
+      if (isTxExpired(tx)) {
+        meta.status = TxEntryStatus.EXPIRED;
+      }
     }
   } else {
     // no deposit

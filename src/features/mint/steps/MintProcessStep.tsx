@@ -1,31 +1,63 @@
-import { Divider, IconButton } from '@material-ui/core'
-import { depositMachine, DepositMachineSchema, GatewaySession, GatewayTransaction, } from '@renproject/ren-tx'
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState, } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom'
-import { Actor } from 'xstate'
-import { ActionButton, ToggleIconButton, } from '../../../components/buttons/Buttons'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
-import { CenteringSpacedBox, PaperSpacerWrapper, } from '../../../components/layout/LayoutHelpers'
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../../components/layout/Paper'
-import { Debug } from '../../../components/utils/Debug'
-import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
-import { paths } from '../../../pages/routes'
-import { useNotifications } from '../../../providers/Notifications'
-import { usePageTitle, usePaperTitle } from '../../../providers/TitleProviders'
-import { getChainConfigByRentxName, getCurrencyConfigByRentxName, } from '../../../utils/assetConfigs'
-import { $renNetwork } from '../../network/networkSlice'
-import { BrowserNotificationsDrawer } from '../../notifications/components/NotificationsHelpers'
-import { useBrowserNotifications, useBrowserNotificationsConfirmation, } from '../../notifications/notificationsUtils'
-import { TransactionFees } from '../../transactions/components/TransactionFees'
-import { TransactionMenu } from '../../transactions/components/TransactionMenu'
+import { Divider, IconButton } from "@material-ui/core";
+import {
+  depositMachine,
+  DepositMachineSchema,
+  GatewaySession,
+  GatewayTransaction,
+} from "@renproject/ren-tx";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+import { Actor } from "xstate";
+import {
+  ActionButton,
+  ToggleIconButton,
+} from "../../../components/buttons/Buttons";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
+import {
+  CenteringSpacedBox,
+  PaperSpacerWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../../components/layout/Paper";
+import { Debug } from "../../../components/utils/Debug";
+import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
+import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
+import {
+  getChainConfigByRentxName,
+  getCurrencyConfigByRentxName,
+} from "../../../utils/assetConfigs";
+import { $renNetwork } from "../../network/networkSlice";
+import { BrowserNotificationsDrawer } from "../../notifications/components/NotificationsHelpers";
+import {
+  useBrowserNotifications,
+  useBrowserNotificationsConfirmation,
+} from "../../notifications/notificationsUtils";
+import { TransactionFees } from "../../transactions/components/TransactionFees";
+import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import {
   BookmarkPageWarning,
   ExpiredErrorDialog,
   ProgressStatus,
   WrongAddressWarningDialog,
-} from '../../transactions/components/TransactionsHelpers'
-import { useSetCurrentTxId, useTransactionDeletion, } from '../../transactions/transactionsHooks'
+} from "../../transactions/components/TransactionsHelpers";
+import {
+  useSetCurrentTxId,
+  useTransactionDeletion,
+} from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getAddressExplorerLink,
@@ -33,21 +65,34 @@ import {
   parseTxQueryString,
   TxType,
   useTxParam,
-} from '../../transactions/transactionsUtils'
-import { useAuthRequired, useSelectedChainWallet, } from '../../wallet/walletHooks'
-import { $chain, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
-import { DepositWrapper, MultipleDepositsMessage, } from '../components/MintHelpers'
+} from "../../transactions/transactionsUtils";
+import {
+  useAuthRequired,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
+import {
+  $chain,
+  setChain,
+  setWalletPickerOpened,
+} from "../../wallet/walletSlice";
+import {
+  DepositWrapper,
+  MultipleDepositsMessage,
+} from "../components/MintHelpers";
 import {
   DestinationPendingStatus,
   MintCompletedStatus,
   MintDepositAcceptedStatus,
   MintDepositConfirmationStatus,
   MintDepositToStatus,
-} from '../components/MintStatuses'
-import { DepositNextButton, DepositPrevButton, } from '../components/MultipleDepositsHelpers'
-import { useDepositPagination, useMintMachine, } from '../mintHooks'
-import { resetMint } from '../mintSlice'
-import { getLockAndMintParams } from '../mintUtils'
+} from "../components/MintStatuses";
+import {
+  DepositNextButton,
+  DepositPrevButton,
+} from "../components/MultipleDepositsHelpers";
+import { useDepositPagination, useMintMachine } from "../mintHooks";
+import { resetMint } from "../mintSlice";
+import { getLockAndMintParams } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -425,9 +470,9 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
 
   const state = machine?.state.value as keyof DepositMachineSchema["states"];
   if (!machine) {
-    return <div>Transaction completed</div>;
+    return <ProgressStatus processing={false} reason="Transaction completed" />;
   }
-  console.log(depositHash, state);
+  console.debug(tx.id, depositHash, state);
   switch (state) {
     case "srcSettling":
       return (

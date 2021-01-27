@@ -46,7 +46,10 @@ import {
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
-import { useSetCurrentTxId, useTransactionDeletion } from '../../transactions/transactionsHooks'
+import {
+  useSetCurrentTxId,
+  useTransactionDeletion,
+} from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getTxPageTitle,
@@ -66,10 +69,7 @@ import {
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
 } from "../components/ReleaseStatuses";
-import {
-  useBurnMachine,
-  useReleaseTransactionPersistence,
-} from "../releaseHooks";
+import { useBurnMachine } from "../releaseHooks";
 import { getBurnAndReleaseParams } from "../releaseUtils";
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
@@ -295,8 +295,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
 
   // const forceState = "errorReleasing";
   const state = current.value as keyof BurnMachineSchema["states"];
-  console.log(state);
-  useReleaseTransactionPersistence(current.context.tx, state);
+  console.debug(tx.id, state);
   switch (state) {
     // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
