@@ -451,12 +451,6 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     machine.send({ type: "CLAIM" });
   }, [machine]);
 
-  // User confirms that they have recieved their mint
-  // TODO: decide if this is neccessary
-  // const handleAcknowledge = useCallback(() => {
-  //   machine.send({ type: "ACKNOWLEDGE" });
-  // }, [machine]);
-
   const handleReload = useCallback(() => {
     history.replace({
       ...location,

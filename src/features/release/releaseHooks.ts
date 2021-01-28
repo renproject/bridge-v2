@@ -58,11 +58,7 @@ export const useReleaseTransactionPersistence = (
     async (state: State<BurnMachineContext, BurnMachineEvent>) => {
       const tx = state.context.tx;
       try {
-        // TODO: which event should we listen to?
-        if (
-          state.value === "listening" &&
-          (state.event.type === "CREATED" || state.event.type === "RELEASED")
-        ) {
+        if (state.event.type === "CREATED" || state.event.type === "RELEASED") {
           // Clone prevents throwing serialization errors during dispatch
           // which breaks the event loop and prevents txs from processing
           const newDbTx = cloneTx(tx);
