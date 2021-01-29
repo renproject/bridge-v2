@@ -2783,6 +2783,15 @@
     bignumber.js "^9.0.1"
     web3-core "^2.0.0-alpha.1"
 
+"@renproject/interfaces@^2.0.8":
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.0.8.tgz#14b86100c58107c3054cb70320653256aaaecd4f"
+  integrity sha512-dk2lh1Yc7G75uQTsP3YY+iFGIXNfuFfV4GYw2AobEAobGuw6obuhO4zg94/A0J2ppIbqQj7wJsvnzymp/UKcHQ==
+  dependencies:
+    "@types/node" ">=10"
+    bignumber.js "^9.0.1"
+    web3-core "^2.0.0-alpha.1"
+
 "@renproject/multiwallet-abstract-ethereum-connector@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@renproject/multiwallet-abstract-ethereum-connector/-/multiwallet-abstract-ethereum-connector-2.0.6.tgz#ca9f752cdb9e1a585e52c59b6d1b5d6b9e920c29"
@@ -2853,23 +2862,34 @@
     axios "^0.20.0"
     immutable "^4.0.0-rc.12"
 
-"@renproject/ren-tx@^2.0.7-alpha.6":
-  version "2.0.7-alpha.6"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.0.7-alpha.6.tgz#25ecb3ca2cfafce0391405c2027809c1a2c79513"
-  integrity sha512-xGNRqyfQ6JSxBqrm1bKFD/hQwEXiAaxLkgbBBYztGrhvRZFzHj9EJ5xm5c1KR4gpkZwYvxnedF5r+kzLpyZx0g==
+"@renproject/provider@^2.0.8":
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/@renproject/provider/-/provider-2.0.8.tgz#7b41ce8c0d73e176b3b967130acf7c123ccea7e7"
+  integrity sha512-B4ISsrsX5UUAs6FFUeu8ouqD5RDiP20XHitEzDj//eqqFDM6DzJEhPRF6rd4KvvUeeJ9qCHEaSGj7DRRMTdJPQ==
+  dependencies:
+    "@renproject/interfaces" "^2.0.8"
+    "@renproject/utils" "^2.0.8"
+    "@types/node" ">=10"
+    axios "^0.21.1"
+    immutable "^4.0.0-rc.12"
+
+"@renproject/ren-tx@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.0.10-alpha.0.tgz#abb468b4c43745b259d0bb58507f212b977ecf32"
+  integrity sha512-Ri/QJs4PdmlayKsebbmy/ybSh6ZbOVOrw/WA0HlrFsL+ZYcXzw96blgfUdd5XkLduNo9rx9r4+8zhDEyQ2+Yhg==
   dependencies:
     bignumber.js "^9.0.1"
 
-"@renproject/ren@^2.0.7":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.0.7.tgz#84b20ee5d3a6dbdef929ae5342eea847df4c0d20"
-  integrity sha512-HMOj5EQW37Aw+pW2k5FCjQPEelGAl4AYoWv5uo/DXKyEEMEVeW6wKXfb0u4kH8FVdn5oGsWhL/AQQqC+KQBREA==
+"@renproject/ren@^2.0.9":
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.0.9.tgz#afc2ddfcb09982041b3b292bafd2aebe320f0ed8"
+  integrity sha512-xdCoGeGHGgdBmIR1HqwslElkenusXkDNOKGbm2+DrA6LAaQjPxVVgFkoeXneBwJ4GRMLknZIk3HbYjDTtYxpaQ==
   dependencies:
-    "@renproject/interfaces" "^2.0.6"
-    "@renproject/provider" "^2.0.6"
-    "@renproject/rpc" "^2.0.7"
-    "@renproject/utils" "^2.0.6"
-    "@types/bn.js" "^4.11.6"
+    "@renproject/interfaces" "^2.0.8"
+    "@renproject/provider" "^2.0.8"
+    "@renproject/rpc" "^2.0.8"
+    "@renproject/utils" "^2.0.8"
+    "@types/bn.js" "^5.1.0"
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
     bn.js "^5.1.3"
@@ -2900,6 +2920,18 @@
     bignumber.js "^9.0.1"
     immutable "^4.0.0-rc.12"
 
+"@renproject/rpc@^2.0.8":
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/@renproject/rpc/-/rpc-2.0.8.tgz#e591661dd8f9c4570fb34758a818ab013cf6adac"
+  integrity sha512-gfHg8CuwtgUbjLOlO/XmDj+N+qboPMcFL/ziSl5HBGsTyD+a2/dUtbt34T8S0iq6J/SLXwINeY7wXCigJG4v9A==
+  dependencies:
+    "@renproject/interfaces" "^2.0.8"
+    "@renproject/provider" "^2.0.8"
+    "@renproject/utils" "^2.0.8"
+    "@types/node" ">=10"
+    bignumber.js "^9.0.1"
+    immutable "^4.0.0-rc.12"
+
 "@renproject/utils@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.0.6.tgz#a6d8f820b630cf278e7efc2ac7e3eba240353da0"
@@ -2911,6 +2943,24 @@
     "@types/mocha" "^8.0.3"
     "@types/node" ">=10"
     axios "^0.20.0"
+    bignumber.js "^9.0.1"
+    create-hash "1.2.0"
+    events "^3.2.0"
+    immutable "^4.0.0-rc.12"
+    keccak "^3.0.1"
+    web3-eth-abi "^2.0.0-alpha.1"
+
+"@renproject/utils@^2.0.8":
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.0.8.tgz#6656608cfda904815f7da7e6d60fb3f9330758fb"
+  integrity sha512-Cj47quWafyhaAu8sEFlTgiyMDLjLjofVV/jdVRBpqmGMfCycnVLb4MZOWkpKzlxWpEhBTFtDx1nC79qvN68EmQ==
+  dependencies:
+    "@renproject/interfaces" "^2.0.8"
+    "@types/create-hash" "1.2.2"
+    "@types/keccak" "^3.0.1"
+    "@types/mocha" "^8.2.0"
+    "@types/node" ">=10"
+    axios "^0.21.1"
     bignumber.js "^9.0.1"
     create-hash "1.2.0"
     events "^3.2.0"
@@ -3236,6 +3286,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/bn.js@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-5.1.0.tgz#32c5d271503a12653c62cf4d2b45e6eab8cebc68"
+  integrity sha512-QSSVYj7pYFN49kW77o2s9xTCwZ8F2xLbjLLSEVh8D2F4JUhZtPAGOFLTD+ffqksBx/u4cE/KImFjyhqCjn/LIA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/bs58@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@types/bs58/-/bs58-4.0.1.tgz#3d51222aab067786d3bc3740a84a7f5a0effaa37"
@@ -3413,7 +3470,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/mocha@^8.0.3":
+"@types/mocha@^8.0.3", "@types/mocha@^8.2.0":
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-8.2.0.tgz#3eb56d13a1de1d347ecb1957c6860c911704bc44"
   integrity sha512-/Sge3BymXo4lKc31C8OINJgXLaw+7vL1/L1pGiBNpGrBiT8FQiaFpSYV0uhTaG4y78vcMBTMFsWaHDvuD+xGzQ==
@@ -4551,6 +4608,13 @@ axios@^0.20.0:
   version "0.20.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.20.0.tgz#057ba30f04884694993a8cd07fa394cff11c50bd"
   integrity sha512-ANA4rr2BDcmmAQLOKft2fufrtuvlqR+cXNNinUmvfeSNCOF98PZL+7M/v1zIdGo7OLjEA9J2gXJL+j4zGsl0bA==
+  dependencies:
+    follow-redirects "^1.10.0"
+
+axios@^0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
     follow-redirects "^1.10.0"
 

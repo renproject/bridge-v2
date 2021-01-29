@@ -74,11 +74,9 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
 };
 
 export const depositSorter = (a: GatewayTransaction, b: GatewayTransaction) => {
-  const aConf = a.sourceTxConfs || 0;
-  const bConf = b.sourceTxConfs || 0;
-  // TODO: FIXME find a better way for sorting deposits
-  // deposit with more confirmations is first
-  return aConf - bConf;
+  const aConf = a.detectedAt || 0;
+  const bConf = b.detectedAt || 0;
+  return Number(aConf) - Number(bConf);
 };
 
 export const getLockAndMintParams = (
