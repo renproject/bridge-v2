@@ -2,6 +2,18 @@
 # yarn lockfile v1
 
 
+"@CoinSpace/bitcore-lib-dogecoin@github:CoinSpace/bitcore-lib-dogecoin", bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin:
+  version "8.1.2"
+  resolved "https://codeload.github.com/CoinSpace/bitcore-lib-dogecoin/tar.gz/cf8b3f663d6f065c12a643d8eb7c9e7b7f516bf1"
+  dependencies:
+    bn.js "=4.11.8"
+    bs58 "^4.0.1"
+    buffer-compare "=1.1.1"
+    elliptic "=6.4.0"
+    inherits "=2.0.1"
+    lodash "^4.17.15"
+    scryptsy "^2.1.0"
+
 "@babel/cli@^7.10.1":
   version "7.12.8"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.12.8.tgz#3b24ed2fd5da353ee6f19e8935ff8c93b5fe8430"
@@ -1707,20 +1719,20 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.4.1.tgz#600f2275ff54739ad5ac0102f1467b8963cd5f71"
   integrity sha512-0yPjzuzGMkW1GkrC8yWsiN7vt1OzkMIi9HgxRmKREZl2wnNPOKo/yScTjXf/O57HM8dltqxPF6jlNLFVtc2qdw==
 
-"@glif/filecoin-address@^1.1.0-beta.4":
-  version "1.1.0-beta.10"
-  resolved "https://registry.yarnpkg.com/@glif/filecoin-address/-/filecoin-address-1.1.0-beta.10.tgz#41af9957ef46f67d75e9bf180734ac21ec4b891d"
-  integrity sha512-o71goGIPo5Imd4wj+PR4O94lrkjes2h1c6mTMLgQ3cy2qg8jUwHHiDgfz4WCM9nYn6lO7pXwZqSwoqXjgWC3oQ==
+"@glif/filecoin-address@^1.1.0-beta.18":
+  version "1.1.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@glif/filecoin-address/-/filecoin-address-1.1.0-beta.18.tgz#9b50c1055c8d70b214dd4f6ca1bd0f07f08cf7a8"
+  integrity sha512-OuoDqcyPqTq5L+P4sC6XiYmc35S6KzgximUGy82IBT24Y0JCseOp5I8V9NOCrUJCxlSUVPEI72IUymx2YeLYzQ==
   dependencies:
     blakejs "1.1.0"
     borc "2.1.1"
     leb128 "0.0.5"
     uint8arrays "1.1.0"
 
-"@glif/filecoin-rpc-client@^1.1.0-beta.1":
-  version "1.1.0-beta.11"
-  resolved "https://registry.yarnpkg.com/@glif/filecoin-rpc-client/-/filecoin-rpc-client-1.1.0-beta.11.tgz#fa489db3b210de7cf5cb7214e154599e66f841af"
-  integrity sha512-dhaF8Vjnt+Rc5ulBMBwfNAdTGLKJonkd6GiABcDcqZxNx6ryBwVYoOGUvyqfkmVR+hj39cBBIc+VdPqc6yMa8A==
+"@glif/filecoin-rpc-client@^1.1.0-beta.17":
+  version "1.1.0-beta.17"
+  resolved "https://registry.yarnpkg.com/@glif/filecoin-rpc-client/-/filecoin-rpc-client-1.1.0-beta.17.tgz#e27d11386ca4247f4a00304462fd597a0b8d33b0"
+  integrity sha512-GeQuE0KBr9NJMgfTn7ZewwnAmWiFb7aDnd/r+Ucbz5xVBjefN17bZsDt9T+9LknSHAb5FHfo4zpYo9zILunuqA==
   dependencies:
     axios "0.21.0"
 
@@ -2651,6 +2663,28 @@
     redux-thunk "^2.3.0"
     reselect "^4.0.0"
 
+"@renproject/chains-bitcoin@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-bitcoin/-/chains-bitcoin-2.0.10-alpha.0.tgz#33cf4df5680b3cfe198f4c70c6383ba09d176e7d"
+  integrity sha512-iXB9pqHGAASDbrzdL8AyGfmkS8Px119eM1jyxNcZVZkIHDTJD3BhAKO3XXhICw0cMKJNLD95KkrrjWuT637ATw==
+  dependencies:
+    "@CoinSpace/bitcore-lib-dogecoin" CoinSpace/bitcore-lib-dogecoin
+    "@renproject/interfaces" "^2.0.10-alpha.0"
+    "@renproject/rpc" "^2.0.10-alpha.0"
+    "@renproject/utils" "^2.0.10-alpha.0"
+    "@types/bs58" "^4.0.1"
+    "@types/cashaddrjs" "^0.3.0"
+    "@types/node" ">=10"
+    bchaddrjs "^0.5.2"
+    bignumber.js "^9.0.1"
+    bitcore-lib "^8.24.2"
+    bitcore-lib-cash "^8.24.2"
+    bitcore-lib-zcash zcash-hackworks/bitcore-lib-zcash
+    bs58 "^4.0.1"
+    bs58check "^2.1.2"
+    cashaddrjs "^0.4.4"
+    wallet-address-validator "^0.2.4"
+
 "@renproject/chains-bitcoin@^2.0.7":
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@renproject/chains-bitcoin/-/chains-bitcoin-2.0.7.tgz#72cba844ccefa5f82947bcb3aecf30248e890333"
@@ -2673,6 +2707,25 @@
     cashaddrjs "^0.4.4"
     wallet-address-validator "^0.2.4"
 
+"@renproject/chains-ethereum@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-2.0.10-alpha.0.tgz#5d173526ebdab91484a67367cafa5e7edb4c3138"
+  integrity sha512-DiXQJQ+PPPLwmNi4L/zOCLtC7plpcEw7lvJrKvr9qnN+niT9Ik72bD3IMAcQzHOTssCwU6Dq2Wv4G32mHcPIYA==
+  dependencies:
+    "@renproject/interfaces" "^2.0.10-alpha.0"
+    "@renproject/utils" "^2.0.10-alpha.0"
+    "@types/bn.js" "^5.1.0"
+    "@types/node" ">=10"
+    bignumber.js "^9.0.1"
+    bn.js "^5.1.3"
+    bnc-sdk "^3.0.0"
+    ethereumjs-util "^7.0.7"
+    wallet-address-validator "^0.2.4"
+    web3 "^2.0.0-alpha.1"
+    web3-core "^2.0.0-alpha.1"
+    web3-providers "^2.0.0-alpha.1"
+    web3-utils "^2.0.0-alpha.1"
+
 "@renproject/chains-ethereum@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-2.0.6.tgz#6595cd2577a9f5fdd69f3d597de06504226f10cf"
@@ -2692,28 +2745,34 @@
     web3-providers "^2.0.0-alpha.1"
     web3-utils "^2.0.0-alpha.1"
 
-"@renproject/chains-filecoin@^2.0.7":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-filecoin/-/chains-filecoin-2.0.7.tgz#68ac3dcfdd65ee3bf762be2c8ce9fe8426bc62ee"
-  integrity sha512-LUWWx5eSJOqXVA8lSj3BQRJ6h72QGlfzYQIGUjc4mtdI4CKwRWUJvYsRj1cV55qis9GaO56kYSNldLD627HFmA==
+"@renproject/chains-filecoin@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-filecoin/-/chains-filecoin-2.0.10-alpha.0.tgz#b186b376a7fcec2f861d68faf18eac065d2e617c"
+  integrity sha512-YxUAD7RbMIJ31amD5+0xT1AYzoQrSI6dttDbM0XjfLK1Cm9OArn/eXHHrgfVAGtiIy9fpZDMz0Wgy9Te23HKeg==
   dependencies:
-    "@glif/filecoin-address" "^1.1.0-beta.4"
-    "@glif/filecoin-rpc-client" "^1.1.0-beta.1"
-    "@renproject/interfaces" "^2.0.6"
-    "@renproject/rpc" "^2.0.7"
-    "@renproject/utils" "^2.0.6"
-    "@types/bs58" "^4.0.1"
+    "@glif/filecoin-address" "^1.1.0-beta.18"
+    "@glif/filecoin-rpc-client" "^1.1.0-beta.17"
+    "@renproject/interfaces" "^2.0.10-alpha.0"
+    "@renproject/rpc" "^2.0.10-alpha.0"
+    "@renproject/utils" "^2.0.10-alpha.0"
     "@types/elliptic" "^6.4.12"
     "@types/node" ">=10"
-    bchaddrjs "^0.4.9"
     bignumber.js "^9.0.1"
-    bitcore-lib "^8.22.2"
-    bitcore-lib-cash "^8.22.2"
-    bitcore-lib-dogecoin CoinSpace/bitcore-lib-dogecoin
-    bitcore-lib-zcash zcash-hackworks/bitcore-lib-zcash
-    bs58 "^4.0.1"
-    cids "^1.0.1"
-    wallet-address-validator "^0.2.4"
+    cids "^1.1.5"
+    elliptic "^6.5.3"
+
+"@renproject/chains-terra@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-terra/-/chains-terra-2.0.10-alpha.0.tgz#f54acd66cc8702f85a49a3fb78b7784777e3ecf4"
+  integrity sha512-X9gfdQ2IWduQ8rIWG9DHlTAzqc4T6nPEz1XceanaQPjCgkZ8VkssXTHrdnDog187VezFMVrbf5qrvGyjzfvqDw==
+  dependencies:
+    "@renproject/interfaces" "^2.0.10-alpha.0"
+    "@renproject/rpc" "^2.0.10-alpha.0"
+    "@renproject/utils" "^2.0.10-alpha.0"
+    "@terra-money/terra.js" "1.3.6"
+    "@types/node" ">=10"
+    bech32 "^1.1.4"
+    bignumber.js "^9.0.1"
 
 "@renproject/chains-terra@^2.0.6":
   version "2.0.6"
@@ -2736,37 +2795,16 @@
     bs58 "^4.0.1"
     wallet-address-validator "^0.2.4"
 
-"@renproject/chains-terra@^2.0.7":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-terra/-/chains-terra-2.0.7.tgz#f5ac3eb4fd89958d383665e3ce8abdf3d9c87f33"
-  integrity sha512-sB4aRkIcq23z6V7HbL3dCpGgaAgMZyDWatsN4otk0ffsTDZFGv7Bvs9NgpwrEDQ8HWtnl67XgTRETTLFOCMGjw==
+"@renproject/chains@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/chains/-/chains-2.0.10-alpha.0.tgz#ef28728823354c2fdafbc55a0c948d30d7e17903"
+  integrity sha512-tPhFJmVQ7cUiTt4uu6mIL2ffFE/uyXK1JYlNo8cYNGtKloQiYXao3EM5mYawRipMIlF7Be3rgEltndcZ6P7NCA==
   dependencies:
-    "@renproject/interfaces" "^2.0.6"
-    "@renproject/rpc" "^2.0.7"
-    "@renproject/utils" "^2.0.6"
-    "@terra-money/terra.js" "1.3.1"
-    "@types/bs58" "^4.0.1"
-    "@types/node" ">=10"
-    bchaddrjs "^0.4.9"
-    bech32 "^1.1.4"
-    bignumber.js "^9.0.1"
-    bitcore-lib "^8.22.2"
-    bitcore-lib-cash "^8.22.2"
-    bitcore-lib-dogecoin CoinSpace/bitcore-lib-dogecoin
-    bitcore-lib-zcash zcash-hackworks/bitcore-lib-zcash
-    bs58 "^4.0.1"
-    wallet-address-validator "^0.2.4"
-
-"@renproject/chains@^2.0.7":
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/@renproject/chains/-/chains-2.0.7.tgz#faf04e56d79f85bd86bfb55510b228c52c8f276c"
-  integrity sha512-X3UJwUG5OoDEhn+cMDH/0wRTk2D9EhL3c39OttoXZLZIriY0mxGG1VK+UX2H8Krvoz9wZvWVrBG9Hq8vGorF1A==
-  dependencies:
-    "@renproject/chains-bitcoin" "^2.0.7"
-    "@renproject/chains-ethereum" "^2.0.6"
-    "@renproject/chains-filecoin" "^2.0.7"
-    "@renproject/chains-terra" "^2.0.7"
-    "@renproject/interfaces" "^2.0.6"
+    "@renproject/chains-bitcoin" "^2.0.10-alpha.0"
+    "@renproject/chains-ethereum" "^2.0.10-alpha.0"
+    "@renproject/chains-filecoin" "^2.0.10-alpha.0"
+    "@renproject/chains-terra" "^2.0.10-alpha.0"
+    "@renproject/interfaces" "^2.0.10-alpha.0"
     "@types/node" ">=10"
 
 "@renproject/fonts@^1.0.3-rc1":
@@ -2774,19 +2812,19 @@
   resolved "https://registry.yarnpkg.com/@renproject/fonts/-/fonts-1.0.3-rc1.tgz#66d9d782bfb2e220b9db4f6ac01d39884fb4d4e5"
   integrity sha512-nua2aANNcXgV4SENTf0cRJBx4NGcSyq3ithc3Qf4URMPrlJPQ+N/PWCsPxOd+O3DzH9F4h2UksYhlcSZrH4x2A==
 
-"@renproject/interfaces@^2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.0.6.tgz#ca2aeb2cb180db11d522917cd3a66afd016292e7"
-  integrity sha512-a/2cJtxWAdcjDz07F7yVbml7YNbKb1fb691vEMQrNY11U0GWIqmjOAmz3lUdYeOIDg4vzAJOXiiqTYr/kylofQ==
+"@renproject/interfaces@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.0.10-alpha.0.tgz#7532abef9df775be567b05a517b125b7331c03c8"
+  integrity sha512-QC/x7Pp9e9M9xaqQhjvt3Pq4G1/InSCeCQy1odQGcOBco7lzTv6a/6VJ9k7nXytBw2NJLpbKwgKtjOFbTJiA1Q==
   dependencies:
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
     web3-core "^2.0.0-alpha.1"
 
-"@renproject/interfaces@^2.0.8":
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.0.8.tgz#14b86100c58107c3054cb70320653256aaaecd4f"
-  integrity sha512-dk2lh1Yc7G75uQTsP3YY+iFGIXNfuFfV4GYw2AobEAobGuw6obuhO4zg94/A0J2ppIbqQj7wJsvnzymp/UKcHQ==
+"@renproject/interfaces@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.0.6.tgz#ca2aeb2cb180db11d522917cd3a66afd016292e7"
+  integrity sha512-a/2cJtxWAdcjDz07F7yVbml7YNbKb1fb691vEMQrNY11U0GWIqmjOAmz3lUdYeOIDg4vzAJOXiiqTYr/kylofQ==
   dependencies:
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
@@ -2851,6 +2889,17 @@
     "@renproject/interfaces" "^2.0.6"
     "@renproject/multiwallet-base-connector" "^2.0.6"
 
+"@renproject/provider@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/provider/-/provider-2.0.10-alpha.0.tgz#275184a118ae38d2b9ba13fbe0ae39fc24e04782"
+  integrity sha512-kulAlUUK1wQOKI3ORPE7hdnwNz7FihGI0uh+R1cPg2chf+8RRXAK14tA8UsvUZwegcwWsHoB0isMNeuEjL7QkA==
+  dependencies:
+    "@renproject/interfaces" "^2.0.10-alpha.0"
+    "@renproject/utils" "^2.0.10-alpha.0"
+    "@types/node" ">=10"
+    axios "^0.21.1"
+    immutable "^4.0.0-rc.12"
+
 "@renproject/provider@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@renproject/provider/-/provider-2.0.6.tgz#4a48419a7263e2235dd5bb6570f0e0f7c44bb7fe"
@@ -2862,17 +2911,6 @@
     axios "^0.20.0"
     immutable "^4.0.0-rc.12"
 
-"@renproject/provider@^2.0.8":
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/@renproject/provider/-/provider-2.0.8.tgz#7b41ce8c0d73e176b3b967130acf7c123ccea7e7"
-  integrity sha512-B4ISsrsX5UUAs6FFUeu8ouqD5RDiP20XHitEzDj//eqqFDM6DzJEhPRF6rd4KvvUeeJ9qCHEaSGj7DRRMTdJPQ==
-  dependencies:
-    "@renproject/interfaces" "^2.0.8"
-    "@renproject/utils" "^2.0.8"
-    "@types/node" ">=10"
-    axios "^0.21.1"
-    immutable "^4.0.0-rc.12"
-
 "@renproject/ren-tx@^2.0.10-alpha.0":
   version "2.0.10-alpha.0"
   resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.0.10-alpha.0.tgz#abb468b4c43745b259d0bb58507f212b977ecf32"
@@ -2880,21 +2918,33 @@
   dependencies:
     bignumber.js "^9.0.1"
 
-"@renproject/ren@^2.0.9":
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.0.9.tgz#afc2ddfcb09982041b3b292bafd2aebe320f0ed8"
-  integrity sha512-xdCoGeGHGgdBmIR1HqwslElkenusXkDNOKGbm2+DrA6LAaQjPxVVgFkoeXneBwJ4GRMLknZIk3HbYjDTtYxpaQ==
+"@renproject/ren@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.0.10-alpha.0.tgz#5154092cc62fcdccf2c27c8e246676992e0694c4"
+  integrity sha512-f4kv7AZP4hZpAoCVKKaF6CdQjA2ETnW+Ed1el+sZ6EPKhSvW8AdNykuY3GUZsoIidTYwGTqJ4nR80KLN73LpLw==
   dependencies:
-    "@renproject/interfaces" "^2.0.8"
-    "@renproject/provider" "^2.0.8"
-    "@renproject/rpc" "^2.0.8"
-    "@renproject/utils" "^2.0.8"
+    "@renproject/interfaces" "^2.0.10-alpha.0"
+    "@renproject/provider" "^2.0.10-alpha.0"
+    "@renproject/rpc" "^2.0.10-alpha.0"
+    "@renproject/utils" "^2.0.10-alpha.0"
     "@types/bn.js" "^5.1.0"
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
     bn.js "^5.1.3"
     immutable "^4.0.0-rc.12"
     web3-eth-abi "^2.0.0-alpha.1"
+
+"@renproject/rpc@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/rpc/-/rpc-2.0.10-alpha.0.tgz#b5dc11220637d80899a5e5fdce4f8a0c45027082"
+  integrity sha512-vZNUE0vjd470uwG6x9xsSfbSe9XJ+TwLWUFg0/56oalkEC5crkFr5FFsjfw/1n7426VHbh6B35gn7Z0ydvlRqg==
+  dependencies:
+    "@renproject/interfaces" "^2.0.10-alpha.0"
+    "@renproject/provider" "^2.0.10-alpha.0"
+    "@renproject/utils" "^2.0.10-alpha.0"
+    "@types/node" ">=10"
+    bignumber.js "^9.0.1"
+    immutable "^4.0.0-rc.12"
 
 "@renproject/rpc@^2.0.6":
   version "2.0.6"
@@ -2920,17 +2970,23 @@
     bignumber.js "^9.0.1"
     immutable "^4.0.0-rc.12"
 
-"@renproject/rpc@^2.0.8":
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/@renproject/rpc/-/rpc-2.0.8.tgz#e591661dd8f9c4570fb34758a818ab013cf6adac"
-  integrity sha512-gfHg8CuwtgUbjLOlO/XmDj+N+qboPMcFL/ziSl5HBGsTyD+a2/dUtbt34T8S0iq6J/SLXwINeY7wXCigJG4v9A==
+"@renproject/utils@^2.0.10-alpha.0":
+  version "2.0.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.0.10-alpha.0.tgz#4746a0971b0b0ba823fc49e97ed3ddd2df73f02c"
+  integrity sha512-zbihl7wK0Nj0fngVSw4pDaDGKPtIIgXfTdtFgJ7eumz9YFIXNFKKL+tGQmoRgTlhjCe/f++ayyE8abzMa2pBAQ==
   dependencies:
-    "@renproject/interfaces" "^2.0.8"
-    "@renproject/provider" "^2.0.8"
-    "@renproject/utils" "^2.0.8"
+    "@renproject/interfaces" "^2.0.10-alpha.0"
+    "@types/create-hash" "1.2.2"
+    "@types/keccak" "^3.0.1"
+    "@types/mocha" "^8.2.0"
     "@types/node" ">=10"
+    axios "^0.21.1"
     bignumber.js "^9.0.1"
+    create-hash "1.2.0"
+    events "^3.2.0"
     immutable "^4.0.0-rc.12"
+    keccak "^3.0.1"
+    web3-eth-abi "^2.0.0-alpha.1"
 
 "@renproject/utils@^2.0.6":
   version "2.0.6"
@@ -2943,24 +2999,6 @@
     "@types/mocha" "^8.0.3"
     "@types/node" ">=10"
     axios "^0.20.0"
-    bignumber.js "^9.0.1"
-    create-hash "1.2.0"
-    events "^3.2.0"
-    immutable "^4.0.0-rc.12"
-    keccak "^3.0.1"
-    web3-eth-abi "^2.0.0-alpha.1"
-
-"@renproject/utils@^2.0.8":
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.0.8.tgz#6656608cfda904815f7da7e6d60fb3f9330758fb"
-  integrity sha512-Cj47quWafyhaAu8sEFlTgiyMDLjLjofVV/jdVRBpqmGMfCycnVLb4MZOWkpKzlxWpEhBTFtDx1nC79qvN68EmQ==
-  dependencies:
-    "@renproject/interfaces" "^2.0.8"
-    "@types/create-hash" "1.2.2"
-    "@types/keccak" "^3.0.1"
-    "@types/mocha" "^8.2.0"
-    "@types/node" ">=10"
-    axios "^0.21.1"
     bignumber.js "^9.0.1"
     create-hash "1.2.0"
     events "^3.2.0"
@@ -3184,6 +3222,24 @@
     tmp "^0.2.1"
     utf-8-validate "^5.0.2"
     ws "^7.3.1"
+
+"@terra-money/terra.js@1.3.6":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-1.3.6.tgz#e41e68d6cd9106c92634aa91753b3976c37e61f6"
+  integrity sha512-o+eQh4k3+HPEsOdZl8bpaQxWYsRe9tvTUL8kEy3J2Jzey8MnEzslqg8by6h1CxKFbJMDjqHUc6Sp+ebWd4zA+w==
+  dependencies:
+    axios "^0.21.1"
+    bech32 "^1.1.4"
+    bip32 "^2.0.6"
+    bip39 "^3.0.3"
+    bufferutil "^4.0.1"
+    crypto-js "3.3.0"
+    decimal.js "^10.2.1"
+    readable-stream "^3.6.0"
+    secp256k1 "^4.0.2"
+    tmp "^0.2.1"
+    utf-8-validate "^5.0.2"
+    ws "^7.4.2"
 
 "@testing-library/dom@*":
   version "7.28.1"
@@ -4828,6 +4884,16 @@ bchaddrjs@^0.4.9:
     bs58check "^2.1.2"
     cashaddrjs "^0.3.12"
 
+bchaddrjs@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/bchaddrjs/-/bchaddrjs-0.5.2.tgz#1f52b5077329774e7c82d4882964628106bb11a0"
+  integrity sha512-OO7gIn3m7ea4FVx4cT8gdlWQR2+++EquhdpWQJH9BQjK63tJJ6ngB3QMZDO6DiBoXiIGUsTPHjlrHVxPGcGxLQ==
+  dependencies:
+    bs58check "2.1.2"
+    buffer "^6.0.3"
+    cashaddrjs "0.4.4"
+    stream-browserify "^3.0.0"
+
 bcrypt-pbkdf@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.2.tgz#a4301d389b6a43f9b67ff3ca11a3f6637e360e9e"
@@ -4918,7 +4984,7 @@ bip39@^2.5.0:
     safe-buffer "^5.0.1"
     unorm "^1.3.3"
 
-bip39@^3.0.2:
+bip39@^3.0.2, bip39@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/bip39/-/bip39-3.0.3.tgz#4a8b79067d6ed2e74f9199ac994a2ab61b176760"
   integrity sha512-P0dKrz4g0V0BjXfx7d9QNkJ/Txcz/k+hM9TnjqjUaXtuOfAvxXSw2rJw8DX0e3ZPwnK/IgDxoRqf0bvoVCqbMg==
@@ -4974,19 +5040,20 @@ bitcore-lib-cash@^8.22.2:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin:
-  version "8.1.2"
-  resolved "https://codeload.github.com/CoinSpace/bitcore-lib-dogecoin/tar.gz/cf8b3f663d6f065c12a643d8eb7c9e7b7f516bf1"
+bitcore-lib-cash@^8.24.2:
+  version "8.24.2"
+  resolved "https://registry.yarnpkg.com/bitcore-lib-cash/-/bitcore-lib-cash-8.24.2.tgz#3d6e94925d4fb1e03247d787a521d0a465ef5271"
+  integrity sha512-SZiDkEyQqQ5pyerDPgqqBA2orvk93txBFczPLfSBYJ7sUMRH5ylc9cHEvxo26n09Gt/+31AqEAiOshI3MtQiyg==
   dependencies:
+    bitcore-lib "^8.24.2"
     bn.js "=4.11.8"
     bs58 "^4.0.1"
     buffer-compare "=1.1.1"
-    elliptic "=6.4.0"
+    elliptic "^6.5.3"
     inherits "=2.0.1"
-    lodash "^4.17.15"
-    scryptsy "^2.1.0"
+    lodash "^4.17.20"
 
-bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
+"bitcore-lib-zcash@github:zcash-hackworks/bitcore-lib-zcash", bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
   version "0.13.19"
   resolved "https://codeload.github.com/zcash-hackworks/bitcore-lib-zcash/tar.gz/e97ae1dd2e9f14d6076d5e5429c75d8965afa4ab"
   dependencies:
@@ -5001,6 +5068,19 @@ bitcore-lib@^8.22.2, bitcore-lib@^8.24.1:
   version "8.24.1"
   resolved "https://registry.yarnpkg.com/bitcore-lib/-/bitcore-lib-8.24.1.tgz#2456d25a0fcad8f73ef88ec81fef56d15f9b5f4c"
   integrity sha512-dNwH9L1+xgUhEr02jqRNfJtIzOU3YQ7JGIPslKkFxsnVFxQublCcuYW5DWcYgvAclg/Ddcfv/DZk26lo41X+4g==
+  dependencies:
+    bech32 "=1.1.3"
+    bn.js "=4.11.8"
+    bs58 "^4.0.1"
+    buffer-compare "=1.1.1"
+    elliptic "^6.5.3"
+    inherits "=2.0.1"
+    lodash "^4.17.20"
+
+bitcore-lib@^8.24.2:
+  version "8.24.2"
+  resolved "https://registry.yarnpkg.com/bitcore-lib/-/bitcore-lib-8.24.2.tgz#62d2b5dd6622c1ce6c3edc8945bcee462544ee17"
+  integrity sha512-jujnK/wsLs4ARe3VEfZmbzNrPRgLoirz7PYJn4uRVk2vP7zeiN8pStnbYUNSB0ZgNnB7lcB1F3ZnSBk2y1By/Q==
   dependencies:
     bech32 "=1.1.3"
     bn.js "=4.11.8"
@@ -5088,6 +5168,15 @@ bnc-sdk@^2.1.5:
   integrity sha512-rtwOGKjal1LQyYrdESdOfCK5L2ocS3tjoWtNacm3rkb+xjDusVnUpF/NgudJpCnv3Mwu9YDWjsLKIPKjwbJL7A==
   dependencies:
     crypto-es "^1.2.2"
+    sturdy-websocket "^0.1.12"
+
+bnc-sdk@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/bnc-sdk/-/bnc-sdk-3.1.0.tgz#b568d357a3fe95b627701470c051b72d6c9199a8"
+  integrity sha512-qr299cdBiAxFjTharZNlF+qpxjtB49oexSVwDnsW5fczJjBLG1ibJHoUD/GtJbCiVPS+hqq+qH6HJnpsQknRZA==
+  dependencies:
+    crypto-es "^1.2.2"
+    rxjs "^6.6.3"
     sturdy-websocket "^0.1.12"
 
 body-parser@1.19.0, body-parser@^1.19.0:
@@ -5306,7 +5395,7 @@ bs58@^4.0.0, bs58@^4.0.1:
   dependencies:
     base-x "^3.0.2"
 
-bs58check@<3.0.0, bs58check@^2.0.0, bs58check@^2.1.1, bs58check@^2.1.2:
+bs58check@2.1.2, bs58check@<3.0.0, bs58check@^2.0.0, bs58check@^2.1.1, bs58check@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/bs58check/-/bs58check-2.1.2.tgz#53b018291228d82a5aa08e7d796fdafda54aebfc"
   integrity sha512-0TS1jicxdU09dwJMNZtVAfzPi6Q6QeN0pM1Fkzrjn+XYHvzMKPU3pHVpva+769iNVSfIYWf7LJ6WR+BuuMf8cA==
@@ -5418,6 +5507,14 @@ buffer@^5.1.0, buffer@^5.2.1, buffer@^5.4.3, buffer@^5.5.0:
   dependencies:
     base64-js "^1.3.1"
     ieee754 "^1.1.13"
+
+buffer@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-6.0.3.tgz#2ace578459cc8fbe2a70aaa8f52ee63b6a74c6c6"
+  integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
+  dependencies:
+    base64-js "^1.3.1"
+    ieee754 "^1.2.1"
 
 bufferutil@^4.0.1:
   version "4.0.3"
@@ -5647,17 +5744,17 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
+cashaddrjs@0.4.4, cashaddrjs@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/cashaddrjs/-/cashaddrjs-0.4.4.tgz#169f1ae620d325db77700273d972282adeeee331"
+  integrity sha512-xZkuWdNOh0uq/mxJIng6vYWfTowZLd9F4GMAlp2DwFHlcCqCm91NtuAc47RuV4L7r4PYcY5p6Cr2OKNb4hnkWA==
+  dependencies:
+    big-integer "1.6.36"
+
 cashaddrjs@^0.3.12:
   version "0.3.12"
   resolved "https://registry.yarnpkg.com/cashaddrjs/-/cashaddrjs-0.3.12.tgz#73089588113459741e854aa842db1f7816d8428d"
   integrity sha512-GdjCYMVwd86HXcFcxyEZQLPLFv8a/u0ccYPsO0PpnUW26LhZzHX9l9QA+DjaeUah7tnebwPs33NWDbbUy8iVYQ==
-  dependencies:
-    big-integer "1.6.36"
-
-cashaddrjs@^0.4.4:
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/cashaddrjs/-/cashaddrjs-0.4.4.tgz#169f1ae620d325db77700273d972282adeeee331"
-  integrity sha512-xZkuWdNOh0uq/mxJIng6vYWfTowZLd9F4GMAlp2DwFHlcCqCm91NtuAc47RuV4L7r4PYcY5p6Cr2OKNb4hnkWA==
   dependencies:
     big-integer "1.6.36"
 
@@ -5811,15 +5908,15 @@ ci-info@^2.0.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
 
-cids@^1.0.1:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/cids/-/cids-1.1.4.tgz#d2aa4343fef971ef896b032fa0b99a66755d0f98"
-  integrity sha512-mo0IWZKcaQZsret8cP39MzDnPVT9NhhQEVaIKwWnBFaLtj2slTFckYMnbk15ptewNkb22qRBLfuBK+qiWYW/Mg==
+cids@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/cids/-/cids-1.1.5.tgz#778bf8b70de3a0bf70989fd7d89c28fe23c685cb"
+  integrity sha512-i0V7tF2Jf78BKXyy2rpy1H/ozaJEP8b3Z7ZcHe9J86RRvJZ4e7daaJP3xwL09e14/Bl/mYX5WVc36fbQtjH7Sg==
   dependencies:
     multibase "^3.0.1"
     multicodec "^2.1.0"
-    multihashes "^3.0.1"
-    uint8arrays "^1.1.0"
+    multihashes "^3.1.0"
+    uint8arrays "^2.0.5"
 
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   version "1.0.4"
@@ -10033,7 +10130,7 @@ ieee754@1.1.13:
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.13.tgz#ec168558e95aa181fd87d37f55c32bbcb6708b84"
   integrity sha512-4vf7I2LYV/HaWerSo3XmlMkp5eZ83i+/CDluXi/IGTs/O1sejBNhTtnxzmRZfvOUqj7lZjqHkeTvpgSFDlWZTg==
 
-ieee754@^1.1.13, ieee754@^1.1.4, ieee754@^1.1.8:
+ieee754@^1.1.13, ieee754@^1.1.4, ieee754@^1.1.8, ieee754@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
@@ -10161,7 +10258,7 @@ inflight@^1.0.4:
     once "^1.3.0"
     wrappy "1"
 
-inherits@2, inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0.1, inherits@~2.0.3:
+inherits@2, inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0.1, inherits@~2.0.3, inherits@~2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
@@ -12595,13 +12692,13 @@ multicodec@^2.1.0:
     uint8arrays "1.1.0"
     varint "^6.0.0"
 
-multihashes@^3.0.1:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/multihashes/-/multihashes-3.1.0.tgz#aada18fc55169ae044c3455e2264024bd00f5690"
-  integrity sha512-snU+w6aZy5bTrrqIHW3wkT0MfHmxcpOsaVNJt0NzUnseksbjFDVUZjSmhDMAVOVnIdLMS7xHjo55pKlBIGmC3g==
+multihashes@^3.1.0:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/multihashes/-/multihashes-3.1.2.tgz#ffa5e50497aceb7911f7b4a3b6cada9b9730edfc"
+  integrity sha512-AP4IoV/YzkNrfbQKZE3OMPibrmy350OmCd6cJkwyM8oExaXIlOY4UnOOVSQtAEuq/LR01XfXKCESidzZvSwHCQ==
   dependencies:
     multibase "^3.1.0"
-    uint8arrays "^1.0.0"
+    uint8arrays "^2.0.5"
     varint "^6.0.0"
 
 multiparty@^4.2.1:
@@ -15310,7 +15407,7 @@ readable-stream@^1.0.33:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.6.0:
+readable-stream@^3.0.6, readable-stream@^3.1.1, readable-stream@^3.4.0, readable-stream@^3.5.0, readable-stream@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.6.0.tgz#337bbda3adc0706bd3e024426a286d4b4b2c9198"
   integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
@@ -15850,7 +15947,7 @@ rustbn.js@~0.2.0:
   resolved "https://registry.yarnpkg.com/rustbn.js/-/rustbn.js-0.2.0.tgz#8082cb886e707155fd1cb6f23bd591ab8d55d0ca"
   integrity sha512-4VlvkRUuCJvr2J6Y0ImW7NvTCriMi7ErOAqWk1y69vAdoNIzCF3yPmgeNzx+RQTLEDFq5sHfscn1MwHxP9hNfA==
 
-rxjs@^6.4.0, rxjs@^6.5.3, rxjs@^6.6.0, rxjs@^6.6.2:
+rxjs@^6.4.0, rxjs@^6.5.3, rxjs@^6.6.0, rxjs@^6.6.2, rxjs@^6.6.3:
   version "6.6.3"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.3.tgz#8ca84635c4daa900c0d3967a6ee7ac60271ee552"
   integrity sha512-trsQc+xYYXZ3urjOiJOuCOa5N3jAZ3eiSpQB5hIT8zGlL2QfnHLJ2r7GMkBGuIausdJN1OneaI6gQlsqNHHmZQ==
@@ -16633,6 +16730,14 @@ stream-browserify@^2.0.1:
   dependencies:
     inherits "~2.0.1"
     readable-stream "^2.0.2"
+
+stream-browserify@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/stream-browserify/-/stream-browserify-3.0.0.tgz#22b0a2850cdf6503e73085da1fc7b7d0c2122f2f"
+  integrity sha512-H73RAHsVBapbim0tU2JwwOiXUj+fikfiaoYAKHF3VJfA0pe2BCzkhAHBlLG6REzE+2WNZcxOXjK7lkso+9euLA==
+  dependencies:
+    inherits "~2.0.4"
+    readable-stream "^3.5.0"
 
 stream-each@^1.1.0:
   version "1.2.3"
@@ -17479,13 +17584,21 @@ uid-safe@2.1.5:
   dependencies:
     random-bytes "~1.0.0"
 
-uint8arrays@1.1.0, uint8arrays@^1.0.0, uint8arrays@^1.1.0:
+uint8arrays@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/uint8arrays/-/uint8arrays-1.1.0.tgz#d034aa65399a9fd213a1579e323f0b29f67d0ed2"
   integrity sha512-cLdlZ6jnFczsKf5IH1gPHTtcHtPGho5r4CvctohmQjw8K7Q3gFdfIGHxSTdTaCKrL4w09SsPRJTqRS0drYeszA==
   dependencies:
     multibase "^3.0.0"
     web-encoding "^1.0.2"
+
+uint8arrays@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/uint8arrays/-/uint8arrays-2.0.5.tgz#763d0c3dd8e1d05b656d2e60c8a9a53096a47d9e"
+  integrity sha512-1HSktgwqtYIwVn1mg3GcnqKhHH9oC4kVgdD/43cxMWwhP8rihKcFPmToDzS1XtbvVvlR8XxTk/DUBf0C83qNIg==
+  dependencies:
+    multibase "^3.0.0"
+    web-encoding "^1.0.5"
 
 unbzip2-stream@^1.0.9:
   version "1.4.3"
@@ -18015,7 +18128,7 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
-web-encoding@^1.0.2, web-encoding@^1.0.4:
+web-encoding@^1.0.2, web-encoding@^1.0.4, web-encoding@^1.0.5:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/web-encoding/-/web-encoding-1.0.6.tgz#ec631356ee523b4474ecbcae680440bd1e79416a"
   integrity sha512-26wEnRPEFAc5d5lmH1Q/DuvWEYsRF1D2alX2jlKpdmqv7cj+BbANL7Xlcl9r4s72Eg9kItZa9RWVbBMC9dMv4w==
@@ -18826,7 +18939,7 @@ ws@^6.1.2, ws@^6.2.1:
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^7.3.1:
+ws@^7.3.1, ws@^7.4.2:
   version "7.4.2"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.2.tgz#782100048e54eb36fe9843363ab1c68672b261dd"
   integrity sha512-T4tewALS3+qsrpGI/8dqNMLIVdq/g/85U98HPMa6F0m6xTbvhXU6RCQLqPH3+SlomNV/LdY6RXEbBpMH6EOJnA==
