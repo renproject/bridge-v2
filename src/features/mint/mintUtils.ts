@@ -206,7 +206,7 @@ export const getLockAndMintDepositsParams = (tx: GatewaySession) => {
   return { depositsParams };
 };
 
-// TODO: deprecated method, replace with getLockAndMintBasicParams, getDepositParams
+// TODO: deprecated method, replace with getLockAndMintBasicParams, getLockAndMintDepositsParams
 export const getLockAndMintParams = (
   tx: GatewaySession,
   depositSourceHash = ""
