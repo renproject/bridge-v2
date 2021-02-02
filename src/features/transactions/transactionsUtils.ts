@@ -19,6 +19,7 @@ export enum TxEntryStatus {
   ACTION_REQUIRED = "action_required",
   COMPLETED = "completed",
   EXPIRED = "expired",
+  NONE = "",
 }
 
 export enum TxPhase {
@@ -34,6 +35,24 @@ export type TxMeta = {
   phase: TxPhase;
   createdTimestamp: number;
   transactionsCount: number;
+};
+
+export enum DepositPhase {
+  LOCK = "lock",
+  MINT = "mint",
+  NONE = "",
+}
+
+export enum DepositEntryStatus {
+  PENDING = "pending",
+  ACTION_REQUIRED = "action_required",
+  COMPLETED = "completed",
+  EXPIRED = "expired",
+}
+
+export type DepositMeta = {
+  status: DepositEntryStatus;
+  phase: DepositPhase;
 };
 
 export enum TxType {

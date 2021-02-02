@@ -14,6 +14,9 @@ import {
   toMintedCurrency,
 } from "../../utils/assetConfigs";
 import {
+  DepositEntryStatus,
+  DepositMeta,
+  DepositPhase,
   getAddressExplorerLink,
   getChainExplorerLink,
   getTxCreationTimestamp,
@@ -79,10 +82,93 @@ export const depositSorter = (a: GatewayTransaction, b: GatewayTransaction) => {
   return Number(aConf) - Number(bConf);
 };
 
-export const getLockAndMintParams = (
+export const getDepositParams = (
   tx: GatewaySession,
-  depositSourceHash = ""
+  transaction: GatewayTransaction | null
 ) => {
+  const { lockChainConfig, mintChainConfig } = getLockAndMintBasicParams(tx);
+  let mintTxHash: string = "";
+  let mintTxLink: string = "";
+  if (transaction && transaction.destTxHash) {
+    mintTxHash = transaction.destTxHash;
+    mintTxLink =
+      getChainExplorerLink(
+        mintChainConfig.symbol,
+        tx.network,
+        transaction.destTxHash || ""
+      ) || "";
+  }
+  let lockTxHash: string = "";
+  let lockTxLink: string = "";
+  let lockTxAmount = 0;
+  let lockProcessingTime = null;
+  let lockConfirmations = 0;
+  let lockTargetConfirmations = 0;
+  if (transaction) {
+    lockTxAmount = transaction.sourceTxAmount / 1e8;
+    if (transaction.rawSourceTx) {
+      lockTxHash = transaction.rawSourceTx.transaction.txHash;
+      lockTxLink =
+        getChainExplorerLink(lockChainConfig.symbol, tx.network, lockTxHash) ||
+        "";
+    }
+    lockConfirmations = transaction.sourceTxConfs;
+    if (transaction.sourceTxConfTarget) {
+      lockTargetConfirmations = transaction.sourceTxConfTarget;
+      lockProcessingTime =
+        Math.max(lockTargetConfirmations - lockConfirmations, 0) *
+        lockChainConfig.blockTime;
+    }
+  }
+  const meta: DepositMeta = {
+    status: DepositEntryStatus.PENDING,
+    phase: DepositPhase.NONE,
+  };
+
+  if (lockTxHash) {
+    // it has lockTxHash - there is deposit
+    if (mintTxHash) {
+      // mint tx hash present - completed
+      meta.status = DepositEntryStatus.COMPLETED;
+    } else if (lockConfirmations >= lockTargetConfirmations) {
+      // no mint tx hash, but confirmations fulfilled
+      meta.status = DepositEntryStatus.ACTION_REQUIRED;
+      meta.phase = DepositPhase.MINT;
+      // expired in mint phase - no submission
+      if (isTxExpired(tx)) {
+        meta.status = DepositEntryStatus.EXPIRED;
+      }
+    } else if (lockConfirmations < lockTargetConfirmations) {
+      // no mint tx hash, but awaiting confirmations
+      meta.status = DepositEntryStatus.PENDING;
+      meta.phase = DepositPhase.LOCK;
+      if (isTxExpired(tx)) {
+        meta.status = DepositEntryStatus.EXPIRED;
+      }
+    }
+  } else {
+    // no deposit
+    meta.status = DepositEntryStatus.ACTION_REQUIRED;
+    meta.phase = DepositPhase.LOCK;
+    // expired in lock phase - no deposit
+    if (isTxExpired(tx)) {
+      meta.status = DepositEntryStatus.EXPIRED;
+    }
+  }
+  return {
+    mintTxHash,
+    mintTxLink,
+    lockTxHash,
+    lockTxLink,
+    lockConfirmations,
+    lockTargetConfirmations,
+    lockProcessingTime,
+    lockTxAmount,
+    meta,
+  };
+};
+
+export const getLockAndMintBasicParams = (tx: GatewaySession) => {
   const networkConfig = getNetworkConfigByRentxName(tx.network);
   const lockCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const mintCurrencyConfig = getCurrencyConfig(
@@ -95,6 +181,44 @@ export const getLockAndMintParams = (
     tx.network,
     tx.userAddress
   );
+  const suggestedAmount = Number(tx.suggestedAmount) / 1e8;
+  const createdTime = getTxCreationTimestamp(tx);
+
+  return {
+    networkConfig,
+    lockCurrencyConfig,
+    mintCurrencyConfig,
+    mintChainConfig,
+    lockChainConfig,
+    mintAddressLink,
+    suggestedAmount,
+    createdTime,
+  };
+};
+
+export const getLockAndMintDepositsParams = (tx: GatewaySession) => {
+  const sortedTransactions = Object.values(tx.transactions).sort(depositSorter);
+  const depositsParams = [];
+  for (const transaction of sortedTransactions) {
+    const params = getDepositParams(tx, transaction);
+    depositsParams.push(params);
+  }
+  return { depositsParams };
+};
+
+// TODO: deprecated method, replace with getLockAndMintBasicParams, getDepositParams
+export const getLockAndMintParams = (
+  tx: GatewaySession,
+  depositSourceHash = ""
+) => {
+  const {
+    networkConfig,
+    mintCurrencyConfig,
+    lockCurrencyConfig,
+    mintChainConfig,
+    lockChainConfig,
+    mintAddressLink,
+  } = getLockAndMintBasicParams(tx);
 
   const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
   let transaction = null;
@@ -141,7 +265,7 @@ export const getLockAndMintParams = (
   const meta: TxMeta = {
     status: TxEntryStatus.PENDING,
     phase: TxPhase.NONE,
-    createdTimestamp: getTxCreationTimestamp(tx),
+    createdTimestamp: getTxCreationTimestamp(tx), // TODO: deprecated
     transactionsCount: sortedDeposits.length,
   };
 
@@ -196,10 +320,19 @@ export const getLockAndMintParams = (
   };
 };
 
+export const areAllDepositsCompleted = (tx: GatewaySession) => {
+  const { depositsParams } = getLockAndMintDepositsParams(tx);
+  for (const deposit of depositsParams) {
+    // if any of the deposits is in not in completed state
+    if (deposit.meta.status !== DepositEntryStatus.COMPLETED) {
+      return false;
+    }
+  }
+  return true;
+};
+
 export const isMintTransactionCompleted = (tx: GatewaySession) => {
-  const { meta } = getLockAndMintParams(tx);
-  return (
-    meta.status === TxEntryStatus.COMPLETED ||
-    tx.expiryTime < new Date().getTime()
-  );
+  const allDepositsCompleted = areAllDepositsCompleted(tx);
+  const txExpired = isTxExpired(tx);
+  return allDepositsCompleted || txExpired;
 };
