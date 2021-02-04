@@ -103,6 +103,7 @@ const useReceivingAssetInfoStyle = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "flex-end",
+    textAlign: "right",
   },
   value: {
     fontSize: 14,
