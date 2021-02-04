@@ -32,6 +32,7 @@ import {
 } from "../../../components/layout/Paper";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
 import {
   AssetInfo,
   BigAssetAmount,
@@ -56,6 +57,7 @@ import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
+  $currentSessionCount,
   addTransaction,
   setCurrentTxId,
 } from "../../transactions/transactionsSlice";
@@ -95,6 +97,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     signatures: { signature },
   } = useSelector($wallet);
   const network = useSelector($renNetwork);
+  const currentSessionCount = useSelector($currentSessionCount);
   const exchangeRates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);
@@ -130,6 +133,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     setAckChecked(event.target.checked);
   }, []);
   useShakePaper(showAckError);
+
   const tx = useMemo(
     () =>
       createMintTransaction({
@@ -140,6 +144,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         mintedCurrencyChain: chain,
         userAddress: account,
         network: network,
+        dayIndex: currentSessionCount,
       }),
     [amount, currency, account, chain, network]
   );

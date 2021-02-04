@@ -34,7 +34,12 @@ type CreateMintTransactionParams = {
   userAddress: string;
   destAddress: string;
   network: RenNetwork;
+  dayIndex: number;
 };
+
+export const getSessionDay = () => Math.floor(Date.now() / 1000 / 60 / 60 / 24);
+export const getSessionExpiry = () =>
+  (getSessionDay() + 1) * 60 * 60 * 24 * 1000;
 
 export const createMintTransaction = ({
   amount,
@@ -43,10 +48,11 @@ export const createMintTransaction = ({
   userAddress,
   destAddress,
   network,
+  dayIndex,
 }: CreateMintTransactionParams) => {
   // Providing a nonce manually prevents us from needing to instantiate the mint-machine just for that purpose
   // It does not need to be truely random, because it is already limited by destination address
-  const nonce = Math.floor(Math.random() * 10 ** 16);
+  const nonce = dayIndex + getSessionDay();
   const tx: GatewaySession = {
     id: "tx-" + nonce,
     type: "mint",
@@ -57,8 +63,8 @@ export const createMintTransaction = ({
     destChain: getChainRentxName(mintedCurrencyChain),
     targetAmount: Number(amount),
     userAddress,
-    nonce: nonce.toString(16).padEnd(64, "0"),
-    expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
+    nonce: nonce.toString(16).padStart(64, "0"),
+    expiryTime: getSessionExpiry(),
     transactions: {},
     customParams: {},
   };
