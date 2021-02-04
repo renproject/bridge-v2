@@ -37,7 +37,7 @@ import {
   $transactionsNeedsAction,
   setTxHistoryOpened,
 } from "../features/transactions/transactionsSlice";
-import { useTestnetName } from "../features/ui/uiHooks";
+import { useSubNetworkName } from "../features/ui/uiHooks";
 import {
   useAuthentication,
   useSelectedChainWallet,
@@ -178,7 +178,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
 
   const debugWallet = useWallet(multiwalletChain); //remove
   const debugMultiwallet = useMultiwallet(); //remove
-  const debugNetworkName = useTestnetName();
+  const debugNetworkName = useSubNetworkName();
 
   const drawerId = "main-menu-mobile";
   const showTxIndicator = walletConnected && txsNeedsAction;

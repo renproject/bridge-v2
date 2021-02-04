@@ -127,8 +127,7 @@ export type CurrencyConfig = LabelsConfig &
     destinationChains?: Array<BridgeChain>;
     bandchainSymbol?: string;
     networkMappings: ChainToNetworkMappings;
-    ethTestnet?: EthTestnet | null; // TODO: remove
-    testNetworkVersion?: RenNetwork; // TODO: remove
+    ethTestnet?: EthTestnet | null;
   };
 
 const networkMappingLegacy: NetworkMapping = {
@@ -245,7 +244,6 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DOGE,
     ethTestnet: EthTestnet.RINKEBY,
-    testNetworkVersion: RenNetwork.TestnetVDot3,
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.ZEC]: {
@@ -514,6 +512,9 @@ export const isMainnetNetwork = (name: string) => name.indexOf("mainnet") > -1;
 export const getNetworkConfigByRentxName = (name: string) => {
   if (isTestnetNetwork(name)) {
     return networksConfig[BridgeNetwork.TESTNET];
+  }
+  if (isMainnetNetwork(name)) {
+    return networksConfig[BridgeNetwork.MAINNET];
   }
   return (
     Object.values(networksConfig).find(

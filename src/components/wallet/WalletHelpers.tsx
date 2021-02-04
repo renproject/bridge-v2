@@ -11,7 +11,7 @@ import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useTimeout } from "react-use";
-import { useTestnetName } from "../../features/ui/uiHooks";
+import { useSubNetworkName } from "../../features/ui/uiHooks";
 import { createPulseAnimation } from "../../theme/animationUtils";
 import { defaultShadow } from "../../theme/other";
 import {
@@ -199,7 +199,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
 >["WrongNetworkInfo"] = (props) => {
   const { chain, targetNetwork, onClose } = props;
   const theme = useTheme();
-  const subNetworkName = useTestnetName();
+  const subNetworkName = useSubNetworkName();
   const chainName = getChainConfigByRentxName(chain).full;
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
   return (
