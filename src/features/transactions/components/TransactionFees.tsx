@@ -132,7 +132,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue
-        label={`Esti. ${targetChainConfig.full} Fee`}
+        label={`Esti. ${targetChainConfig.short} Fee`}
         labelTooltip={tooltips.renCurrencyChainFee}
         value={targetChainFeeLabel}
         valueEquivalent={
