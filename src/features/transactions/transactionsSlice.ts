@@ -5,7 +5,6 @@ import { getCurrencyRentxName } from "../../utils/assetConfigs";
 import { $mint } from "../mint/mintSlice";
 import {
   getLockAndMintParams,
-  getSessionDay,
   getSessionExpiry,
 } from "../mint/mintUtils";
 import { $renNetwork } from "../network/networkSlice";
@@ -116,8 +115,8 @@ export const $currentSessionCount = createSelector(
     const expiryTime = getSessionExpiry();
     return [...txs].filter(
       (x) =>
-        x.sourceAsset == getCurrencyRentxName(mint.currency) &&
-        x.type == "mint" &&
+        x.sourceAsset === getCurrencyRentxName(mint.currency) &&
+        x.type === "mint" &&
         x.expiryTime === expiryTime
     ).length;
   }

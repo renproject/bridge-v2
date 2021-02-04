@@ -32,7 +32,6 @@ import {
 } from "../../../components/layout/Paper";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
-import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
 import {
   AssetInfo,
   BigAssetAmount,
@@ -146,7 +145,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         network: network,
         dayIndex: currentSessionCount,
       }),
-    [amount, currency, account, chain, network]
+    [amount, currency, account, chain, network, currentSessionCount]
   );
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;
