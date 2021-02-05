@@ -63,7 +63,7 @@ export const createMintTransaction = ({
   // but we assume that no one will reach that amount, and an overflow is just confusing, not breaking
   const nonce = dayIndex + getSessionDay() * 1000;
   const tx: GatewaySession = {
-    id: "tx-" + nonce,
+    id: `tx-${userAddress}-${nonce}`,
     type: "mint",
     network,
     sourceAsset: getCurrencyRentxName(currency),
