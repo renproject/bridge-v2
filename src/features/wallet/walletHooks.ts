@@ -1,3 +1,4 @@
+import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -84,7 +85,9 @@ export const useSyncMultiwalletNetwork = () => {
   useEffect(() => {
     if (renNetwork !== targetNetwork) {
       console.info("syncing multiwallet with network", renNetwork);
-      setTargetNetwork(renNetwork);
+      setTargetNetwork(
+        renNetwork.includes("mainnet") ? RenNetwork.Mainnet : renNetwork
+      );
     }
   }, [renNetwork, setTargetNetwork, targetNetwork]);
 };

@@ -51,10 +51,19 @@ export const createMintTransaction = ({
   dayIndex,
 }: CreateMintTransactionParams) => {
   // Providing a nonce manually prevents us from needing to instantiate the mint-machine just for that purpose
-  // It does not need to be truely random, because it is already limited by destination address
-  const nonce = getSessionDay() * 1000 + dayIndex;
+
+  // We use a deterministic nonce that you can re-create if you know
+  // 1) the source asset
+  // 2) the destination chain
+  // 3) the destination address
+  // 4) the day the transaction was made (in UTC)
+  // 5) the number of transactions you made with the same parameters above for that day
+  //
+  // NOTE - this will overflow if the user makes more than 1000 transactions to the same pair in a day,
+  // but we assume that no one will reach that amount, and an overflow is just confusing, not breaking
+  const nonce = dayIndex + getSessionDay() * 1000;
   const tx: GatewaySession = {
-    id: "tx-" + nonce,
+    id: `tx-${userAddress}-${nonce}`,
     type: "mint",
     network,
     sourceAsset: getCurrencyRentxName(currency),
