@@ -52,7 +52,7 @@ export const createMintTransaction = ({
 }: CreateMintTransactionParams) => {
   // Providing a nonce manually prevents us from needing to instantiate the mint-machine just for that purpose
   // It does not need to be truely random, because it is already limited by destination address
-  const nonce = dayIndex + getSessionDay();
+  const nonce = getSessionDay() * 1000 + dayIndex;
   const tx: GatewaySession = {
     id: "tx-" + nonce,
     type: "mint",

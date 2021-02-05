@@ -81,7 +81,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     chain,
   });
 
-  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice);
+  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.1); // gas price to real gas price adjustment
   const targetChainFeeUsd = fromGwei(feeInGwei) * targetChainCurrencyUsdRate;
   const targetChainFeeLabel = `${feeInGwei} Gwei`;
 

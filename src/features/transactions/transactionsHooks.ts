@@ -12,6 +12,7 @@ import {
   isMainnetNetwork,
   isTestnetNetwork,
 } from "../../utils/assetConfigs";
+import { trimAddress } from '../../utils/strings'
 import { $renNetwork, setRenNetwork } from "../network/networkSlice";
 import { useSelectedChainWallet } from "../wallet/walletHooks";
 import { $multiwalletChain } from "../wallet/walletSlice";
@@ -40,7 +41,7 @@ export const useTransactionDeletion = (tx: GatewaySession) => {
   const handleDeleteTx = useCallback(() => {
     db.deleteTx(tx).then(() => {
       dispatch(removeTransaction(tx));
-      showNotification(`Transaction ${tx.id} deleted.`);
+      showNotification(`Transaction ${trimAddress(tx.id, 6)} deleted.`);
       history.push(tx.type === TxType.MINT ? paths.MINT : paths.RELEASE);
     });
   }, [dispatch, history, showNotification, tx]);
