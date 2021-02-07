@@ -163,6 +163,7 @@ export const parseTxQueryString: (
     targetAmount,
     transactions,
     customParams,
+    createdAt,
     ...rest
   } = parsed;
 
@@ -171,6 +172,7 @@ export const parseTxQueryString: (
     transactions: JSON.parse((transactions as string) || "{}"),
     customParams: JSON.parse((customParams as string) || "{}"),
     expiryTime: parseNumber(expiryTime),
+    createdAt: parseNumber(createdAt),
     suggestedAmount: parseNumber(suggestedAmount),
     targetAmount: parseNumber(targetAmount),
   };
@@ -246,7 +248,7 @@ export const getTxPageTitle = (tx: GatewaySession) => {
 };
 
 export const getTxCreationTimestamp = (tx: GatewaySession) =>
-  tx.expiryTime - 24 * 3600 * 1000;
+  tx.createdAt || tx.expiryTime - 24 * 3600 * 1000;
 
 export const getPaymentLink = (
   chain: BridgeChain,
