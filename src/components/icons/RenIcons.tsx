@@ -3,6 +3,7 @@ import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
 import { getScalingProps } from "../../utils/icons";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
+import { ReactComponent as Beta } from "./../../assets/icons/icon-beta.svg";
 import { ReactComponent as BchGrey } from "./../../assets/icons/bch-icon-grey.svg";
 import { ReactComponent as Bch } from "./../../assets/icons/bch-icon-nocolour.svg";
 import { ReactComponent as BchFull } from "./../../assets/icons/bch-icon.svg";
@@ -127,6 +128,11 @@ export const BitcoinIcon: CustomSvgIconComponent = (props) => (
 export const EthereumIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Ethereum} {...props} />
 );
+
+export const BetaIcon: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingProps(47, 24);
+  return <SvgIcon component={Beta} {...scalingProps} {...props} />;
+};
 
 export const RenBridgeLogoIcon: CustomSvgIconComponent = (props) => {
   const scalingProps = getScalingProps(115, 23);

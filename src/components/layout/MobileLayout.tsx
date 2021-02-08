@@ -1,28 +1,15 @@
-import { Container, Grid, styled } from "@material-ui/core";
+import { Container, Grid } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import React, { FunctionComponent, ReactNode, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { HomeMenuIconButton } from "../buttons/Buttons";
-import { RenBridgeLogoIcon } from "../icons/RenIcons";
+import { BetaIcon, RenBridgeLogoIcon } from "../icons/RenIcons";
 import { Footer } from "./Footer";
 
 const headerHeight = 82;
 const footerHeight = 55;
-
-const StageLabel = styled("div")(({ theme }) => ({
-  display: "inline-flex",
-  border: `1px solid ${theme.palette.text.primary}`,
-  borderRadius: 6,
-  fontSize: 14,
-  padding: `3px 3px 1px 3px`,
-  margin: `-8px 0 0 8px`,
-  color: theme.palette.text.primary,
-  opacity: 0.6,
-  textTransform: "uppercase",
-  textDecoration: "none",
-}));
 
 export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
   grow: {
@@ -38,6 +25,10 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     alignItems: "center",
     marginRight: 40,
+  },
+  beta: {
+    marginLeft: 8,
+    marginTop: -10,
   },
   desktopMenu: {
     display: "none",
@@ -143,7 +134,7 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
                   <Link to="/">
                     <RenBridgeLogoIcon />
                   </Link>
-                  <StageLabel>Beta</StageLabel>
+                  <BetaIcon className={styles.beta} />
                 </div>
                 <Link to="/">
                   <HomeMenuIconButton />

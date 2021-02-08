@@ -193,9 +193,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   useEffect(() => {
     if (mintingInitialized && !creatingMintTx) {
       setCreatingMintTx(true);
-      onMintTxCreated(tx);
+      onMintTxCreated(tx).finally();
     }
-  }, [onMintTxCreated, mintingInitialized, tx]);
+  }, [onMintTxCreated, mintingInitialized, tx, creatingMintTx]);
 
   return (
     <>
