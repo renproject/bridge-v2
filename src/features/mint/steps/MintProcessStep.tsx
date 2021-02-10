@@ -92,7 +92,7 @@ import {
 } from "../components/MultipleDepositsHelpers";
 import { useDepositPagination, useMintMachine } from "../mintHooks";
 import { resetMint } from "../mintSlice";
-import { getLockAndMintParams } from "../mintUtils";
+import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -346,9 +346,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, [currentAmount, onActiveAmountChange]);
 
-  const [timeRemained] = useState(
-    Math.ceil(tx.expiryTime - Number(new Date()))
-  );
+  const [timeRemained] = useState(getRemainingGatewayTime(tx.expiryTime));
 
   // In order to enable quick restoration, we need to persist the deposit transaction
   // We persist via querystring, so lets check if the transaction is present

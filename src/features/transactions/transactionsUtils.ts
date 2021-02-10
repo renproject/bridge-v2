@@ -113,13 +113,7 @@ const parseNumber = (value: any) => {
 };
 
 export const isTxExpired = (tx: GatewaySession) => {
-  if (tx.expiryTime) {
-    const difference = Date.now() - tx.expiryTime;
-    if (difference >= 24 * 3600) {
-      return true;
-    }
-  }
-  return false;
+  return Date.now() > tx.expiryTime;
 };
 
 export const txCompletedSorter = (a: GatewaySession, b: GatewaySession) => {
@@ -248,7 +242,7 @@ export const getTxPageTitle = (tx: GatewaySession) => {
 };
 
 export const getTxCreationTimestamp = (tx: GatewaySession) =>
-  tx.createdAt || tx.expiryTime - 24 * 3600 * 1000;
+  tx.createdAt || tx.expiryTime - 24 * 3600 * 1000 * 3;
 
 export const getPaymentLink = (
   chain: BridgeChain,

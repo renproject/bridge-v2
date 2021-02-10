@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@CoinSpace/bitcore-lib-dogecoin@github:CoinSpace/bitcore-lib-dogecoin", bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin:
+"@CoinSpace/bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin", bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin:
   version "8.1.2"
   resolved "https://codeload.github.com/CoinSpace/bitcore-lib-dogecoin/tar.gz/cf8b3f663d6f065c12a643d8eb7c9e7b7f516bf1"
   dependencies:
@@ -2930,10 +2930,10 @@
     axios "^0.21.1"
     immutable "^4.0.0-rc.12"
 
-"@renproject/ren-tx@^2.1.2-alpha.1":
-  version "2.1.2-alpha.1"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.1.2-alpha.1.tgz#babb2da603c0987f4d692ce2d683eb715f1a8848"
-  integrity sha512-b6C5vOsE7eTvnczg6r2pzeUlcVmZhoFK76cXlQeyiOxQg0RVG6lXjtVplFXPZ5Nr/EH6PuQ91n7riCQZS+vKPQ==
+"@renproject/ren-tx@^2.1.2-alpha.2":
+  version "2.1.2-alpha.2"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.1.2-alpha.2.tgz#413dafe1f9c70c26361e13c064a8d4eb14cd8f38"
+  integrity sha512-sB0Tk08n+g3egyv6t4l0U0HhZP5lPWS5OAXrRLCjSYYVYvvlcMdLyBRZXhzm32KVRkGLj5JnZP8iQmaV2OBfgQ==
   dependencies:
     bignumber.js "^9.0.1"
 
@@ -5072,7 +5072,7 @@ bitcore-lib-cash@^8.24.2:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-"bitcore-lib-zcash@github:zcash-hackworks/bitcore-lib-zcash", bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
+bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
   version "0.13.19"
   resolved "https://codeload.github.com/zcash-hackworks/bitcore-lib-zcash/tar.gz/e97ae1dd2e9f14d6076d5e5429c75d8965afa4ab"
   dependencies:

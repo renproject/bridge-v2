@@ -41,6 +41,7 @@ import {
   useSetPaperTitle,
 } from "../../../providers/TitleProviders";
 import { orangeLight } from "../../../theme/colors";
+import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
@@ -52,7 +53,7 @@ import {
 } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { resetMint } from "../mintSlice";
-import { getLockAndMintParams } from "../mintUtils";
+import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
 import { AddressValidityMessage } from "./MintHelpers";
 
 export type MintDepositToProps = {
@@ -60,21 +61,23 @@ export type MintDepositToProps = {
 };
 
 export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
-  tx
+  tx,
 }) => {
   const [showQr, setShowQr] = useState(false);
   const toggleQr = useCallback(() => {
     setShowQr(!showQr);
   }, [showQr]);
   const { showNotification, closeNotification } = useNotifications();
-  const [timeRemained] = useState(
-    Math.ceil(tx.expiryTime - Number(new Date()))
-  );
+  const [timeRemained] = useState(getRemainingGatewayTime(tx.expiryTime));
+
   useEffect(() => {
     let key = 0;
     if (timeRemained > 0) {
       key = showNotification(
-        <AddressValidityMessage milliseconds={timeRemained} />,
+        <AddressValidityMessage
+          milliseconds={timeRemained}
+          destNetwork={getChainConfigByRentxName(tx.destChain).full}
+        />,
         {
           variant: "warning",
           persist: true,

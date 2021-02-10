@@ -20,16 +20,22 @@ export const DepositWrapper = styled("div")({
   position: "relative",
 });
 
-type AddressValidityMessageProps = { milliseconds: number };
+type AddressValidityMessageProps = {
+  milliseconds: number;
+  destNetwork: string;
+};
 
 export const AddressValidityMessage: FunctionComponent<AddressValidityMessageProps> = ({
   milliseconds,
+  destNetwork,
 }) => {
   return (
     <span>
-      This Gateway Address is only valid for 24 hours, it expires in{" "}
+      This Gateway Address expires in{" "}
       <HMSCountdown milliseconds={milliseconds} />. Do not send multiple
-      deposits or deposit after it has expired.
+      deposits or deposit after it has expired. <br />
+      Once you have deposited funds to the Gateway Address, you have 24 hours to
+      submit the mint transaction to {destNetwork}
     </span>
   );
 };

@@ -38,8 +38,20 @@ type CreateMintTransactionParams = {
 };
 
 export const getSessionDay = () => Math.floor(Date.now() / 1000 / 60 / 60 / 24);
+
+// user has 72 hours from the start of a session day to complete the tx
+// a gateway is only valid for 48 hours however.
+//
+// FIXME: once ren-tx takes the two-stage expiry into account, update this
 export const getSessionExpiry = () =>
-  (getSessionDay() + 1) * 60 * 60 * 24 * 1000;
+  (getSessionDay() + 3) * 60 * 60 * 24 * 1000;
+
+// Amount of time remaining until gateway expires
+// We remove 1 day from the ren-tx expiry to reflect the extra mint
+// submission leeway
+// FIXME: once ren-tx takes the two stages into account, fix this
+export const getRemainingGatewayTime = (expiryTime: number) =>
+  Math.ceil(expiryTime - 24 * 60 * 60 * 1000 - Number(new Date()));
 
 export const createMintTransaction = ({
   amount,
