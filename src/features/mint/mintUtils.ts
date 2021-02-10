@@ -75,7 +75,7 @@ export const createMintTransaction = ({
   // but we assume that no one will reach that amount, and an overflow is just confusing, not breaking
   const nonce = dayIndex + getSessionDay() * 1000;
   const tx: GatewaySession = {
-    id: `tx-${userAddress}-${nonce}`,
+    id: `tx-${userAddress}-${nonce}-${currency}-${mintedCurrencyChain}`,
     type: "mint",
     network,
     sourceAsset: getCurrencyRentxName(currency),
@@ -350,6 +350,9 @@ export const getLockAndMintParams = (
 
 export const areAllDepositsCompleted = (tx: GatewaySession) => {
   const { depositsParams } = getLockAndMintDepositsParams(tx);
+  if (depositsParams.length === 0) {
+    return false;
+  }
   for (const deposit of depositsParams) {
     // if any of the deposits is in not in completed state
     if (deposit.meta.status !== DepositEntryStatus.COMPLETED) {

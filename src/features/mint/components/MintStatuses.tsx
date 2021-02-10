@@ -89,7 +89,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
         closeNotification(key);
       }
     };
-  }, [showNotification, closeNotification, timeRemained]);
+  }, [showNotification, tx.destChain, closeNotification, timeRemained]);
 
   const {
     lockCurrencyConfig,
