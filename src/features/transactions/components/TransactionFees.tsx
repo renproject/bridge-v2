@@ -81,9 +81,12 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     chain,
   });
 
-  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.1); // gas price to real gas price adjustment
+  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18); // gas price to real gas price adjustment
+  const targetChainFeeNative = fromGwei(feeInGwei);
   const targetChainFeeUsd = fromGwei(feeInGwei) * targetChainCurrencyUsdRate;
-  const targetChainFeeLabel = `${feeInGwei} Gwei`;
+  const targetChainCurrency = getCurrencyConfig(
+    targetChainConfig.nativeCurrency
+  );
 
   if (status !== WalletStatus.CONNECTED) {
     return null;
@@ -134,7 +137,13 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
       <LabelWithValue
         label={`Esti. ${targetChainConfig.short} Fee`}
         labelTooltip={tooltips.renCurrencyChainFee}
-        value={targetChainFeeLabel}
+        value={
+          <NumberFormatText
+            value={targetChainFeeNative}
+            spacedSuffix={targetChainCurrency.short}
+            decimalScale={4}
+          />
+        }
         valueEquivalent={
           <NumberFormatText
             value={targetChainFeeUsd}
