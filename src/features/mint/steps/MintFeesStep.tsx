@@ -56,6 +56,7 @@ import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
+  $currentSessionCount,
   addTransaction,
   setCurrentTxId,
 } from "../../transactions/transactionsSlice";
@@ -95,6 +96,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     signatures: { signature },
   } = useSelector($wallet);
   const network = useSelector($renNetwork);
+  const currentSessionCount = useSelector($currentSessionCount);
   const exchangeRates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);
@@ -130,6 +132,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     setAckChecked(event.target.checked);
   }, []);
   useShakePaper(showAckError);
+
   const tx = useMemo(
     () =>
       createMintTransaction({
@@ -140,8 +143,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         mintedCurrencyChain: chain,
         userAddress: account,
         network: network,
+        dayIndex: currentSessionCount,
       }),
-    [amount, currency, account, chain, network]
+    [amount, currency, account, chain, network, currentSessionCount]
   );
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;
@@ -162,28 +166,36 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   }, [dispatch, status, canInitializeMinting]);
 
   const onMintTxCreated = useCallback(
-    (tx) => {
+    async (tx) => {
       const dbTx = { ...tx };
-      db.addTx(dbTx, account, signature).then(() => {
-        dispatch(setCurrentTxId(tx.id));
-        dispatch(addTransaction(tx));
-        history.push({
-          pathname: paths.MINT_TRANSACTION,
-          search: "?" + createTxQueryString(tx),
-          state: {
-            txState: { newTx: true },
-          } as LocationTxState,
-        });
+      await db.addTx(dbTx, account, signature);
+
+      dispatch(setCurrentTxId(tx.id));
+      dispatch(addTransaction(tx));
+      history.push({
+        pathname: paths.MINT_TRANSACTION,
+        search: "?" + createTxQueryString(tx),
+        state: {
+          txState: { newTx: true },
+        } as LocationTxState,
       });
     },
     [dispatch, history, account, signature]
   );
 
+  // there is a dependency loop, because we depend on the number
+  // of txes to determine the dayIndex, which updates when we create
+  // a new tx, leading to multiple txes being created for the same
+  // parameters.
+  // This flag prevents that
+  const [creatingMintTx, setCreatingMintTx] = useState(false);
+
   useEffect(() => {
-    if (mintingInitialized) {
-      onMintTxCreated(tx);
+    if (mintingInitialized && !creatingMintTx) {
+      setCreatingMintTx(true);
+      onMintTxCreated(tx).finally();
     }
-  }, [onMintTxCreated, mintingInitialized, tx]);
+  }, [onMintTxCreated, mintingInitialized, tx, creatingMintTx]);
 
   return (
     <>
@@ -296,7 +308,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleConfirm}
-            disabled={showAckError || mintingInitialized || !walletConnected}
+            disabled={!ackChecked || mintingInitialized || !walletConnected}
           >
             {!walletConnected
               ? "Connect Wallet"

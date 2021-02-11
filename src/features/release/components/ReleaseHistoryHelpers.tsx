@@ -1,32 +1,25 @@
-import { Chip, Typography } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { SmallActionButton } from "../../../components/buttons/Buttons";
-import { CompletedIcon, EmptyIcon } from "../../../components/icons/RenIcons";
-import { Link } from "../../../components/links/Links";
-import { TransactionStatusIndicator } from "../../../components/progress/ProgressHelpers";
-import { useTransactionEntryStyles } from "../../../components/transactions/TransactionsGrid";
-import { Debug } from "../../../components/utils/Debug";
-import { paths } from "../../../pages/routes";
-import { getFormattedDateTime } from "../../../utils/dates";
-import { TransactionItemProps } from "../../transactions/components/TransactionsHelpers";
-import { setTxHistoryOpened } from "../../transactions/transactionsSlice";
+import { Chip, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { SmallActionButton } from '../../../components/buttons/Buttons'
+import { CompletedIcon, EmptyIcon } from '../../../components/icons/RenIcons'
+import { Link } from '../../../components/links/Links'
+import { TransactionStatusIndicator } from '../../../components/progress/ProgressHelpers'
+import { useTransactionEntryStyles } from '../../../components/transactions/TransactionsGrid'
+import { Debug } from '../../../components/utils/Debug'
+import { paths } from '../../../pages/routes'
+import { getFormattedDateTime } from '../../../utils/dates'
+import { TransactionItemProps } from '../../transactions/components/TransactionsHelpers'
+import { setTxHistoryOpened } from '../../transactions/transactionsSlice'
 import {
   createTxQueryString,
   isTransactionCompleted,
   TxEntryStatus,
   TxPhase,
-} from "../../transactions/transactionsUtils";
-import {
-  BurnMachineSchemaState,
-  useBurnMachine,
-  useReleaseTransactionPersistence,
-} from "../releaseHooks";
-import {
-  getBurnAndReleaseParams,
-  isReleaseTransactionCompleted,
-} from "../releaseUtils";
+} from '../../transactions/transactionsUtils'
+import { useBurnMachine, } from '../releaseHooks'
+import { getBurnAndReleaseParams, isReleaseTransactionCompleted, } from '../releaseUtils'
 
 export const ReleaseTransactionEntryResolver: FunctionComponent<TransactionItemProps> = ({
   tx,
@@ -51,11 +44,6 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
     [service]
   );
 
-  useReleaseTransactionPersistence(
-    current.context.tx,
-    current.value as BurnMachineSchemaState
-  );
-
   const handleFinish = useCallback(() => {
     history.push({
       pathname: paths.RELEASE_TRANSACTION,
@@ -70,13 +58,16 @@ export const ReleaseTransactionEntryMachine: FunctionComponent<TransactionItemPr
   }, [dispatch, history, tx]);
 
   return (
-    <ReleaseTransactionEntry tx={current.context.tx} onAction={handleFinish} />
+    <ReleaseTransactionEntry
+      tx={current.context.tx}
+      onContinue={handleFinish}
+    />
   );
 };
 
 export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
-  onAction,
+  onContinue,
   isActive,
 }) => {
   const styles = useTransactionEntryStyles();
@@ -97,6 +88,12 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
   } else if (phase === TxPhase.BURN) {
     StatusIcon = burnChainConfig.Icon;
   }
+
+  const handleContinue = useCallback(() => {
+    if (onContinue) {
+      onContinue();
+    }
+  }, [onContinue]);
 
   const params = getBurnAndReleaseParams(tx);
   return (
@@ -155,7 +152,7 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
             </Typography>
           )}
           {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
-            <SmallActionButton onClick={onAction}>
+            <SmallActionButton onClick={handleContinue}>
               Finish release
             </SmallActionButton>
           )}

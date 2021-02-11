@@ -33,7 +33,6 @@ import {
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { featureFlags } from "../../../constants/featureFlags";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
@@ -51,6 +50,7 @@ import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import {
   BookmarkPageWarning,
+  ExpiredErrorDialog,
   ProgressStatus,
   WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
@@ -75,7 +75,10 @@ import {
   setChain,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
-import { MultipleDepositsMessage } from "../components/MintHelpers";
+import {
+  DepositWrapper,
+  MultipleDepositsMessage,
+} from "../components/MintHelpers";
 import {
   DestinationPendingStatus,
   MintCompletedStatus,
@@ -83,9 +86,13 @@ import {
   MintDepositConfirmationStatus,
   MintDepositToStatus,
 } from "../components/MintStatuses";
-import { useMintMachine, useMintTransactionPersistence } from "../mintHooks";
+import {
+  DepositNextButton,
+  DepositPrevButton,
+} from "../components/MultipleDepositsHelpers";
+import { useDepositPagination, useMintMachine } from "../mintHooks";
 import { resetMint } from "../mintSlice";
-import { getLockAndMintParams } from "../mintUtils";
+import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
@@ -138,6 +145,11 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     }
   }, [history, location, txState, parsedTx]);
 
+  const [activeAmount, setActiveAmount] = useState(Number(tx.targetAmount));
+  const handleActiveAmountChange = useCallback((newAmount: number) => {
+    setActiveAmount(newAmount);
+  }, []);
+
   const destChain = parsedTx?.destChain;
   useEffect(() => {
     if (destChain) {
@@ -156,17 +168,16 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 
   const showTransactionStatus = !!tx && walletConnected;
   const feeCurrency = getCurrencyConfigByRentxName(tx.sourceAsset).symbol;
-  const amount = Number(tx.targetAmount);
 
   const handleRestart = useCallback(() => {
     dispatch(
       resetMint({
-        amount: amount,
+        amount: activeAmount,
         currency: feeCurrency,
       })
     );
     history.push(paths.MINT);
-  }, [dispatch, amount, feeCurrency, history]);
+  }, [dispatch, activeAmount, feeCurrency, history]);
 
   return (
     <>
@@ -195,7 +206,12 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       <PaperContent bottomPadding>
         {reloading && <ProgressStatus processing />}
         {!reloading && showTransactionStatus && (
-          <MintTransactionStatus tx={tx} onRestart={handleRestart} />
+          <MintTransactionStatus
+            tx={tx}
+            onRestart={handleRestart}
+            depositHash={parsedTx?.depositHash || ""}
+            onActiveAmountChange={handleActiveAmountChange}
+          />
         )}
         {!walletConnected && (
           <>
@@ -216,7 +232,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
           <PaperContent darker topPadding bottomPadding>
             <TransactionFees
               chain={chain}
-              amount={amount}
+              amount={activeAmount}
               currency={feeCurrency}
               type={TxType.MINT}
               address={tx.userAddress}
@@ -246,14 +262,17 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 type MintTransactionStatusProps = {
   tx: GatewaySession;
   onRestart: () => void;
+  depositHash?: string;
+  onActiveAmountChange: (amount: number) => void;
 };
 
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
+  depositHash = "",
   onRestart,
+  onActiveAmountChange,
 }) => {
   const [current, , service] = useMintMachine(tx);
-  const currentTx = current.context.tx;
   const chain = useSelector($chain);
   const renNetwork = useSelector($renNetwork);
   const { account } = useSelectedChainWallet();
@@ -265,29 +284,28 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   );
 
   const {
-    meta: { transactionsCount },
-  } = getLockAndMintParams(currentTx);
+    currentIndex,
+    currentHash,
+    total,
+    handlePrev,
+    handleNext,
+  } = useDepositPagination(current.context.tx, depositHash);
+
   const { showNotification, closeNotification } = useNotifications();
   useEffect(() => {
     let key = 0;
-    if (transactionsCount > 1 && featureFlags.enableMultipleDeposits) {
-      key = showNotification(
-        <MultipleDepositsMessage
-          total={transactionsCount}
-          onLinkClick={() => {}}
-        />,
-        {
-          variant: "warning",
-          persist: true,
-        }
-      ) as number;
+    if (total > 1) {
+      key = showNotification(<MultipleDepositsMessage />, {
+        variant: "warning",
+        persist: true,
+      }) as number;
     }
     return () => {
       if (key) {
         closeNotification(key);
       }
     };
-  }, [showNotification, closeNotification, transactionsCount]);
+  }, [showNotification, closeNotification, total]);
 
   const [wrongAddressDialogOpened, setWrongAddressDialogOpened] = useState(
     false
@@ -299,14 +317,14 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   useEffect(() => {
     if (
       account &&
-      currentTx.userAddress &&
-      account.toLowerCase() !== currentTx.userAddress.toLowerCase()
+      current.context.tx.userAddress &&
+      account.toLowerCase() !== current.context.tx.userAddress.toLowerCase()
     ) {
       setWrongAddressDialogOpened(true);
     } else {
       setWrongAddressDialogOpened(false);
     }
-  }, [account, currentTx.userAddress]);
+  }, [account, current.context.tx.userAddress]);
 
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction;
@@ -315,11 +333,20 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     if (!current.context.tx.transactions) {
       return null;
     }
-    const deposit = Object.values(current.context.tx.transactions)[0];
+    const deposit = current.context.tx.transactions[currentHash];
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];
     return { deposit, machine };
-  }, [current.context]);
+  }, [currentHash, current.context]);
+
+  const currentAmount = activeDeposit?.deposit.sourceTxAmount;
+  useEffect(() => {
+    if (currentAmount) {
+      onActiveAmountChange(currentAmount / 10 ** 8);
+    }
+  }, [currentAmount, onActiveAmountChange]);
+
+  const [timeRemained] = useState(getRemainingGatewayTime(tx.expiryTime));
 
   // In order to enable quick restoration, we need to persist the deposit transaction
   // We persist via querystring, so lets check if the transaction is present
@@ -330,7 +357,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   useEffect(() => {
     if (!location.search) return;
     const queryTx = parseTxQueryString(location.search);
-    const deposit = Object.values(queryTx?.transactions || {})[0];
+    const deposit = (queryTx?.transactions || {})[currentHash];
     // If we have detected a deposit, but there is no deposit in the querystring
     // update the queryString to have the deposit
     // TODO: to enable quick resume, we may want to ask users to update their bookmarks
@@ -340,9 +367,12 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         search: "?" + createTxQueryString(current.context.tx),
       });
     }
-  }, [location, activeDeposit, current.context.tx, history]);
+  }, [currentHash, location, activeDeposit, current.context.tx, history]);
 
-  const { mintCurrencyConfig } = getLockAndMintParams(currentTx);
+  const { mintCurrencyConfig } = getLockAndMintParams(
+    current.context.tx,
+    currentHash
+  );
   const accountExplorerLink = getAddressExplorerLink(
     chain,
     renNetwork,
@@ -351,14 +381,30 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   return (
     <>
       {activeDeposit ? (
-        <MintTransactionDepositStatus
-          tx={currentTx}
-          deposit={activeDeposit.deposit}
-          machine={activeDeposit.machine}
-        />
+        <DepositWrapper>
+          <MintTransactionDepositStatus
+            tx={current.context.tx}
+            deposit={activeDeposit.deposit}
+            machine={activeDeposit.machine}
+            depositHash={currentHash}
+          />
+          {total > 1 && (
+            <>
+              <DepositPrevButton
+                onClick={handlePrev}
+                disabled={currentIndex === 0}
+              />
+              <DepositNextButton
+                onClick={handleNext}
+                disabled={currentIndex === total - 1}
+              />
+            </>
+          )}
+        </DepositWrapper>
       ) : (
-        <MintDepositToStatus tx={currentTx} onRestart={onRestart} />
+        <MintDepositToStatus tx={current.context.tx} />
       )}
+      {timeRemained <= 0 && <ExpiredErrorDialog open onAction={onRestart} />}
       <WrongAddressWarningDialog
         open={wrongAddressDialogOpened}
         address={account}
@@ -366,7 +412,18 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         currency={mintCurrencyConfig.short}
         onAlternativeAction={handleCloseWrongAddressDialog}
       />
-      <Debug it={{ contextTx: current.context.tx, activeDeposit }} />
+      <Debug
+        disable
+        it={{
+          depositHash,
+          // pagination: { currentIndex, currentHash, total },
+          // contextTx: current.context.tx,
+          // activeDeposit,
+          // total,
+          // currentIndex,
+          // currentHash,
+        }}
+      />
     </>
   );
 };
@@ -375,25 +432,21 @@ type MintTransactionDepositStatusProps = {
   tx: GatewaySession;
   deposit: GatewayTransaction;
   machine: Actor<typeof depositMachine>;
+  depositHash: string;
 };
 
-export const forceState = "srcConfirmed" as keyof DepositMachineSchema["states"];
+export const forceState = "srcSettling" as keyof DepositMachineSchema["states"];
 
 export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepositStatusProps> = ({
   tx,
   deposit,
   machine,
+  depositHash,
 }) => {
   const history = useHistory();
   const location = useLocation();
   const handleSubmitToDestinationChain = useCallback(() => {
     machine.send({ type: "CLAIM" });
-  }, [machine]);
-
-  // User confirms that they have recieved their mint
-  // TODO: decide if this is neccessary
-  const handleAcknowledge = useCallback(() => {
-    machine.send({ type: "ACKNOWLEDGE" });
   }, [machine]);
 
   const handleReload = useCallback(() => {
@@ -409,12 +462,14 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
 
   const state = machine?.state.value as keyof DepositMachineSchema["states"];
   if (!machine) {
-    return <div>Transaction completed</div>;
+    return <ProgressStatus processing={false} reason="Transaction completed" />;
   }
+  console.debug(tx.id, depositHash, state);
   switch (state) {
-    // switch (forceState) {
     case "srcSettling":
-      return <MintDepositConfirmationStatus tx={tx} />;
+      return (
+        <MintDepositConfirmationStatus tx={tx} depositHash={depositHash} />
+      );
     case "srcConfirmed": // source sourceChain confirmations ok, but renVM still doesn't accept it
       return <ProgressStatus reason="Submitting to RenVM" />;
     case "errorAccepting":
@@ -426,6 +481,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
           tx={tx}
           onSubmit={handleSubmitToDestinationChain}
           onReload={handleReload}
+          depositHash={depositHash}
           submitting={state === "claiming"}
           submittingError={
             state === "errorSubmitting" || state === "errorAccepting"
@@ -435,12 +491,13 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     case "destInitiated": // final txHash means its done or check if wallet balances went up
     case "completed":
       if (deposit.destTxHash) {
-        return <MintCompletedStatus tx={tx} />;
+        return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
       } else {
         return (
           <DestinationPendingStatus
             tx={tx}
             onSubmit={handleSubmitToDestinationChain}
+            depositHash={depositHash}
             submitting={true}
           />
         );

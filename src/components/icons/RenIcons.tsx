@@ -3,6 +3,7 @@ import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
 import { getScalingProps } from "../../utils/icons";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
+import { ReactComponent as Beta } from "./../../assets/icons/icon-beta.svg";
 import { ReactComponent as BchGrey } from "./../../assets/icons/bch-icon-grey.svg";
 import { ReactComponent as Bch } from "./../../assets/icons/bch-icon-nocolour.svg";
 import { ReactComponent as BchFull } from "./../../assets/icons/bch-icon.svg";
@@ -37,6 +38,8 @@ import { ReactComponent as Luna } from "./../../assets/icons/luna-icon-nocolour.
 import { ReactComponent as LunaFull } from "./../../assets/icons/luna-icon.svg";
 import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox.svg";
 import { ReactComponent as MetamaskFull } from "./../../assets/icons/metamask-icon-colour.svg";
+import { ReactComponent as NavigateNext } from "./../../assets/icons/chevron-icon-right.svg";
+import { ReactComponent as NavigatePrev } from "./../../assets/icons/chevron-icon-left.svg";
 import { ReactComponent as QrCode } from "./../../assets/icons/qr-code.svg";
 import { ReactComponent as RenLogo } from "./../../assets/icons/ren-logo.svg";
 import { ReactComponent as RenLogo3F } from "./../../assets/icons/ren-logo-3f.svg";
@@ -53,12 +56,14 @@ import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconn
 import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
+
 import CompletedIcon from "@material-ui/icons/Done";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import WarningIcon from "@material-ui/icons/Warning";
+import HomeIcon from "@material-ui/icons/Home";
 
-export { CompletedIcon, AddIcon, DeleteIcon, WarningIcon };
+export { CompletedIcon, AddIcon, DeleteIcon, WarningIcon, HomeIcon };
 
 export type CustomSvgIconComponent =
   | FunctionComponent<SvgIconProps>
@@ -92,6 +97,14 @@ export const BackArrowIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BackArrow} {...props} />
 );
 
+export const NavigatePrevIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={NavigatePrev} {...props} />
+);
+
+export const NavigateNextIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={NavigateNext} {...props} />
+);
+
 export const SuccessIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Success} {...props} />
 );
@@ -115,6 +128,11 @@ export const BitcoinIcon: CustomSvgIconComponent = (props) => (
 export const EthereumIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Ethereum} {...props} />
 );
+
+export const BetaIcon: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingProps(47, 24);
+  return <SvgIcon component={Beta} {...scalingProps} {...props} />;
+};
 
 export const RenBridgeLogoIcon: CustomSvgIconComponent = (props) => {
   const scalingProps = getScalingProps(115, 23);

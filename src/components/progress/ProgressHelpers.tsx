@@ -212,6 +212,7 @@ const useTransactionStatusInfoStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     color: theme.palette.common.black,
+    padding: 10,
   },
   status: {
     fontWeight: theme.typography.fontWeightBold,
@@ -243,7 +244,11 @@ export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps
       <Typography variant="body1" className={styles.status} align="center">
         {status}
       </Typography>
-      {chain && <Typography variant="body1" align="center">{chain} Tx:</Typography>}
+      {chain && (
+        <Typography variant="body1" align="center">
+          {chain} Tx:
+        </Typography>
+      )}
       {address && (
         <Typography variant="body1" className={styles.txLink}>
           <span>{address}</span>

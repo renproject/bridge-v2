@@ -113,6 +113,17 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
   date: {
     marginRight: 6,
   },
+  time: {
+    marginRight: 32,
+  },
+  multiple: {
+    display: "inline-flex",
+    marginRight: 6,
+  },
+  multipleLabel: {
+    marginRight: 16,
+  },
+  multiplePagination: {},
   description: {
     marginTop: 3,
     marginBottom: 3,

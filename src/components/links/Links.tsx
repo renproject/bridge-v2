@@ -5,6 +5,11 @@ import {
   LinkProps as RouterLinkProps,
 } from "react-router-dom";
 
+export const externalLinkAttributes = {
+  target: "_blank",
+  rel: "noopener noreferrer",
+};
+
 export type CustomLinkProps = LinkProps & {
   external?: boolean;
   to?: any;
@@ -20,7 +25,7 @@ export const Link: FunctionComponent<CustomLinkProps> = ({
   const additionalParams =
     target === "_blank"
       ? {
-          rel: "noopener noreferrer",
+          rel: externalLinkAttributes.rel,
         }
       : {};
   if (to) {

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Link } from "../../../components/links/Links";
+import { styled } from "@material-ui/core";
 import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 
@@ -16,38 +16,36 @@ export const getMintDynamicTooltips = (
   acknowledge: `Minting an asset on ${chainConfig.full} requires you to submit a transaction. It will cost you a small amount of ${chainNativeCurrencyConfig.short}.`,
 });
 
-type AddressValidityMessageProps = { milliseconds: number };
+export const DepositWrapper = styled("div")({
+  position: "relative",
+});
+
+type AddressValidityMessageProps = {
+  milliseconds: number;
+  destNetwork: string;
+};
 
 export const AddressValidityMessage: FunctionComponent<AddressValidityMessageProps> = ({
   milliseconds,
+  destNetwork,
 }) => {
   return (
     <span>
-      This Gateway Address is only valid for 24 hours, it expires in{" "}
+      This Gateway Address expires in{" "}
       <HMSCountdown milliseconds={milliseconds} />. Do not send multiple
-      deposits or deposit after it has expired.
+      deposits or deposit after it has expired. <br />
+      Once you have deposited funds to the Gateway Address, you have 24 hours to
+      submit the mint transaction to {destNetwork}
     </span>
   );
 };
 
-type MultipleDepositsMessageProps = {
-  total: number;
-  onLinkClick: () => void;
-};
-
-export const MultipleDepositsMessage: FunctionComponent<MultipleDepositsMessageProps> = ({
-  total,
-  onLinkClick,
-}) => {
+export const MultipleDepositsMessage: FunctionComponent = () => {
   return (
     <span>
-      RenBridge has detected {total} deposits to the same gateway address.
-      You'll need to submit {total > 2 ? "all of them" : "both"} to the
-      destination chain via your web3 wallet.
-      <br />
-      <Link external onClick={onLinkClick}>
-        View Transaction
-      </Link>
+      RenBridge has detected another deposit to the same gateway address. It
+      will require an additional submission to to the destination chain via your
+      web3 wallet.
     </span>
   );
 };

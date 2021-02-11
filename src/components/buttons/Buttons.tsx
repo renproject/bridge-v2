@@ -31,6 +31,7 @@ import { defaultShadow } from "../../theme/other";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
+  HomeIcon,
   QrCodeIcon,
   TxHistoryIcon,
 } from "../icons/RenIcons";
@@ -127,8 +128,7 @@ export const QrCodeIconButton: FunctionComponent<IconButtonProps> = (props) => {
   );
 };
 
-// TODO: remove
-const useTxHistoryIconButtonStyles = makeStyles((theme) => ({
+const useCircledIconButtonStyles = makeStyles((theme) => ({
   root: {
     color: theme.palette.secondary.light,
     backgroundColor: grayLight,
@@ -150,7 +150,7 @@ const useTxHistoryIconButtonStyles = makeStyles((theme) => ({
 export const TxHistoryIconButton: FunctionComponent<IconButtonProps> = (
   props
 ) => {
-  const { icon: iconClassName, ...classes } = useTxHistoryIconButtonStyles();
+  const { icon: iconClassName, ...classes } = useCircledIconButtonStyles();
   return (
     <IconButton classes={classes} {...props}>
       <TxHistoryIcon className={iconClassName} />
@@ -385,7 +385,7 @@ export const BigQrCode = styled("div")(({ theme }) => ({
   fontSize: 150, // TODO: remove when QR codes done
 }));
 
-const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
+const useMenuIconButtonStyles = makeStyles((theme) => ({
   root: {
     padding: 6,
     color: theme.palette.secondary.light,
@@ -404,6 +404,23 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.divider,
     padding: 3,
   },
+  icon: {
+    fontSize: 20,
+  },
+}));
+
+export const HomeMenuIconButton: FunctionComponent<IconButtonProps> = (
+  props
+) => {
+  const { icon, ...classes } = useMenuIconButtonStyles();
+  return (
+    <IconButton classes={classes} {...props}>
+      <HomeIcon className={icon} />
+    </IconButton>
+  );
+};
+
+const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   indicator: {
     position: "absolute",
     top: 0,
@@ -411,9 +428,6 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   },
   hoisted: {
     zIndex: theme.zIndex.tooltip,
-  },
-  icon: {
-    fontSize: 20,
   },
 }));
 
@@ -428,11 +442,10 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
   className,
   ...props
 }) => {
+  const { icon: iconClassName, ...classes } = useMenuIconButtonStyles();
   const {
-    icon: iconClassName,
     hoisted: hoistedClassName,
     indicator: indicatorClassname,
-    ...classes
   } = useTransactionHistoryIconButtonStyles();
   const Icon = opened ? CloseIcon : TxHistoryIcon;
   const resolvedClassName = classNames(className, {

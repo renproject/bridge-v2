@@ -22,7 +22,8 @@ export const getFormattedDateTime = (timestamp: number) => {
 export const millisecondsToHMS = (milliseconds: number) => {
   const seconds = Math.floor((milliseconds / 1000) % 60);
   const minutes = Math.floor((milliseconds / 1000 / 60) % 60);
-  const hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
+  // take absolute hours as they may be greater than 24
+  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
   return { hours, minutes, seconds };
 };
 
@@ -32,5 +33,5 @@ const pad = (value: number) => {
 
 export const getFormattedHMS = (milliseconds: number) => {
   const { hours, minutes, seconds } = millisecondsToHMS(milliseconds);
-  return `${pad(hours)}.${pad(minutes)}.${pad(seconds)}`;
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 };

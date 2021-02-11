@@ -1,11 +1,12 @@
-import { Container, Grid } from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
-import { makeStyles, Theme } from '@material-ui/core/styles'
-import Toolbar from '@material-ui/core/Toolbar'
-import React, { FunctionComponent, ReactNode, useEffect, } from 'react'
-import { Link } from 'react-router-dom'
-import { RenBridgeLogoIcon } from '../icons/RenIcons'
-import { Footer } from './Footer'
+import { Container, Grid } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import React, { FunctionComponent, ReactNode, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { HomeMenuIconButton } from "../buttons/Buttons";
+import { BetaIcon, RenBridgeLogoIcon } from "../icons/RenIcons";
+import { Footer } from "./Footer";
 
 const headerHeight = 82;
 const footerHeight = 55;
@@ -23,6 +24,11 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
   logo: {
     display: "flex",
     alignItems: "center",
+    marginRight: 40,
+  },
+  beta: {
+    marginLeft: 8,
+    marginTop: -10,
   },
   desktopMenu: {
     display: "none",
@@ -128,7 +134,11 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
                   <Link to="/">
                     <RenBridgeLogoIcon />
                   </Link>
+                  <BetaIcon className={styles.beta} />
                 </div>
+                <Link to="/">
+                  <HomeMenuIconButton />
+                </Link>
                 <div className={styles.grow} />
                 {ToolbarMenu}
               </Toolbar>

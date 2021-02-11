@@ -2,6 +2,7 @@ import { Divider, IconButton, Typography } from "@material-ui/core";
 import React, {
   FunctionComponent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -31,7 +32,6 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { paths } from "../../../pages/routes";
 import { db } from "../../../services/database/database";
-import { DbMeta } from "../../../services/database/firebase/firebase";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -62,11 +62,7 @@ import {
   $wallet,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
-import {
-  BurnAndReleaseTransactionInitializer,
-  releaseTooltips,
-} from "../components/ReleaseHelpers";
-import { releaseTxStateUpdateSequence } from "../releaseHooks";
+import { releaseTooltips } from "../components/ReleaseHelpers";
 import { $release, $releaseUsdAmount } from "../releaseSlice";
 import {
   createReleaseTransaction,
@@ -138,8 +134,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const onReleaseTxCreated = useCallback(
     (tx) => {
-      const meta: DbMeta = { state: releaseTxStateUpdateSequence[0] };
-      const dbTx = { ...tx, meta };
+      const dbTx = { ...tx };
       db.addTx(dbTx, account, signature).then(() => {
         dispatch(setCurrentTxId(tx.id));
         dispatch(addTransaction(tx));
@@ -155,14 +150,14 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     [dispatch, history, account, signature]
   );
 
+  useEffect(() => {
+    if (releasingInitialized) {
+      onReleaseTxCreated(tx);
+    }
+  }, [onReleaseTxCreated, releasingInitialized, tx]);
+
   return (
     <>
-      {releasingInitialized && (
-        <BurnAndReleaseTransactionInitializer
-          initialTx={tx}
-          onCreated={onReleaseTxCreated}
-        />
-      )}
       <PaperHeader>
         <PaperNav>
           <IconButton onClick={onPrev}>

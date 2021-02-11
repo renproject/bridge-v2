@@ -19,6 +19,7 @@ export enum TxEntryStatus {
   ACTION_REQUIRED = "action_required",
   COMPLETED = "completed",
   EXPIRED = "expired",
+  NONE = "",
 }
 
 export enum TxPhase {
@@ -34,6 +35,24 @@ export type TxMeta = {
   phase: TxPhase;
   createdTimestamp: number;
   transactionsCount: number;
+};
+
+export enum DepositPhase {
+  LOCK = "lock",
+  MINT = "mint",
+  NONE = "",
+}
+
+export enum DepositEntryStatus {
+  PENDING = "pending",
+  ACTION_REQUIRED = "action_required",
+  COMPLETED = "completed",
+  EXPIRED = "expired",
+}
+
+export type DepositMeta = {
+  status: DepositEntryStatus;
+  phase: DepositPhase;
 };
 
 export enum TxType {
@@ -94,13 +113,7 @@ const parseNumber = (value: any) => {
 };
 
 export const isTxExpired = (tx: GatewaySession) => {
-  if (tx.expiryTime) {
-    const difference = Date.now() - tx.expiryTime;
-    if (difference >= 24 * 3600) {
-      return true;
-    }
-  }
-  return false;
+  return Date.now() > tx.expiryTime;
 };
 
 export const txCompletedSorter = (a: GatewaySession, b: GatewaySession) => {
@@ -127,9 +140,13 @@ export const txExpirySorter = (
 export const cloneTx = (tx: GatewaySession) =>
   JSON.parse(JSON.stringify(tx)) as GatewaySession;
 
+type ParsedGatewaySession = GatewaySession & {
+  depositHash?: string;
+};
+
 export const parseTxQueryString: (
   query: string
-) => Partial<GatewaySession> | null = (query: string) => {
+) => Partial<ParsedGatewaySession> | null = (query: string) => {
   const parsed = queryString.parse(query);
   if (!parsed) {
     return null;
@@ -140,6 +157,7 @@ export const parseTxQueryString: (
     targetAmount,
     transactions,
     customParams,
+    createdAt,
     ...rest
   } = parsed;
 
@@ -148,6 +166,7 @@ export const parseTxQueryString: (
     transactions: JSON.parse((transactions as string) || "{}"),
     customParams: JSON.parse((customParams as string) || "{}"),
     expiryTime: parseNumber(expiryTime),
+    createdAt: parseNumber(createdAt),
     suggestedAmount: parseNumber(suggestedAmount),
     targetAmount: parseNumber(targetAmount),
   };
@@ -223,7 +242,7 @@ export const getTxPageTitle = (tx: GatewaySession) => {
 };
 
 export const getTxCreationTimestamp = (tx: GatewaySession) =>
-  tx.expiryTime - 24 * 3600 * 1000;
+  tx.createdAt || tx.expiryTime - 24 * 3600 * 1000 * 3;
 
 export const getPaymentLink = (
   chain: BridgeChain,

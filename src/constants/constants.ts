@@ -19,4 +19,4 @@ export const links = {
   SOCIAL_REDDIT: "https://www.reddit.com/r/renproject",
 };
 
-export const MINT_GAS_UNIT_COST = 68000;
+export const MINT_GAS_UNIT_COST = 153400;

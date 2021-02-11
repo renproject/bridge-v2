@@ -140,7 +140,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
       return (
         <Box display="flex" alignItems="center" width="100%">
           {!condensed && (
-            <Box width="40%">
+            <Box width="37%">
               <Typography variant="body2" className={styles.supplementalText}>
                 {label}
               </Typography>

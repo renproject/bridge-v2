@@ -1,3 +1,3 @@
 export const featureFlags = {
-  enableMultipleDeposits: true,
+  enableMultipleDeposits: true
 };

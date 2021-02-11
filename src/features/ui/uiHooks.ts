@@ -1,19 +1,19 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { paths } from "../../pages/routes";
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
+import { paths } from '../../pages/routes'
 import {
   BridgeChain,
   EthTestnet,
   getCurrencyConfig,
+  isMainnetNetwork,
   toMintedCurrency,
-} from "../../utils/assetConfigs";
-import { $mintCurrency } from "../mint/mintSlice";
-import { $renNetwork } from "../network/networkSlice";
-import { $releaseCurrency } from "../release/releaseSlice";
-import { $chain } from "../wallet/walletSlice";
-import { setPaperShaking } from "./uiSlice";
+} from '../../utils/assetConfigs'
+import { $mintCurrency } from '../mint/mintSlice'
+import { $renNetwork } from '../network/networkSlice'
+import { $releaseCurrency } from '../release/releaseSlice'
+import { $chain } from '../wallet/walletSlice'
+import { setPaperShaking } from './uiSlice'
 
 export const useShakePaper = (shake: boolean, timeout = 600) => {
   const dispatch = useDispatch();
@@ -40,7 +40,7 @@ export const useLocationFlow = () => {
   return null;
 };
 
-export const useTestnetName = () => {
+export const useSubNetworkName = () => {
   const flow = useLocationFlow();
   const chain = useSelector($chain);
   const renNetwork = useSelector($renNetwork);
@@ -49,7 +49,7 @@ export const useTestnetName = () => {
   if (
     chain !== BridgeChain.ETHC ||
     flow == null ||
-    renNetwork === RenNetwork.Mainnet
+    isMainnetNetwork(renNetwork)
   ) {
     return "";
   }

@@ -1,12 +1,33 @@
-import { Button, Divider, ListItemIcon, makeStyles, MenuItem, MenuItemProps, Typography, } from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { ActionButton, ActionButtonWrapper, RedButton, } from '../../../components/buttons/Buttons'
-import { CircleIcon } from '../../../components/icons/IconHelpers'
-import { AddIcon, CustomSvgIconComponent, DeleteIcon, TxSettingsIcon, } from '../../../components/icons/RenIcons'
-import { PaperContent } from '../../../components/layout/Paper'
-import { BridgeModalTitle, NestedDrawer, } from '../../../components/modals/BridgeModal'
+import {
+  Button,
+  Divider,
+  ListItemIcon,
+  makeStyles,
+  MenuItem,
+  MenuItemProps,
+  Typography,
+} from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import classNames from "classnames";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+  RedButton,
+} from "../../../components/buttons/Buttons";
+import { CircleIcon } from "../../../components/icons/IconHelpers";
+import {
+  AddIcon,
+  CustomSvgIconComponent,
+  DeleteIcon,
+  TxSettingsIcon,
+} from "../../../components/icons/RenIcons";
+import { PaperContent } from "../../../components/layout/Paper";
+import { externalLinkAttributes } from "../../../components/links/Links";
+import {
+  BridgeModalTitle,
+  NestedDrawer,
+} from "../../../components/modals/BridgeModal";
 
 const useTransactionMenuItemStyles = makeStyles((theme) => ({
   root: {
@@ -121,7 +142,12 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
         </PaperContent>
         <Divider />
         <PaperContent bottomPadding topPadding paddingVariant="medium">
-          <Button variant="outlined" size="small" disabled>
+          <Button
+            variant="outlined"
+            size="small"
+            href="https://renprotocol.typeform.com/to/YdmFyB"
+            {...externalLinkAttributes}
+          >
             Report an Issue
           </Button>
         </PaperContent>
