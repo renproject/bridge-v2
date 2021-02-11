@@ -462,7 +462,8 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
 
   const state = machine?.state.value as keyof DepositMachineSchema["states"];
   if (!machine) {
-    return <ProgressStatus processing={false} reason="Transaction completed" />;
+    // We should always have machines for transactions
+    return <ProgressStatus processing={false} reason="Restoring..." />;
   }
   console.debug(tx.id, depositHash, state);
   switch (state) {
@@ -489,10 +490,19 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         />
       );
     case "destInitiated": // final txHash means its done or check if wallet balances went up
+      return (
+        <DestinationPendingStatus
+          tx={tx}
+          onSubmit={handleSubmitToDestinationChain}
+          depositHash={depositHash}
+          submitting={true}
+        />
+      );
     case "completed":
       if (deposit.destTxHash) {
         return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
       } else {
+        // FIXME: actually an error case, this shouldn't happen in this state
         return (
           <DestinationPendingStatus
             tx={tx}
