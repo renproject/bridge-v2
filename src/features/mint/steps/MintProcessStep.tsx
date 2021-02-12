@@ -62,6 +62,7 @@ import {
   createTxQueryString,
   getAddressExplorerLink,
   getTxPageTitle,
+  isTxExpired,
   parseTxQueryString,
   TxType,
   useTxParam,
@@ -404,7 +405,16 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       ) : (
         <MintDepositToStatus tx={current.context.tx} />
       )}
-      {timeRemained <= 0 && <ExpiredErrorDialog open onAction={onRestart} />}
+      {
+        // We want to allow users to finish mints for deposits that have been detected
+        // If there are no deposits, and the gateway is expired (timeRemained < 0),
+        // show the expiry modal
+        (isTxExpired(current.context.tx) ||
+          (timeRemained <= 0 &&
+            Object.keys(current.context.tx.transactions).length === 0)) && (
+          <ExpiredErrorDialog open onAction={onRestart} />
+        )
+      }
       <WrongAddressWarningDialog
         open={wrongAddressDialogOpened}
         address={account}
