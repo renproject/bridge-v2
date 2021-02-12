@@ -208,6 +208,7 @@ export const MarkText: FunctionComponent<MarkTextProps> = ({
 
 export const useMiddleEllipsisTextStyles = makeStyles({
   root: {
+    useSelect: "none",
     // width: "100%",
     "&:hover $hideForHover": {
       display: "none",
@@ -219,8 +220,10 @@ export const useMiddleEllipsisTextStyles = makeStyles({
   hideForHover: {
     maxWidth: "100%",
     display: "block",
+    userSelect: "none",
   },
   showForHover: {
+    userSelect: "all",
     display: "none",
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -241,6 +244,7 @@ export const MiddleEllipsisText: FunctionComponent<MiddleEllipsisTextProps> = ({
   children,
 }) => {
   const styles = useMiddleEllipsisTextStyles();
+
   return (
     <MiddleEllipsisWrapper>
       {!hoverable && (

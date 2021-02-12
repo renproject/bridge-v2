@@ -1,11 +1,22 @@
-import { Button, useTheme } from '@material-ui/core'
-import React, { FunctionComponent, useCallback, useState } from 'react'
-import { ToggleIconButton } from '../../buttons/Buttons'
-import { BitcoinIcon, MetamaskFoxIcon } from '../../icons/RenIcons'
-import { CenteringSpacedBox } from '../../layout/LayoutHelpers'
-import { BridgePaper, PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle, } from '../../layout/Paper'
-import { BigDoneIcon, ProgressWithContent, TransactionStatusInfo, } from '../../progress/ProgressHelpers'
-import { Section } from '../PresentationHelpers'
+import { Button, useTheme } from "@material-ui/core";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { ToggleIconButton } from "../../buttons/Buttons";
+import { BitcoinIcon, MetamaskFoxIcon } from "../../icons/RenIcons";
+import { CenteringSpacedBox } from "../../layout/LayoutHelpers";
+import {
+  BridgePaper,
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from "../../layout/Paper";
+import {
+  BigDoneIcon,
+  ProgressWithContent,
+  TransactionStatusInfo,
+} from "../../progress/ProgressHelpers";
+import { Section } from "../PresentationHelpers";
 
 const STEPS = 3;
 
@@ -17,7 +28,7 @@ export const ProgressSection: FunctionComponent = () => {
     setStep((step) => (step + 1) % STEPS);
   }, []);
   return (
-    <Section header="Progress Helpers">
+    <Section header="Progress Helperss">
       <BridgePaper>
         <PaperHeader>
           <PaperNav />
