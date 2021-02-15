@@ -53,6 +53,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
   },
+  legacy: {
+    marginTop: 70,
+    textAlign: "center",
+  },
 }));
 
 const AdjustedWarningIcon = styled(WarningIcon)({
@@ -143,6 +147,20 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
             </UnstyledList>
           </div>
         </NarrowCenteredWrapper>
+        <div className={styles.legacy}>
+          <Typography variant="body1">
+            If you'd rather use the old version of RenBridge,{" "}
+            <Link
+              external
+              href={links.LEGACY_BRIDGE}
+              color="primary"
+              underline="hover"
+            >
+              head here
+            </Link>
+            .
+          </Typography>
+        </div>
       </Container>
     </MobileLayout>
   );

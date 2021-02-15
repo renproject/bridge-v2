@@ -5,6 +5,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   background-color: #f2f2f2;
+  position: relative;
 }
 body::before {
   z-index: -1000;
