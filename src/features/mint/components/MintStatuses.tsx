@@ -394,7 +394,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
       </ActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
-          label={lockChainConfig.symbol}
+          label={lockChainConfig.short}
           address={lockTxHash}
           link={lockTxLink}
         />

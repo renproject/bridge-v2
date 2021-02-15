@@ -28,7 +28,7 @@ export const ProgressSection: FunctionComponent = () => {
     setStep((step) => (step + 1) % STEPS);
   }, []);
   return (
-    <Section header="Progress Helperss">
+    <Section header="Progress Helpers">
       <BridgePaper>
         <PaperHeader>
           <PaperNav />
