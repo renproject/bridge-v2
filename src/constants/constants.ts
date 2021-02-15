@@ -13,6 +13,7 @@ export const links = {
   SECURITY_AUDITS: "https://github.com/renproject/ren/wiki/Audits",
   TERMS_OF_SERVICE: "/RenBridge_Service_Agreement.pdf",
   BUGS_LOG: "https://renprotocol.typeform.com/to/YdmFyB",
+  LEGACY_BRIDGE: "https://legacy-bridge.renproject.io",
   SOCIAL_TWITTER: "https://twitter.com/renprotocol",
   SOCIAL_GITHUB: "https://github.com/renproject",
   SOCIAL_TELEGRAM: "https://t.me/renproject",

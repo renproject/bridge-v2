@@ -85,6 +85,18 @@ const AboutPage: FunctionComponent<RouteComponentProps> = () => {
           don't completely eliminate risks. Please don't supply assets you can't
           afford to lose!
         </Typography>
+        <Typography variant="body1">
+          If you'd rather use the old version of RenBridge,{" "}
+          <Link
+            external
+            href={links.LEGACY_BRIDGE}
+            color="primary"
+            underline="hover"
+          >
+            head here
+          </Link>
+          .
+        </Typography>
         <div className={styles.logos}>
           <span className={styles.ren}>
             <RenLogoFullIcon fontSize="inherit" />
