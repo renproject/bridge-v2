@@ -95,7 +95,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             errorText={
               basicCondition && !hasMinimalAmount ? (
                 <span>
-                  Amount to low{" "}
+                  Amount too low{" "}
                   <TooltipWithIcon title="After fees have been applied, the amount you will receive is too little." />
                 </span>
               ) : (

@@ -11,7 +11,7 @@ export const links = {
   WIKI: "https://github.com/renproject/ren/wiki",
   FAQ: "https://docs.renproject.io/darknodes/faq/renbridge-faq",
   SECURITY_AUDITS: "https://github.com/renproject/ren/wiki/Audits",
-  TERMS_OF_SERVICE: "https://github.com/renproject/ren/wiki/Audits", //TODO: change when known
+  TERMS_OF_SERVICE: "/RenBridge_Service_Agreement.pdf",
   BUGS_LOG: "https://renprotocol.typeform.com/to/YdmFyB",
   SOCIAL_TWITTER: "https://twitter.com/renprotocol",
   SOCIAL_GITHUB: "https://github.com/renproject",

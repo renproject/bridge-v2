@@ -18,7 +18,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import MiddleEllipsis from "react-middle-ellipsis";
 import {
   blue,
   graphiteLight,
@@ -37,6 +36,7 @@ import {
 } from "../icons/RenIcons";
 import { Hide } from "../layout/LayoutHelpers";
 import { PulseIndicator } from "../progress/ProgressHelpers";
+import { MiddleEllipsisText } from "../typography/TypographyHelpers";
 
 type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
@@ -188,14 +188,14 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
     marginRight: 10,
     color: blue,
     backgroundColor: skyBlueLighter,
-    userSelect: "all",
+    // userSelect: "all",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     maxWidth: 265,
   },
   contentValue: {
-    width: "100%",
+    maxWidth: "100%",
     paddingLeft: 9,
     paddingRight: 9,
   },
@@ -234,7 +234,7 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
           </Fade>
         )}
         <Hide when={copied} className={styles.contentValue}>
-          <MiddleEllipsisCopy content={content} />
+          <MiddleEllipsisText hoverable>{content}</MiddleEllipsisText>
         </Hide>
       </div>
       <div className={styles.copy}>
@@ -267,22 +267,22 @@ const useMiddleEllipsisCopyStyles = makeStyles({
     textOverflow: "ellipsis",
     paddingLeft: 15,
     paddingRight: 15,
-  },
+  }
 });
 
 type MiddleEllipsisCopyProps = {
   content: string;
 };
-const MiddleEllipsisCopy: FunctionComponent<MiddleEllipsisCopyProps> = ({
+export const MiddleEllipsisCopy: FunctionComponent<MiddleEllipsisCopyProps> = ({
   content,
 }) => {
   const styles = useMiddleEllipsisCopyStyles();
   return (
     <div className={styles.root}>
       <div className={styles.hideForHover}>
-        <MiddleEllipsis>
+        <MiddleEllipsisText>
           <span>{content}</span>
-        </MiddleEllipsis>
+        </MiddleEllipsisText>
       </div>
       <div className={styles.showForHover}>{content}</div>
     </div>

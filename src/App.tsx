@@ -5,7 +5,6 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
 import { WelcomePage } from "./pages/WelcomePage";
 
-const CatalogPage = lazy(() => import("./pages/CatalogPage"));
 const MainPage = lazy(() => import("./pages/MainPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 
@@ -22,7 +21,6 @@ function App() {
       <Suspense fallback={<AppLoader />}>
         <Switch>
           <Route exact path={paths.WELCOME} component={WelcomePage} />
-          <Route exact path={paths.CATALOG} component={CatalogPage} />
           <Route exact path={paths.ABOUT} component={AboutPage} />
           <Route exact path={mainPagePaths} component={MainPage} />
           <Route component={NotFoundPage} />
