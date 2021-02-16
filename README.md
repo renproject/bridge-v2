@@ -2,6 +2,8 @@
 
 The safe, fast and most secure way to bring cross-chain assets to Ethereum.
 
+![bridge](https://user-images.githubusercontent.com/2221955/108037890-4b8b0100-708e-11eb-948a-289766d0aebd.png)
+
 ## Development guide
 
 Ensure the dependencies are installed by running `yarn`.
