@@ -5,13 +5,19 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { CustomSvgIconComponent } from "./RenIcons";
 
-const useIconWithLabelStyles = makeStyles(() => ({
+const useIconWithLabelStyles = makeStyles((theme) => ({
   root: {
     display: "inline-flex",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     width: 50,
+    [theme.breakpoints.up("sm")]: {
+      width: 60,
+    },
+    [theme.breakpoints.up("md")]: {
+      width: 70,
+    },
   },
   icon: {
     fontSize: 66,
@@ -20,7 +26,9 @@ const useIconWithLabelStyles = makeStyles(() => ({
   },
   label: {
     marginTop: 12,
-    lineHeight: 1,
+    fontSize: 12,
+    textAlign: "center",
+    color: theme.palette.text.secondary,
   },
 }));
 
@@ -39,9 +47,7 @@ export const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
       <span className={styles.icon}>
         <Icon fontSize="inherit" />
       </span>
-      <Typography variant="overline" className={styles.label}>
-        {label}
-      </Typography>
+      <Typography className={styles.label}>{label}</Typography>
     </span>
   );
 };

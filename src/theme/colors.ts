@@ -33,7 +33,7 @@ export const textLight = "#6B6D70";
 export const textLighter = "#87888C";
 export const textDisabled = "#DCE0E3";
 
-export const grayLight = "#EBEDF2";
+export const grayLight = "#c1c2c4";
 export const gray = "#D2D4D9";
 export const grayDark = "#D2D4D9";
 export const grayPlaceholder = "#D0D2D9";
