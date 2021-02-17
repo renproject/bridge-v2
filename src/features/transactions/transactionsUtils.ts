@@ -265,7 +265,7 @@ export const isMinimalAmount = (
   type: TxType
 ) => {
   if (type === TxType.BURN) {
-    return true;
+    return receiving > 0;
   }
   return receiving / amount >= 0.5;
 };
