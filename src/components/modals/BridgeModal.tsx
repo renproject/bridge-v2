@@ -1,4 +1,4 @@
-import { Backdrop } from "@material-ui/core";
+import { Backdrop, styled } from "@material-ui/core";
 import Dialog, { DialogProps } from "@material-ui/core/Dialog";
 import MuiDialogTitle, {
   DialogTitleProps,
@@ -114,8 +114,11 @@ const useNestedDrawerStyles = makeStyles((theme) => ({
   },
   paper: {
     position: "absolute",
+    top: 160,
     bottom: 0,
     width: "100%",
+    display: "flex",
+    flexDirection: "column",
   },
 }));
 
@@ -126,6 +129,16 @@ type NestedDrawerProps = DialogProps & {
 const stopPropagation = (event: any) => {
   event.stopPropagation();
 };
+
+export const NestedDrawerWrapper = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  flexGrow: 2,
+  justifyContent: "space-between",
+});
+
+export const NestedDrawerContent = styled("div")({});
+export const NestedDrawerActions = styled("div")({});
 
 export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
   open,
