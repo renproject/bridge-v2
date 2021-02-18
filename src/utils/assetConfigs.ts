@@ -84,6 +84,7 @@ export enum EthTestnet {
 export enum BridgeWallet {
   METAMASKW = "METAMASKW",
   WALLETCONNECTW = "WALLETCONNECTW",
+  MEWCONNECTW = "MEWCONNECTW",
   BINANCESMARTW = "BINANCESMARTW",
   UNKNOWNW = "UNKNOWNW",
 }
@@ -609,6 +610,15 @@ export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
     MainIcon: BinanceChainFullIcon,
     chain: BridgeChain.BSCC,
     rentxName: "BinanceSmartWallet",
+  },
+  [BridgeWallet.MEWCONNECTW]: {
+    symbol: BridgeWallet.UNKNOWNW,
+    short: "MEW",
+    full: "MEWConnect",
+    Icon: NotSetIcon,
+    MainIcon: NotSetIcon,
+    chain: BridgeChain.ETHC,
+    rentxName: "MEW",
   },
   [BridgeWallet.UNKNOWNW]: {
     symbol: BridgeWallet.UNKNOWNW,

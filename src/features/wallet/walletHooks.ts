@@ -34,12 +34,16 @@ type WalletData = ReturnType<typeof useMultiwallet> & {
 const resolveWallet = (provider: any) => {
   if (provider?.isMetaMask) {
     return BridgeWallet.METAMASKW;
-  } else if (
-    provider?.chainId === "0x61" ||
-    provider?.chainId.indexOf("Binance")
-  ) {
+  }
+
+  if (provider?.chainId === "0x61" || provider?.chainId?.indexOf("Binance")) {
     return BridgeWallet.BINANCESMARTW;
   }
+
+  if (provider?.isMewConnect || provider?.isMEWConnect) {
+    return BridgeWallet.MEWCONNECTW;
+  }
+
   return BridgeWallet.UNKNOWNW;
 };
 

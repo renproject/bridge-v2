@@ -50,8 +50,8 @@ export const walletPickerModalConfig = (targetEthChainId: number) => ({
         connector: new EthereumMEWConnectConnector({
           debug: env.DEV,
           rpc: {
-            42: `https://kovan.infura.io/v3/${env.INFURA_KEY}`,
-            1: `https://mainnet.infura.io/v3/${env.INFURA_KEY}`,
+            42: `wss://kovan.infura.io/ws/v3/${env.INFURA_KEY}`,
+            1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_KEY}`,
           },
           chainId: targetEthChainId,
         }),
@@ -92,6 +92,9 @@ export const walletPickerModalConfig = (targetEthChainId: number) => ({
             <PaperContent>
               <ActionButtonWrapper>
                 <ActionButton onClick={acknowledge}>Ok</ActionButton>
+              </ActionButtonWrapper>
+
+              <ActionButtonWrapper>
                 <ActionButton onClick={onClose}>Cancel</ActionButton>
               </ActionButtonWrapper>
             </PaperContent>

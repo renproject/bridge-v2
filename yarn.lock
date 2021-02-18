@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@CoinSpace/bitcore-lib-dogecoin@github:CoinSpace/bitcore-lib-dogecoin":
+"@CoinSpace/bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin":
   version "8.1.2"
   resolved "https://codeload.github.com/CoinSpace/bitcore-lib-dogecoin/tar.gz/cf8b3f663d6f065c12a643d8eb7c9e7b7f516bf1"
   dependencies:
@@ -2617,7 +2617,7 @@
   resolved "https://registry.yarnpkg.com/@renproject/fonts/-/fonts-1.0.3-rc1.tgz#66d9d782bfb2e220b9db4f6ac01d39884fb4d4e5"
   integrity sha512-nua2aANNcXgV4SENTf0cRJBx4NGcSyq3ithc3Qf4URMPrlJPQ+N/PWCsPxOd+O3DzH9F4h2UksYhlcSZrH4x2A==
 
-"@renproject/interfaces@^2.1.2":
+"@renproject/interfaces@^2.1.2", "@renproject/interfaces@^2.1.2-alpha.1":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.1.2.tgz#9c2640a6183017641082d1b61309771939dfbdac"
   integrity sha512-4nAa2Gsm6uQjb07MNr2otWA9QJrzHAsKex7PvcLPmFXkObVNbkVKTf0oZdBXi+tITQJc4b9TTUvZw1mUGe6WxQ==
@@ -2626,7 +2626,7 @@
     bignumber.js "^9.0.1"
     web3-core "^2.0.0-alpha.1"
 
-"@renproject/multiwallet-abstract-ethereum-connector@^2.1.2":
+"@renproject/multiwallet-abstract-ethereum-connector@^2.1.2", "@renproject/multiwallet-abstract-ethereum-connector@^2.1.2-alpha.1":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@renproject/multiwallet-abstract-ethereum-connector/-/multiwallet-abstract-ethereum-connector-2.1.2.tgz#86c6826b90715cc45e1d066fc3f38365a9499e69"
   integrity sha512-EY5CgbvnrobmhOgxIVR/1vpysmf5KcwD9/+iWWVTVDQpkzx+6dxlbA1EiesnJi7P8sAaC87S4QPw/t2EtZMonA==
@@ -2637,7 +2637,7 @@
     "@types/node" ">=10"
     web3 "^2.0.0-alpha.1"
 
-"@renproject/multiwallet-base-connector@^2.1.2":
+"@renproject/multiwallet-base-connector@^2.1.2", "@renproject/multiwallet-base-connector@^2.1.2-alpha.1":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@renproject/multiwallet-base-connector/-/multiwallet-base-connector-2.1.2.tgz#0f0dc4f8e15f009fe186511545928c091ff65f05"
   integrity sha512-YBlN3tKXFudu8TnL/epfK3GTmp+adMfKkNTznuRLE1I42b0pm42KXYjj7DlzcvXQs8rn+35ESdvI1PYV2alaTA==
@@ -2666,15 +2666,13 @@
     "@renproject/multiwallet-base-connector" "^2.1.2"
     "@types/node" ">=10"
 
-"@renproject/multiwallet-ethereum-mewconnect-connector@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-ethereum-mewconnect-connector/-/multiwallet-ethereum-mewconnect-connector-2.1.2.tgz#83a7463f2b354139902bb71395d51d4ae5dd2326"
-  integrity sha512-bX9gK3ZLO1XPBIHuVWDj/Ll4oKMF2pdkF37l2VVPCc9NmbyaojNd46MNNLfDgaar2Oe7t+wNVYlip83utNbGRg==
+"@renproject/multiwallet-ethereum-mewconnect-connector@../ren-js/packages/lib/multiwallet/multiwallet-ethereum-mewconnect-connector/":
+  version "2.1.2-alpha.1"
   dependencies:
     "@myetherwallet/mewconnect-web-client" "^2.1.23-beta.1"
-    "@renproject/interfaces" "^2.1.2"
-    "@renproject/multiwallet-abstract-ethereum-connector" "^2.1.2"
-    "@renproject/multiwallet-base-connector" "^2.1.2"
+    "@renproject/interfaces" "^2.1.2-alpha.1"
+    "@renproject/multiwallet-abstract-ethereum-connector" "^2.1.2-alpha.1"
+    "@renproject/multiwallet-base-connector" "^2.1.2-alpha.1"
     "@types/node" ">=10"
 
 "@renproject/multiwallet-ethereum-walletconnect-connector@^2.1.2":
@@ -4821,7 +4819,7 @@ bitcore-lib-cash@^8.24.2:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-"bitcore-lib-zcash@github:zcash-hackworks/bitcore-lib-zcash":
+bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
   version "0.13.19"
   resolved "https://codeload.github.com/zcash-hackworks/bitcore-lib-zcash/tar.gz/e97ae1dd2e9f14d6076d5e5429c75d8965afa4ab"
   dependencies:
@@ -5507,7 +5505,7 @@ ccount@^1.0.0:
   resolved "https://registry.yarnpkg.com/ccount/-/ccount-1.1.0.tgz#246687debb6014735131be8abab2d93898f8d043"
   integrity sha512-vlNK021QdI7PNeiUh/lKkC/mNHHfV0m/Ad5JoI0TYtlBnJAslM/JIkm/tGC88bkLIwO6OQ5uV6ztS6kVAtCDlg==
 
-"chai-bignumber@github:ren-forks/chai-bignumber#afa6f46dcbef0b7e622dc27b9b3354fc67afafbc", chai-bignumber@ren-forks/chai-bignumber#afa6f46dcbef0b7e622dc27b9b3354fc67afafbc:
+chai-bignumber@ren-forks/chai-bignumber#afa6f46dcbef0b7e622dc27b9b3354fc67afafbc:
   version "2.0.2"
   resolved "https://codeload.github.com/ren-forks/chai-bignumber/tar.gz/afa6f46dcbef0b7e622dc27b9b3354fc67afafbc"
 
