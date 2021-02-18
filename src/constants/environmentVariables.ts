@@ -9,12 +9,12 @@ const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY || null;
 const FIREBASE_PROJECT_ID =
   process.env.REACT_APP_FIREBASE_PROJECT_ID || "ren-auth";
 
-const XSTATE_DEVTOOLS = Boolean(
-  process.env.REACT_APP_XSTATE_DEVTOOLS ||
-    process.env.NODE_ENV === "development"
-);
+const DEV = Boolean(process.env.NODE_ENV === "development");
+
+const XSTATE_DEVTOOLS = Boolean(process.env.REACT_APP_XSTATE_DEVTOOLS || DEV);
 
 export const env = {
+  DEV,
   NETWORK,
   INFURA_KEY,
   FIREBASE_KEY,
@@ -24,4 +24,4 @@ export const env = {
   XSTATE_DEVTOOLS,
 };
 
-console.debug("env", env, process);
+if (DEV) console.debug("env", env, process);
