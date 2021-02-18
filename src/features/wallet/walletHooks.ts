@@ -172,7 +172,7 @@ export const useSignatures = () => {
         console.error(error);
       }
     }
-  }, [dispatch, chain, account, web3]);
+  }, [dispatch, chain, status, account, web3]);
 
   return { getSignatures };
 };
