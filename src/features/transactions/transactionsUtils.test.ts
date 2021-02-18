@@ -1,9 +1,14 @@
-import { GatewaySession } from '@renproject/ren-tx'
-import { BridgeChain } from '../../utils/assetConfigs'
-import { createTxQueryString, getPaymentLink, getTxPageTitle, parseTxQueryString, } from './transactionsUtils'
+import { GatewaySession } from "@renproject/ren-tx";
+import { BridgeChain } from "../../utils/assetConfigs";
+import {
+  createTxQueryString,
+  getPaymentLink,
+  getTxPageTitle,
+  parseTxQueryString,
+} from "./transactionsUtils";
 
 const mintTx: GatewaySession = {
-  customParams: undefined,
+  customParams: {},
   id: "tx-1234abc",
   type: "mint",
   sourceAsset: "btc",
@@ -97,18 +102,18 @@ describe("(de/se)rialization", () => {
 describe("pageTitle", () => {
   test("constructs mint tx page title", () => {
     const title = getTxPageTitle(mintTx);
-    expect(title).toEqual("Mint - 1 BTC - 2020-11-05T13:54:59.484Z");
+    expect(title).toEqual("Mint - 1 BTC - 2020-11-03T13:54:59.484Z");
   });
 
   test("constructs release tx page title", () => {
     const title = getTxPageTitle(releaseTx);
-    expect(title).toEqual("Release - 1 BTC - 2020-11-05T13:54:59.484Z");
+    expect(title).toEqual("Release - 1 BTC - 2020-11-03T13:54:59.484Z");
   });
 });
 
 describe("paymentLinks", () => {
   test("generates payment link", () => {
     const result = getPaymentLink(BridgeChain.BTCC, "12345abcde", 0.1234);
-    expect(result).toEqual("bitcoin://12345abcde?amount=0.1234")
-  })
-})
+    expect(result).toEqual("bitcoin://12345abcde?amount=0.1234");
+  });
+});
