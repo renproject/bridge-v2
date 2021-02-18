@@ -151,11 +151,11 @@ const useWeb3 = () => {
 export const useSignatures = () => {
   const dispatch = useDispatch();
   const chain = useSelector($multiwalletChain);
-  const { account } = useWallet(chain);
+  const { account, status } = useWallet(chain);
   const web3 = useWeb3();
   const getSignatures = useCallback(async () => {
     console.debug("reauth");
-    if (account && web3) {
+    if (account && web3 && status === "connected") {
       try {
         const signatures = await getWeb3Signatures(account, web3, chain);
         dispatch(setSignatures(signatures));

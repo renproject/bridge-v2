@@ -266,8 +266,8 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       {...props}
     >
       <span>
-        Transaction expires after 24 hours. Restart the transaction and start
-        again.
+        Transactions expire after 24 hours. Please restart the transaction if
+        you wish to continue.
       </span>
       <ActionButtonWrapper>
         <Button variant="text" color="inherit" onClick={goToHome}>

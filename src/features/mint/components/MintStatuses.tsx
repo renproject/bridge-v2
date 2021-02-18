@@ -365,6 +365,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
     lockTxHash,
     lockTxAmount,
     lockTxLink,
+    mintTxLink,
     mintTxHash,
     mintChainConfig,
   } = getLockAndMintParams(tx, depositHash);
@@ -376,7 +377,16 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
           <TransactionStatusInfo
             status="Pending"
             chain={mintChainConfig.full}
-            address={mintTxHash}
+            address={
+              <Link
+                color="primary"
+                underline="hover"
+                href={mintTxLink}
+                target="_blank"
+              >
+                {mintTxHash}
+              </Link>
+            }
           />
         </ProgressWithContent>
       </ProgressWrapper>
