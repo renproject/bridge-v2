@@ -381,7 +381,7 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
   any,
   any
 >["DefaultInfo"] = ({ acknowledge, onClose }) => {
-  //TODO: not ery elegant solution, Dialog should be extended with onBack/onPrev action
+  //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
   const dispatch = useDispatch();
   const handleBackToWalletPicker = useCallback(() => {
     onClose();
@@ -391,7 +391,11 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
   }, [dispatch, onClose]);
   return (
     <>
-      <BridgeModalTitle title=" " onClose={onClose} />
+      <BridgeModalTitle
+        title=" "
+        onClose={onClose}
+        onPrev={handleBackToWalletPicker}
+      />
       <SpacedPaperContent topPadding bottomPadding>
         <Typography variant="h5" align="center" gutterBottom>
           Connect BSC with MetaMask
