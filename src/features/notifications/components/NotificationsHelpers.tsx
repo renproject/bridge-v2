@@ -86,7 +86,7 @@ export const BrowserNotificationButton: FunctionComponent<BrowserNotificationBut
         disableFocusListener
         disableHoverListener
         disableTouchListener
-        title="Revoke notification permissions in browser settings."
+        title="Turn off notifications in your browser settings."
       >
         <span>
           <ToggleIconButton
