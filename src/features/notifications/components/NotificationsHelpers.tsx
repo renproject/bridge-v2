@@ -86,7 +86,7 @@ export const BrowserNotificationButton: FunctionComponent<BrowserNotificationBut
         disableFocusListener
         disableHoverListener
         disableTouchListener
-        title="Turn off notifications in your browser settings."
+        title="Turn off browser notifications in your browser settings."
       >
         <span>
           <ToggleIconButton
