@@ -51,7 +51,10 @@ import {
   $walletPickerOpened,
   setWalletPickerOpened,
 } from "../features/wallet/walletSlice";
-import { walletPickerModalConfig } from "../providers/multiwallet/Multiwallet";
+import {
+  renNetworkToEthNetwork,
+  walletPickerModalConfig,
+} from "../providers/multiwallet/Multiwallet";
 import { TransactionHistoryMenuIconButton } from "../components/buttons/Buttons";
 import { RenBridgeLogoIcon } from "../components/icons/RenIcons";
 import { Debug } from "../components/utils/Debug";
@@ -171,7 +174,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WrongNetworkInfo: WalletWrongNetworkInfo,
       WalletEntryButton,
       WalletChainLabel,
-      config: walletPickerModalConfig,
+      config: walletPickerModalConfig(renNetworkToEthNetwork(renNetwork) || 1),
     };
     return options;
   }, [multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);

@@ -38,6 +38,7 @@ import { ReactComponent as Luna } from "./../../assets/icons/luna-icon-nocolour.
 import { ReactComponent as LunaFull } from "./../../assets/icons/luna-icon.svg";
 import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox.svg";
 import { ReactComponent as MetamaskFull } from "./../../assets/icons/metamask-icon-colour.svg";
+import { ReactComponent as MewFull } from "./../../assets/icons/mew-icon.svg";
 import { ReactComponent as NavigateNext } from "./../../assets/icons/chevron-icon-right.svg";
 import { ReactComponent as NavigatePrev } from "./../../assets/icons/chevron-icon-left.svg";
 import { ReactComponent as QrCode } from "./../../assets/icons/qr-code.svg";
@@ -164,6 +165,10 @@ export const MetamaskFoxIcon: CustomSvgIconComponent = (props) => (
 
 export const MetamaskFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={MetamaskFull} {...props} />
+);
+
+export const MewFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={MewFull} viewBox="0 0 86 104" {...props} />
 );
 
 export const WalletConnectFullIcon: CustomSvgIconComponent = (props) => (

@@ -9,9 +9,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
 import { useSubNetworkName } from "../../features/ui/uiHooks";
+import { setWalletPickerOpened } from "../../features/wallet/walletSlice";
 import { createPulseAnimation } from "../../theme/animationUtils";
 import { defaultShadow } from "../../theme/other";
 import {
@@ -24,8 +26,10 @@ import {
   getWalletConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { trimAddress } from "../../utils/strings";
+import { ActionButton, ActionButtonWrapper } from "../buttons/Buttons";
 import { WalletIcon } from "../icons/RenIcons";
-import { PaperContent } from "../layout/Paper";
+import { PaperContent, SpacedPaperContent } from "../layout/Paper";
+import { Link } from "../links/Links";
 import { BridgeModalTitle } from "../modals/BridgeModal";
 import {
   ProgressWithContent,
@@ -370,5 +374,64 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
         <span className={accountClassName}>{trimmedAddress}</span>
       )}
     </Button>
+  );
+};
+
+export const BinanceMetamaskConnectorInfo: WalletPickerProps<
+  any,
+  any
+>["DefaultInfo"] = ({ acknowledge, onClose }) => {
+  //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
+  const dispatch = useDispatch();
+  const handleBackToWalletPicker = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      dispatch(setWalletPickerOpened(true));
+    }, 1);
+  }, [dispatch, onClose]);
+  return (
+    <>
+      <BridgeModalTitle
+        title=" "
+        onClose={onClose}
+        onPrev={handleBackToWalletPicker}
+      />
+      <SpacedPaperContent topPadding bottomPadding>
+        <Typography variant="h5" align="center" gutterBottom>
+          Connect BSC with MetaMask
+        </Typography>
+        <Typography
+          variant="body1"
+          align="center"
+          color="textSecondary"
+          gutterBottom
+        >
+          Please ensure that you have added the Binance Smart Chain network to
+          Metamask as explained{" "}
+          <Link
+            href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain"
+            external
+          >
+            here
+          </Link>
+        </Typography>
+      </SpacedPaperContent>
+      <PaperContent bottomPadding>
+        <ActionButtonWrapper>
+          <Button
+            variant="text"
+            color="primary"
+            onClick={handleBackToWalletPicker}
+          >
+            Use another wallet
+          </Button>
+        </ActionButtonWrapper>
+        <ActionButtonWrapper>
+          <ActionButton onClick={acknowledge}>
+            Continue with MetaMask
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </>
   );
 };
