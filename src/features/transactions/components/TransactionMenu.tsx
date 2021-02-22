@@ -27,6 +27,9 @@ import { externalLinkAttributes } from "../../../components/links/Links";
 import {
   BridgeModalTitle,
   NestedDrawer,
+  NestedDrawerActions,
+  NestedDrawerContent,
+  NestedDrawerWrapper,
 } from "../../../components/modals/BridgeModal";
 
 const useTransactionMenuItemStyles = makeStyles((theme) => ({
@@ -126,31 +129,37 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
           </ListItemIcon>
           <Typography variant="inherit">Transaction Menu</Typography>
         </BridgeModalTitle>
-        <div className={styles.menuItems}>
-          <TransactionMenuItem Icon={AddIcon} disabled>
-            Insert/update transaction
-          </TransactionMenuItem>
-          <TransactionMenuItem
-            Icon={DeleteIcon}
-            onClick={handleDeleteWithConfirm}
-          >
-            Delete transaction
-          </TransactionMenuItem>
-        </div>
-        <PaperContent paddingVariant="medium" className={styles.transferId}>
-          <Typography variant="inherit">Transfer ID: {tx.id}</Typography>
-        </PaperContent>
-        <Divider />
-        <PaperContent bottomPadding topPadding paddingVariant="medium">
-          <Button
-            variant="outlined"
-            size="small"
-            href="https://renprotocol.typeform.com/to/YdmFyB"
-            {...externalLinkAttributes}
-          >
-            Report an Issue
-          </Button>
-        </PaperContent>
+        <NestedDrawerWrapper>
+          <NestedDrawerContent>
+            <div className={styles.menuItems}>
+              <TransactionMenuItem Icon={AddIcon} disabled>
+                Insert/update transaction
+              </TransactionMenuItem>
+              <TransactionMenuItem
+                Icon={DeleteIcon}
+                onClick={handleDeleteWithConfirm}
+              >
+                Delete transaction
+              </TransactionMenuItem>
+            </div>
+          </NestedDrawerContent>
+          <NestedDrawerActions>
+            <PaperContent paddingVariant="medium" className={styles.transferId}>
+              <Typography variant="inherit">Transfer ID: {tx.id}</Typography>
+            </PaperContent>
+            <Divider />
+            <PaperContent bottomPadding topPadding paddingVariant="medium">
+              <Button
+                variant="outlined"
+                size="small"
+                href="https://renprotocol.typeform.com/to/YdmFyB"
+                {...externalLinkAttributes}
+              >
+                Report an Issue
+              </Button>
+            </PaperContent>
+          </NestedDrawerActions>
+        </NestedDrawerWrapper>
       </NestedDrawer>
       <ConfirmTransactionDeletionDrawer
         open={confirmOpen}
@@ -179,38 +188,44 @@ export const ConfirmTransactionDeletionDrawer: FunctionComponent<ConfirmTransact
   }, [onDeleteTx]);
   return (
     <NestedDrawer title="Delete a Transaction" open={open} onClose={onClose}>
-      <PaperContent topPadding>
-        <Typography variant="h5" align="center" gutterBottom>
-          Are you sure?
-        </Typography>
-        <Typography
-          variant="body2"
-          align="center"
-          color="textSecondary"
-          gutterBottom
-        >
-          If you have already sent your assets you will lose them forever if you
-          remove the transaction.
-        </Typography>
-      </PaperContent>
-      <PaperContent bottomPadding>
-        <ActionButtonWrapper>
-          <RedButton
-            variant="text"
-            color="inherit"
-            startIcon={<DeleteIcon />}
-            onClick={handleDeleteTx}
-            disabled={deleting}
-          >
-            {deleting ? "Removing..." : "Remove"} Transaction
-          </RedButton>
-        </ActionButtonWrapper>
-        <ActionButtonWrapper>
-          <ActionButton onClick={onClose} disabled={deleting}>
-            Cancel
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
+      <NestedDrawerWrapper>
+        <NestedDrawerContent>
+          <PaperContent topPadding>
+            <Typography variant="h5" align="center" gutterBottom>
+              Are you sure?
+            </Typography>
+            <Typography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+              gutterBottom
+            >
+              If you have already sent your assets you will lose them forever if
+              you remove the transaction.
+            </Typography>
+          </PaperContent>
+        </NestedDrawerContent>
+        <NestedDrawerActions>
+          <PaperContent bottomPadding>
+            <ActionButtonWrapper>
+              <RedButton
+                variant="text"
+                color="inherit"
+                startIcon={<DeleteIcon />}
+                onClick={handleDeleteTx}
+                disabled={deleting}
+              >
+                {deleting ? "Removing..." : "Remove"} Transaction
+              </RedButton>
+            </ActionButtonWrapper>
+            <ActionButtonWrapper>
+              <ActionButton onClick={onClose} disabled={deleting}>
+                Cancel
+              </ActionButton>
+            </ActionButtonWrapper>
+          </PaperContent>
+        </NestedDrawerActions>
+      </NestedDrawerWrapper>
     </NestedDrawer>
   );
 };

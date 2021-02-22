@@ -241,7 +241,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
           </PaperContent>
         </>
       )}
-      {txState?.newTx && (
+      {txState?.newTx && walletConnected && (
         <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
       )}
       <BrowserNotificationsDrawer

@@ -1,10 +1,19 @@
 import { Divider } from '@material-ui/core'
 import React, { FunctionComponent, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ActionButton, ActionButtonWrapper, } from '../../../components/buttons/Buttons'
-import { AssetDropdown, AssetDropdownWrapper, } from '../../../components/dropdowns/AssetDropdown'
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from '../../../components/buttons/Buttons'
+import {
+  AssetDropdown,
+  AssetDropdownWrapper,
+} from '../../../components/dropdowns/AssetDropdown'
 import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
-import { BigCurrencyInput, BigCurrencyInputWrapper, } from '../../../components/inputs/BigCurrencyInput'
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from '../../../components/inputs/BigCurrencyInput'
 import { PaperContent } from '../../../components/layout/Paper'
 import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
 import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
@@ -18,10 +27,23 @@ import {
 import { useFetchFees } from '../../fees/feesHooks'
 import { getTransactionFees } from '../../fees/feesUtils'
 import { useRenNetworkTracker } from '../../transactions/transactionsHooks'
-import { isMinimalAmount, TxConfigurationStepProps, TxType, } from '../../transactions/transactionsUtils'
+import {
+  isMinimalAmount,
+  TxConfigurationStepProps,
+  TxType,
+} from '../../transactions/transactionsUtils'
 import { useSelectedChainWallet } from '../../wallet/walletHooks'
-import { $wallet, setChain, setWalletPickerOpened, } from '../../wallet/walletSlice'
-import { $mint, $mintUsdAmount, setMintAmount, setMintCurrency, } from '../mintSlice'
+import {
+  $wallet,
+  setChain,
+  setWalletPickerOpened,
+} from '../../wallet/walletSlice'
+import {
+  $mint,
+  $mintUsdAmount,
+  setMintAmount,
+  setMintCurrency,
+} from '../mintSlice'
 
 export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,

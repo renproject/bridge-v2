@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("md")]: {
       paddingRight: 42,
       flexGrow: 5,
-      borderRight: `2px solid ${theme.customColors.grayLight}`,
+      borderRight: `2px solid ${theme.customColors.grayDisabled}`,
     },
   },
   chains: {

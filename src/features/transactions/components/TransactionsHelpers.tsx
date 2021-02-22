@@ -31,6 +31,9 @@ import { Link } from "../../../components/links/Links";
 import {
   BridgeModal,
   NestedDrawer,
+  NestedDrawerActions,
+  NestedDrawerContent,
+  NestedDrawerWrapper,
 } from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
@@ -55,68 +58,35 @@ type BookmarkPageWarningProps = {
 export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
   onClosed,
 }) => {
-  const [open, setOpen] = useState(true);
+  const [open] = useState(true);
   const handleClose = useCallback(() => {
     if (onClosed) {
       onClosed();
     }
-    setOpen(false);
+    // setOpen(false);
   }, [onClosed]);
   return (
     <NestedDrawer title="Warning" open={open} onClose={handleClose}>
-      <SpacedPaperContent topPadding bottomPadding smaller>
-        <Typography variant="h5" align="center" gutterBottom>
-          Bookmark this page
-        </Typography>
-        <Typography variant="body2" align="center" gutterBottom>
-          To ensure you don’t lose track of your transaction, please bookmark
-          this page.
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <ActionButtonWrapper>
-          <ActionButton onClick={handleClose}>I understand</ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
-    </NestedDrawer>
-  );
-};
-
-type EnableNotificationsWarningProps = {
-  onClosed?: () => void;
-};
-
-export const EnableNotificationsWarning: FunctionComponent<EnableNotificationsWarningProps> = ({
-  onClosed,
-}) => {
-  const [open, setOpen] = useState(true);
-  const handleClose = useCallback(() => {
-    if (onClosed) {
-      onClosed();
-    }
-    setOpen(false);
-  }, [onClosed]);
-  return (
-    <NestedDrawer title="Warning" open={open} onClose={handleClose}>
-      <SpacedPaperContent topPadding bottomPadding>
-        <Typography variant="h5" align="center" gutterBottom>
-          Bookmark this page
-        </Typography>
-        <Typography variant="body2" align="center" gutterBottom>
-          To ensure you don’t lose track of your transaction, please bookmark
-          this page.
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <Button variant="text" color="primary">
-          Do not enable
-        </Button>
-        <ActionButtonWrapper>
-          <ActionButton onClick={handleClose}>
-            Enable Browser Notifications
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
+      <NestedDrawerWrapper>
+        <NestedDrawerContent>
+          <PaperContent topPadding bottomPadding>
+            <Typography variant="h5" align="center" gutterBottom>
+              Bookmark this page
+            </Typography>
+            <Typography variant="body2" align="center" gutterBottom>
+              To ensure you don’t lose track of your transaction, please
+              bookmark this page.
+            </Typography>
+          </PaperContent>
+        </NestedDrawerContent>
+        <NestedDrawerActions>
+          <PaperContent bottomPadding>
+            <ActionButtonWrapper>
+              <ActionButton onClick={handleClose}>I understand</ActionButton>
+            </ActionButtonWrapper>
+          </PaperContent>
+        </NestedDrawerActions>
+      </NestedDrawerWrapper>
     </NestedDrawer>
   );
 };
