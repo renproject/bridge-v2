@@ -615,7 +615,7 @@ export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
   [BridgeWallet.MEWCONNECTW]: {
     symbol: BridgeWallet.UNKNOWNW,
     short: "MEW",
-    full: "MEWConnect",
+    full: "MEW Wallet",
     Icon: NotSetIcon,
     MainIcon: MewFullIcon,
     chain: BridgeChain.ETHC,
