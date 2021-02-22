@@ -1,85 +1,79 @@
-import {
-  Box,
-  ClickAwayListener,
-  Divider,
-  IconButton,
-  Tooltip,
-} from "@material-ui/core";
-import { BurnMachineSchema, GatewaySession } from "@renproject/ren-tx";
+import { Divider, IconButton, } from '@material-ui/core'
+import { BurnMachineSchema, GatewaySession } from '@renproject/ren-tx'
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+} from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom'
 import {
   ActionButton,
   ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
+} from '../../../components/buttons/Buttons'
+import { NumberFormatText } from '../../../components/formatting/NumberFormatText'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
 import {
   CenteringSpacedBox,
   PaperSpacerWrapper,
-} from "../../../components/layout/LayoutHelpers";
+} from '../../../components/layout/LayoutHelpers'
 import {
   PaperActions,
   PaperContent,
   PaperHeader,
   PaperNav,
   PaperTitle,
-} from "../../../components/layout/Paper";
+} from '../../../components/layout/Paper'
 import {
   LabelWithValue,
   MiddleEllipsisText,
   SpacedDivider,
-} from "../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { paths } from "../../../pages/routes";
-import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
-import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
-import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
+} from '../../../components/typography/TypographyHelpers'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletStatus } from '../../../components/utils/types'
+import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
+import { paths } from '../../../pages/routes'
+import { usePageTitle, usePaperTitle } from '../../../providers/TitleProviders'
+import { getChainConfigByRentxName } from '../../../utils/assetConfigs'
+import { $exchangeRates } from '../../marketData/marketDataSlice'
+import { findExchangeRate } from '../../marketData/marketDataUtils'
 import {
   BrowserNotificationButton,
   BrowserNotificationsDrawer,
-} from "../../notifications/components/NotificationsHelpers";
+} from '../../notifications/components/NotificationsHelpers'
 import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
-} from "../../notifications/notificationsUtils";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { TransactionMenu } from "../../transactions/components/TransactionMenu";
-import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
+} from '../../notifications/notificationsUtils'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
+import { TransactionMenu } from '../../transactions/components/TransactionMenu'
+import { ProgressStatus } from '../../transactions/components/TransactionsHelpers'
 import {
   useSetCurrentTxId,
   useTransactionDeletion,
-} from "../../transactions/transactionsHooks";
+} from '../../transactions/transactionsHooks'
 import {
   createTxQueryString,
   getTxPageTitle,
   TxType,
   useTxParam,
-} from "../../transactions/transactionsUtils";
+} from '../../transactions/transactionsUtils'
 import {
   useAuthRequired,
   useSelectedChainWallet,
-} from "../../wallet/walletHooks";
+} from '../../wallet/walletHooks'
 import {
   $chain,
   setChain,
   setWalletPickerOpened,
-} from "../../wallet/walletSlice";
+} from '../../wallet/walletSlice'
 import {
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
-} from "../components/ReleaseStatuses";
-import { useBurnMachine } from "../releaseHooks";
-import { getBurnAndReleaseParams } from "../releaseUtils";
+} from '../components/ReleaseStatuses'
+import { useBurnMachine } from '../releaseHooks'
+import { getBurnAndReleaseParams } from '../releaseUtils'
 
 export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
