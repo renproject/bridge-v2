@@ -1,8 +1,15 @@
-import { Button, Typography } from "@material-ui/core";
+import {
+  Button,
+  ClickAwayListener,
+  Tooltip,
+  Typography,
+} from "@material-ui/core";
 import React, { FunctionComponent } from "react";
 import {
   ActionButton,
   ActionButtonWrapper,
+  ToggleIconButton,
+  ToggleIconButtonProps,
 } from "../../../components/buttons/Buttons";
 import { PaperContent } from "../../../components/layout/Paper";
 import {
@@ -57,5 +64,38 @@ export const BrowserNotificationsDrawer: FunctionComponent<BrowserNotificationsD
         </NestedDrawerActions>
       </NestedDrawerWrapper>
     </NestedDrawer>
+  );
+};
+
+type BrowserNotificationButtonProps = ToggleIconButtonProps & {
+  onTooltipClose: () => void;
+  tooltipOpened: boolean;
+};
+
+export const BrowserNotificationButton: FunctionComponent<BrowserNotificationButtonProps> = ({
+  pressed,
+  onClick,
+  onTooltipClose,
+  tooltipOpened,
+}) => {
+  return (
+    <ClickAwayListener onClickAway={onTooltipClose}>
+      <Tooltip
+        onClose={onTooltipClose}
+        open={tooltipOpened}
+        disableFocusListener
+        disableHoverListener
+        disableTouchListener
+        title="Revoke notification permissions in browser settings."
+      >
+        <span>
+          <ToggleIconButton
+            pressed={pressed}
+            variant="notifications"
+            onClick={onClick}
+          />
+        </span>
+      </Tooltip>
+    </ClickAwayListener>
   );
 };

@@ -1,4 +1,10 @@
-import { Divider, IconButton } from "@material-ui/core";
+import {
+  Box,
+  ClickAwayListener,
+  Divider,
+  IconButton,
+  Tooltip,
+} from "@material-ui/core";
 import { BurnMachineSchema, GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
@@ -38,7 +44,10 @@ import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
-import { BrowserNotificationsDrawer } from "../../notifications/components/NotificationsHelpers";
+import {
+  BrowserNotificationButton,
+  BrowserNotificationsDrawer,
+} from "../../notifications/components/NotificationsHelpers";
 import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
@@ -122,6 +131,8 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     modalOpened,
     handleModalOpen,
     handleModalClose,
+    tooltipOpened,
+    handleTooltipClose,
   } = useBrowserNotificationsConfirmation();
 
   const { enabled, handleEnable } = useBrowserNotifications(handleModalClose);
@@ -161,10 +172,11 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
         </PaperNav>
         <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
-          <ToggleIconButton
+          <BrowserNotificationButton
             pressed={enabled}
-            variant="notifications"
             onClick={handleModalOpen}
+            tooltipOpened={tooltipOpened}
+            onTooltipClose={handleTooltipClose}
           />
           <ToggleIconButton
             variant="settings"
@@ -241,7 +253,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
         onClose={handleMenuClose}
         onDeleteTx={handleDeleteTx}
       />
-      <Debug it={{ parsedTx, txState: txState }} />
+      <Debug it={{ tooltipOpened, parsedTx, txState: txState }} />
     </>
   );
 };

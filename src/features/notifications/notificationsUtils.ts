@@ -40,12 +40,19 @@ export const useBrowserNotifications = (onEnabled = () => {}) => {
 export const useBrowserNotificationsConfirmation = () => {
   const { enabled } = useBrowserNotifications();
   const [modalOpened, setModalOpened] = useState(false);
+  const [tooltipOpened, setTooltipOpened] = useState(false);
+
+  const handleTooltipClose = useCallback(() => {
+    setTooltipOpened(false);
+  }, []);
 
   const handleModalOpen = useCallback(() => {
     if (!enabled) {
       setModalOpened(true);
+    } else {
+      setTooltipOpened(!tooltipOpened);
     }
-  }, [enabled]);
+  }, [enabled, tooltipOpened]);
 
   const handleModalClose = useCallback(() => {
     setModalOpened(false);
@@ -55,5 +62,7 @@ export const useBrowserNotificationsConfirmation = () => {
     modalOpened,
     handleModalOpen,
     handleModalClose,
+    tooltipOpened,
+    handleTooltipClose,
   };
 };
