@@ -13,6 +13,12 @@ const DEV = Boolean(process.env.NODE_ENV === "development");
 
 const XSTATE_DEVTOOLS = Boolean(process.env.REACT_APP_XSTATE_DEVTOOLS || DEV);
 
+const MEWCONNECT_ENABLED = Boolean(process.env.REACT_APP_MEWCONNECT_ENABLED);
+const WALLETCONNECT_ENABLED = Boolean(
+  process.env.REACT_APP_WALLETCONNECT_ENABLED
+);
+const BSC_MM_ENABLED = Boolean(process.env.REACT_APP_BSC_MM_ENABLED);
+
 export const env = {
   DEV,
   NETWORK,
@@ -22,6 +28,9 @@ export const env = {
   BANDCHAIN_ENDPOINT,
   GAS_FEE_ENDPOINT,
   XSTATE_DEVTOOLS,
+  BSC_MM_ENABLED,
+  MEWCONNECT_ENABLED,
+  WALLETCONNECT_ENABLED,
 };
 
 if (DEV) console.debug("env", env, process);
