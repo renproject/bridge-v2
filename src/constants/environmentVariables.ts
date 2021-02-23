@@ -14,6 +14,8 @@ const XSTATE_DEVTOOLS = Boolean(
     process.env.NODE_ENV === "development"
 );
 
+const GH_PAGES = Boolean(process.env.REACT_APP_GH_PAGES);
+
 export const env = {
   NETWORK,
   INFURA_KEY,
@@ -22,6 +24,7 @@ export const env = {
   BANDCHAIN_ENDPOINT,
   GAS_FEE_ENDPOINT,
   XSTATE_DEVTOOLS,
+  GH_PAGES,
 };
 
 console.debug("env", env, process);

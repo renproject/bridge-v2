@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AppLoader } from "./components/progress/AppLoader";
+import { env } from "./constants/environmentVariables";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
 import { WelcomePage } from "./pages/WelcomePage";
@@ -17,7 +18,7 @@ const mainPagePaths = [
 ];
 function App() {
   return (
-    <Router>
+    <Router basename={env.GH_PAGES ? "bridge-v2" : ""}>
       <Suspense fallback={<AppLoader />}>
         <Switch>
           <Route exact path={paths.WELCOME} component={WelcomePage} />
