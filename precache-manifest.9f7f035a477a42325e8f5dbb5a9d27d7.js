@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "817b087926cb04338a5ef9664d66b927",
+    "revision": "c10afa0c94bd3e3ce83add79d0cf4812",
     "url": "/bridge-v2/index.html"
   },
   {
