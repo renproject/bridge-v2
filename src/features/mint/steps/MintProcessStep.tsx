@@ -41,7 +41,10 @@ import {
   getCurrencyConfigByRentxName,
 } from "../../../utils/assetConfigs";
 import { $renNetwork } from "../../network/networkSlice";
-import { BrowserNotificationsDrawer } from "../../notifications/components/NotificationsHelpers";
+import {
+  BrowserNotificationButton,
+  BrowserNotificationsDrawer
+} from '../../notifications/components/NotificationsHelpers'
 import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
@@ -131,6 +134,8 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     modalOpened,
     handleModalOpen,
     handleModalClose,
+    tooltipOpened,
+    handleTooltipClose,
   } = useBrowserNotificationsConfirmation();
 
   const { enabled, handleEnable } = useBrowserNotifications(handleModalClose);
@@ -192,10 +197,11 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         </PaperNav>
         <PaperTitle>{paperTitle}</PaperTitle>
         <PaperActions>
-          <ToggleIconButton
+          <BrowserNotificationButton
             pressed={enabled}
-            variant="notifications"
             onClick={handleModalOpen}
+            tooltipOpened={tooltipOpened}
+            onTooltipClose={handleTooltipClose}
           />
           <ToggleIconButton
             variant="settings"
