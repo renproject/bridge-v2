@@ -1,14 +1,15 @@
-import { Backdrop, styled } from "@material-ui/core";
+import { Backdrop } from "@material-ui/core";
 import Dialog, { DialogProps } from "@material-ui/core/Dialog";
 import MuiDialogTitle, {
   DialogTitleProps,
 } from "@material-ui/core/DialogTitle";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, styled } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
+import { BackArrowIcon } from "../icons/RenIcons";
 import { BridgePurePaper } from "../layout/Paper";
 
 export const useBridgeModalTitleStyles = makeStyles((theme) => ({
@@ -20,7 +21,8 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   },
   titleWrapper: {
     flexGrow: 1,
-    paddingLeft: 30, // compensating close icon for visual text centering
+    paddingLeft: 30, // compensating icons for visual text centering
+    paddingRight: 30,
     textAlign: "center",
   },
   title: {},
@@ -35,27 +37,54 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   closeButton: {
     color: theme.palette.grey[600],
   },
+  prevButtonWrapper: {
+    minWidth: 30,
+  },
+  prevButton: {
+    color: theme.palette.grey[600],
+  },
 }));
 
-type BridgeModalTitleProps = DialogTitleProps & Pick<DialogProps, "onClose">;
+type BridgeModalTitleProps = DialogTitleProps &
+  Pick<DialogProps, "onClose"> & {
+    onPrev?: () => void;
+  };
 
 export const BridgeModalTitle: FunctionComponent<BridgeModalTitleProps> = ({
   title,
   onClose,
+  onPrev,
   className,
   children,
 }) => {
   const styles = useBridgeModalTitleStyles();
-  const onCustomClose = () => {
+  const handleClose = () => {
     if (onClose) {
       onClose({}, "backdropClick");
     }
   };
+  const handlePrev = () => {
+    if (onPrev) {
+      onPrev();
+    }
+  };
+
   return (
     <MuiDialogTitle
       disableTypography
       className={classNames(className, styles.dialogTitle)}
     >
+      <div className={styles.prevButtonWrapper}>
+        {onPrev ? (
+          <IconButton
+            aria-label="prev"
+            className={styles.prevButton}
+            onClick={handlePrev}
+          >
+            <BackArrowIcon fontSize="inherit" />
+          </IconButton>
+        ) : null}
+      </div>
       {title && (
         <div className={styles.titleWrapper}>
           <Typography variant="body1" className={styles.title}>
@@ -71,7 +100,7 @@ export const BridgeModalTitle: FunctionComponent<BridgeModalTitleProps> = ({
           <IconButton
             aria-label="close"
             className={styles.closeButton}
-            onClick={onCustomClose}
+            onClick={handleClose}
           >
             <CloseIcon fontSize="inherit" />
           </IconButton>
