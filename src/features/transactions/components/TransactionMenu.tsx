@@ -6,31 +6,32 @@ import {
   MenuItem,
   MenuItemProps,
   Typography,
-} from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
-import classNames from "classnames";
-import React, { FunctionComponent, useCallback, useState } from "react";
+} from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import {
   ActionButton,
   ActionButtonWrapper,
   RedButton,
-} from "../../../components/buttons/Buttons";
-import { CircleIcon } from "../../../components/icons/IconHelpers";
+} from '../../../components/buttons/Buttons'
+import { CircleIcon } from '../../../components/icons/IconHelpers'
 import {
   AddIcon,
   CustomSvgIconComponent,
   DeleteIcon,
   TxSettingsIcon,
-} from "../../../components/icons/RenIcons";
-import { PaperContent } from "../../../components/layout/Paper";
-import { externalLinkAttributes } from "../../../components/links/Links";
+} from '../../../components/icons/RenIcons'
+import { AddressInput } from '../../../components/inputs/AddressInput'
+import { PaperContent } from '../../../components/layout/Paper'
+import { externalLinkAttributes } from '../../../components/links/Links'
 import {
   BridgeModalTitle,
   NestedDrawer,
   NestedDrawerActions,
   NestedDrawerContent,
   NestedDrawerWrapper,
-} from "../../../components/modals/BridgeModal";
+} from '../../../components/modals/BridgeModal'
 
 const useTransactionMenuItemStyles = makeStyles((theme) => ({
   root: {
@@ -93,6 +94,7 @@ type TransactionMenuProps = {
   open: boolean;
   onClose: () => void;
   onDeleteTx: () => void;
+  onUpdateTx?: (txHash: string, vout: string) => void;
   tx: GatewaySession;
 };
 
@@ -100,6 +102,10 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   open,
   onClose,
   onDeleteTx,
+  onUpdateTx = (tx, vout) => {
+    console.log("updating");
+    console.log(tx, vout);
+  },
   tx,
 }) => {
   const styles = useTransactionMenuStyles();
@@ -115,6 +121,15 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   const handleDeleteWithConfirm = useCallback(() => {
     setConfirmOpen(true);
   }, []);
+
+  const [updateOpen, setUpdateOpen] = useState(true); // FIXME: false
+  const handleUpdateClose = useCallback(() => {
+    setUpdateOpen(false);
+  }, []);
+  const handleUpdateOpen = useCallback(() => {
+    setUpdateOpen(true);
+  }, []);
+
 
   return (
     <>
@@ -132,7 +147,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
         <NestedDrawerWrapper>
           <NestedDrawerContent>
             <div className={styles.menuItems}>
-              <TransactionMenuItem Icon={AddIcon} disabled>
+              <TransactionMenuItem Icon={AddIcon} onClick={handleUpdateOpen}>
                 Insert/update transaction
               </TransactionMenuItem>
               <TransactionMenuItem
@@ -166,17 +181,22 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
         onClose={handleConfirmClose as any}
         onDeleteTx={onDeleteTx}
       />
+      <UpdateTransactionDrawer
+        open={updateOpen}
+        onClose={handleUpdateClose}
+        onUpdateTx={onUpdateTx}
+      />
     </>
   );
 };
 
-type ConfirmTransactionDeletionProps = {
+type ConfirmTransactionDeletionDrawerProps = {
   open: boolean;
   onClose: () => void;
   onDeleteTx: () => void;
 };
 
-export const ConfirmTransactionDeletionDrawer: FunctionComponent<ConfirmTransactionDeletionProps> = ({
+export const ConfirmTransactionDeletionDrawer: FunctionComponent<ConfirmTransactionDeletionDrawerProps> = ({
   open,
   onClose,
   onDeleteTx,
@@ -220,6 +240,72 @@ export const ConfirmTransactionDeletionDrawer: FunctionComponent<ConfirmTransact
             </ActionButtonWrapper>
             <ActionButtonWrapper>
               <ActionButton onClick={onClose} disabled={deleting}>
+                Cancel
+              </ActionButton>
+            </ActionButtonWrapper>
+          </PaperContent>
+        </NestedDrawerActions>
+      </NestedDrawerWrapper>
+    </NestedDrawer>
+  );
+};
+
+type UpdateTransactionDrawerProps = {
+  open: boolean;
+  onClose: () => void;
+  onUpdateTx: (txHash: string, vout: string) => void;
+};
+
+export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerProps> = ({
+  open,
+  onClose,
+  onUpdateTx,
+}) => {
+  const [vout, setVout] = useState("");
+  const [hash, setHash] = useState("");
+  const [updating, setUpdating] = useState(false);
+  const handleVoutChange = useCallback((event) => {
+    setVout(event.target.value);
+  }, []);
+  const handleHashChange = useCallback((event) => {
+    setHash(event.target.value);
+  }, []);
+  const handleUpdateTx = useCallback(() => {
+    setUpdating(true);
+    onUpdateTx(hash, vout);
+  }, [onUpdateTx, hash, vout]);
+
+  return (
+    <NestedDrawer title="Update Transaction Hash" open={open} onClose={onClose}>
+      <NestedDrawerWrapper>
+        <NestedDrawerContent>
+          <PaperContent topPadding>
+            <AddressInput
+              label="Transaction Hash"
+              value={hash}
+              placeholder="Enter transaction hash"
+            />
+            <AddressInput
+              label="Vout"
+              value={vout}
+              placeholder="Enter transaction vout"
+            />
+          </PaperContent>
+        </NestedDrawerContent>
+        <NestedDrawerActions>
+          <PaperContent bottomPadding>
+            <ActionButtonWrapper>
+              <RedButton
+                variant="text"
+                color="inherit"
+                onClick={handleUpdateTx}
+                disabled={updating}
+              >
+                {updating ? "Updating..." : "Update"} Transaction
+              </RedButton>
+            </ActionButtonWrapper>
+            <ActionButtonWrapper>
+              <ActionButton onClick={onClose} disabled={updating}>
                 Cancel
               </ActionButton>
             </ActionButtonWrapper>

@@ -1,11 +1,12 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AppLoader } from "./components/progress/AppLoader";
+import MainPage from './pages/MainPage'
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
 import { WelcomePage } from "./pages/WelcomePage";
 
-const MainPage = lazy(() => import("./pages/MainPage"));
+// const MainPage = lazy(() => import("./pages/MainPage")); //FIXME: lazy
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 
 const mainPagePaths = [
