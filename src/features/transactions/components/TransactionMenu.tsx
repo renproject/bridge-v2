@@ -6,32 +6,35 @@ import {
   MenuItem,
   MenuItemProps,
   Typography,
-} from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useState } from 'react'
+} from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
+import classNames from "classnames";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   ActionButton,
   ActionButtonWrapper,
   RedButton,
-} from '../../../components/buttons/Buttons'
-import { CircleIcon } from '../../../components/icons/IconHelpers'
+} from "../../../components/buttons/Buttons";
+import { CircleIcon } from "../../../components/icons/IconHelpers";
 import {
   AddIcon,
   CustomSvgIconComponent,
   DeleteIcon,
   TxSettingsIcon,
-} from '../../../components/icons/RenIcons'
-import { AddressInput } from '../../../components/inputs/AddressInput'
-import { PaperContent } from '../../../components/layout/Paper'
-import { externalLinkAttributes } from '../../../components/links/Links'
+} from "../../../components/icons/RenIcons";
+import {
+  OutlinedTextField,
+  OutlinedTextFieldWrapper,
+} from "../../../components/inputs/OutlinedTextField";
+import { PaperContent } from "../../../components/layout/Paper";
+import { externalLinkAttributes } from "../../../components/links/Links";
 import {
   BridgeModalTitle,
   NestedDrawer,
   NestedDrawerActions,
   NestedDrawerContent,
   NestedDrawerWrapper,
-} from '../../../components/modals/BridgeModal'
+} from "../../../components/modals/BridgeModal";
 
 const useTransactionMenuItemStyles = makeStyles((theme) => ({
   root: {
@@ -94,7 +97,7 @@ type TransactionMenuProps = {
   open: boolean;
   onClose: () => void;
   onDeleteTx: () => void;
-  onUpdateTx?: (txHash: string, vout: string) => void;
+  onUpdateTx?: (amount: string, vOut: string, txHash: string) => void;
   tx: GatewaySession;
 };
 
@@ -102,10 +105,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   open,
   onClose,
   onDeleteTx,
-  onUpdateTx = (tx, vout) => {
-    console.log("updating");
-    console.log(tx, vout);
-  },
+  onUpdateTx,
   tx,
 }) => {
   const styles = useTransactionMenuStyles();
@@ -129,7 +129,6 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   const handleUpdateOpen = useCallback(() => {
     setUpdateOpen(true);
   }, []);
-
 
   return (
     <>
@@ -181,11 +180,13 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
         onClose={handleConfirmClose as any}
         onDeleteTx={onDeleteTx}
       />
-      <UpdateTransactionDrawer
-        open={updateOpen}
-        onClose={handleUpdateClose}
-        onUpdateTx={onUpdateTx}
-      />
+      {onUpdateTx && (
+        <UpdateTransactionDrawer
+          open={updateOpen}
+          onClose={handleUpdateClose}
+          onUpdateTx={onUpdateTx}
+        />
+      )}
     </>
   );
 };
@@ -253,7 +254,7 @@ export const ConfirmTransactionDeletionDrawer: FunctionComponent<ConfirmTransact
 type UpdateTransactionDrawerProps = {
   open: boolean;
   onClose: () => void;
-  onUpdateTx: (txHash: string, vout: string) => void;
+  onUpdateTx: (amount: string, vOut: string, txHash: string) => void;
 };
 
 export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerProps> = ({
@@ -261,35 +262,58 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
   onClose,
   onUpdateTx,
 }) => {
+  const [amount, setAmount] = useState("");
   const [vout, setVout] = useState("");
   const [hash, setHash] = useState("");
   const [updating, setUpdating] = useState(false);
+
+  const handleAmountChange = useCallback((event) => {
+    const newValue = event.target.value;
+    if (!isNaN(Number(newValue))) {
+      setAmount(newValue);
+    }
+  }, []);
   const handleVoutChange = useCallback((event) => {
     setVout(event.target.value);
   }, []);
   const handleHashChange = useCallback((event) => {
     setHash(event.target.value);
   }, []);
+
   const handleUpdateTx = useCallback(() => {
     setUpdating(true);
-    onUpdateTx(hash, vout);
-  }, [onUpdateTx, hash, vout]);
+    onUpdateTx(amount, vout, hash);
+  }, [onUpdateTx, hash, vout, amount]);
 
   return (
     <NestedDrawer title="Update Transaction Hash" open={open} onClose={onClose}>
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding>
-            <AddressInput
-              label="Transaction Hash"
-              value={hash}
-              placeholder="Enter transaction hash"
-            />
-            <AddressInput
-              label="Vout"
-              value={vout}
-              placeholder="Enter transaction vout"
-            />
+            <OutlinedTextFieldWrapper>
+              <OutlinedTextField
+                label="Amount"
+                value={amount}
+                onChange={handleAmountChange}
+                placeholder="Enter ammount"
+              />
+            </OutlinedTextFieldWrapper>
+            <OutlinedTextFieldWrapper>
+              <OutlinedTextField
+                label="Transaction Hash"
+                value={hash}
+                onChange={handleHashChange}
+                placeholder="Enter transaction hash"
+              />
+            </OutlinedTextFieldWrapper>
+            <OutlinedTextFieldWrapper>
+              <OutlinedTextField
+                label="Vout"
+                value={vout}
+                onChange={handleVoutChange}
+                placeholder="Enter transaction vout"
+              />
+            </OutlinedTextFieldWrapper>
           </PaperContent>
         </NestedDrawerContent>
         <NestedDrawerActions>

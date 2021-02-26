@@ -43,8 +43,8 @@ import {
 import { $renNetwork } from "../../network/networkSlice";
 import {
   BrowserNotificationButton,
-  BrowserNotificationsDrawer
-} from '../../notifications/components/NotificationsHelpers'
+  BrowserNotificationsDrawer,
+} from "../../notifications/components/NotificationsHelpers";
 import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
@@ -129,6 +129,10 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     handleMenuClose,
     handleDeleteTx,
   } = useTransactionDeletion(tx);
+
+  const handleUpdateTx = useCallback((amount, vOut, txHash) => {
+    console.log("updating", amount, vOut, txHash);
+  }, []);
 
   const {
     modalOpened,
@@ -260,6 +264,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         open={menuOpened}
         onClose={handleMenuClose}
         onDeleteTx={handleDeleteTx}
+        onUpdateTx={handleUpdateTx}
       />
       <Debug it={{ parsedTx, txState: txState }} />
     </>
