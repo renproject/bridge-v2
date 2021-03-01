@@ -93,11 +93,13 @@ const useTransactionMenuStyles = makeStyles((theme) => ({
   },
 }));
 
+export type UpdateTxFn = (amount: string, vOut: string, txHash: string) => void;
+
 type TransactionMenuProps = {
   open: boolean;
   onClose: () => void;
   onDeleteTx: () => void;
-  onUpdateTx?: (amount: string, vOut: string, txHash: string) => void;
+  onUpdateTx?: UpdateTxFn;
   tx: GatewaySession;
 };
 
@@ -122,7 +124,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
     setConfirmOpen(true);
   }, []);
 
-  const [updateOpen, setUpdateOpen] = useState(true); // FIXME: false
+  const [updateOpen, setUpdateOpen] = useState(false);
   const handleUpdateClose = useCallback(() => {
     setUpdateOpen(false);
   }, []);
@@ -266,7 +268,7 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
   const [vout, setVout] = useState("");
   const [hash, setHash] = useState("");
   const [updating, setUpdating] = useState(false);
-
+  const valid = amount && vout && hash;
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value;
     if (!isNaN(Number(newValue))) {
@@ -292,10 +294,10 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
           <PaperContent topPadding>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label="Amount"
+                label="Amount (sats)"
                 value={amount}
                 onChange={handleAmountChange}
-                placeholder="Enter ammount"
+                placeholder="Enter amount in sats"
               />
             </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
@@ -323,9 +325,9 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
                 variant="text"
                 color="inherit"
                 onClick={handleUpdateTx}
-                disabled={updating}
+                disabled={updating || !valid}
               >
-                {updating ? "Updating..." : "Update"} Transaction
+                {updating ? "Updating..." : "Update"} transaction
               </RedButton>
             </ActionButtonWrapper>
             <ActionButtonWrapper>
