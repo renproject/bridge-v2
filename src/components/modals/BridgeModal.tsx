@@ -30,6 +30,7 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
     flexGrow: 1,
     display: "flex",
     alignItems: "center",
+    justifyContent: "center"
   },
   closeButtonWrapper: {
     minWidth: 30,
