@@ -144,7 +144,8 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       const rawSourceTx = { amount, txHash, vOut, confirmations: 100 };
       console.log("restoring");
       if (machineSend) {
-        machineSend("RESTORE", { data: { rawSourceTx } });
+        // @ts-ignore
+        machineSend({ type: "RESTORE", data: { rawSourceTx } });
       }
     },
     [machineSend]
