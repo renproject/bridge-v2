@@ -23,6 +23,7 @@ jobs:
           REACT_APP_NETWORK: mainnet
           REACT_APP_BSC_MM_ENABLED: ${{ secrets.REACT_APP_BSC_MM_ENABLED }}
           REACT_APP_MEWCONNECT_ENABLED: ${{ secrets.REACT_APP_MEWCONNECT_ENABLED }}
+          REACT_APP_INFURA_ID: ${{ secrets.REACT_APP_INFURA_ID }}
           # REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_SENTRY_DSN }}
       - uses: netlify/actions/cli@master
         with:
