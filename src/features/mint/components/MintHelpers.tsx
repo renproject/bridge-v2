@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from "react";
-import { styled } from "@material-ui/core";
-import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
-import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
+import { makeStyles, styled, Typography } from '@material-ui/core'
+import React, { FunctionComponent } from 'react'
+import { BridgeChainConfig, CurrencyConfig } from '../../../utils/assetConfigs'
+import { HMSCountdown } from '../../transactions/components/TransactionsHelpers'
 
 export const mintTooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",
@@ -47,5 +47,35 @@ export const MultipleDepositsMessage: FunctionComponent = () => {
       will require an additional submission to to the destination chain via your
       web3 wallet.
     </span>
+  );
+};
+
+export const useMintIntroStyles = makeStyles({
+  root: {
+    marginTop: 30,
+    marginBottom: 30,
+  },
+  heading: {
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+});
+
+export const MintIntro: FunctionComponent = () => {
+  const styles = useMintIntroStyles();
+  return (
+    <div className={styles.root}>
+      <Typography
+        className={styles.heading}
+        variant="h5"
+        align="center"
+        gutterBottom
+      >
+        RenBridge 2
+      </Typography>
+      <Typography variant="body1" align="center">
+        Select an asset and destination chain, to&nbsp;begin or resume a mint.
+      </Typography>
+    </div>
   );
 };
