@@ -27,7 +27,6 @@ import {
 } from "../transactions/transactionsUtils";
 
 type CreateMintTransactionParams = {
-  amount: number;
   currency: BridgeCurrency;
   mintedCurrency: BridgeCurrency; // TODO: Can be probably derived from mintedCurrencyChain
   mintedCurrencyChain: BridgeChain;
@@ -54,7 +53,6 @@ export const getRemainingGatewayTime = (expiryTime: number) =>
   Math.ceil(expiryTime - 24 * 60 * 60 * 1000 - Number(new Date()));
 
 export const createMintTransaction = ({
-  amount,
   currency,
   mintedCurrencyChain,
   userAddress,
@@ -82,7 +80,7 @@ export const createMintTransaction = ({
     sourceChain: getCurrencyRentxSourceChain(currency), // TODO: it can be derived for minting
     destAddress,
     destChain: getChainRentxName(mintedCurrencyChain),
-    targetAmount: Number(amount),
+    targetAmount: 0,
     userAddress,
     nonce: nonce.toString(16).padStart(64, "0"),
     expiryTime: getSessionExpiry(),

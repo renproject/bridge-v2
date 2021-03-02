@@ -147,6 +147,11 @@ export const UnstyledList = styled("ul")({
   listStyleType: "none",
 });
 
+export const SmallSpacedDivider = styled(Divider)({
+  marginTop: 10,
+  marginBottom: 10,
+});
+
 export const SpacedDivider = styled(Divider)({
   marginTop: 20,
   marginBottom: 20,

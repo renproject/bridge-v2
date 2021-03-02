@@ -112,6 +112,12 @@ export const overrides = (palette: Palette): Overrides => {
         marginRight: 0,
       },
     },
+    MuiFilledInput: {
+      root: {
+        borderTopLeftRadius: 4,
+        borderTopRightRadius: 4,
+      }
+    },
     MuiInputBase: {
       // input: { ...generatePlaceholderStyles("ff0000") },
     },

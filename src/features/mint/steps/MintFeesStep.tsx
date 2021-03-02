@@ -4,7 +4,9 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  Grid,
   IconButton,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import React, {
@@ -34,10 +36,9 @@ import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
-  BigAssetAmount,
-  BigAssetAmountWrapper,
   LabelWithValue,
   MiddleEllipsisText,
+  SmallSpacedDivider,
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
@@ -90,7 +91,8 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const history = useHistory();
   const { status, walletConnected, account } = useSelectedChainWallet();
   const [mintingInitialized, setMintingInitialized] = useState(false);
-  const { amount, currency } = useSelector($mint);
+  const { currency } = useSelector($mint);
+  const [amountValue, setAmountValue] = useState("");
   const {
     chain,
     signatures: { signature },
@@ -100,7 +102,14 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const exchangeRates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);
-
+  const handleAmountChange = useCallback((event) => {
+    const newValue = event.target.value.replace(",", ".");
+    if (!isNaN(newValue)) {
+      setAmountValue(newValue);
+    }
+  }, []);
+  const amount = Number(amountValue);
+  const hasAmount = amount !== 0;
   const amountUsd = amount * currencyUsdRate;
   const { conversionTotal } = getTransactionFees({
     amount,
@@ -136,7 +145,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const tx = useMemo(
     () =>
       createMintTransaction({
-        amount: amount,
         currency: currency,
         destAddress: account,
         mintedCurrency: toMintedCurrency(currency),
@@ -145,7 +153,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         network: network,
         dayIndex: currentSessionCount,
       }),
-    [amount, currency, account, chain, network, currentSessionCount]
+    [currency, account, chain, network, currentSessionCount]
   );
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;
@@ -209,25 +217,52 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
-        <BigAssetAmountWrapper>
-          <BigAssetAmount
-            value={<NumberFormatText value={amount} spacedSuffix={currency} />}
-          />
-        </BigAssetAmountWrapper>
+        {/*<BigAssetAmountWrapper>*/}
+        {/*  <BigAssetAmount*/}
+        {/*    value={<NumberFormatText value={amount} spacedSuffix={currency} />}*/}
+        {/*  />*/}
+        {/*</BigAssetAmountWrapper>*/}
+        <Grid container alignItems="flex-end">
+          <Grid item xs={7}>
+            <Typography variant="body1" gutterBottom>
+              Fee calculator
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <TextField
+              label="Enter an amount"
+              variant="filled"
+              color="primary"
+              value={amountValue || ""}
+              onChange={handleAmountChange}
+            />
+          </Grid>
+        </Grid>
+        <SmallSpacedDivider />
         <Typography variant="body1" gutterBottom>
           Details
         </Typography>
         <LabelWithValue
           label="Sending"
           labelTooltip={mintTooltips.sending}
-          value={<NumberFormatText value={amount} spacedSuffix={currency} />}
+          value={
+            hasAmount ? (
+              <NumberFormatText value={amount} spacedSuffix={currency} />
+            ) : (
+              currency
+            )
+          }
           valueEquivalent={
-            <NumberFormatText
-              value={amountUsd}
-              spacedSuffix="USD"
-              decimalScale={2}
-              fixedDecimalScale
-            />
+            hasAmount ? (
+              <NumberFormatText
+                value={amountUsd}
+                spacedSuffix="USD"
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            ) : (
+              ""
+            )
           }
         />
         <LabelWithValue
@@ -253,6 +288,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           type={TxType.MINT}
         />
       </PaperContent>
+      <Debug it={{ amount, hasAmount }} />
       <Divider />
       <PaperContent darker topPadding bottomPadding>
         {walletConnected &&

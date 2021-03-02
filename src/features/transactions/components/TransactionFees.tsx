@@ -57,6 +57,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     targetChainConfig.nativeCurrency,
     USD_SYMBOL
   );
+  const hasAmount = amount !== 0;
   const amountUsd = amount * currencyUsdRate;
   const { fees, pending } = useFetchFees(currency, type);
   const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
@@ -101,19 +102,29 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         label="RenVM Fee"
         labelTooltip={tooltips.renVmFee}
         value={
-          <NumberFormatText
-            value={renVMFeeAmount}
-            spacedSuffix={currencyConfig.short}
-            decimalScale={8}
-          />
+          hasAmount ? (
+            <NumberFormatText
+              value={renVMFeeAmount}
+              spacedSuffix={currencyConfig.short}
+              decimalScale={8}
+            />
+          ) : (
+            <span>
+              {(type === TxType.MINT ? fees.mint : fees.burn) / 10000 * 100}%
+            </span>
+          )
         }
         valueEquivalent={
-          <NumberFormatText
-            value={renVMFeeAmountUsd}
-            prefix="$"
-            decimalScale={2}
-            fixedDecimalScale
-          />
+          hasAmount ? (
+            <NumberFormatText
+              value={renVMFeeAmountUsd}
+              prefix="$"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          ) : (
+            ""
+          )
         }
       />
       <LabelWithValue
