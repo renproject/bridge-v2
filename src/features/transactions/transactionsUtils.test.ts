@@ -23,7 +23,7 @@ const mintTx: GatewaySession = {
 };
 
 const releaseTx: GatewaySession = {
-  customParams: { },
+  customParams: {},
   id: "tx-1234abcd",
   type: "burn",
   sourceAsset: "btc",
@@ -113,7 +113,7 @@ describe("pageTitle", () => {
 
 describe("paymentLinks", () => {
   test("generates payment link", () => {
-    const result = getPaymentLink(BridgeChain.BTCC, "12345abcde", 0.1234);
-    expect(result).toEqual("bitcoin://12345abcde?amount=0.1234");
+    const result = getPaymentLink(BridgeChain.BTCC, "12345abcde");
+    expect(result).toEqual("bitcoin://12345abcde");
   });
 });

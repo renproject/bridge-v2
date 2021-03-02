@@ -37,14 +37,16 @@ import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import {
+  BridgeCurrency,
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
 } from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
 import { $renNetwork } from "../../network/networkSlice";
 import {
   BrowserNotificationButton,
-  BrowserNotificationsDrawer
-} from '../../notifications/components/NotificationsHelpers'
+  BrowserNotificationsDrawer,
+} from "../../notifications/components/NotificationsHelpers";
 import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
@@ -385,6 +387,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     renNetwork,
     account
   );
+
+  const { fees } = useFetchFees(BridgeCurrency.BTC, TxType.MINT);
+  const minimumAmount = (fees.lock / 10 ** 8) * 2;
   return (
     <>
       {activeDeposit ? (
@@ -409,7 +414,10 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           )}
         </DepositWrapper>
       ) : (
-        <MintDepositToStatus tx={current.context.tx} />
+        <MintDepositToStatus
+          tx={current.context.tx}
+          minimumAmount={minimumAmount}
+        />
       )}
       {
         // We want to allow users to finish mints for deposits that have been detected
@@ -429,9 +437,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         onAlternativeAction={handleCloseWrongAddressDialog}
       />
       <Debug
-        disable
         it={{
           depositHash,
+          fees,
           // pagination: { currentIndex, currentHash, total },
           // contextTx: current.context.tx,
           // activeDeposit,

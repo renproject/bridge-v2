@@ -42,7 +42,6 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
 import { db } from "../../../services/database/database";
 import {
@@ -89,7 +88,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   useAuthRequired(true);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { status, walletConnected, account } = useSelectedChainWallet();
+  const { walletConnected, account } = useSelectedChainWallet();
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { currency } = useSelector($mint);
   const [amountValue, setAmountValue] = useState("");
@@ -100,7 +99,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const network = useSelector($renNetwork);
   const currentSessionCount = useSelector($currentSessionCount);
   const exchangeRates = useSelector($exchangeRates);
-  const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value.replace(",", ".");
@@ -111,6 +109,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const amount = Number(amountValue);
   const hasAmount = amount !== 0;
   const amountUsd = amount * currencyUsdRate;
+  const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
     amount,
     fees,
@@ -159,7 +158,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const canInitializeMinting = ackChecked && txValid;
 
   const handleConfirm = useCallback(() => {
-    if (status === WalletStatus.CONNECTED) {
+    if (walletConnected) {
       setTouched(true);
       if (canInitializeMinting) {
         setMintingInitialized(true);
@@ -171,7 +170,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       setMintingInitialized(false);
       dispatch(setWalletPickerOpened(true));
     }
-  }, [dispatch, status, canInitializeMinting]);
+  }, [dispatch, walletConnected, canInitializeMinting]);
 
   const onMintTxCreated = useCallback(
     async (tx) => {
@@ -201,7 +200,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   useEffect(() => {
     if (mintingInitialized && !creatingMintTx) {
       setCreatingMintTx(true);
-      onMintTxCreated(tx).finally();
+      onMintTxCreated(tx).catch(console.error).finally();
     }
   }, [onMintTxCreated, mintingInitialized, tx, creatingMintTx]);
 
@@ -288,7 +287,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           type={TxType.MINT}
         />
       </PaperContent>
-      <Debug it={{ amount, hasAmount }} />
+      <Debug it={{ amount, hasAmount, mintingInitialized }} />
       <Divider />
       <PaperContent darker topPadding bottomPadding>
         {walletConnected &&
@@ -344,7 +343,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleConfirm}
-            disabled={!ackChecked || mintingInitialized || !walletConnected}
+            disabled={
+              walletConnected ? !ackChecked || mintingInitialized : false
+            }
           >
             {!walletConnected
               ? "Connect Wallet"

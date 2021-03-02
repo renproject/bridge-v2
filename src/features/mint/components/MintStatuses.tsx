@@ -58,10 +58,12 @@ import { AddressValidityMessage } from "./MintHelpers";
 
 export type MintDepositToProps = {
   tx: GatewaySession;
+  minimumAmount: number;
 };
 
 export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   tx,
+  minimumAmount,
 }) => {
   const [showQr, setShowQr] = useState(false);
   const toggleQr = useCallback(() => {
@@ -94,12 +96,10 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   const {
     lockCurrencyConfig,
     lockChainConfig,
-    suggestedAmount,
     mintAddressLink,
   } = getLockAndMintParams(tx);
   const { color } = lockCurrencyConfig;
   const { MainIcon } = lockChainConfig;
-
   useSetPaperTitle(`Send ${lockChainConfig.short}`);
 
   return (
@@ -111,17 +111,20 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
       </ProgressWrapper>
       <MediumWrapper>
         <BigAssetAmount
-          value={
-            <span>
-              Send{" "}
-              <NumberFormatText
-                value={suggestedAmount}
-                spacedSuffix={lockCurrencyConfig.short}
-              />{" "}
-              to
-            </span>
-          }
+          value={<span>Send {lockCurrencyConfig.short} to</span>}
         />
+        <Typography
+          component="p"
+          variant="caption"
+          align="center"
+          color="textSecondary"
+        >
+          Minimum amount:{" "}
+          <NumberFormatText
+            value={minimumAmount}
+            spacedSuffix={lockCurrencyConfig.short}
+          />
+        </Typography>
       </MediumWrapper>
       {!!tx.gatewayAddress && (
         <>
@@ -132,8 +135,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
                   <QRCode
                     value={getPaymentLink(
                       lockChainConfig.symbol,
-                      tx.gatewayAddress,
-                      suggestedAmount
+                      tx.gatewayAddress
                     )}
                   />
                 </BigQrCode>
@@ -160,7 +162,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
         <Typography variant="caption">
           {timeRemained > 0 && (
             <span>
-              Expires in: <HMSCountdown milliseconds={timeRemained} />
+              Do not send after: <HMSCountdown milliseconds={timeRemained} />
             </span>
           )}
           {timeRemained <= 0 && <span>Expired</span>}

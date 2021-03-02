@@ -80,7 +80,7 @@ export const createMintTransaction = ({
     sourceChain: getCurrencyRentxSourceChain(currency), // TODO: it can be derived for minting
     destAddress,
     destChain: getChainRentxName(mintedCurrencyChain),
-    targetAmount: 0,
+    targetAmount: 0, // FIXME: determine what to do here
     userAddress,
     nonce: nonce.toString(16).padStart(64, "0"),
     expiryTime: getSessionExpiry(),
@@ -94,12 +94,7 @@ export const createMintTransaction = ({
 
 export const preValidateMintTransaction = (tx: GatewaySession) => {
   // TODO: create advancedValidation
-  return (
-    tx.type === "mint" &&
-    tx.destAddress &&
-    tx.userAddress &&
-    tx.targetAmount > 0
-  );
+  return tx.type === "mint" && tx.destAddress && tx.userAddress;
 };
 
 export const depositSorter = (a: GatewayTransaction, b: GatewayTransaction) => {

@@ -244,13 +244,9 @@ export const getTxPageTitle = (tx: GatewaySession) => {
 export const getTxCreationTimestamp = (tx: GatewaySession) =>
   tx.createdAt || tx.expiryTime - 24 * 3600 * 1000 * 3;
 
-export const getPaymentLink = (
-  chain: BridgeChain,
-  address: string,
-  amount: number
-) => {
+export const getPaymentLink = (chain: BridgeChain, address: string) => {
   const chainConfig = getChainConfig(chain);
-  return `${chainConfig.rentxName}://${address}?amount=${amount}`;
+  return `${chainConfig.rentxName}://${address}`;
 };
 
 export const isTransactionCompleted = (tx: GatewaySession) => {
@@ -258,6 +254,8 @@ export const isTransactionCompleted = (tx: GatewaySession) => {
     ? isMintTransactionCompleted(tx)
     : isReleaseTransactionCompleted(tx);
 };
+
+export const RECEIVING_RATION = 2;
 
 export const isMinimalAmount = (
   amount: number,
