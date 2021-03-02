@@ -93,7 +93,7 @@ const useTransactionMenuStyles = makeStyles((theme) => ({
   },
 }));
 
-export type UpdateTxFn = (amount: string, vOut: string, txHash: string) => void;
+export type UpdateTxFn = (amount: number, vOut: number, txHash: string) => void;
 
 type TransactionMenuProps = {
   open: boolean;
@@ -256,7 +256,11 @@ export const ConfirmTransactionDeletionDrawer: FunctionComponent<ConfirmTransact
 type UpdateTransactionDrawerProps = {
   open: boolean;
   onClose: () => void;
-  onUpdateTx: (amount: string, vOut: string, txHash: string) => void;
+  onUpdateTx: UpdateTxFn;
+};
+
+const isValidInteger = (amount: string) => {
+  return Number.isInteger(Number(amount));
 };
 
 export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerProps> = ({
@@ -271,12 +275,15 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
   const valid = amount && vout && hash;
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value;
-    if (!isNaN(Number(newValue))) {
+    if (isValidInteger(newValue)) {
       setAmount(newValue);
     }
   }, []);
   const handleVoutChange = useCallback((event) => {
-    setVout(event.target.value);
+    const newValue = event.target.value;
+    if (isValidInteger(newValue)) {
+      setVout(newValue);
+    }
   }, []);
   const handleHashChange = useCallback((event) => {
     setHash(event.target.value);
@@ -284,7 +291,7 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
 
   const handleUpdateTx = useCallback(() => {
     setUpdating(true);
-    onUpdateTx(amount, vout, hash);
+    onUpdateTx(Number(amount), Number(vout), hash);
   }, [onUpdateTx, hash, vout, amount]);
 
   return (
@@ -310,10 +317,10 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
             </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label="Vout"
+                label="vOut"
                 value={vout}
                 onChange={handleVoutChange}
-                placeholder="Enter transaction vout"
+                placeholder="Enter transaction vOut"
               />
             </OutlinedTextFieldWrapper>
           </PaperContent>
