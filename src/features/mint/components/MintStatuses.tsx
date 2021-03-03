@@ -100,7 +100,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   } = getLockAndMintParams(tx);
   const { color } = lockCurrencyConfig;
   const { MainIcon } = lockChainConfig;
-  useSetPaperTitle(`Send ${lockChainConfig.short}`);
+  useSetPaperTitle("Gateway address");
 
   return (
     <>

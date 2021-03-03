@@ -235,10 +235,12 @@ export const getFeeTooltips = ({
 export const getTxPageTitle = (tx: GatewaySession) => {
   const amount = tx.targetAmount;
   const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
-  const type = tx.type === TxType.MINT ? "Mint" : "Release";
   const date = new Date(getTxCreationTimestamp(tx)).toISOString();
-
-  return `${type} - ${amount} ${asset} - ${date}`;
+  if (tx.type === TxType.MINT) {
+    return `Mint - ${asset} - ${date}`;
+  } else {
+    return `Release - ${amount} ${asset} - ${date}`;
+  }
 };
 
 export const getTxCreationTimestamp = (tx: GatewaySession) =>
