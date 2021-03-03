@@ -141,7 +141,16 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   }, []);
   const handleUpdateTx = useCallback<UpdateTxFn>(
     (amount, vOut, txHash) => {
-      const rawSourceTx = { amount, txHash, vOut, confirmations: 100 };
+      const rawSourceTx = {
+        amount: String(amount),
+        txHash,
+        transaction: {
+          amount: String(amount),
+          txHash,
+          vOut,
+          confirmations: 100,
+        },
+      };
       console.log("restoring");
       if (machineSend) {
         // @ts-ignore
