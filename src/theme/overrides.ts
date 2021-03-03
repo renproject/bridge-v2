@@ -210,15 +210,15 @@ export const overrides = (palette: Palette): Overrides => {
         borderRadius: 30,
         borderColor: palette.grey[300],
         "&$selected": {
-          backgroundColor: fade(palette.grey[300], 0.4),
+          backgroundColor: fade(palette.grey[300], 0.6),
           "&:hover": {
             backgroundColor: fade(palette.grey[300], 0.6),
           },
         },
         "&:hover": {
-          backgroundColor: fade(palette.grey[300], 0.7),
+          backgroundColor: fade(palette.grey[300], 0.4),
         },
-      }
+      },
     },
     MuiTooltip: {
       arrow: {

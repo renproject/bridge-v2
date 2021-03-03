@@ -2,26 +2,28 @@ import {
   ButtonBase,
   ButtonProps,
   fade,
+  lighten,
   makeStyles,
   styled,
   Theme,
   useTheme,
-} from '@material-ui/core'
+} from "@material-ui/core";
 import {
   ToggleButton,
   ToggleButtonGroup,
   ToggleButtonGroupProps,
   ToggleButtonProps,
-} from '@material-ui/lab'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useState } from 'react'
+} from "@material-ui/lab";
+import classNames from "classnames";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   BitcoinIcon,
+  CompletedIcon, EthereumChainIcon,
   NavigateNextIcon,
   NavigatePrevIcon,
   QrCodeIcon,
 } from '../../../components/icons/RenIcons'
-import { ProgressWithContent } from '../../../components/progress/ProgressHelpers'
+import { ProgressWithContent } from "../../../components/progress/ProgressHelpers";
 
 const useBigNavButtonStyles = makeStyles((theme) => ({
   root: {
@@ -109,7 +111,7 @@ const useCircledIconContainerStyles = makeStyles<
     height: ({ size }) => size,
     width: ({ size }) => size,
     backgroundColor: ({ background = theme.palette.grey[400], opacity = 1 }) =>
-      opacity !== 1 ? fade(background, opacity) : background,
+      opacity !== 1 ? lighten(background, 1 - opacity) : background,
     color: ({ color = "inherit" }) => color,
   },
 }));
@@ -222,7 +224,22 @@ export const DepositToggleButtonGroup: FunctionComponent<ToggleButtonGroupProps>
             targetConfirmations={6}
             size={42}
           >
-            <BitcoinIcon fontSize="large" />
+            <CompletedIcon fontSize="large" />
+          </ProgressWithContent>
+        </CircledIconContainer>
+      </DepositToggleButton>
+      <DepositToggleButton value="eth">
+        <CircledIconContainer
+          background={theme.customColors.blue}
+          opacity={0.1}
+        >
+          <ProgressWithContent
+            color={theme.customColors.blue}
+            confirmations={15}
+            targetConfirmations={30}
+            size={42}
+          >
+            <EthereumChainIcon fontSize="large" />
           </ProgressWithContent>
         </CircledIconContainer>
       </DepositToggleButton>
