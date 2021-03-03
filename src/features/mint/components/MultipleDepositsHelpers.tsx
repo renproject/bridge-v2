@@ -1,10 +1,27 @@
-import { ButtonBase, ButtonProps, makeStyles, styled } from "@material-ui/core";
-import classNames from "classnames";
-import React, { FunctionComponent } from "react";
 import {
-  NavigatePrevIcon,
+  ButtonBase,
+  ButtonProps,
+  fade,
+  makeStyles,
+  styled,
+  Theme,
+  useTheme,
+} from '@material-ui/core'
+import {
+  ToggleButton,
+  ToggleButtonGroup,
+  ToggleButtonGroupProps,
+  ToggleButtonProps,
+} from '@material-ui/lab'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useState } from 'react'
+import {
+  BitcoinIcon,
   NavigateNextIcon,
-} from "../../../components/icons/RenIcons";
+  NavigatePrevIcon,
+  QrCodeIcon,
+} from '../../../components/icons/RenIcons'
+import { ProgressWithContent } from '../../../components/progress/ProgressHelpers'
 
 const useBigNavButtonStyles = makeStyles((theme) => ({
   root: {
@@ -71,3 +88,144 @@ export const DepositNextButton = styled(BigNextButton)({
   top: offsetTop,
   right: offsetHorizontal,
 });
+
+type CircledIconContainerProps = {
+  background?: string;
+  color?: string;
+  opacity?: number;
+  size?: number;
+  className?: string;
+};
+
+const useCircledIconContainerStyles = makeStyles<
+  Theme,
+  CircledIconContainerProps
+>((theme) => ({
+  root: {
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: ({ size }) => size,
+    width: ({ size }) => size,
+    backgroundColor: ({ background = theme.palette.grey[400], opacity = 1 }) =>
+      opacity !== 1 ? fade(background, opacity) : background,
+    color: ({ color = "inherit" }) => color,
+  },
+}));
+
+export const CircledIconContainer: FunctionComponent<CircledIconContainerProps> = ({
+  background,
+  color,
+  size = 54,
+  opacity,
+  children,
+}) => {
+  const styles = useCircledIconContainerStyles({
+    size,
+    background,
+    color,
+    opacity,
+  });
+
+  return <div className={styles.root}>{children}</div>;
+};
+
+const useDepositToggleButtonStyles = makeStyles({
+  root: {
+    padding: `2px 15px 2px 15px`,
+    "&:first-child": {
+      paddingLeft: 2,
+    },
+    "&:last-child": {
+      paddingRight: 2,
+    },
+  },
+});
+
+export const DepositToggleButton: FunctionComponent<ToggleButtonProps> = ({
+  value,
+  className,
+  ...rest
+}) => {
+  const styles = useDepositToggleButtonStyles();
+  return (
+    <ToggleButton
+      className={classNames(styles.root, className)}
+      value={value}
+      {...rest}
+    />
+  );
+};
+
+export const DepositIndicator: FunctionComponent = () => {
+  const theme = useTheme();
+  return (
+    <CircledIconContainer
+      size={42}
+      background={theme.palette.common.black}
+      color={theme.palette.grey[200]}
+    >
+      <QrCodeIcon fontSize="large" color="inherit" />
+    </CircledIconContainer>
+  );
+};
+export const DepositToggleButtonGroup: FunctionComponent<ToggleButtonGroupProps> = ({
+  exclusive = true,
+  size = "large",
+  ...props
+}) => {
+  const [value, setValue] = useState("");
+  const handleValueChange = useCallback(
+    (event: React.MouseEvent<HTMLElement>, newValue: string) => {
+      setValue(newValue);
+    },
+    []
+  );
+  const theme = useTheme();
+  return (
+    <ToggleButtonGroup
+      exclusive={exclusive}
+      size={size}
+      onChange={handleValueChange}
+      value={value}
+      {...props}
+    >
+      <DepositToggleButton value="deposit">
+        <CircledIconContainer>
+          <DepositIndicator />
+        </CircledIconContainer>
+      </DepositToggleButton>
+      <DepositToggleButton value="btc">
+        <CircledIconContainer
+          background={theme.customColors.orange}
+          opacity={0.1}
+        >
+          <ProgressWithContent
+            color={theme.customColors.orange}
+            confirmations={2}
+            targetConfirmations={6}
+            size={42}
+          >
+            <BitcoinIcon fontSize="large" />
+          </ProgressWithContent>
+        </CircledIconContainer>
+      </DepositToggleButton>
+      <DepositToggleButton value="done">
+        <CircledIconContainer
+          background={theme.customColors.blue}
+          opacity={0.1}
+        >
+          <ProgressWithContent
+            color={theme.customColors.blue}
+            confirmations={6}
+            targetConfirmations={6}
+            size={42}
+          >
+            <BitcoinIcon fontSize="large" />
+          </ProgressWithContent>
+        </CircledIconContainer>
+      </DepositToggleButton>
+    </ToggleButtonGroup>
+  );
+};

@@ -95,6 +95,7 @@ import {
 import {
   DepositNextButton,
   DepositPrevButton,
+  DepositToggleButtonGroup,
 } from "../components/MultipleDepositsHelpers";
 import { useDepositPagination, useMintMachine } from "../mintHooks";
 import { resetMint } from "../mintSlice";
@@ -262,6 +263,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         onClose={handleMenuClose}
         onDeleteTx={handleDeleteTx}
       />
+      <DepositToggleButtonGroup />
       <Debug it={{ parsedTx, txState: txState }} />
     </>
   );

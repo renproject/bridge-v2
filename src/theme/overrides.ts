@@ -1,3 +1,4 @@
+import { fade } from "@material-ui/core";
 import { Palette } from "@material-ui/core/styles/createPalette";
 import { Overrides } from "@material-ui/core/styles/overrides";
 import { getShadow } from "./animationUtils";
@@ -116,7 +117,7 @@ export const overrides = (palette: Palette): Overrides => {
       root: {
         borderTopLeftRadius: 4,
         borderTopRightRadius: 4,
-      }
+      },
     },
     MuiInputBase: {
       // input: { ...generatePlaceholderStyles("ff0000") },
@@ -203,6 +204,21 @@ export const overrides = (palette: Palette): Overrides => {
           color: textDisabled,
         },
       },
+    },
+    MuiToggleButton: {
+      root: {
+        borderRadius: 30,
+        borderColor: palette.grey[300],
+        "&$selected": {
+          backgroundColor: fade(palette.grey[300], 0.4),
+          "&:hover": {
+            backgroundColor: fade(palette.grey[300], 0.6),
+          },
+        },
+        "&:hover": {
+          backgroundColor: fade(palette.grey[300], 0.7),
+        },
+      }
     },
     MuiTooltip: {
       arrow: {
