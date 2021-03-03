@@ -180,12 +180,11 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const handleRestart = useCallback(() => {
     dispatch(
       resetMint({
-        amount: activeAmount,
         currency: feeCurrency,
       })
     );
     history.push(paths.MINT);
-  }, [dispatch, activeAmount, feeCurrency, history]);
+  }, [dispatch, feeCurrency, history]);
 
   return (
     <>

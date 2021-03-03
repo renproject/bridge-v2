@@ -133,16 +133,14 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
   } = getLockAndMintParams(tx, currentHash);
 
   const handleRestart = useCallback(() => {
-    const {
-      lockCurrencyConfig,
-      mintChainConfig,
-      suggestedAmount,
-    } = getLockAndMintParams(tx, currentHash);
+    const { lockCurrencyConfig, mintChainConfig } = getLockAndMintParams(
+      tx,
+      currentHash
+    );
     dispatch(setTxHistoryOpened(false));
     dispatch(
       resetMint({
         currency: lockCurrencyConfig.symbol,
-        amount: suggestedAmount,
       })
     );
     dispatch(setChain(mintChainConfig.symbol));
