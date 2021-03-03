@@ -11,7 +11,7 @@ import { MintInitialStep } from "./steps/MintInitialStep";
 import { MintProcessStep } from "./steps/MintProcessStep";
 
 const MintConfiguration: FunctionComponent<RouteComponentProps> = () => {
-  const [step, setStep] = useState(TxConfigurationStep.FEES); // FIXME: INITIAL
+  const [step, setStep] = useState(TxConfigurationStep.INITIAL); // FIXME: INITIAL
 
   // clear the current tx so that history starts processing again
   useSetCurrentTxId("");
