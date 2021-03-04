@@ -34,12 +34,16 @@ type WalletData = ReturnType<typeof useMultiwallet> & {
 const resolveWallet = (provider: any) => {
   if (provider?.isMetaMask) {
     return BridgeWallet.METAMASKW;
-  } else if (
-    provider?.chainId === "0x61" ||
-    provider?.chainId.indexOf("Binance")
-  ) {
+  }
+
+  if (provider?.chainId === "0x61" || provider?.chainId?.indexOf("Binance")) {
     return BridgeWallet.BINANCESMARTW;
   }
+
+  if (provider?.isMewConnect || provider?.isMEWConnect) {
+    return BridgeWallet.MEWCONNECTW;
+  }
+
   return BridgeWallet.UNKNOWNW;
 };
 
@@ -151,11 +155,11 @@ const useWeb3 = () => {
 export const useSignatures = () => {
   const dispatch = useDispatch();
   const chain = useSelector($multiwalletChain);
-  const { account } = useWallet(chain);
+  const { account, status } = useWallet(chain);
   const web3 = useWeb3();
   const getSignatures = useCallback(async () => {
     console.debug("reauth");
-    if (account && web3) {
+    if (account && web3 && status === "connected") {
       try {
         const signatures = await getWeb3Signatures(account, web3, chain);
         dispatch(setSignatures(signatures));
@@ -168,7 +172,7 @@ export const useSignatures = () => {
         console.error(error);
       }
     }
-  }, [dispatch, chain, account, web3]);
+  }, [account, web3, status, chain, dispatch]);
 
   return { getSignatures };
 };

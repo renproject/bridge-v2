@@ -6,8 +6,11 @@ import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
 import {
   BchFullIcon,
+  BinanceChainFullIcon,
   BtcFullIcon,
   DogeFullIcon,
+  EmptyCircleIcon,
+  EthereumChainFullIcon,
   WarningIcon,
   ZecFullIcon,
 } from "../components/icons/RenIcons";
@@ -40,18 +43,53 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 400,
     marginTop: 20,
   },
-  assets: {
+  supported: {
     marginTop: 82,
-    textAlign: "center",
+    display: "flex",
+    flexDirection: "column",
+    [theme.breakpoints.up("md")]: {
+      flexDirection: "row",
+      justifyContent: "stretch",
+    },
   },
-  assetsLabel: {
+  assets: {
+    [theme.breakpoints.up("md")]: {
+      paddingRight: 42,
+      flexGrow: 5,
+      borderRight: `2px solid ${theme.customColors.grayDisabled}`,
+    },
+  },
+  chains: {
+    // width: "20%",
+    [theme.breakpoints.up("md")]: {
+      paddingLeft: 40,
+      flexGrow: 1,
+    },
+  },
+  label: {
     color: theme.customColors.textLight,
     fontWeight: "bold",
+    textAlign: "center",
+    [theme.breakpoints.up("md")]: {
+      textAlign: "left",
+    },
   },
   assetsList: {
     margin: "12px auto",
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    [theme.breakpoints.up("md")]: {
+      justifyContent: "space-between",
+    },
+  },
+  assetListItem: {
+    padding: `0px 4px 0px 4px`,
+    [theme.breakpoints.up("sm")]: {
+      padding: `0px 12px 0px 12px`,
+    },
+    [theme.breakpoints.up("md")]: {
+      padding: 0,
+    },
   },
   legacy: {
     marginTop: 70,
@@ -123,30 +161,54 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           <ActionButton className={styles.button} onClick={handleAgree}>
             Agree & Continue
           </ActionButton>
+        </NarrowCenteredWrapper>
+      </Container>
+      <Container maxWidth="md">
+        <div className={styles.supported}>
           <div className={styles.assets}>
             <Typography
               variant="overline"
               component="h2"
-              className={styles.assetsLabel}
+              className={styles.label}
             >
-              Supported Assets
+              Assets
             </Typography>
             <UnstyledList className={styles.assetsList}>
-              <li>
-                <IconWithLabel label="BTC" Icon={BtcFullIcon} />
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="Bitcoin" Icon={BtcFullIcon} />
               </li>
-              <li>
-                <IconWithLabel label="BCH" Icon={BchFullIcon} />
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="Bitcoin Cash" Icon={BchFullIcon} />
               </li>
-              <li>
-                <IconWithLabel label="ZEC" Icon={ZecFullIcon} />
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="ZCash" Icon={ZecFullIcon} />
               </li>
-              <li>
-                <IconWithLabel label="DOGE" Icon={DogeFullIcon} />
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="Doge" Icon={DogeFullIcon} />
+              </li>
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
               </li>
             </UnstyledList>
           </div>
-        </NarrowCenteredWrapper>
+          <div className={styles.chains}>
+            <Typography
+              variant="overline"
+              component="h2"
+              className={styles.label}
+            >
+              Destination
+            </Typography>
+            <UnstyledList className={styles.assetsList}>
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="Ethereum" Icon={EthereumChainFullIcon} />
+              </li>
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="Binance Smart Chain" Icon={BinanceChainFullIcon} />
+              </li>
+            </UnstyledList>
+          </div>
+        </div>
         <div className={styles.legacy}>
           <Typography variant="body1">
             If you'd rather use the old version of RenBridge,{" "}

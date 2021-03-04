@@ -4,44 +4,47 @@ import {
   styled,
   Typography,
   useTheme,
-} from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
+} from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useState,
-} from "react";
-import { useHistory } from "react-router-dom";
-import { useInterval } from "react-use";
+} from 'react'
+import { useHistory } from 'react-router-dom'
+import { useInterval } from 'react-use'
 import {
   ActionButton,
   ActionButtonWrapper,
   RedButton,
-} from "../../../components/buttons/Buttons";
+} from '../../../components/buttons/Buttons'
 import {
   SpecialAlertIcon,
   WarningIcon,
-} from "../../../components/icons/RenIcons";
+} from '../../../components/icons/RenIcons'
 import {
   PaperContent,
   SpacedPaperContent,
-} from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
+} from '../../../components/layout/Paper'
+import { Link } from '../../../components/links/Links'
 import {
   BridgeModal,
   NestedDrawer,
-} from "../../../components/modals/BridgeModal";
+  NestedDrawerActions,
+  NestedDrawerContent,
+  NestedDrawerWrapper,
+} from '../../../components/modals/BridgeModal'
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { links } from "../../../constants/constants";
-import { paths } from "../../../pages/routes";
-import { usePaperTitle } from "../../../providers/TitleProviders";
-import { getFormattedHMS } from "../../../utils/dates";
-import { trimAddress } from "../../../utils/strings";
+} from '../../../components/progress/ProgressHelpers'
+import { links } from '../../../constants/constants'
+import { paths } from '../../../pages/routes'
+import { usePaperTitle } from '../../../providers/TitleProviders'
+import { getFormattedHMS } from '../../../utils/dates'
+import { trimAddress } from '../../../utils/strings'
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -55,68 +58,35 @@ type BookmarkPageWarningProps = {
 export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
   onClosed,
 }) => {
-  const [open, setOpen] = useState(true);
+  const [open] = useState(true);
   const handleClose = useCallback(() => {
     if (onClosed) {
       onClosed();
     }
-    setOpen(false);
+    // setOpen(false);
   }, [onClosed]);
   return (
     <NestedDrawer title="Warning" open={open} onClose={handleClose}>
-      <SpacedPaperContent topPadding bottomPadding smaller>
-        <Typography variant="h5" align="center" gutterBottom>
-          Bookmark this page
-        </Typography>
-        <Typography variant="body2" align="center" gutterBottom>
-          To ensure you don’t lose track of your transaction, please bookmark
-          this page.
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <ActionButtonWrapper>
-          <ActionButton onClick={handleClose}>I understand</ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
-    </NestedDrawer>
-  );
-};
-
-type EnableNotificationsWarningProps = {
-  onClosed?: () => void;
-};
-
-export const EnableNotificationsWarning: FunctionComponent<EnableNotificationsWarningProps> = ({
-  onClosed,
-}) => {
-  const [open, setOpen] = useState(true);
-  const handleClose = useCallback(() => {
-    if (onClosed) {
-      onClosed();
-    }
-    setOpen(false);
-  }, [onClosed]);
-  return (
-    <NestedDrawer title="Warning" open={open} onClose={handleClose}>
-      <SpacedPaperContent topPadding bottomPadding>
-        <Typography variant="h5" align="center" gutterBottom>
-          Bookmark this page
-        </Typography>
-        <Typography variant="body2" align="center" gutterBottom>
-          To ensure you don’t lose track of your transaction, please bookmark
-          this page.
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <Button variant="text" color="primary">
-          Do not enable
-        </Button>
-        <ActionButtonWrapper>
-          <ActionButton onClick={handleClose}>
-            Enable Browser Notifications
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
+      <NestedDrawerWrapper>
+        <NestedDrawerContent>
+          <PaperContent topPadding bottomPadding>
+            <Typography variant="h5" align="center" gutterBottom>
+              Bookmark this page
+            </Typography>
+            <Typography variant="body2" align="center" gutterBottom>
+              To ensure you don’t lose track of your transaction, please
+              bookmark this page.
+            </Typography>
+          </PaperContent>
+        </NestedDrawerContent>
+        <NestedDrawerActions>
+          <PaperContent bottomPadding>
+            <ActionButtonWrapper>
+              <ActionButton onClick={handleClose}>I understand</ActionButton>
+            </ActionButtonWrapper>
+          </PaperContent>
+        </NestedDrawerActions>
+      </NestedDrawerWrapper>
     </NestedDrawer>
   );
 };
@@ -266,8 +236,8 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       {...props}
     >
       <span>
-        Transaction expires after 24 hours. Restart the transaction and start
-        again.
+        Transactions expire after 24 hours. Please restart the transaction if
+        you wish to continue.
       </span>
       <ActionButtonWrapper>
         <Button variant="text" color="inherit" onClick={goToHome}>

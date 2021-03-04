@@ -24,5 +24,5 @@ test("calculates HMS", () => {
 
 test("formats HMS", () => {
   const result = getFormattedHMS(53612345);
-  expect(result).toEqual("14.53.32");
+  expect(result).toEqual("14:53:32");
 });
