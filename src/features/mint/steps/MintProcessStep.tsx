@@ -43,14 +43,17 @@ import {
 import { $renNetwork } from "../../network/networkSlice";
 import {
   BrowserNotificationButton,
-  BrowserNotificationsDrawer
-} from '../../notifications/components/NotificationsHelpers'
+  BrowserNotificationsDrawer,
+} from "../../notifications/components/NotificationsHelpers";
 import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
 } from "../../notifications/notificationsUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import { TransactionMenu } from "../../transactions/components/TransactionMenu";
+import {
+  TransactionMenu,
+  UpdateTxFn,
+} from "../../transactions/components/TransactionMenu";
 import {
   BookmarkPageWarning,
   ExpiredErrorDialog,
@@ -98,6 +101,8 @@ import { useDepositPagination, useMintMachine } from "../mintHooks";
 import { resetMint } from "../mintSlice";
 import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
 
+type MachineSend = ReturnType<typeof useMintMachine>[1];
+
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
@@ -129,6 +134,31 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     handleMenuClose,
     handleDeleteTx,
   } = useTransactionDeletion(tx);
+
+  const [machineSend, setMachineSend] = useState<MachineSend>();
+  const handleMachineReady = useCallback<OnMachineSendReadyFn>((send) => {
+    setMachineSend(() => send);
+  }, []);
+  const handleUpdateTx = useCallback<UpdateTxFn>(
+    (amount, vOut, txHash) => {
+      const rawSourceTx = {
+        amount: String(amount),
+        txHash,
+        transaction: {
+          amount: String(amount),
+          txHash,
+          vOut,
+          confirmations: 100,
+        },
+      };
+      console.log("restoring");
+      if (machineSend) {
+        // @ts-ignore
+        machineSend({ type: "RESTORE", data: { rawSourceTx } });
+      }
+    },
+    [machineSend]
+  );
 
   const {
     modalOpened,
@@ -215,8 +245,9 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         {!reloading && showTransactionStatus && (
           <MintTransactionStatus
             tx={tx}
-            onRestart={handleRestart}
             depositHash={parsedTx?.depositHash || ""}
+            onMachineSendReady={handleMachineReady}
+            onRestart={handleRestart}
             onActiveAmountChange={handleActiveAmountChange}
           />
         )}
@@ -260,29 +291,42 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         open={menuOpened}
         onClose={handleMenuClose}
         onDeleteTx={handleDeleteTx}
+        onUpdateTx={handleUpdateTx}
       />
       <Debug it={{ parsedTx, txState: txState }} />
     </>
   );
 };
 
+type OnMachineSendReadyFn = (
+  send: ReturnType<typeof useMintMachine>[1]
+) => void;
+
 type MintTransactionStatusProps = {
   tx: GatewaySession;
   onRestart: () => void;
   depositHash?: string;
+  onMachineSendReady: OnMachineSendReadyFn;
   onActiveAmountChange: (amount: number) => void;
 };
 
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
   depositHash = "",
+  onMachineSendReady,
   onRestart,
   onActiveAmountChange,
 }) => {
-  const [current, , service] = useMintMachine(tx);
+  const machine = useMintMachine(tx);
+  const [current, send, service] = machine;
   const chain = useSelector($chain);
   const renNetwork = useSelector($renNetwork);
   const { account } = useSelectedChainWallet();
+
+  useEffect(() => {
+    onMachineSendReady(send);
+  }, [onMachineSendReady, send]);
+
   useEffect(
     () => () => {
       service.stop();
