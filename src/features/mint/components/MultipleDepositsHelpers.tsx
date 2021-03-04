@@ -6,15 +6,16 @@ import {
   styled,
   Theme,
   useTheme,
-} from "@material-ui/core";
+} from '@material-ui/core'
 import {
   ToggleButton,
   ToggleButtonGroup,
   ToggleButtonGroupProps,
   ToggleButtonProps,
-} from "@material-ui/lab";
-import classNames from "classnames";
-import React, { FunctionComponent, useCallback, useState } from "react";
+} from '@material-ui/lab'
+import { GatewaySession } from '@renproject/ren-tx'
+import classNames from 'classnames'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import {
   BitcoinIcon,
   CompletedIcon,
@@ -22,8 +23,16 @@ import {
   NavigateNextIcon,
   NavigatePrevIcon,
   QrCodeIcon,
-} from "../../../components/icons/RenIcons";
-import { ProgressWithContent } from "../../../components/progress/ProgressHelpers";
+} from '../../../components/icons/RenIcons'
+import {
+  ProgressWithContent,
+  ProgressWithContentProps,
+} from '../../../components/progress/ProgressHelpers'
+import {
+  depositSorter,
+  getDepositParams,
+  getLockAndMintBasicParams,
+} from '../mintUtils'
 
 const useBigNavButtonStyles = makeStyles((theme) => ({
   root: {
@@ -250,6 +259,18 @@ export const DepositToggleButtonGroup: FunctionComponent<ToggleButtonGroupProps>
   );
 };
 
+export const CircledProgressWithContent: FunctionComponent<ProgressWithContentProps> = ({
+  color,
+  size = 42,
+  ...rest
+}) => {
+  return (
+    <CircledIconContainer background={color} opacity={0.1}>
+      <ProgressWithContent color={color} size={size} {...rest} />
+    </CircledIconContainer>
+  );
+};
+
 const useDepositNavigationStyles = makeStyles({
   root: {
     position: "absolute",
@@ -258,19 +279,58 @@ const useDepositNavigationStyles = makeStyles({
     top: -152,
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
   },
 });
 
-type DepositNavigationProps = {
-  current?: string;
+type DepositNavigationProps = ToggleButtonGroupProps & {
+  tx: GatewaySession;
 };
 
-export const DepositNavigation: FunctionComponent<DepositNavigationProps> = () => {
+export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
+  value,
+  onChange,
+  tx,
+}) => {
   const styles = useDepositNavigationStyles();
+  const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
+  const orderedHashes = sortedDeposits.map((deposit) => deposit.sourceTxHash);
+
+  const { lockChainConfig, lockCurrencyConfig } = getLockAndMintBasicParams(tx);
+  const { MainIcon: Icon } = lockChainConfig;
 
   return (
     <div className={styles.root}>
-      <DepositToggleButtonGroup />
+      <ToggleButtonGroup
+        exclusive
+        size="large"
+        onChange={onChange}
+        value={value}
+      >
+        <DepositToggleButton value="gateway">
+          <CircledIconContainer>
+            <DepositIndicator />
+          </CircledIconContainer>
+        </DepositToggleButton>
+        {sortedDeposits.map((deposit) => {
+          const hash = deposit.sourceTxHash;
+          const {
+            lockConfirmations,
+            lockTargetConfirmations,
+          } = getDepositParams(tx, deposit);
+          return (
+            <DepositToggleButton key={hash} value={hash}>
+              <CircledProgressWithContent
+                color={lockCurrencyConfig.color}
+                confirmations={lockConfirmations}
+                targetConfirmations={lockTargetConfirmations}
+              >
+                <Icon fontSize="large" />
+              </CircledProgressWithContent>
+            </DepositToggleButton>
+          );
+        })}
+      </ToggleButtonGroup>
     </div>
   );
 };

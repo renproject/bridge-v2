@@ -99,7 +99,7 @@ import {
   DepositNavigation,
   DepositNextButton,
   DepositPrevButton,
-} from '../components/MultipleDepositsHelpers'
+} from "../components/MultipleDepositsHelpers";
 import { useDepositPagination, useMintMachine } from "../mintHooks";
 import { resetMint } from "../mintSlice";
 import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
@@ -319,8 +319,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   onRestart,
   onActiveAmountChange,
 }) => {
-  const machine = useMintMachine(tx);
-  const [current, send, service] = machine;
+  const [current, send, service] = useMintMachine(tx);
   const chain = useSelector($chain);
   const renNetwork = useSelector($renNetwork);
   const { account } = useSelectedChainWallet();
@@ -434,10 +433,20 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
   const { fees } = useFetchFees(BridgeCurrency.BTC, TxType.MINT);
   const minimumAmount = (fees.lock / 10 ** 8) * 2;
+
+  const [currentDeposit, setCurrentDeposit] = useState(depositHash || "gateway");
+  const handleNavChange = useCallback((newDeposit) => {
+    setCurrentDeposit(newDeposit);
+  }, []);
+
   return (
     <>
       <DepositWrapper>
-        <DepositNavigation />
+        <DepositNavigation
+          value={currentDeposit}
+          onChange={handleNavChange}
+          tx={current.context.tx}
+        />
         {activeDeposit ? (
           <DepositWrapper>
             <MintTransactionDepositStatus
