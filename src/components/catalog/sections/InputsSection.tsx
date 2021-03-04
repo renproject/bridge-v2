@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { $ui } from "../../../features/ui/uiSlice";
 import { useShakePaper } from "../../../features/ui/uiHooks";
 import { BitcoinInCircleIcon } from "../../icons/RenIcons";
-import { AddressInput } from "../../inputs/AddressInput";
+import { OutlinedTextField } from "../../inputs/OutlinedTextField";
 import { BigCurrencyInput } from "../../inputs/BigCurrencyInput";
 import { BridgePurePaper, PaperContent } from "../../layout/Paper";
 import { Link } from "../../links/Links";
@@ -69,7 +69,7 @@ export const InputsSection: FunctionComponent = () => {
             />
           </Box>
           <Box mt={1}>
-            <AddressInput
+            <OutlinedTextField
               label="Releasing to:"
               onChange={handleAddressChange}
               value={address}

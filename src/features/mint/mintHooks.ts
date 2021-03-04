@@ -58,12 +58,12 @@ export const useMintTransactionPersistence = (
       try {
         // DEPOSIT_UPDATE should be a safe event to update the db on
         if (
-          state.event.type === "DEPOSIT_UPDATE" &&
+          (state.event.type === "DEPOSIT_UPDATE" ||
+            // We also persist on listening to catch the initial gateway
+            state.event.type === "LISTENING") &&
           state.value === "listening"
         ) {
-          // no more meta status -
-          // this would not have worked with multiple deposits anyhow
-          // Also clone prevents throwing serialization errors during dispatch
+          // clone prevents throwing serialization errors during dispatch
           // which breaks the event loop and prevents txs from processing
           const newDbTx = cloneTx(tx);
           await db.updateTx(newDbTx);

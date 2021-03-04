@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AppLoader } from "./components/progress/AppLoader";
+import CatalogPage from "./pages/CatalogPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
 import { WelcomePage } from "./pages/WelcomePage";
@@ -22,6 +23,7 @@ function App() {
         <Switch>
           <Route exact path={paths.WELCOME} component={WelcomePage} />
           <Route exact path={paths.ABOUT} component={AboutPage} />
+          <Route exact path={paths.CATALOG} component={CatalogPage} />
           <Route exact path={mainPagePaths} component={MainPage} />
           <Route component={NotFoundPage} />
         </Switch>

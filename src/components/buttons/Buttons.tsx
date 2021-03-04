@@ -38,7 +38,7 @@ import { Hide } from "../layout/LayoutHelpers";
 import { PulseIndicator } from "../progress/ProgressHelpers";
 import { MiddleEllipsisText } from "../typography/TypographyHelpers";
 
-type ToggleIconButtonProps = IconButtonProps & {
+export type ToggleIconButtonProps = IconButtonProps & {
   variant?: "settings" | "notifications";
   pressed?: boolean;
 };

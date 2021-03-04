@@ -11,9 +11,9 @@ import {
 } from "../../../components/dropdowns/AssetDropdown";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import {
-  AddressInput,
-  AddressInputWrapper,
-} from "../../../components/inputs/AddressInput";
+  OutlinedTextField,
+  BigOutlinedTextFieldWrapper,
+} from "../../../components/inputs/OutlinedTextField";
 import {
   BigCurrencyInput,
   BigCurrencyInputWrapper,
@@ -211,15 +211,15 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             onChange={handleCurrencyChange}
           />
         </AssetDropdownWrapper>
-        <AddressInputWrapper>
-          <AddressInput
+        <BigOutlinedTextFieldWrapper>
+          <OutlinedTextField
             error={!!address && !isAddressValid}
             placeholder={`Enter a Destination ${releaseChainConfig.full} Address`}
             label="Releasing to"
             onChange={handleAddressChange}
             value={address}
           />
-        </AddressInputWrapper>
+        </BigOutlinedTextFieldWrapper>
       </PaperContent>
       <Divider />
       <PaperContent darker topPadding bottomPadding>

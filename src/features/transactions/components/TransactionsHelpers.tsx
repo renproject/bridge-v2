@@ -4,47 +4,47 @@ import {
   styled,
   Typography,
   useTheme,
-} from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
+} from '@material-ui/core'
+import { GatewaySession } from '@renproject/ren-tx'
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useState,
-} from "react";
-import { useHistory } from "react-router-dom";
-import { useInterval } from "react-use";
+} from 'react'
+import { useHistory } from 'react-router-dom'
+import { useInterval } from 'react-use'
 import {
   ActionButton,
   ActionButtonWrapper,
   RedButton,
-} from "../../../components/buttons/Buttons";
+} from '../../../components/buttons/Buttons'
 import {
   SpecialAlertIcon,
   WarningIcon,
-} from "../../../components/icons/RenIcons";
+} from '../../../components/icons/RenIcons'
 import {
   PaperContent,
   SpacedPaperContent,
-} from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
+} from '../../../components/layout/Paper'
+import { Link } from '../../../components/links/Links'
 import {
   BridgeModal,
   NestedDrawer,
   NestedDrawerActions,
   NestedDrawerContent,
   NestedDrawerWrapper,
-} from "../../../components/modals/BridgeModal";
+} from '../../../components/modals/BridgeModal'
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from "../../../components/progress/ProgressHelpers";
-import { links } from "../../../constants/constants";
-import { paths } from "../../../pages/routes";
-import { usePaperTitle } from "../../../providers/TitleProviders";
-import { getFormattedHMS } from "../../../utils/dates";
-import { trimAddress } from "../../../utils/strings";
+} from '../../../components/progress/ProgressHelpers'
+import { links } from '../../../constants/constants'
+import { paths } from '../../../pages/routes'
+import { usePaperTitle } from '../../../providers/TitleProviders'
+import { getFormattedHMS } from '../../../utils/dates'
+import { trimAddress } from '../../../utils/strings'
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
