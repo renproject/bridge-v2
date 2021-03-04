@@ -1,48 +1,48 @@
-import { Divider, IconButton } from '@material-ui/core'
+import { Divider, IconButton } from "@material-ui/core";
 import {
   depositMachine,
   DepositMachineSchema,
   GatewaySession,
   GatewayTransaction,
-} from '@renproject/ren-tx'
+} from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useMemo,
   useState,
-} from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom'
-import { Actor } from 'xstate'
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+import { Actor } from "xstate";
 import {
   ActionButton,
   ToggleIconButton,
-} from '../../../components/buttons/Buttons'
-import { BackArrowIcon } from '../../../components/icons/RenIcons'
+} from "../../../components/buttons/Buttons";
+import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import {
   CenteringSpacedBox,
   PaperSpacerWrapper,
-} from '../../../components/layout/LayoutHelpers'
+} from "../../../components/layout/LayoutHelpers";
 import {
   PaperActions,
   PaperContent,
   PaperHeader,
   PaperNav,
   PaperTitle,
-} from '../../../components/layout/Paper'
-import { Debug } from '../../../components/utils/Debug'
-import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
-import { paths } from '../../../pages/routes'
-import { useNotifications } from '../../../providers/Notifications'
-import { usePageTitle, usePaperTitle } from '../../../providers/TitleProviders'
+} from "../../../components/layout/Paper";
+import { Debug } from "../../../components/utils/Debug";
+import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
+import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import {
   BridgeCurrency,
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
-} from '../../../utils/assetConfigs'
-import { useFetchFees } from '../../fees/feesHooks'
-import { $renNetwork } from '../../network/networkSlice'
+} from "../../../utils/assetConfigs";
+import { useFetchFees } from "../../fees/feesHooks";
+import { $renNetwork } from "../../network/networkSlice";
 import {
   BrowserNotificationButton,
   BrowserNotificationsDrawer,
@@ -61,11 +61,11 @@ import {
   ExpiredErrorDialog,
   ProgressStatus,
   WrongAddressWarningDialog,
-} from '../../transactions/components/TransactionsHelpers'
+} from "../../transactions/components/TransactionsHelpers";
 import {
   useSetCurrentTxId,
   useTransactionDeletion,
-} from '../../transactions/transactionsHooks'
+} from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getAddressExplorerLink,
@@ -74,34 +74,35 @@ import {
   parseTxQueryString,
   TxType,
   useTxParam,
-} from '../../transactions/transactionsUtils'
+} from "../../transactions/transactionsUtils";
 import {
   useAuthRequired,
   useSelectedChainWallet,
-} from '../../wallet/walletHooks'
+} from "../../wallet/walletHooks";
 import {
   $chain,
   setChain,
   setWalletPickerOpened,
-} from '../../wallet/walletSlice'
+} from "../../wallet/walletSlice";
 import {
   DepositWrapper,
   MultipleDepositsMessage,
-} from '../components/MintHelpers'
+} from "../components/MintHelpers";
 import {
   DestinationPendingStatus,
   MintCompletedStatus,
   MintDepositAcceptedStatus,
   MintDepositConfirmationStatus,
   MintDepositToStatus,
-} from '../components/MintStatuses'
+} from "../components/MintStatuses";
 import {
+  DepositNavigation,
   DepositNextButton,
   DepositPrevButton,
 } from '../components/MultipleDepositsHelpers'
-import { useDepositPagination, useMintMachine } from '../mintHooks'
-import { resetMint } from '../mintSlice'
-import { getLockAndMintParams, getRemainingGatewayTime } from '../mintUtils'
+import { useDepositPagination, useMintMachine } from "../mintHooks";
+import { resetMint } from "../mintSlice";
+import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
 
 type MachineSend = ReturnType<typeof useMintMachine>[1];
 
@@ -435,33 +436,36 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const minimumAmount = (fees.lock / 10 ** 8) * 2;
   return (
     <>
-      {activeDeposit ? (
-        <DepositWrapper>
-          <MintTransactionDepositStatus
+      <DepositWrapper>
+        <DepositNavigation />
+        {activeDeposit ? (
+          <DepositWrapper>
+            <MintTransactionDepositStatus
+              tx={current.context.tx}
+              deposit={activeDeposit.deposit}
+              machine={activeDeposit.machine}
+              depositHash={currentHash}
+            />
+            {total > 1 && (
+              <>
+                <DepositPrevButton
+                  onClick={handlePrev}
+                  disabled={currentIndex === 0}
+                />
+                <DepositNextButton
+                  onClick={handleNext}
+                  disabled={currentIndex === total - 1}
+                />
+              </>
+            )}
+          </DepositWrapper>
+        ) : (
+          <MintDepositToStatus
             tx={current.context.tx}
-            deposit={activeDeposit.deposit}
-            machine={activeDeposit.machine}
-            depositHash={currentHash}
+            minimumAmount={minimumAmount}
           />
-          {total > 1 && (
-            <>
-              <DepositPrevButton
-                onClick={handlePrev}
-                disabled={currentIndex === 0}
-              />
-              <DepositNextButton
-                onClick={handleNext}
-                disabled={currentIndex === total - 1}
-              />
-            </>
-          )}
-        </DepositWrapper>
-      ) : (
-        <MintDepositToStatus
-          tx={current.context.tx}
-          minimumAmount={minimumAmount}
-        />
-      )}
+        )}
+      </DepositWrapper>
       {
         // We want to allow users to finish mints for deposits that have been detected
         // If there are no deposits, and the gateway is expired (timeRemained < 0),

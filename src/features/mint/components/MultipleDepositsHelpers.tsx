@@ -1,7 +1,6 @@
 import {
   ButtonBase,
   ButtonProps,
-  fade,
   lighten,
   makeStyles,
   styled,
@@ -18,11 +17,12 @@ import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   BitcoinIcon,
-  CompletedIcon, EthereumChainIcon,
+  CompletedIcon,
+  EthereumChainIcon,
   NavigateNextIcon,
   NavigatePrevIcon,
   QrCodeIcon,
-} from '../../../components/icons/RenIcons'
+} from "../../../components/icons/RenIcons";
 import { ProgressWithContent } from "../../../components/progress/ProgressHelpers";
 
 const useBigNavButtonStyles = makeStyles((theme) => ({
@@ -133,17 +133,19 @@ export const CircledIconContainer: FunctionComponent<CircledIconContainerProps> 
   return <div className={styles.root}>{children}</div>;
 };
 
-const useDepositToggleButtonStyles = makeStyles({
+const useDepositToggleButtonStyles = makeStyles((theme) => ({
   root: {
+    background: theme.palette.common.white,
     padding: `2px 15px 2px 15px`,
     "&:first-child": {
       paddingLeft: 2,
+      marginRight: 1,
     },
     "&:last-child": {
       paddingRight: 2,
     },
   },
-});
+}));
 
 export const DepositToggleButton: FunctionComponent<ToggleButtonProps> = ({
   value,
@@ -172,6 +174,7 @@ export const DepositIndicator: FunctionComponent = () => {
     </CircledIconContainer>
   );
 };
+
 export const DepositToggleButtonGroup: FunctionComponent<ToggleButtonGroupProps> = ({
   exclusive = true,
   size = "large",
@@ -244,5 +247,30 @@ export const DepositToggleButtonGroup: FunctionComponent<ToggleButtonGroupProps>
         </CircledIconContainer>
       </DepositToggleButton>
     </ToggleButtonGroup>
+  );
+};
+
+const useDepositNavigationStyles = makeStyles({
+  root: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: -152,
+    display: "flex",
+    alignItems: "center",
+  },
+});
+
+type DepositNavigationProps = {
+  current?: string;
+};
+
+export const DepositNavigation: FunctionComponent<DepositNavigationProps> = () => {
+  const styles = useDepositNavigationStyles();
+
+  return (
+    <div className={styles.root}>
+      <DepositToggleButtonGroup />
+    </div>
   );
 };

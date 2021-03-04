@@ -205,6 +205,12 @@ export const overrides = (palette: Palette): Overrides => {
         },
       },
     },
+    MuiToggleButtonGroup: {
+      root: {
+        boxShadow: `0px 0px 4px rgba(0, 27, 58, 0.1)`,
+        borderRadius: "50%"
+      },
+    },
     MuiToggleButton: {
       root: {
         borderRadius: 30,
