@@ -16,7 +16,7 @@ body::before {
   left: 0;
   bottom: 0;
   right: 0;
-  background-image: url("/background.svg");
+  background-image: url(./assets/backgrounds/background.svg);
   background-position: 50% 50%;
   transition: all 1s ease-in-out;
   background-size: 100% 100%;
