@@ -1,12 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { GatewaySession } from "@renproject/ren-tx";
 import { RootState } from "../../store/rootReducer";
-import { getCurrencyRentxName } from "../../utils/assetConfigs";
-import { $mint } from "../mint/mintSlice";
-import {
-  getLockAndMintParams,
-  getSessionExpiry,
-} from "../mint/mintUtils";
+import { getLockAndMintParams } from "../mint/mintUtils";
 import { $renNetwork } from "../network/networkSlice";
 import { getBurnAndReleaseParams } from "../release/releaseUtils";
 import { txCompletedSorter, TxEntryStatus, TxType } from "./transactionsUtils";
@@ -22,8 +17,8 @@ type TransactionsState = {
 
 let initialState: TransactionsState = {
   txs: [],
-  txsPending: false,
-  txHistoryOpened: false,
+  txsPending: false, // FIXME: remove
+  txHistoryOpened: true, // FIXME: false
   currentTxId: "",
 };
 
@@ -106,20 +101,6 @@ export const $networkTransactions = createSelector(
 export const $orderedTransactions = createSelector(
   $networkTransactions,
   (txs) => [...txs].sort(txCompletedSorter)
-);
-
-export const $currentSessionCount = createSelector(
-  $networkTransactions,
-  $mint,
-  (txs, mint) => {
-    const expiryTime = getSessionExpiry();
-    return [...txs].filter(
-      (x) =>
-        x.sourceAsset === getCurrencyRentxName(mint.currency) &&
-        x.type === "mint" &&
-        x.expiryTime === expiryTime
-    ).length;
-  }
 );
 
 //TODO: move this one to separate file to simplify up store dependencies (chunks)

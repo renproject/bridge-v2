@@ -23,11 +23,16 @@ const standardPaddings = {
   paddingRight: 30,
 };
 
+const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
+
 const useTransactionsHeaderStyles = makeStyles((theme) => ({
   root: {
     ...standardPaddings,
-    paddingTop: 20,
-    background: theme.customColors.greyHeaderBackground,
+    paddingTop: 22,
+    paddingBottom: 18,
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    background: theme.palette.common.white,
+    boxShadow: standardShadow,
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
@@ -36,7 +41,7 @@ const useTransactionsHeaderStyles = makeStyles((theme) => ({
   actions: {
     display: "flex",
     alignItems: "center",
-    marginLeft: theme.spacing(2)
+    marginLeft: theme.spacing(2),
   },
 }));
 

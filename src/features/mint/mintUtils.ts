@@ -33,17 +33,25 @@ type CreateMintTransactionParams = {
   userAddress: string;
   destAddress: string;
   network: RenNetwork;
-  dayIndex: number;
+  dayIndex?: number;
+  dayOffset?: number;
+  nonce?: string;
 };
 
-export const getSessionDay = () => Math.floor(Date.now() / 1000 / 60 / 60 / 24);
+export const getSessionDay = (dayOffset = 0) =>
+  Math.floor(Date.now() / 1000 / 60 / 60 / 24) - dayOffset;
 
 // user has 72 hours from the start of a session day to complete the tx
 // a gateway is only valid for 48 hours however.
 //
 // FIXME: once ren-tx takes the two-stage expiry into account, update this
-export const getSessionExpiry = () =>
-  (getSessionDay() + 3) * 60 * 60 * 24 * 1000;
+export const getSessionExpiry = (dayOffset = 0) =>
+  (getSessionDay(dayOffset) + 3) * 60 * 60 * 24 * 1000;
+
+const generateNonce = (dayOffset = 0, dayIndex = 0) => {
+  const nonce = dayIndex + getSessionDay(dayOffset) * 1000;
+  return nonce.toString(16).padStart(64, "0");
+};
 
 // Amount of time remaining until gateway expires
 // We remove 1 day from the ren-tx expiry to reflect the extra mint
@@ -58,7 +66,9 @@ export const createMintTransaction = ({
   userAddress,
   destAddress,
   network,
-  dayIndex,
+  dayIndex = 0,
+  dayOffset = 0,
+  nonce = generateNonce(dayOffset, dayIndex),
 }: CreateMintTransactionParams) => {
   // Providing a nonce manually prevents us from needing to instantiate the mint-machine just for that purpose
 
@@ -71,7 +81,7 @@ export const createMintTransaction = ({
   //
   // NOTE - this will overflow if the user makes more than 1000 transactions to the same pair in a day,
   // but we assume that no one will reach that amount, and an overflow is just confusing, not breaking
-  const nonce = dayIndex + getSessionDay() * 1000;
+  const resolvedNonce = nonce || dayIndex + getSessionDay() * 1000;
   const tx: GatewaySession = {
     id: `tx-${userAddress}-${nonce}-${currency}-${mintedCurrencyChain}`,
     type: "mint",
@@ -80,9 +90,9 @@ export const createMintTransaction = ({
     sourceChain: getCurrencyRentxSourceChain(currency), // TODO: it can be derived for minting
     destAddress,
     destChain: getChainRentxName(mintedCurrencyChain),
-    targetAmount: 0, // FIXME: determine what to do here
+    targetAmount: 0,
     userAddress,
-    nonce: nonce.toString(16).padStart(64, "0"),
+    nonce: resolvedNonce.toString(16).padStart(64, "0"),
     expiryTime: getSessionExpiry(),
     transactions: {},
     customParams: {},
@@ -163,9 +173,7 @@ export const getDepositParams = (
       if (isTxExpired(tx)) {
         meta.status = DepositEntryStatus.EXPIRED;
       }
-    } else if (
-      lockConfirmations < lockTargetConfirmations
-    ) {
+    } else if (lockConfirmations < lockTargetConfirmations) {
       console.log(lockConfirmations, lockTargetConfirmations);
       // no mint tx hash, but awaiting confirmations
       meta.status = DepositEntryStatus.PENDING;

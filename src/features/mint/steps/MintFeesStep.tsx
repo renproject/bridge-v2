@@ -56,7 +56,6 @@ import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
-  $currentSessionCount,
   addTransaction,
   setCurrentTxId,
 } from "../../transactions/transactionsSlice";
@@ -97,7 +96,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     signatures: { signature },
   } = useSelector($wallet);
   const network = useSelector($renNetwork);
-  const currentSessionCount = useSelector($currentSessionCount);
   const exchangeRates = useSelector($exchangeRates);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);
   const handleAmountChange = useCallback((event) => {
@@ -150,9 +148,8 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         mintedCurrencyChain: chain,
         userAddress: account,
         network: network,
-        dayIndex: currentSessionCount,
       }),
-    [currency, account, chain, network, currentSessionCount]
+    [currency, account, chain, network]
   );
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;

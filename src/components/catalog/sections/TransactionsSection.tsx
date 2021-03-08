@@ -1,6 +1,5 @@
 import { Button, Dialog } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
-import { TransactionsGrid } from "../../transactions/TransactionsGrid";
 import { Section } from "../PresentationHelpers";
 
 export const TransactionsSection: FunctionComponent = () => {
@@ -17,8 +16,13 @@ export const TransactionsSection: FunctionComponent = () => {
       <Button variant="text" onClick={handleOpen}>
         Open Transactions
       </Button>
-      <Dialog open={opened} maxWidth="sm" fullWidth onBackdropClick={handleClose}>
-        <TransactionsGrid />
+      <Dialog
+        open={opened}
+        maxWidth="sm"
+        fullWidth
+        onBackdropClick={handleClose}
+      >
+        .
       </Dialog>
     </Section>
   );
