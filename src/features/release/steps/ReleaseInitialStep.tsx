@@ -204,7 +204,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <AssetDropdownWrapper>
           <AssetDropdown
             label="Asset"
-            mode="send"
             available={supportedReleaseCurrencies}
             balances={balances}
             value={currency}

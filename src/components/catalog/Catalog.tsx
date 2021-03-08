@@ -83,7 +83,6 @@ export const Catalog: FunctionComponent = () => {
                   <Box height={200}>
                     <Box pb={1}>
                       <AssetDropdown
-                        mode="send"
                         defaultValue="BTC"
                         label="Send"
                       />
@@ -116,7 +115,6 @@ export const Catalog: FunctionComponent = () => {
                 <div>
                   <Box height={200}>
                     <AssetDropdown
-                      mode="receive"
                       defaultValue="BCH"
                       label="Receive"
                     />

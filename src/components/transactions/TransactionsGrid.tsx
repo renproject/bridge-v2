@@ -29,13 +29,14 @@ const useTransactionsHeaderStyles = makeStyles((theme) => ({
     paddingTop: 20,
     background: theme.customColors.greyHeaderBackground,
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   header: {},
   actions: {
     display: "flex",
     alignItems: "center",
+    marginLeft: theme.spacing(2)
   },
 }));
 

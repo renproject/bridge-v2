@@ -31,7 +31,7 @@ import { env } from "../constants/environmentVariables";
 import { $renNetwork } from "../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../features/network/networkUtils";
 import { AuthWarningDialog } from "../features/transactions/components/TransactionsHelpers";
-import { TransactionHistory } from "../features/transactions/TransactionHistory";
+import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
 import {
   $transactionsData,
   $transactionsNeedsAction,
@@ -302,7 +302,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WalletMenu={WalletMenu}
     >
       {children}
-      <TransactionHistory />
+      <MintTransactionHistory />
       <AuthWarningDialog open={authWarningOpened} onMainAction={authenticate} />
       <Debug
         it={{

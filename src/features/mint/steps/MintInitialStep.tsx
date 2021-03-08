@@ -68,7 +68,6 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         <AssetDropdownWrapper>
           <AssetDropdown
             label="Send"
-            mode="send"
             available={supportedLockCurrencies}
             value={currency}
             onChange={handleCurrencyChange}

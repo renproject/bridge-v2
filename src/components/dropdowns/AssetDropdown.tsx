@@ -91,10 +91,10 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
   },
 }));
 
-type AssetDropdownMode = "send" | "receive" | "chain"; // TODO: remove recaive
+type AssetDropdownMode = "currency" | "chain";
 
 type AssetDropdownProps = SelectProps & {
-  mode: AssetDropdownMode;
+  mode?: AssetDropdownMode;
   available?: Array<BridgeCurrency | BridgeChain>;
   balances?: Array<AssetBalance>;
   condensed?: boolean;
@@ -120,7 +120,7 @@ const getAssetData = (
 };
 
 export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
-  mode,
+  mode = "currency",
   available,
   condensed = false,
   label,
