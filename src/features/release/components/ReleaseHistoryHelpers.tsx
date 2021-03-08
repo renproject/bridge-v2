@@ -151,7 +151,7 @@ export const ReleaseTransactionEntry: FunctionComponent<TransactionItemProps> = 
               Currently viewing
             </Typography>
           )}
-          {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
+          {!isActive && (
             <SmallActionButton onClick={handleContinue}>
               Finish release
             </SmallActionButton>

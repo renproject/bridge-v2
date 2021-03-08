@@ -41,7 +41,7 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     devTools: env.XSTATE_DEVTOOLS,
   });
 
-  useMintTransactionPersistence(machineHook[2]);
+  // useMintTransactionPersistence(machineHook[2]);
 
   return machineHook;
 };

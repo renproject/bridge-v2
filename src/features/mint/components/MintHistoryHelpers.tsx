@@ -274,7 +274,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
               Currently viewing
             </Typography>
           )}
-          {!isActive && status === TxEntryStatus.ACTION_REQUIRED && (
+          {!isActive && (
             <SmallActionButton onClick={handleContinue}>
               {phase === TxPhase.LOCK ? "Continue" : "Finish"} mint
             </SmallActionButton>

@@ -151,7 +151,11 @@ export const getDepositParams = (
     if (mintTxHash) {
       // mint tx hash present - completed
       meta.status = DepositEntryStatus.COMPLETED;
-    } else if (lockConfirmations >= lockTargetConfirmations) {
+    } else if (
+      lockTargetConfirmations &&
+      lockConfirmations >= lockTargetConfirmations
+    ) {
+      console.log(lockConfirmations, lockTargetConfirmations);
       // no mint tx hash, but confirmations fulfilled
       meta.status = DepositEntryStatus.ACTION_REQUIRED;
       meta.phase = DepositPhase.MINT;
@@ -159,7 +163,10 @@ export const getDepositParams = (
       if (isTxExpired(tx)) {
         meta.status = DepositEntryStatus.EXPIRED;
       }
-    } else if (lockConfirmations < lockTargetConfirmations) {
+    } else if (
+      lockConfirmations < lockTargetConfirmations
+    ) {
+      console.log(lockConfirmations, lockTargetConfirmations);
       // no mint tx hash, but awaiting confirmations
       meta.status = DepositEntryStatus.PENDING;
       meta.phase = DepositPhase.LOCK;
@@ -168,7 +175,7 @@ export const getDepositParams = (
       }
     }
   } else {
-    // no deposit
+    // no lockTxHash - no deposit to process
     meta.status = DepositEntryStatus.ACTION_REQUIRED;
     meta.phase = DepositPhase.LOCK;
     // expired in lock phase - no deposit

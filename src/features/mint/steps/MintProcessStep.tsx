@@ -1,71 +1,71 @@
-import { Divider, IconButton } from "@material-ui/core";
+import { Divider, IconButton } from '@material-ui/core'
 import {
   depositMachine,
   DepositMachineSchema,
   GatewaySession,
   GatewayTransaction,
-} from "@renproject/ren-tx";
+} from '@renproject/ren-tx'
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useMemo,
   useState,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
-import { Actor } from "xstate";
+} from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom'
+import { Actor } from 'xstate'
 import {
   ActionButton,
   ToggleIconButton,
-} from "../../../components/buttons/Buttons";
-import { BackArrowIcon } from "../../../components/icons/RenIcons";
+} from '../../../components/buttons/Buttons'
+import { BackArrowIcon } from '../../../components/icons/RenIcons'
 import {
   CenteringSpacedBox,
   PaperSpacerWrapper,
-} from "../../../components/layout/LayoutHelpers";
+} from '../../../components/layout/LayoutHelpers'
 import {
   PaperActions,
   PaperContent,
   PaperHeader,
   PaperNav,
   PaperTitle,
-} from "../../../components/layout/Paper";
-import { Debug } from "../../../components/utils/Debug";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
-import { paths } from "../../../pages/routes";
-import { useNotifications } from "../../../providers/Notifications";
-import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
+} from '../../../components/layout/Paper'
+import { Debug } from '../../../components/utils/Debug'
+import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpers'
+import { paths } from '../../../pages/routes'
+import { useNotifications } from '../../../providers/Notifications'
+import { usePageTitle, usePaperTitle } from '../../../providers/TitleProviders'
 import {
   BridgeCurrency,
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
-} from "../../../utils/assetConfigs";
-import { useFetchFees } from "../../fees/feesHooks";
-import { $renNetwork } from "../../network/networkSlice";
+} from '../../../utils/assetConfigs'
+import { useFetchFees } from '../../fees/feesHooks'
+import { $renNetwork } from '../../network/networkSlice'
 import {
   BrowserNotificationButton,
   BrowserNotificationsDrawer,
-} from "../../notifications/components/NotificationsHelpers";
+} from '../../notifications/components/NotificationsHelpers'
 import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
-} from "../../notifications/notificationsUtils";
-import { TransactionFees } from "../../transactions/components/TransactionFees";
+} from '../../notifications/notificationsUtils'
+import { TransactionFees } from '../../transactions/components/TransactionFees'
 import {
   TransactionMenu,
   UpdateTxFn,
-} from "../../transactions/components/TransactionMenu";
+} from '../../transactions/components/TransactionMenu'
 import {
   BookmarkPageWarning,
   ExpiredErrorDialog,
   ProgressStatus,
   WrongAddressWarningDialog,
-} from "../../transactions/components/TransactionsHelpers";
+} from '../../transactions/components/TransactionsHelpers'
 import {
   useSetCurrentTxId,
   useTransactionDeletion,
-} from "../../transactions/transactionsHooks";
+} from '../../transactions/transactionsHooks'
 import {
   createTxQueryString,
   getAddressExplorerLink,
@@ -74,35 +74,34 @@ import {
   parseTxQueryString,
   TxType,
   useTxParam,
-} from "../../transactions/transactionsUtils";
+} from '../../transactions/transactionsUtils'
 import {
   useAuthRequired,
   useSelectedChainWallet,
-} from "../../wallet/walletHooks";
+} from '../../wallet/walletHooks'
 import {
   $chain,
   setChain,
   setWalletPickerOpened,
-} from "../../wallet/walletSlice";
+} from '../../wallet/walletSlice'
 import {
   DepositWrapper,
   MultipleDepositsMessage,
-} from "../components/MintHelpers";
+} from '../components/MintHelpers'
 import {
   DestinationPendingStatus,
   MintCompletedStatus,
   MintDepositAcceptedStatus,
   MintDepositConfirmationStatus,
   MintDepositToStatus,
-} from "../components/MintStatuses";
+} from '../components/MintStatuses'
+import { DepositNavigation, } from '../components/MultipleDepositsHelpers'
+import { useDepositPagination, useMintMachine } from '../mintHooks'
+import { resetMint } from '../mintSlice'
 import {
-  DepositNavigation,
-  DepositNextButton,
-  DepositPrevButton,
-} from "../components/MultipleDepositsHelpers";
-import { useDepositPagination, useMintMachine } from "../mintHooks";
-import { resetMint } from "../mintSlice";
-import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
+  getLockAndMintBasicParams,
+  getRemainingGatewayTime,
+} from '../mintUtils'
 
 type MachineSend = ReturnType<typeof useMintMachine>[1];
 
@@ -324,6 +323,14 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const renNetwork = useSelector($renNetwork);
   const { account } = useSelectedChainWallet();
 
+  const [currentDeposit, setCurrentDeposit] = useState(
+    depositHash || "gateway"
+  );
+  const handleCurrentDepositChange = useCallback((_, newDeposit) => {
+    console.log("cdd", newDeposit);
+    setCurrentDeposit(newDeposit);
+  }, []);
+
   useEffect(() => {
     onMachineSendReady(send);
   }, [onMachineSendReady, send]);
@@ -335,13 +342,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     [service]
   );
 
-  const {
-    currentIndex,
-    currentHash,
-    total,
-    handlePrev,
-    handleNext,
-  } = useDepositPagination(current.context.tx, depositHash);
+  const { total } = useDepositPagination(current.context.tx);
 
   const { showNotification, closeNotification } = useNotifications();
   useEffect(() => {
@@ -382,14 +383,14 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     deposit: GatewayTransaction;
     machine: Actor<typeof depositMachine>;
   } | null>(() => {
-    if (!current.context.tx.transactions) {
+    if (!current.context.tx.transactions || currentDeposit === "gateway") {
       return null;
     }
-    const deposit = current.context.tx.transactions[currentHash];
+    const deposit = current.context.tx.transactions[currentDeposit];
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];
     return { deposit, machine };
-  }, [currentHash, current.context]);
+  }, [currentDeposit, current.context]);
 
   const currentAmount = activeDeposit?.deposit.sourceTxAmount;
   useEffect(() => {
@@ -407,9 +408,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const history = useHistory();
 
   useEffect(() => {
-    if (!location.search) return;
+    if (!location.search || currentDeposit === "gateway") return;
     const queryTx = parseTxQueryString(location.search);
-    const deposit = (queryTx?.transactions || {})[currentHash];
+    const deposit = (queryTx?.transactions || {})[currentDeposit];
     // If we have detected a deposit, but there is no deposit in the querystring
     // update the queryString to have the deposit
     // TODO: to enable quick resume, we may want to ask users to update their bookmarks
@@ -419,12 +420,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         search: "?" + createTxQueryString(current.context.tx),
       });
     }
-  }, [currentHash, location, activeDeposit, current.context.tx, history]);
+  }, [currentDeposit, location, activeDeposit, current.context.tx, history]);
 
-  const { mintCurrencyConfig } = getLockAndMintParams(
-    current.context.tx,
-    currentHash
-  );
+  const { mintCurrencyConfig } = getLockAndMintBasicParams(current.context.tx);
   const accountExplorerLink = getAddressExplorerLink(
     chain,
     renNetwork,
@@ -434,40 +432,21 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const { fees } = useFetchFees(BridgeCurrency.BTC, TxType.MINT);
   const minimumAmount = (fees.lock / 10 ** 8) * 2;
 
-  const [currentDeposit, setCurrentDeposit] = useState(depositHash || "gateway");
-  const handleNavChange = useCallback((newDeposit) => {
-    setCurrentDeposit(newDeposit);
-  }, []);
-
   return (
     <>
       <DepositWrapper>
         <DepositNavigation
           value={currentDeposit}
-          onChange={handleNavChange}
+          onChange={handleCurrentDepositChange}
           tx={current.context.tx}
         />
         {activeDeposit ? (
-          <DepositWrapper>
-            <MintTransactionDepositStatus
-              tx={current.context.tx}
-              deposit={activeDeposit.deposit}
-              machine={activeDeposit.machine}
-              depositHash={currentHash}
-            />
-            {total > 1 && (
-              <>
-                <DepositPrevButton
-                  onClick={handlePrev}
-                  disabled={currentIndex === 0}
-                />
-                <DepositNextButton
-                  onClick={handleNext}
-                  disabled={currentIndex === total - 1}
-                />
-              </>
-            )}
-          </DepositWrapper>
+          <MintTransactionDepositStatus
+            tx={current.context.tx}
+            deposit={activeDeposit.deposit}
+            machine={activeDeposit.machine}
+            depositHash={currentDeposit}
+          />
         ) : (
           <MintDepositToStatus
             tx={current.context.tx}

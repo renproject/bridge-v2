@@ -6,33 +6,39 @@ import {
   styled,
   Theme,
   useTheme,
-} from '@material-ui/core'
+} from "@material-ui/core";
 import {
   ToggleButton,
   ToggleButtonGroup,
   ToggleButtonGroupProps,
   ToggleButtonProps,
-} from '@material-ui/lab'
-import { GatewaySession } from '@renproject/ren-tx'
-import classNames from 'classnames'
-import React, { FunctionComponent, useCallback, useState } from 'react'
+} from "@material-ui/lab";
+import { GatewaySession } from "@renproject/ren-tx";
+import classNames from "classnames";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   BitcoinIcon,
   CompletedIcon,
+  EmptyIcon,
   EthereumChainIcon,
   NavigateNextIcon,
   NavigatePrevIcon,
   QrCodeIcon,
-} from '../../../components/icons/RenIcons'
+} from "../../../components/icons/RenIcons";
 import {
   ProgressWithContent,
   ProgressWithContentProps,
-} from '../../../components/progress/ProgressHelpers'
+  PulseIndicator,
+} from "../../../components/progress/ProgressHelpers";
+import {
+  DepositEntryStatus,
+  DepositPhase,
+} from "../../transactions/transactionsUtils";
 import {
   depositSorter,
   getDepositParams,
   getLockAndMintBasicParams,
-} from '../mintUtils'
+} from "../mintUtils";
 
 const useBigNavButtonStyles = makeStyles((theme) => ({
   root: {
@@ -130,6 +136,7 @@ export const CircledIconContainer: FunctionComponent<CircledIconContainerProps> 
   color,
   size = 54,
   opacity,
+  className,
   children,
 }) => {
   const styles = useCircledIconContainerStyles({
@@ -139,7 +146,7 @@ export const CircledIconContainer: FunctionComponent<CircledIconContainerProps> 
     opacity,
   });
 
-  return <div className={styles.root}>{children}</div>;
+  return <div className={classNames(styles.root, className)}>{children}</div>;
 };
 
 const useDepositToggleButtonStyles = makeStyles((theme) => ({
@@ -259,14 +266,32 @@ export const DepositToggleButtonGroup: FunctionComponent<ToggleButtonGroupProps>
   );
 };
 
-export const CircledProgressWithContent: FunctionComponent<ProgressWithContentProps> = ({
+const useCircledProgressWithContentStyles = makeStyles({
+  container: {
+    position: "relative",
+  },
+  indicator: {
+    position: "absolute",
+    top: "8%",
+    right: "8%",
+  },
+});
+
+type CircledProgressWithContent = ProgressWithContentProps & {
+  indicator?: boolean;
+};
+
+export const CircledProgressWithContent: FunctionComponent<CircledProgressWithContent> = ({
   color,
   size = 42,
+  indicator = false,
   ...rest
 }) => {
+  const styles = useCircledProgressWithContentStyles();
   return (
     <CircledIconContainer background={color} opacity={0.1}>
       <ProgressWithContent color={color} size={size} {...rest} />
+      {indicator && <PulseIndicator className={styles.indicator} pulsing />}
     </CircledIconContainer>
   );
 };
@@ -294,10 +319,12 @@ export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
 }) => {
   const styles = useDepositNavigationStyles();
   const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
-  const orderedHashes = sortedDeposits.map((deposit) => deposit.sourceTxHash);
 
-  const { lockChainConfig, lockCurrencyConfig } = getLockAndMintBasicParams(tx);
-  const { MainIcon: Icon } = lockChainConfig;
+  const {
+    lockChainConfig,
+    mintChainConfig,
+    lockCurrencyConfig,
+  } = getLockAndMintBasicParams(tx);
 
   return (
     <div className={styles.root}>
@@ -317,15 +344,29 @@ export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
           const {
             lockConfirmations,
             lockTargetConfirmations,
+            meta: { status, phase },
           } = getDepositParams(tx, deposit);
+          console.log(status, phase);
+          let StatusIcon = EmptyIcon;
+          if (status === DepositEntryStatus.COMPLETED) {
+            StatusIcon = CompletedIcon;
+          } else if (phase === DepositPhase.LOCK) {
+            StatusIcon = lockChainConfig.Icon;
+          } else if (phase === DepositPhase.MINT) {
+            StatusIcon = mintChainConfig.Icon;
+          }
+          const isProcessing = phase === DepositPhase.NONE;
+          const requiresAction = status === DepositEntryStatus.ACTION_REQUIRED;
           return (
             <DepositToggleButton key={hash} value={hash}>
               <CircledProgressWithContent
                 color={lockCurrencyConfig.color}
                 confirmations={lockConfirmations}
                 targetConfirmations={lockTargetConfirmations}
+                processing={isProcessing}
+                indicator={requiresAction}
               >
-                <Icon fontSize="large" />
+                <StatusIcon fontSize="large" />
               </CircledProgressWithContent>
             </DepositToggleButton>
           );
