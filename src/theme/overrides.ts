@@ -69,6 +69,8 @@ export const overrides = (palette: Palette): Overrides => {
       root: {
         paddingTop: 3, // TODO: fix after investigation font hoisting issue
         backgroundColor: "#F1F1F6",
+        borderRadius: 4,
+        height: 22,
       },
       sizeSmall: {
         height: 16,
@@ -208,7 +210,7 @@ export const overrides = (palette: Palette): Overrides => {
     MuiToggleButtonGroup: {
       root: {
         boxShadow: `0px 0px 4px rgba(0, 27, 58, 0.1)`,
-        borderRadius: "50%"
+        borderRadius: "50%",
       },
     },
     MuiToggleButton: {

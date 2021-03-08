@@ -330,7 +330,7 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
   },
   icon: {},
   indicatorWrapper: {
-    marginLeft: 10,
+    marginLeft: 20,
     minWidth: 10,
   },
 }));

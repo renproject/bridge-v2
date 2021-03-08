@@ -19,8 +19,8 @@ export type Transaction = {
 };
 
 const standardPaddings = {
-  paddingLeft: 30,
-  paddingRight: 30,
+  paddingLeft: 40,
+  paddingRight: 40,
 };
 
 const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
