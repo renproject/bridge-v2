@@ -28,10 +28,12 @@ import {
   SimplePagination,
   SimplestPagination,
 } from "../../components/pagination/SimplePagination";
-import { PulseIndicator } from "../../components/progress/ProgressHelpers";
+import {
+  CenteredProgress,
+  PulseIndicator,
+} from "../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../components/tooltips/TooltipWithIcon";
 import {
-  TransactionsContent,
   TransactionsHeader,
   TransactionsPaginationWrapper,
 } from "../../components/transactions/TransactionsGrid";
@@ -99,6 +101,14 @@ export const MintTransactionHistory: FunctionComponent = () => {
   const opened = useSelector($txHistoryOpened);
   const activeTxId = useSelector($currentTxId);
   const [page, setPage] = useState(0);
+  const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, 1000);
+  }, [currency, chain]);
 
   const chainConfig = getChainConfig(chain);
 
@@ -144,34 +154,37 @@ export const MintTransactionHistory: FunctionComponent = () => {
         />
       </TransactionsHeader>
       {!walletConnected && (
-        <TransactionsContent>
-          <BigTopWrapper>
-            {!walletConnected && (
-              <>
+        <BigTopWrapper>
+          {!walletConnected && (
+            <>
+              <MediumWrapper>
+                <Typography variant="body1" align="center">
+                  Please connect {isFirstVowel(chainConfig.full) ? "an" : "a"}{" "}
+                  {chainConfig.full} compatible wallet to view transactions
+                </Typography>
+              </MediumWrapper>
+              <BigWrapper>
                 <MediumWrapper>
-                  <Typography variant="body1" align="center">
-                    Please connect {isFirstVowel(chainConfig.full) ? "an" : "a"}{" "}
-                    {chainConfig.full} compatible wallet to view transactions
-                  </Typography>
+                  <CenteringSpacedBox>
+                    <WalletConnectionProgress />
+                  </CenteringSpacedBox>
                 </MediumWrapper>
-                <BigWrapper>
-                  <MediumWrapper>
-                    <CenteringSpacedBox>
-                      <WalletConnectionProgress />
-                    </CenteringSpacedBox>
-                  </MediumWrapper>
-                  <ActionButtonWrapper>
-                    <ActionButton onClick={handleWalletPickerOpen}>
-                      Connect Wallet
-                    </ActionButton>
-                  </ActionButtonWrapper>
-                </BigWrapper>
-              </>
-            )}
-          </BigTopWrapper>
-        </TransactionsContent>
+                <ActionButtonWrapper>
+                  <ActionButton onClick={handleWalletPickerOpen}>
+                    Connect Wallet
+                  </ActionButton>
+                </ActionButtonWrapper>
+              </BigWrapper>
+            </>
+          )}
+        </BigTopWrapper>
       )}
-      {walletConnected && (
+      {walletConnected && pending && (
+        <BigTopWrapper>
+          <CenteredProgress color="primary" size={100} />
+        </BigTopWrapper>
+      )}
+      {walletConnected && !pending && (
         <>
           {[0, 1, 2].map((offset) => (
             <GatewayEntryResolver
