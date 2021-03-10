@@ -24,7 +24,7 @@ export const WarningChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.customColors.alertWarningBackground,
 }));
 
-export const ExpiresChip = styled(Chip)(({ theme }) => ({
+export const SuccessChip = styled(Chip)(({ theme }) => ({
   color: theme.customColors.alertSuccess,
   backgroundColor: theme.customColors.alertSuccessBackground,
 }));

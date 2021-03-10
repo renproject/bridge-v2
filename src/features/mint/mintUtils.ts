@@ -17,6 +17,7 @@ import {
   DepositEntryStatus,
   DepositMeta,
   DepositPhase,
+  GatewayStatus,
   getAddressExplorerLink,
   getChainExplorerLink,
   getTxCreationTimestamp,
@@ -60,6 +61,18 @@ const generateNonce = (dayOffset = 0, dayIndex = 0) => {
 export const getRemainingGatewayTime = (expiryTime: number) =>
   Math.ceil(expiryTime - 24 * 60 * 60 * 1000 - Number(new Date()));
 
+export const getGatewayStatus = (expiryTime: number) => {
+  const remaining = getRemainingGatewayTime(expiryTime);
+  if (remaining > 0) {
+    return GatewayStatus.DEPOSITS_ACCEPTED; // deposit + confirm + mint
+  } else if (remaining > -24 * 60 * 60 * 1000) {
+    // up to one day after gateway is closed
+    return GatewayStatus.SUBMIT_ONLY; // only mint
+  } else {
+    return GatewayStatus.EXPIRED; // no operation permitted
+  }
+};
+
 export const createMintTransaction = ({
   currency,
   mintedCurrencyChain,
@@ -81,7 +94,6 @@ export const createMintTransaction = ({
   //
   // NOTE - this will overflow if the user makes more than 1000 transactions to the same pair in a day,
   // but we assume that no one will reach that amount, and an overflow is just confusing, not breaking
-  const resolvedNonce = nonce || dayIndex + getSessionDay() * 1000;
   const tx: GatewaySession = {
     id: `tx-${userAddress}-${nonce}-${currency}-${mintedCurrencyChain}`,
     type: "mint",
@@ -92,8 +104,8 @@ export const createMintTransaction = ({
     destChain: getChainRentxName(mintedCurrencyChain),
     targetAmount: 0,
     userAddress,
-    nonce: resolvedNonce.toString(16).padStart(64, "0"),
-    expiryTime: getSessionExpiry(),
+    nonce,
+    expiryTime: getSessionExpiry(dayOffset),
     transactions: {},
     customParams: {},
     createdAt: Date.now(),
@@ -151,46 +163,51 @@ export const getDepositParams = (
         lockChainConfig.blockTime;
     }
   }
-  const meta: DepositMeta = {
-    status: DepositEntryStatus.PENDING,
-    phase: DepositPhase.NONE,
-  };
+
+  let depositStatus = DepositEntryStatus.PENDING;
+  let depositPhase = DepositPhase.NONE;
 
   if (lockTxHash) {
     // it has lockTxHash - there is deposit
     if (mintTxHash) {
       // mint tx hash present - completed
-      meta.status = DepositEntryStatus.COMPLETED;
+      depositStatus = DepositEntryStatus.COMPLETED;
     } else if (
       lockTargetConfirmations &&
       lockConfirmations >= lockTargetConfirmations
     ) {
-      console.log(lockConfirmations, lockTargetConfirmations);
       // no mint tx hash, but confirmations fulfilled
-      meta.status = DepositEntryStatus.ACTION_REQUIRED;
-      meta.phase = DepositPhase.MINT;
+      depositStatus = DepositEntryStatus.ACTION_REQUIRED;
+      depositPhase = DepositPhase.MINT;
       // expired in mint phase - no submission
       if (isTxExpired(tx)) {
-        meta.status = DepositEntryStatus.EXPIRED;
+        depositStatus = DepositEntryStatus.EXPIRED;
       }
     } else if (lockConfirmations < lockTargetConfirmations) {
       console.log(lockConfirmations, lockTargetConfirmations);
       // no mint tx hash, but awaiting confirmations
-      meta.status = DepositEntryStatus.PENDING;
-      meta.phase = DepositPhase.LOCK;
+      depositStatus = DepositEntryStatus.PENDING;
+      depositPhase = DepositPhase.LOCK;
       if (isTxExpired(tx)) {
-        meta.status = DepositEntryStatus.EXPIRED;
+        depositStatus = DepositEntryStatus.EXPIRED;
       }
     }
   } else {
     // no lockTxHash - no deposit to process
-    meta.status = DepositEntryStatus.ACTION_REQUIRED;
-    meta.phase = DepositPhase.LOCK;
+    depositStatus = DepositEntryStatus.ACTION_REQUIRED;
+    depositPhase = DepositPhase.LOCK;
     // expired in lock phase - no deposit
     if (isTxExpired(tx)) {
-      meta.status = DepositEntryStatus.EXPIRED;
+      depositStatus = DepositEntryStatus.EXPIRED;
     }
   }
+
+  // TODO: depreacate meta
+  const meta: DepositMeta = {
+    status: depositStatus,
+    phase: depositPhase,
+  };
+
   return {
     mintTxHash,
     mintTxLink,
@@ -200,6 +217,8 @@ export const getDepositParams = (
     lockTargetConfirmations,
     lockProcessingTime,
     lockTxAmount,
+    depositStatus,
+    depositPhase,
     meta,
   };
 };
@@ -219,6 +238,8 @@ export const getLockAndMintBasicParams = (tx: GatewaySession) => {
   );
   const suggestedAmount = Number(tx.suggestedAmount) / 1e8;
   const createdTime = getTxCreationTimestamp(tx);
+  const depositsCount = Object.values(tx.transactions || {}).length;
+  const gatewayStatus = getGatewayStatus(tx.expiryTime);
 
   return {
     networkConfig,
@@ -229,6 +250,8 @@ export const getLockAndMintBasicParams = (tx: GatewaySession) => {
     mintAddressLink,
     suggestedAmount,
     createdTime,
+    depositsCount,
+    gatewayStatus,
   };
 };
 

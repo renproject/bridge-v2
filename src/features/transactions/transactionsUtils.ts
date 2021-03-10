@@ -37,6 +37,13 @@ export type TxMeta = {
   transactionsCount: number;
 };
 
+export enum GatewayStatus {
+  DEPOSITS_ACCEPTED = "deposits_accepted",
+  SUBMIT_ONLY = "submit_only",
+  EXPIRED = "expired",
+  NONE = "",
+}
+
 export enum DepositPhase {
   LOCK = "lock",
   MINT = "mint",

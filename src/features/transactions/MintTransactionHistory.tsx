@@ -1,42 +1,43 @@
-import { Box, Chip, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { RenNetwork } from '@renproject/interfaces'
-import { GatewaySession } from '@renproject/ren-tx'
+import { Box, Chip, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { RenNetwork } from "@renproject/interfaces";
+import { GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
-} from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useInterval } from 'react-use'
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
   SmallActionButton,
-} from '../../components/buttons/Buttons'
-import { AssetDropdown } from '../../components/dropdowns/AssetDropdown'
-import { CompletedIcon, EmptyIcon } from '../../components/icons/RenIcons'
+} from "../../components/buttons/Buttons";
+import { AssetDropdown } from "../../components/dropdowns/AssetDropdown";
 import {
   BigTopWrapper,
   BigWrapper,
   CenteringSpacedBox,
   MediumWrapper,
-} from '../../components/layout/LayoutHelpers'
-import { Link } from '../../components/links/Links'
+} from "../../components/layout/LayoutHelpers";
+import { Link } from "../../components/links/Links";
 import {
   SimplePagination,
   SimplestPagination,
-} from '../../components/pagination/SimplePagination'
-import { TransactionStatusIndicator } from '../../components/progress/ProgressHelpers'
-import { TooltipWithIcon } from '../../components/tooltips/TooltipWithIcon'
+} from "../../components/pagination/SimplePagination";
+import { PulseIndicator } from "../../components/progress/ProgressHelpers";
+import { TooltipWithIcon } from "../../components/tooltips/TooltipWithIcon";
 import {
   TransactionsContent,
   TransactionsHeader,
   TransactionsPaginationWrapper,
-} from '../../components/transactions/TransactionsGrid'
-import { Debug } from '../../components/utils/Debug'
-import { WalletConnectionProgress } from '../../components/wallet/WalletHelpers'
+} from "../../components/transactions/TransactionsGrid";
+import { Debug } from "../../components/utils/Debug";
+import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
+import { paths } from "../../pages/routes";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -44,36 +45,50 @@ import {
   supportedLockCurrencies,
   supportedMintDestinationChains,
   toMintedCurrency,
-} from '../../utils/assetConfigs'
-import { getFormattedDateTime, getFormattedHMS } from '../../utils/dates'
-import { isFirstVowel } from '../../utils/strings'
-import { useDepositPagination } from '../mint/mintHooks'
-import { $mint, setMintCurrency } from '../mint/mintSlice'
+} from "../../utils/assetConfigs";
+import { getFormattedDateTime, getFormattedHMS } from "../../utils/dates";
+import { isFirstVowel } from "../../utils/strings";
+import {
+  CircledProgressWithContent,
+  getDepositStatusIcon,
+} from "../mint/components/MultipleDepositsHelpers";
+import {
+  useDepositPagination,
+  useIntervalCountdown,
+  useMintMachine,
+} from "../mint/mintHooks";
+import { $mint, setMintCurrency } from "../mint/mintSlice";
 import {
   createMintTransaction,
+  getDepositParams,
+  getLockAndMintBasicParams,
   getLockAndMintParams,
   getRemainingGatewayTime,
-} from '../mint/mintUtils'
-import { $renNetwork } from '../network/networkSlice'
-import { useSelectedChainWallet } from '../wallet/walletHooks'
+} from "../mint/mintUtils";
+import { $renNetwork } from "../network/networkSlice";
+import { useSelectedChainWallet } from "../wallet/walletHooks";
 import {
   $wallet,
   setChain,
   setWalletPickerOpened,
-} from '../wallet/walletSlice'
+} from "../wallet/walletSlice";
 import {
-  ExpiresChip,
+  SuccessChip,
   TransactionHistoryDialog,
   WarningChip,
-} from './components/TransactionHistoryHelpers'
-import { TransactionItemProps } from './components/TransactionsHelpers'
-import { $currentTxId, $txHistoryOpened } from './transactionsSlice'
+} from "./components/TransactionHistoryHelpers";
+import { TransactionItemProps } from "./components/TransactionsHelpers";
 import {
-  isTransactionCompleted,
-  TxEntryStatus,
-  TxPhase,
-} from './transactionsUtils'
-import { doubleTransaction, singleTransaction } from './txMocks'
+  $currentTxId,
+  $txHistoryOpened,
+  setTxHistoryOpened,
+} from "./transactionsSlice";
+import {
+  createTxQueryString,
+  DepositEntryStatus,
+  DepositPhase,
+  GatewayStatus,
+} from "./transactionsUtils";
 
 export const MintTransactionHistory: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -129,60 +144,57 @@ export const MintTransactionHistory: FunctionComponent = () => {
         />
       </TransactionsHeader>
       {!walletConnected && (
-        <>
-          <TransactionsContent>
-            <BigTopWrapper>
-              {!walletConnected && (
-                <>
+        <TransactionsContent>
+          <BigTopWrapper>
+            {!walletConnected && (
+              <>
+                <MediumWrapper>
+                  <Typography variant="body1" align="center">
+                    Please connect {isFirstVowel(chainConfig.full) ? "an" : "a"}{" "}
+                    {chainConfig.full} compatible wallet to view transactions
+                  </Typography>
+                </MediumWrapper>
+                <BigWrapper>
                   <MediumWrapper>
-                    <Typography variant="body1" align="center">
-                      Please connect{" "}
-                      {isFirstVowel(chainConfig.full) ? "an" : "a"}{" "}
-                      {chainConfig.full} compatible wallet to view transactions
-                    </Typography>
+                    <CenteringSpacedBox>
+                      <WalletConnectionProgress />
+                    </CenteringSpacedBox>
                   </MediumWrapper>
-                  <BigWrapper>
-                    <MediumWrapper>
-                      <CenteringSpacedBox>
-                        <WalletConnectionProgress />
-                      </CenteringSpacedBox>
-                    </MediumWrapper>
-                    <ActionButtonWrapper>
-                      <ActionButton onClick={handleWalletPickerOpen}>
-                        Connect Wallet
-                      </ActionButton>
-                    </ActionButtonWrapper>
-                  </BigWrapper>
-                </>
-              )}
-            </BigTopWrapper>
-          </TransactionsContent>
-        </>
+                  <ActionButtonWrapper>
+                    <ActionButton onClick={handleWalletPickerOpen}>
+                      Connect Wallet
+                    </ActionButton>
+                  </ActionButtonWrapper>
+                </BigWrapper>
+              </>
+            )}
+          </BigTopWrapper>
+        </TransactionsContent>
       )}
-      <>
-        {[0, 1, 2].map((offset) => (
-          <div key={startDay + offset}>
-            <span>{offset}</span>
+      {walletConnected && (
+        <>
+          {[0, 1, 2].map((offset) => (
             <GatewayEntryResolver
+              key={startDay + offset}
               dayOffset={startDay + offset}
               currency={currency}
               chain={chain}
-              account={account || "0xdf88bc963E614FAB2bda81c298056ba18e01A424"}
+              account={account}
               network={network}
               activeTxId={activeTxId}
             />
-          </div>
-        ))}
-      </>
-      <Debug disable it={{ activeTxId }} />
-      <TransactionsPaginationWrapper>
-        <SimplePagination
-          count={rowsPerPage * 2}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-        />
-      </TransactionsPaginationWrapper>
+          ))}
+          <Debug it={{ activeTxId }} />
+          <TransactionsPaginationWrapper>
+            <SimplePagination
+              count={rowsPerPage * 2}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onChangePage={handleChangePage}
+            />
+          </TransactionsPaginationWrapper>
+        </>
+      )}
     </TransactionHistoryDialog>
   );
 };
@@ -204,7 +216,8 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
   account,
   activeTxId,
 }) => {
-  const txData = useMemo(
+  console.log(dayOffset);
+  const tx = useMemo(
     () =>
       createMintTransaction({
         currency: currency,
@@ -218,15 +231,35 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
     [currency, account, chain, network, dayOffset]
   );
 
-  const isActive = activeTxId === txData.id;
-  const tx = dayOffset ? singleTransaction : doubleTransaction;
-
+  const isActive = activeTxId === tx.id;
+  if (isActive) {
+    return <GatewayEntry tx={tx} isActive />;
+  }
   return (
     <>
-      <GatewayEntry tx={(tx as unknown) as GatewaySession} />
-      <Debug disable wrapper it={{ dayOffset, isActive }} />
+      <GatewayEntryMachine tx={tx} />
     </>
   );
+};
+
+export type GatewayEntryProps = {
+  tx: GatewaySession;
+  isActive?: boolean;
+  onContinue?: ((depositHash?: string) => void) | (() => void);
+};
+
+export const GatewayEntryMachine: FunctionComponent<GatewayEntryProps> = ({
+  tx,
+}) => {
+  const [current, , service] = useMintMachine(tx);
+  useEffect(
+    () => () => {
+      service.stop();
+    },
+    [service]
+  );
+
+  return <GatewayEntry tx={current.context.tx} />;
 };
 
 const standardPaddings = {
@@ -248,15 +281,26 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
     ...standardPaddings,
     height: 32,
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "stretch",
     alignItems: "center",
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
   datetime: {
     paddingTop: 2,
+    minWidth: 80,
   },
-  gatewayAddress: {},
-  counter: {},
+  gatewayAddress: {
+    paddingTop: 1,
+    flexGrow: 2,
+  },
+  gatewayLink: {
+    marginLeft: 8,
+  },
+  counter: {
+    minWidth: 180,
+    display: "flex",
+    justifyContent: "flex-end",
+  },
   multiple: {
     ...standardPaddings,
     height: 32,
@@ -293,10 +337,14 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
   statusAndActions: {
     display: "flex",
     flexGrow: 2,
-    paddingRight: 20,
-    paddingLet: 20,
   },
   status: {},
+  indicator: {
+    width: 40,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   actions: {
     display: "flex",
     justifyContent: "flex-end",
@@ -309,8 +357,9 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
 const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
   isActive,
-  onContinue,
 }) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const styles = useGatewayResolverStyles();
   const {
     handleNext,
@@ -322,26 +371,31 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
 
   const {
     lockChainConfig,
+    lockCurrencyConfig,
+    mintCurrencyConfig,
+    mintChainConfig,
+    depositsCount,
+    gatewayStatus,
+  } = getLockAndMintBasicParams(tx);
+
+  const {
     lockConfirmations,
     lockTargetConfirmations,
     lockTxLink,
     lockTxAmount,
-    mintCurrencyConfig,
-    mintChainConfig,
     mintTxLink,
-    meta: { status, phase, createdTimestamp, transactionsCount },
-  } = getLockAndMintParams(tx, currentHash);
+    depositStatus,
+    depositPhase,
+  } = getDepositParams(tx, tx.transactions[currentHash]);
+  const hasDeposits = depositsCount > 0;
+  const { date } = getFormattedDateTime(tx.expiryTime - 48 * 3600 * 1000);
 
-  const { date } = getFormattedDateTime(createdTimestamp); //TODO: correct period
-
-  let StatusIcon = EmptyIcon;
-  if (status === TxEntryStatus.COMPLETED) {
-    StatusIcon = CompletedIcon;
-  } else if (phase === TxPhase.LOCK) {
-    StatusIcon = lockChainConfig.Icon;
-  } else if (phase === TxPhase.MINT) {
-    StatusIcon = mintChainConfig.Icon;
-  }
+  const StatusIcon = getDepositStatusIcon({
+    depositStatus,
+    depositPhase,
+    mintChainConfig,
+    lockChainConfig,
+  });
 
   const handlePageChange = useCallback(
     (event: any, newPage: number) => {
@@ -351,23 +405,34 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
   );
 
   const handleContinue = useCallback(() => {
-    if (onContinue) {
-      onContinue(currentHash);
-    }
-  }, [currentHash, onContinue]);
+    history.push({
+      pathname: paths.MINT_TRANSACTION,
+      search: "?" + createTxQueryString(tx),
+      state: {
+        txState: {
+          reloadTx: true,
+          currentHash, // TODO: querystring?
+        },
+      },
+    });
+    dispatch(setTxHistoryOpened(false));
+  }, [dispatch, history, tx, currentHash]);
 
+  const timeToGatewayExpiration = useIntervalCountdown(
+    getRemainingGatewayTime(tx.expiryTime)
+  );
   const params = getLockAndMintParams(tx, currentHash);
   return (
     <>
       <Debug
-        disable
         wrapper
         it={{
+          tx,
           currentHash,
           currentIndex,
-          tx,
+          depositStatus,
+          depositPhase,
           params,
-          completed: isTransactionCompleted(tx),
         }}
       />
       <div className={styles.root}>
@@ -378,15 +443,38 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
             </Typography>
           </div>
           <div className={styles.gatewayAddress}>
-            <Typography variant="caption" color="textSecondary">
-              {tx.gatewayAddress}
-            </Typography>
+            {Boolean(tx.gatewayAddress) &&
+              gatewayStatus !== GatewayStatus.EXPIRED && (
+                <Typography
+                  variant="caption"
+                  color={
+                    gatewayStatus === GatewayStatus.DEPOSITS_ACCEPTED
+                      ? "textPrimary"
+                      : "textSecondary"
+                  }
+                >
+                  {tx.gatewayAddress}
+                  {gatewayStatus === GatewayStatus.DEPOSITS_ACCEPTED && (
+                    <Link
+                      className={styles.gatewayLink}
+                      color="primary"
+                      underline="hover"
+                      onClick={handleContinue}
+                    >
+                      View
+                    </Link>
+                  )}
+                </Typography>
+              )}
           </div>
           <div className={styles.counter}>
-            <ExpirationStatus expiryTime={tx.expiryTime} />
+            <GatewayStatusChip
+              status={gatewayStatus}
+              timeToGatewayExpiration={timeToGatewayExpiration}
+            />
           </div>
         </div>
-        {transactionsCount > 1 && (
+        {depositsCount > 1 && (
           <div className={styles.multiple}>
             <WarningChip
               className={styles.multipleLabel}
@@ -403,12 +491,14 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
         )}
         <div className={styles.details}>
           <div className={styles.titleAndLinks}>
-            <Typography variant="body2" className={styles.title}>
-              Mint {lockTxAmount || tx.targetAmount} {mintCurrencyConfig.short}{" "}
-              on {mintChainConfig.full}
-            </Typography>
+            {hasDeposits && (
+              <Typography variant="body2" className={styles.title}>
+                Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
+                {mintChainConfig.full}
+              </Typography>
+            )}
             <div className={styles.links}>
-              {lockTxLink && (
+              {Boolean(lockTxLink) && (
                 <Link
                   href={lockTxLink}
                   external
@@ -419,7 +509,7 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
                   {lockChainConfig.full} transaction
                 </Link>
               )}
-              {mintTxLink && (
+              {Boolean(mintTxLink) && (
                 <Link
                   href={mintTxLink}
                   external
@@ -435,31 +525,46 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
           <div className={styles.statusAndActions}>
             <div className={styles.actions}>
               {isActive && (
-                <Typography color="primary" variant="body2">
+                <Typography color="primary" variant="caption">
                   Currently viewing
                 </Typography>
               )}
-              {!isActive && (
-                <SmallActionButton onClick={handleContinue}>
-                  {phase === TxPhase.LOCK ? "Continue" : "Finish"} mint
-                </SmallActionButton>
+              {!isActive && hasDeposits && (
+                <>
+                  {depositStatus === DepositEntryStatus.ACTION_REQUIRED && (
+                    <SmallActionButton onClick={handleContinue}>
+                      {depositPhase === DepositPhase.LOCK
+                        ? "Continue"
+                        : "Finish"}{" "}
+                      mint
+                    </SmallActionButton>
+                  )}
+                  {depositStatus === DepositEntryStatus.PENDING &&
+                    lockConfirmations < lockTargetConfirmations && (
+                      <Typography color="textPrimary" variant="caption">
+                        {lockConfirmations}/{lockTargetConfirmations}{" "}
+                        Confirmations
+                      </Typography>
+                    )}
+                </>
               )}
-              {!isActive &&
-                status === TxEntryStatus.PENDING &&
-                lockConfirmations < lockTargetConfirmations && (
-                  <Typography color="primary" variant="body2">
-                    {lockConfirmations}/{lockTargetConfirmations} Confirmations
-                  </Typography>
-                )}
             </div>
             <div className={styles.status}>
-              <TransactionStatusIndicator
-                needsAction={status === TxEntryStatus.ACTION_REQUIRED}
-                Icon={StatusIcon}
-                showConfirmations={phase === TxPhase.LOCK}
+              <CircledProgressWithContent
+                color={lockCurrencyConfig.color}
                 confirmations={lockConfirmations}
                 targetConfirmations={lockTargetConfirmations}
-              />
+                processing={depositPhase === DepositPhase.NONE}
+                size={34}
+              >
+                <StatusIcon />
+              </CircledProgressWithContent>
+            </div>
+            <div className={styles.indicator}>
+              {hasDeposits &&
+                depositStatus === DepositEntryStatus.ACTION_REQUIRED && (
+                  <PulseIndicator pulsing size={12} />
+                )}
             </div>
           </div>
         </div>
@@ -468,41 +573,62 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
   );
 };
 
-type ExpirationStatusProps = {
-  expiryTime: number;
+const expiresInMessage =
+  "To ensure funds stay secure, Gateway Addresses refresh every 24 hours.  Make sure a Gateway Address is not expired before sending assets to it.";
+
+const submitInMessage =
+  "After the asset has been received and confirmed by RenVM, you must submit a mint transaction to the destination chain within 24 hours. If you do not, the assets will be lost. This is part of RenVM's security-first approach that sees gateways renew every 24 hours to ensure custodied funds cannot be stolen.";
+
+const gatewayExpiredMessage =
+  "This Gateway Address is no longer valid. Any transactions completed before the Gateway Address expired are safe and remain on the destination chain. To begin another transaction, open a new Gateway Address from the home screen.";
+
+type GatewayStatusChipProps = {
+  status: GatewayStatus;
+  timeToGatewayExpiration?: number;
 };
 
-export const ExpirationStatus: FunctionComponent<ExpirationStatusProps> = ({
-  expiryTime,
+export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
+  status,
+  timeToGatewayExpiration = 0,
 }) => {
-  const [timeRemained, setTimeRemained] = useState(
-    getRemainingGatewayTime(expiryTime)
-  );
-  useInterval(() => {
-    setTimeRemained((ms) => ms - 1000);
-  }, 1000);
-
-  if (timeRemained <= 0) {
-    return (
-      <Chip
-        label={
-          <span>
-            Gateway Expired{" "}
-            <TooltipWithIcon title="This Gateway Address has expired." />
-          </span>
-        }
-      />
-    );
+  switch (status) {
+    case GatewayStatus.DEPOSITS_ACCEPTED:
+      return (
+        <SuccessChip
+          label={
+            <span>
+              Expires in:{" "}
+              <strong>{getFormattedHMS(timeToGatewayExpiration)}</strong>{" "}
+              <TooltipWithIcon title={expiresInMessage} />
+            </span>
+          }
+        />
+      );
+    case GatewayStatus.SUBMIT_ONLY:
+      return (
+        <SuccessChip
+          label={
+            <span>
+              Submit in:{" "}
+              <strong>
+                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+              </strong>{" "}
+              <TooltipWithIcon title={submitInMessage} />
+            </span>
+          }
+        />
+      );
+    case GatewayStatus.EXPIRED:
+      return (
+        <Chip
+          label={
+            <span>
+              Gateway Expired <TooltipWithIcon title={gatewayExpiredMessage} />
+            </span>
+          }
+        />
+      );
+    default:
+      return null;
   }
-  const time = getFormattedHMS(timeRemained);
-  return (
-    <ExpiresChip
-      label={
-        <span>
-          Expires in: <strong>{time}</strong>{" "}
-          <TooltipWithIcon title="This Gateway Address will expire." />
-        </span>
-      }
-    />
-  );
 };

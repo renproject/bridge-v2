@@ -9,6 +9,7 @@ import {
 import { useMachine } from "@xstate/react";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useInterval } from "react-use";
 import { Interpreter, State } from "xstate";
 import { env } from "../../constants/environmentVariables";
 import { db } from "../../services/database/database";
@@ -124,3 +125,20 @@ export const useDepositPagination = (
     total,
   };
 };
+
+/**
+ * Will rerender component every intervalMs, producing new ms value
+ */
+
+export const useIntervalCountdown = (
+  countFromMs: number,
+  intervalMs = 1000
+) => {
+  const [ms, setMs] = useState(countFromMs);
+  useInterval(() => {
+    setMs(ms - intervalMs);
+  }, intervalMs);
+  return ms;
+};
+
+

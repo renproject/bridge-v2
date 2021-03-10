@@ -30,6 +30,7 @@ import {
   ProgressWithContentProps,
   PulseIndicator,
 } from "../../../components/progress/ProgressHelpers";
+import { BridgeChainConfig } from "../../../utils/assetConfigs";
 import {
   DepositEntryStatus,
   DepositPhase,
@@ -289,7 +290,12 @@ export const CircledProgressWithContent: FunctionComponent<CircledProgressWithCo
 }) => {
   const styles = useCircledProgressWithContentStyles();
   return (
-    <CircledIconContainer background={color} opacity={0.1}>
+    <CircledIconContainer
+      background={color}
+      opacity={0.1}
+      size={Math.floor(1.28 * size)}
+      className={styles.container}
+    >
       <ProgressWithContent color={color} size={size} {...rest} />
       {indicator && <PulseIndicator className={styles.indicator} pulsing />}
     </CircledIconContainer>
@@ -344,19 +350,18 @@ export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
           const {
             lockConfirmations,
             lockTargetConfirmations,
-            meta: { status, phase },
+            depositStatus,
+            depositPhase,
           } = getDepositParams(tx, deposit);
-          console.log(status, phase);
-          let StatusIcon = EmptyIcon;
-          if (status === DepositEntryStatus.COMPLETED) {
-            StatusIcon = CompletedIcon;
-          } else if (phase === DepositPhase.LOCK) {
-            StatusIcon = lockChainConfig.Icon;
-          } else if (phase === DepositPhase.MINT) {
-            StatusIcon = mintChainConfig.Icon;
-          }
-          const isProcessing = phase === DepositPhase.NONE;
-          const requiresAction = status === DepositEntryStatus.ACTION_REQUIRED;
+          const StatusIcon = getDepositStatusIcon({
+            depositStatus,
+            depositPhase,
+            mintChainConfig,
+            lockChainConfig,
+          });
+          const isProcessing = depositPhase === DepositPhase.NONE;
+          const requiresAction =
+            depositStatus === DepositEntryStatus.ACTION_REQUIRED;
           return (
             <DepositToggleButton key={hash} value={hash}>
               <CircledProgressWithContent
@@ -374,4 +379,28 @@ export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
       </ToggleButtonGroup>
     </div>
   );
+};
+
+type GetDepositStatusIconFnParams = {
+  depositStatus: DepositEntryStatus;
+  depositPhase: DepositPhase;
+  lockChainConfig: BridgeChainConfig;
+  mintChainConfig: BridgeChainConfig;
+};
+
+export const getDepositStatusIcon = ({
+  depositStatus,
+  depositPhase,
+  lockChainConfig,
+  mintChainConfig,
+}: GetDepositStatusIconFnParams) => {
+  let StatusIcon = EmptyIcon;
+  if (depositStatus === DepositEntryStatus.COMPLETED) {
+    StatusIcon = CompletedIcon;
+  } else if (depositPhase === DepositPhase.LOCK) {
+    StatusIcon = lockChainConfig.Icon;
+  } else if (depositPhase === DepositPhase.MINT) {
+    StatusIcon = mintChainConfig.Icon;
+  }
+  return StatusIcon;
 };
