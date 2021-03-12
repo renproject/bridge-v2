@@ -63,13 +63,12 @@ export const getRemainingGatewayTime = (expiryTime: number) =>
 
 export const getGatewayStatus = (expiryTime: number) => {
   const remaining = getRemainingGatewayTime(expiryTime);
-  if (remaining > 0) {
-    return GatewayStatus.DEPOSITS_ACCEPTED; // deposit + confirm + mint
-  } else if (remaining > -24 * 60 * 60 * 1000) {
-    // up to one day after gateway is closed
-    return GatewayStatus.SUBMIT_ONLY; // only mint
+  if (remaining > 24 * 60 * 60 * 1000) {
+    return GatewayStatus.CURRENT; // newest gateway
+  } else if (remaining > 0) {
+    return GatewayStatus.PREVIOUS; // depositing still possible
   } else {
-    return GatewayStatus.EXPIRED; // no operation permitted
+    return GatewayStatus.EXPIRING; // just mint operation permitted
   }
 };
 

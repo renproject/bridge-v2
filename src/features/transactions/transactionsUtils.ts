@@ -38,8 +38,9 @@ export type TxMeta = {
 };
 
 export enum GatewayStatus {
-  DEPOSITS_ACCEPTED = "deposits_accepted",
-  SUBMIT_ONLY = "submit_only",
+  CURRENT = "current",
+  PREVIOUS = "previous",
+  EXPIRING = "expiring",
   EXPIRED = "expired",
   NONE = "",
 }

@@ -1,4 +1,10 @@
-import { Chip, Dialog, makeStyles, styled } from "@material-ui/core";
+import {
+  Chip,
+  Dialog,
+  makeStyles,
+  styled,
+  Typography,
+} from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog/Dialog";
 import React, { FunctionComponent } from "react";
 
@@ -22,6 +28,11 @@ export const TransactionHistoryDialog: FunctionComponent<DialogProps> = (
 export const WarningChip = styled(Chip)(({ theme }) => ({
   color: theme.customColors.alertWarning,
   backgroundColor: theme.customColors.alertWarningBackground,
+}));
+
+export const WarningLabel = styled(Typography)(({ theme }) => ({
+  color: theme.customColors.alertWarning,
+  fontSize: 12,
 }));
 
 export const SuccessChip = styled(Chip)(({ theme }) => ({

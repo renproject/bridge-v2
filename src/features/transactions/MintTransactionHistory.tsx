@@ -1,5 +1,6 @@
-import { Box, Chip, Typography } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Skeleton } from "@material-ui/lab";
 import { RenNetwork } from "@renproject/interfaces";
 import { GatewaySession } from "@renproject/ren-tx";
 import React, {
@@ -17,6 +18,7 @@ import {
   SmallActionButton,
 } from "../../components/buttons/Buttons";
 import { AssetDropdown } from "../../components/dropdowns/AssetDropdown";
+import { BlockIcon } from "../../components/icons/RenIcons";
 import {
   BigTopWrapper,
   BigWrapper,
@@ -77,7 +79,7 @@ import {
 import {
   SuccessChip,
   TransactionHistoryDialog,
-  WarningChip,
+  WarningLabel,
 } from "./components/TransactionHistoryHelpers";
 import { TransactionItemProps } from "./components/TransactionsHelpers";
 import {
@@ -292,24 +294,23 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
   },
   gateway: {
     ...standardPaddings,
-    height: 32,
+    paddingTop: 8,
+    paddingBottom: 8,
     display: "flex",
     justifyContent: "stretch",
-    alignItems: "center",
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
-  datetime: {
-    paddingTop: 2,
-    minWidth: 80,
+  gatewayInfo: {
+    flexGrow: 2,
   },
+  gatewayLabel: {},
   gatewayAddress: {
     paddingTop: 1,
-    flexGrow: 2,
   },
   gatewayLink: {
     marginLeft: 8,
   },
-  counter: {
+  gatewayCounter: {
     minWidth: 180,
     display: "flex",
     justifyContent: "flex-end",
@@ -326,17 +327,28 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
     marginRight: 16,
   },
   multiplePagination: {},
-  details: {
+  deposit: {
     paddingLeft: standardPaddings.paddingLeft,
     paddingTop: 6,
     paddingBottom: 6,
     display: "flex",
     justifyContent: "space-between",
+    alignItems: "stretch",
+  },
+  details: {
+    flexGrow: 2,
+  },
+  detailsTitleAndLinks: {
+    flexGrow: 2,
+    display: "flex",
+    justifyContent: "space-between",
     alignItems: "center",
   },
-  titleAndLinks: {},
-  title: {
+  detailsTitle: {
     fontSize: 14,
+  },
+  detailsDate: {
+    fontSize: 12,
   },
   links: {},
   link: {
@@ -391,6 +403,7 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
     gatewayStatus,
   } = getLockAndMintBasicParams(tx);
 
+  const deposit = tx.transactions[currentHash];
   const {
     lockConfirmations,
     lockTargetConfirmations,
@@ -399,9 +412,8 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
     mintTxLink,
     depositStatus,
     depositPhase,
-  } = getDepositParams(tx, tx.transactions[currentHash]);
+  } = getDepositParams(tx, deposit);
   const hasDeposits = depositsCount > 0;
-  const { date } = getFormattedDateTime(tx.expiryTime - 48 * 3600 * 1000);
 
   const StatusIcon = getDepositStatusIcon({
     depositStatus,
@@ -450,37 +462,24 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
       />
       <div className={styles.root}>
         <div className={styles.gateway}>
-          <div className={styles.datetime}>
-            <Typography variant="overline" color="textSecondary">
-              {date}
-            </Typography>
-          </div>
-          <div className={styles.gatewayAddress}>
-            {Boolean(tx.gatewayAddress) &&
-              gatewayStatus !== GatewayStatus.EXPIRED && (
-                <Typography
-                  variant="caption"
-                  color={
-                    gatewayStatus === GatewayStatus.DEPOSITS_ACCEPTED
-                      ? "textPrimary"
-                      : "textSecondary"
-                  }
-                >
-                  {tx.gatewayAddress}
-                  {gatewayStatus === GatewayStatus.DEPOSITS_ACCEPTED && (
-                    <Link
-                      className={styles.gatewayLink}
-                      color="primary"
-                      underline="hover"
-                      onClick={handleContinue}
-                    >
-                      View
-                    </Link>
-                  )}
-                </Typography>
+          <div className={styles.gatewayInfo}>
+            <GatewayLabel
+              status={gatewayStatus}
+              timeToGatewayExpiration={timeToGatewayExpiration}
+            />
+            <div className={styles.gatewayAddress}>
+              {tx.gatewayAddress ? (
+                <GatewayAddress
+                  address={tx.gatewayAddress}
+                  status={gatewayStatus}
+                  onClick={handleContinue}
+                />
+              ) : (
+                <Skeleton width={270} />
               )}
+            </div>
           </div>
-          <div className={styles.counter}>
+          <div className={styles.gatewayCounter}>
             <GatewayStatusChip
               status={gatewayStatus}
               timeToGatewayExpiration={timeToGatewayExpiration}
@@ -489,10 +488,9 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
         </div>
         {depositsCount > 1 && (
           <div className={styles.multiple}>
-            <WarningChip
-              className={styles.multipleLabel}
-              label="Multiple deposits"
-            />
+            <WarningLabel className={styles.multipleLabel}>
+              Multiple transactions
+            </WarningLabel>
             <SimplestPagination
               className={styles.multiplePagination}
               count={total}
@@ -502,14 +500,28 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
             />
           </div>
         )}
-        <div className={styles.details}>
-          <div className={styles.titleAndLinks}>
-            {hasDeposits && (
-              <Typography variant="body2" className={styles.title}>
-                Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
-                {mintChainConfig.full}
-              </Typography>
-            )}
+        <div className={styles.deposit}>
+          <div className={styles.details}>
+            <div className={styles.detailsTitleAndLinks}>
+              {hasDeposits && (
+                <>
+                  <Typography className={styles.detailsTitle}>
+                    Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
+                    {mintChainConfig.full}
+                  </Typography>
+                  {Boolean(deposit) && (
+                    <Typography
+                      color="textSecondary"
+                      component="span"
+                      variant="inherit"
+                      className={styles.detailsDate}
+                    >
+                      {getFormattedDateTime(Number(deposit.detectedAt)).date}
+                    </Typography>
+                  )}
+                </>
+              )}
+            </div>
             <div className={styles.links}>
               {Boolean(lockTxLink) && (
                 <Link
@@ -546,10 +558,7 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
                 <>
                   {depositStatus === DepositEntryStatus.ACTION_REQUIRED && (
                     <SmallActionButton onClick={handleContinue}>
-                      {depositPhase === DepositPhase.LOCK
-                        ? "Continue"
-                        : "Finish"}{" "}
-                      mint
+                      Action required!
                     </SmallActionButton>
                   )}
                   {depositStatus === DepositEntryStatus.PENDING &&
@@ -586,15 +595,6 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
   );
 };
 
-const expiresInMessage =
-  "To ensure funds stay secure, Gateway Addresses refresh every 24 hours.  Make sure a Gateway Address is not expired before sending assets to it.";
-
-const submitInMessage =
-  "After the asset has been received and confirmed by RenVM, you must submit a mint transaction to the destination chain within 24 hours. If you do not, the assets will be lost. This is part of RenVM's security-first approach that sees gateways renew every 24 hours to ensure custodied funds cannot be stolen.";
-
-const gatewayExpiredMessage =
-  "This Gateway Address is no longer valid. Any transactions completed before the Gateway Address expired are safe and remain on the destination chain. To begin another transaction, open a new Gateway Address from the home screen.";
-
 type GatewayStatusChipProps = {
   status: GatewayStatus;
   timeToGatewayExpiration?: number;
@@ -605,41 +605,151 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
   timeToGatewayExpiration = 0,
 }) => {
   switch (status) {
-    case GatewayStatus.DEPOSITS_ACCEPTED:
+    case GatewayStatus.CURRENT:
       return (
         <SuccessChip
           label={
             <span>
               Expires in:{" "}
-              <strong>{getFormattedHMS(timeToGatewayExpiration)}</strong>{" "}
-              <TooltipWithIcon title={expiresInMessage} />
+              <strong>{getFormattedHMS(timeToGatewayExpiration)}</strong>
             </span>
           }
         />
       );
-    case GatewayStatus.SUBMIT_ONLY:
+    case GatewayStatus.PREVIOUS:
       return (
         <SuccessChip
           label={
             <span>
-              Submit in:{" "}
+              Finish mint within:{" "}
               <strong>
                 {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
-              </strong>{" "}
-              <TooltipWithIcon title={submitInMessage} />
+              </strong>
             </span>
           }
         />
       );
-    case GatewayStatus.EXPIRED:
+    case GatewayStatus.EXPIRING:
       return (
-        <Chip
+        <SuccessChip
           label={
             <span>
-              Gateway Expired <TooltipWithIcon title={gatewayExpiredMessage} />
+              Finish mint within:{" "}
+              <strong>
+                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+              </strong>
             </span>
           }
         />
+      );
+    default:
+      return null;
+  }
+};
+
+type GatewayLabelProps = {
+  status: GatewayStatus;
+  timeToGatewayExpiration?: number;
+};
+export const GatewayLabel: FunctionComponent<GatewayLabelProps> = ({
+  status,
+  timeToGatewayExpiration = 0,
+}) => {
+  switch (status) {
+    case GatewayStatus.CURRENT:
+      return (
+        <Typography>
+          Current Gateway{" "}
+          <TooltipWithIcon title="To ensure funds stay secure, Gateway Addresses refresh every 24 hours. Make sure a Gateway Address has not expired before sending assets to it." />
+        </Typography>
+      );
+    case GatewayStatus.PREVIOUS:
+      return (
+        <Typography>
+          Previous Gateway{" "}
+          <TooltipWithIcon
+            title={
+              <span>
+                Transactions listed here have{" "}
+                {getFormattedHMS(timeToGatewayExpiration)} hours left to be
+                confirmed. Please speed up or cancel the transactions if they
+                will not be confirmed before this time elapses.
+              </span>
+            }
+          />
+        </Typography>
+      );
+    case GatewayStatus.EXPIRING:
+      return (
+        <Typography>
+          Expiring Gateway{" "}
+          <TooltipWithIcon
+            title={
+              <span>
+                You have{" "}
+                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}{" "}
+                hours left to mint any deposits listed here. After this period,
+                your funds will be lost. Any transactions completed before the
+                Gateway Address expires are safe and remain on the destination
+                chain.
+              </span>
+            }
+          />
+        </Typography>
+      );
+    default:
+      return null;
+  }
+};
+
+type GatewayAddressProps = {
+  status: GatewayStatus;
+  address: string;
+  onClick: () => void;
+};
+
+const useGatewayAddressStyles = makeStyles(() => ({
+  icon: {
+    marginBottom: -1,
+  },
+  disabled: {
+    userSelect: "none",
+  },
+}));
+export const GatewayAddress: FunctionComponent<GatewayAddressProps> = ({
+  status,
+  onClick,
+  address,
+}) => {
+  const styles = useGatewayAddressStyles();
+  switch (status) {
+    case GatewayStatus.CURRENT:
+      return (
+        <Typography variant="caption">
+          <Link color="primary" underline="hover" onClick={onClick}>
+            {address}
+          </Link>
+        </Typography>
+      );
+    case GatewayStatus.PREVIOUS:
+      return (
+        <Typography
+          className={styles.disabled}
+          color="textSecondary"
+          variant="caption"
+        >
+          <BlockIcon className={styles.icon} fontSize="inherit" /> {address}
+        </Typography>
+      );
+    case GatewayStatus.EXPIRING:
+      return (
+        <Typography
+          className={styles.disabled}
+          color="textSecondary"
+          variant="caption"
+        >
+          <BlockIcon className={styles.icon} fontSize="inherit" /> {address}
+        </Typography>
       );
     default:
       return null;

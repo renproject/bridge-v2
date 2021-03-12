@@ -58,13 +58,14 @@ import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.sv
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
 
-import CompletedIcon from "@material-ui/icons/Done";
 import AddIcon from "@material-ui/icons/Add";
+import BlockIcon from "@material-ui/icons/Block";
+import CompletedIcon from "@material-ui/icons/Done";
 import DeleteIcon from "@material-ui/icons/Delete";
-import WarningIcon from "@material-ui/icons/Warning";
 import HomeIcon from "@material-ui/icons/Home";
+import WarningIcon from "@material-ui/icons/Warning";
 
-export { CompletedIcon, AddIcon, DeleteIcon, WarningIcon, HomeIcon };
+export { CompletedIcon, BlockIcon, AddIcon, DeleteIcon, WarningIcon, HomeIcon };
 
 export type CustomSvgIconComponent =
   | FunctionComponent<SvgIconProps>
