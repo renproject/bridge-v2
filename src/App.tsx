@@ -24,7 +24,6 @@ function App() {
         <Switch>
           <Route exact path={paths.WELCOME} component={WelcomePage} />
           <Route exact path={paths.ABOUT} component={AboutPage} />
-          <Route exact path={paths.CATALOG} component={CatalogPage} />
           <Route exact path={mainPagePaths} component={MainPage} />
           <Route component={NotFoundPage} />
         </Switch>

@@ -90,7 +90,11 @@ export const useSyncMultiwalletNetwork = () => {
     if (renNetwork !== targetNetwork) {
       console.info("syncing multiwallet with network", renNetwork);
       setTargetNetwork(
-        renNetwork.includes("mainnet") ? RenNetwork.Mainnet : renNetwork
+        renNetwork.includes("mainnet")
+          ? RenNetwork.Mainnet
+          : renNetwork.includes("testnet")
+          ? RenNetwork.Testnet
+          : renNetwork
       );
     }
   }, [renNetwork, setTargetNetwork, targetNetwork]);
