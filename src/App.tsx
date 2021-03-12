@@ -1,7 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AppLoader } from "./components/progress/AppLoader";
-import CatalogPage from "./pages/CatalogPage";
 import MainPage from "./pages/MainPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";

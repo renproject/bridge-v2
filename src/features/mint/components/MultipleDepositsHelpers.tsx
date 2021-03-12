@@ -278,11 +278,11 @@ const useCircledProgressWithContentStyles = makeStyles({
   },
 });
 
-type CircledProgressWithContent = ProgressWithContentProps & {
+type CircledProgressWithContentProps = ProgressWithContentProps & {
   indicator?: boolean;
 };
 
-export const CircledProgressWithContent: FunctionComponent<CircledProgressWithContent> = ({
+export const CircledProgressWithContent: FunctionComponent<CircledProgressWithContentProps> = ({
   color,
   size = 42,
   indicator = false,

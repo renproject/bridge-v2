@@ -313,13 +313,13 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   );
 };
 
-type WrongAddressWarningDialog = WarningWithActionsProps & {
+type WrongAddressWarningDialogProps = WarningWithActionsProps & {
   address: string;
   addressExplorerLink: string;
   currency: string;
 };
 
-export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDialog> = ({
+export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDialogProps> = ({
   address,
   addressExplorerLink,
   currency,

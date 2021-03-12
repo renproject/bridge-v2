@@ -67,8 +67,11 @@ export const getGatewayStatus = (expiryTime: number) => {
     return GatewayStatus.CURRENT; // newest gateway
   } else if (remaining > 0) {
     return GatewayStatus.PREVIOUS; // depositing still possible
-  } else {
+  } else if (remaining > -24 * 60 * 60 * 1000) {
     return GatewayStatus.EXPIRING; // just mint operation permitted
+  } else {
+    // totally expired gateway
+    return GatewayStatus.EXPIRED;
   }
 };
 
@@ -171,6 +174,7 @@ export const getDepositParams = (
     if (mintTxHash) {
       // mint tx hash present - completed
       depositStatus = DepositEntryStatus.COMPLETED;
+      depositPhase = DepositPhase.MINT;
     } else if (
       lockTargetConfirmations &&
       lockConfirmations >= lockTargetConfirmations

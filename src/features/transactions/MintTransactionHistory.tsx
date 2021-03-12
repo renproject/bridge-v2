@@ -1,4 +1,4 @@
-import { Box, Typography } from "@material-ui/core";
+import { Box, Chip, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Skeleton } from "@material-ui/lab";
 import { RenNetwork } from "@renproject/interfaces";
@@ -103,8 +103,8 @@ export const MintTransactionHistory: FunctionComponent = () => {
   const opened = useSelector($txHistoryOpened);
   const activeTxId = useSelector($currentTxId);
   const [page, setPage] = useState(0);
-  const [pending, setPending] = useState(false);
 
+  const [pending, setPending] = useState(false);
   useEffect(() => {
     setPending(true);
     setTimeout(() => {
@@ -331,14 +331,17 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
     paddingLeft: standardPaddings.paddingLeft,
     paddingTop: 6,
     paddingBottom: 6,
+    minHeight: 64,
     display: "flex",
     justifyContent: "space-between",
     alignItems: "stretch",
   },
   details: {
     flexGrow: 2,
+    display: "flex",
+    alignItems: "center",
   },
-  detailsTitleAndLinks: {
+  detailsTitleAndDate: {
     flexGrow: 2,
     display: "flex",
     justifyContent: "space-between",
@@ -363,7 +366,10 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
     display: "flex",
     flexGrow: 2,
   },
-  status: {},
+  status: {
+    display: "flex",
+    alignItems: "center",
+  },
   indicator: {
     width: 40,
     display: "flex",
@@ -383,9 +389,12 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
   tx,
   isActive,
 }) => {
+  const styles = useGatewayResolverStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const styles = useGatewayResolverStyles();
+
+  const [resolving, setResolving] = useState(true);
+
   const {
     handleNext,
     handlePrev,
@@ -446,6 +455,19 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
   const timeToGatewayExpiration = useIntervalCountdown(
     getRemainingGatewayTime(tx.expiryTime)
   );
+
+  useEffect(() => {
+    if (tx.gatewayAddress) {
+      if (hasDeposits) {
+        setResolving(false);
+      } else {
+        setTimeout(() => {
+          setResolving(false);
+        }, 5000);
+      }
+    }
+  }, [tx.gatewayAddress, hasDeposits]);
+
   const params = getLockAndMintParams(tx, currentHash);
   return (
     <>
@@ -502,12 +524,36 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
         )}
         <div className={styles.deposit}>
           <div className={styles.details}>
-            <div className={styles.detailsTitleAndLinks}>
+            <div className={styles.detailsTitleAndDate}>
               {hasDeposits && (
                 <>
                   <Typography className={styles.detailsTitle}>
                     Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
                     {mintChainConfig.full}
+                    <div className={styles.links}>
+                      {Boolean(lockTxLink) && (
+                        <Link
+                          href={lockTxLink}
+                          external
+                          color="primary"
+                          underline="hover"
+                          className={styles.link}
+                        >
+                          {lockChainConfig.full} transaction
+                        </Link>
+                      )}
+                      {Boolean(mintTxLink) && (
+                        <Link
+                          href={mintTxLink}
+                          external
+                          color="primary"
+                          underline="hover"
+                          className={styles.link}
+                        >
+                          {mintChainConfig.full} transaction
+                        </Link>
+                      )}
+                    </div>
                   </Typography>
                   {Boolean(deposit) && (
                     <Typography
@@ -521,29 +567,16 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
                   )}
                 </>
               )}
-            </div>
-            <div className={styles.links}>
-              {Boolean(lockTxLink) && (
-                <Link
-                  href={lockTxLink}
-                  external
-                  color="primary"
-                  underline="hover"
-                  className={styles.link}
-                >
-                  {lockChainConfig.full} transaction
-                </Link>
-              )}
-              {Boolean(mintTxLink) && (
-                <Link
-                  href={mintTxLink}
-                  external
-                  color="primary"
-                  underline="hover"
-                  className={styles.link}
-                >
-                  {mintChainConfig.full} transaction
-                </Link>
+              {!hasDeposits && (
+                <>
+                  {resolving ? (
+                    <Skeleton width={200} />
+                  ) : (
+                    <Typography className={styles.detailsTitle}>
+                      No deposits found...
+                    </Typography>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -572,15 +605,20 @@ const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
               )}
             </div>
             <div className={styles.status}>
-              <CircledProgressWithContent
-                color={lockCurrencyConfig.color}
-                confirmations={lockConfirmations}
-                targetConfirmations={lockTargetConfirmations}
-                processing={depositPhase === DepositPhase.NONE}
-                size={34}
-              >
-                <StatusIcon />
-              </CircledProgressWithContent>
+              {resolving && (
+                <Skeleton variant="circle" width={42} height={42} />
+              )}
+              {!resolving && hasDeposits && (
+                <CircledProgressWithContent
+                  color={lockCurrencyConfig.color}
+                  confirmations={lockConfirmations}
+                  targetConfirmations={lockTargetConfirmations}
+                  processing={depositPhase === DepositPhase.NONE}
+                  size={34}
+                >
+                  <StatusIcon />
+                </CircledProgressWithContent>
+              )}
             </div>
             <div className={styles.indicator}>
               {hasDeposits &&
@@ -642,6 +680,8 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
           }
         />
       );
+    case GatewayStatus.EXPIRED:
+      return <Chip label="Gateway expired" />;
     default:
       return null;
   }
@@ -697,6 +737,13 @@ export const GatewayLabel: FunctionComponent<GatewayLabelProps> = ({
           />
         </Typography>
       );
+    case GatewayStatus.EXPIRED:
+      return (
+        <Typography>
+          Expired Gateway{" "}
+          <TooltipWithIcon title={<span>This gateway is expired.</span>} />
+        </Typography>
+      );
     default:
       return null;
   }
@@ -722,36 +769,22 @@ export const GatewayAddress: FunctionComponent<GatewayAddressProps> = ({
   address,
 }) => {
   const styles = useGatewayAddressStyles();
-  switch (status) {
-    case GatewayStatus.CURRENT:
-      return (
-        <Typography variant="caption">
-          <Link color="primary" underline="hover" onClick={onClick}>
-            {address}
-          </Link>
-        </Typography>
-      );
-    case GatewayStatus.PREVIOUS:
-      return (
-        <Typography
-          className={styles.disabled}
-          color="textSecondary"
-          variant="caption"
-        >
-          <BlockIcon className={styles.icon} fontSize="inherit" /> {address}
-        </Typography>
-      );
-    case GatewayStatus.EXPIRING:
-      return (
-        <Typography
-          className={styles.disabled}
-          color="textSecondary"
-          variant="caption"
-        >
-          <BlockIcon className={styles.icon} fontSize="inherit" /> {address}
-        </Typography>
-      );
-    default:
-      return null;
+  if (status === GatewayStatus.CURRENT) {
+    return (
+      <Typography variant="caption">
+        <Link color="primary" underline="hover" onClick={onClick}>
+          {address}
+        </Link>
+      </Typography>
+    );
   }
+  return (
+    <Typography
+      className={styles.disabled}
+      color="textSecondary"
+      variant="caption"
+    >
+      <BlockIcon className={styles.icon} fontSize="inherit" /> {address}
+    </Typography>
+  );
 };
