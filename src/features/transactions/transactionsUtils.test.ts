@@ -102,7 +102,7 @@ describe("(de/se)rialization", () => {
 describe("pageTitle", () => {
   test("constructs mint tx page title", () => {
     const title = getTxPageTitle(mintTx);
-    expect(title).toEqual("Mint - 1 BTC - 2020-11-03T13:54:59.484Z");
+    expect(title).toEqual("Mint - BTC - 2020-11-03T13:54:59.484Z");
   });
 
   test("constructs release tx page title", () => {
