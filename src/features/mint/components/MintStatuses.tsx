@@ -476,7 +476,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     mintTxLink,
   ]);
 
-  useEffect(showNotifications, [pending]);
+  useEffect(showNotifications, [showNotifications, pending]);
 
   return (
     <>

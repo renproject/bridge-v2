@@ -1,21 +1,15 @@
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   burnMachine,
-  BurnMachineContext,
-  BurnMachineEvent,
   BurnMachineSchema,
   GatewaySession,
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
-import { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Interpreter, State } from "xstate";
+import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
-import { db } from "../../services/database/database";
 import { getRenJs } from "../../services/renJs";
 import { burnChainMap, releaseChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
-import { updateTransaction } from "../transactions/transactionsSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
 
 export const useBurnMachine = (burnTransaction: GatewaySession) => {
@@ -29,7 +23,7 @@ export const useBurnMachine = (burnTransaction: GatewaySession) => {
     }),
     {}
   );
-  const machineHook = useMachine(burnMachine, {
+  return useMachine(burnMachine, {
     context: {
       tx,
       providers,
@@ -42,45 +36,6 @@ export const useBurnMachine = (burnTransaction: GatewaySession) => {
     },
     devTools: env.XSTATE_DEVTOOLS,
   });
-
-  useReleaseTransactionPersistence(machineHook[2]);
-
-  return machineHook;
 };
 
 export type BurnMachineSchemaState = keyof BurnMachineSchema["states"];
-
-export const useReleaseTransactionPersistence = (
-  service: Interpreter<BurnMachineContext, any, BurnMachineEvent>
-) => {
-  const dispatch = useDispatch();
-  const sub = useCallback(
-    async (state: State<BurnMachineContext, BurnMachineEvent>) => {
-      const tx = state.context.tx;
-      try {
-        const event = state.event.type;
-        // Persist more regularly to prevent the user from seeing confusing states
-        // and submitting multiple times
-        if (["CREATED", "SUBMITTED", "CONFIRMED", "RELEASED"].includes(event)) {
-          // Clone prevents throwing serialization errors during dispatch
-          // which breaks the event loop and prevents txs from processing
-          const newDbTx = cloneTx(tx);
-          await db.updateTx(newDbTx);
-          dispatch(updateTransaction(newDbTx));
-        }
-      } catch (err) {
-        console.warn("Release Tx synchronization failed", err, tx);
-      }
-    },
-    [dispatch]
-  );
-
-  useEffect(() => {
-    service.subscribe(sub);
-    return () => {
-      service.off(sub);
-    };
-  }, [dispatch, service, sub]);
-
-  service.subscribe();
-};
