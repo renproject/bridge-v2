@@ -76,7 +76,6 @@ import {
   useTxParam,
 } from "../../transactions/transactionsUtils";
 import {
-  useAuthRequired,
   useSelectedChainWallet,
 } from "../../wallet/walletHooks";
 import {
@@ -109,7 +108,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
-  useAuthRequired(true);
   const dispatch = useDispatch();
   const chain = useSelector($chain);
   const { walletConnected } = useSelectedChainWallet();

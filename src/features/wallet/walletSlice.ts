@@ -24,36 +24,18 @@ type WalletState = {
   chain: BridgeChain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
-  signatures: AuthSignatures;
-  user: AuthUser;
-  settingUser: boolean;
-  authRequired: boolean;
 };
 
 let initialState: WalletState = {
   chain: BridgeChain.ETHC,
   pickerOpened: false,
   balances: [],
-  signatures: {
-    signature: "",
-    rawSignature: "",
-  },
-  user: null,
-  settingUser: false,
-  authRequired: false,
 };
 
 const slice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    settingUser(state) {
-      state.settingUser = true;
-    },
-    setUser(state, action: PayloadAction<AuthUser>) {
-      state.settingUser = false;
-      state.user = action.payload;
-    },
     setChain(state, action: PayloadAction<BridgeChain>) {
       state.chain = action.payload;
     },
@@ -73,23 +55,14 @@ const slice = createSlice({
     resetBalances(state) {
       state.balances = [];
     },
-    setSignatures(state, action: PayloadAction<AuthSignatures>) {
-      state.signatures = action.payload;
-    },
-    setAuthRequired(state, action: PayloadAction<boolean>) {
-      state.authRequired = action.payload;
-    },
   },
 });
 
 export const {
-  settingUser,
   setChain,
   setWalletPickerOpened,
   addOrUpdateBalance,
   resetBalances,
-  setSignatures,
-  setAuthRequired,
 } = slice.actions;
 
 export const walletReducer = slice.reducer;
@@ -104,13 +77,3 @@ export const $multiwalletChain = createSelector($chain, (chain) => {
   const chainConfig = getChainConfig(chain);
   return chainConfig.rentxName;
 });
-
-export const $walletUser = createSelector($wallet, (wallet) => wallet.user);
-export const $isAuthenticating = createSelector(
-  $wallet,
-  (wallet) => wallet.settingUser
-);
-export const $authRequired = createSelector(
-  $wallet,
-  (wallet) => wallet.authRequired
-);

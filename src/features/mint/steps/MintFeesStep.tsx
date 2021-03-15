@@ -63,7 +63,6 @@ import {
 } from "../../transactions/transactionsUtils";
 import { useShakePaper } from "../../ui/uiHooks";
 import {
-  useAuthRequired,
   useSelectedChainWallet,
 } from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
@@ -80,7 +79,6 @@ import {
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
-  useAuthRequired(true);
   const dispatch = useDispatch();
   const history = useHistory();
   const { walletConnected, account } = useSelectedChainWallet();

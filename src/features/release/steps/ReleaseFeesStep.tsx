@@ -49,7 +49,6 @@ import {
   TxType,
 } from "../../transactions/transactionsUtils";
 import {
-  useAuthRequired,
   useSelectedChainWallet,
 } from "../../wallet/walletHooks";
 import {
@@ -67,7 +66,6 @@ import {
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
-  useAuthRequired(true);
   const dispatch = useDispatch();
   const history = useHistory();
   const { account, walletConnected } = useSelectedChainWallet();

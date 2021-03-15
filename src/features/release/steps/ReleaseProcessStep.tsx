@@ -60,7 +60,6 @@ import {
   useTxParam,
 } from '../../transactions/transactionsUtils'
 import {
-  useAuthRequired,
   useSelectedChainWallet,
 } from '../../wallet/walletHooks'
 import {
@@ -79,7 +78,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
-  useAuthRequired(true);
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
