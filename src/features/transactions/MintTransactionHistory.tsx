@@ -81,7 +81,6 @@ import {
   TransactionHistoryDialog,
   WarningLabel,
 } from "./components/TransactionHistoryHelpers";
-import { TransactionItemProps } from "./components/TransactionsHelpers";
 import {
   $currentTxId,
   $txHistoryOpened,
@@ -259,6 +258,7 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
 
 export type GatewayEntryProps = {
   tx: GatewaySession;
+  forceLoading?: boolean;
   isActive?: boolean;
   onContinue?: ((depositHash?: string) => void) | (() => void);
 };
@@ -385,7 +385,7 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
   },
 }));
 
-const GatewayEntry: FunctionComponent<TransactionItemProps> = ({
+const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   tx,
   isActive,
 }) => {
