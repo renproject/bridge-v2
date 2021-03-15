@@ -7,7 +7,7 @@ type TransactionsState = {
 };
 
 let initialState: TransactionsState = {
-  txHistoryOpened: true, // FIXME: false
+  txHistoryOpened: false,
   currentTxId: "",
 };
 
