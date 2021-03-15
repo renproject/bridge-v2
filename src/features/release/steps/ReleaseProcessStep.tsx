@@ -118,7 +118,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     menuOpened,
     handleMenuOpen,
     handleMenuClose,
-    handleDeleteTx,
   } = useTransactionDeletion(tx);
 
   const {
@@ -245,7 +244,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
         tx={tx}
         open={menuOpened}
         onClose={handleMenuClose}
-        onDeleteTx={handleDeleteTx}
       />
       <Debug it={{ tooltipOpened, parsedTx, txState: txState }} />
     </>

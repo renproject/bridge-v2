@@ -134,7 +134,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     menuOpened,
     handleMenuOpen,
     handleMenuClose,
-    handleDeleteTx,
   } = useTransactionDeletion(tx);
 
   const [machineSend, setMachineSend] = useState<MachineSend>();
@@ -291,7 +290,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         tx={tx}
         open={menuOpened}
         onClose={handleMenuClose}
-        onDeleteTx={handleDeleteTx}
         onUpdateTx={handleUpdateTx}
       />
       <Debug it={{ parsedTx, txState: txState }} />
