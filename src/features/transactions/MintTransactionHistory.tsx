@@ -1,4 +1,4 @@
-import { Box, Chip, Typography } from "@material-ui/core";
+import { Box, Chip, Typography, useTheme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Skeleton } from "@material-ui/lab";
 import { RenNetwork } from "@renproject/interfaces";
@@ -231,7 +231,6 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
   pending,
   activeTxId,
 }) => {
-  console.log(dayOffset);
   const tx = useMemo(
     () =>
       createMintTransaction({
@@ -344,7 +343,7 @@ export const useGatewayResolverStyles = makeStyles((theme) => ({
     alignItems: "stretch",
   },
   details: {
-    flexGrow: 2,
+    width: 360,
     display: "flex",
     alignItems: "center",
   },
@@ -396,6 +395,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   tx,
   isActive,
 }) => {
+  const theme = useTheme();
   const styles = useGatewayResolverStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -446,13 +446,13 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   );
 
   const handleContinue = useCallback(() => {
+    const qsTx = { ...tx, depositHash: currentHash };
     history.push({
       pathname: paths.MINT_TRANSACTION,
-      search: "?" + createTxQueryString(tx),
+      search: "?" + createTxQueryString(qsTx),
       state: {
         txState: {
           reloadTx: true,
-          currentHash, // TODO: querystring?
         },
       },
     });
@@ -476,6 +476,13 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   }, [tx.gatewayAddress, hasDeposits]);
 
   const params = getLockAndMintParams(tx, currentHash);
+  const completed = depositStatus === DepositEntryStatus.COMPLETED;
+  const confirmationProps = completed
+    ? {}
+    : {
+        confirmations: lockConfirmations,
+        targetConfirmations: lockTargetConfirmations,
+      };
   return (
     <>
       <Debug
@@ -617,9 +624,12 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
               )}
               {!resolving && hasDeposits && (
                 <CircledProgressWithContent
-                  color={lockCurrencyConfig.color}
-                  confirmations={lockConfirmations}
-                  targetConfirmations={lockTargetConfirmations}
+                  color={
+                    completed
+                      ? theme.customColors.blue
+                      : lockCurrencyConfig.color
+                  }
+                  {...confirmationProps}
                   processing={depositPhase === DepositPhase.NONE}
                   size={34}
                 >

@@ -324,6 +324,7 @@ export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
   tx,
 }) => {
   const styles = useDepositNavigationStyles();
+  const theme = useTheme();
   const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
 
   const {
@@ -362,12 +363,20 @@ export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
           const isProcessing = depositPhase === DepositPhase.NONE;
           const requiresAction =
             depositStatus === DepositEntryStatus.ACTION_REQUIRED;
+          const completed = depositStatus === DepositEntryStatus.COMPLETED;
+          const confirmationProps = completed
+            ? {}
+            : {
+                confirmations: lockConfirmations,
+                targetConfirmations: lockTargetConfirmations,
+              };
           return (
             <DepositToggleButton key={hash} value={hash}>
               <CircledProgressWithContent
-                color={lockCurrencyConfig.color}
-                confirmations={lockConfirmations}
-                targetConfirmations={lockTargetConfirmations}
+                color={
+                  completed ? theme.customColors.blue : lockCurrencyConfig.color
+                }
+                {...confirmationProps}
                 processing={isProcessing}
                 indicator={requiresAction}
               >

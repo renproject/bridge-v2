@@ -30,7 +30,7 @@ import {
   ZecGreyIcon,
   ZecIcon,
 } from "../components/icons/RenIcons";
-import { bitcoinCashGreen, bitcoinOrange } from "../theme/colors";
+import * as customColors from "../theme/colors";
 
 // TODO: replace everywhere
 export enum RenChain {
@@ -161,7 +161,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     symbol: BridgeCurrency.BTC,
     short: "BTC",
     full: "Bitcoin",
-    color: bitcoinOrange,
+    color: customColors.bitcoinOrange,
     FullIcon: BtcFullIcon,
     GreyIcon: BtcGreyIcon,
     Icon: BtcIcon,
@@ -187,7 +187,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     symbol: BridgeCurrency.BCH,
     short: "BCH",
     full: "Bitcoin Cash",
-    color: bitcoinCashGreen,
+    color: customColors.bitcoinCashGreen,
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
     Icon: BchIcon,
