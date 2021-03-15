@@ -23,6 +23,7 @@ import {
   BigTopWrapper,
   BigWrapper,
   CenteringSpacedBox,
+  Hide,
   MediumWrapper,
 } from "../../components/layout/LayoutHelpers";
 import { Link } from "../../components/links/Links";
@@ -38,6 +39,7 @@ import {
 } from "../../components/transactions/TransactionsGrid";
 import { Debug } from "../../components/utils/Debug";
 import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
+import { featureFlags } from "../../constants/featureFlags";
 import { paths } from "../../pages/routes";
 import {
   BridgeChain,
@@ -194,14 +196,16 @@ export const MintTransactionHistory: FunctionComponent = () => {
             />
           ))}
           <Debug it={{ activeTxId }} />
-          <TransactionsPaginationWrapper>
-            <SimplePagination
-              count={rowsPerPage * 2}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={handleChangePage}
-            />
-          </TransactionsPaginationWrapper>
+          <Hide when={!featureFlags.enableTxHistoryExploration}>
+            <TransactionsPaginationWrapper>
+              <SimplePagination
+                count={rowsPerPage * 2}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onChangePage={handleChangePage}
+              />
+            </TransactionsPaginationWrapper>
+          </Hide>
         </>
       )}
     </TransactionHistoryDialog>
