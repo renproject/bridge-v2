@@ -11,15 +11,6 @@ export type AssetBalance = {
   balance: number;
 };
 
-export type AuthUser = null | {
-  uid: string;
-};
-
-export type AuthSignatures = {
-  signature: string;
-  rawSignature: string;
-};
-
 type WalletState = {
   chain: BridgeChain;
   pickerOpened: boolean;

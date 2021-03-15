@@ -4,7 +4,7 @@ import { RootState } from "../../store/rootReducer";
 import { getLockAndMintParams } from "../mint/mintUtils";
 import { $renNetwork } from "../network/networkSlice";
 import { getBurnAndReleaseParams } from "../release/releaseUtils";
-import { txCompletedSorter, TxEntryStatus, TxType } from "./transactionsUtils";
+import { TxEntryStatus, TxType } from "./transactionsUtils";
 
 export type BridgeTransaction = GatewaySession;
 
@@ -35,10 +35,7 @@ const slice = createSlice({
   },
 });
 
-export const {
-  setTxHistoryOpened,
-  setCurrentTxId,
-} = slice.actions;
+export const { setTxHistoryOpened, setCurrentTxId } = slice.actions;
 
 export const transactionsReducer = slice.reducer;
 

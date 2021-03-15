@@ -87,8 +87,11 @@ const useTransactionMenuStyles = makeStyles((theme) => ({
     paddingTop: 6,
     minHeight: 150,
   },
-  transferId: {
+  transferData: {
     paddingBottom: 10,
+  },
+  transferId: {
+    wordBreak: "break-all",
   },
 }));
 
@@ -144,8 +147,14 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
             </div>
           </NestedDrawerContent>
           <NestedDrawerActions>
-            <PaperContent paddingVariant="medium" className={styles.transferId}>
-              <Typography variant="inherit">Transfer ID: {tx.id}</Typography>
+            <PaperContent
+              paddingVariant="medium"
+              className={styles.transferData}
+            >
+              <Typography variant="inherit">Transfer ID:</Typography>
+              <Typography variant="inherit" className={styles.transferId}>
+                {tx.id}
+              </Typography>
             </PaperContent>
             <Divider />
             <PaperContent bottomPadding topPadding paddingVariant="medium">
