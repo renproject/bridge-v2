@@ -100,6 +100,7 @@ export const TransactionsPaginationWrapper = styled("div")(({ theme }) => ({
   paddingTop: 10,
   paddingBottom: 10,
   backgroundColor: theme.customColors.greyHeaderBackground,
+  display: "none",
 }));
 
 export const useTransactionEntryStyles = makeStyles((theme) => ({

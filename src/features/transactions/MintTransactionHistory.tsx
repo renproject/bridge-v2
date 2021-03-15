@@ -30,10 +30,7 @@ import {
   SimplePagination,
   SimplestPagination,
 } from "../../components/pagination/SimplePagination";
-import {
-  CenteredProgress,
-  PulseIndicator,
-} from "../../components/progress/ProgressHelpers";
+import { PulseIndicator } from "../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../components/tooltips/TooltipWithIcon";
 import {
   TransactionsHeader,
@@ -109,18 +106,20 @@ export const MintTransactionHistory: FunctionComponent = () => {
     setTimeout(() => {
       setPending(false);
     }, 1000);
-  }, [currency, chain]);
+  }, [currency, chain, page]);
 
   const chainConfig = getChainConfig(chain);
 
   const handleCurrencyChange = useCallback(
     (event) => {
+      setPage(0);
       dispatch(setMintCurrency(event.target.value));
     },
     [dispatch]
   );
   const handleChainChange = useCallback(
     (event) => {
+      setPage(0);
       dispatch(setChain(event.target.value));
     },
     [dispatch]
@@ -180,12 +179,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
           )}
         </BigTopWrapper>
       )}
-      {walletConnected && pending && (
-        <BigTopWrapper>
-          <CenteredProgress color="primary" size={100} />
-        </BigTopWrapper>
-      )}
-      {walletConnected && !pending && (
+      {walletConnected && (
         <>
           {[0, 1, 2].map((offset) => (
             <GatewayEntryResolver
@@ -196,6 +190,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
               account={account}
               network={network}
               activeTxId={activeTxId}
+              pending={pending}
             />
           ))}
           <Debug it={{ activeTxId }} />
@@ -219,6 +214,7 @@ type GatewayResolverProps = {
   chain: BridgeChain;
   account: string;
   network: RenNetwork;
+  pending: boolean;
   activeTxId: string;
 };
 
@@ -228,6 +224,7 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
   chain,
   network,
   account,
+  pending,
   activeTxId,
 }) => {
   console.log(dayOffset);
@@ -247,18 +244,20 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
 
   const isActive = activeTxId === tx.id;
   if (isActive) {
+    console.log("returning isActive", dayOffset);
     return <GatewayEntry tx={tx} isActive />;
   }
-  return (
-    <>
-      <GatewayEntryMachine tx={tx} />
-    </>
-  );
+  if (pending) {
+    console.log("returning entry pending", dayOffset);
+    return <GatewayEntry tx={tx} pending />;
+  }
+  console.log("returning entry machine", dayOffset);
+  return <GatewayEntryMachine tx={tx} />;
 };
 
 export type GatewayEntryProps = {
   tx: GatewaySession;
-  forceLoading?: boolean;
+  pending?: boolean;
   isActive?: boolean;
   onContinue?: ((depositHash?: string) => void) | (() => void);
 };
@@ -269,11 +268,15 @@ export const GatewayEntryMachine: FunctionComponent<GatewayEntryProps> = ({
   const [current, , service] = useMintMachine(tx);
   useEffect(
     () => () => {
+      // console.log("stopping", tx.id);
       service.stop();
     },
     [service]
   );
-
+  useEffect(() => {
+    // console.log("starting", tx.id);
+  }, []);
+  // console.log("updating", tx.id);
   return <GatewayEntry tx={current.context.tx} />;
 };
 
@@ -527,7 +530,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
             <div className={styles.detailsTitleAndDate}>
               {hasDeposits && (
                 <>
-                  <Typography className={styles.detailsTitle}>
+                  <Typography className={styles.detailsTitle} component="div">
                     Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
                     {mintChainConfig.full}
                     <div className={styles.links}>

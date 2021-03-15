@@ -10,14 +10,12 @@ export type BridgeTransaction = GatewaySession;
 
 type TransactionsState = {
   txs: Array<BridgeTransaction>;
-  txsPending: boolean;
   txHistoryOpened: boolean;
-  currentTxId: string; //FIXME: rename to MintTxGateway
+  currentTxId: string;
 };
 
 let initialState: TransactionsState = {
   txs: [],
-  txsPending: false, // FIXME: remove
   txHistoryOpened: true, // FIXME: false
   currentTxId: "",
 };
