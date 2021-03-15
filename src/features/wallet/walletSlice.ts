@@ -83,7 +83,6 @@ const slice = createSlice({
 });
 
 export const {
-  setUser,
   settingUser,
   setChain,
   setWalletPickerOpened,
@@ -105,10 +104,6 @@ export const $multiwalletChain = createSelector($chain, (chain) => {
   const chainConfig = getChainConfig(chain);
   return chainConfig.rentxName;
 });
-export const $walletSignatures = createSelector(
-  $wallet,
-  (wallet) => wallet.signatures
-);
 
 export const $walletUser = createSelector($wallet, (wallet) => wallet.user);
 export const $isAuthenticating = createSelector(

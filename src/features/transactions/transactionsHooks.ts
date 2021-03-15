@@ -2,31 +2,21 @@ import { RenNetwork } from "@renproject/interfaces";
 import { GatewaySession } from "@renproject/ren-tx";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
-import { paths } from "../../pages/routes";
-import { useNotifications } from "../../providers/Notifications";
-import { db } from "../../services/database/database";
 import {
   BridgeCurrency,
   getCurrencyConfig,
   isMainnetNetwork,
   isTestnetNetwork,
 } from "../../utils/assetConfigs";
-import { trimAddress } from '../../utils/strings'
 import { $renNetwork, setRenNetwork } from "../network/networkSlice";
 import { useSelectedChainWallet } from "../wallet/walletHooks";
 import { $multiwalletChain } from "../wallet/walletSlice";
 import {
   $currentTxId,
-  removeTransaction,
   setCurrentTxId,
 } from "./transactionsSlice";
-import { TxType } from "./transactionsUtils";
 
 export const useTransactionMenuControl = (tx: GatewaySession) => {
-  const dispatch = useDispatch();
-  const history = useHistory();
-  const { showNotification } = useNotifications();
   const { walletConnected } = useSelectedChainWallet();
 
   const [menuOpened, setMenuOpened] = useState(false);
@@ -38,15 +28,8 @@ export const useTransactionMenuControl = (tx: GatewaySession) => {
       setMenuOpened(true);
     }
   }, [walletConnected]);
-  const handleDeleteTx = useCallback(() => {
-    db.deleteTx(tx).then(() => {
-      dispatch(removeTransaction(tx));
-      showNotification(`Transaction ${trimAddress(tx.id, 6)} deleted.`);
-      history.push(tx.type === TxType.MINT ? paths.MINT : paths.RELEASE);
-    });
-  }, [dispatch, history, showNotification, tx]);
 
-  return { menuOpened, handleMenuOpen, handleMenuClose, handleDeleteTx };
+  return { menuOpened, handleMenuOpen, handleMenuClose };
 };
 
 export const useRenNetworkTracker = (currency: BridgeCurrency) => {

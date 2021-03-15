@@ -26,37 +26,15 @@ import React, {
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useDebounce, useWindowSize } from "react-use";
-import { env } from "../constants/environmentVariables";
-import { $renNetwork } from "../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../features/network/networkUtils";
-import { AuthWarningDialog } from "../features/transactions/components/TransactionsHelpers";
-import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
-import {
-  $transactionsData,
-  $transactionsNeedsAction,
-  setTxHistoryOpened,
-} from "../features/transactions/transactionsSlice";
-import { useSubNetworkName } from "../features/ui/uiHooks";
-import {
-  useAuthentication,
-  useSelectedChainWallet,
-  useSyncMultiwalletNetwork,
-  useWallet,
-  useWeb3Signatures,
-} from "../features/wallet/walletHooks";
-import {
-  $authRequired,
-  $multiwalletChain,
-  $walletPickerOpened,
-  setWalletPickerOpened,
-} from "../features/wallet/walletSlice";
-import {
-  renNetworkToEthNetwork,
-  walletPickerModalConfig,
-} from "../providers/multiwallet/Multiwallet";
+import { useWindowSize } from "react-use";
 import { TransactionHistoryMenuIconButton } from "../components/buttons/Buttons";
 import { RenBridgeLogoIcon } from "../components/icons/RenIcons";
+import { Footer } from "../components/layout/Footer";
+import {
+  MainLayoutVariantProps,
+  MobileLayout,
+  useMobileLayoutStyles,
+} from "../components/layout/MobileLayout";
 import { Debug } from "../components/utils/Debug";
 import {
   useWalletPickerStyles,
@@ -66,12 +44,30 @@ import {
   WalletEntryButton,
   WalletWrongNetworkInfo,
 } from "../components/wallet/WalletHelpers";
-import { Footer } from "../components/layout/Footer";
+import { env } from "../constants/environmentVariables";
+import { $renNetwork } from "../features/network/networkSlice";
+import { useSetNetworkFromParam } from "../features/network/networkUtils";
+import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
 import {
-  MobileLayout,
-  MainLayoutVariantProps,
-  useMobileLayoutStyles,
-} from "../components/layout/MobileLayout";
+  $transactionsData,
+  $transactionsNeedsAction,
+  setTxHistoryOpened,
+} from "../features/transactions/transactionsSlice";
+import { useSubNetworkName } from "../features/ui/uiHooks";
+import {
+  useSelectedChainWallet,
+  useSyncMultiwalletNetwork,
+  useWallet,
+} from "../features/wallet/walletHooks";
+import {
+  $multiwalletChain,
+  $walletPickerOpened,
+  setWalletPickerOpened,
+} from "../features/wallet/walletSlice";
+import {
+  renNetworkToEthNetwork,
+  walletPickerModalConfig,
+} from "../providers/multiwallet/Multiwallet";
 
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
@@ -80,12 +76,6 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const dispatch = useDispatch();
   useSetNetworkFromParam();
   useSyncMultiwalletNetwork();
-  useWeb3Signatures();
-  const {
-    authenticate,
-    isAuthenticated,
-    isAuthenticating,
-  } = useAuthentication();
   const {
     status,
     account,
@@ -95,24 +85,6 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   } = useSelectedChainWallet();
   const { txHistoryOpened } = useSelector($transactionsData);
   const txsNeedsAction = useSelector($transactionsNeedsAction);
-
-  const authRequired = useSelector($authRequired);
-  const [authWarningOpened, setAuthWarningOpened] = useState(false);
-  useDebounce(
-    () => {
-      const shouldAuthWarningOpened =
-        walletConnected &&
-        !isAuthenticated &&
-        !isAuthenticating &&
-        (authRequired || txHistoryOpened);
-
-      setAuthWarningOpened(shouldAuthWarningOpened);
-    },
-    1000, // the authentication process takes a few seconds
-    [walletConnected, isAuthenticated, authRequired, txHistoryOpened]
-  );
-  // const authWarningOpened =
-  //   walletConnected && !isAuthenticated && (authRequired || txHistoryOpened);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {
@@ -303,10 +275,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     >
       {children}
       <MintTransactionHistory />
-      <AuthWarningDialog open={authWarningOpened} onMainAction={authenticate} />
       <Debug
         it={{
-          isAuthenticated,
           debugNetworkName,
           debugWallet,
           debugMultiwallet,

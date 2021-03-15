@@ -31,7 +31,6 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { paths } from "../../../pages/routes";
-import { db } from "../../../services/database/database";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -43,10 +42,6 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import {
-  addTransaction,
-  setCurrentTxId,
-} from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   LocationTxState,
@@ -81,7 +76,6 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const network = useSelector($renNetwork);
   const {
     chain,
-    signatures: { signature },
   } = useSelector($wallet);
   const renChain = useSelector($multiwalletChain);
   const amountUsd = useSelector($releaseUsdAmount);
@@ -134,20 +128,15 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const onReleaseTxCreated = useCallback(
     (tx) => {
-      const dbTx = { ...tx };
-      db.addTx(dbTx, account, signature).then(() => {
-        dispatch(setCurrentTxId(tx.id));
-        dispatch(addTransaction(tx));
-        history.push({
-          pathname: paths.RELEASE_TRANSACTION,
-          search: "?" + createTxQueryString(tx),
-          state: {
-            txState: { newTx: true },
-          } as LocationTxState,
-        });
+      history.push({
+        pathname: paths.RELEASE_TRANSACTION,
+        search: "?" + createTxQueryString(tx),
+        state: {
+          txState: { newTx: true },
+        } as LocationTxState,
       });
     },
-    [dispatch, history, account, signature]
+    [history]
   );
 
   useEffect(() => {

@@ -43,7 +43,6 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
-import { db } from "../../../services/database/database";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -55,10 +54,7 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import {
-  addTransaction,
-  setCurrentTxId,
-} from "../../transactions/transactionsSlice";
+import { setCurrentTxId } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   LocationTxState,
@@ -93,7 +89,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const [amountValue, setAmountValue] = useState("");
   const {
     chain,
-    signatures: { signature },
   } = useSelector($wallet);
   const network = useSelector($renNetwork);
   const exchangeRates = useSelector($exchangeRates);
@@ -171,11 +166,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const onMintTxCreated = useCallback(
     async (tx) => {
-      const dbTx = { ...tx };
-      await db.addTx(dbTx, account, signature);
-
-      dispatch(setCurrentTxId(tx.id));
-      dispatch(addTransaction(tx));
       history.push({
         pathname: paths.MINT_TRANSACTION,
         search: "?" + createTxQueryString(tx),
@@ -183,8 +173,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           txState: { newTx: true },
         } as LocationTxState,
       });
+      dispatch(setCurrentTxId(tx.id));
     },
-    [dispatch, history, account, signature]
+    [dispatch, history]
   );
 
   // there is a dependency loop, because we depend on the number
@@ -213,11 +204,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
-        {/*<BigAssetAmountWrapper>*/}
-        {/*  <BigAssetAmount*/}
-        {/*    value={<NumberFormatText value={amount} spacedSuffix={currency} />}*/}
-        {/*  />*/}
-        {/*</BigAssetAmountWrapper>*/}
         <Grid container alignItems="flex-end">
           <Grid item xs={7}>
             <Typography variant="body1" gutterBottom>

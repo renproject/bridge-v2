@@ -8,7 +8,6 @@ import {
   WalletStatus,
 } from "../../components/utils/types";
 import { storageKeys } from "../../constants/constants";
-import { db } from "../../services/database/database";
 import { signWithBinanceChain } from "../../services/wallets/bsc";
 import { BridgeWallet, RenChain } from "../../utils/assetConfigs";
 import { $renNetwork } from "../network/networkSlice";
@@ -19,7 +18,6 @@ import {
   setAuthRequired,
   setSignatures,
   settingUser,
-  setUser,
 } from "./walletSlice";
 
 type WalletData = ReturnType<typeof useMultiwallet> & {
@@ -162,15 +160,13 @@ export const useSignatures = () => {
   const { account, status } = useWallet(chain);
   const web3 = useWeb3();
   const getSignatures = useCallback(async () => {
-    console.debug("reauth");
+    console.debug("reautdh");
     if (account && web3 && status === "connected") {
       try {
         const signatures = await getWeb3Signatures(account, web3, chain);
         dispatch(setSignatures(signatures));
         console.debug("account", account);
         dispatch(settingUser());
-        const userData = await db.getUser(account.toLowerCase(), signatures);
-        dispatch(setUser(userData));
       } catch (error) {
         // FIXME: dispatch some error here to handle in UI
         console.error(error);
