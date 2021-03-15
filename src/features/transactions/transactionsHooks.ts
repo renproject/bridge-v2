@@ -23,7 +23,7 @@ import {
 } from "./transactionsSlice";
 import { TxType } from "./transactionsUtils";
 
-export const useTransactionDeletion = (tx: GatewaySession) => {
+export const useTransactionMenuControl = (tx: GatewaySession) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { showNotification } = useNotifications();

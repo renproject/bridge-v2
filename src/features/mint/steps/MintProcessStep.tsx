@@ -64,7 +64,7 @@ import {
 } from "../../transactions/components/TransactionsHelpers";
 import {
   useSetCurrentTxId,
-  useTransactionDeletion,
+  useTransactionMenuControl,
 } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
@@ -134,7 +134,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     menuOpened,
     handleMenuOpen,
     handleMenuClose,
-  } = useTransactionDeletion(tx);
+  } = useTransactionMenuControl(tx);
 
   const [machineSend, setMachineSend] = useState<MachineSend>();
   const handleMachineReady = useCallback<OnMachineSendReadyFn>((send) => {

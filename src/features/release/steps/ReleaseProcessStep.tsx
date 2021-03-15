@@ -51,7 +51,7 @@ import { TransactionMenu } from '../../transactions/components/TransactionMenu'
 import { ProgressStatus } from '../../transactions/components/TransactionsHelpers'
 import {
   useSetCurrentTxId,
-  useTransactionDeletion,
+  useTransactionMenuControl,
 } from '../../transactions/transactionsHooks'
 import {
   createTxQueryString,
@@ -118,7 +118,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     menuOpened,
     handleMenuOpen,
     handleMenuClose,
-  } = useTransactionDeletion(tx);
+  } = useTransactionMenuControl(tx);
 
   const {
     modalOpened,
