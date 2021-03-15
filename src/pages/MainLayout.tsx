@@ -50,7 +50,6 @@ import { useSetNetworkFromParam } from "../features/network/networkUtils";
 import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
 import {
   $transactionsData,
-  $transactionsNeedsAction,
   setTxHistoryOpened,
 } from "../features/transactions/transactionsSlice";
 import { useSubNetworkName } from "../features/ui/uiHooks";
@@ -84,7 +83,6 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     symbol,
   } = useSelectedChainWallet();
   const { txHistoryOpened } = useSelector($transactionsData);
-  const txsNeedsAction = useSelector($transactionsNeedsAction);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {
@@ -156,14 +154,12 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const debugNetworkName = useSubNetworkName();
 
   const drawerId = "main-menu-mobile";
-  const showTxIndicator = walletConnected && txsNeedsAction;
 
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
         <TransactionHistoryMenuIconButton
           opened={txHistoryOpened}
-          indicator={showTxIndicator}
           className={styles.desktopTxHistory}
           onClick={handleTxHistoryToggle}
         />
@@ -235,7 +231,6 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
         <Button className={styles.mobileMenuButton} component="div">
           <TransactionHistoryMenuIconButton
             className={styles.mobileTxHistory}
-            indicator={showTxIndicator}
           />
           <span>View Transactions</span>
         </Button>

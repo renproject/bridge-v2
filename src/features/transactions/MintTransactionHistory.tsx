@@ -525,7 +525,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
         {depositsCount > 1 && (
           <div className={styles.multiple}>
             <WarningLabel className={styles.multipleLabel}>
-              Multiple transactions
+              Multiple Transactions
             </WarningLabel>
             <SimplestPagination
               className={styles.multiplePagination}
@@ -758,7 +758,7 @@ export const GatewayLabel: FunctionComponent<GatewayLabelProps> = ({
       return (
         <Typography>
           Expired Gateway{" "}
-          <TooltipWithIcon title={<span>This gateway is expired.</span>} />
+          <TooltipWithIcon title={<span>This gateway has expired.</span>} />
         </Typography>
       );
     default:

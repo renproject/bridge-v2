@@ -1,21 +1,12 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GatewaySession } from "@renproject/ren-tx";
 import { RootState } from "../../store/rootReducer";
-import { getLockAndMintParams } from "../mint/mintUtils";
-import { $renNetwork } from "../network/networkSlice";
-import { getBurnAndReleaseParams } from "../release/releaseUtils";
-import { TxEntryStatus, TxType } from "./transactionsUtils";
-
-export type BridgeTransaction = GatewaySession;
 
 type TransactionsState = {
-  txs: Array<BridgeTransaction>;
   txHistoryOpened: boolean;
   currentTxId: string;
 };
 
 let initialState: TransactionsState = {
-  txs: [],
   txHistoryOpened: true, // FIXME: false
   currentTxId: "",
 };
@@ -46,27 +37,4 @@ export const $currentTxId = createSelector(
   $transactionsData,
   (transactions) => transactions.currentTxId
 );
-export const $networkTransactions = createSelector(
-  $transactionsData,
-  $renNetwork,
-  (transactions, renNetwork) => {
-    return transactions.txs.filter((tx) => tx.network === renNetwork);
-  }
-);
 
-//TODO: move this one to separate file to simplify up store dependencies (chunks)
-export const $transactionsNeedsAction = createSelector(
-  $networkTransactions,
-  (txs) => {
-    for (let tx of txs) {
-      const { meta } =
-        tx.type === TxType.MINT
-          ? getLockAndMintParams(tx)
-          : getBurnAndReleaseParams(tx);
-      if (meta.status === TxEntryStatus.ACTION_REQUIRED) {
-        return true;
-      }
-    }
-    return false;
-  }
-);
