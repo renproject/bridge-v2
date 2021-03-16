@@ -10,21 +10,20 @@ import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
 import { RenChain } from "../../utils/assetConfigs";
 
-const networkMapping: Record<number, RenNetwork> = {
-  1: RenNetwork.Mainnet,
-  4: RenNetwork.TestnetVDot3,
-  42: RenNetwork.Testnet,
+const networkMapping: Record<number, RenNetwork[]> = {
+  1: [RenNetwork.Mainnet],
+  42: [RenNetwork.Testnet, RenNetwork.TestnetVDot3],
 };
 
 export const renNetworkToEthNetwork = (id: RenNetwork): number | undefined => {
-  const entry = Object.entries(networkMapping).find(([_, x]) => x === id);
+  const entry = Object.entries(networkMapping).find(([_, x]) => x.includes(id));
   if (!entry) return entry;
   return parseInt(entry[0]);
 };
 
 export const ethNetworkToRenNetwork = (id: string | number): RenNetwork => {
   const index = Number(id);
-  return networkMapping[index];
+  return networkMapping[index]?.[0] || RenNetwork.Testnet;
 };
 
 export const walletPickerModalConfig = (targetEthChainId: number) => ({

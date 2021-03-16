@@ -245,7 +245,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renDOGE",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DOGE,
-    ethTestnet: EthTestnet.RINKEBY,
+    ethTestnet: EthTestnet.KOVAN,
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.ZEC]: {

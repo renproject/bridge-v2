@@ -1,8 +1,9 @@
 import {
-  OutlinedInputProps, styled,
+  OutlinedInputProps,
+  styled,
   TextField,
   TextFieldProps,
-} from '@material-ui/core'
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
 
@@ -19,7 +20,7 @@ export const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const AddressInput: FunctionComponent<TextFieldProps> = (props) => {
+export const OutlinedTextField: FunctionComponent<TextFieldProps> = (props) => {
   const { input, ...classes } = useStyles();
   return (
     <TextField
@@ -34,7 +35,11 @@ export const AddressInput: FunctionComponent<TextFieldProps> = (props) => {
   );
 };
 
-export const AddressInputWrapper = styled('div')({
+export const OutlinedTextFieldWrapper = styled("div")({
+  minHeight: 75,
+});
+
+export const BigOutlinedTextFieldWrapper = styled("div")({
   marginTop: 50,
   marginBottom: 25,
-})
+});

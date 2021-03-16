@@ -5,25 +5,25 @@
   "dependencies": {
     "@babel/helper-call-delegate": "^7.12.1",
     "@bandprotocol/bandchain.js": "1.1.6",
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@reduxjs/toolkit": "^1.4.0",
-    "@renproject/chains": "^2.1.3",
-    "@renproject/chains-bitcoin": "^2.1.3",
-    "@renproject/chains-ethereum": "^2.1.3",
-    "@renproject/chains-terra": "^2.1.3",
+    "@renproject/chains": "^2.1.6",
+    "@renproject/chains-bitcoin": "^2.1.6",
+    "@renproject/chains-ethereum": "^2.1.6",
+    "@renproject/chains-terra": "^2.1.6",
     "@renproject/fonts": "^1.0.3-rc1",
-    "@renproject/interfaces": "^2.1.3",
-    "@renproject/multiwallet-binancesmartchain-injected-connector": "^2.1.3",
-    "@renproject/multiwallet-ethereum-injected-connector": "^2.1.3",
-    "@renproject/multiwallet-ethereum-mewconnect-connector": "^2.1.3",
-    "@renproject/multiwallet-ethereum-walletconnect-connector": "^2.1.3",
-    "@renproject/multiwallet-ui": "^2.1.3",
-    "@renproject/ren": "^2.1.3",
-    "@renproject/ren-tx": "^2.1.3",
-    "@renproject/rpc": "^2.1.3",
-    "@renproject/utils": "^2.1.3",
+    "@renproject/interfaces": "^2.1.6",
+    "@renproject/multiwallet-binancesmartchain-injected-connector": "^2.1.6",
+    "@renproject/multiwallet-ethereum-injected-connector": "^2.1.6",
+    "@renproject/multiwallet-ethereum-mewconnect-connector": "^2.1.6",
+    "@renproject/multiwallet-ethereum-walletconnect-connector": "^2.1.6",
+    "@renproject/multiwallet-ui": "^2.1.6",
+    "@renproject/ren": "^2.1.6",
+    "@renproject/ren-tx": "^2.1.6",
+    "@renproject/rpc": "^2.1.6",
+    "@renproject/utils": "^2.1.6",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -43,17 +43,16 @@
     "firebase": "^8.1.1",
     "notistack": "^1.0.0",
     "numeral": "^2.0.6",
-    "prettier": "^2.1.1",
     "qrcode.react": "^1.0.0",
     "query-string": "^6.13.6",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "react-lorem-component": "^0.13.0",
     "react-middle-ellipsis": "^1.1.0",
     "react-number-format": "^4.4.1",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "^4.0.3",
     "react-use": "^15.3.4",
     "typescript": "^4.0.3",
     "xstate": "^4.16.0"
@@ -68,15 +67,16 @@
     "lint": "eslint --ext js,ts,tsx src",
     "eject": "react-scripts eject"
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!material-ui|@material-ui|rc-.+?|@babel/runtime|@renproject/multiwallet-ethereum-mewconnect-connector).+(js|jsx)$"
+    ]
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
+    "production": [">0.2%", "not dead", "not op_mini all"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
@@ -84,6 +84,8 @@
     ]
   },
   "devDependencies": {
-    "netlify-cli": "^2.71.0"
+    "@babel/plugin-transform-modules-commonjs": "^7.13.0",
+    "netlify-cli": "^2.71.0",
+    "prettier": "^2.1.1"
   }
 }
