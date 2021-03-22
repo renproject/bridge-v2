@@ -171,6 +171,11 @@ export const overrides = (palette: Palette): Overrides => {
         boxShadow: `0 0 3px 0 rgba(0,27,58,0.10)`,
       },
     },
+    MuiSkeleton: {
+      text: {
+        borderRadius: 4,
+      },
+    },
     MuiSnackbar: {
       anchorOriginTopCenter: {
         top: "-64px!important",

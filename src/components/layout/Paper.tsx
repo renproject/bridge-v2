@@ -15,7 +15,7 @@ const useBridgePaperStyles = makeStyles((theme) => {
       maxWidth: 400,
       margin: "70px auto 0",
       position: "relative",
-      // overflow: "hidden",
+      overflow: "hidden",
     },
   };
 });
