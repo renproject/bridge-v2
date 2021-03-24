@@ -17,7 +17,7 @@ import React, {
   useState,
 } from "react";
 import { useHistory } from "react-router-dom";
-import { useInterval } from "react-use";
+import { useInterval, usePageLeave } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -45,7 +45,6 @@ import {
   ProgressWrapper,
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
-import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { SpacedTypography } from "../../../components/typography/TypographyHelpers";
 import { links } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
@@ -189,8 +188,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
                   label={
                     <FormLabel htmlFor="ack" component={Typography}>
                       <Typography variant="caption" color="textPrimary">
-                        I can complete this transaction within the time{" "}
-                        <TooltipWithIcon title={`TODO: tooltip`} />
+                        I can complete this transaction within the time
                       </Typography>
                     </FormLabel>
                   }
@@ -468,19 +466,32 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   );
 };
 
-export const AuthWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
+export const PageLeaveWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   ...props
 }) => {
+  // const [warned, setWarned] = useState(false);
+  // const [leaveWarningOpened, setLeaveWarningOpened] = useState(false);
+  // const handleLeaveWarningClose = useCallback(() => {
+  //   setLeaveWarningOpened(false);
+  //   setWarned(true);
+  // }, []);
+  // usePageLeave(() => {
+  //   // alert(`Please don't`);
+  //   if (!warned) {
+  //     setLeaveWarningOpened(true);
+  //   }
+  // }, [warned as never]);
+
   return (
     <WarningDialog
-      reason="Allow RenBridge to backup transactions"
-      mainActionText="Sign & allow to continue"
+      reason="Are you sure?"
+      mainActionText="I understand"
+      alternativeActionText="Stop reminding me"
       {...props}
     >
       <span>
-        To continue, you must sign with your wallet to allow RenBridge to backup
-        your transactions. This allows you to resume a transaction if you close
-        your web browser mid-transaction.
+        You have unfinished transactions. You should finish them before leaving
+        this page.
       </span>
     </WarningDialog>
   );
