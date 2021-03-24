@@ -5,7 +5,10 @@ import { EthereumMEWConnectConnector } from "@renproject/multiwallet-ethereum-me
 import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
 import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
 import React, { FunctionComponent } from "react";
-import { BinanceMetamaskConnectorInfo } from "../../components/wallet/WalletHelpers";
+import {
+  BinanceConnectorInfo,
+  BinanceMetamaskConnectorInfo,
+} from "../../components/wallet/WalletHelpers";
 import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
 import { RenChain } from "../../utils/assetConfigs";
@@ -77,6 +80,7 @@ export const walletPickerModalConfig = (targetEthChainId: number) => ({
         name: "BinanceSmartWallet",
         logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
         connector: new BinanceSmartChainInjectedConnector({ debug: true }),
+        info: BinanceConnectorInfo,
       },
       // TODO: move this config into its own connector?
 
