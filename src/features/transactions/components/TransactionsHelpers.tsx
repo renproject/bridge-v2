@@ -17,7 +17,7 @@ import React, {
   useState,
 } from "react";
 import { useHistory } from "react-router-dom";
-import { useInterval, usePageLeave } from "react-use";
+import { useInterval } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,

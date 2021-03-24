@@ -54,7 +54,10 @@ import {
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { resetMint } from "../mintSlice";
 import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
-import { AddressValidityMessage } from "./MintHelpers";
+import {
+  GatewayAddressValidityMessage,
+  GatewayTransactionValidityMessage,
+} from "./MintHelpers";
 
 export type MintDepositToProps = {
   tx: GatewaySession;
@@ -76,12 +79,12 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
     let key = 0;
     if (timeRemained > 0) {
       key = showNotification(
-        <AddressValidityMessage
+        <GatewayAddressValidityMessage
           milliseconds={timeRemained}
           destNetwork={getChainConfigByRentxName(tx.destChain).full}
         />,
         {
-          variant: "warning",
+          variant: timeRemained < 6 * 3600 * 1000 ? "error" : "warning",
           persist: true,
         }
       ) as number;
@@ -288,6 +291,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
     lockConfirmations,
     lockTargetConfirmations,
     mintChainConfig,
+    mintCurrencyConfig,
   } = getLockAndMintParams(tx, depositHash);
 
   const notificationMessage = `${maxConfirmations(
@@ -296,12 +300,29 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   )}/${lockTargetConfirmations} confirmations, ready to submit ${
     lockCurrencyConfig.short
   } to ${mintChainConfig.full}?`;
-  const { showNotification } = useNotifications();
-  const { showBrowserNotification } = useBrowserNotifications();
+  const { showNotification, closeNotification } = useNotifications();
   useEffectOnce(() => {
     showNotification(notificationMessage);
-    showBrowserNotification(notificationMessage);
   });
+  const [timeRemained] = useState(getRemainingGatewayTime(tx.expiryTime));
+
+  useEffect(() => {
+    let key = 0;
+    if (timeRemained < 6 * 3600 * 1000) {
+      key = showNotification(
+        <GatewayTransactionValidityMessage milliseconds={timeRemained} />,
+        {
+          variant: "error",
+          persist: true,
+        }
+      ) as number;
+    }
+    return () => {
+      if (key) {
+        closeNotification(key);
+      }
+    };
+  }, [showNotification, closeNotification, timeRemained]);
 
   const { MainIcon } = lockChainConfig;
 
@@ -331,7 +352,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting" : "Submit"} to {mintChainConfig.full}
+          {submitting ? "Minting" : "Mint"} {mintCurrencyConfig.short}
           {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
@@ -370,6 +391,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
     mintTxLink,
     mintTxHash,
     mintChainConfig,
+    mintCurrencyConfig,
   } = getLockAndMintParams(tx, depositHash);
 
   return (
@@ -400,7 +422,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting" : "Submit"} to {mintChainConfig.full}
+          {submitting ? "Minting" : "Mint"} {mintCurrencyConfig.short}
           {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>

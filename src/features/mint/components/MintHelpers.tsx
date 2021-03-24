@@ -20,12 +20,15 @@ export const DepositWrapper = styled("div")({
   position: "relative",
 });
 
-type AddressValidityMessageProps = {
+type CountdownProps = {
   milliseconds: number;
+};
+
+type GatewayAddressValidityMessageProps = CountdownProps & {
   destNetwork: string;
 };
 
-export const AddressValidityMessage: FunctionComponent<AddressValidityMessageProps> = ({
+export const GatewayAddressValidityMessage: FunctionComponent<GatewayAddressValidityMessageProps> = ({
   milliseconds,
   destNetwork,
 }) => {
@@ -34,8 +37,21 @@ export const AddressValidityMessage: FunctionComponent<AddressValidityMessagePro
       This Gateway Address expires in{" "}
       <HMSCountdown milliseconds={milliseconds} />. Do not send multiple
       deposits or deposit after it has expired. <br />
+      <br />
       Once you have deposited funds to the Gateway Address, you have 24 hours to
-      submit the mint transaction to {destNetwork}
+      submit the mint transaction to {destNetwork}.
+    </span>
+  );
+};
+
+export const GatewayTransactionValidityMessage: FunctionComponent<CountdownProps> = ({
+  milliseconds,
+}) => {
+  return (
+    <span>
+      This Gateway Address expires in{" "}
+      <HMSCountdown milliseconds={milliseconds} />. You must complete this
+      transaction before then. <br />
     </span>
   );
 };
@@ -43,9 +59,8 @@ export const AddressValidityMessage: FunctionComponent<AddressValidityMessagePro
 export const MultipleDepositsMessage: FunctionComponent = () => {
   return (
     <span>
-      RenBridge has detected another deposit to the same gateway address. It
-      will require an additional submission to to the destination chain via your
-      web3 wallet.
+      RenBridge has detected another deposit to the same gateway address. View
+      its progress using the navigation bar at the top of the screen.
     </span>
   );
 };

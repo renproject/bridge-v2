@@ -1,4 +1,4 @@
-import { Box, Chip, Typography, useTheme } from "@material-ui/core";
+import { Box, Chip, Tooltip, Typography, useTheme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Skeleton } from "@material-ui/lab";
 import { RenNetwork } from "@renproject/interfaces";
@@ -427,6 +427,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   } = getLockAndMintBasicParams(tx);
 
   const deposit = tx.transactions[currentHash];
+  const depositTime = getFormattedDateTime(Number(deposit?.detectedAt));
   const {
     lockConfirmations,
     lockTargetConfirmations,
@@ -576,14 +577,19 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
                       )}
                     </div>
                   </Typography>
-                  {Boolean(deposit) && (
+                  {Boolean(deposit) && Boolean(deposit?.detectedAt) && (
                     <Typography
                       color="textSecondary"
                       component="span"
                       variant="inherit"
                       className={styles.detailsDate}
                     >
-                      {getFormattedDateTime(Number(deposit.detectedAt)).date}
+                      <Tooltip
+                        title={`${depositTime.date} ${depositTime.time} `}
+                        placement="top"
+                      >
+                        <span>{depositTime.date}</span>
+                      </Tooltip>
                     </Typography>
                   )}
                 </>
