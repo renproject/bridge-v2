@@ -99,14 +99,21 @@ export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = 
 type FinishTransactionWarningProps = {
   onClosed?: () => void;
   timeRemained: number;
-  completionTimeLabel: string;
-  targetConfirmations: number;
-  sourceChain: string;
-  destinationChain: string;
+  lockChainConfirmations: number;
+  lockChainBlockTime: number;
+  lockCurrencyLabel: string;
+  mintCurrencyLabel: string;
+  mintChainLabel: string;
 };
 
 export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarningProps> = ({
   onClosed,
+  timeRemained,
+  lockChainBlockTime,
+  lockChainConfirmations,
+  lockCurrencyLabel,
+  mintCurrencyLabel,
+  mintChainLabel,
 }) => {
   const [checked, setChecked] = useState(true);
 
@@ -119,31 +126,32 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
       onClosed();
     }
   }, [onClosed]);
-  const timeFormatted = "69:03:hours";
+  const txTimeMinutes = lockChainBlockTime * lockChainConfirmations;
   return (
     <NestedDrawer title="Warning" open onClose={handleClose}>
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding bottomPadding>
             <SpacedTypography variant="h5" align="center">
-              You only have <strong>{timeFormatted}</strong> hours to complete
-              this transaction
+              You only have <HMSCountdown milliseconds={timeRemained} /> hours
+              to complete this transaction
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
               align="center"
               color="textSecondary"
             >
-              This transaction takes about 1 hour to complete.
+              This transaction takes about {txTimeMinutes} minutes to complete.
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
               align="center"
               color="textSecondary"
             >
-              For security reasons, after RenVM receives your BTC you will need
-              to wait for 6 block confirmations before you can mint renBTC on
-              Ethereum.
+              For security reasons, after RenVM receives your{" "}
+              {lockCurrencyLabel} you will need to wait for{" "}
+              {lockChainConfirmations} block confirmations before you can mint{" "}
+              {mintCurrencyLabel} on {mintChainLabel}.
             </SpacedTypography>{" "}
             <SpacedTypography
               variant="body2"

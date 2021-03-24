@@ -374,7 +374,7 @@ export type BridgeChainConfig = LabelsConfig &
     rentxName: RenChain;
     blockTime: number;
     nativeCurrency: BridgeCurrency;
-    targetConfirmations?: number;
+    targetConfirmations: number;
   };
 
 // TODO: add confirmations from https://support.kraken.com/hc/en-us/articles/203325283-Cryptocurrency-deposit-processing-times
@@ -402,8 +402,8 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     MainIcon: BchFullIcon,
     rentxName: RenChain.bitcoinCash,
     blockTime: 10,
-    nativeCurrency: BridgeCurrency.BCH,
     targetConfirmations: 6,
+    nativeCurrency: BridgeCurrency.BCH,
   },
   [BridgeChain.ZECC]: {
     symbol: BridgeChain.ZECC,
@@ -416,6 +416,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     rentxName: RenChain.zcash,
     blockTime: 2.5,
     nativeCurrency: BridgeCurrency.ZEC,
+    targetConfirmations: 24,
   },
   [BridgeChain.DOGC]: {
     symbol: BridgeChain.DOGC,
@@ -427,6 +428,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     MainIcon: DogeFullIcon,
     rentxName: RenChain.dogecoin,
     blockTime: 1,
+    targetConfirmations: 40,
     nativeCurrency: BridgeCurrency.DOGE,
   },
   [BridgeChain.BSCC]: {
@@ -439,6 +441,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     GreyIcon: NotSetIcon,
     rentxName: RenChain.binanceSmartChain,
     blockTime: 3,
+    targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.BNB,
   },
   [BridgeChain.ETHC]: {
@@ -451,6 +454,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     GreyIcon: NotSetIcon,
     rentxName: RenChain.ethereum,
     blockTime: 0.25,
+    targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.ETH,
   },
   [BridgeChain.UNKNOWNC]: {
@@ -463,6 +467,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     MainIcon: NotSetIcon,
     rentxName: RenChain.unknown,
     blockTime: 1e6,
+    targetConfirmations: 1e6,
     nativeCurrency: BridgeCurrency.UNKNOWN,
   },
 };

@@ -38,7 +38,6 @@ import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import {
   BridgeCurrency,
-  getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
 } from "../../../utils/assetConfigs";
 import { useFetchFees } from "../../fees/feesHooks";
@@ -109,8 +108,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const dispatch = useDispatch();
   const chain = useSelector($chain);
   const { walletConnected } = useSelectedChainWallet();
-  const { tx: parsedTx } = useTxParam();
-  const txState: any = { newTx: true }; //TODO: fixmee
+  const { tx: parsedTx, txState } = useTxParam();
   const [reloading, setReloading] = useState(false);
   const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession);
   useSetCurrentTxId(tx.id);
@@ -185,12 +183,17 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   }, []);
 
   const destChain = parsedTx?.destChain;
+  const {
+    mintChainConfig,
+    mintCurrencyConfig,
+    lockChainConfig,
+  } = getLockAndMintBasicParams(tx);
+
   useEffect(() => {
     if (destChain) {
-      const bridgeChainConfig = getChainConfigByRentxName(destChain);
-      dispatch(setChain(bridgeChainConfig.symbol));
+      dispatch(setChain(mintChainConfig.symbol));
     }
-  }, [dispatch, destChain]);
+  }, [dispatch, destChain, mintChainConfig.symbol]);
 
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setWalletPickerOpened(true));
@@ -278,11 +281,12 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       {txState?.newTx && walletConnected && (
         <FinishTransactionWarning
           onClosed={onWarningClosed}
-          completionTimeLabel="1 hour"
-          destinationChain="BTC"
-          sourceChain="BTC"
-          targetConfirmations={6}
-          timeRemained={5000000}
+          timeRemained={getRemainingGatewayTime(tx.expiryTime)}
+          lockChainBlockTime={lockChainConfig.blockTime}
+          lockCurrencyLabel={lockChainConfig.full}
+          lockChainConfirmations={lockChainConfig.targetConfirmations}
+          mintChainLabel={mintChainConfig.full}
+          mintCurrencyLabel={mintCurrencyConfig.short}
         />
       )}
       <BrowserNotificationsDrawer
