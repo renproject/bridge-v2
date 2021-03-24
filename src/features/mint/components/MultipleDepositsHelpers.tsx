@@ -20,11 +20,11 @@ import {
   BitcoinIcon,
   CompletedIcon,
   EmptyIcon,
-  EthereumChainIcon,
+  EthereumChainIcon, GatewayIcon,
   NavigateNextIcon,
   NavigatePrevIcon,
-  QrCodeIcon,
-} from "../../../components/icons/RenIcons";
+
+} from '../../../components/icons/RenIcons'
 import {
   ProgressWithContent,
   ProgressWithContentProps,
@@ -187,7 +187,7 @@ export const DepositIndicator: FunctionComponent = () => {
       background={theme.palette.common.black}
       color={theme.palette.grey[200]}
     >
-      <QrCodeIcon fontSize="large" color="inherit" />
+      <GatewayIcon fontSize="large" color="inherit" />
     </CircledIconContainer>
   );
 };
