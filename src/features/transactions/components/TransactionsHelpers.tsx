@@ -1,50 +1,57 @@
 import {
   Button,
+  Checkbox,
   DialogProps,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   styled,
   Typography,
   useTheme,
-} from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
+} from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useState,
-} from 'react'
-import { useHistory } from 'react-router-dom'
-import { useInterval } from 'react-use'
+} from "react";
+import { useHistory } from "react-router-dom";
+import { useInterval } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,
   RedButton,
-} from '../../../components/buttons/Buttons'
+} from "../../../components/buttons/Buttons";
 import {
   SpecialAlertIcon,
   WarningIcon,
-} from '../../../components/icons/RenIcons'
+} from "../../../components/icons/RenIcons";
+import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
-} from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
+} from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
 import {
   BridgeModal,
   NestedDrawer,
   NestedDrawerActions,
   NestedDrawerContent,
   NestedDrawerWrapper,
-} from '../../../components/modals/BridgeModal'
+} from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { links } from '../../../constants/constants'
-import { paths } from '../../../pages/routes'
-import { usePaperTitle } from '../../../providers/TitleProviders'
-import { getFormattedHMS } from '../../../utils/dates'
-import { trimAddress } from '../../../utils/strings'
+} from "../../../components/progress/ProgressHelpers";
+import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { SpacedTypography } from "../../../components/typography/TypographyHelpers";
+import { links } from "../../../constants/constants";
+import { paths } from "../../../pages/routes";
+import { usePaperTitle } from "../../../providers/TitleProviders";
+import { getFormattedHMS } from "../../../utils/dates";
+import { trimAddress } from "../../../utils/strings";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -58,15 +65,13 @@ type BookmarkPageWarningProps = {
 export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
   onClosed,
 }) => {
-  const [open] = useState(true);
   const handleClose = useCallback(() => {
     if (onClosed) {
       onClosed();
     }
-    // setOpen(false);
   }, [onClosed]);
   return (
-    <NestedDrawer title="Warning" open={open} onClose={handleClose}>
+    <NestedDrawer title="Warning" onClose={handleClose} open>
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding bottomPadding>
@@ -83,6 +88,111 @@ export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = 
           <PaperContent bottomPadding>
             <ActionButtonWrapper>
               <ActionButton onClick={handleClose}>I understand</ActionButton>
+            </ActionButtonWrapper>
+          </PaperContent>
+        </NestedDrawerActions>
+      </NestedDrawerWrapper>
+    </NestedDrawer>
+  );
+};
+
+type FinishTransactionWarningProps = {
+  onClosed?: () => void;
+  timeRemained: number;
+  completionTimeLabel: string;
+  targetConfirmations: number;
+  sourceChain: string;
+  destinationChain: string;
+};
+
+export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarningProps> = ({
+  onClosed,
+}) => {
+  const [checked, setChecked] = useState(true);
+
+  const handleCheckboxChange = useCallback(() => {
+    setChecked(!checked);
+  }, [checked]);
+
+  const handleClose = useCallback(() => {
+    if (onClosed) {
+      onClosed();
+    }
+  }, [onClosed]);
+  const timeFormatted = "69:03:hours";
+  return (
+    <NestedDrawer title="Warning" open onClose={handleClose}>
+      <NestedDrawerWrapper>
+        <NestedDrawerContent>
+          <PaperContent topPadding bottomPadding>
+            <SpacedTypography variant="h5" align="center">
+              You only have <strong>{timeFormatted}</strong> hours to complete
+              this transaction
+            </SpacedTypography>
+            <SpacedTypography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+            >
+              This transaction takes about 1 hour to complete.
+            </SpacedTypography>
+            <SpacedTypography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+            >
+              For security reasons, after RenVM receives your BTC you will need
+              to wait for 6 block confirmations before you can mint renBTC on
+              Ethereum.
+            </SpacedTypography>{" "}
+            <SpacedTypography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+            >
+              If you cannot complete this transaction within the required time,
+              please return at a later date.
+            </SpacedTypography>
+            <SpacedTypography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+            >
+              <strong>
+                If you do not finish it within this window your assets will be
+                lost.
+              </strong>
+            </SpacedTypography>
+          </PaperContent>
+        </NestedDrawerContent>
+        <NestedDrawerActions>
+          <PaperContent bottomPadding>
+            <CheckboxWrapper>
+              <FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={checked}
+                      onChange={handleCheckboxChange}
+                      name="ack"
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <FormLabel htmlFor="ack" component={Typography}>
+                      <Typography variant="caption" color="textPrimary">
+                        I can complete this transaction within the time{" "}
+                        <TooltipWithIcon title={`TODO: tooltip`} />
+                      </Typography>
+                    </FormLabel>
+                  }
+                />
+              </FormControl>
+            </CheckboxWrapper>
+            <ActionButtonWrapper>
+              <ActionButton onClick={handleClose} disabled={!checked}>
+                Continue
+              </ActionButton>
             </ActionButtonWrapper>
           </PaperContent>
         </NestedDrawerActions>

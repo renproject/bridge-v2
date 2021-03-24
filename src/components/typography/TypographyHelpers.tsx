@@ -271,3 +271,7 @@ export const MiddleEllipsisText: FunctionComponent<MiddleEllipsisTextProps> = ({
     </MiddleEllipsisWrapper>
   );
 };
+
+export const SpacedTypography = styled(Typography)({
+  marginBottom: "1.4em",
+});

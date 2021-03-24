@@ -57,8 +57,8 @@ import {
   UpdateTxFn,
 } from "../../transactions/components/TransactionMenu";
 import {
-  BookmarkPageWarning,
   ExpiredErrorDialog,
+  FinishTransactionWarning,
   ProgressStatus,
   WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
@@ -109,7 +109,8 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const dispatch = useDispatch();
   const chain = useSelector($chain);
   const { walletConnected } = useSelectedChainWallet();
-  const { tx: parsedTx, txState } = useTxParam();
+  const { tx: parsedTx } = useTxParam();
+  const txState: any = { newTx: true }; //TODO: fixmee
   const [reloading, setReloading] = useState(false);
   const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession);
   useSetCurrentTxId(tx.id);
@@ -195,7 +196,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
 
-  const onBookmarkWarningClosed = useCallback(() => {
+  const onWarningClosed = useCallback(() => {
     history.replace({ ...location, state: undefined });
   }, [history, location]);
 
@@ -275,7 +276,14 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         </>
       )}
       {txState?.newTx && walletConnected && (
-        <BookmarkPageWarning onClosed={onBookmarkWarningClosed} />
+        <FinishTransactionWarning
+          onClosed={onWarningClosed}
+          completionTimeLabel="1 hour"
+          destinationChain="BTC"
+          sourceChain="BTC"
+          targetConfirmations={6}
+          timeRemained={5000000}
+        />
       )}
       <BrowserNotificationsDrawer
         open={modalOpened}
