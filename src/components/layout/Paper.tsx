@@ -15,7 +15,6 @@ const useBridgePaperStyles = makeStyles((theme) => {
       maxWidth: 400,
       margin: "70px auto 0",
       position: "relative",
-      overflow: "hidden",
     },
   };
 });
@@ -87,6 +86,8 @@ const usePaperContentStyles = makeStyles<Theme, PaperContentProps>((theme) => ({
     paddingBottom: ({ paddingVariant }) => getPadding(paddingVariant),
   },
   darker: {
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
     backgroundColor: theme.customColors.whiteDarker,
   },
 }));

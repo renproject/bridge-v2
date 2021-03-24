@@ -20,11 +20,11 @@ import {
   BitcoinIcon,
   CompletedIcon,
   EmptyIcon,
-  EthereumChainIcon, GatewayIcon,
+  EthereumChainIcon,
+  GatewayIcon,
   NavigateNextIcon,
   NavigatePrevIcon,
-
-} from '../../../components/icons/RenIcons'
+} from "../../../components/icons/RenIcons";
 import {
   ProgressWithContent,
   ProgressWithContentProps,
@@ -199,8 +199,10 @@ export const DepositToggleButtonGroup: FunctionComponent<ToggleButtonGroupProps>
 }) => {
   const [value, setValue] = useState("");
   const handleValueChange = useCallback(
-    (event: React.MouseEvent<HTMLElement>, newValue: string) => {
-      setValue(newValue);
+    (event: React.MouseEvent<HTMLElement>, newValue: string | null) => {
+      if (newValue !== null) {
+        setValue(newValue);
+      }
     },
     []
   );

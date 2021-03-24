@@ -1,6 +1,5 @@
 import { Button, useTheme } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
-import { DepositToggleButtonGroup } from "../../../features/mint/components/MultipleDepositsHelpers";
 import { ToggleIconButton } from "../../buttons/Buttons";
 import { BitcoinIcon, MetamaskFoxIcon } from "../../icons/RenIcons";
 import { CenteringSpacedBox } from "../../layout/LayoutHelpers";
@@ -129,9 +128,6 @@ export const ProgressSection: FunctionComponent = () => {
             >
               <BitcoinIcon fontSize="inherit" color="inherit" />
             </ProgressWithContent>
-          </CenteringSpacedBox>
-          <CenteringSpacedBox>
-            <DepositToggleButtonGroup />
           </CenteringSpacedBox>
         </PaperContent>
       </BridgePaper>

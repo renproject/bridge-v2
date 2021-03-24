@@ -75,9 +75,7 @@ import {
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
-import {
-  useSelectedChainWallet,
-} from "../../wallet/walletHooks";
+import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import {
   $chain,
   setChain,
@@ -323,8 +321,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     depositHash || "gateway"
   );
   const handleCurrentDepositChange = useCallback((_, newDeposit) => {
-    console.log("cdd", newDeposit);
-    setCurrentDeposit(newDeposit);
+    if (newDeposit !== null) {
+      setCurrentDeposit(newDeposit);
+    }
   }, []);
 
   useEffect(() => {
