@@ -453,7 +453,7 @@ export const BinanceConnectorInfo: WalletPickerProps<
       />
       <SpacedPaperContent topPadding bottomPadding>
         <Typography variant="h5" align="center" gutterBottom>
-          Binance Smart Wallet
+          Binance Chain Wallet
         </Typography>
         <Typography
           variant="body1"
@@ -462,12 +462,8 @@ export const BinanceConnectorInfo: WalletPickerProps<
           gutterBottom
         >
           Some users experience issues with Binance Smart Wallet. We suggest you
-          connect to BSC via MetaMask instead as explained{" "}
-          <Link href={links.BINANCE_METAMASK_CONNECTION} external>
-            here
-          </Link>
-          . If you have already started a transaction with Binance Smart Wallet,
-          please use the support form{" "}
+          connect to BSC via MetaMask instead. If you have already started a
+          transaction with Binance Smart Wallet, please use the support form{" "}
           <Link href={links.BUGS_LOG} external>
             here
           </Link>{" "}
