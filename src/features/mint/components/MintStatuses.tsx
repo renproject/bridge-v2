@@ -51,7 +51,11 @@ import {
   ProcessingTimeWrapper,
   SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
-import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
+import {
+  createTxQueryString,
+  getPaymentLink,
+  TxType,
+} from "../../transactions/transactionsUtils";
 import { resetMint } from "../mintSlice";
 import {
   getLockAndMintParams,
@@ -468,9 +472,17 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     type: TxType.MINT,
   });
   const handleReturn = useCallback(() => {
-    history.push(paths.MINT);
-    dispatch(resetMint());
-  }, [dispatch, history]);
+    const qsTx = { ...tx, depositHash: "gateway" };
+    history.push({
+      pathname: paths.MINT_TRANSACTION,
+      search: "?" + createTxQueryString(qsTx),
+      state: {
+        txState: {
+          reloadTx: true,
+        },
+      },
+    });
+  }, [dispatch, history, tx]);
 
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
@@ -516,7 +528,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         !
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>Back to start</ActionButton>
+        <ActionButton onClick={handleReturn}>Back to Gateway Address</ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link
