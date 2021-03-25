@@ -295,7 +295,10 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   } to ${mintChainConfig.full}?`;
   const { showNotification, closeNotification } = useNotifications();
   useEffectOnce(() => {
-    showNotification(notificationMessage);
+    const key = showNotification(notificationMessage);
+    return () => {
+      closeNotification(key);
+    };
   });
   const [timeRemained] = useState(getRemainingGatewayTime(tx.expiryTime));
 

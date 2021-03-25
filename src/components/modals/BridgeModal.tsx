@@ -30,7 +30,7 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
     flexGrow: 1,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   closeButtonWrapper: {
     minWidth: 30,
@@ -154,6 +154,7 @@ const useNestedDrawerStyles = makeStyles((theme) => ({
 
 type NestedDrawerProps = DialogProps & {
   open: boolean;
+  fixed?: boolean;
 };
 
 const stopPropagation = (event: any) => {
@@ -174,11 +175,14 @@ export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
   open,
   onClose,
   title,
+  fixed = true,
   className,
   children,
 }) => {
   const styles = useNestedDrawerStyles();
-  const resolvedClassName = classNames(className, styles.paper);
+  const resolvedClassName = classNames(className, {
+    [styles.paper]: fixed,
+  });
 
   return (
     <Backdrop className={styles.backdrop} open={open} onClick={onClose as any}>

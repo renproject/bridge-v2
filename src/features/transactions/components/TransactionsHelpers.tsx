@@ -49,7 +49,7 @@ import { SpacedTypography } from "../../../components/typography/TypographyHelpe
 import { links } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
-import { getFormattedHMS } from "../../../utils/dates";
+import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 
 export const ProcessingTimeWrapper = styled("div")({
@@ -127,13 +127,13 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
   }, [onClosed]);
   const txTimeMinutes = lockChainBlockTime * lockChainConfirmations;
   return (
-    <NestedDrawer title="Warning" open onClose={handleClose}>
+    <NestedDrawer title="Warning" open onClose={handleClose} fixed={false}>
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding bottomPadding>
             <SpacedTypography variant="h5" align="center">
-              You only have <HMSCountdown milliseconds={timeRemained} /> hours
-              to complete this transaction
+              You only have <HCountdown milliseconds={timeRemained} /> to
+              complete this transaction
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
@@ -141,14 +141,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
               color="textSecondary"
             >
               This transaction takes about {txTimeMinutes} minutes to complete.
-            </SpacedTypography>
-            <SpacedTypography
-              variant="body2"
-              align="center"
-              color="textSecondary"
-            >
-              For security reasons, after RenVM receives your{" "}
-              {lockCurrencyLabel} you will need to wait for{" "}
+              For security reasons, you will need to wait for{" "}
               {lockChainConfirmations} block confirmations before you can mint{" "}
               {mintCurrencyLabel} on {mintChainLabel}.
             </SpacedTypography>{" "}
@@ -166,7 +159,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
               color="textSecondary"
             >
               <strong>
-                If you do not finish it within this window your assets will be
+                If you do not finish it within this window, your assets will be
                 lost.
               </strong>
             </SpacedTypography>
@@ -253,6 +246,22 @@ export const HMSCountdown: FunctionComponent<HMSCountdownProps> = ({
   const time = getFormattedHMS(count);
 
   return <strong>{time}</strong>;
+};
+
+export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
+  milliseconds,
+}) => {
+  const [count, setCount] = useState(milliseconds);
+  useInterval(() => {
+    setCount((ms) => ms - 1000);
+  }, 60 * 1000);
+  const { hours } = millisecondsToHMS(count);
+
+  return (
+    <strong>
+      {hours} {hours > 1 ? "hours" : "hour"}
+    </strong>
+  );
 };
 
 const ErrorIconWrapper = styled("div")(({ theme }) => ({
