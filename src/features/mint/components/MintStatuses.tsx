@@ -308,11 +308,11 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
 
   useEffect(() => {
     let key = 0;
-    if (mintTimeRemained < 6 * 3600 * 1000) {
+    if (mintTimeRemained < 24 * 3600 * 1000) {
       key = showNotification(
         <GatewayTransactionValidityMessage milliseconds={mintTimeRemained} />,
         {
-          variant: "error",
+          variant: mintTimeRemained < 12 * 3600 * 1000 ? "error" : "warning",
           persist: true,
         }
       ) as number;

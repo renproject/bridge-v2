@@ -275,3 +275,7 @@ export const MiddleEllipsisText: FunctionComponent<MiddleEllipsisTextProps> = ({
 export const SpacedTypography = styled(Typography)({
   marginBottom: "1.4em",
 });
+
+export const UnderlinedSpan = styled('span')({
+  textDecoration: "underline",
+});

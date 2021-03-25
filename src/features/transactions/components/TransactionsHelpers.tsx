@@ -6,6 +6,7 @@ import {
   FormControlLabel,
   FormLabel,
   styled,
+  Tooltip,
   Typography,
   useTheme,
 } from "@material-ui/core";
@@ -45,7 +46,10 @@ import {
   ProgressWrapper,
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
-import { SpacedTypography } from "../../../components/typography/TypographyHelpers";
+import {
+  SpacedTypography,
+  UnderlinedSpan,
+} from "../../../components/typography/TypographyHelpers";
 import { links } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
@@ -140,8 +144,11 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
               align="center"
               color="textSecondary"
             >
-              This transaction takes about {txTimeMinutes} minutes to complete.
-              For security reasons, you will need to wait for{" "}
+              This transaction takes{" "}
+              <Tooltip title="Block confirmation time depends on factors such as blockchain activity and the fee you set for your transaction">
+                <UnderlinedSpan>about {txTimeMinutes} minutes</UnderlinedSpan>
+              </Tooltip>{" "}
+              to complete. For security reasons, you will need to wait for{" "}
               {lockChainConfirmations} block confirmations before you can mint{" "}
               {mintCurrencyLabel} on {mintChainLabel}.
             </SpacedTypography>{" "}
