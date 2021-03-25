@@ -1,4 +1,11 @@
-import { Box, Chip, Tooltip, Typography, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Chip,
+  Fade,
+  Tooltip,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Skeleton } from "@material-ui/lab";
 import { RenNetwork } from "@renproject/interfaces";
@@ -524,10 +531,14 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
             </div>
           </div>
           <div className={styles.gatewayCounter}>
-            <GatewayStatusChip
-              status={gatewayStatus}
-              timeToGatewayExpiration={timeToGatewayExpiration}
-            />
+            {hasDeposits && (
+              <Fade in={true}>
+                <GatewayStatusChip
+                  status={gatewayStatus}
+                  timeToGatewayExpiration={timeToGatewayExpiration}
+                />
+              </Fade>
+            )}
           </div>
         </div>
         {depositsCount > 1 && (

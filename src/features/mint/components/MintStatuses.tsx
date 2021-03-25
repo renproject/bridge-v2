@@ -7,7 +7,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
@@ -56,7 +55,6 @@ import {
   getPaymentLink,
   TxType,
 } from "../../transactions/transactionsUtils";
-import { resetMint } from "../mintSlice";
 import {
   getLockAndMintParams,
   getRemainingGatewayTime,
@@ -451,7 +449,6 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   depositHash,
 }) => {
   useSetPaperTitle("Complete");
-  const dispatch = useDispatch();
   const history = useHistory();
   const {
     lockCurrencyConfig,
@@ -482,7 +479,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         },
       },
     });
-  }, [dispatch, history, tx]);
+  }, [history, tx]);
 
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
@@ -511,7 +508,6 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   ]);
 
   useEffect(showNotifications, [showNotifications, pending]);
-
   return (
     <>
       <ProgressWrapper>
@@ -528,7 +524,9 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         !
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>Back to Gateway Address</ActionButton>
+        <ActionButton onClick={handleReturn}>
+          Back to Gateway Address
+        </ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link
