@@ -18,6 +18,8 @@ export const links = {
   SOCIAL_GITHUB: "https://github.com/renproject",
   SOCIAL_TELEGRAM: "https://t.me/renproject",
   SOCIAL_REDDIT: "https://www.reddit.com/r/renproject",
+  BINANCE_METAMASK_CONNECTION:
+    "https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain",
 };
 
 export const MINT_GAS_UNIT_COST = 153400;

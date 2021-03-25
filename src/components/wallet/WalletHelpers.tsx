@@ -12,6 +12,7 @@ import classNames from "classnames";
 import React, { FunctionComponent, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
+import { links } from "../../constants/constants";
 import { useSubNetworkName } from "../../features/ui/uiHooks";
 import { setWalletPickerOpened } from "../../features/wallet/walletSlice";
 import { createPulseAnimation } from "../../theme/animationUtils";
@@ -377,10 +378,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   );
 };
 
-export const BinanceMetamaskConnectorInfo: WalletPickerProps<
-  any,
-  any
->["DefaultInfo"] = ({ acknowledge, onClose }) => {
+const useResetWalletPicker = (onClose: () => void) => {
   //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
   const dispatch = useDispatch();
   const handleBackToWalletPicker = useCallback(() => {
@@ -389,6 +387,14 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
       dispatch(setWalletPickerOpened(true));
     }, 1);
   }, [dispatch, onClose]);
+  return { handleBackToWalletPicker };
+};
+
+export const BinanceMetamaskConnectorInfo: WalletPickerProps<
+  any,
+  any
+>["DefaultInfo"] = ({ acknowledge, onClose }) => {
+  const { handleBackToWalletPicker } = useResetWalletPicker(onClose);
   return (
     <>
       <BridgeModalTitle
@@ -408,10 +414,7 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
         >
           Please ensure that you have added the Binance Smart Chain network to
           Metamask as explained{" "}
-          <Link
-            href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain"
-            external
-          >
+          <Link href={links.BINANCE_METAMASK_CONNECTION} external>
             here
           </Link>
         </Typography>
@@ -429,6 +432,57 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
         <ActionButtonWrapper>
           <ActionButton onClick={acknowledge}>
             Continue with MetaMask
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </>
+  );
+};
+
+export const BinanceConnectorInfo: WalletPickerProps<
+  any,
+  any
+>["DefaultInfo"] = ({ acknowledge, onClose }) => {
+  const { handleBackToWalletPicker } = useResetWalletPicker(onClose);
+  return (
+    <>
+      <BridgeModalTitle
+        title=" "
+        onClose={onClose}
+        onPrev={handleBackToWalletPicker}
+      />
+      <SpacedPaperContent topPadding bottomPadding>
+        <Typography variant="h5" align="center" gutterBottom>
+          Binance Chain Wallet
+        </Typography>
+        <Typography
+          variant="body1"
+          align="center"
+          color="textSecondary"
+          gutterBottom
+        >
+          Some users experience issues with Binance Smart Wallet. We suggest you
+          connect to BSC via MetaMask instead. If you have already started a
+          transaction with Binance Smart Wallet, please use the support form{" "}
+          <Link href={links.BUGS_LOG} external>
+            here
+          </Link>{" "}
+          if you are experiencing issues.
+        </Typography>
+      </SpacedPaperContent>
+      <PaperContent bottomPadding>
+        <ActionButtonWrapper>
+          <Button
+            variant="text"
+            color="primary"
+            onClick={handleBackToWalletPicker}
+          >
+            Use another wallet
+          </Button>
+        </ActionButtonWrapper>
+        <ActionButtonWrapper>
+          <ActionButton onClick={acknowledge}>
+            Continue with Binance Smart Wallet
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
