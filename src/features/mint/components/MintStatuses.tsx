@@ -155,13 +155,6 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
         flexDirection="column"
         alignItems="center"
       >
-        {lockChainConfig.targetConfirmations && (
-          <Typography variant="caption" gutterBottom>
-            Estimated processing time:{" "}
-            {lockChainConfig.targetConfirmations * lockChainConfig.blockTime}{" "}
-            minutes
-          </Typography>
-        )}
         <Typography variant="caption">
           {timeRemained > 0 && (
             <span>
