@@ -58,7 +58,7 @@ export const GatewayTransactionValidityMessage: FunctionComponent<CountdownProps
 export const MultipleDepositsMessage: FunctionComponent = () => {
   return (
     <span>
-      RenBridge has detected another deposit to the same gateway address. View
+      RenBridge has detected multiple deposits for this gateway address. View
       its progress using the navigation bar at the top of the screen.
     </span>
   );
