@@ -53,7 +53,11 @@ import {
 } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import { resetMint } from "../mintSlice";
-import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
+import {
+  getLockAndMintParams,
+  getRemainingGatewayTime,
+  getRemainingMintTime,
+} from "../mintUtils";
 import {
   GatewayAddressValidityMessage,
   GatewayTransactionValidityMessage,
@@ -300,13 +304,13 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       closeNotification(key);
     };
   });
-  const [timeRemained] = useState(getRemainingGatewayTime(tx.expiryTime));
+  const [mintTimeRemained] = useState(getRemainingMintTime(tx.expiryTime));
 
   useEffect(() => {
     let key = 0;
-    if (timeRemained < 6 * 3600 * 1000) {
+    if (mintTimeRemained < 6 * 3600 * 1000) {
       key = showNotification(
-        <GatewayTransactionValidityMessage milliseconds={timeRemained} />,
+        <GatewayTransactionValidityMessage milliseconds={mintTimeRemained} />,
         {
           variant: "error",
           persist: true,
@@ -318,7 +322,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
         closeNotification(key);
       }
     };
-  }, [showNotification, closeNotification, timeRemained]);
+  }, [showNotification, closeNotification, mintTimeRemained]);
 
   const { MainIcon } = lockChainConfig;
 

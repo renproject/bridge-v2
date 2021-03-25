@@ -61,6 +61,9 @@ const generateNonce = (dayOffset = 0, dayIndex = 0) => {
 export const getRemainingGatewayTime = (expiryTime: number) =>
   Math.ceil(expiryTime - 24 * 60 * 60 * 1000 - Number(new Date()));
 
+export const getRemainingMintTime = (expiryTime: number) =>
+  Math.ceil(expiryTime - Number(new Date()));
+
 export const getGatewayStatus = (expiryTime: number) => {
   const remaining = getRemainingGatewayTime(expiryTime);
   if (remaining > 24 * 60 * 60 * 1000) {

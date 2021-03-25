@@ -93,6 +93,13 @@ export const useTxParam = () => {
   return { tx, txState: locationState?.txState };
 };
 
+export const bufferReplacer = (name: any, val: any) => {
+  if (val && val.type === "Buffer") {
+    return "";
+  }
+  return val;
+};
+
 export const createTxQueryString = (tx: GatewaySession) => {
   const { customParams, transactions, ...sanitized } = tx as any;
 
@@ -104,7 +111,7 @@ export const createTxQueryString = (tx: GatewaySession) => {
   const stringResult = queryString.stringify({
     ...sanitized,
     customParams: JSON.stringify(customParams),
-    transactions: JSON.stringify(transactions),
+    transactions: JSON.stringify(transactions, bufferReplacer),
   } as any);
 
   if (stringResult.includes("[object Object]")) {

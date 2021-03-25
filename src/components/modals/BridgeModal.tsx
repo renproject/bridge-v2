@@ -128,12 +128,14 @@ export const BridgeModal: FunctionComponent<DialogProps> = ({
 
 const useNestedDrawerStyles = makeStyles((theme) => ({
   backdrop: {
+    overflow: "hidden",
     position: "absolute",
     top: 0,
     right: 0,
     bottom: 0,
     left: 0,
     zIndex: "auto",
+    borderRadius: 20,
   },
   positioner: {
     position: "relative",
@@ -143,12 +145,15 @@ const useNestedDrawerStyles = makeStyles((theme) => ({
     left: 0,
   },
   paper: {
-    position: "absolute",
-    top: 160,
-    bottom: 0,
+    margin: "auto 0 0 0",
     width: "100%",
     display: "flex",
     flexDirection: "column",
+  },
+  paperFixed: {
+    position: "absolute",
+    top: 160,
+    bottom: 0,
   },
 }));
 
@@ -180,8 +185,8 @@ export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
   children,
 }) => {
   const styles = useNestedDrawerStyles();
-  const resolvedClassName = classNames(className, {
-    [styles.paper]: fixed,
+  const resolvedClassName = classNames(className, styles.paper, {
+    [styles.paperFixed]: fixed,
   });
 
   return (

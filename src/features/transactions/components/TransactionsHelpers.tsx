@@ -130,7 +130,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
     <NestedDrawer title="Warning" open onClose={handleClose} fixed={false}>
       <NestedDrawerWrapper>
         <NestedDrawerContent>
-          <PaperContent topPadding bottomPadding>
+          <PaperContent topPadding>
             <SpacedTypography variant="h5" align="center">
               You only have <HCountdown milliseconds={timeRemained} /> to
               complete this transaction

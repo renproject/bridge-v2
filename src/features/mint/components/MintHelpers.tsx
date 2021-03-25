@@ -49,9 +49,8 @@ export const GatewayTransactionValidityMessage: FunctionComponent<CountdownProps
 }) => {
   return (
     <span>
-      This Gateway Address expires in{" "}
-      <HMSCountdown milliseconds={milliseconds} />. You must complete this
-      transaction before then. <br />
+      Complete this transaction within{" "}
+      <HMSCountdown milliseconds={milliseconds} />
     </span>
   );
 };
