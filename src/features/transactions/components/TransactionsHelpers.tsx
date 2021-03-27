@@ -482,6 +482,7 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   );
 };
 
+// POC - keep
 export const PageLeaveWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   ...props
 }) => {

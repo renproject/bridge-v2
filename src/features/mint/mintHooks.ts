@@ -67,9 +67,6 @@ export const useDepositPagination = (
   const handlePrev = useCallback(() => {
     setCurrentHash(prevHash);
   }, [prevHash]);
-  // const handleNavigate = useCallback((newHash) => {
-  //   setCurrentHash(newHash);
-  // }, []);
 
   return {
     currentHash,

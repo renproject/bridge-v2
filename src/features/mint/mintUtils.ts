@@ -208,7 +208,7 @@ export const getDepositParams = (
     }
   }
 
-  // TODO: depreacate meta
+  // FIXME: depreacate meta
   const meta: DepositMeta = {
     status: depositStatus,
     phase: depositPhase,
@@ -383,24 +383,4 @@ export const getLockAndMintParams = (
     suggestedAmount: Number(tx.suggestedAmount) / 1e8,
     meta,
   };
-};
-
-export const areAllDepositsCompleted = (tx: GatewaySession) => {
-  const { depositsParams } = getLockAndMintDepositsParams(tx);
-  if (depositsParams.length === 0) {
-    return false;
-  }
-  for (const deposit of depositsParams) {
-    // if any of the deposits is in not in completed state
-    if (deposit.meta.status !== DepositEntryStatus.COMPLETED) {
-      return false;
-    }
-  }
-  return true;
-};
-
-export const isMintTransactionCompleted = (tx: GatewaySession) => {
-  const allDepositsCompleted = areAllDepositsCompleted(tx);
-  const txExpired = isTxExpired(tx);
-  return allDepositsCompleted || txExpired;
 };

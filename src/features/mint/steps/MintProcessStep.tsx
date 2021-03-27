@@ -36,10 +36,7 @@ import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpe
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
-import {
-  BridgeCurrency,
-  getCurrencyConfigByRentxName,
-} from "../../../utils/assetConfigs";
+import { getCurrencyConfigByRentxName } from "../../../utils/assetConfigs";
 import { useFetchFees } from "../../fees/feesHooks";
 import { $renNetwork } from "../../network/networkSlice";
 import {
@@ -429,14 +426,16 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, [currentDeposit, location, activeDeposit, current.context.tx, history]);
 
-  const { mintCurrencyConfig } = getLockAndMintBasicParams(current.context.tx);
+  const { mintCurrencyConfig, lockCurrencyConfig } = getLockAndMintBasicParams(
+    current.context.tx
+  );
   const accountExplorerLink = getAddressExplorerLink(
     chain,
     renNetwork,
     account
   );
 
-  const { fees } = useFetchFees(BridgeCurrency.BTC, TxType.MINT);
+  const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
   const minimumAmount = (fees.lock / 10 ** 8) * 2;
 
   return (

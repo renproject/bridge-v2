@@ -15,12 +15,10 @@ import {
 } from "@material-ui/lab";
 import { GatewaySession } from "@renproject/ren-tx";
 import classNames from "classnames";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, { FunctionComponent } from "react";
 import {
-  BitcoinIcon,
   CompletedIcon,
   EmptyIcon,
-  EthereumChainIcon,
   GatewayIcon,
   NavigateNextIcon,
   NavigatePrevIcon,
@@ -189,83 +187,6 @@ export const DepositIndicator: FunctionComponent = () => {
     >
       <GatewayIcon fontSize="large" color="inherit" />
     </CircledIconContainer>
-  );
-};
-
-export const DepositToggleButtonGroup: FunctionComponent<ToggleButtonGroupProps> = ({
-  exclusive = true,
-  size = "large",
-  ...props
-}) => {
-  const [value, setValue] = useState("");
-  const handleValueChange = useCallback(
-    (event: React.MouseEvent<HTMLElement>, newValue: string | null) => {
-      if (newValue !== null) {
-        setValue(newValue);
-      }
-    },
-    []
-  );
-  const theme = useTheme();
-  return (
-    <ToggleButtonGroup
-      exclusive={exclusive}
-      size={size}
-      onChange={handleValueChange}
-      value={value}
-      {...props}
-    >
-      <DepositToggleButton value="deposit">
-        <CircledIconContainer>
-          <DepositIndicator />
-        </CircledIconContainer>
-      </DepositToggleButton>
-      <DepositToggleButton value="btc">
-        <CircledIconContainer
-          background={theme.customColors.orange}
-          opacity={0.1}
-        >
-          <ProgressWithContent
-            color={theme.customColors.orange}
-            confirmations={2}
-            targetConfirmations={6}
-            size={42}
-          >
-            <BitcoinIcon fontSize="large" />
-          </ProgressWithContent>
-        </CircledIconContainer>
-      </DepositToggleButton>
-      <DepositToggleButton value="done">
-        <CircledIconContainer
-          background={theme.customColors.blue}
-          opacity={0.1}
-        >
-          <ProgressWithContent
-            color={theme.customColors.blue}
-            confirmations={6}
-            targetConfirmations={6}
-            size={42}
-          >
-            <CompletedIcon fontSize="large" />
-          </ProgressWithContent>
-        </CircledIconContainer>
-      </DepositToggleButton>
-      <DepositToggleButton value="eth">
-        <CircledIconContainer
-          background={theme.customColors.blue}
-          opacity={0.1}
-        >
-          <ProgressWithContent
-            color={theme.customColors.blue}
-            confirmations={15}
-            targetConfirmations={30}
-            size={42}
-          >
-            <EthereumChainIcon fontSize="large" />
-          </ProgressWithContent>
-        </CircledIconContainer>
-      </DepositToggleButton>
-    </ToggleButtonGroup>
   );
 };
 

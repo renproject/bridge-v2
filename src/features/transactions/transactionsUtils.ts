@@ -11,8 +11,6 @@ import {
   getCurrencyConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
-import { isMintTransactionCompleted } from "../mint/mintUtils";
-import { isReleaseTransactionCompleted } from "../release/releaseUtils";
 
 export enum TxEntryStatus {
   PENDING = "pending",
@@ -131,27 +129,6 @@ export const isTxExpired = (tx: GatewaySession) => {
   return Date.now() > tx.expiryTime;
 };
 
-export const txCompletedSorter = (a: GatewaySession, b: GatewaySession) => {
-  const aCompleted = isTransactionCompleted(a);
-  const bCompleted = isTransactionCompleted(b);
-  if (aCompleted && !bCompleted) {
-    return 1;
-  } else if (!aCompleted && bCompleted) {
-    return -1;
-  }
-  return txExpirySorter(a, b);
-};
-
-export const txExpirySorter = (
-  a: Partial<GatewaySession>,
-  b: Partial<GatewaySession>
-) => {
-  if (a.expiryTime && b.expiryTime) {
-    return b.expiryTime - a.expiryTime;
-  }
-  return 0;
-};
-
 export const cloneTx = (tx: GatewaySession) =>
   JSON.parse(JSON.stringify(tx)) as GatewaySession;
 
@@ -265,14 +242,6 @@ export const getPaymentLink = (chain: BridgeChain, address: string) => {
   const chainConfig = getChainConfig(chain);
   return `${chainConfig.rentxName}://${address}`;
 };
-
-export const isTransactionCompleted = (tx: GatewaySession) => {
-  return tx.type === TxType.MINT
-    ? isMintTransactionCompleted(tx)
-    : isReleaseTransactionCompleted(tx);
-};
-
-export const RECEIVING_RATION = 2;
 
 export const isMinimalAmount = (
   amount: number,
