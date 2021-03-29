@@ -19,11 +19,15 @@ export const getFormattedDateTime = (timestamp: number) => {
   return { date, time };
 };
 
+export const getHours =(milliseconds: number) => {
+  return Math.floor(milliseconds / (1000 * 60 * 60));
+}
+
 export const millisecondsToHMS = (milliseconds: number) => {
   const seconds = Math.floor((milliseconds / 1000) % 60);
   const minutes = Math.floor((milliseconds / 1000 / 60) % 60);
   // take absolute hours as they may be greater than 24
-  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+  const hours = getHours(milliseconds);
   return { hours, minutes, seconds };
 };
 

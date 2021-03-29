@@ -41,6 +41,7 @@ import {
 } from "../../../providers/TitleProviders";
 import { orangeLight } from "../../../theme/colors";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
+import { getHours } from '../../../utils/dates'
 import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
@@ -90,7 +91,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
           destNetwork={getChainConfigByRentxName(tx.destChain).full}
         />,
         {
-          variant: timeRemained < 6 * 3600 * 1000 ? "error" : "warning",
+          variant: getHours(timeRemained) < 6 ? "error" : "warning",
           persist: true,
         }
       ) as number;
@@ -314,7 +315,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       key = showNotification(
         <GatewayTransactionValidityMessage milliseconds={mintTimeRemained} />,
         {
-          variant: mintTimeRemained < 12 * 3600 * 1000 ? "error" : "warning",
+          variant: getHours(mintTimeRemained) < 12 ? "error" : "warning",
           persist: true,
         }
       ) as number;
