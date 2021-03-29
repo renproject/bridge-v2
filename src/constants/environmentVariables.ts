@@ -5,7 +5,6 @@ const BANDCHAIN_ENDPOINT =
 const GAS_FEE_ENDPOINT =
   process.env.REACT_APP_GAS_FEE_ENDPOINT ||
   "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty";
-const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY || null;
 const FIREBASE_PROJECT_ID =
   process.env.REACT_APP_FIREBASE_PROJECT_ID || "ren-auth";
 
@@ -26,7 +25,6 @@ export const env = {
   DEV,
   NETWORK,
   INFURA_ID,
-  FIREBASE_KEY,
   FIREBASE_PROJECT_ID,
   BANDCHAIN_ENDPOINT,
   GAS_FEE_ENDPOINT,
