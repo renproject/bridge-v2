@@ -1,10 +1,15 @@
 # `ren bridge v2`
 
-The safe, fast and most secure way to bring cross-chain assets to Ethereum.
+An easy way to bridge cross-chain assets between blockchains.
 
 ![bridge](https://user-images.githubusercontent.com/2221955/108037890-4b8b0100-708e-11eb-948a-289766d0aebd.png)
 
 ## Development guide
+
+### `.env`
+Ensure you have copied `.env.example` into `.env`, add missing environment variables. Bridge uses Infura internally, ensure you provided your `INFURA_KEY`.
+
+### `yarn`
 
 Ensure the dependencies are installed by running `yarn`.
 

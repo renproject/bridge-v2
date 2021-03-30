@@ -25,11 +25,6 @@ export const TransactionHistoryDialog: FunctionComponent<DialogProps> = (
   return <Dialog maxWidth="sm" fullWidth classes={classes} {...props} />;
 };
 
-export const WarningChip = styled(Chip)(({ theme }) => ({
-  color: theme.customColors.alertWarning,
-  backgroundColor: theme.customColors.alertWarningBackground,
-}));
-
 export const WarningLabel = styled(Typography)(({ theme }) => ({
   color: theme.customColors.alertWarning,
   fontSize: 12,
@@ -38,4 +33,14 @@ export const WarningLabel = styled(Typography)(({ theme }) => ({
 export const SuccessChip = styled(Chip)(({ theme }) => ({
   color: theme.customColors.alertSuccess,
   backgroundColor: theme.customColors.alertSuccessBackground,
+}));
+
+export const WarningChip = styled(Chip)(({ theme }) => ({
+  color: theme.customColors.alertWarning,
+  backgroundColor: theme.customColors.alertWarningBackground,
+}));
+
+export const ErrorChip = styled(Chip)(({ theme }) => ({
+  color: theme.customColors.alertError,
+  backgroundColor: theme.customColors.alertErrorBackground,
 }));

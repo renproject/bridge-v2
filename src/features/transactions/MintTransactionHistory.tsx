@@ -83,8 +83,10 @@ import {
   setWalletPickerOpened,
 } from "../wallet/walletSlice";
 import {
+  ErrorChip,
   SuccessChip,
   TransactionHistoryDialog,
+  WarningChip,
   WarningLabel,
 } from "./components/TransactionHistoryHelpers";
 import {
@@ -304,7 +306,7 @@ const standardPaddings = {
 
 const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
 
-export const useGatewayResolverStyles = makeStyles((theme) => ({
+export const useGatewayEntryStyles = makeStyles((theme) => ({
   root: {
     background: theme.palette.common.white,
     borderTop: `1px solid ${theme.palette.divider}`,
@@ -410,7 +412,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   isActive,
 }) => {
   const theme = useTheme();
-  const styles = useGatewayResolverStyles();
+  const styles = useGatewayEntryStyles();
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -514,10 +516,6 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
       <div className={styles.root}>
         <div className={styles.gateway}>
           <div className={styles.gatewayInfo}>
-            <GatewayLabel
-              status={gatewayStatus}
-              timeToGatewayExpiration={timeToGatewayExpiration}
-            />
             <div className={styles.gatewayAddress}>
               {tx.gatewayAddress ? (
                 <GatewayAddress
@@ -622,7 +620,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
             <div className={styles.actions}>
               {isActive && (
                 <Typography color="primary" variant="caption">
-                  Currently viewing
+                  Close window to view
                 </Typography>
               )}
               {!isActive && hasDeposits && (
@@ -689,18 +687,20 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
         <SuccessChip
           label={
             <span>
-              Expires in:{" "}
-              <strong>{getFormattedHMS(timeToGatewayExpiration)}</strong>
+              Time remaining:{" "}
+              <strong>
+                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+              </strong>
             </span>
           }
         />
       );
     case GatewayStatus.PREVIOUS:
       return (
-        <SuccessChip
+        <WarningChip
           label={
             <span>
-              Finish mint within:{" "}
+              Time remaining:{" "}
               <strong>
                 {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
               </strong>
@@ -710,10 +710,10 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
       );
     case GatewayStatus.EXPIRING:
       return (
-        <SuccessChip
+        <ErrorChip
           label={
             <span>
-              Finish mint within:{" "}
+              Time remaining:{" "}
               <strong>
                 {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
               </strong>

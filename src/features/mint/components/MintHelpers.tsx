@@ -35,11 +35,11 @@ export const GatewayAddressValidityMessage: FunctionComponent<GatewayAddressVali
   return (
     <span>
       This Gateway Address expires in{" "}
-      <HMSCountdown milliseconds={milliseconds} />. Do not send multiple
-      deposits or deposit after it has expired. <br />
+      <HMSCountdown milliseconds={milliseconds} />. Do not send to it after it
+      has expired. <br />
       <br />
-      Once you have deposited funds to the Gateway Address, you have 24 hours to
-      submit the mint transaction to {destNetwork}.
+      Once you have deposited funds, you have a further 24 hours to submit the
+      mint transaction to {destNetwork}.
     </span>
   );
 };
