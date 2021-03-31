@@ -271,7 +271,7 @@ export const getLockAndMintDepositsParams = (tx: GatewaySession) => {
   return { depositsParams };
 };
 
-// TODO: deprecated method, replace with getLockAndMintBasicParams, getLockAndMintDepositsParams
+// TODO: replace with getLockAndMintBasicParams, getLockAndMintDepositsParams
 export const getLockAndMintParams = (
   tx: GatewaySession,
   depositSourceHash = ""
@@ -383,4 +383,18 @@ export const getLockAndMintParams = (
     suggestedAmount: Number(tx.suggestedAmount) / 1e8,
     meta,
   };
+};
+
+export const areAllDepositsCompleted = (tx: GatewaySession) => {
+  const { depositsParams } = getLockAndMintDepositsParams(tx);
+  if (depositsParams.length === 0) {
+    return false;
+  }
+  for (const deposit of depositsParams) {
+    // if any of the deposits is in not in completed state
+    if (deposit.meta.status !== DepositEntryStatus.COMPLETED) {
+      return false;
+    }
+  }
+  return true;
 };

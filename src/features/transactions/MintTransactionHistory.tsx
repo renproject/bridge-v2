@@ -69,10 +69,10 @@ import {
 } from "../mint/mintHooks";
 import { $mint, setMintCurrency } from "../mint/mintSlice";
 import {
+  areAllDepositsCompleted,
   createMintTransaction,
   getDepositParams,
   getLockAndMintBasicParams,
-  getLockAndMintParams,
   getRemainingGatewayTime,
 } from "../mint/mintUtils";
 import { $renNetwork } from "../network/networkSlice";
@@ -492,7 +492,8 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
     }
   }, [tx.gatewayAddress, hasDeposits]);
 
-  const params = getLockAndMintParams(tx, currentHash);
+  console.log("gs", gatewayStatus);
+  const allCompleted = areAllDepositsCompleted(tx);
   const completed = depositStatus === DepositEntryStatus.COMPLETED;
   const confirmationProps = completed
     ? {}
@@ -502,17 +503,6 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
       };
   return (
     <>
-      <Debug
-        wrapper
-        it={{
-          tx,
-          currentHash,
-          currentIndex,
-          depositStatus,
-          depositPhase,
-          params,
-        }}
-      />
       <div className={styles.root}>
         <div className={styles.gateway}>
           <div className={styles.gatewayInfo}>
@@ -529,7 +519,8 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
             </div>
           </div>
           <div className={styles.gatewayCounter}>
-            {hasDeposits && (
+            {(gatewayStatus === GatewayStatus.CURRENT ||
+              (hasDeposits && !allCompleted)) && (
               <Fade in={true}>
                 <GatewayStatusChip
                   status={gatewayStatus}
