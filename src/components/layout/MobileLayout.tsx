@@ -1,25 +1,11 @@
-import {
-  Container,
-  DialogActions,
-  DialogContent,
-  Grid,
-  Typography,
-} from "@material-ui/core";
+import { Container, Grid } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
-import React, {
-  FunctionComponent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, ReactNode, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { links } from "../../constants/constants";
-import { ActionButton, HomeMenuIconButton } from "../buttons/Buttons";
+import { HomeMenuIconButton } from "../buttons/Buttons";
 import { BetaIcon, RenBridgeLogoIcon } from "../icons/RenIcons";
-import { BridgeModal } from "../modals/BridgeModal";
 import { Footer } from "./Footer";
 
 const headerHeight = 82;
@@ -162,35 +148,8 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
           </header>
           <main className={styles.main}>{children}</main>
           <Footer />
-          <LegacyBridgeModal />
         </Container>
       </Grid>
     </Container>
-  );
-};
-
-const LegacyBridgeModal: FunctionComponent = () => {
-  const [open, setOpen] = useState(true);
-  const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
-  return (
-    <BridgeModal open={open}>
-      <DialogContent>
-        <Typography variant="h5" align="center" gutterBottom>
-          Welcome to RenBridge 2.1
-        </Typography>
-        <Typography variant="body2" align="center" gutterBottom>
-          If you're here to complete a transaction you started in the past,
-          you'll need to finish it on RenBridge 2.0,{" "}
-          <Link to={links.LEGACY_BRIDGE}>head here.</Link>
-        </Typography>
-      </DialogContent>
-      <DialogActions>
-        <ActionButton onClick={handleClose}>
-          Continue to RenBridge 2.1
-        </ActionButton>
-      </DialogActions>
-    </BridgeModal>
   );
 };
