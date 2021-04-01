@@ -96,9 +96,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
     <footer className={rootClassName}>
       <ul className={styles.textLinks}>
         <li>
-          <FooterTextLink to={paths.ABOUT}>
-            About
-          </FooterTextLink>
+          <FooterTextLink to={paths.ABOUT}>About</FooterTextLink>
         </li>
         <li>
           <FooterTextLink href={links.DOCS} target="_blank">
@@ -113,6 +111,11 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
         <li>
           <FooterTextLink href={links.WIKI} target="_blank">
             Wiki
+          </FooterTextLink>
+        </li>
+        <li>
+          <FooterTextLink href={links.LEGACY_BRIDGE} target="_blank">
+            RenBridge 2.0
           </FooterTextLink>
         </li>
       </ul>
