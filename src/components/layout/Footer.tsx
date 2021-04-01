@@ -115,7 +115,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
         </li>
         <li>
           <FooterTextLink href={links.LEGACY_BRIDGE} target="_blank">
-            RenBridge 2.0
+            Legacy Bridge
           </FooterTextLink>
         </li>
       </ul>

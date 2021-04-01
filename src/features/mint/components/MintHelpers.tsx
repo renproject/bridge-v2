@@ -79,14 +79,6 @@ export const MintIntro: FunctionComponent = () => {
   const styles = useMintIntroStyles();
   return (
     <div className={styles.root}>
-      <Typography
-        className={styles.heading}
-        variant="h5"
-        align="center"
-        gutterBottom
-      >
-        RenBridge 2
-      </Typography>
       <Typography variant="body1" align="center">
         Select an asset and destination chain, to&nbsp;begin or resume a mint.
       </Typography>
