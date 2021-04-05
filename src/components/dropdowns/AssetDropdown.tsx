@@ -17,7 +17,7 @@ import {
   BridgeCurrency,
   chainsConfig,
   currenciesConfig,
-  CurrencyConfig,
+  BridgeCurrencyConfig,
 } from "../../utils/assetConfigs";
 import { NumberFormatText } from "../formatting/NumberFormatText";
 import { EmptyCircleIcon } from "../icons/RenIcons";
@@ -27,14 +27,14 @@ const getOptions = (mode: AssetDropdownMode) => {
     mode === "chain"
       ? Object.values(chainsConfig)
       : Object.values(currenciesConfig);
-  return options as Array<BridgeChainConfig | CurrencyConfig>;
+  return options as Array<BridgeChainConfig | BridgeCurrencyConfig>;
 };
 
 const getOptionBySymbol = (symbol: string, mode: AssetDropdownMode) =>
   getOptions(mode).find((option) => option.symbol === symbol);
 
 const createAvailabilityFilter = (available: Array<string> | undefined) => (
-  option: BridgeChainConfig | CurrencyConfig
+  option: BridgeChainConfig | BridgeCurrencyConfig
 ) => {
   if (!available) {
     return true;
@@ -102,7 +102,7 @@ type AssetDropdownProps = SelectProps & {
 };
 
 const getAssetData = (
-  selected: BridgeChainConfig | CurrencyConfig | undefined
+  selected: BridgeChainConfig | BridgeCurrencyConfig | undefined
 ) => {
   let full = "Select";
   let short = "Select";

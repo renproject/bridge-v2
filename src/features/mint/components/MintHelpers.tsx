@@ -1,6 +1,9 @@
 import { makeStyles, styled, Typography } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
-import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
+import {
+  BridgeChainConfig,
+  BridgeCurrencyConfig,
+} from "../../../utils/assetConfigs";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 
 export const mintTooltips = {
@@ -11,7 +14,7 @@ export const mintTooltips = {
 
 export const getMintDynamicTooltips = (
   chainConfig: BridgeChainConfig,
-  chainNativeCurrencyConfig: CurrencyConfig
+  chainNativeCurrencyConfig: BridgeCurrencyConfig
 ) => ({
   acknowledge: `Minting an asset on ${chainConfig.full} requires you to submit a transaction. It will cost you a small amount of ${chainNativeCurrencyConfig.short}.`,
 });

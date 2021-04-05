@@ -120,7 +120,7 @@ export type IconsConfig = MainIconConfig & {
   GreyIcon: CustomSvgIconComponent | SvgIconComponent;
 };
 
-export type CurrencyConfig = LabelsConfig &
+export type BridgeCurrencyConfig = LabelsConfig &
   ColorsConfig &
   IconsConfig & {
     symbol: BridgeCurrency;
@@ -156,7 +156,7 @@ const newNetworkMappings: ChainToNetworkMappings = {
   [RenChain.binanceSmartChain]: networkMappingLegacy,
 };
 
-export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
+export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
   [BridgeCurrency.BTC]: {
     symbol: BridgeCurrency.BTC,
     short: "BTC",
@@ -281,7 +281,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: DgbGreyIcon,
     Icon: DgbIcon,
     MainIcon: DgbFullIcon,
-    sourceChain: BridgeChain.UNKNOWNC, // TODO:
+    sourceChain: BridgeChain.UNKNOWNC, // TODO: add when supported
     rentxName: "DGB",
     networkMappings: newNetworkMappings,
   },
@@ -377,7 +377,6 @@ export type BridgeChainConfig = LabelsConfig &
     targetConfirmations: number;
   };
 
-// TODO: add confirmations from https://support.kraken.com/hc/en-us/articles/203325283-Cryptocurrency-deposit-processing-times
 export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
   [BridgeChain.BTCC]: {
     symbol: BridgeChain.BTCC,
