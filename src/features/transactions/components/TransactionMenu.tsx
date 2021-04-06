@@ -1,6 +1,4 @@
 import {
-  Button,
-  Divider,
   ListItemIcon,
   makeStyles,
   MenuItem,
@@ -26,7 +24,6 @@ import {
   OutlinedTextFieldWrapper,
 } from "../../../components/inputs/OutlinedTextField";
 import { PaperContent } from "../../../components/layout/Paper";
-import { externalLinkAttributes } from "../../../components/links/Links";
 import {
   BridgeModalTitle,
   NestedDrawer,
@@ -155,17 +152,6 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
               <Typography variant="inherit" className={styles.transferId}>
                 {tx.id}
               </Typography>
-            </PaperContent>
-            <Divider />
-            <PaperContent bottomPadding topPadding paddingVariant="medium">
-              <Button
-                variant="outlined"
-                size="small"
-                href="https://renprotocol.typeform.com/to/YdmFyB"
-                {...externalLinkAttributes}
-              >
-                Report an Issue
-              </Button>
             </PaperContent>
           </NestedDrawerActions>
         </NestedDrawerWrapper>

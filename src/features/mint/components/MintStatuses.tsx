@@ -41,7 +41,7 @@ import {
 } from "../../../providers/TitleProviders";
 import { orangeLight } from "../../../theme/colors";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
-import { getHours } from '../../../utils/dates'
+import { getHours } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
@@ -51,11 +51,7 @@ import {
   ProcessingTimeWrapper,
   SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
-import {
-  createTxQueryString,
-  getPaymentLink,
-  TxType,
-} from "../../transactions/transactionsUtils";
+import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import {
   getLockAndMintParams,
   getRemainingGatewayTime,
@@ -470,17 +466,10 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     type: TxType.MINT,
   });
   const handleReturn = useCallback(() => {
-    const qsTx = { ...tx, depositHash: "gateway" };
     history.push({
-      pathname: paths.MINT_TRANSACTION,
-      search: "?" + createTxQueryString(qsTx),
-      state: {
-        txState: {
-          reloadTx: true,
-        },
-      },
+      pathname: paths.HOME,
     });
-  }, [history, tx]);
+  }, [history]);
 
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
@@ -525,9 +514,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         !
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>
-          Back to Gateway Address
-        </ActionButton>
+        <ActionButton onClick={handleReturn}>Back to home</ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link

@@ -144,7 +144,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
 
-  const handleEscapeKeyDown = useCallback(() => {
+  const handleTxHistoryClose = useCallback(() => {
     dispatch(setTxHistoryOpened(false));
   }, [dispatch]);
 
@@ -153,7 +153,8 @@ export const MintTransactionHistory: FunctionComponent = () => {
   return (
     <TransactionHistoryDialog
       open={opened}
-      onEscapeKeyDown={handleEscapeKeyDown}
+      onEscapeKeyDown={handleTxHistoryClose}
+      onBackdropClick={handleTxHistoryClose}
     >
       <TransactionsHeader title="Viewing mint history for">
         <AssetDropdown

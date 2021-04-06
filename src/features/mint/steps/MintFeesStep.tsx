@@ -62,9 +62,7 @@ import {
   TxType,
 } from "../../transactions/transactionsUtils";
 import { useShakePaper } from "../../ui/uiHooks";
-import {
-  useSelectedChainWallet,
-} from "../../wallet/walletHooks";
+import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   getMintDynamicTooltips,
@@ -85,9 +83,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { currency } = useSelector($mint);
   const [amountValue, setAmountValue] = useState("");
-  const {
-    chain,
-  } = useSelector($wallet);
+  const { chain } = useSelector($wallet);
   const network = useSelector($renNetwork);
   const exchangeRates = useSelector($exchangeRates);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);
@@ -312,7 +308,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                     variant="caption"
                     color={showAckError ? "inherit" : "textPrimary"}
                   >
-                    I acknowledge this transaction requires{" "}
+                    I acknowledge the fees and that this transaction requires{" "}
                     {destinationChainNativeCurrencyConfig.short}{" "}
                     <TooltipWithIcon title={mintDynamicTooltips.acknowledge} />
                   </Typography>
@@ -330,9 +326,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           >
             {!walletConnected
               ? "Connect Wallet"
-              : mintingInitialized
-              ? "Confirming..."
-              : "Confirm"}
+              : `View ${lockCurrencyConfig.short} Gateway Address`}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

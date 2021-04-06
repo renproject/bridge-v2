@@ -2,6 +2,7 @@ import {
   Button,
   Divider,
   Drawer,
+  Fab,
   ListItem,
   Menu,
   MenuItem,
@@ -9,6 +10,8 @@ import {
   useTheme,
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
+import { styled } from "@material-ui/core/styles";
+import { Feedback } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
 import {
@@ -35,6 +38,7 @@ import {
   MobileLayout,
   useMobileLayoutStyles,
 } from "../components/layout/MobileLayout";
+import { externalLinkAttributes } from "../components/links/Links";
 import { Debug } from "../components/utils/Debug";
 import {
   useWalletPickerStyles,
@@ -44,6 +48,7 @@ import {
   WalletEntryButton,
   WalletWrongNetworkInfo,
 } from "../components/wallet/WalletHelpers";
+import { links } from "../constants/constants";
 import { env } from "../constants/environmentVariables";
 import { $renNetwork } from "../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../features/network/networkUtils";
@@ -282,8 +287,23 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   );
 };
 
+export const IssueFab = styled(Fab)({
+  position: "fixed",
+  right: 30,
+  bottom: 20,
+});
+
 export const ConnectedMainLayout: FunctionComponent = ({ children }) => (
   <MultiwalletProvider>
     <MainLayout>{children}</MainLayout>
+    <IssueFab
+      size="small"
+      color="primary"
+      href={links.BUGS_LOG}
+      title="Report an issue"
+      {...externalLinkAttributes}
+    >
+      <Feedback fontSize="small" />
+    </IssueFab>
   </MultiwalletProvider>
 );
