@@ -5,10 +5,6 @@ const BANDCHAIN_ENDPOINT =
 const GAS_FEE_ENDPOINT =
   process.env.REACT_APP_GAS_FEE_ENDPOINT ||
   "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty";
-const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY || null;
-const FIREBASE_PROJECT_ID =
-  process.env.REACT_APP_FIREBASE_PROJECT_ID || "ren-auth";
-
 const DEV = Boolean(process.env.NODE_ENV === "development");
 
 const XSTATE_DEVTOOLS = Boolean(process.env.REACT_APP_XSTATE_DEVTOOLS || DEV);
@@ -18,19 +14,21 @@ const WALLETCONNECT_ENABLED = Boolean(
   process.env.REACT_APP_WALLETCONNECT_ENABLED
 );
 const BSC_MM_ENABLED = Boolean(process.env.REACT_APP_BSC_MM_ENABLED);
+const TX_HISTORY_EXPLORATION = Boolean(
+  process.env.REACT_TX_HISTORY_EXPLORATION
+);
 
 export const env = {
   DEV,
   NETWORK,
   INFURA_ID,
-  FIREBASE_KEY,
-  FIREBASE_PROJECT_ID,
   BANDCHAIN_ENDPOINT,
   GAS_FEE_ENDPOINT,
   XSTATE_DEVTOOLS,
   BSC_MM_ENABLED,
   MEWCONNECT_ENABLED,
   WALLETCONNECT_ENABLED,
+  TX_HISTORY_EXPLORATION,
 };
 
 if (DEV) console.debug("env", env, process);

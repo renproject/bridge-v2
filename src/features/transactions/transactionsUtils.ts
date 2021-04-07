@@ -11,8 +11,6 @@ import {
   getCurrencyConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { toPercent } from "../../utils/converters";
-import { isMintTransactionCompleted } from "../mint/mintUtils";
-import { isReleaseTransactionCompleted } from "../release/releaseUtils";
 
 export enum TxEntryStatus {
   PENDING = "pending",
@@ -36,6 +34,14 @@ export type TxMeta = {
   createdTimestamp: number;
   transactionsCount: number;
 };
+
+export enum GatewayStatus {
+  CURRENT = "current",
+  PREVIOUS = "previous",
+  EXPIRING = "expiring",
+  EXPIRED = "expired",
+  NONE = "",
+}
 
 export enum DepositPhase {
   LOCK = "lock",
@@ -85,6 +91,13 @@ export const useTxParam = () => {
   return { tx, txState: locationState?.txState };
 };
 
+export const bufferReplacer = (name: any, val: any) => {
+  if (val && val.type === "Buffer") {
+    return "";
+  }
+  return val;
+};
+
 export const createTxQueryString = (tx: GatewaySession) => {
   const { customParams, transactions, ...sanitized } = tx as any;
 
@@ -96,7 +109,7 @@ export const createTxQueryString = (tx: GatewaySession) => {
   const stringResult = queryString.stringify({
     ...sanitized,
     customParams: JSON.stringify(customParams),
-    transactions: JSON.stringify(transactions),
+    transactions: JSON.stringify(transactions, bufferReplacer),
   } as any);
 
   if (stringResult.includes("[object Object]")) {
@@ -114,27 +127,6 @@ const parseNumber = (value: any) => {
 
 export const isTxExpired = (tx: GatewaySession) => {
   return Date.now() > tx.expiryTime;
-};
-
-export const txCompletedSorter = (a: GatewaySession, b: GatewaySession) => {
-  const aCompleted = isTransactionCompleted(a);
-  const bCompleted = isTransactionCompleted(b);
-  if (aCompleted && !bCompleted) {
-    return 1;
-  } else if (!aCompleted && bCompleted) {
-    return -1;
-  }
-  return txExpirySorter(a, b);
-};
-
-export const txExpirySorter = (
-  a: Partial<GatewaySession>,
-  b: Partial<GatewaySession>
-) => {
-  if (a.expiryTime && b.expiryTime) {
-    return b.expiryTime - a.expiryTime;
-  }
-  return 0;
 };
 
 export const cloneTx = (tx: GatewaySession) =>
@@ -235,28 +227,20 @@ export const getFeeTooltips = ({
 export const getTxPageTitle = (tx: GatewaySession) => {
   const amount = tx.targetAmount;
   const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
-  const type = tx.type === TxType.MINT ? "Mint" : "Release";
   const date = new Date(getTxCreationTimestamp(tx)).toISOString();
-
-  return `${type} - ${amount} ${asset} - ${date}`;
+  if (tx.type === TxType.MINT) {
+    return `Mint - ${asset} - ${date}`;
+  } else {
+    return `Release - ${amount} ${asset} - ${date}`;
+  }
 };
 
 export const getTxCreationTimestamp = (tx: GatewaySession) =>
   tx.createdAt || tx.expiryTime - 24 * 3600 * 1000 * 3;
 
-export const getPaymentLink = (
-  chain: BridgeChain,
-  address: string,
-  amount: number
-) => {
+export const getPaymentLink = (chain: BridgeChain, address: string) => {
   const chainConfig = getChainConfig(chain);
-  return `${chainConfig.rentxName}://${address}?amount=${amount}`;
-};
-
-export const isTransactionCompleted = (tx: GatewaySession) => {
-  return tx.type === TxType.MINT
-    ? isMintTransactionCompleted(tx)
-    : isReleaseTransactionCompleted(tx);
+  return `${chainConfig.rentxName}://${address}`;
 };
 
 export const isMinimalAmount = (

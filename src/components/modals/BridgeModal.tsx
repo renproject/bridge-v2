@@ -30,7 +30,7 @@ export const useBridgeModalTitleStyles = makeStyles((theme) => ({
     flexGrow: 1,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   closeButtonWrapper: {
     minWidth: 30,
@@ -128,12 +128,14 @@ export const BridgeModal: FunctionComponent<DialogProps> = ({
 
 const useNestedDrawerStyles = makeStyles((theme) => ({
   backdrop: {
+    overflow: "hidden",
     position: "absolute",
     top: 0,
     right: 0,
     bottom: 0,
     left: 0,
     zIndex: "auto",
+    borderRadius: 20,
   },
   positioner: {
     position: "relative",
@@ -143,17 +145,21 @@ const useNestedDrawerStyles = makeStyles((theme) => ({
     left: 0,
   },
   paper: {
-    position: "absolute",
-    top: 160,
-    bottom: 0,
+    margin: "auto 0 0 0",
     width: "100%",
     display: "flex",
     flexDirection: "column",
+  },
+  paperFixed: {
+    position: "absolute",
+    top: 160,
+    bottom: 0,
   },
 }));
 
 type NestedDrawerProps = DialogProps & {
   open: boolean;
+  fixed?: boolean;
 };
 
 const stopPropagation = (event: any) => {
@@ -174,11 +180,14 @@ export const NestedDrawer: FunctionComponent<NestedDrawerProps> = ({
   open,
   onClose,
   title,
+  fixed = true,
   className,
   children,
 }) => {
   const styles = useNestedDrawerStyles();
-  const resolvedClassName = classNames(className, styles.paper);
+  const resolvedClassName = classNames(className, styles.paper, {
+    [styles.paperFixed]: fixed,
+  });
 
   return (
     <Backdrop className={styles.backdrop} open={open} onClick={onClose as any}>

@@ -19,7 +19,7 @@ export const useExchangeRates = () => {
     });
   }, [dispatch]);
 
-  useEffect(fetchData, []);
+  useEffect(fetchData, [fetchData]);
   useInterval(fetchData, dataRefreshInterval * 1000);
 
   return null;
@@ -43,7 +43,7 @@ export const useGasPrices = () => {
     });
   }, [dispatch]);
 
-  useEffect(fetchData, []);
+  useEffect(fetchData, [fetchData]);
 
   return null;
 };

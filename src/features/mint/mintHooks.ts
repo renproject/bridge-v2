@@ -1,21 +1,17 @@
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   DepositMachineSchema,
-  GatewayMachineContext,
-  GatewayMachineEvent,
   GatewaySession,
   mintMachine,
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
 import { useCallback, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Interpreter, State } from "xstate";
+import { useSelector } from "react-redux";
+import { useInterval } from "react-use";
 import { env } from "../../constants/environmentVariables";
-import { db } from "../../services/database/database";
 import { getRenJs } from "../../services/renJs";
 import { lockChainMap, mintChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
-import { updateTransaction } from "../transactions/transactionsSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
 import { depositSorter } from "./mintUtils";
 
@@ -30,7 +26,7 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     }),
     {}
   );
-  const machineHook = useMachine(mintMachine, {
+  return useMachine(mintMachine, {
     context: {
       tx,
       providers,
@@ -38,53 +34,12 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
       fromChainMap: lockChainMap,
       toChainMap: mintChainMap,
     },
+    autoSubmit: true,
     devTools: env.XSTATE_DEVTOOLS,
   });
-
-  useMintTransactionPersistence(machineHook[2]);
-
-  return machineHook;
 };
 
 export type DepositMachineSchemaState = keyof DepositMachineSchema["states"];
-
-export const useMintTransactionPersistence = (
-  service: Interpreter<GatewayMachineContext, any, GatewayMachineEvent>
-) => {
-  const dispatch = useDispatch();
-  const sub = useCallback(
-    async (state: State<GatewayMachineContext, GatewayMachineEvent, any>) => {
-      const tx = state.context.tx;
-      try {
-        // DEPOSIT_UPDATE should be a safe event to update the db on
-        if (
-          (state.event.type === "DEPOSIT_UPDATE" ||
-            // We also persist on listening to catch the initial gateway
-            state.event.type === "LISTENING") &&
-          state.value === "listening"
-        ) {
-          // clone prevents throwing serialization errors during dispatch
-          // which breaks the event loop and prevents txs from processing
-          const newDbTx = cloneTx(tx);
-          await db.updateTx(newDbTx);
-          dispatch(updateTransaction(newDbTx));
-        }
-      } catch (err) {
-        console.warn("Mint Tx synchronization failed", err, tx);
-      }
-    },
-    [dispatch]
-  );
-
-  useEffect(() => {
-    service.subscribe(sub);
-    return () => {
-      service.off(sub);
-    };
-  }, [dispatch, service, sub]);
-
-  service.subscribe();
-};
 
 export const useDepositPagination = (
   tx: GatewaySession,
@@ -112,6 +67,7 @@ export const useDepositPagination = (
   const handlePrev = useCallback(() => {
     setCurrentHash(prevHash);
   }, [prevHash]);
+
   return {
     currentHash,
     currentIndex,
@@ -119,4 +75,19 @@ export const useDepositPagination = (
     handlePrev,
     total,
   };
+};
+
+/**
+ * Will rerender component every intervalMs, producing new ms value
+ */
+
+export const useIntervalCountdown = (
+  countFromMs: number,
+  intervalMs = 1000
+) => {
+  const [ms, setMs] = useState(countFromMs);
+  useInterval(() => {
+    setMs(ms - intervalMs);
+  }, intervalMs);
+  return ms;
 };

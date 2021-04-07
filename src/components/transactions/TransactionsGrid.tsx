@@ -19,23 +19,29 @@ export type Transaction = {
 };
 
 const standardPaddings = {
-  paddingLeft: 30,
-  paddingRight: 30,
+  paddingLeft: 40,
+  paddingRight: 40,
 };
+
+const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
 
 const useTransactionsHeaderStyles = makeStyles((theme) => ({
   root: {
     ...standardPaddings,
-    paddingTop: 20,
-    background: theme.customColors.greyHeaderBackground,
+    paddingTop: 22,
+    paddingBottom: 18,
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    background: theme.palette.common.white,
+    boxShadow: standardShadow,
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   header: {},
   actions: {
     display: "flex",
     alignItems: "center",
+    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -93,7 +99,7 @@ export const TransactionsPaginationWrapper = styled("div")(({ theme }) => ({
   ...standardPaddings,
   paddingTop: 10,
   paddingBottom: 10,
-  backgroundColor: theme.customColors.greyHeaderBackground,
+  backgroundColor: theme.customColors.greyHeaderBackground
 }));
 
 export const useTransactionEntryStyles = makeStyles((theme) => ({

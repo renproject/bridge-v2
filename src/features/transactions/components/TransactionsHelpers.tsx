@@ -1,50 +1,60 @@
 import {
   Button,
+  Checkbox,
   DialogProps,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   styled,
+  Tooltip,
   Typography,
   useTheme,
-} from '@material-ui/core'
-import { GatewaySession } from '@renproject/ren-tx'
+} from "@material-ui/core";
+import { GatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useState,
-} from 'react'
-import { useHistory } from 'react-router-dom'
-import { useInterval } from 'react-use'
+} from "react";
+import { useHistory } from "react-router-dom";
+import { useInterval } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,
   RedButton,
-} from '../../../components/buttons/Buttons'
+} from "../../../components/buttons/Buttons";
 import {
   SpecialAlertIcon,
   WarningIcon,
-} from '../../../components/icons/RenIcons'
+} from "../../../components/icons/RenIcons";
+import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
-} from '../../../components/layout/Paper'
-import { Link } from '../../../components/links/Links'
+} from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
 import {
   BridgeModal,
   NestedDrawer,
   NestedDrawerActions,
   NestedDrawerContent,
   NestedDrawerWrapper,
-} from '../../../components/modals/BridgeModal'
+} from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
-} from '../../../components/progress/ProgressHelpers'
-import { links } from '../../../constants/constants'
-import { paths } from '../../../pages/routes'
-import { usePaperTitle } from '../../../providers/TitleProviders'
-import { getFormattedHMS } from '../../../utils/dates'
-import { trimAddress } from '../../../utils/strings'
+} from "../../../components/progress/ProgressHelpers";
+import {
+  SpacedTypography,
+  UnderlinedSpan,
+} from "../../../components/typography/TypographyHelpers";
+import { links } from "../../../constants/constants";
+import { paths } from "../../../pages/routes";
+import { usePaperTitle } from "../../../providers/TitleProviders";
+import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
+import { trimAddress } from "../../../utils/strings";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -58,15 +68,13 @@ type BookmarkPageWarningProps = {
 export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
   onClosed,
 }) => {
-  const [open] = useState(true);
   const handleClose = useCallback(() => {
     if (onClosed) {
       onClosed();
     }
-    // setOpen(false);
   }, [onClosed]);
   return (
-    <NestedDrawer title="Warning" open={open} onClose={handleClose}>
+    <NestedDrawer title="Warning" onClose={handleClose} open>
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding bottomPadding>
@@ -83,6 +91,114 @@ export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = 
           <PaperContent bottomPadding>
             <ActionButtonWrapper>
               <ActionButton onClick={handleClose}>I understand</ActionButton>
+            </ActionButtonWrapper>
+          </PaperContent>
+        </NestedDrawerActions>
+      </NestedDrawerWrapper>
+    </NestedDrawer>
+  );
+};
+
+type FinishTransactionWarningProps = {
+  onClosed?: () => void;
+  timeRemained: number;
+  lockChainConfirmations: number;
+  lockChainBlockTime: number;
+  lockCurrencyLabel: string;
+  mintCurrencyLabel: string;
+  mintChainLabel: string;
+};
+
+export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarningProps> = ({
+  onClosed,
+  timeRemained,
+  lockChainBlockTime,
+  lockChainConfirmations,
+  lockCurrencyLabel,
+  mintCurrencyLabel,
+  mintChainLabel,
+}) => {
+  const [checked, setChecked] = useState(true);
+
+  const handleCheckboxChange = useCallback(() => {
+    setChecked(!checked);
+  }, [checked]);
+
+  const handleClose = useCallback(() => {
+    if (onClosed) {
+      onClosed();
+    }
+  }, [onClosed]);
+  const txTimeMinutes = lockChainBlockTime * lockChainConfirmations;
+  return (
+    <NestedDrawer title="Warning" open onClose={handleClose} fixed={false}>
+      <NestedDrawerWrapper>
+        <NestedDrawerContent>
+          <PaperContent topPadding>
+            <SpacedTypography variant="h5" align="center">
+              You only have <HCountdown milliseconds={timeRemained} /> to
+              complete this transaction
+            </SpacedTypography>
+            <SpacedTypography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+            >
+              This transaction takes{" "}
+              <Tooltip title="Block confirmation time depends on factors such as blockchain activity and the fee you set for your transaction">
+                <UnderlinedSpan>about {txTimeMinutes} minutes</UnderlinedSpan>
+              </Tooltip>{" "}
+              to complete. For security reasons, you will need to wait for{" "}
+              {lockChainConfirmations} block confirmations before you can mint{" "}
+              {mintCurrencyLabel} on {mintChainLabel}.
+            </SpacedTypography>{" "}
+            <SpacedTypography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+            >
+              If you cannot complete this transaction within the required time,
+              please return at a later date.
+            </SpacedTypography>
+            <SpacedTypography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+            >
+              <strong>
+                If you do not finish it within this window, your assets will be
+                lost.
+              </strong>
+            </SpacedTypography>
+          </PaperContent>
+        </NestedDrawerContent>
+        <NestedDrawerActions>
+          <PaperContent bottomPadding>
+            <CheckboxWrapper>
+              <FormControl>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={checked}
+                      onChange={handleCheckboxChange}
+                      name="ack"
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <FormLabel htmlFor="ack" component={Typography}>
+                      <Typography variant="caption" color="textPrimary">
+                        I can complete this transaction within the time
+                      </Typography>
+                    </FormLabel>
+                  }
+                />
+              </FormControl>
+            </CheckboxWrapper>
+            <ActionButtonWrapper>
+              <ActionButton onClick={handleClose} disabled={!checked}>
+                Continue
+              </ActionButton>
             </ActionButtonWrapper>
           </PaperContent>
         </NestedDrawerActions>
@@ -137,6 +253,22 @@ export const HMSCountdown: FunctionComponent<HMSCountdownProps> = ({
   const time = getFormattedHMS(count);
 
   return <strong>{time}</strong>;
+};
+
+export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
+  milliseconds,
+}) => {
+  const [count, setCount] = useState(milliseconds);
+  useInterval(() => {
+    setCount((ms) => ms - 1000);
+  }, 60 * 1000);
+  const { hours } = millisecondsToHMS(count);
+
+  return (
+    <strong>
+      {hours} {hours > 1 ? "hours" : "hour"}
+    </strong>
+  );
 };
 
 const ErrorIconWrapper = styled("div")(({ theme }) => ({
@@ -313,13 +445,13 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   );
 };
 
-type WrongAddressWarningDialog = WarningWithActionsProps & {
+type WrongAddressWarningDialogProps = WarningWithActionsProps & {
   address: string;
   addressExplorerLink: string;
   currency: string;
 };
 
-export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDialog> = ({
+export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDialogProps> = ({
   address,
   addressExplorerLink,
   currency,
@@ -350,19 +482,33 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   );
 };
 
-export const AuthWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
+// POC - keep
+export const PageLeaveWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   ...props
 }) => {
+  // const [warned, setWarned] = useState(false);
+  // const [leaveWarningOpened, setLeaveWarningOpened] = useState(false);
+  // const handleLeaveWarningClose = useCallback(() => {
+  //   setLeaveWarningOpened(false);
+  //   setWarned(true);
+  // }, []);
+  // usePageLeave(() => {
+  //   // alert(`Please don't`);
+  //   if (!warned) {
+  //     setLeaveWarningOpened(true);
+  //   }
+  // }, [warned as never]);
+
   return (
     <WarningDialog
-      reason="Allow RenBridge to backup transactions"
-      mainActionText="Sign & allow to continue"
+      reason="Are you sure?"
+      mainActionText="I understand"
+      alternativeActionText="Stop reminding me"
       {...props}
     >
       <span>
-        To continue, you must sign with your wallet to allow RenBridge to backup
-        your transactions. This allows you to resume a transaction if you close
-        your web browser mid-transaction.
+        You have unfinished transactions. You should finish them before leaving
+        this page.
       </span>
     </WarningDialog>
   );

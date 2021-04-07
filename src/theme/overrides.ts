@@ -1,3 +1,4 @@
+import { fade } from "@material-ui/core";
 import { Palette } from "@material-ui/core/styles/createPalette";
 import { Overrides } from "@material-ui/core/styles/overrides";
 import { getShadow } from "./animationUtils";
@@ -68,6 +69,8 @@ export const overrides = (palette: Palette): Overrides => {
       root: {
         paddingTop: 3, // TODO: fix after investigation font hoisting issue
         backgroundColor: "#F1F1F6",
+        borderRadius: 4,
+        height: 22,
       },
       sizeSmall: {
         height: 16,
@@ -110,6 +113,12 @@ export const overrides = (palette: Palette): Overrides => {
     MuiFormControlLabel: {
       root: {
         marginRight: 0,
+      },
+    },
+    MuiFilledInput: {
+      root: {
+        borderTopLeftRadius: 4,
+        borderTopRightRadius: 4,
       },
     },
     MuiInputBase: {
@@ -162,6 +171,11 @@ export const overrides = (palette: Palette): Overrides => {
         boxShadow: `0 0 3px 0 rgba(0,27,58,0.10)`,
       },
     },
+    MuiSkeleton: {
+      text: {
+        borderRadius: 4,
+      },
+    },
     MuiSnackbar: {
       anchorOriginTopCenter: {
         top: "-64px!important",
@@ -195,6 +209,27 @@ export const overrides = (palette: Palette): Overrides => {
         },
         "&$disabled": {
           color: textDisabled,
+        },
+      },
+    },
+    MuiToggleButtonGroup: {
+      root: {
+        boxShadow: `0px 0px 4px rgba(0, 27, 58, 0.1)`,
+        borderRadius: "50%",
+      },
+    },
+    MuiToggleButton: {
+      root: {
+        borderRadius: 30,
+        borderColor: palette.grey[300],
+        "&$selected": {
+          backgroundColor: fade(palette.grey[300], 0.6),
+          "&:hover": {
+            backgroundColor: fade(palette.grey[300], 0.6),
+          },
+        },
+        "&:hover": {
+          backgroundColor: fade(palette.grey[300], 0.4),
         },
       },
     },

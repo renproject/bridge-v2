@@ -334,14 +334,14 @@ const useTransactionDetailsButtonStyles = makeStyles((theme) => ({
   },
 }));
 
-type TransactionDetailsButton = ButtonProps & {
+type TransactionDetailsButtonProps = ButtonProps & {
   label: string;
   address: string;
   isTx?: boolean;
   link?: string;
 };
 
-export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButton> = ({
+export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButtonProps> = ({
   label,
   address,
   isTx = true,

@@ -7,7 +7,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
@@ -42,6 +41,7 @@ import {
 } from "../../../providers/TitleProviders";
 import { orangeLight } from "../../../theme/colors";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
+import { getHours } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
@@ -52,16 +52,24 @@ import {
   SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
-import { resetMint } from "../mintSlice";
-import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
-import { AddressValidityMessage } from "./MintHelpers";
+import {
+  getLockAndMintParams,
+  getRemainingGatewayTime,
+  getRemainingMintTime,
+} from "../mintUtils";
+import {
+  GatewayAddressValidityMessage,
+  GatewayTransactionValidityMessage,
+} from "./MintHelpers";
 
 export type MintDepositToProps = {
   tx: GatewaySession;
+  minimumAmount: number;
 };
 
 export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   tx,
+  minimumAmount,
 }) => {
   const [showQr, setShowQr] = useState(false);
   const toggleQr = useCallback(() => {
@@ -74,12 +82,12 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
     let key = 0;
     if (timeRemained > 0) {
       key = showNotification(
-        <AddressValidityMessage
+        <GatewayAddressValidityMessage
           milliseconds={timeRemained}
           destNetwork={getChainConfigByRentxName(tx.destChain).full}
         />,
         {
-          variant: "warning",
+          variant: getHours(timeRemained) < 6 ? "error" : "warning",
           persist: true,
         }
       ) as number;
@@ -94,13 +102,11 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   const {
     lockCurrencyConfig,
     lockChainConfig,
-    suggestedAmount,
     mintAddressLink,
   } = getLockAndMintParams(tx);
   const { color } = lockCurrencyConfig;
   const { MainIcon } = lockChainConfig;
-
-  useSetPaperTitle(`Send ${lockChainConfig.short}`);
+  useSetPaperTitle("Gateway address");
 
   return (
     <>
@@ -111,17 +117,20 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
       </ProgressWrapper>
       <MediumWrapper>
         <BigAssetAmount
-          value={
-            <span>
-              Send{" "}
-              <NumberFormatText
-                value={suggestedAmount}
-                spacedSuffix={lockCurrencyConfig.short}
-              />{" "}
-              to
-            </span>
-          }
+          value={<span>Send {lockCurrencyConfig.short} to</span>}
         />
+        <Typography
+          component="p"
+          variant="caption"
+          align="center"
+          color="textSecondary"
+        >
+          Minimum amount:{" "}
+          <NumberFormatText
+            value={minimumAmount}
+            spacedSuffix={lockCurrencyConfig.short}
+          />
+        </Typography>
       </MediumWrapper>
       {!!tx.gatewayAddress && (
         <>
@@ -132,8 +141,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
                   <QRCode
                     value={getPaymentLink(
                       lockChainConfig.symbol,
-                      tx.gatewayAddress,
-                      suggestedAmount
+                      tx.gatewayAddress
                     )}
                   />
                 </BigQrCode>
@@ -150,17 +158,10 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
         flexDirection="column"
         alignItems="center"
       >
-        {lockChainConfig.targetConfirmations && (
-          <Typography variant="caption" gutterBottom>
-            Estimated processing time:{" "}
-            {lockChainConfig.targetConfirmations * lockChainConfig.blockTime}{" "}
-            minutes
-          </Typography>
-        )}
         <Typography variant="caption">
           {timeRemained > 0 && (
             <span>
-              Expires in: <HMSCountdown milliseconds={timeRemained} />
+              Do not send after: <HMSCountdown milliseconds={timeRemained} />
             </span>
           )}
           {timeRemained <= 0 && <span>Expired</span>}
@@ -286,6 +287,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
     lockConfirmations,
     lockTargetConfirmations,
     mintChainConfig,
+    mintCurrencyConfig,
   } = getLockAndMintParams(tx, depositHash);
 
   const notificationMessage = `${maxConfirmations(
@@ -294,12 +296,32 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   )}/${lockTargetConfirmations} confirmations, ready to submit ${
     lockCurrencyConfig.short
   } to ${mintChainConfig.full}?`;
-  const { showNotification } = useNotifications();
-  const { showBrowserNotification } = useBrowserNotifications();
+  const { showNotification, closeNotification } = useNotifications();
   useEffectOnce(() => {
-    showNotification(notificationMessage);
-    showBrowserNotification(notificationMessage);
+    const key = showNotification(notificationMessage);
+    return () => {
+      closeNotification(key);
+    };
   });
+  const [mintTimeRemained] = useState(getRemainingMintTime(tx.expiryTime));
+
+  useEffect(() => {
+    let key = 0;
+    if (mintTimeRemained < 24 * 3600 * 1000) {
+      key = showNotification(
+        <GatewayTransactionValidityMessage milliseconds={mintTimeRemained} />,
+        {
+          variant: getHours(mintTimeRemained) < 12 ? "error" : "warning",
+          persist: true,
+        }
+      ) as number;
+    }
+    return () => {
+      if (key) {
+        closeNotification(key);
+      }
+    };
+  }, [showNotification, closeNotification, mintTimeRemained]);
 
   const { MainIcon } = lockChainConfig;
 
@@ -329,7 +351,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting" : "Submit"} to {mintChainConfig.full}
+          {submitting ? "Minting" : "Mint"} {mintCurrencyConfig.short}
           {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
@@ -368,6 +390,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
     mintTxLink,
     mintTxHash,
     mintChainConfig,
+    mintCurrencyConfig,
   } = getLockAndMintParams(tx, depositHash);
 
   return (
@@ -398,7 +421,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Submitting" : "Submit"} to {mintChainConfig.full}
+          {submitting ? "Minting" : "Mint"} {mintCurrencyConfig.short}
           {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
@@ -423,7 +446,6 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   depositHash,
 }) => {
   useSetPaperTitle("Complete");
-  const dispatch = useDispatch();
   const history = useHistory();
   const {
     lockCurrencyConfig,
@@ -444,9 +466,10 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     type: TxType.MINT,
   });
   const handleReturn = useCallback(() => {
-    history.push(paths.MINT);
-    dispatch(resetMint());
-  }, [dispatch, history]);
+    history.push({
+      pathname: paths.HOME,
+    });
+  }, [history]);
 
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
@@ -474,8 +497,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     mintTxLink,
   ]);
 
-  useEffect(showNotifications, [pending]);
-
+  useEffect(showNotifications, [showNotifications, pending]);
   return (
     <>
       <ProgressWrapper>
@@ -492,7 +514,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         !
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>Back to start</ActionButton>
+        <ActionButton onClick={handleReturn}>Back to home</ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link
