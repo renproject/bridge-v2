@@ -535,7 +535,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     // We should always have machines for transactions
     return <ProgressStatus processing={false} reason="Restoring..." />;
   }
-  console.debug(tx.id, depositHash, state);
+
   switch (state) {
     case "srcSettling":
       return (
