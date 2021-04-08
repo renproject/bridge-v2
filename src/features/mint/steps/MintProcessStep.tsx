@@ -144,7 +144,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
           confirmations: 100,
         },
       };
-      console.log("restoring");
       if (machineSend) {
         // @ts-ignore
         machineSend({ type: "RESTORE", data: { rawSourceTx } });
@@ -346,7 +345,19 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     [service]
   );
 
-  const { total } = useDepositPagination(current.context.tx);
+  const { total, orderedHashes } = useDepositPagination(current.context.tx);
+
+  const lastDepositHash = total > 0 ? orderedHashes[total - 1] : "";
+  useEffect(() => {
+    if (total >= 1) {
+      setCurrentDeposit((current) => {
+        if (current === "gateway") {
+          return lastDepositHash;
+        }
+        return current;
+      });
+    }
+  }, [total, lastDepositHash]);
 
   const { showNotification, closeNotification } = useNotifications();
   useEffect(() => {
@@ -481,12 +492,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         it={{
           depositHash,
           fees,
-          // pagination: { currentIndex, currentHash, total },
-          // contextTx: current.context.tx,
-          // activeDeposit,
-          // total,
-          // currentIndex,
-          // currentHash,
         }}
       />
     </>
@@ -530,7 +535,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     // We should always have machines for transactions
     return <ProgressStatus processing={false} reason="Restoring..." />;
   }
-  console.debug(tx.id, depositHash, state);
+
   switch (state) {
     case "srcSettling":
       return (

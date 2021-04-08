@@ -264,14 +264,11 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
 
   const isActive = activeTxId === tx.id;
   if (isActive) {
-    console.log("returning isActive", dayOffset);
     return <GatewayEntry tx={tx} isActive />;
   }
   if (pending) {
-    console.log("returning entry pending", dayOffset);
     return <GatewayEntry tx={tx} pending />;
   }
-  console.log("returning entry machine", dayOffset);
   return <GatewayEntryMachine tx={tx} />;
 };
 
@@ -493,7 +490,6 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
     }
   }, [tx.gatewayAddress, hasDeposits]);
 
-  console.log("gs", gatewayStatus);
   const allCompleted = areAllDepositsCompleted(tx);
   const completed = depositStatus === DepositEntryStatus.COMPLETED;
   const confirmationProps = completed
