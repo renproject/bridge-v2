@@ -70,6 +70,7 @@ export const useDepositPagination = (
 
   return {
     currentHash,
+    orderedHashes,
     currentIndex,
     handleNext,
     handlePrev,

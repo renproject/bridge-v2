@@ -190,7 +190,6 @@ export const getDepositParams = (
         depositStatus = DepositEntryStatus.EXPIRED;
       }
     } else if (lockConfirmations < lockTargetConfirmations) {
-      console.log(lockConfirmations, lockTargetConfirmations);
       // no mint tx hash, but awaiting confirmations
       depositStatus = DepositEntryStatus.PENDING;
       depositPhase = DepositPhase.LOCK;
