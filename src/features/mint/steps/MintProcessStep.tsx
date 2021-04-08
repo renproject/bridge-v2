@@ -349,7 +349,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
   const lastDepositHash = total > 0 ? orderedHashes[total - 1] : "";
   useEffect(() => {
-    if (total > 1) {
+    if (total >= 1) {
       setCurrentDeposit((current) => {
         if (current === "gateway") {
           return lastDepositHash;
