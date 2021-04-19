@@ -23,7 +23,7 @@ const mintTx: GatewaySession = {
 };
 
 const releaseTx: GatewaySession = {
-  customParams: { },
+  customParams: {},
   id: "tx-1234abcd",
   type: "burn",
   sourceAsset: "btc",
@@ -102,7 +102,7 @@ describe("(de/se)rialization", () => {
 describe("pageTitle", () => {
   test("constructs mint tx page title", () => {
     const title = getTxPageTitle(mintTx);
-    expect(title).toEqual("Mint - 1 BTC - 2020-11-03T13:54:59.484Z");
+    expect(title).toEqual("Mint - BTC - 2020-11-03T13:54:59.484Z");
   });
 
   test("constructs release tx page title", () => {
@@ -113,7 +113,7 @@ describe("pageTitle", () => {
 
 describe("paymentLinks", () => {
   test("generates payment link", () => {
-    const result = getPaymentLink(BridgeChain.BTCC, "12345abcde", 0.1234);
-    expect(result).toEqual("bitcoin://12345abcde?amount=0.1234");
+    const result = getPaymentLink(BridgeChain.BTCC, "12345abcde");
+    expect(result).toEqual("bitcoin://12345abcde");
   });
 });

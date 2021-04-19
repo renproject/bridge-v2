@@ -35,7 +35,7 @@ export const BigDoneIcon = styled(DoneIcon)({
 
 type ProgressIconSize = "big" | "medium" | number;
 
-type ProgressWithContentProps = {
+export type ProgressWithContentProps = {
   color?: string;
   incompleteSectionColor?: string;
   fontSize?: ProgressIconSize;
@@ -330,7 +330,7 @@ const useTransactionStatusIndicatorStyles = makeStyles((theme) => ({
   },
   icon: {},
   indicatorWrapper: {
-    marginLeft: 10,
+    marginLeft: 20,
     minWidth: 10,
   },
 }));

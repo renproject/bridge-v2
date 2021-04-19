@@ -30,7 +30,7 @@ import {
   ZecGreyIcon,
   ZecIcon,
 } from "../components/icons/RenIcons";
-import { bitcoinCashGreen, bitcoinOrange } from "../theme/colors";
+import * as customColors from "../theme/colors";
 
 // TODO: replace everywhere
 export enum RenChain {
@@ -120,7 +120,7 @@ export type IconsConfig = MainIconConfig & {
   GreyIcon: CustomSvgIconComponent | SvgIconComponent;
 };
 
-export type CurrencyConfig = LabelsConfig &
+export type BridgeCurrencyConfig = LabelsConfig &
   ColorsConfig &
   IconsConfig & {
     symbol: BridgeCurrency;
@@ -156,12 +156,12 @@ const newNetworkMappings: ChainToNetworkMappings = {
   [RenChain.binanceSmartChain]: networkMappingLegacy,
 };
 
-export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
+export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
   [BridgeCurrency.BTC]: {
     symbol: BridgeCurrency.BTC,
     short: "BTC",
     full: "Bitcoin",
-    color: bitcoinOrange,
+    color: customColors.bitcoinOrange,
     FullIcon: BtcFullIcon,
     GreyIcon: BtcGreyIcon,
     Icon: BtcIcon,
@@ -187,7 +187,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     symbol: BridgeCurrency.BCH,
     short: "BCH",
     full: "Bitcoin Cash",
-    color: bitcoinCashGreen,
+    color: customColors.bitcoinCashGreen,
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
     Icon: BchIcon,
@@ -281,7 +281,7 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     GreyIcon: DgbGreyIcon,
     Icon: DgbIcon,
     MainIcon: DgbFullIcon,
-    sourceChain: BridgeChain.UNKNOWNC, // TODO:
+    sourceChain: BridgeChain.UNKNOWNC, // TODO: add when supported
     rentxName: "DGB",
     networkMappings: newNetworkMappings,
   },
@@ -374,10 +374,9 @@ export type BridgeChainConfig = LabelsConfig &
     rentxName: RenChain;
     blockTime: number;
     nativeCurrency: BridgeCurrency;
-    targetConfirmations?: number;
+    targetConfirmations: number;
   };
 
-// TODO: add confirmations from https://support.kraken.com/hc/en-us/articles/203325283-Cryptocurrency-deposit-processing-times
 export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
   [BridgeChain.BTCC]: {
     symbol: BridgeChain.BTCC,
@@ -402,8 +401,8 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     MainIcon: BchFullIcon,
     rentxName: RenChain.bitcoinCash,
     blockTime: 10,
-    nativeCurrency: BridgeCurrency.BCH,
     targetConfirmations: 6,
+    nativeCurrency: BridgeCurrency.BCH,
   },
   [BridgeChain.ZECC]: {
     symbol: BridgeChain.ZECC,
@@ -416,6 +415,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     rentxName: RenChain.zcash,
     blockTime: 2.5,
     nativeCurrency: BridgeCurrency.ZEC,
+    targetConfirmations: 24,
   },
   [BridgeChain.DOGC]: {
     symbol: BridgeChain.DOGC,
@@ -427,6 +427,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     MainIcon: DogeFullIcon,
     rentxName: RenChain.dogecoin,
     blockTime: 1,
+    targetConfirmations: 40,
     nativeCurrency: BridgeCurrency.DOGE,
   },
   [BridgeChain.BSCC]: {
@@ -439,6 +440,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     GreyIcon: NotSetIcon,
     rentxName: RenChain.binanceSmartChain,
     blockTime: 3,
+    targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.BNB,
   },
   [BridgeChain.ETHC]: {
@@ -451,6 +453,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     GreyIcon: NotSetIcon,
     rentxName: RenChain.ethereum,
     blockTime: 0.25,
+    targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.ETH,
   },
   [BridgeChain.UNKNOWNC]: {
@@ -463,6 +466,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     MainIcon: NotSetIcon,
     rentxName: RenChain.unknown,
     blockTime: 1e6,
+    targetConfirmations: 1e6,
     nativeCurrency: BridgeCurrency.UNKNOWN,
   },
 };

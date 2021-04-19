@@ -11,13 +11,13 @@ import {
 } from "../../../components/dropdowns/AssetDropdown";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import {
-  OutlinedTextField,
-  BigOutlinedTextFieldWrapper,
-} from "../../../components/inputs/OutlinedTextField";
-import {
   BigCurrencyInput,
   BigCurrencyInputWrapper,
 } from "../../../components/inputs/BigCurrencyInput";
+import {
+  BigOutlinedTextFieldWrapper,
+  OutlinedTextField,
+} from "../../../components/inputs/OutlinedTextField";
 import { PaperContent } from "../../../components/layout/Paper";
 import { Link } from "../../../components/links/Links";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
@@ -204,7 +204,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <AssetDropdownWrapper>
           <AssetDropdown
             label="Asset"
-            mode="send"
             available={supportedReleaseCurrencies}
             balances={balances}
             value={currency}

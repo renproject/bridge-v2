@@ -53,6 +53,7 @@ export const strokeDefault = "#DBE0E8";
 export const alertWarning = "#AD5700";
 export const alertWarningBackground = "#FBF3E9";
 
+
 export const alertInfo = "#5027E2";
 export const alertInfoBackground = "#F7F3FF";
 export const alertError = "#D60000";

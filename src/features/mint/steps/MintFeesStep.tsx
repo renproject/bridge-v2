@@ -4,7 +4,9 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  Grid,
   IconButton,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import React, {
@@ -34,16 +36,13 @@ import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
-  BigAssetAmount,
-  BigAssetAmountWrapper,
   LabelWithValue,
   MiddleEllipsisText,
+  SmallSpacedDivider,
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { WalletStatus } from "../../../components/utils/types";
 import { paths } from "../../../pages/routes";
-import { db } from "../../../services/database/database";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -55,11 +54,7 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
-import {
-  $currentSessionCount,
-  addTransaction,
-  setCurrentTxId,
-} from "../../transactions/transactionsSlice";
+import { setCurrentTxId } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
   LocationTxState,
@@ -67,10 +62,7 @@ import {
   TxType,
 } from "../../transactions/transactionsUtils";
 import { useShakePaper } from "../../ui/uiHooks";
-import {
-  useAuthRequired,
-  useSelectedChainWallet,
-} from "../../wallet/walletHooks";
+import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import {
   getMintDynamicTooltips,
@@ -85,23 +77,26 @@ import {
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
-  useAuthRequired(true);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { status, walletConnected, account } = useSelectedChainWallet();
+  const { walletConnected, account } = useSelectedChainWallet();
   const [mintingInitialized, setMintingInitialized] = useState(false);
-  const { amount, currency } = useSelector($mint);
-  const {
-    chain,
-    signatures: { signature },
-  } = useSelector($wallet);
+  const { currency } = useSelector($mint);
+  const [amountValue, setAmountValue] = useState("");
+  const { chain } = useSelector($wallet);
   const network = useSelector($renNetwork);
-  const currentSessionCount = useSelector($currentSessionCount);
   const exchangeRates = useSelector($exchangeRates);
-  const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency);
-
+  const handleAmountChange = useCallback((event) => {
+    const newValue = event.target.value.replace(",", ".");
+    if (!isNaN(newValue)) {
+      setAmountValue(newValue);
+    }
+  }, []);
+  const amount = Number(amountValue);
+  const hasAmount = amount !== 0;
   const amountUsd = amount * currencyUsdRate;
+  const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
     amount,
     fees,
@@ -136,22 +131,20 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const tx = useMemo(
     () =>
       createMintTransaction({
-        amount: amount,
         currency: currency,
         destAddress: account,
         mintedCurrency: toMintedCurrency(currency),
         mintedCurrencyChain: chain,
         userAddress: account,
         network: network,
-        dayIndex: currentSessionCount,
       }),
-    [amount, currency, account, chain, network, currentSessionCount]
+    [currency, account, chain, network]
   );
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;
 
   const handleConfirm = useCallback(() => {
-    if (status === WalletStatus.CONNECTED) {
+    if (walletConnected) {
       setTouched(true);
       if (canInitializeMinting) {
         setMintingInitialized(true);
@@ -163,15 +156,10 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       setMintingInitialized(false);
       dispatch(setWalletPickerOpened(true));
     }
-  }, [dispatch, status, canInitializeMinting]);
+  }, [dispatch, walletConnected, canInitializeMinting]);
 
   const onMintTxCreated = useCallback(
     async (tx) => {
-      const dbTx = { ...tx };
-      await db.addTx(dbTx, account, signature);
-
-      dispatch(setCurrentTxId(tx.id));
-      dispatch(addTransaction(tx));
       history.push({
         pathname: paths.MINT_TRANSACTION,
         search: "?" + createTxQueryString(tx),
@@ -179,8 +167,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           txState: { newTx: true },
         } as LocationTxState,
       });
+      dispatch(setCurrentTxId(tx.id));
     },
-    [dispatch, history, account, signature]
+    [dispatch, history]
   );
 
   // there is a dependency loop, because we depend on the number
@@ -193,7 +182,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   useEffect(() => {
     if (mintingInitialized && !creatingMintTx) {
       setCreatingMintTx(true);
-      onMintTxCreated(tx).finally();
+      onMintTxCreated(tx).catch(console.error).finally();
     }
   }, [onMintTxCreated, mintingInitialized, tx, creatingMintTx]);
 
@@ -209,25 +198,47 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
-        <BigAssetAmountWrapper>
-          <BigAssetAmount
-            value={<NumberFormatText value={amount} spacedSuffix={currency} />}
-          />
-        </BigAssetAmountWrapper>
+        <Grid container alignItems="flex-end">
+          <Grid item xs={7}>
+            <Typography variant="body1" gutterBottom>
+              Fee calculator
+            </Typography>
+          </Grid>
+          <Grid item xs={5}>
+            <TextField
+              label="Enter an amount"
+              variant="filled"
+              color="primary"
+              value={amountValue || ""}
+              onChange={handleAmountChange}
+            />
+          </Grid>
+        </Grid>
+        <SmallSpacedDivider />
         <Typography variant="body1" gutterBottom>
           Details
         </Typography>
         <LabelWithValue
           label="Sending"
           labelTooltip={mintTooltips.sending}
-          value={<NumberFormatText value={amount} spacedSuffix={currency} />}
+          value={
+            hasAmount ? (
+              <NumberFormatText value={amount} spacedSuffix={currency} />
+            ) : (
+              currency
+            )
+          }
           valueEquivalent={
-            <NumberFormatText
-              value={amountUsd}
-              spacedSuffix="USD"
-              decimalScale={2}
-              fixedDecimalScale
-            />
+            hasAmount ? (
+              <NumberFormatText
+                value={amountUsd}
+                spacedSuffix="USD"
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            ) : (
+              ""
+            )
           }
         />
         <LabelWithValue
@@ -253,6 +264,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           type={TxType.MINT}
         />
       </PaperContent>
+      <Debug it={{ amount, hasAmount, mintingInitialized }} />
       <Divider />
       <PaperContent darker topPadding bottomPadding>
         {walletConnected &&
@@ -296,7 +308,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                     variant="caption"
                     color={showAckError ? "inherit" : "textPrimary"}
                   >
-                    I acknowledge this transaction requires{" "}
+                    I acknowledge the fees and that this transaction requires{" "}
                     {destinationChainNativeCurrencyConfig.short}{" "}
                     <TooltipWithIcon title={mintDynamicTooltips.acknowledge} />
                   </Typography>
@@ -308,13 +320,13 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleConfirm}
-            disabled={!ackChecked || mintingInitialized || !walletConnected}
+            disabled={
+              walletConnected ? !ackChecked || mintingInitialized : false
+            }
           >
             {!walletConnected
               ? "Connect Wallet"
-              : mintingInitialized
-              ? "Confirming..."
-              : "Confirm"}
+              : `View ${lockCurrencyConfig.short} Gateway Address`}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
