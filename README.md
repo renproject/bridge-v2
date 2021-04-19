@@ -7,7 +7,8 @@ An easy way to bridge cross-chain assets between blockchains.
 ## Development guide
 
 ### `.env`
-Ensure you have copied `.env.example` into `.env`, add missing environment variables. Bridge uses Infura internally, create and provide your `INFURA_KEY`.
+
+Copy `.env.example` into `.env` and add missing environment variables. Bridge uses Infura internally, so you'll need to go to [infura.io](https://infura.io), create a key and set `REACT_APP_INFURA_ID` in the `.env` file.
 
 ### `yarn`
 
@@ -33,6 +34,7 @@ Builds the app for production to the `build` folder.<br />
 It correctly bundles React in production mode and optimizes the build for the best performance. The build is minified and the filenames include the hashes.<br />
 
 ## Architecture
+
 The app was build on top of [CRA](https://reactjs.org/docs/create-a-new-react-app.html), [Material-UI](https://material-ui.com/) with [redux-toolkit](https://redux-toolkit.js.org/) for shared state management.
 
 The core RenVM libraries on which the application is built are as follows:
@@ -44,24 +46,42 @@ The core RenVM libraries on which the application is built are as follows:
 [`@renproject/ren`](https://www.npmjs.com/package/@renproject/ren) - RenJS is the core library for interacting with RenVM. RenTX uses it internally. Bridge uses it for things such as fees calculation.
 
 ## Forking
+
 You are free to fork this app and adapt/extend it to your needs.
-`git clone https://github.com/renproject/bridge-v2.git`
+
+```sh
+git clone https://github.com/renproject/bridge-v2.git
+```
+
+### Requirements
+
+RenBridge requires an Infura key provided as an environment variable. You can create one by going to [infura.io](https://infura.io). If another Ethereum provider is being used, it can be changed in [Multiwallet.tsx](src/providers/multiwallet/Multiwallet.tsx).
 
 ### Common cases
-Here are some common cases you can run into.
 
-### Adding new asset
-If you want to add a new asset, follow this steps:
-* add asset source chain and appropriate mappings to [rentx.ts](src/services/rentx.ts)
-* add a new asset and its chain data in [assetConfigs.ts](src/utils/assetConfigs.ts). Ensure you covered following points:
-  * add a new asset symbol to `BridgeCurrency` enum
-  * add the newly installed chain to `RenChain` and `BridgeChain` enums
-  * add a new `BridgeCurrencyConfig` entry in `currenciesConfig`.
+Here are some common cases you can run into:
+
+#### Adding new asset
+
+If you want to add a new asset, follow these steps:
+
+- add asset source chain and appropriate mappings to [rentx.ts](src/services/rentx.ts)
+- add a new asset and its chain data in [assetConfigs.ts](src/utils/assetConfigs.ts). Ensure you covered following points:
+  - add a new asset symbol to `BridgeCurrency` enum
+  - add the newly installed chain to `RenChain` and `BridgeChain` enums
+  - add a new `BridgeCurrencyConfig` entry in `currenciesConfig`.
     Should include labels, icons/coloring, source chain and network mappings.
-  * add a new `BridgeChainConfig` entry in `chainsConfig`.
+  - add a new `BridgeChainConfig` entry in `chainsConfig`.
     Should include labels, icons, block time/confirmations data and native currency mapping
-  * extend `toMintedCurrency` and `toReleasedCurrency` functions with new asset mappings
-  * enable newly added asset in `supportedLockCurrencies`, `supportedReleaseCurrencies`
+  - extend `toMintedCurrency` and `toReleasedCurrency` functions with new asset mappings
+  - enable newly added asset in `supportedLockCurrencies`, `supportedReleaseCurrencies`
 
-### Changing visual appearance
+#### Changing visual appearance
+
 Most of the visual - related configuration lies in a [theme](src/theme) folder. To find out how to style Material UI, check [this link](https://material-ui.com/customization/theming/). Icons, logos and other images can be found in [assets](src/assets) folder.
+
+### Deploying
+
+Any static hosting site can be used, such as GitHub pages, Netlify or Cloudflare pages, or on IPFS through a service like [Fleek](https://blog.fleek.co/posts/fleek-create-react-app).
+
+For GitHub pages, instructions can be found here: https://create-react-app.dev/docs/deployment#github-pages.
