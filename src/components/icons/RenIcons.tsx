@@ -55,6 +55,9 @@ import { ReactComponent as TxSettings } from "./../../assets/icons/tx-settings.s
 import { ReactComponent as WalletConnectFull } from "./../../assets/icons/walletconnect-icon-colour.svg";
 import { ReactComponent as Wallet } from "./../../assets/icons/wallet-icon.svg";
 import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconnect-icon.svg";
+import { ReactComponent as XbbGrey } from "./../../assets/icons/xbb-icon-grey.svg";
+import { ReactComponent as Xbb } from "./../../assets/icons/xbb-icon-nocolour.svg";
+import { ReactComponent as XbbFull } from "./../../assets/icons/xbb-icon.svg";
 import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
@@ -241,6 +244,19 @@ export const DogeIcon: CustomSvgIconComponent = (props) => (
 
 export const DogeGreyIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={DogeGrey} {...props} />
+);
+
+
+export const XbbIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Xbb} {...props} />
+);
+
+export const XbbFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={XbbFull} {...props} />
+);
+
+export const XbbGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={XbbGrey} {...props} />
 );
 
 export const ZecIcon: CustomSvgIconComponent = (props) => (
