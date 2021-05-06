@@ -238,8 +238,14 @@ export const getTxPageTitle = (tx: any) => {
 
 export const getTxCreationTimestamp = (
   tx: GatewaySession<any> | BurnSession<any, any>
-) =>
-  tx.createdAt || (tx as GatewaySession<any>).expiryTime - 24 * 3600 * 1000 * 3;
+) => {
+  if (tx.createdAt) {
+    return tx.createdAt;
+  } else if ((tx as GatewaySession<any>).expiryTime) {
+    return (tx as GatewaySession<any>).expiryTime - 24 * 3600 * 1000 * 3;
+  }
+  return Date.now();
+};
 
 export const getPaymentLink = (chain: BridgeChain, address: string) => {
   const chainConfig = getChainConfig(chain);
