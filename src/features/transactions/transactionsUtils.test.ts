@@ -7,31 +7,27 @@ import {
   parseTxQueryString,
 } from "./transactionsUtils";
 
-const mintTx: GatewaySession = {
+const mintTx: GatewaySession<any> = {
   customParams: {},
   id: "tx-1234abc",
-  type: "mint",
   sourceAsset: "btc",
   sourceChain: "bitcoin",
   network: "testnet",
   destAddress: "",
   destChain: "ethereum",
-  targetAmount: 1,
   userAddress: "",
   expiryTime: 1604670899484,
   transactions: {},
 };
 
-const releaseTx: GatewaySession = {
+const releaseTx: GatewaySession<any> = {
   customParams: {},
   id: "tx-1234abcd",
-  type: "burn",
   sourceAsset: "btc",
   sourceChain: "ethereum",
   network: "testnet",
   destAddress: "",
   destChain: "bitcoin",
-  targetAmount: 1,
   userAddress: "",
   expiryTime: 1604670899484,
   transactions: {},
@@ -41,17 +37,14 @@ describe("(de/se)rialization", () => {
   const txQuery =
     "customParams=%7B%7D&destAddress=&destChain=ethereum&expiryTime=1604670899484&id=tx-1234abc&network=testnet&sourceAsset=btc&sourceChain=bitcoin&targetAmount=1&transactions=%7B%7D&type=mint&userAddress=";
 
-  const expectedParsedTx: Partial<GatewaySession> = {
+  const expectedParsedTx: Partial<GatewaySession<any>> = {
     customParams: {},
     id: "tx-1234abc",
-    type: "mint",
     sourceAsset: "btc",
     sourceChain: "bitcoin",
-    suggestedAmount: undefined,
     network: "testnet",
     destAddress: "",
     destChain: "ethereum",
-    targetAmount: 1,
     transactions: {},
     userAddress: "",
     expiryTime: 1604670899484,

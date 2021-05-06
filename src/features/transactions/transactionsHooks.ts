@@ -11,12 +11,9 @@ import {
 import { $renNetwork, setRenNetwork } from "../network/networkSlice";
 import { useSelectedChainWallet } from "../wallet/walletHooks";
 import { $multiwalletChain } from "../wallet/walletSlice";
-import {
-  $currentTxId,
-  setCurrentTxId,
-} from "./transactionsSlice";
+import { $currentTxId, setCurrentTxId } from "./transactionsSlice";
 
-export const useTransactionMenuControl = (tx: GatewaySession) => {
+export const useTransactionMenuControl = () => {
   const { walletConnected } = useSelectedChainWallet();
 
   const [menuOpened, setMenuOpened] = useState(false);

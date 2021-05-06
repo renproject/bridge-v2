@@ -236,7 +236,7 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
 };
 
 export type TransactionItemProps = {
-  tx: GatewaySession;
+  tx: GatewaySession<any>;
   isActive?: boolean;
   onContinue?: ((depositHash?: string) => void) | (() => void);
 };

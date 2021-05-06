@@ -9,7 +9,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { Skeleton } from "@material-ui/lab";
 import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession } from "@renproject/ren-tx";
+import { GatewaySession, OpenedGatewaySession } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
@@ -273,7 +273,7 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
 };
 
 export type GatewayEntryProps = {
-  tx: GatewaySession;
+  tx: GatewaySession<any>;
   pending?: boolean;
   isActive?: boolean;
   onContinue?: ((depositHash?: string) => void) | (() => void);
@@ -479,7 +479,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   );
 
   useEffect(() => {
-    if (tx.gatewayAddress) {
+    if ((tx as OpenedGatewaySession<any>).gatewayAddress) {
       if (hasDeposits) {
         setResolving(false);
       } else {
@@ -488,7 +488,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
         }, 5000);
       }
     }
-  }, [tx.gatewayAddress, hasDeposits]);
+  }, [(tx as OpenedGatewaySession<any>).gatewayAddress, hasDeposits]);
 
   const allCompleted = areAllDepositsCompleted(tx);
   const completed = depositStatus === DepositEntryStatus.COMPLETED;
@@ -504,9 +504,9 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
         <div className={styles.gateway}>
           <div className={styles.gatewayInfo}>
             <div className={styles.gatewayAddress}>
-              {tx.gatewayAddress ? (
+              {(tx as OpenedGatewaySession<any>).gatewayAddress ? (
                 <GatewayAddress
-                  address={tx.gatewayAddress}
+                  address={(tx as OpenedGatewaySession<any>).gatewayAddress}
                   status={gatewayStatus}
                   onClick={handleContinue}
                 />

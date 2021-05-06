@@ -238,7 +238,7 @@ const useDepositNavigationStyles = makeStyles({
 });
 
 type DepositNavigationProps = ToggleButtonGroupProps & {
-  tx: GatewaySession;
+  tx: GatewaySession<any>;
 };
 
 export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({

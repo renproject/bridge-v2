@@ -2,17 +2,18 @@ import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   burnMachine,
   BurnMachineSchema,
+  BurnSession,
   GatewaySession,
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
 import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
-import { burnChainMap, releaseChainMap } from "../../services/rentx";
+// import { burnChainMap, releaseChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
 
-export const useBurnMachine = (burnTransaction: GatewaySession) => {
+export const useBurnMachine = (burnTransaction: BurnSession<any, any>) => {
   const tx = cloneTx(burnTransaction);
   const { enabledChains } = useMultiwallet();
   const network = useSelector($renNetwork);
@@ -26,13 +27,10 @@ export const useBurnMachine = (burnTransaction: GatewaySession) => {
   return useMachine(burnMachine, {
     context: {
       tx,
-      providers,
       sdk: getRenJs(network),
-      fromChainMap: burnChainMap,
-      toChainMap: releaseChainMap,
       // If we already have a transaction, we need to autoSubmit
       // to check the tx status
-      autoSubmit: !!Object.values(burnTransaction.transactions)[0],
+      autoSubmit: !!burnTransaction.transaction,
     },
     devTools: env.XSTATE_DEVTOOLS,
   });

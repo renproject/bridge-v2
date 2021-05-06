@@ -1,5 +1,9 @@
 import { Divider, IconButton } from "@material-ui/core";
-import { BurnMachineSchema, GatewaySession } from "@renproject/ren-tx";
+import {
+  BurnMachineSchema,
+  BurnSession,
+  GatewaySession,
+} from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
@@ -83,7 +87,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const rates = useSelector($exchangeRates);
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
-  const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  const [tx, setTx] = useState<BurnSession<any, any>>(
+    parsedTx as BurnSession<any, any>
+  ); // TODO Partial<GatewaySession>
   useSetCurrentTxId(tx.id);
 
   usePageTitle(getTxPageTitle(tx));
@@ -96,7 +102,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
 
   useEffect(() => {
     if (txState?.reloadTx) {
-      setTx(parsedTx as GatewaySession);
+      setTx(parsedTx as BurnSession<any, any>);
       setReloading(true);
       history.replace({ ...location, state: undefined });
       setTimeout(() => {
@@ -114,7 +120,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     menuOpened,
     handleMenuOpen,
     handleMenuClose,
-  } = useTransactionMenuControl(tx);
+  } = useTransactionMenuControl();
 
   const {
     modalOpened,
@@ -243,7 +249,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
 };
 
 type ReleaseTransactionStatusProps = {
-  tx: GatewaySession;
+  tx: BurnSession<any, any>;
 };
 
 const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({

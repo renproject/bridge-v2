@@ -1,5 +1,5 @@
 import { Box, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
+import { BurnSession, GatewaySession } from "@renproject/ren-tx";
 import React, { FunctionComponent, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -30,7 +30,7 @@ import { getBurnAndReleaseParams } from "../releaseUtils";
 export const a = 1;
 
 type ReleaseProgressStatusProps = {
-  tx: GatewaySession;
+  tx: BurnSession<any, any>;
   onSubmit?: () => void;
   onReload?: () => void;
   submittingError?: boolean;
@@ -112,7 +112,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
 };
 
 type ReleaseCompletedStatusProps = {
-  tx: GatewaySession;
+  tx: BurnSession<any, any>;
   onReturn?: () => void;
 };
 

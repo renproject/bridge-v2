@@ -1,6 +1,7 @@
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   DepositMachineSchema,
+  GatewayMachineContext,
   GatewaySession,
   mintMachine,
 } from "@renproject/ren-tx";
@@ -10,39 +11,40 @@ import { useSelector } from "react-redux";
 import { useInterval } from "react-use";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
-import { lockChainMap, mintChainMap } from "../../services/rentx";
+// import { lockChainMap, mintChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
 import { depositSorter } from "./mintUtils";
 
-export const useMintMachine = (mintTransaction: GatewaySession) => {
+export const useMintMachine = (mintTransaction: GatewaySession<any>) => {
   const tx = cloneTx(mintTransaction);
   const { enabledChains } = useMultiwallet();
   const network = useSelector($renNetwork);
-  const providers = Object.entries(enabledChains).reduce(
+  const providers: any = Object.entries(enabledChains).reduce(
     (c, n) => ({
       ...c,
-      [n[0]]: n[1].provider,
+      [n[0]]: (n[1] as any).provider,
     }),
     {}
-  );
+  ) as Partial<GatewayMachineContext<any>>;
+
   return useMachine(mintMachine, {
     context: {
       tx,
-      providers,
+      // providers,
       sdk: getRenJs(network),
-      fromChainMap: lockChainMap,
-      toChainMap: mintChainMap,
+      // fromChainMap: lockChainMap,
+      // toChainMap: mintChainMap,
     },
     autoSubmit: true,
     devTools: env.XSTATE_DEVTOOLS,
   });
 };
 
-export type DepositMachineSchemaState = keyof DepositMachineSchema["states"];
+export type DepositMachineSchemaState = keyof DepositMachineSchema<any>["states"];
 
 export const useDepositPagination = (
-  tx: GatewaySession,
+  tx: GatewaySession<any>,
   depositSourceHash = ""
 ) => {
   const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
