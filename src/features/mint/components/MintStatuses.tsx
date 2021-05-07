@@ -1,5 +1,6 @@
 import { Box, Grow, Typography, useTheme } from "@material-ui/core";
 import { GatewaySession, OpenedGatewaySession } from "@renproject/ren-tx";
+import { ErroringGatewaySession } from "@renproject/ren-tx/src/types/mint";
 import QRCode from "qrcode.react";
 import React, {
   FunctionComponent,
@@ -260,7 +261,7 @@ const maxConfirmations = (actual: number, target: number) => {
 };
 
 type MintDepositAcceptedStatusProps = {
-  tx: GatewaySession<any>;
+  tx: ErroringGatewaySession<any>;
   onSubmit?: () => void;
   onReload?: () => void;
   submitting: boolean;
@@ -363,7 +364,11 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           link={lockTxLink}
         />
       </ActionButtonWrapper>
-      <SubmitErrorDialog open={submittingError} onAction={onReload} />
+      <SubmitErrorDialog
+        open={submittingError}
+        onAction={onReload}
+        error={tx.error}
+      />
     </>
   );
 };

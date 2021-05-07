@@ -5,6 +5,7 @@ import {
   GatewaySession,
   GatewayTransaction,
   OpenedGatewaySession,
+  ErroringGatewaySession,
 } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
@@ -555,7 +556,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     case "accepted": // RenVM accepted it, it can be submitted to ethereum
       return (
         <MintDepositAcceptedStatus
-          tx={tx}
+          tx={tx as ErroringGatewaySession<any>}
           onSubmit={handleSubmitToDestinationChain}
           onReload={handleReload}
           depositHash={depositHash}

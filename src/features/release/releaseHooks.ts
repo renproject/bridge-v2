@@ -13,7 +13,6 @@ import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
 import { getBurnChainMap, releaseChainMap } from "../../services/rentx";
-// import { burnChainMap, releaseChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
 

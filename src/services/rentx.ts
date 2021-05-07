@@ -30,25 +30,22 @@ export const lockChainMap = {
   [RenChain.dogecoin]: () => Dogecoin(),
 };
 
-// export const mintChainMap = {
-//   [RenChain.ethereum]: (context: GatewayMachineContext<any>) => {
-//     const { destAddress, network } = context.tx;
-//     const { providers } = context;
-//
-//     return Ethereum(providers.ethereum, network).Account({
-//       address: destAddress,
-//     }) as any;
-//   },
-//   [RenChain.binanceSmartChain]: (context: GatewayMachineContext<any>) => {
-//     const { destAddress, network } = context.tx;
-//     const { providers } = context;
-//
-//     return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
-//       // providers.binanceSmartChain?
-//       address: destAddress,
-//     }) as any;
-//   },
-// };
+export const getMintChainMap = (providers: any) => ({
+  [RenChain.ethereum]: (context: GatewayMachineContext<any>) => {
+    const { destAddress, network } = context.tx;
+
+    return Ethereum(providers.ethereum, network).Account({
+      address: destAddress,
+    }) as any;
+  },
+  [RenChain.binanceSmartChain]: (context: GatewayMachineContext<any>) => {
+    const { destAddress, network } = context.tx;
+
+    return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
+      address: destAddress,
+    }) as any;
+  },
+});
 
 export const mintChainClassMap = {
   [RenChain.ethereum]: Ethereum,
