@@ -1,5 +1,9 @@
 import { Box, Typography, useTheme } from "@material-ui/core";
-import { BurnSession, GatewaySession } from "@renproject/ren-tx";
+import {
+  BurnSession,
+  ErroringBurnSession,
+  GatewaySession,
+} from "@renproject/ren-tx";
 import React, { FunctionComponent, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -21,6 +25,7 @@ import { useNotifications } from "../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { useBrowserNotifications } from "../../notifications/notificationsUtils";
 import {
+  AnyBurnSession,
   GeneralErrorDialog,
   SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
@@ -30,7 +35,7 @@ import { getBurnAndReleaseParams } from "../releaseUtils";
 export const a = 1;
 
 type ReleaseProgressStatusProps = {
-  tx: BurnSession<any, any>;
+  tx: AnyBurnSession;
   onSubmit?: () => void;
   onReload?: () => void;
   submittingError?: boolean;
@@ -105,8 +110,16 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
           {buttonSubmitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
-      <SubmitErrorDialog open={Boolean(submittingError)} onAction={onReload} />
-      <GeneralErrorDialog open={Boolean(generalError)} onAction={onReload} />
+      <SubmitErrorDialog
+        open={Boolean(submittingError)}
+        onAction={onReload}
+        error={(tx as ErroringBurnSession<any, any>).error}
+      />
+      <GeneralErrorDialog
+        open={Boolean(generalError)}
+        onAction={onReload}
+        error={(tx as ErroringBurnSession<any, any>).error}
+      />
     </>
   );
 };

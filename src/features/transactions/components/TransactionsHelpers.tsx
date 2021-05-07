@@ -10,7 +10,11 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
+import {
+  BurnSession,
+  ErroringBurnSession,
+  GatewaySession,
+} from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
@@ -29,6 +33,7 @@ import {
   WarningIcon,
 } from "../../../components/icons/RenIcons";
 import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
+import { Hide } from "../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
@@ -50,11 +55,16 @@ import {
   SpacedTypography,
   UnderlinedSpan,
 } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
 import { links } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
+
+export type AnyBurnSession =
+  | BurnSession<any, any>
+  | ErroringBurnSession<any, any>;
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -279,11 +289,35 @@ const ErrorIconWrapper = styled("div")(({ theme }) => ({
   color: theme.customColors.textLight,
 }));
 
+type ErrorDetailsProps = {
+  error: any;
+};
+
+export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
+  error,
+}) => {
+  const [visible, setVisible] = useState(false);
+  const handleToggle = useCallback(() => {
+    setVisible(!visible);
+  }, [visible]);
+  return (
+    <div>
+      <Button variant="text" size="small" onClick={handleToggle}>
+        Show {visible ? "less" : "more"}
+      </Button>
+      <Hide when={!visible}>
+        <Debug force it={{ error }} />
+      </Hide>
+    </div>
+  );
+};
+
 type ErrorWithActionProps = DialogProps & {
   title?: string;
   onAction?: () => void;
   reason?: string;
   actionText?: string;
+  error?: any;
 };
 
 export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
@@ -292,6 +326,7 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   reason = "",
   actionText = "",
   onAction,
+  error,
   children,
 }) => {
   return (
@@ -311,6 +346,7 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
         >
           {children}
         </Typography>
+        {Boolean(error) && <ErrorDetails error={error} />}
       </SpacedPaperContent>
       <PaperContent bottomPadding>
         <ActionButtonWrapper>
@@ -333,9 +369,10 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   </ErrorDialog>
 );
 
-export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = (
-  props
-) => (
+export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
+  children,
+  ...props
+}) => (
   <ErrorDialog
     reason="An error has occurred"
     actionText="Refresh page"
@@ -349,6 +386,7 @@ export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       </Link>
       .
     </span>
+    {children}
   </ErrorDialog>
 );
 

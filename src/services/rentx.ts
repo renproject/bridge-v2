@@ -8,7 +8,11 @@ import {
 } from "@renproject/chains-bitcoin";
 import { Ethereum, BinanceSmartChain } from "@renproject/chains-ethereum";
 import { RenNetwork } from "@renproject/interfaces";
-import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
+import {
+  BurnMachineContext,
+  BurnTransaction,
+  GatewayMachineContext,
+} from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
 import {
   BridgeCurrency,
@@ -51,42 +55,41 @@ export const mintChainClassMap = {
   [RenChain.binanceSmartChain]: BinanceSmartChain,
 };
 
-// export const burnChainMap: BurnMachineContext["fromChainMap"] = {
-//   [RenChain.ethereum]: (context) => {
-//     return Ethereum(context.providers.ethereum, context.tx.network).Account({
-//       address: context.tx.userAddress,
-//       value: context.tx.suggestedAmount,
-//     }) as any;
-//   },
-//   [RenChain.binanceSmartChain]: (context) => {
-//     const { network } = context.tx;
-//     const { providers } = context;
-//     return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
-//       address: context.tx.userAddress,
-//       value: context.tx.suggestedAmount,
-//     }) as any;
-//   },
-// };
+export const getBurnChainMap: any = (providers: any) => ({
+  [RenChain.ethereum]: (context: BurnMachineContext<any, any>) => {
+    return Ethereum(providers.ethereum, context.tx.network).Account({
+      address: context.tx.userAddress,
+      value: String(Number(context.tx.targetAmount) * 1e8), // TODO: crit
+    }) as any;
+  },
+  [RenChain.binanceSmartChain]: (context: BurnMachineContext<any, any>) => {
+    const { network } = context.tx;
+    return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
+      address: context.tx.userAddress,
+      value: String(Number(context.tx.targetAmount) * 1e8),
+    }) as any;
+  },
+});
 
 export const burnChainClassMap = {
   [RenChain.ethereum]: Ethereum,
   [RenChain.binanceSmartChain]: BinanceSmartChain,
 };
 
-// export const releaseChainMap: BurnMachineContext<any, any>["toChainMap"] = {
-//   [RenChain.bitcoin]: (context: any) => {
-//     return Bitcoin().Address(context.tx.destAddress) as any;
-//   },
-//   [RenChain.zcash]: (context) => {
-//     return Zcash().Address(context.tx.destAddress) as any;
-//   },
-//   [RenChain.bitcoinCash]: (context) => {
-//     return BitcoinCash().Address(context.tx.destAddress) as any;
-//   },
-//   [RenChain.dogecoin]: (context) => {
-//     return Dogecoin().Address(context.tx.destAddress) as any;
-//   },
-// };
+export const releaseChainMap: any = {
+  [RenChain.bitcoin]: (context: BurnMachineContext<any, any>) => {
+    return Bitcoin().Address(context.tx.destAddress) as any;
+  },
+  [RenChain.zcash]: (context: BurnMachineContext<any, any>) => {
+    return Zcash().Address(context.tx.destAddress) as any;
+  },
+  [RenChain.bitcoinCash]: (context: BurnMachineContext<any, any>) => {
+    return BitcoinCash().Address(context.tx.destAddress) as any;
+  },
+  [RenChain.dogecoin]: (context: BurnMachineContext<any, any>) => {
+    return Dogecoin().Address(context.tx.destAddress) as any;
+  },
+};
 
 export const releaseChainClassMap = {
   [RenChain.bitcoin]: Bitcoin,
