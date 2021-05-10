@@ -1,9 +1,5 @@
 import { RenNetwork } from "@renproject/interfaces";
-import {
-  BurnSession,
-  GatewaySession,
-  ReleasedBurnTransaction,
-} from "@renproject/ren-tx";
+import { BurnSession, ReleasedBurnTransaction } from "@renproject/ren-tx";
 import { ConfirmedBurnTransaction } from "@renproject/ren-tx/src/types/burn";
 import {
   BridgeCurrency,

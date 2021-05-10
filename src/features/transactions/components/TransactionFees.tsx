@@ -95,6 +95,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   if (pending) {
     return <CenteredProgress />;
   }
+  console.log(renVMFeeAmount);
   return (
     <>
       <Debug it={{ currency, fees }} />
@@ -104,13 +105,13 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         value={
           hasAmount ? (
             <NumberFormatText
-              value={renVMFeeAmount}
+              value={renVMFeeAmount.toFixed(15)}
               spacedSuffix={currencyConfig.short}
               decimalScale={8}
             />
           ) : (
             <span>
-              {(type === TxType.MINT ? fees.mint : fees.burn) / 10000 * 100}%
+              {((type === TxType.MINT ? fees.mint : fees.burn) / 10000) * 100}%
             </span>
           )
         }

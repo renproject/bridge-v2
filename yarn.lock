@@ -15680,10 +15680,10 @@ react-middle-ellipsis@^1.1.0:
   resolved "https://registry.yarnpkg.com/react-middle-ellipsis/-/react-middle-ellipsis-1.1.0.tgz#c8fb226c5621e8f0852494be05a5d1574ae37b19"
   integrity sha512-jEkF6l6l12/V70bYqCCEdHRDFHVG8kdR46tcE5HBssgPDaoLm7XC9hkrL1cW4eL4wi2/0g19PMORge38ReXp9A==
 
-react-number-format@^4.4.1:
-  version "4.4.4"
-  resolved "https://registry.yarnpkg.com/react-number-format/-/react-number-format-4.4.4.tgz#2a7f50be404f990ec15855cc6babfeae1be16351"
-  integrity sha512-/MuF1GOs1Z0xBaQie8+TTqCxUTT8xxjc6RqIFVWcWB6FM8GNIenSh2ayzN6Y1J2WMcXUDVwMdDXjweHKVjXm/w==
+react-number-format@^4.5.5:
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/react-number-format/-/react-number-format-4.5.5.tgz#563807ee142a03857111115806d39767bc698797"
+  integrity sha512-3NGqgSbMUwRwgJ4852RH24UFkW89yx/e0P78Hwmf3TajLMKCOJ7DPJCcl/6z+2+HpJ8AG7je/J8na3ykWx8acg==
   dependencies:
     prop-types "^15.7.2"
 

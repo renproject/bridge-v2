@@ -1,11 +1,9 @@
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   buildBurnContextWithMap,
-  buildMintContextWithMap,
   burnMachine,
   BurnMachineSchema,
   BurnSession,
-  GatewaySession,
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
 import { useMemo } from "react";

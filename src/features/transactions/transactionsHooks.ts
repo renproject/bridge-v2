@@ -1,5 +1,4 @@
 import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession } from "@renproject/ren-tx";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {

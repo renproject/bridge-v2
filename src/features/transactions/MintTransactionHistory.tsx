@@ -478,8 +478,9 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
     getRemainingGatewayTime(tx.expiryTime)
   );
 
+  const gatewayAddress = (tx as OpenedGatewaySession<any>).gatewayAddress;
   useEffect(() => {
-    if ((tx as OpenedGatewaySession<any>).gatewayAddress) {
+    if (gatewayAddress) {
       if (hasDeposits) {
         setResolving(false);
       } else {
@@ -488,7 +489,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
         }, 5000);
       }
     }
-  }, [(tx as OpenedGatewaySession<any>).gatewayAddress, hasDeposits]);
+  }, [gatewayAddress, hasDeposits]);
 
   const allCompleted = areAllDepositsCompleted(tx);
   const completed = depositStatus === DepositEntryStatus.COMPLETED;

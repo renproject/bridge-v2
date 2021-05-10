@@ -2,7 +2,6 @@ import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   buildMintContextWithMap,
   DepositMachineSchema,
-  GatewayMachineContext,
   GatewaySession,
   mintMachine,
 } from "@renproject/ren-tx";

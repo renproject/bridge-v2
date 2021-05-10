@@ -6,13 +6,9 @@ import {
   Dogecoin,
   Zcash,
 } from "@renproject/chains-bitcoin";
-import { Ethereum, BinanceSmartChain } from "@renproject/chains-ethereum";
+import { BinanceSmartChain, Ethereum } from "@renproject/chains-ethereum";
 import { RenNetwork } from "@renproject/interfaces";
-import {
-  BurnMachineContext,
-  BurnTransaction,
-  GatewayMachineContext,
-} from "@renproject/ren-tx";
+import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
 import {
   BridgeCurrency,

@@ -1,9 +1,5 @@
 import { Box, Typography, useTheme } from "@material-ui/core";
-import {
-  BurnSession,
-  ErroringBurnSession,
-  GatewaySession,
-} from "@renproject/ren-tx";
+import { BurnSession, ErroringBurnSession } from "@renproject/ren-tx";
 import React, { FunctionComponent, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
