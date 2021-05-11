@@ -146,15 +146,16 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
         <NestedDrawerContent>
           <PaperContent topPadding>
             <SpacedTypography variant="h5" align="center">
-              You only have <HCountdown milliseconds={timeRemained} /> to
-              complete this transaction
+              This deposit address is only open for{" "}
+              <HCountdown milliseconds={timeRemained} />, but you can send to it
+              multiple times within this time
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
               align="center"
               color="textSecondary"
             >
-              This transaction takes{" "}
+              Each transaction to this deposit address takes about{" "}
               <Tooltip title="Block confirmation time depends on factors such as blockchain activity and the fee you set for your transaction">
                 <UnderlinedSpan>about {txTimeMinutes} minutes</UnderlinedSpan>
               </Tooltip>{" "}
