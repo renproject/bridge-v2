@@ -67,7 +67,7 @@ import {
 import {
   createTxQueryString,
   getAddressExplorerLink,
-  getTxPageTitle,
+  getMintTxPageTitle,
   isTxExpired,
   parseTxQueryString,
   TxType,
@@ -114,7 +114,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   );
   useSetCurrentTxId(tx.id);
 
-  usePageTitle(getTxPageTitle(tx));
+  usePageTitle(getMintTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
     if (!walletConnected) {

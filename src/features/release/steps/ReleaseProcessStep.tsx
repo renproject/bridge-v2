@@ -58,7 +58,7 @@ import {
 } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
-  getTxPageTitle,
+  getReleaseTxPageTitle,
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
@@ -89,7 +89,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [tx, setTx] = useState<AnyBurnSession>(parsedTx as AnyBurnSession); // TODO Partial<GatewaySession>
   useSetCurrentTxId(tx.id);
 
-  usePageTitle(getTxPageTitle(tx));
+  usePageTitle(getReleaseTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
     if (!walletConnected) {

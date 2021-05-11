@@ -225,15 +225,16 @@ export const getFeeTooltips = ({
   };
 };
 
-export const getTxPageTitle = (tx: any) => {
-  const amount = tx.targetAmount;
+export const getMintTxPageTitle = (tx: any) => {
   const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
   const date = new Date(getTxCreationTimestamp(tx)).toISOString();
-  if (tx.type === TxType.MINT) {
-    return `Mint - ${asset} - ${date}`;
-  } else {
-    return `Release - ${amount} ${asset} - ${date}`;
-  }
+  return `Mint - ${asset} - ${date}`;
+};
+
+export const getReleaseTxPageTitle = (tx: any) => {
+  const amount = tx.targetAmount;
+  const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
+  return `Release - ${amount} ${asset}`;
 };
 
 export const getTxCreationTimestamp = (
@@ -262,6 +263,3 @@ export const isMinimalAmount = (
   }
   return receiving / amount >= 0.5;
 };
-
-export const base64ToHex = (hash: string) =>
-  Buffer.from(hash, "base64").toString("hex");
