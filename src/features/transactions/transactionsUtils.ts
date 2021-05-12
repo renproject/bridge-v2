@@ -250,6 +250,9 @@ export const getTxCreationTimestamp = (
 
 export const getPaymentLink = (chain: BridgeChain, address: string) => {
   const chainConfig = getChainConfig(chain);
+  if (chain === BridgeChain.ZECC) {
+    return `zcash:${address}`;
+  }
   return `${chainConfig.rentxName}://${address}`;
 };
 

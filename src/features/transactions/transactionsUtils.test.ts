@@ -108,4 +108,9 @@ describe("paymentLinks", () => {
     const result = getPaymentLink(BridgeChain.BTCC, "12345abcde");
     expect(result).toEqual("bitcoin://12345abcde");
   });
+
+  test("generates payment link for zcash", () => {
+    const result = getPaymentLink(BridgeChain.ZECC, "12345abcde");
+    expect(result).toEqual("zcash:12345abcde");
+  });
 });
