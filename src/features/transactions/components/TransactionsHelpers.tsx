@@ -148,7 +148,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
             <SpacedTypography variant="h5" align="center">
               This deposit address is only open for{" "}
               <HCountdown milliseconds={timeRemained} />, but you can send to it
-              multiple times within this time
+              multiple times within this session
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
@@ -177,8 +177,8 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
               color="textSecondary"
             >
               <strong>
-                If you do not finish it within this window, your assets will be
-                lost.
+                If you do not finish your transactions within this
+                period/session/time frame, you risk losing the deposits
               </strong>
             </SpacedTypography>
           </PaperContent>

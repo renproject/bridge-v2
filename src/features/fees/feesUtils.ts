@@ -59,8 +59,6 @@ export const getTransactionFees = ({
     feeData.conversionTotal = total > 0 ? total : 0;
   }
 
-  console.log(feeData);
-
   return feeData;
 };
 
