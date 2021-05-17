@@ -32,7 +32,7 @@ export const useGasPrices = () => {
     fetchEthMarketDataGasPrices().then((anyBlockPrices) => {
       const ethPrice = {
         chain: BridgeChain.ETHC,
-        standard: anyBlockPrices.standard,
+        standard: anyBlockPrices.fast,
       };
       const bscPrice = {
         chain: BridgeChain.BSCC,
