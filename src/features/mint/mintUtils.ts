@@ -387,7 +387,6 @@ export const getLockAndMintParams = (
     lockTargetConfirmations,
     lockProcessingTime,
     lockTxAmount,
-    // suggestedAmount: Number(tx.suggestedAmount) / 1e8,
     meta,
   };
 };
