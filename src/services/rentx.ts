@@ -1,13 +1,17 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { Fantom, Polygon } from "@renproject/chains";
 import {
   Bitcoin,
   BitcoinCash,
   Dogecoin,
   Zcash,
 } from "@renproject/chains-bitcoin";
-import { BinanceSmartChain, Ethereum } from "@renproject/chains-ethereum";
+import {
+  BinanceSmartChain,
+  Ethereum,
+  Fantom,
+  Polygon,
+} from "@renproject/chains-ethereum";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";

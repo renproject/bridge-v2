@@ -139,8 +139,12 @@ export const WalletConnectingInfo: WalletPickerProps<
   const chainConfig = getChainConfigByRentxName(chain);
 
   // TODO: There should be better mapping.
-  const walletSymbol =
-    chain === "ethereum" ? BridgeWallet.METAMASKW : BridgeWallet.BINANCESMARTW;
+  const walletSymbol: BridgeWallet = {
+    ethereum: BridgeWallet.METAMASKW,
+    bsc: BridgeWallet.BINANCESMARTW,
+    fantom: BridgeWallet.METAMASKW,
+    polygon: BridgeWallet.METAMASKW,
+  }[chain as "ethereum" | "bsc" | "fantom" | "polygon"];
   const walletConfig = getWalletConfig(walletSymbol);
 
   const labels = getLabels(chainConfig, walletConfig);
