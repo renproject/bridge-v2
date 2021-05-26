@@ -468,7 +468,7 @@ export const FantomMetamaskConnectorInfo: WalletPickerProps<
           Please ensure that you have added the Fantom network to Metamask as
           explained{" "}
           <Link
-            href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain"
+            href="https://docs.fantom.foundation/tutorials/set-up-metamask"
             external
           >
             here
@@ -527,7 +527,7 @@ export const PolygonMetamaskConnectorInfo: WalletPickerProps<
           Please ensure that you have added the Polygon network to Metamask as
           explained{" "}
           <Link
-            href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain"
+            href="https://docs.matic.network/docs/develop/metamask/config-matic/"
             external
           >
             here

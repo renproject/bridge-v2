@@ -69,28 +69,28 @@ export const getBurnChainMap: any = (providers: any) => ({
   [RenChain.ethereum]: (context: BurnMachineContext<any, any>) => {
     return Ethereum(providers.ethereum, context.tx.network).Account({
       address: context.tx.userAddress,
-      value: String(Number(context.tx.targetAmount) * 1e8), // TODO: crit
+      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)), // TODO: crit
     }) as any;
   },
   [RenChain.binanceSmartChain]: (context: BurnMachineContext<any, any>) => {
     const { network } = context.tx;
     return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
       address: context.tx.userAddress,
-      value: String(Number(context.tx.targetAmount) * 1e8),
+      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
     }) as any;
   },
   [RenChain.fantom]: (context: BurnMachineContext<any, any>) => {
     const { network } = context.tx;
     return new Fantom(providers.fantom, network).Account({
       address: context.tx.userAddress,
-      value: String(Number(context.tx.targetAmount) * 1e8),
+      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
     }) as any;
   },
   [RenChain.polygon]: (context: BurnMachineContext<any, any>) => {
     const { network } = context.tx;
     return new Polygon(providers.polygon, network).Account({
       address: context.tx.userAddress,
-      value: String(Number(context.tx.targetAmount) * 1e8),
+      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
     }) as any;
   },
 });
