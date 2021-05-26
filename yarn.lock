@@ -2987,10 +2987,10 @@
     axios "^0.21.1"
     immutable "^4.0.0-rc.12"
 
-"@renproject/ren-tx@^2.1.9":
-  version "2.1.9"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.1.9.tgz#810f71542f42ec664bea6aede6f207b6b04742d1"
-  integrity sha512-lOaNYlV7ycBb8t0AyMzdT98tvRZ5AtUfFIWkMVD6miJJM9onavhvigQMCNr7golV10PCxx1b1m1b5woKhmN65A==
+"@renproject/ren-tx@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.2.1.tgz#292371174d1fb4eeeb6857b56fcc2c6ef730a09a"
+  integrity sha512-X+JZt0TM/MKbcMXvKMbid/cmJzgvGc8LK1ShZrXCMlQrPzzOQxync1lkS6xq+lNa7Crdj6qnS+44hKHrfo5yTQ==
   dependencies:
     bignumber.js "^9.0.1"
 
@@ -6010,7 +6010,7 @@ ccount@^1.0.0:
   resolved "https://registry.yarnpkg.com/ccount/-/ccount-1.1.0.tgz#246687debb6014735131be8abab2d93898f8d043"
   integrity sha512-vlNK021QdI7PNeiUh/lKkC/mNHHfV0m/Ad5JoI0TYtlBnJAslM/JIkm/tGC88bkLIwO6OQ5uV6ztS6kVAtCDlg==
 
-"chai-bignumber@github:ren-forks/chai-bignumber#afa6f46dcbef0b7e622dc27b9b3354fc67afafbc", chai-bignumber@ren-forks/chai-bignumber#afa6f46dcbef0b7e622dc27b9b3354fc67afafbc:
+chai-bignumber@ren-forks/chai-bignumber#afa6f46dcbef0b7e622dc27b9b3354fc67afafbc:
   version "2.0.2"
   resolved "https://codeload.github.com/ren-forks/chai-bignumber/tar.gz/afa6f46dcbef0b7e622dc27b9b3354fc67afafbc"
 
