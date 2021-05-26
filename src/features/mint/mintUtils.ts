@@ -1,5 +1,11 @@
 import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession, GatewayTransaction } from "@renproject/ren-tx";
+import {
+  AllGatewayTransactions,
+  ConfirmingGatewayTransaction,
+  GatewaySession,
+  GatewayTransaction,
+  MintedGatewayTransaction,
+} from "@renproject/ren-tx";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -99,15 +105,13 @@ export const createMintTransaction = ({
   //
   // NOTE - this will overflow if the user makes more than 1000 transactions to the same pair in a day,
   // but we assume that no one will reach that amount, and an overflow is just confusing, not breaking
-  const tx: GatewaySession = {
+  const tx: GatewaySession<any> = {
     id: `tx-${userAddress}-${nonce}-${currency}-${mintedCurrencyChain}`,
-    type: "mint",
     network,
     sourceAsset: getCurrencyRentxName(currency),
     sourceChain: getCurrencyRentxSourceChain(currency), // TODO: it can be derived for minting
     destAddress,
     destChain: getChainRentxName(mintedCurrencyChain),
-    targetAmount: 0,
     userAddress,
     nonce,
     expiryTime: getSessionExpiry(dayOffset),
@@ -119,33 +123,26 @@ export const createMintTransaction = ({
   return tx;
 };
 
-export const preValidateMintTransaction = (tx: GatewaySession) => {
-  // TODO: create advancedValidation
-  return tx.type === "mint" && tx.destAddress && tx.userAddress;
+export const preValidateMintTransaction = (tx: GatewaySession<any>) => {
+  return tx.destAddress && tx.userAddress;
 };
 
-export const depositSorter = (a: GatewayTransaction, b: GatewayTransaction) => {
+export const depositSorter = (
+  a: GatewayTransaction<any>,
+  b: GatewayTransaction<any>
+) => {
   const aConf = a.detectedAt || 0;
   const bConf = b.detectedAt || 0;
   return Number(aConf) - Number(bConf);
 };
 
 export const getDepositParams = (
-  tx: GatewaySession,
-  transaction: GatewayTransaction | null
+  tx: GatewaySession<any>,
+  transaction: AllGatewayTransactions<any> | null
 ) => {
   const { lockChainConfig, mintChainConfig } = getLockAndMintBasicParams(tx);
   let mintTxHash: string = "";
   let mintTxLink: string = "";
-  if (transaction && transaction.destTxHash) {
-    mintTxHash = transaction.destTxHash;
-    mintTxLink =
-      getChainExplorerLink(
-        mintChainConfig.symbol,
-        tx.network,
-        transaction.destTxHash || ""
-      ) || "";
-  }
   let lockTxHash: string = "";
   let lockTxLink: string = "";
   let lockTxAmount = 0;
@@ -153,7 +150,16 @@ export const getDepositParams = (
   let lockConfirmations = 0;
   let lockTargetConfirmations = 0;
   if (transaction) {
-    lockTxAmount = transaction.sourceTxAmount / 1e8;
+    if ((transaction as MintedGatewayTransaction<any>).destTxHash) {
+      mintTxHash = (transaction as MintedGatewayTransaction<any>).destTxHash;
+      mintTxLink =
+        getChainExplorerLink(
+          mintChainConfig.symbol,
+          tx.network,
+          mintTxHash || ""
+        ) || "";
+    }
+    lockTxAmount = Number(transaction.sourceTxAmount) / 1e8;
     if (transaction.rawSourceTx) {
       lockTxHash = transaction.rawSourceTx.transaction.txHash;
       lockTxLink =
@@ -161,8 +167,9 @@ export const getDepositParams = (
         "";
     }
     lockConfirmations = transaction.sourceTxConfs;
-    if (transaction.sourceTxConfTarget) {
-      lockTargetConfirmations = transaction.sourceTxConfTarget;
+    if ((transaction as ConfirmingGatewayTransaction<any>).sourceTxConfTarget) {
+      lockTargetConfirmations = (transaction as ConfirmingGatewayTransaction<any>)
+        .sourceTxConfTarget;
       lockProcessingTime =
         Math.max(lockTargetConfirmations - lockConfirmations, 0) *
         lockChainConfig.blockTime;
@@ -228,7 +235,7 @@ export const getDepositParams = (
   };
 };
 
-export const getLockAndMintBasicParams = (tx: GatewaySession) => {
+export const getLockAndMintBasicParams = (tx: GatewaySession<any>) => {
   const networkConfig = getNetworkConfigByRentxName(tx.network);
   const lockCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const mintCurrencyConfig = getCurrencyConfig(
@@ -241,7 +248,7 @@ export const getLockAndMintBasicParams = (tx: GatewaySession) => {
     tx.network,
     tx.userAddress
   );
-  const suggestedAmount = Number(tx.suggestedAmount) / 1e8;
+  // const suggestedAmount = Number(tx.suggestedAmount) / 1e8;
   const createdTime = getTxCreationTimestamp(tx);
   const depositsCount = Object.values(tx.transactions || {}).length;
   const gatewayStatus = getGatewayStatus(tx.expiryTime);
@@ -253,14 +260,14 @@ export const getLockAndMintBasicParams = (tx: GatewaySession) => {
     mintChainConfig,
     lockChainConfig,
     mintAddressLink,
-    suggestedAmount,
+    // suggestedAmount,
     createdTime,
     depositsCount,
     gatewayStatus,
   };
 };
 
-export const getLockAndMintDepositsParams = (tx: GatewaySession) => {
+export const getLockAndMintDepositsParams = (tx: GatewaySession<any>) => {
   const sortedTransactions = Object.values(tx.transactions).sort(depositSorter);
   const depositsParams = [];
   for (const transaction of sortedTransactions) {
@@ -272,7 +279,7 @@ export const getLockAndMintDepositsParams = (tx: GatewaySession) => {
 
 // TODO: replace with getLockAndMintBasicParams, getLockAndMintDepositsParams
 export const getLockAndMintParams = (
-  tx: GatewaySession,
+  tx: GatewaySession<any>,
   depositSourceHash = ""
 ) => {
   const {
@@ -295,15 +302,6 @@ export const getLockAndMintParams = (
   }
   let mintTxHash: string = "";
   let mintTxLink: string = "";
-  if (transaction && transaction.destTxHash) {
-    mintTxHash = transaction.destTxHash;
-    mintTxLink =
-      getChainExplorerLink(
-        mintChainConfig.symbol,
-        tx.network,
-        transaction.destTxHash || ""
-      ) || "";
-  }
   let lockTxHash: string = "";
   let lockTxLink: string = "";
   let lockTxAmount = 0;
@@ -311,7 +309,16 @@ export const getLockAndMintParams = (
   let lockConfirmations = 0;
   let lockTargetConfirmations = 0;
   if (transaction) {
-    lockTxAmount = transaction.sourceTxAmount / 1e8;
+    if ((transaction as MintedGatewayTransaction<any>).destTxHash) {
+      mintTxHash = (transaction as MintedGatewayTransaction<any>).destTxHash;
+      mintTxLink =
+        getChainExplorerLink(
+          mintChainConfig.symbol,
+          tx.network,
+          mintTxHash || ""
+        ) || "";
+    }
+    lockTxAmount = Number(transaction.sourceTxAmount) / 1e8;
     if (transaction.rawSourceTx) {
       lockTxHash = transaction.rawSourceTx.transaction.txHash;
       lockTxLink =
@@ -319,8 +326,9 @@ export const getLockAndMintParams = (
         "";
     }
     lockConfirmations = transaction.sourceTxConfs;
-    if (transaction.sourceTxConfTarget) {
-      lockTargetConfirmations = transaction.sourceTxConfTarget;
+    if ((transaction as ConfirmingGatewayTransaction<any>).sourceTxConfTarget) {
+      lockTargetConfirmations = (transaction as ConfirmingGatewayTransaction<any>)
+        .sourceTxConfTarget;
       lockProcessingTime =
         Math.max(lockTargetConfirmations - lockConfirmations, 0) *
         lockChainConfig.blockTime;
@@ -379,12 +387,11 @@ export const getLockAndMintParams = (
     lockTargetConfirmations,
     lockProcessingTime,
     lockTxAmount,
-    suggestedAmount: Number(tx.suggestedAmount) / 1e8,
     meta,
   };
 };
 
-export const areAllDepositsCompleted = (tx: GatewaySession) => {
+export const areAllDepositsCompleted = (tx: GatewaySession<any>) => {
   const { depositsParams } = getLockAndMintDepositsParams(tx);
   if (depositsParams.length === 0) {
     return false;

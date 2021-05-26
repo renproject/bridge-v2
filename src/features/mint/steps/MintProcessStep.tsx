@@ -1,9 +1,11 @@
 import { Divider, IconButton } from "@material-ui/core";
 import {
-  depositMachine,
+  mintMachine,
   DepositMachineSchema,
   GatewaySession,
   GatewayTransaction,
+  OpenedGatewaySession,
+  ErroringGatewaySession,
 } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
@@ -65,7 +67,7 @@ import {
 import {
   createTxQueryString,
   getAddressExplorerLink,
-  getTxPageTitle,
+  getMintTxPageTitle,
   isTxExpired,
   parseTxQueryString,
   TxType,
@@ -107,10 +109,12 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const { walletConnected } = useSelectedChainWallet();
   const { tx: parsedTx, txState } = useTxParam();
   const [reloading, setReloading] = useState(false);
-  const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession);
+  const [tx, setTx] = useState<GatewaySession<any>>(
+    parsedTx as GatewaySession<any>
+  );
   useSetCurrentTxId(tx.id);
 
-  usePageTitle(getTxPageTitle(tx));
+  usePageTitle(getMintTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
     if (!walletConnected) {
@@ -126,7 +130,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     menuOpened,
     handleMenuOpen,
     handleMenuClose,
-  } = useTransactionMenuControl(tx);
+  } = useTransactionMenuControl();
 
   const [machineSend, setMachineSend] = useState<MachineSend>();
   const handleMachineReady = useCallback<OnMachineSendReadyFn>((send) => {
@@ -164,7 +168,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 
   useEffect(() => {
     if (txState?.reloadTx) {
-      setTx(parsedTx as GatewaySession);
+      setTx(parsedTx as GatewaySession<any>);
       setReloading(true);
       history.replace({ ...location, state: undefined });
       setTimeout(() => {
@@ -173,7 +177,9 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
     }
   }, [history, location, txState, parsedTx]);
 
-  const [activeAmount, setActiveAmount] = useState(Number(tx.targetAmount));
+  const [activeAmount, setActiveAmount] = useState(
+    Number((tx as any).targetAmount)
+  );
   const handleActiveAmountChange = useCallback((newAmount: number) => {
     setActiveAmount(newAmount);
   }, []);
@@ -306,7 +312,7 @@ type OnMachineSendReadyFn = (
 ) => void;
 
 type MintTransactionStatusProps = {
-  tx: GatewaySession;
+  tx: GatewaySession<any>;
   onRestart: () => void;
   depositHash?: string;
   onMachineSendReady: OnMachineSendReadyFn;
@@ -395,8 +401,8 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   }, [account, current.context.tx.userAddress]);
 
   const activeDeposit = useMemo<{
-    deposit: GatewayTransaction;
-    machine: Actor<typeof depositMachine>;
+    deposit: GatewayTransaction<any>;
+    machine: Actor<typeof mintMachine>;
   } | null>(() => {
     if (!current.context.tx.transactions || currentDeposit === "gateway") {
       return null;
@@ -404,13 +410,13 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     const deposit = current.context.tx.transactions[currentDeposit];
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];
-    return { deposit, machine };
+    return { deposit, machine } as any;
   }, [currentDeposit, current.context]);
 
   const currentAmount = activeDeposit?.deposit.sourceTxAmount;
   useEffect(() => {
     if (currentAmount) {
-      onActiveAmountChange(currentAmount / 10 ** 8);
+      onActiveAmountChange(Number(currentAmount) / 10 ** 8);
     }
   }, [currentAmount, onActiveAmountChange]);
 
@@ -466,7 +472,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           />
         ) : (
           <MintDepositToStatus
-            tx={current.context.tx}
+            tx={current.context.tx as OpenedGatewaySession<any>}
             minimumAmount={minimumAmount}
           />
         )}
@@ -499,13 +505,13 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 };
 
 type MintTransactionDepositStatusProps = {
-  tx: GatewaySession;
-  deposit: GatewayTransaction;
-  machine: Actor<typeof depositMachine>;
+  tx: GatewaySession<any>;
+  deposit: GatewayTransaction<any>;
+  machine: Actor<typeof mintMachine>;
   depositHash: string;
 };
 
-export const forceState = "srcSettling" as keyof DepositMachineSchema["states"];
+export const forceState = "srcSettling" as keyof DepositMachineSchema<any>["states"];
 
 export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepositStatusProps> = ({
   tx,
@@ -530,7 +536,8 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     });
   }, [history, location]);
 
-  const state = machine?.state.value as keyof DepositMachineSchema["states"];
+  const state = machine?.state
+    .value as keyof DepositMachineSchema<any>["states"];
   if (!machine) {
     // We should always have machines for transactions
     return <ProgressStatus processing={false} reason="Restoring..." />;
@@ -549,7 +556,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     case "accepted": // RenVM accepted it, it can be submitted to ethereum
       return (
         <MintDepositAcceptedStatus
-          tx={tx}
+          tx={tx as ErroringGatewaySession<any>}
           onSubmit={handleSubmitToDestinationChain}
           onReload={handleReload}
           depositHash={depositHash}
@@ -569,7 +576,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         />
       );
     case "completed":
-      if (deposit.destTxHash) {
+      if ((deposit as any).destTxHash) {
         return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
       } else {
         // FIXME: actually an error case, this shouldn't happen in this state

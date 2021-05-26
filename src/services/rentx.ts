@@ -6,7 +6,7 @@ import {
   Dogecoin,
   Zcash,
 } from "@renproject/chains-bitcoin";
-import { Ethereum, BinanceSmartChain } from "@renproject/chains-ethereum";
+import { BinanceSmartChain, Ethereum } from "@renproject/chains-ethereum";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
@@ -26,64 +26,60 @@ export const lockChainMap = {
   [RenChain.dogecoin]: () => Dogecoin(),
 };
 
-export const mintChainMap = {
-  [RenChain.ethereum]: (context: GatewayMachineContext) => {
+export const getMintChainMap = (providers: any) => ({
+  [RenChain.ethereum]: (context: GatewayMachineContext<any>) => {
     const { destAddress, network } = context.tx;
-    const { providers } = context;
 
     return Ethereum(providers.ethereum, network).Account({
       address: destAddress,
     }) as any;
   },
-  [RenChain.binanceSmartChain]: (context: GatewayMachineContext) => {
+  [RenChain.binanceSmartChain]: (context: GatewayMachineContext<any>) => {
     const { destAddress, network } = context.tx;
-    const { providers } = context;
 
     return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
-      // providers.binanceSmartChain?
       address: destAddress,
     }) as any;
   },
-};
+});
 
 export const mintChainClassMap = {
   [RenChain.ethereum]: Ethereum,
   [RenChain.binanceSmartChain]: BinanceSmartChain,
 };
 
-export const burnChainMap: BurnMachineContext["fromChainMap"] = {
-  [RenChain.ethereum]: (context) => {
-    return Ethereum(context.providers.ethereum, context.tx.network).Account({
+export const getBurnChainMap: any = (providers: any) => ({
+  [RenChain.ethereum]: (context: BurnMachineContext<any, any>) => {
+    return Ethereum(providers.ethereum, context.tx.network).Account({
       address: context.tx.userAddress,
-      value: context.tx.suggestedAmount,
+      value: String(Number(context.tx.targetAmount) * 1e8), // TODO: crit
     }) as any;
   },
-  [RenChain.binanceSmartChain]: (context) => {
+  [RenChain.binanceSmartChain]: (context: BurnMachineContext<any, any>) => {
     const { network } = context.tx;
-    const { providers } = context;
     return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
       address: context.tx.userAddress,
-      value: context.tx.suggestedAmount,
+      value: String(Number(context.tx.targetAmount) * 1e8),
     }) as any;
   },
-};
+});
 
 export const burnChainClassMap = {
   [RenChain.ethereum]: Ethereum,
   [RenChain.binanceSmartChain]: BinanceSmartChain,
 };
 
-export const releaseChainMap: BurnMachineContext["toChainMap"] = {
-  [RenChain.bitcoin]: (context) => {
+export const releaseChainMap: any = {
+  [RenChain.bitcoin]: (context: BurnMachineContext<any, any>) => {
     return Bitcoin().Address(context.tx.destAddress) as any;
   },
-  [RenChain.zcash]: (context) => {
+  [RenChain.zcash]: (context: BurnMachineContext<any, any>) => {
     return Zcash().Address(context.tx.destAddress) as any;
   },
-  [RenChain.bitcoinCash]: (context) => {
+  [RenChain.bitcoinCash]: (context: BurnMachineContext<any, any>) => {
     return BitcoinCash().Address(context.tx.destAddress) as any;
   },
-  [RenChain.dogecoin]: (context) => {
+  [RenChain.dogecoin]: (context: BurnMachineContext<any, any>) => {
     return Dogecoin().Address(context.tx.destAddress) as any;
   },
 };

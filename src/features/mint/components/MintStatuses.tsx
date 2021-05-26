@@ -1,5 +1,6 @@
 import { Box, Grow, Typography, useTheme } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
+import { GatewaySession, OpenedGatewaySession } from "@renproject/ren-tx";
+import { ErroringGatewaySession } from "@renproject/ren-tx/src/types/mint";
 import QRCode from "qrcode.react";
 import React, {
   FunctionComponent,
@@ -53,6 +54,7 @@ import {
 } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
 import {
+  getLockAndMintBasicParams,
   getLockAndMintParams,
   getRemainingGatewayTime,
   getRemainingMintTime,
@@ -63,7 +65,7 @@ import {
 } from "./MintHelpers";
 
 export type MintDepositToProps = {
-  tx: GatewaySession;
+  tx: OpenedGatewaySession<any>;
   minimumAmount: number;
 };
 
@@ -103,7 +105,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
     lockCurrencyConfig,
     lockChainConfig,
     mintAddressLink,
-  } = getLockAndMintParams(tx);
+  } = getLockAndMintBasicParams(tx);
   const { color } = lockCurrencyConfig;
   const { MainIcon } = lockChainConfig;
   useSetPaperTitle("Gateway address");
@@ -184,7 +186,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
 };
 
 type MintDepositConfirmationStatusProps = {
-  tx: GatewaySession;
+  tx: GatewaySession<any>;
   depositHash: string;
 };
 
@@ -259,7 +261,7 @@ const maxConfirmations = (actual: number, target: number) => {
 };
 
 type MintDepositAcceptedStatusProps = {
-  tx: GatewaySession;
+  tx: ErroringGatewaySession<any>;
   onSubmit?: () => void;
   onReload?: () => void;
   submitting: boolean;
@@ -362,13 +364,17 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           link={lockTxLink}
         />
       </ActionButtonWrapper>
-      <SubmitErrorDialog open={submittingError} onAction={onReload} />
+      <SubmitErrorDialog
+        open={submittingError}
+        onAction={onReload}
+        error={tx.error}
+      />
     </>
   );
 };
 
 type DestinationPendingStatusProps = {
-  tx: GatewaySession;
+  tx: GatewaySession<any>;
   onSubmit?: () => void;
   submitting: boolean;
   depositHash: string;
@@ -437,7 +443,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 };
 
 type MintCompletedStatusProps = {
-  tx: GatewaySession;
+  tx: GatewaySession<any>;
   depositHash: string;
 };
 

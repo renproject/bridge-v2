@@ -30,9 +30,10 @@ export const useGasPrices = () => {
 
   const fetchData = useCallback(() => {
     fetchEthMarketDataGasPrices().then((anyBlockPrices) => {
+      const fast = anyBlockPrices.fast;
       const ethPrice = {
         chain: BridgeChain.ETHC,
-        standard: anyBlockPrices.standard,
+        standard: fast < 20 ? 50 : fast,
       };
       const bscPrice = {
         chain: BridgeChain.BSCC,

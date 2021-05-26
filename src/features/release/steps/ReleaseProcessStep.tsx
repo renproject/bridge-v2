@@ -1,5 +1,5 @@
 import { Divider, IconButton } from "@material-ui/core";
-import { BurnMachineSchema, GatewaySession } from "@renproject/ren-tx";
+import { BurnMachineSchema } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
@@ -48,14 +48,17 @@ import {
 } from "../../notifications/notificationsUtils";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
-import { ProgressStatus } from "../../transactions/components/TransactionsHelpers";
+import {
+  AnyBurnSession,
+  ProgressStatus,
+} from "../../transactions/components/TransactionsHelpers";
 import {
   useSetCurrentTxId,
   useTransactionMenuControl,
 } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
-  getTxPageTitle,
+  getReleaseTxPageTitle,
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
@@ -83,10 +86,10 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const rates = useSelector($exchangeRates);
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
-  const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
+  const [tx, setTx] = useState<AnyBurnSession>(parsedTx as AnyBurnSession); // TODO Partial<GatewaySession>
   useSetCurrentTxId(tx.id);
 
-  usePageTitle(getTxPageTitle(tx));
+  usePageTitle(getReleaseTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
     if (!walletConnected) {
@@ -96,7 +99,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
 
   useEffect(() => {
     if (txState?.reloadTx) {
-      setTx(parsedTx as GatewaySession);
+      setTx(parsedTx as AnyBurnSession);
       setReloading(true);
       history.replace({ ...location, state: undefined });
       setTimeout(() => {
@@ -114,7 +117,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     menuOpened,
     handleMenuOpen,
     handleMenuClose,
-  } = useTransactionMenuControl(tx);
+  } = useTransactionMenuControl();
 
   const {
     modalOpened,
@@ -243,7 +246,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
 };
 
 type ReleaseTransactionStatusProps = {
-  tx: GatewaySession;
+  tx: AnyBurnSession;
 };
 
 const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
