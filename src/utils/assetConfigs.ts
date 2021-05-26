@@ -22,8 +22,12 @@ import {
   DotsIcon,
   EthereumChainFullIcon,
   EthereumIcon,
+  FantomCircleIcon,
+  FantomFullIcon,
   MetamaskFullIcon,
   MewFullIcon,
+  PolygonFullIcon,
+  PolygonGreyIcon,
   TooltipIcon as NotSetIcon,
   WalletConnectFullIcon,
   ZecFullIcon,
@@ -36,6 +40,8 @@ import * as customColors from "../theme/colors";
 export enum RenChain {
   binanceSmartChain = "binanceSmartChain",
   ethereum = "ethereum",
+  fantom = "fantom",
+  polygon = "polygon",
   bitcoin = "bitcoin",
   zcash = "zcash",
   bitcoinCash = "bitcoinCash",
@@ -56,6 +62,8 @@ export enum BridgeCurrency {
   RENZEC = "RENZEC",
   RENDGB = "RENDGB",
   ETH = "ETH",
+  FTM = "FTM",
+  MATIC = "MATIC",
   BNB = "BNB",
   UNKNOWN = "UNKNOWN",
 }
@@ -67,6 +75,8 @@ export enum BridgeChain {
   DOGC = "DOGC",
   BSCC = "BSCC",
   ETHC = "ETHC",
+  MATICC = "MATICC",
+  FTMC = "FTMC",
   UNKNOWNC = "UNKNOWNC",
 }
 
@@ -147,6 +157,8 @@ const oldNetworkMappings: ChainToNetworkMappings = {
   // BinanceSmartChain only has 1 network for testnet/mainnet
   // so vDot3 is equavelent to "legacy" mappings
   [RenChain.binanceSmartChain]: networkMappingLegacy,
+  [RenChain.fantom]: networkMappingLegacy,
+  [RenChain.polygon]: networkMappingLegacy,
 };
 
 const newNetworkMappings: ChainToNetworkMappings = {
@@ -154,6 +166,8 @@ const newNetworkMappings: ChainToNetworkMappings = {
   // BinanceSmartChain only has 1 network for testnet/mainnet
   // so vDot3 is equavelent to "legacy" mappings
   [RenChain.binanceSmartChain]: networkMappingLegacy,
+  [RenChain.fantom]: networkMappingLegacy,
+  [RenChain.polygon]: networkMappingLegacy,
 };
 
 export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
@@ -310,6 +324,42 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     networkMappings: newNetworkMappings,
   },
+  [BridgeCurrency.MATIC]: {
+    symbol: BridgeCurrency.MATIC,
+    short: "MATIC",
+    full: "Matic",
+    FullIcon: PolygonFullIcon,
+    GreyIcon: NotSetIcon,
+    Icon: PolygonFullIcon,
+    MainIcon: PolygonFullIcon,
+    rentxName: "matic",
+    sourceChain: BridgeChain.MATICC,
+    networkMappings: newNetworkMappings,
+  },
+  [BridgeCurrency.FTM]: {
+    symbol: BridgeCurrency.FTM,
+    short: "FTM",
+    full: "Fantom",
+    FullIcon: FantomFullIcon,
+    GreyIcon: NotSetIcon,
+    Icon: FantomFullIcon,
+    MainIcon: BtcFullIcon,
+    rentxName: "ftm",
+    sourceChain: BridgeChain.FTMC,
+    networkMappings: newNetworkMappings,
+  },
+  [BridgeCurrency.ETH]: {
+    symbol: BridgeCurrency.ETH,
+    short: "ETH",
+    full: "Ether",
+    FullIcon: EthereumIcon,
+    GreyIcon: NotSetIcon,
+    Icon: EthereumIcon,
+    MainIcon: BtcFullIcon,
+    rentxName: "eth",
+    sourceChain: BridgeChain.ETHC,
+    networkMappings: newNetworkMappings,
+  },
   [BridgeCurrency.BNB]: {
     symbol: BridgeCurrency.BNB,
     short: "BNB",
@@ -443,6 +493,32 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.BNB,
   },
+  [BridgeChain.FTMC]: {
+    symbol: BridgeChain.FTMC,
+    short: "FTM",
+    full: "Fantom",
+    FullIcon: FantomCircleIcon,
+    Icon: FantomCircleIcon,
+    MainIcon: FantomCircleIcon,
+    GreyIcon: NotSetIcon,
+    rentxName: RenChain.fantom,
+    blockTime: 3,
+    targetConfirmations: 30,
+    nativeCurrency: BridgeCurrency.FTM,
+  },
+  [BridgeChain.MATICC]: {
+    symbol: BridgeChain.MATICC,
+    short: "MATIC",
+    full: "Polygon",
+    FullIcon: PolygonFullIcon,
+    Icon: PolygonFullIcon,
+    MainIcon: PolygonFullIcon,
+    GreyIcon: NotSetIcon,
+    rentxName: RenChain.polygon,
+    blockTime: 3,
+    targetConfirmations: 30,
+    nativeCurrency: BridgeCurrency.MATIC,
+  },
   [BridgeChain.ETHC]: {
     symbol: BridgeChain.ETHC,
     short: "ETH",
@@ -539,9 +615,16 @@ export const supportedLockCurrencies = [
 export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
   BridgeChain.BSCC,
+  BridgeChain.MATICC,
+  BridgeChain.FTMC,
 ];
 
-export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
+export const supportedBurnChains = [
+  BridgeChain.ETHC,
+  BridgeChain.BSCC,
+  BridgeChain.MATICC,
+  BridgeChain.FTMC,
+];
 
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENBTC,
@@ -653,6 +736,10 @@ export const bridgeChainToRenChain = (bridgeChain: BridgeChain): RenChain => {
       return RenChain.ethereum;
     case BridgeChain.BSCC:
       return RenChain.binanceSmartChain;
+    case BridgeChain.FTMC:
+      return RenChain.fantom;
+    case BridgeChain.MATICC:
+      return RenChain.polygon;
     default:
       return RenChain.unknown;
   }
