@@ -150,7 +150,10 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       };
       if (machineSend) {
         // @ts-ignore
-        machineSend({ type: "RESTORE", data: { rawSourceTx } });
+        machineSend({
+          type: "RESTORE",
+          data: { rawSourceTx, sourceTxHash: txHash },
+        });
       }
     },
     [machineSend]
