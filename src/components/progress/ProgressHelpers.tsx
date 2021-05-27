@@ -52,6 +52,9 @@ const getSectionMargin = (sections: number) => {
 
 const generateSections = (all: number) => {
   let sections: any = {};
+  if (all > 360) {
+    all = 360;
+  }
   const degreeStep = 360 / all;
   const margin = getSectionMargin(all);
   for (let i = 0; i < all; i++) {
@@ -150,6 +153,9 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
   fontSize = Math.floor(0.75 * size),
   children,
 }) => {
+  if (targetConfirmations > 360) {
+    targetConfirmations = 360;
+  }
   const theme = useTheme();
   const styles = useProgressWithContentStyles({
     color: color || theme.palette.primary.main,
@@ -167,7 +173,7 @@ export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = 
     <div className={rootClassName}>
       {typeof confirmations !== "undefined" && (
         <div className={styles.sections}>
-          {new Array(targetConfirmations).fill(true).map((_, index) => {
+          {new Array(targetConfirmations || 0).fill(true).map((_, index) => {
             const value = 100 / targetConfirmations - margin;
             const completed = index < confirmations;
             const processing = index === confirmations;

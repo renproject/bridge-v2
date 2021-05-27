@@ -33,6 +33,7 @@ export const useRenNetworkTracker = (currency: BridgeCurrency) => {
   const renChain = useSelector($multiwalletChain);
   const renNetwork = useSelector($renNetwork);
   useEffect(() => {
+    console.log(currency, renChain);
     const currencyConfig = getCurrencyConfig(currency);
     const networkMapping = currencyConfig.networkMappings[renChain];
     let newNetwork: RenNetwork | null = null;

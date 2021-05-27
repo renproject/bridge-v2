@@ -486,7 +486,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
       } else {
         setTimeout(() => {
           setResolving(false);
-        }, 5000);
+        }, 15000);
       }
     }
   }, [gatewayAddress, hasDeposits]);

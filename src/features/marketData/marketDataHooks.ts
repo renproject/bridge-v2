@@ -14,9 +14,14 @@ export const useExchangeRates = () => {
   const dispatch = useDispatch();
 
   const fetchData = useCallback(() => {
-    fetchMarketDataRates().then((rates) => {
-      dispatch(setExchangeRates(rates));
-    });
+    fetchMarketDataRates()
+      .then((rates) => {
+        dispatch(setExchangeRates(rates));
+      })
+      .catch((e) => {
+        //FIXME: handle this properly
+        console.error(e);
+      });
   }, [dispatch]);
 
   useEffect(fetchData, [fetchData]);

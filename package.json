@@ -9,9 +9,9 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@reduxjs/toolkit": "^1.4.0",
-    "@renproject/chains": "^2.1.9",
+    "@renproject/chains": "^2.2.0",
     "@renproject/chains-bitcoin": "^2.1.9",
-    "@renproject/chains-ethereum": "^2.1.9",
+    "@renproject/chains-ethereum": "^2.2.0",
     "@renproject/chains-terra": "^2.1.9",
     "@renproject/fonts": "^1.0.3-rc1",
     "@renproject/interfaces": "^2.1.9",
@@ -20,8 +20,8 @@
     "@renproject/multiwallet-ethereum-mewconnect-connector": "^2.1.9",
     "@renproject/multiwallet-ethereum-walletconnect-connector": "^2.1.9",
     "@renproject/multiwallet-ui": "^2.1.9",
-    "@renproject/ren": "^2.1.9",
-    "@renproject/ren-tx": "^2.1.9",
+    "@renproject/ren": "^2.2.0",
+    "@renproject/ren-tx": "^2.2.1",
     "@renproject/rpc": "^2.1.9",
     "@renproject/utils": "^2.1.9",
     "@testing-library/jest-dom": "^4.2.4",
@@ -75,7 +75,11 @@
     "extends": "react-app"
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

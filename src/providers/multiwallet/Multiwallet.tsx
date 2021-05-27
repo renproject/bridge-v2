@@ -5,7 +5,11 @@ import { EthereumMEWConnectConnector } from "@renproject/multiwallet-ethereum-me
 import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
 import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
 import React, { FunctionComponent } from "react";
-import { BinanceMetamaskConnectorInfo } from "../../components/wallet/WalletHelpers";
+import {
+  BinanceMetamaskConnectorInfo,
+  FantomMetamaskConnectorInfo,
+  PolygonMetamaskConnectorInfo,
+} from "../../components/wallet/WalletHelpers";
 import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
 import { RenChain } from "../../utils/assetConfigs";
@@ -24,6 +28,19 @@ export const renNetworkToEthNetwork = (id: RenNetwork): number | undefined => {
 export const ethNetworkToRenNetwork = (id: string | number): RenNetwork => {
   const index = Number(id);
   return networkMapping[index]?.[0] || RenNetwork.Testnet;
+};
+
+export const fantomNetworkToRenNetwork = (id: string | number): RenNetwork => {
+  return {
+    "250": RenNetwork.Mainnet,
+    "4002": RenNetwork.Testnet,
+  }[parseInt(id as string).toString() as "250" | "4002"];
+};
+export const polygonNetworkToRenNetwork = (id: string | number): RenNetwork => {
+  return {
+    "137": RenNetwork.Mainnet,
+    "80001": RenNetwork.Testnet,
+  }[parseInt(id as string).toString() as "137" | "80001"];
 };
 
 export const walletPickerModalConfig = (targetEthChainId: number) => ({
@@ -71,6 +88,36 @@ export const walletPickerModalConfig = (targetEthChainId: number) => ({
             },
           ]
         : []),
+    ],
+    [RenChain.fantom]: [
+      {
+        name: "Metamask",
+        logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+        info: FantomMetamaskConnectorInfo,
+        connector: (() => {
+          const connector = new EthereumInjectedConnector({
+            networkIdMapper: fantomNetworkToRenNetwork,
+            debug: true,
+          });
+          connector.getProvider = () => (window as any).ethereum;
+          return connector;
+        })(),
+      },
+    ],
+    [RenChain.polygon]: [
+      {
+        name: "Metamask",
+        logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+        info: PolygonMetamaskConnectorInfo,
+        connector: (() => {
+          const connector = new EthereumInjectedConnector({
+            networkIdMapper: polygonNetworkToRenNetwork,
+            debug: true,
+          });
+          connector.getProvider = () => (window as any).ethereum;
+          return connector;
+        })(),
+      },
     ],
     [RenChain.binanceSmartChain]: [
       {
