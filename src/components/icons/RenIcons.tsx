@@ -33,6 +33,9 @@ import { ReactComponent as EthereumChainColor } from "./../../assets/icons/ether
 import { ReactComponent as FilGrey } from "./../../assets/icons/fil-icon-grey.svg";
 import { ReactComponent as Fil } from "./../../assets/icons/fil-icon-nocolour.svg";
 import { ReactComponent as FilFull } from "./../../assets/icons/fil-icon.svg";
+import { ReactComponent as Fantom } from "./../../assets/icons/fantom-icon.svg";
+import { ReactComponent as FantomFull } from "./../../assets/icons/fantom-colour-icon.svg";
+import { ReactComponent as FantomCircle } from "./../../assets/icons/fantom-circle-icon.svg";
 import { ReactComponent as Gateway } from "./../../assets/icons/gateway-icon.svg";
 import { ReactComponent as LunaGrey } from "./../../assets/icons/luna-icon-grey.svg";
 import { ReactComponent as Luna } from "./../../assets/icons/luna-icon-nocolour.svg";
@@ -58,6 +61,9 @@ import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconn
 import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
+
+import { ReactComponent as Polygon } from "./../../assets/icons/polygon-icon.svg";
+import { ReactComponent as PolygonFull } from "./../../assets/icons/polygon-colour-icon.svg";
 
 import AddIcon from "@material-ui/icons/Add";
 import BlockIcon from "@material-ui/icons/Block";
@@ -301,4 +307,24 @@ export const FilFullIcon: CustomSvgIconComponent = (props) => (
 
 export const FilGreyIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={FilGrey} {...props} />
+);
+
+export const PolygonGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Polygon} {...props} />
+);
+
+export const PolygonFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={PolygonFull} {...props} />
+);
+
+export const FantomGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Fantom} {...props} />
+);
+
+export const FantomFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={FantomFull} {...props} />
+);
+
+export const FantomCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={FantomCircle} {...props} />
 );
