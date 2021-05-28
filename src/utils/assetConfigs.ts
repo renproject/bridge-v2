@@ -27,7 +27,6 @@ import {
   MetamaskFullIcon,
   MewFullIcon,
   PolygonFullIcon,
-  PolygonGreyIcon,
   TooltipIcon as NotSetIcon,
   WalletConnectFullIcon,
   ZecFullIcon,

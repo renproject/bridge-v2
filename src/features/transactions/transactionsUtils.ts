@@ -101,7 +101,7 @@ export const bufferReplacer = (name: any, val: any) => {
 export const createTxQueryString = (
   tx: GatewaySession<any> | BurnSession<any, any>
 ) => {
-  const { customParams, transactions, ...sanitized } = tx as any;
+  const { customParams, transactions, transaction, ...sanitized } = tx as any;
 
   // These were broken previously and should not be part of the tx object
   delete sanitized.meta;
@@ -110,11 +110,12 @@ export const createTxQueryString = (
 
   const stringResult = queryString.stringify({
     ...sanitized,
+    transaction: JSON.stringify(transaction, bufferReplacer),
     customParams: JSON.stringify(customParams),
     transactions: JSON.stringify(transactions, bufferReplacer),
   } as any);
 
-  if (stringResult.includes("[object Object]")) {
+  if (stringResult.includes("Object")) {
     throw new Error("Failed to serialize tx");
   }
   return stringResult;
@@ -140,6 +141,9 @@ type ParsedGatewaySession = GatewaySession<any> & {
 export const parseTxQueryString: (
   query: string
 ) => Partial<ParsedGatewaySession> | null = (query: string) => {
+  if (query.includes("Object")) {
+    throw new Error("Malformed query string");
+  }
   const parsed = queryString.parse(query);
   if (!parsed) {
     return null;
@@ -149,6 +153,7 @@ export const parseTxQueryString: (
     suggestedAmount,
     targetAmount,
     transactions,
+    transaction,
     customParams,
     createdAt,
     ...rest
@@ -157,6 +162,7 @@ export const parseTxQueryString: (
   return {
     ...rest,
     transactions: JSON.parse((transactions as string) || "{}"),
+    transaction: JSON.parse((transaction as string) || "{}"),
     customParams: JSON.parse((customParams as string) || "{}"),
     expiryTime: parseNumber(expiryTime),
     createdAt: parseNumber(createdAt),

@@ -69,6 +69,7 @@ import {
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
 import {
+  ReleaseAcceptedStatus,
   ReleaseCompletedStatus,
   ReleaseProgressStatus,
 } from "../components/ReleaseStatuses";
@@ -292,12 +293,13 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     }
   }, [history, current.value, current.context.tx]);
 
-  // const forceState = "errorReleasing";
+  // const forceState = "accepted";
   const state = current.value as keyof BurnMachineSchema["states"];
   console.debug(tx.id, state);
   switch (state) {
     // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
+    case "submittingBurn":
       return (
         <ReleaseProgressStatus
           tx={tx}
@@ -321,7 +323,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     case "srcConfirmed":
       return <ProgressStatus reason="Submitting to RenVM" />;
     case "accepted":
-      return <ProgressStatus reason="Releasing from RenVM" />;
+      return <ReleaseAcceptedStatus tx={current.context.tx} />;
     case "destInitiated":
       return <ReleaseCompletedStatus tx={current.context.tx} />;
     default:
