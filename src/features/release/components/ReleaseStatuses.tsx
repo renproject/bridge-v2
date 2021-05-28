@@ -76,7 +76,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
         >
           {pending ? (
             <TransactionStatusInfo
-              status="Pending"
+              status={`Pending ${tx.transaction?.sourceTxConfs} / ${tx.transaction?.sourceTxConfTarget}`}
               chain={burnChainConfig.full}
               address={
                 <Link

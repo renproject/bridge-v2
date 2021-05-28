@@ -293,7 +293,6 @@ export const GatewayEntryMachine: FunctionComponent<GatewayEntryProps> = ({
   useEffect(() => {
     // console.log("starting", tx.id);
   }, []);
-  // console.log("updating", tx.id);
   return <GatewayEntry tx={current.context.tx} />;
 };
 
