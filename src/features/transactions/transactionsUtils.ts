@@ -1,5 +1,5 @@
 import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession } from "@renproject/ren-tx";
+import { BurnSession, GatewaySession } from "@renproject/ren-tx";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import { chainsClassMap } from "../../services/rentx";
@@ -98,7 +98,9 @@ export const bufferReplacer = (name: any, val: any) => {
   return val;
 };
 
-export const createTxQueryString = (tx: GatewaySession) => {
+export const createTxQueryString = (
+  tx: GatewaySession<any> | BurnSession<any, any>
+) => {
   const { customParams, transactions, ...sanitized } = tx as any;
 
   // These were broken previously and should not be part of the tx object
@@ -125,14 +127,13 @@ const parseNumber = (value: any) => {
   return Number(value);
 };
 
-export const isTxExpired = (tx: GatewaySession) => {
+export const isTxExpired = (tx: GatewaySession<any>) => {
   return Date.now() > tx.expiryTime;
 };
 
-export const cloneTx = (tx: GatewaySession) =>
-  JSON.parse(JSON.stringify(tx)) as GatewaySession;
+export const cloneTx = (tx: any) => JSON.parse(JSON.stringify(tx)) as any;
 
-type ParsedGatewaySession = GatewaySession & {
+type ParsedGatewaySession = GatewaySession<any> & {
   depositHash?: string;
 };
 
@@ -224,22 +225,34 @@ export const getFeeTooltips = ({
   };
 };
 
-export const getTxPageTitle = (tx: GatewaySession) => {
-  const amount = tx.targetAmount;
+export const getMintTxPageTitle = (tx: any) => {
   const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
   const date = new Date(getTxCreationTimestamp(tx)).toISOString();
-  if (tx.type === TxType.MINT) {
-    return `Mint - ${asset} - ${date}`;
-  } else {
-    return `Release - ${amount} ${asset} - ${date}`;
-  }
+  return `Mint - ${asset} - ${date}`;
 };
 
-export const getTxCreationTimestamp = (tx: GatewaySession) =>
-  tx.createdAt || tx.expiryTime - 24 * 3600 * 1000 * 3;
+export const getReleaseTxPageTitle = (tx: any) => {
+  const amount = tx.targetAmount;
+  const asset = getCurrencyConfigByRentxName(tx.sourceAsset).short;
+  return `Release - ${amount} ${asset}`;
+};
+
+export const getTxCreationTimestamp = (
+  tx: GatewaySession<any> | BurnSession<any, any>
+) => {
+  if (tx.createdAt) {
+    return tx.createdAt;
+  } else if ((tx as GatewaySession<any>).expiryTime) {
+    return (tx as GatewaySession<any>).expiryTime - 24 * 3600 * 1000 * 3;
+  }
+  return Date.now();
+};
 
 export const getPaymentLink = (chain: BridgeChain, address: string) => {
   const chainConfig = getChainConfig(chain);
+  if (chain === BridgeChain.ZECC) {
+    return `zcash:${address}`;
+  }
   return `${chainConfig.rentxName}://${address}`;
 };
 
@@ -253,6 +266,3 @@ export const isMinimalAmount = (
   }
   return receiving / amount >= 0.5;
 };
-
-export const base64ToHex = (hash: string) =>
-  Buffer.from(hash, "base64").toString("hex");

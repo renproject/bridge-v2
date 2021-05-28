@@ -57,7 +57,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     targetChainConfig.nativeCurrency,
     USD_SYMBOL
   );
-  const hasAmount = amount !== 0;
+  const hasAmount = !isNaN(amount) && amount !== 0;
   const amountUsd = amount * currencyUsdRate;
   const { fees, pending } = useFetchFees(currency, type);
   const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
@@ -95,6 +95,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   if (pending) {
     return <CenteredProgress />;
   }
+
   return (
     <>
       <Debug it={{ currency, fees }} />
@@ -104,13 +105,13 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         value={
           hasAmount ? (
             <NumberFormatText
-              value={renVMFeeAmount}
+              value={renVMFeeAmount.toFixed(15)}
               spacedSuffix={currencyConfig.short}
               decimalScale={8}
             />
           ) : (
             <span>
-              {(type === TxType.MINT ? fees.mint : fees.burn) / 10000 * 100}%
+              {((type === TxType.MINT ? fees.mint : fees.burn) / 10000) * 100}%
             </span>
           )
         }

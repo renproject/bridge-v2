@@ -14,9 +14,14 @@ export const useExchangeRates = () => {
   const dispatch = useDispatch();
 
   const fetchData = useCallback(() => {
-    fetchMarketDataRates().then((rates) => {
-      dispatch(setExchangeRates(rates));
-    });
+    fetchMarketDataRates()
+      .then((rates) => {
+        dispatch(setExchangeRates(rates));
+      })
+      .catch((e) => {
+        //FIXME: handle this properly
+        console.error(e);
+      });
   }, [dispatch]);
 
   useEffect(fetchData, [fetchData]);
@@ -30,9 +35,10 @@ export const useGasPrices = () => {
 
   const fetchData = useCallback(() => {
     fetchEthMarketDataGasPrices().then((anyBlockPrices) => {
+      const fast = anyBlockPrices.fast;
       const ethPrice = {
         chain: BridgeChain.ETHC,
-        standard: anyBlockPrices.standard,
+        standard: fast < 20 ? 50 : fast,
       };
       const bscPrice = {
         chain: BridgeChain.BSCC,

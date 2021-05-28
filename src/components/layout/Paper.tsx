@@ -156,7 +156,7 @@ export const PaperTitle = styled("div")({
 
 const useSpacedContentStyles = makeStyles({
   root: {
-    minHeight: 200,
+    minHeight: 200, // this causes shifting
   },
   rootSmaller: {
     minHeight: 130,

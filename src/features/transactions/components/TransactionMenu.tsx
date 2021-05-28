@@ -5,7 +5,7 @@ import {
   MenuItemProps,
   Typography,
 } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
+import { BurnSession, GatewaySession } from "@renproject/ren-tx";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
@@ -98,7 +98,7 @@ type TransactionMenuProps = {
   open: boolean;
   onClose: () => void;
   onUpdateTx?: UpdateTxFn;
-  tx: GatewaySession;
+  tx: GatewaySession<any> | BurnSession<any, any>;
 };
 
 export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({

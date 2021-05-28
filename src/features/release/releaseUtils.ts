@@ -1,5 +1,6 @@
 import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession } from "@renproject/ren-tx";
+import { BurnSession, ReleasedBurnTransaction } from "@renproject/ren-tx";
+import { ConfirmedBurnTransaction } from "@renproject/ren-tx/src/types/burn";
 import {
   BridgeCurrency,
   getChainConfig,
@@ -21,14 +22,13 @@ import {
   TxPhase,
 } from "../transactions/transactionsUtils";
 
-export const preValidateReleaseTransaction = (tx: GatewaySession) => {
+export const preValidateReleaseTransaction = (tx: BurnSession<any, any>) => {
   // TODO: create advancedValidation
   return (
-    tx.type === "burn" &&
     tx.sourceAsset &&
     tx.destAddress &&
     tx.userAddress &&
-    tx.targetAmount > 0
+    Number(tx.targetAmount) > 0
   );
 };
 
@@ -51,25 +51,22 @@ export const createReleaseTransaction = ({
 }: CreateReleaseTransactionParams) => {
   const sourceCurrency = toReleasedCurrency(currency);
   const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  const tx: GatewaySession = {
+  const tx: BurnSession<any, any> = {
     id: "tx-" + Math.floor(Math.random() * 10 ** 16),
-    type: "burn",
     network,
     sourceAsset: sourceCurrencyConfig.rentxName,
     sourceChain: sourceChain, // TODO: pass sourceChain explicitly
     destAddress,
     destChain: getChainRentxName(sourceCurrencyConfig.sourceChain),
-    targetAmount: Number(amount),
+    targetAmount: amount.toString(),
     userAddress,
-    expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
-    transactions: {},
     customParams: {},
   };
 
   return tx;
 };
 
-export const getBurnAndReleaseParams = (tx: GatewaySession) => {
+export const getBurnAndReleaseParams = (tx: BurnSession<any, any>) => {
   const networkConfig = getNetworkConfigByRentxName(tx.network);
   const releaseCurrencyConfig = getCurrencyConfigByRentxName(tx.sourceAsset);
   const burnCurrencyConfig = getCurrencyConfig(
@@ -78,7 +75,7 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   const burnChainConfig = getChainConfigByRentxName(tx.sourceChain);
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
 
-  const transaction = Object.values(tx.transactions)[0];
+  const transaction = tx.transaction;
   let burnTxHash: string = "";
   let burnTxLink: string = "";
   if (transaction && transaction.sourceTxHash) {
@@ -92,12 +89,12 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
   }
   let releaseTxHash: string = "";
   let releaseTxLink: string = "";
-  if (transaction && transaction.destTxHash) {
+  if (transaction && (transaction as ReleasedBurnTransaction<any>).destTxHash) {
     releaseTxLink =
       getChainExplorerLink(
         releaseChainConfig.symbol,
         tx.network,
-        transaction.destTxHash
+        (transaction as ReleasedBurnTransaction<any>).destTxHash || ""
       ) || "";
   }
   const releaseAddressLink = getAddressExplorerLink(
@@ -113,7 +110,10 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     transactionsCount: 1,
   };
   if (burnTxHash) {
-    if (transaction.renVMHash || transaction.destTxHash) {
+    if (
+      (transaction as ConfirmedBurnTransaction<any>).renVMHash ||
+      (transaction as ReleasedBurnTransaction<any>).destTxHash
+    ) {
       // burn and releaseTxHash present
       meta.status = TxEntryStatus.COMPLETED;
     }
@@ -136,9 +136,4 @@ export const getBurnAndReleaseParams = (tx: GatewaySession) => {
     releaseAddressLink,
     meta,
   };
-};
-
-export const isReleaseTransactionCompleted = (tx: GatewaySession) => {
-  const transaction = Object.values(tx.transactions)[0];
-  return !!(transaction?.renVMHash || transaction?.destTxHash);
 };

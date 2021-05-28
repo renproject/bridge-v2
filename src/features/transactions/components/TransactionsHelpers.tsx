@@ -10,7 +10,11 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { GatewaySession } from "@renproject/ren-tx";
+import {
+  BurnSession,
+  ErroringBurnSession,
+  GatewaySession,
+} from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
   useCallback,
@@ -29,6 +33,7 @@ import {
   WarningIcon,
 } from "../../../components/icons/RenIcons";
 import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
+import { Hide } from "../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
@@ -50,11 +55,16 @@ import {
   SpacedTypography,
   UnderlinedSpan,
 } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
 import { links } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
+
+export type AnyBurnSession =
+  | BurnSession<any, any>
+  | ErroringBurnSession<any, any>;
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -136,15 +146,16 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
         <NestedDrawerContent>
           <PaperContent topPadding>
             <SpacedTypography variant="h5" align="center">
-              You only have <HCountdown milliseconds={timeRemained} /> to
-              complete this transaction
+              This deposit address is only open for{" "}
+              <HCountdown milliseconds={timeRemained} />, but you can send to it
+              multiple times within this session
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
               align="center"
               color="textSecondary"
             >
-              This transaction takes{" "}
+              Each transaction to this deposit address takes about{" "}
               <Tooltip title="Block confirmation time depends on factors such as blockchain activity and the fee you set for your transaction">
                 <UnderlinedSpan>about {txTimeMinutes} minutes</UnderlinedSpan>
               </Tooltip>{" "}
@@ -166,8 +177,8 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
               color="textSecondary"
             >
               <strong>
-                If you do not finish it within this window, your assets will be
-                lost.
+                If you do not finish your transactions within this
+                period/session/time frame, you risk losing the deposits
               </strong>
             </SpacedTypography>
           </PaperContent>
@@ -236,7 +247,7 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
 };
 
 export type TransactionItemProps = {
-  tx: GatewaySession;
+  tx: GatewaySession<any>;
   isActive?: boolean;
   onContinue?: ((depositHash?: string) => void) | (() => void);
 };
@@ -279,11 +290,35 @@ const ErrorIconWrapper = styled("div")(({ theme }) => ({
   color: theme.customColors.textLight,
 }));
 
+type ErrorDetailsProps = {
+  error: any;
+};
+
+export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
+  error,
+}) => {
+  const [visible, setVisible] = useState(false);
+  const handleToggle = useCallback(() => {
+    setVisible(!visible);
+  }, [visible]);
+  return (
+    <div>
+      <Button variant="text" size="small" onClick={handleToggle}>
+        Show {visible ? "less" : "more"}
+      </Button>
+      <Hide when={!visible}>
+        <Debug force it={{ error }} />
+      </Hide>
+    </div>
+  );
+};
+
 type ErrorWithActionProps = DialogProps & {
   title?: string;
   onAction?: () => void;
   reason?: string;
   actionText?: string;
+  error?: any;
 };
 
 export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
@@ -292,6 +327,7 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   reason = "",
   actionText = "",
   onAction,
+  error,
   children,
 }) => {
   return (
@@ -311,6 +347,7 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
         >
           {children}
         </Typography>
+        {Boolean(error) && <ErrorDetails error={error} />}
       </SpacedPaperContent>
       <PaperContent bottomPadding>
         <ActionButtonWrapper>
@@ -333,9 +370,10 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   </ErrorDialog>
 );
 
-export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = (
-  props
-) => (
+export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
+  children,
+  ...props
+}) => (
   <ErrorDialog
     reason="An error has occurred"
     actionText="Refresh page"
@@ -349,6 +387,7 @@ export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       </Link>
       .
     </span>
+    {children}
   </ErrorDialog>
 );
 
