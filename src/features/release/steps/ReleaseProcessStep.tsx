@@ -299,6 +299,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   switch (state) {
     // switch (forceState as keyof BurnMachineSchema["states"]) {
     case "created":
+    case "submittingBurn":
       return (
         <ReleaseProgressStatus
           tx={tx}
