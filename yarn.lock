@@ -2926,6 +2926,15 @@
     bignumber.js "^9.0.1"
     web3-core "^2.0.0-alpha.1"
 
+"@renproject/interfaces@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.2.3.tgz#c17d6e02b0e0b24bccb5df7cd363302334739f9b"
+  integrity sha512-s5ABd4qJ2RnKN+djjg5yQvQB9GnUOerp6IjAEIWwpRNnZqfx9aqg8lrJ5mrwum3p1yLEoMOICh98El/r/YhHww==
+  dependencies:
+    "@types/node" ">=10"
+    bignumber.js "^9.0.1"
+    web3-core "^2.0.0-alpha.1"
+
 "@renproject/multiwallet-abstract-ethereum-connector@^2.1.9":
   version "2.1.9"
   resolved "https://registry.yarnpkg.com/@renproject/multiwallet-abstract-ethereum-connector/-/multiwallet-abstract-ethereum-connector-2.1.9.tgz#9b87c726efcd12340a8165a73867692e85edd1b9"
@@ -3027,22 +3036,33 @@
     axios "^0.21.1"
     immutable "^4.0.0-rc.12"
 
-"@renproject/ren-tx@^2.2.3":
+"@renproject/provider@^2.2.3":
   version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.2.3.tgz#ca0fa39cacbac3e5ed2ce607854e7a6371664951"
-  integrity sha512-3gEfmBLbceA/vZq2BLzht70ML5CwKKOId0EvgGTVYsQ9+b2NbxlaQbA/Pt9E6WMBVnIKI/bF8hy++nRws6v3Bg==
+  resolved "https://registry.yarnpkg.com/@renproject/provider/-/provider-2.2.3.tgz#4373433e8becd0200be0a1613a97624657e571f6"
+  integrity sha512-gp+alq8MSAUjxvDd9JhUW0mJ1xGQvITnqGujKrAm7LwPrSBjeQso/ZaFsW475/rc/cIXJiQxiyzdk5rCj59TdA==
+  dependencies:
+    "@renproject/interfaces" "^2.2.3"
+    "@renproject/utils" "^2.2.3"
+    "@types/node" ">=10"
+    axios "^0.21.1"
+    immutable "^4.0.0-rc.12"
+
+"@renproject/ren-tx@2.2.4-alpha.0":
+  version "2.2.4-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.2.4-alpha.0.tgz#3c941d1dd0f6c84fe4d86be7f022d2f7489ecae5"
+  integrity sha512-ThDYQWwUYAkxVMiTuqws2MsHqKKWFL7cr38UWDW6SEYbMZ6dghbKEQfhBaek+4UO0e/2A4A1HR1X8bf3N4sesA==
   dependencies:
     bignumber.js "^9.0.1"
 
-"@renproject/ren@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.2.0.tgz#e0ab9beaaac0ecb780343cba585cb97d3f31876d"
-  integrity sha512-9bFy+Sl4/pAgo8DbVjAmTQLbOtiURFACJSG2qIrT2R9hS75ZwONLbW+j3cyZ12xZwUJfW6i5H4hG2TMnz3T+TA==
+"@renproject/ren@^2.2.4-alpha.0":
+  version "2.2.4-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.2.4-alpha.0.tgz#760bee588d8222d67027c3c560ed8b155ff5b779"
+  integrity sha512-/rZGcJjUV4GHG1hl/W/pXu67C/kr7cwX1XZ5qgM3YjFrd6wQVc9zXaeh9P8Kwmn5IQGiNfQkcya6DxfXjaurjg==
   dependencies:
-    "@renproject/interfaces" "^2.1.9"
-    "@renproject/provider" "^2.1.9"
-    "@renproject/rpc" "^2.1.9"
-    "@renproject/utils" "^2.1.9"
+    "@renproject/interfaces" "^2.2.3"
+    "@renproject/provider" "^2.2.3"
+    "@renproject/rpc" "^2.2.3"
+    "@renproject/utils" "^2.2.3"
     "@types/bn.js" "^5.1.0"
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
@@ -3062,12 +3082,42 @@
     bignumber.js "^9.0.1"
     immutable "^4.0.0-rc.12"
 
+"@renproject/rpc@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@renproject/rpc/-/rpc-2.2.3.tgz#4fb1ea10c0393c6319b76a16c8d9100fbf8e2245"
+  integrity sha512-dV+Ul2uHOXYFsdcMjnWXkVI6CSMIo2Wyy++aHRPMCT8u+EdH3HioN8nVQ3eKK4rrvB+5iLIB4/1fIkOc91mwLw==
+  dependencies:
+    "@renproject/interfaces" "^2.2.3"
+    "@renproject/provider" "^2.2.3"
+    "@renproject/utils" "^2.2.3"
+    "@types/node" ">=10"
+    bignumber.js "^9.0.1"
+    immutable "^4.0.0-rc.12"
+
 "@renproject/utils@^2.1.9":
   version "2.1.9"
   resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.1.9.tgz#a4f3a7fbd75466180909b3367ff1635cbe4be8f3"
   integrity sha512-2VQZuG7ItpePuEtQrEHWAVh5IMzon84SV+//8kJ72xQyzez6CQkckVWHwMZEj8Dm7ExwsRZv0t5PLhkB6/WKSQ==
   dependencies:
     "@renproject/interfaces" "^2.1.9"
+    "@types/create-hash" "1.2.2"
+    "@types/keccak" "^3.0.1"
+    "@types/mocha" "^8.2.0"
+    "@types/node" ">=10"
+    axios "^0.21.1"
+    bignumber.js "^9.0.1"
+    create-hash "1.2.0"
+    events "^3.2.0"
+    immutable "^4.0.0-rc.12"
+    keccak "^3.0.1"
+    web3-eth-abi "^2.0.0-alpha.1"
+
+"@renproject/utils@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.2.3.tgz#cc40f7374a4ac111a9557d2b57b6d31d32d12d59"
+  integrity sha512-qk/IUqrrj6vERyc9b7ZtLUXTFRLCistfjSmNwfj4HklpzbQmJOCOnu6l/VrUnaOlN+8OPvi0Ydl5la/PJ3vD3w==
+  dependencies:
+    "@renproject/interfaces" "^2.2.3"
     "@types/create-hash" "1.2.2"
     "@types/keccak" "^3.0.1"
     "@types/mocha" "^8.2.0"
