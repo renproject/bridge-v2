@@ -18,12 +18,14 @@ const mintTx: GatewaySession<any> = {
   destChain: "ethereum",
   userAddress: "",
   expiryTime: 1604670899484,
+  createdAt: 1622445762598,
   transactions: {},
 };
 
 const releaseTx: BurnSession<any, any> = {
   customParams: {},
   id: "tx-1234abcd",
+  createdAt: 1622445762598,
   sourceAsset: "btc",
   sourceChain: "ethereum",
   network: "testnet",
@@ -35,7 +37,7 @@ const releaseTx: BurnSession<any, any> = {
 
 describe("(de/se)rialization", () => {
   const txQuery =
-    "customParams=%7B%7D&destAddress=&destChain=ethereum&expiryTime=1604670899484&id=tx-1234abc&network=testnet&sourceAsset=btc&sourceChain=bitcoin&transactions=%7B%7D&userAddress=";
+    "createdAt=1622445762598&customParams=%7B%7D&destAddress=&destChain=ethereum&expiryTime=1604670899484&id=tx-1234abc&network=testnet&sourceAsset=btc&sourceChain=bitcoin&transactions=%7B%7D&userAddress=";
 
   const expectedParsedTx: Partial<GatewaySession<any>> = {
     customParams: {},
@@ -45,13 +47,15 @@ describe("(de/se)rialization", () => {
     network: "testnet",
     destAddress: "",
     destChain: "ethereum",
+    transaction: {},
     transactions: {},
+    createdAt: 1622445762598,
     userAddress: "",
     expiryTime: 1604670899484,
   };
 
   const realTxQuery =
-    "customParams=%7B%7D&destAddress=0xdf88bc963e614fab2bda81c298056ba18e01a424&destChain=ethereum&expiryTime=1605142829344&gatewayAddress=2NEJcFe7nkJCHFEu4vP2w1PRfeUb9o2ELhM&id=tx-1425032430964379&network=testnet&nonce=c958acd445371132d990073034a19d2f894ef5a3d0a002a4f75f2d1493de42c3&sourceAsset=btc&sourceChain=bitcoin&suggestedAmount=1100000&targetAmount=0.01&&userAddress=0xdf88bc963e614fab2bda81c298056ba18e01a424";
+    "createdAt=1622445762598&customParams=%7B%7D&destAddress=0xdf88bc963e614fab2bda81c298056ba18e01a424&destChain=ethereum&expiryTime=1605142829344&gatewayAddress=2NEJcFe7nkJCHFEu4vP2w1PRfeUb9o2ELhM&id=tx-1425032430964379&network=testnet&nonce=c958acd445371132d990073034a19d2f894ef5a3d0a002a4f75f2d1493de42c3&sourceAsset=btc&sourceChain=bitcoin&suggestedAmount=1100000&targetAmount=0.01&&userAddress=0xdf88bc963e614fab2bda81c298056ba18e01a424";
 
   const realTx = {
     customParams: {},
@@ -66,7 +70,9 @@ describe("(de/se)rialization", () => {
     sourceChain: "bitcoin",
     suggestedAmount: 1100000,
     targetAmount: 0.01,
+    createdAt: 1622445762598,
     transactions: {},
+    transaction: {},
     userAddress: "0xdf88bc963e614fab2bda81c298056ba18e01a424",
   };
 
@@ -94,7 +100,7 @@ describe("(de/se)rialization", () => {
 describe("pageTitle", () => {
   test("constructs mint tx page title", () => {
     const title = getMintTxPageTitle(mintTx);
-    expect(title).toEqual("Mint - BTC - 2020-11-03T13:54:59.484Z");
+    expect(title).toEqual("Mint - BTC - 2021-05-31T07:22:42.598Z");
   });
 
   test("constructs release tx page title", () => {
