@@ -15,6 +15,12 @@ import { $renNetwork } from "../network/networkSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
 
 export const useBurnMachine = (burnTransaction: BurnSession<any, any>) => {
+  if (
+    burnTransaction.transaction &&
+    Object.keys(burnTransaction.transaction).length === 0
+  ) {
+    delete burnTransaction.transaction;
+  }
   const tx = cloneTx(burnTransaction);
   const { enabledChains } = useMultiwallet();
   const network = useSelector($renNetwork);
@@ -28,6 +34,7 @@ export const useBurnMachine = (burnTransaction: BurnSession<any, any>) => {
     );
     return getBurnChainMap(providers);
   }, [enabledChains]);
+  console.log(burnTransaction);
 
   return useMachine(burnMachine, {
     context: {

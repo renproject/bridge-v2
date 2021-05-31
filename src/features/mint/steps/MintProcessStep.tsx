@@ -150,7 +150,10 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       };
       if (machineSend) {
         // @ts-ignore
-        machineSend({ type: "RESTORE", data: { rawSourceTx } });
+        machineSend({
+          type: "RESTORE",
+          data: { rawSourceTx, sourceTxHash: txHash },
+        });
       }
     },
     [machineSend]
@@ -576,7 +579,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         />
       );
     case "completed":
-      if ((deposit as any).destTxHash) {
+      if ((deposit as any).destTxHash !== undefined) {
         return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
       } else {
         // FIXME: actually an error case, this shouldn't happen in this state
