@@ -615,14 +615,14 @@ export const supportedMintDestinationChains = [
   BridgeChain.ETHC,
   BridgeChain.BSCC,
   BridgeChain.MATICC,
-  // BridgeChain.FTMC,
+  BridgeChain.FTMC,
 ];
 
 export const supportedBurnChains = [
   BridgeChain.ETHC,
   BridgeChain.BSCC,
   BridgeChain.MATICC,
-  // BridgeChain.FTMC,
+  BridgeChain.FTMC,
 ];
 
 export const supportedReleaseCurrencies = [
