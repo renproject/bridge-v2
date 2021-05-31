@@ -150,8 +150,11 @@ export const getDepositParams = (
   let lockConfirmations = 0;
   let lockTargetConfirmations = 0;
   if (transaction) {
-    if ((transaction as MintedGatewayTransaction<any>).destTxHash) {
-      mintTxHash = (transaction as MintedGatewayTransaction<any>).destTxHash;
+    if (
+      (transaction as MintedGatewayTransaction<any>).destTxHash !== undefined
+    ) {
+      mintTxHash =
+        (transaction as MintedGatewayTransaction<any>).destTxHash || "unknown";
       mintTxLink =
         getChainExplorerLink(
           mintChainConfig.symbol,
@@ -309,8 +312,11 @@ export const getLockAndMintParams = (
   let lockConfirmations = 0;
   let lockTargetConfirmations = 0;
   if (transaction) {
-    if ((transaction as MintedGatewayTransaction<any>).destTxHash) {
-      mintTxHash = (transaction as MintedGatewayTransaction<any>).destTxHash;
+    if (
+      (transaction as MintedGatewayTransaction<any>).destTxHash !== undefined
+    ) {
+      mintTxHash =
+        (transaction as MintedGatewayTransaction<any>).destTxHash || "unknown";
       mintTxLink =
         getChainExplorerLink(
           mintChainConfig.symbol,

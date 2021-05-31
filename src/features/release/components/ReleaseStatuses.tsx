@@ -1,6 +1,11 @@
-import { Box, Typography, useTheme } from "@material-ui/core";
+import { Box, Grow, Typography, useTheme } from "@material-ui/core";
 import { BurnSession, ErroringBurnSession } from "@renproject/ren-tx";
-import React, { FunctionComponent, useCallback } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
@@ -23,6 +28,7 @@ import { useBrowserNotifications } from "../../notifications/notificationsUtils"
 import {
   AnyBurnSession,
   GeneralErrorDialog,
+  ProgressStatus,
   SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
 import { resetRelease } from "../releaseSlice";
@@ -76,7 +82,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
         >
           {pending ? (
             <TransactionStatusInfo
-              status="Pending"
+              status={`Pending ${tx.transaction?.sourceTxConfs} / ${tx.transaction?.sourceTxConfTarget}`}
               chain={burnChainConfig.full}
               address={
                 <Link
@@ -191,6 +197,35 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
         </Link>
       </Box>
       <Debug it={{ tx }} />
+    </>
+  );
+};
+
+type ReleaseAcceptedStatusProps = {
+  tx: BurnSession<any, any>;
+};
+
+export const ReleaseAcceptedStatus: FunctionComponent<ReleaseAcceptedStatusProps> = ({
+  tx,
+}) => {
+  const { burnChainConfig } = getBurnAndReleaseParams(tx);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    let timer = setTimeout(() => setShow(true), 20 * 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+  return (
+    <>
+      <ProgressStatus reason="Releasing from RenVM" />
+      <Grow in={show}>
+        <Typography variant="body2" color="textSecondary" align="center">
+          Processing a transaction on {burnChainConfig.full} can sometimes take
+          longer due to heavier network load (congestion), please wait
+          patiently.
+        </Typography>
+      </Grow>
     </>
   );
 };
