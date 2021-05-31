@@ -3047,10 +3047,10 @@
     axios "^0.21.1"
     immutable "^4.0.0-rc.12"
 
-"@renproject/ren-tx@2.2.4-alpha.0":
-  version "2.2.4-alpha.0"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.2.4-alpha.0.tgz#3c941d1dd0f6c84fe4d86be7f022d2f7489ecae5"
-  integrity sha512-ThDYQWwUYAkxVMiTuqws2MsHqKKWFL7cr38UWDW6SEYbMZ6dghbKEQfhBaek+4UO0e/2A4A1HR1X8bf3N4sesA==
+"@renproject/ren-tx@2.2.4-alpha.1":
+  version "2.2.4-alpha.1"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.2.4-alpha.1.tgz#db02dafde1b443b0e3a242019a91feb21b41b843"
+  integrity sha512-EY/jgo27eE3ERJBrB8iGQtP80J0nYc6Pb3nV1kdVNOnjSBeeIz7mqNgdYZe4SSa5K4CW2UElEnil8LjZE65IjQ==
   dependencies:
     bignumber.js "^9.0.1"
 
