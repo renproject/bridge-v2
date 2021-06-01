@@ -129,6 +129,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
   mintChainLabel,
 }) => {
   const [checked, setChecked] = useState(true);
+  const history = useHistory();
 
   const handleCheckboxChange = useCallback(() => {
     setChecked(!checked);
@@ -139,9 +140,13 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
       onClosed();
     }
   }, [onClosed]);
+
+  const handleCancel = useCallback(() => {
+    history.push(paths.MINT);
+  }, []);
   const txTimeMinutes = lockChainBlockTime * lockChainConfirmations;
   return (
-    <NestedDrawer title="Warning" open onClose={handleClose} fixed={false}>
+    <NestedDrawer title="Warning" open onClose={handleCancel} fixed={false}>
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding>

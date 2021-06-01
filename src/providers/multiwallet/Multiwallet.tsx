@@ -27,8 +27,10 @@ export const renNetworkToEthNetwork = (id: RenNetwork): number | undefined => {
 };
 
 export const ethNetworkToRenNetwork = (id: string | number): RenNetwork => {
-  const index = Number(id);
-  return networkMapping[index]?.[0] || RenNetwork.Testnet;
+  return {
+    "1": RenNetwork.Mainnet,
+    "42": RenNetwork.Testnet,
+  }[parseInt(id as string).toString() as "1" | "42"];
 };
 
 export const fantomNetworkToRenNetwork = (id: string | number): RenNetwork => {
