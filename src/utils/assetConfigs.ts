@@ -68,7 +68,7 @@ export enum BridgeCurrency {
   FTM = "FTM",
   MATIC = "MATIC",
   BNB = "BNB",
-  AVA = "AVA",
+  AVAX = "AVAX",
   UNKNOWN = "UNKNOWN",
 }
 
@@ -81,7 +81,7 @@ export enum BridgeChain {
   ETHC = "ETHC",
   MATICC = "MATICC",
   FTMC = "FTMC",
-  AVAC = "AVAC",
+  AVAXC = "AVAXC",
   UNKNOWNC = "UNKNOWNC",
 }
 
@@ -331,8 +331,8 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     networkMappings: newNetworkMappings,
   },
-  [BridgeCurrency.AVA]: {
-    symbol: BridgeCurrency.AVA,
+  [BridgeCurrency.AVAX]: {
+    symbol: BridgeCurrency.AVAX,
     short: "AVA",
     full: "Avaer",
     FullIcon: AvaIcon,
@@ -340,7 +340,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     Icon: AvaIcon,
     MainIcon: AvaFullIcon,
     rentxName: "ava",
-    sourceChain: BridgeChain.AVAC,
+    sourceChain: BridgeChain.AVAXC,
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.MATIC]: {
@@ -538,9 +538,9 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.MATIC,
   },
-  [BridgeChain.AVAC]: {
-    symbol: BridgeChain.AVAC,
-    short: "AVA",
+  [BridgeChain.AVAXC]: {
+    symbol: BridgeChain.AVAXC,
+    short: "AVAX",
     full: "Avalanche",
     FullIcon: AvaFullIcon,
     Icon: AvaFullIcon,
@@ -549,7 +549,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     rentxName: RenChain.avalanche,
     blockTime: 3,
     targetConfirmations: 30,
-    nativeCurrency: BridgeCurrency.AVA,
+    nativeCurrency: BridgeCurrency.AVAX,
   },
   [BridgeChain.ETHC]: {
     symbol: BridgeChain.ETHC,
@@ -649,7 +649,7 @@ export const supportedMintDestinationChains = [
   BridgeChain.BSCC,
   BridgeChain.MATICC,
   BridgeChain.FTMC,
-  BridgeChain.AVAC,
+  BridgeChain.AVAXC,
 ];
 
 export const supportedBurnChains = [
@@ -657,7 +657,7 @@ export const supportedBurnChains = [
   BridgeChain.BSCC,
   BridgeChain.MATICC,
   BridgeChain.FTMC,
-  BridgeChain.AVAC,
+  BridgeChain.AVAXC,
 ];
 
 export const supportedReleaseCurrencies = [
