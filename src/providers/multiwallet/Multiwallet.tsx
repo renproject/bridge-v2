@@ -9,6 +9,7 @@ import {
   BinanceMetamaskConnectorInfo,
   FantomMetamaskConnectorInfo,
   PolygonMetamaskConnectorInfo,
+  AvalancheMetamaskConnectorInfo,
 } from "../../components/wallet/WalletHelpers";
 import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
@@ -41,6 +42,14 @@ export const polygonNetworkToRenNetwork = (id: string | number): RenNetwork => {
     "137": RenNetwork.Mainnet,
     "80001": RenNetwork.Testnet,
   }[parseInt(id as string).toString() as "137" | "80001"];
+};
+export const avalancheNetworkToRenNetwork = (
+  id: string | number
+): RenNetwork => {
+  return {
+    "43114": RenNetwork.Mainnet,
+    "43113": RenNetwork.Testnet,
+  }[parseInt(id as string).toString() as "43114" | "43113"];
 };
 
 export const walletPickerModalConfig = (targetEthChainId: number) => ({
@@ -112,6 +121,21 @@ export const walletPickerModalConfig = (targetEthChainId: number) => ({
         connector: (() => {
           const connector = new EthereumInjectedConnector({
             networkIdMapper: polygonNetworkToRenNetwork,
+            debug: true,
+          });
+          connector.getProvider = () => (window as any).ethereum;
+          return connector;
+        })(),
+      },
+    ],
+    [RenChain.avalanche]: [
+      {
+        name: "Metamask",
+        logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+        info: AvalancheMetamaskConnectorInfo,
+        connector: (() => {
+          const connector = new EthereumInjectedConnector({
+            networkIdMapper: avalancheNetworkToRenNetwork,
             debug: true,
           });
           connector.getProvider = () => (window as any).ethereum;

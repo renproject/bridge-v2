@@ -328,3 +328,19 @@ export const FantomFullIcon: CustomSvgIconComponent = (props) => (
 export const FantomCircleIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={FantomCircle} {...props} />
 );
+
+export const AvaIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Fantom} {...props} />
+);
+
+export const AvaGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Fantom} {...props} />
+);
+
+export const AvaFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={FantomFull} {...props} />
+);
+
+export const AvaCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={FantomCircle} {...props} />
+);

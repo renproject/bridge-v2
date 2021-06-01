@@ -11,7 +11,7 @@
     "@reduxjs/toolkit": "^1.4.0",
     "@renproject/chains": "^2.2.0",
     "@renproject/chains-bitcoin": "^2.1.9",
-    "@renproject/chains-ethereum": "^2.2.2",
+    "@renproject/chains-ethereum": "^2.2.4-alpha.3",
     "@renproject/chains-terra": "^2.1.9",
     "@renproject/fonts": "^1.0.3-rc1",
     "@renproject/interfaces": "^2.1.9",
