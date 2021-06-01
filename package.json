@@ -20,7 +20,7 @@
     "@renproject/multiwallet-ethereum-mewconnect-connector": "^2.1.9",
     "@renproject/multiwallet-ethereum-walletconnect-connector": "^2.1.9",
     "@renproject/multiwallet-ui": "^2.1.9",
-    "@renproject/ren": "^2.2.4-alpha.0",
+    "@renproject/ren": "^2.2.4-alpha.2",
     "@renproject/ren-tx": "2.2.4-alpha.1",
     "@renproject/rpc": "^2.1.9",
     "@renproject/utils": "^2.1.9",

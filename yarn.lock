@@ -3054,10 +3054,10 @@
   dependencies:
     bignumber.js "^9.0.1"
 
-"@renproject/ren@^2.2.4-alpha.0":
-  version "2.2.4-alpha.0"
-  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.2.4-alpha.0.tgz#760bee588d8222d67027c3c560ed8b155ff5b779"
-  integrity sha512-/rZGcJjUV4GHG1hl/W/pXu67C/kr7cwX1XZ5qgM3YjFrd6wQVc9zXaeh9P8Kwmn5IQGiNfQkcya6DxfXjaurjg==
+"@renproject/ren@^2.2.4-alpha.2":
+  version "2.2.4-alpha.2"
+  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.2.4-alpha.2.tgz#b882286a446de17f2709c2ccdb047392ba062612"
+  integrity sha512-II+n9Mg8+BwWtbPqWnqt7io3d6z/vpBsotkkrs18MVNyq6XFq4NrvjebYifbEpVmL3dd9lRwSLSYWAkLMwAHsQ==
   dependencies:
     "@renproject/interfaces" "^2.2.3"
     "@renproject/provider" "^2.2.3"
