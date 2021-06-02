@@ -34,9 +34,7 @@ export const useRenNetworkTracker = (currency: BridgeCurrency) => {
   const renNetwork = useSelector($renNetwork);
 
   useEffect(() => {
-    console.log(currency, renChain);
     const currencyConfig = getCurrencyConfig(currency);
-    console.log("config", currencyConfig);
     const networkMapping = currencyConfig.networkMappings[renChain];
     let newNetwork: RenNetwork | null = null;
     if (isTestnetNetwork(renNetwork)) {
