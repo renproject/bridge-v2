@@ -2,6 +2,9 @@ import { SvgIcon, SvgIconProps } from "@material-ui/core";
 import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
 import { getScalingProps } from "../../utils/icons";
+import { ReactComponent as AvaCircle } from "./../../assets/icons/avalanche-circle-icon.svg";
+import { ReactComponent as Ava } from "./../../assets/icons/avalanche-colour-icon.svg";
+import { ReactComponent as AvaFull } from "./../../assets/icons/avalanche-icon.svg";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
 import { ReactComponent as Beta } from "./../../assets/icons/icon-beta.svg";
 import { ReactComponent as BchGrey } from "./../../assets/icons/bch-icon-grey.svg";
@@ -334,13 +337,13 @@ export const AvaIcon: CustomSvgIconComponent = (props) => (
 );
 
 export const AvaGreyIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={Fantom} {...props} />
+  <SvgIcon component={AvaFull} {...props} />
 );
 
 export const AvaFullIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={FantomFull} {...props} />
+  <SvgIcon component={Ava} {...props} />
 );
 
 export const AvaCircleIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={FantomCircle} {...props} />
+  <SvgIcon component={AvaCircle} {...props} />
 );
