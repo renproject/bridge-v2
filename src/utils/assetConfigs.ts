@@ -333,7 +333,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
   },
   [BridgeCurrency.AVAX]: {
     symbol: BridgeCurrency.AVAX,
-    short: "AVA",
+    short: "AVAX",
     full: "Avaer",
     FullIcon: AvaIcon,
     GreyIcon: NotSetIcon,
