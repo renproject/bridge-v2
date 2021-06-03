@@ -2851,13 +2851,13 @@
     web3-providers "^2.0.0-alpha.1"
     web3-utils "^2.0.0-alpha.1"
 
-"@renproject/chains-ethereum@^2.2.4-alpha.3":
-  version "2.2.4-alpha.3"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-2.2.4-alpha.3.tgz#8368b666e30ff206e533367ea8de50a05c59cbc8"
-  integrity sha512-ybvT6Zxioot/84Q8IPddvqaX7xYgCRDLZzBPEY3tuBEUWJ2T1UWbuz22h8tgY+IZ+QJbZUyFIS274bmE6SegUQ==
+"@renproject/chains-ethereum@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-2.3.0.tgz#101b2677af553c1d61647cbfe4e01994519a077a"
+  integrity sha512-eNIWT6pfXaboEa+neluXXaLE20ZjLVwa4bCnarAf3ronN1S/wIFhtrQ3ioX7AKtkZgvv/RzLZB78Khk3ko4bGQ==
   dependencies:
-    "@renproject/interfaces" "^2.2.3"
-    "@renproject/utils" "^2.2.3"
+    "@renproject/interfaces" "^2.3.0"
+    "@renproject/utils" "^2.3.0"
     "@types/bn.js" "^5.1.0"
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
@@ -2946,10 +2946,10 @@
     bignumber.js "^9.0.1"
     web3-core "^2.0.0-alpha.1"
 
-"@renproject/interfaces@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.2.3.tgz#c17d6e02b0e0b24bccb5df7cd363302334739f9b"
-  integrity sha512-s5ABd4qJ2RnKN+djjg5yQvQB9GnUOerp6IjAEIWwpRNnZqfx9aqg8lrJ5mrwum3p1yLEoMOICh98El/r/YhHww==
+"@renproject/interfaces@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.3.0.tgz#3ba4780a61919a61181493b8b2ff87a3caa10f28"
+  integrity sha512-iWFKYm3QDHXh0rtWhpiGFlWbhiE0BALUHSg07DTNCTxtOGUcI52bI+ONHK205u+Z54c197Adv4+9/pGROi69BQ==
   dependencies:
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
@@ -3056,33 +3056,33 @@
     axios "^0.21.1"
     immutable "^4.0.0-rc.12"
 
-"@renproject/provider@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@renproject/provider/-/provider-2.2.3.tgz#4373433e8becd0200be0a1613a97624657e571f6"
-  integrity sha512-gp+alq8MSAUjxvDd9JhUW0mJ1xGQvITnqGujKrAm7LwPrSBjeQso/ZaFsW475/rc/cIXJiQxiyzdk5rCj59TdA==
+"@renproject/provider@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@renproject/provider/-/provider-2.3.0.tgz#041777830e53214de4f8233f817954ebb4739ac9"
+  integrity sha512-rb5UaEbWIjHV3pKj/WnGWqhtpNUzIDZBcaBmJfndPsyoMkztyagP6DCI3fClmTLcsiQJnvYRl+UaQ7bzLNMY/A==
   dependencies:
-    "@renproject/interfaces" "^2.2.3"
-    "@renproject/utils" "^2.2.3"
+    "@renproject/interfaces" "^2.3.0"
+    "@renproject/utils" "^2.3.0"
     "@types/node" ">=10"
     axios "^0.21.1"
     immutable "^4.0.0-rc.12"
 
-"@renproject/ren-tx@2.2.4-alpha.1":
-  version "2.2.4-alpha.1"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.2.4-alpha.1.tgz#db02dafde1b443b0e3a242019a91feb21b41b843"
-  integrity sha512-EY/jgo27eE3ERJBrB8iGQtP80J0nYc6Pb3nV1kdVNOnjSBeeIz7mqNgdYZe4SSa5K4CW2UElEnil8LjZE65IjQ==
+"@renproject/ren-tx@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.3.0.tgz#015811bc01ddb926af20df8f22b382f40e54ed29"
+  integrity sha512-gnPKh3cNTQUPCGGMfCyAtNgpvPVJuW89UqOy8QWxzepE3UBKAqbf1sn5nRMBZV5LhmHEHk54GnK1pDjEXKe9Zw==
   dependencies:
     bignumber.js "^9.0.1"
 
-"@renproject/ren@^2.2.4-alpha.2":
-  version "2.2.4-alpha.2"
-  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.2.4-alpha.2.tgz#b882286a446de17f2709c2ccdb047392ba062612"
-  integrity sha512-II+n9Mg8+BwWtbPqWnqt7io3d6z/vpBsotkkrs18MVNyq6XFq4NrvjebYifbEpVmL3dd9lRwSLSYWAkLMwAHsQ==
+"@renproject/ren@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.3.0.tgz#6828f9b9c21093f97ad91b9918f6db293d6462fe"
+  integrity sha512-UOBjgbEIRs0e5grFc0PSbhRMv/5dmbOp4k10YTntslLWsfNXeoP6p1KZOHk4wAYTec2PcMkrpGmfICr3V/q3sA==
   dependencies:
-    "@renproject/interfaces" "^2.2.3"
-    "@renproject/provider" "^2.2.3"
-    "@renproject/rpc" "^2.2.3"
-    "@renproject/utils" "^2.2.3"
+    "@renproject/interfaces" "^2.3.0"
+    "@renproject/provider" "^2.3.0"
+    "@renproject/rpc" "^2.3.0"
+    "@renproject/utils" "^2.3.0"
     "@types/bn.js" "^5.1.0"
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
@@ -3102,14 +3102,14 @@
     bignumber.js "^9.0.1"
     immutable "^4.0.0-rc.12"
 
-"@renproject/rpc@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@renproject/rpc/-/rpc-2.2.3.tgz#4fb1ea10c0393c6319b76a16c8d9100fbf8e2245"
-  integrity sha512-dV+Ul2uHOXYFsdcMjnWXkVI6CSMIo2Wyy++aHRPMCT8u+EdH3HioN8nVQ3eKK4rrvB+5iLIB4/1fIkOc91mwLw==
+"@renproject/rpc@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@renproject/rpc/-/rpc-2.3.0.tgz#a6310fe1e52331be852c53908bc47ffa3f216de9"
+  integrity sha512-A1av/8dOMl0iVy8Tl/elVFe45ke35aRhqZtqzTmH6NP3OmwbZ2UkPepug3RcsklENK7pEBCbz59uGAvPWnBbMA==
   dependencies:
-    "@renproject/interfaces" "^2.2.3"
-    "@renproject/provider" "^2.2.3"
-    "@renproject/utils" "^2.2.3"
+    "@renproject/interfaces" "^2.3.0"
+    "@renproject/provider" "^2.3.0"
+    "@renproject/utils" "^2.3.0"
     "@types/node" ">=10"
     bignumber.js "^9.0.1"
     immutable "^4.0.0-rc.12"
@@ -3132,12 +3132,12 @@
     keccak "^3.0.1"
     web3-eth-abi "^2.0.0-alpha.1"
 
-"@renproject/utils@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.2.3.tgz#cc40f7374a4ac111a9557d2b57b6d31d32d12d59"
-  integrity sha512-qk/IUqrrj6vERyc9b7ZtLUXTFRLCistfjSmNwfj4HklpzbQmJOCOnu6l/VrUnaOlN+8OPvi0Ydl5la/PJ3vD3w==
+"@renproject/utils@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-2.3.0.tgz#eabb3f55c7a0cde793e3ce322ec99962191d6577"
+  integrity sha512-D6CHxJjqQ/S1JzCCB1ZJoRAxxJiazy1sECFaSK5B9TDzaEX1kyQFtFQFd8u2PfVMEwQELB2wROtDZ/3JHj5CLQ==
   dependencies:
-    "@renproject/interfaces" "^2.2.3"
+    "@renproject/interfaces" "^2.3.0"
     "@types/create-hash" "1.2.2"
     "@types/keccak" "^3.0.1"
     "@types/mocha" "^8.2.0"
