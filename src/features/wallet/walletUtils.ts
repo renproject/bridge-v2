@@ -24,7 +24,6 @@ export const isSupportedByCurrentNetwork = (
   renNetwork: RenNetwork,
   chain: RenChain
 ) => {
-  console.log(currency);
   const currencyConfig = getCurrencyConfig(currency);
   if (currencyConfig.networkMappings) {
     const chainMapping = currencyConfig.networkMappings[chain];

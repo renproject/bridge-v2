@@ -1,6 +1,9 @@
 import { SvgIconComponent } from "@material-ui/icons";
 import { RenNetwork } from "@renproject/interfaces";
 import {
+  AvaCircleIcon,
+  AvaFullIcon,
+  AvaIcon,
   BchFullIcon,
   BchGreyIcon,
   BchIcon,
@@ -37,6 +40,7 @@ import * as customColors from "../theme/colors";
 
 // TODO: replace everywhere
 export enum RenChain {
+  avalanche = "avalanche",
   binanceSmartChain = "binanceSmartChain",
   ethereum = "ethereum",
   fantom = "fantom",
@@ -64,6 +68,7 @@ export enum BridgeCurrency {
   FTM = "FTM",
   MATIC = "MATIC",
   BNB = "BNB",
+  AVAX = "AVAX",
   UNKNOWN = "UNKNOWN",
 }
 
@@ -76,6 +81,7 @@ export enum BridgeChain {
   ETHC = "ETHC",
   MATICC = "MATICC",
   FTMC = "FTMC",
+  AVAXC = "AVAXC",
   UNKNOWNC = "UNKNOWNC",
 }
 
@@ -158,6 +164,7 @@ const oldNetworkMappings: ChainToNetworkMappings = {
   [RenChain.binanceSmartChain]: networkMappingLegacy,
   [RenChain.fantom]: networkMappingLegacy,
   [RenChain.polygon]: networkMappingLegacy,
+  [RenChain.avalanche]: networkMappingLegacy,
 };
 
 const newNetworkMappings: ChainToNetworkMappings = {
@@ -167,6 +174,7 @@ const newNetworkMappings: ChainToNetworkMappings = {
   [RenChain.binanceSmartChain]: networkMappingLegacy,
   [RenChain.fantom]: networkMappingLegacy,
   [RenChain.polygon]: networkMappingLegacy,
+  [RenChain.avalanche]: networkMappingLegacy,
 };
 
 export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
@@ -321,6 +329,18 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     MainIcon: BtcFullIcon,
     rentxName: "eth",
     sourceChain: BridgeChain.ETHC,
+    networkMappings: newNetworkMappings,
+  },
+  [BridgeCurrency.AVAX]: {
+    symbol: BridgeCurrency.AVAX,
+    short: "AVAX",
+    full: "Avaer",
+    FullIcon: AvaIcon,
+    GreyIcon: NotSetIcon,
+    Icon: AvaIcon,
+    MainIcon: AvaFullIcon,
+    rentxName: "ava",
+    sourceChain: BridgeChain.AVAXC,
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.MATIC]: {
@@ -518,6 +538,19 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.MATIC,
   },
+  [BridgeChain.AVAXC]: {
+    symbol: BridgeChain.AVAXC,
+    short: "AVAX",
+    full: "Avalanche",
+    FullIcon: AvaFullIcon,
+    Icon: AvaFullIcon,
+    MainIcon: AvaFullIcon,
+    GreyIcon: NotSetIcon,
+    rentxName: RenChain.avalanche,
+    blockTime: 3,
+    targetConfirmations: 30,
+    nativeCurrency: BridgeCurrency.AVAX,
+  },
   [BridgeChain.ETHC]: {
     symbol: BridgeChain.ETHC,
     short: "ETH",
@@ -616,6 +649,7 @@ export const supportedMintDestinationChains = [
   BridgeChain.BSCC,
   BridgeChain.MATICC,
   BridgeChain.FTMC,
+  BridgeChain.AVAXC,
 ];
 
 export const supportedBurnChains = [
@@ -623,6 +657,7 @@ export const supportedBurnChains = [
   BridgeChain.BSCC,
   BridgeChain.MATICC,
   BridgeChain.FTMC,
+  BridgeChain.AVAXC,
 ];
 
 export const supportedReleaseCurrencies = [

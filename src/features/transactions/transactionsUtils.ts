@@ -159,16 +159,24 @@ export const parseTxQueryString: (
     ...rest
   } = parsed;
 
-  return {
+  const res: any = {
     ...rest,
     transactions: JSON.parse((transactions as string) || "{}"),
     transaction: JSON.parse((transaction as string) || "{}"),
     customParams: JSON.parse((customParams as string) || "{}"),
     expiryTime: parseNumber(expiryTime),
     createdAt: parseNumber(createdAt),
-    suggestedAmount: parseNumber(suggestedAmount),
-    targetAmount: parseNumber(targetAmount),
   };
+
+  if (suggestedAmount) {
+    res.suggestedAmount = parseNumber(suggestedAmount);
+  }
+
+  if (targetAmount) {
+    res.targetAmount = parseNumber(targetAmount);
+  }
+
+  return res;
 };
 
 export const getChainExplorerLink = (
