@@ -24,6 +24,7 @@
     "@renproject/ren-tx": "^2.3.0",
     "@renproject/rpc": "^2.1.9",
     "@renproject/utils": "^2.1.9",
+    "@sentry/react": "^6.5.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",

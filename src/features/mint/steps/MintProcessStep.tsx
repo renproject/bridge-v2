@@ -7,6 +7,7 @@ import {
   OpenedGatewaySession,
   ErroringGatewaySession,
 } from "@renproject/ren-tx";
+import * as Sentry from "@sentry/react";
 import React, {
   FunctionComponent,
   useCallback,
@@ -413,6 +414,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     const deposit = current.context.tx.transactions[currentDeposit];
     if (!deposit || !current.context.depositMachines) return null;
     const machine = current.context.depositMachines[deposit.sourceTxHash];
+    Sentry.captureMessage(`loaded deposit${deposit.sourceTxHash}`);
     return { deposit, machine } as any;
   }, [currentDeposit, current.context]);
 
