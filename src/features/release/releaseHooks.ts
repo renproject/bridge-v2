@@ -6,6 +6,7 @@ import {
   BurnSession,
 } from "@renproject/ren-tx";
 import { useMachine } from "@xstate/react";
+import * as Sentry from "@sentry/react";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
@@ -21,7 +22,11 @@ export const useBurnMachine = (burnTransaction: BurnSession<any, any>) => {
   ) {
     delete burnTransaction.transaction;
   }
-  const tx = cloneTx(burnTransaction);
+  const tx = useMemo(() => {
+    console.debug(burnTransaction);
+    Sentry.captureMessage(JSON.stringify(burnTransaction));
+    return cloneTx(burnTransaction);
+  }, [burnTransaction]);
   const { enabledChains } = useMultiwallet();
   const network = useSelector($renNetwork);
   const burnChainMap = useMemo(() => {
@@ -34,7 +39,6 @@ export const useBurnMachine = (burnTransaction: BurnSession<any, any>) => {
     );
     return getBurnChainMap(providers);
   }, [enabledChains]);
-  console.debug(burnTransaction);
 
   return useMachine(burnMachine, {
     context: {
