@@ -127,7 +127,7 @@ export type AnyBlockGasPrices = {
   instant: number;
 };
 
-export const fetchEthMarketDataGasPrices = async () => {
+export const fetchMarketDataGasPrices = async () => {
   const anyBlockEth = await fetch(env.GAS_FEE_ENDPOINT)
     .then((response) => response.json())
     .catch((error) => {

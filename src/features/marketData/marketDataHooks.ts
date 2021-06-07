@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
 import { setGasPrices, setExchangeRates } from "./marketDataSlice";
 import {
-  fetchEthMarketDataGasPrices,
+  fetchMarketDataGasPrices,
   fetchMarketDataRates,
 } from "./marketDataUtils";
 
@@ -33,7 +33,7 @@ export const useGasPrices = () => {
   const dispatch = useDispatch();
 
   const fetchData = useCallback(() => {
-    fetchEthMarketDataGasPrices().then((prices) => {
+    fetchMarketDataGasPrices().then((prices) => {
       dispatch(setGasPrices(prices));
     });
   }, [dispatch]);
