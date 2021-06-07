@@ -64,9 +64,9 @@ import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconn
 import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
-
 import { ReactComponent as Polygon } from "./../../assets/icons/polygon-icon.svg";
 import { ReactComponent as PolygonFull } from "./../../assets/icons/polygon-colour-icon.svg";
+import { ReactComponent as PolygonCircle } from "./../../assets/icons/polygon-circle-icon.svg";
 
 import AddIcon from "@material-ui/icons/Add";
 import BlockIcon from "@material-ui/icons/Block";
@@ -318,6 +318,10 @@ export const PolygonGreyIcon: CustomSvgIconComponent = (props) => (
 
 export const PolygonFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={PolygonFull} {...props} />
+);
+
+export const PolygonCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={PolygonCircle} {...props} />
 );
 
 export const FantomGreyIcon: CustomSvgIconComponent = (props) => (
