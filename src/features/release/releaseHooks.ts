@@ -34,7 +34,7 @@ export const useBurnMachine = (burnTransaction: BurnSession<any, any>) => {
     );
     return getBurnChainMap(providers);
   }, [enabledChains]);
-  console.log(burnTransaction);
+  console.debug(burnTransaction);
 
   return useMachine(burnMachine, {
     context: {

@@ -440,6 +440,65 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
   );
 };
 
+export const AvalancheMetamaskConnectorInfo: WalletPickerProps<
+  any,
+  any
+>["DefaultInfo"] = ({ acknowledge, onClose }) => {
+  //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
+  const dispatch = useDispatch();
+  const handleBackToWalletPicker = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      dispatch(setWalletPickerOpened(true));
+    }, 1);
+  }, [dispatch, onClose]);
+  return (
+    <>
+      <BridgeModalTitle
+        title=" "
+        onClose={onClose}
+        onPrev={handleBackToWalletPicker}
+      />
+      <SpacedPaperContent topPadding bottomPadding>
+        <Typography variant="h5" align="center" gutterBottom>
+          Connect Avalanche with MetaMask
+        </Typography>
+        <Typography
+          variant="body1"
+          align="center"
+          color="textSecondary"
+          gutterBottom
+        >
+          Please ensure that you have added the Avalanche network to Metamask as
+          explained{" "}
+          <Link
+            href="https://support.avax.network/en/articles/4626956-how-do-i-set-up-metamask-on-avalanche"
+            external
+          >
+            here
+          </Link>
+        </Typography>
+      </SpacedPaperContent>
+      <PaperContent bottomPadding>
+        <ActionButtonWrapper>
+          <Button
+            variant="text"
+            color="primary"
+            onClick={handleBackToWalletPicker}
+          >
+            Use another wallet
+          </Button>
+        </ActionButtonWrapper>
+        <ActionButtonWrapper>
+          <ActionButton onClick={acknowledge}>
+            Continue with MetaMask
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </>
+  );
+};
+
 export const FantomMetamaskConnectorInfo: WalletPickerProps<
   any,
   any

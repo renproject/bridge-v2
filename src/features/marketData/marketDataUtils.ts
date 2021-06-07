@@ -25,7 +25,10 @@ const getPair = (base: string, quote: string) => `${base}/${quote}`;
 const referencePairs = uniqueArray(
   Object.values(BridgeCurrency)
     .map(mapToBandchainCurrencySymbol)
-    .filter((symbol) => symbol !== BridgeCurrency.UNKNOWN)
+    .filter(
+      (symbol) =>
+        symbol !== BridgeCurrency.UNKNOWN && symbol !== BridgeCurrency.AVAX
+    )
 ).map((symbol: string) => getPair(symbol, USD_SYMBOL));
 
 type BandchainExchangeRateEntry = {

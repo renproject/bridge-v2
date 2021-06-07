@@ -11,6 +11,7 @@ import {
   Ethereum,
   Fantom,
   Polygon,
+  Avalanche,
 } from "@renproject/chains-ethereum";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
@@ -60,6 +61,13 @@ export const getMintChainMap = (providers: any) => ({
       address: destAddress,
     }) as any;
   },
+  [RenChain.avalanche]: (context: GatewayMachineContext<any>) => {
+    const { destAddress, network } = context.tx;
+
+    return new Avalanche(providers.avalanche, network).Account({
+      address: destAddress,
+    }) as any;
+  },
 });
 
 export const mintChainClassMap = {
@@ -67,6 +75,7 @@ export const mintChainClassMap = {
   [RenChain.binanceSmartChain]: BinanceSmartChain,
   [RenChain.fantom]: Fantom,
   [RenChain.polygon]: Polygon,
+  [RenChain.avalanche]: Avalanche,
 };
 
 export const getBurnChainMap: any = (providers: any) => ({
@@ -97,6 +106,13 @@ export const getBurnChainMap: any = (providers: any) => ({
       value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
     }) as any;
   },
+  [RenChain.avalanche]: (context: BurnMachineContext<any, any>) => {
+    const { network } = context.tx;
+    return new Avalanche(providers.avalanche, network).Account({
+      address: context.tx.userAddress,
+      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
+    }) as any;
+  },
 });
 
 export const burnChainClassMap = {
@@ -104,6 +120,7 @@ export const burnChainClassMap = {
   [RenChain.binanceSmartChain]: BinanceSmartChain,
   [RenChain.fantom]: Fantom,
   [RenChain.polygon]: Polygon,
+  [RenChain.avalanche]: Avalanche,
 };
 
 export const releaseChainMap: any = {
