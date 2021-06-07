@@ -44,7 +44,11 @@ export const useGasPrices = () => {
         chain: BridgeChain.BSCC,
         standard: 20, // unable to find reliable source, but binance gas price is stable
       };
-      const prices = [ethPrice, bscPrice];
+      const avaxPrice = {
+        chain: BridgeChain.AVAXC,
+        standard: 225, // taken from https://docs.avax.network/learn/platform-overview/transaction-fees#fee-schedule
+      };
+      const prices = [ethPrice, bscPrice, avaxPrice];
       dispatch(setGasPrices(prices));
     });
   }, [dispatch]);
