@@ -3,7 +3,6 @@ const INFURA_ID = process.env.REACT_APP_INFURA_ID || "";
 
 const BANDCHAIN_ENDPOINT =
   process.env.REACT_APP_BANDCHAIN_ENDPOINT || "https://api-gm-lb.bandchain.org";
-const COINGECKO_ENDPOINT = "https://api.coingecko.com/api/v3";
 const GAS_FEE_ENDPOINT =
   process.env.REACT_APP_GAS_FEE_ENDPOINT ||
   "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty";
@@ -26,7 +25,6 @@ export const env = {
   NETWORK,
   INFURA_ID,
   BANDCHAIN_ENDPOINT,
-  COINGECKO_ENDPOINT,
   GAS_FEE_ENDPOINT,
   XSTATE_DEVTOOLS,
   BSC_MM_ENABLED,
