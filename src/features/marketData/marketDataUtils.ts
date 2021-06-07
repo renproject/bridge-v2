@@ -91,7 +91,11 @@ export const fetchMarketDataRates = async () => {
       `/coins/markets?vs_currency=usd&ids=${coingeckoSymbols.join(",")}`
   )
     .then((response) => response.json())
-    .then(mapCoingeckoToExchangeData);
+    .then(mapCoingeckoToExchangeData)
+    .catch((error) => {
+      console.error(error);
+      return [];
+    });
 
   return [...bandchain, ...coingecko];
 };
