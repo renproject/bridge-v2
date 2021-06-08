@@ -147,6 +147,7 @@ export type BridgeCurrencyConfig = LabelsConfig &
     rentxName: string;
     destinationChains?: Array<BridgeChain>;
     bandchainSymbol?: string;
+    coingeckoSymbol?: string;
     networkMappings: ChainToNetworkMappings;
     ethTestnet?: EthTestnet | null;
   };
@@ -344,6 +345,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     Icon: AvaIcon,
     MainIcon: AvaFullIcon,
     rentxName: "ava",
+    coingeckoSymbol: "avalanche-2",
     sourceChain: BridgeChain.AVAXC,
     networkMappings: newNetworkMappings,
   },

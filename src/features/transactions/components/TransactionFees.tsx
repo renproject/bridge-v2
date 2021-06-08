@@ -84,7 +84,10 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18); // gas price to real gas price adjustment
   const targetChainFeeNative = fromGwei(feeInGwei);
-  const targetChainFeeUsd = fromGwei(feeInGwei) * targetChainCurrencyUsdRate;
+  const targetChainFeeUsd = Math.max(
+    fromGwei(feeInGwei) * targetChainCurrencyUsdRate,
+    0.001
+  );
   const targetChainCurrency = getCurrencyConfig(
     targetChainConfig.nativeCurrency
   );
@@ -98,7 +101,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 
   return (
     <>
-      <Debug it={{ currency, fees }} />
+      <Debug it={{ targetChainCurrencyUsdRate, currency, fees }} />
       <LabelWithValue
         label="RenVM Fee"
         labelTooltip={tooltips.renVmFee}
@@ -153,18 +156,18 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           <NumberFormatText
             value={targetChainFeeNative}
             spacedSuffix={targetChainCurrency.short}
-            decimalScale={4}
+            decimalScale={3}
           />
         }
         valueEquivalent={
           <NumberFormatText
             value={targetChainFeeUsd}
             prefix="$"
-            decimalScale={2}
-            fixedDecimalScale
+            decimalScale={4}
           />
         }
       />
+      <Debug it={{ targetChainFeeUsd }} />
       {address && (
         <LabelWithValue
           label="Recipient Address"

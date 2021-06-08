@@ -1,10 +1,9 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
-import { BridgeChain } from "../../utils/assetConfigs";
 import { setGasPrices, setExchangeRates } from "./marketDataSlice";
 import {
-  fetchEthMarketDataGasPrices,
+  fetchMarketDataGasPrices,
   fetchMarketDataRates,
 } from "./marketDataUtils";
 
@@ -34,17 +33,7 @@ export const useGasPrices = () => {
   const dispatch = useDispatch();
 
   const fetchData = useCallback(() => {
-    fetchEthMarketDataGasPrices().then((anyBlockPrices) => {
-      const fast = anyBlockPrices.fast;
-      const ethPrice = {
-        chain: BridgeChain.ETHC,
-        standard: fast < 20 ? 50 : fast,
-      };
-      const bscPrice = {
-        chain: BridgeChain.BSCC,
-        standard: 20, // unable to find reliable source, but binance gas price is stable
-      };
-      const prices = [ethPrice, bscPrice];
+    fetchMarketDataGasPrices().then((prices) => {
       dispatch(setGasPrices(prices));
     });
   }, [dispatch]);
