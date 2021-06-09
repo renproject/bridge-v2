@@ -1,7 +1,6 @@
 import { SvgIconComponent } from "@material-ui/icons";
 import { RenNetwork } from "@renproject/interfaces";
 import {
-  AvaCircleIcon,
   AvaFullIcon,
   AvaGreyIcon,
   AvaIcon,

@@ -5,12 +5,15 @@ import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
 import {
+  AvalancheChainIcon,
   BchFullIcon,
   BinanceChainFullIcon,
   BtcFullIcon,
   DogeFullIcon,
   EmptyCircleIcon,
   EthereumChainFullIcon,
+  FantomFullIcon,
+  PolygonFullIcon,
   WarningIcon,
   ZecFullIcon,
 } from "../components/icons/RenIcons";
@@ -90,6 +93,11 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("md")]: {
       padding: 0,
     },
+  },
+  avalancheIcon: {
+    display: "flex",
+    alignItems: "center",
+    fontSize: 24,
   },
   legacy: {
     marginTop: 70,
@@ -204,7 +212,26 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
                 <IconWithLabel label="Ethereum" Icon={EthereumChainFullIcon} />
               </li>
               <li className={styles.assetListItem}>
-                <IconWithLabel label="Binance Smart Chain" Icon={BinanceChainFullIcon} />
+                <IconWithLabel
+                  label="Binance Smart Chain"
+                  Icon={BinanceChainFullIcon}
+                />
+              </li>
+              <li className={styles.assetListItem}>
+                <IconWithLabel
+                  iconClassName={styles.avalancheIcon}
+                  label="Avalanche"
+                  Icon={AvalancheChainIcon}
+                />
+              </li>
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="Fantom" Icon={FantomFullIcon} />
+              </li>
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="Polygon" Icon={PolygonFullIcon} />
+              </li>
+              <li className={styles.assetListItem}>
+                <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
               </li>
             </UnstyledList>
           </div>

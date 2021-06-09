@@ -2,6 +2,7 @@ import { SvgIcon, SvgIconProps } from "@material-ui/core";
 import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
 import { getScalingProps } from "../../utils/icons";
+import { ReactComponent as AvalancheChain } from "./../../assets/icons/avalanche-chain.svg";
 import { ReactComponent as AvaCircle } from "./../../assets/icons/avalanche-circle-icon.svg";
 import { ReactComponent as Ava } from "./../../assets/icons/avalanche-colour-icon.svg";
 import { ReactComponent as AvaFull } from "./../../assets/icons/avalanche-icon.svg";
@@ -193,6 +194,11 @@ export const WalletConnectFullIcon: CustomSvgIconComponent = (props) => (
 export const WalletConnectIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={WalletConnect} {...props} />
 );
+
+export const AvalancheChainIcon: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingProps(693.26, 257.79);
+  return <SvgIcon component={AvalancheChain} {...scalingProps} {...props} />;
+};
 
 export const BinanceChainIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BinanceChain} {...props} />
