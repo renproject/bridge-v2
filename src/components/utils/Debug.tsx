@@ -77,13 +77,14 @@ export const Debug: FunctionComponent<DebugProps> = ({
   const noClick = useCallback((event) => {
     event.stopPropagation();
   }, []);
-  return show && !disable ? (
-    <DebugWrapper enabled={!!wrapper}>
-      <pre className={classes.root} onClick={noClick}>
-        {JSON.stringify(target, replacer, 2)}
-      </pre>
-    </DebugWrapper>
-  ) : null;
+  return null;
+  /* return show && !disable ? (
+   *   <DebugWrapper enabled={!!wrapper}>
+   *     <pre className={classes.root} onClick={noClick}>
+   *       {JSON.stringify(target, replacer, 2)}
+   *     </pre>
+   *   </DebugWrapper>
+   * ) : null; */
 };
 
 export const DebugComponentProps: FunctionComponent<any> = (props) => (

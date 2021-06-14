@@ -34,6 +34,11 @@ import {
   PolygonCircleIcon,
   PolygonFullIcon,
   PolygonGreyIcon,
+  SolanaCircleIcon,
+  SolanaFullIcon,
+  SolanaGreyIcon,
+  SolletFullIcon,
+  PhantomFullIcon,
   TooltipIcon as NotSetIcon,
   WalletConnectFullIcon,
   ZecFullIcon,
@@ -49,6 +54,7 @@ export enum RenChain {
   ethereum = "ethereum",
   fantom = "fantom",
   polygon = "polygon",
+  solana = "solana",
   bitcoin = "bitcoin",
   zcash = "zcash",
   bitcoinCash = "bitcoinCash",
@@ -73,6 +79,7 @@ export enum BridgeCurrency {
   MATIC = "MATIC",
   BNB = "BNB",
   AVAX = "AVAX",
+  SOL = "SOL",
   UNKNOWN = "UNKNOWN",
 }
 
@@ -86,6 +93,7 @@ export enum BridgeChain {
   MATICC = "MATICC",
   FTMC = "FTMC",
   AVAXC = "AVAXC",
+  SOLC = "SOLC",
   UNKNOWNC = "UNKNOWNC",
 }
 
@@ -106,6 +114,8 @@ export enum BridgeWallet {
   WALLETCONNECTW = "WALLETCONNECTW",
   MEWCONNECTW = "MEWCONNECTW",
   BINANCESMARTW = "BINANCESMARTW",
+  SOLLETW = "SOLLETW",
+  PHANTOMW = "PHANTOMW",
   UNKNOWNW = "UNKNOWNW",
 }
 
@@ -170,6 +180,7 @@ const oldNetworkMappings: ChainToNetworkMappings = {
   [RenChain.fantom]: networkMappingLegacy,
   [RenChain.polygon]: networkMappingLegacy,
   [RenChain.avalanche]: networkMappingLegacy,
+  [RenChain.solana]: networkMappingLegacy,
 };
 
 const newNetworkMappings: ChainToNetworkMappings = {
@@ -180,6 +191,7 @@ const newNetworkMappings: ChainToNetworkMappings = {
   [RenChain.fantom]: networkMappingLegacy,
   [RenChain.polygon]: networkMappingLegacy,
   [RenChain.avalanche]: networkMappingLegacy,
+  [RenChain.solana]: networkMappingLegacy,
 };
 
 export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
@@ -394,7 +406,19 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     Icon: EthereumIcon,
     MainIcon: BtcFullIcon,
     rentxName: "eth",
-    sourceChain: BridgeChain.ETHC,
+    sourceChain: BridgeChain.BSCC,
+    networkMappings: newNetworkMappings,
+  },
+  [BridgeCurrency.SOL]: {
+    symbol: BridgeCurrency.SOL,
+    short: "SOL",
+    full: "Solana",
+    FullIcon: EthereumIcon,
+    GreyIcon: NotSetIcon,
+    Icon: EthereumIcon,
+    MainIcon: BtcFullIcon,
+    rentxName: "sol",
+    sourceChain: BridgeChain.SOLC,
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.UNKNOWN]: {
@@ -570,6 +594,19 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.ETH,
   },
+  [BridgeChain.SOLC]: {
+    symbol: BridgeChain.SOLC,
+    short: "SOL",
+    full: "Solana",
+    FullIcon: SolanaCircleIcon,
+    Icon: SolanaGreyIcon,
+    MainIcon: SolanaCircleIcon,
+    GreyIcon: NotSetIcon,
+    rentxName: RenChain.solana,
+    blockTime: 0.25,
+    targetConfirmations: 30,
+    nativeCurrency: BridgeCurrency.SOL,
+  },
   [BridgeChain.UNKNOWNC]: {
     symbol: BridgeChain.UNKNOWNC,
     short: "UNKNOWNC",
@@ -656,6 +693,7 @@ export const supportedMintDestinationChains = [
   BridgeChain.MATICC,
   BridgeChain.FTMC,
   BridgeChain.AVAXC,
+  BridgeChain.SOLC,
 ];
 
 export const supportedBurnChains = [
@@ -664,6 +702,7 @@ export const supportedBurnChains = [
   BridgeChain.MATICC,
   BridgeChain.FTMC,
   BridgeChain.AVAXC,
+  BridgeChain.SOLC,
 ];
 
 export const supportedReleaseCurrencies = [
@@ -728,7 +767,7 @@ export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
     Icon: NotSetIcon,
     MainIcon: WalletConnectFullIcon,
     chain: BridgeChain.ETHC,
-    rentxName: "walletconnect",
+    rentxName: "WalletConnect",
   },
   [BridgeWallet.BINANCESMARTW]: {
     symbol: BridgeWallet.BINANCESMARTW,
@@ -747,6 +786,24 @@ export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
     MainIcon: MewFullIcon,
     chain: BridgeChain.ETHC,
     rentxName: "MEW",
+  },
+  [BridgeWallet.SOLLETW]: {
+    symbol: BridgeWallet.SOLLETW,
+    short: "Sollet.io",
+    full: "Sollet Wallet",
+    Icon: NotSetIcon,
+    MainIcon: SolletFullIcon,
+    chain: BridgeChain.SOLC,
+    rentxName: "Sollet.io",
+  },
+  [BridgeWallet.PHANTOMW]: {
+    symbol: BridgeWallet.PHANTOMW,
+    short: "Phantom",
+    full: "Phantom Wallet",
+    Icon: NotSetIcon,
+    MainIcon: PhantomFullIcon,
+    chain: BridgeChain.SOLC,
+    rentxName: "Phantom",
   },
   [BridgeWallet.UNKNOWNW]: {
     symbol: BridgeWallet.UNKNOWNW,
@@ -780,6 +837,8 @@ export const bridgeChainToRenChain = (bridgeChain: BridgeChain): RenChain => {
       return RenChain.fantom;
     case BridgeChain.MATICC:
       return RenChain.polygon;
+    case BridgeChain.SOLC:
+      return RenChain.solana;
     default:
       return RenChain.unknown;
   }

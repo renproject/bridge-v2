@@ -2,6 +2,7 @@ import { RenNetwork } from "@renproject/interfaces";
 import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 import { EthereumMEWConnectConnector } from "@renproject/multiwallet-ethereum-mewconnect-connector";
+import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
 import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
 import React, { FunctionComponent } from "react";
@@ -54,125 +55,147 @@ export const avalancheNetworkToRenNetwork = (
   }[parseInt(id as string).toString() as "43114" | "43113"];
 };
 
-export const walletPickerModalConfig = (targetEthChainId: number) => ({
-  chains: {
-    [RenChain.ethereum]: [
-      {
-        name: "Metamask",
-        logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4s",
-        connector: new EthereumInjectedConnector({
-          debug: env.DEV,
-          networkIdMapper: ethNetworkToRenNetwork,
-        }),
-      },
-      ...(featureFlags.enableMEWConnect
-        ? [
-            {
-              name: "MEW",
-              logo:
-                "https://avatars1.githubusercontent.com/u/24321658?s=60&v=4s",
-              connector: new EthereumMEWConnectConnector({
-                debug: env.DEV,
-                rpc: {
-                  42: `wss://kovan.infura.io/ws/v3/${env.INFURA_ID}`,
-                  1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
-                },
-                chainId: targetEthChainId,
-              }),
-            },
-          ]
-        : []),
-      ...(featureFlags.enableWalletConnect
-        ? [
-            {
-              name: "WalletConnect",
-              logo:
-                "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
-              connector: new EthereumWalletConnectConnector({
-                rpc: {
-                  42: `https://kovan.infura.io/v3/${env.INFURA_ID}`,
-                  1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
-                },
-                qrcode: true,
-                debug: true,
-              }),
-            },
-          ]
-        : []),
-    ],
-    [RenChain.fantom]: [
-      {
-        name: "Metamask",
-        logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
-        info: FantomMetamaskConnectorInfo,
-        connector: (() => {
-          const connector = new EthereumInjectedConnector({
-            networkIdMapper: fantomNetworkToRenNetwork,
-            debug: true,
-          });
-          connector.getProvider = () => (window as any).ethereum;
-          return connector;
-        })(),
-      },
-    ],
-    [RenChain.polygon]: [
-      {
-        name: "Metamask",
-        logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
-        info: PolygonMetamaskConnectorInfo,
-        connector: (() => {
-          const connector = new EthereumInjectedConnector({
-            networkIdMapper: polygonNetworkToRenNetwork,
-            debug: true,
-          });
-          connector.getProvider = () => (window as any).ethereum;
-          return connector;
-        })(),
-      },
-    ],
-    [RenChain.avalanche]: [
-      {
-        name: "Metamask",
-        logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
-        info: AvalancheMetamaskConnectorInfo,
-        connector: (() => {
-          const connector = new EthereumInjectedConnector({
-            networkIdMapper: avalancheNetworkToRenNetwork,
-            debug: true,
-          });
-          connector.getProvider = () => (window as any).ethereum;
-          return connector;
-        })(),
-      },
-    ],
-    [RenChain.binanceSmartChain]: [
-      {
-        name: "BinanceSmartWallet",
-        logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
-        connector: new BinanceSmartChainInjectedConnector({ debug: true }),
-      },
-      // TODO: move this config into its own connector?
-
-      ...(featureFlags.enableBSCMetamask
-        ? [
-            {
-              name: "Metamask",
-              logo:
-                "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
-              info: BinanceMetamaskConnectorInfo,
-              connector: (() => {
-                const connector = new BinanceSmartChainInjectedConnector({
+export const walletPickerModalConfig = (network: RenNetwork) => {
+  const targetEthChainId = renNetworkToEthNetwork(network) || 1;
+  return {
+    chains: {
+      [RenChain.ethereum]: [
+        {
+          name: "Metamask",
+          logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4s",
+          connector: new EthereumInjectedConnector({
+            debug: env.DEV,
+            networkIdMapper: ethNetworkToRenNetwork,
+          }),
+        },
+        ...(featureFlags.enableMEWConnect
+          ? [
+              {
+                name: "MEW",
+                logo:
+                  "https://avatars1.githubusercontent.com/u/24321658?s=60&v=4s",
+                connector: new EthereumMEWConnectConnector({
+                  debug: env.DEV,
+                  rpc: {
+                    42: `wss://kovan.infura.io/ws/v3/${env.INFURA_ID}`,
+                    1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
+                  },
+                  chainId: targetEthChainId,
+                }),
+              },
+            ]
+          : []),
+        ...(featureFlags.enableWalletConnect
+          ? [
+              {
+                name: "WalletConnect",
+                logo:
+                  "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
+                connector: new EthereumWalletConnectConnector({
+                  rpc: {
+                    42: `https://kovan.infura.io/v3/${env.INFURA_ID}`,
+                    1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
+                  },
+                  qrcode: true,
                   debug: true,
-                });
-                connector.getProvider = () => (window as any).ethereum;
-                return connector;
-              })(),
-            },
-          ]
-        : []),
-    ],
-  },
-});
+                }),
+              },
+            ]
+          : []),
+      ],
+      [RenChain.fantom]: [
+        {
+          name: "Metamask",
+          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          info: FantomMetamaskConnectorInfo,
+          connector: (() => {
+            const connector = new EthereumInjectedConnector({
+              networkIdMapper: fantomNetworkToRenNetwork,
+              debug: true,
+            });
+            connector.getProvider = () => (window as any).ethereum;
+            return connector;
+          })(),
+        },
+      ],
+      [RenChain.polygon]: [
+        {
+          name: "Metamask",
+          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          info: PolygonMetamaskConnectorInfo,
+          connector: (() => {
+            const connector = new EthereumInjectedConnector({
+              networkIdMapper: polygonNetworkToRenNetwork,
+              debug: true,
+            });
+            connector.getProvider = () => (window as any).ethereum;
+            return connector;
+          })(),
+        },
+      ],
+      [RenChain.avalanche]: [
+        {
+          name: "Metamask",
+          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          info: AvalancheMetamaskConnectorInfo,
+          connector: (() => {
+            const connector = new EthereumInjectedConnector({
+              networkIdMapper: avalancheNetworkToRenNetwork,
+              debug: true,
+            });
+            connector.getProvider = () => (window as any).ethereum;
+            return connector;
+          })(),
+        },
+      ],
+      [RenChain.binanceSmartChain]: [
+        {
+          name: "BinanceSmartWallet",
+          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          connector: new BinanceSmartChainInjectedConnector({ debug: true }),
+        },
+        // TODO: move this config into its own connector?
+
+        ...(featureFlags.enableBSCMetamask
+          ? [
+              {
+                name: "Metamask",
+                logo:
+                  "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+                info: BinanceMetamaskConnectorInfo,
+                connector: (() => {
+                  const connector = new BinanceSmartChainInjectedConnector({
+                    debug: true,
+                  });
+                  connector.getProvider = () => (window as any).ethereum;
+                  return connector;
+                })(),
+              },
+            ]
+          : []),
+      ],
+      [RenChain.solana]: [
+        {
+          name: "Sollet.io",
+          logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
+          connector: new SolanaConnector({
+            providerURL: "https://www.sollet.io",
+            network,
+          }),
+        },
+        {
+          name: "Phantom",
+          logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
+          connector: new SolanaConnector({
+            debug: true,
+            providerURL: (window as any).solana,
+            network,
+          }),
+        },
+      ],
+    },
+  };
+};
 
 export const MultiwalletProvider: FunctionComponent = ({ children }) => {
   return <RenMultiwalletProvider>{children}</RenMultiwalletProvider>;

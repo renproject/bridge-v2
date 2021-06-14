@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
+import { Solana } from "@renproject/chains-solana";
 import React, {
   FunctionComponent,
   useCallback,
@@ -43,7 +44,9 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
 import {
+  BridgeChain,
   getChainConfig,
   getCurrencyConfig,
   toMintedCurrency,
@@ -79,7 +82,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { walletConnected, account } = useSelectedChainWallet();
+  const { walletConnected, account, provider } = useSelectedChainWallet();
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { currency } = useSelector($mint);
   const [amountValue, setAmountValue] = useState("");
@@ -143,10 +146,37 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;
 
-  const handleConfirm = useCallback(() => {
+  const { showNotification, closeNotification } = useNotifications();
+
+  const handleConfirm = useCallback(async () => {
     if (walletConnected) {
       setTouched(true);
       if (canInitializeMinting) {
+        if (chain == BridgeChain.SOLC) {
+          const key = showNotification(
+            <span>
+              Please create a token account for {currency} on Solana.
+            </span>,
+            {
+              variant: "warning",
+              persist: true,
+            }
+          ) as number;
+          try {
+            await new Solana(provider, network).createAssociatedTokenAccount(
+              currency
+            );
+          } catch (e) {
+            showNotification(
+              <span>Failed to create a token account: {e}</span>,
+              {
+                variant: "error",
+                persist: true,
+              }
+            ) as number;
+          }
+          closeNotification(key);
+        }
         setMintingInitialized(true);
       } else {
         setMintingInitialized(false);
@@ -156,7 +186,14 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       setMintingInitialized(false);
       dispatch(setWalletPickerOpened(true));
     }
-  }, [dispatch, walletConnected, canInitializeMinting]);
+  }, [
+    dispatch,
+    walletConnected,
+    canInitializeMinting,
+    network,
+    provider,
+    currency,
+  ]);
 
   const onMintTxCreated = useCallback(
     async (tx) => {

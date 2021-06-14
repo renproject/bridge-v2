@@ -149,7 +149,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WrongNetworkInfo: WalletWrongNetworkInfo,
       WalletEntryButton,
       WalletChainLabel,
-      config: walletPickerModalConfig(renNetworkToEthNetwork(renNetwork) || 1),
+      config: walletPickerModalConfig(renNetwork),
     };
     return options;
   }, [multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);
