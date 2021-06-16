@@ -44,7 +44,6 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
-import { useNotifications } from "../../../providers/Notifications";
 import {
   BridgeChain,
   getChainConfig,
@@ -71,6 +70,7 @@ import {
   getMintDynamicTooltips,
   mintTooltips,
 } from "../components/MintHelpers";
+import { SolanaTokenAccountModal } from "../components/SolanaAccountChecker";
 import { $mint } from "../mintSlice";
 import {
   createMintTransaction,
@@ -146,38 +146,23 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;
 
-  const { showNotification, closeNotification } = useNotifications();
+  const [showSolanaModal, setShowSolanaModal] = useState(false);
 
   const handleConfirm = useCallback(async () => {
     if (walletConnected) {
       setTouched(true);
       if (canInitializeMinting) {
-        if (chain == BridgeChain.SOLC) {
-          const key = showNotification(
-            <span>
-              Please create a token account for {currency} on Solana.
-            </span>,
-            {
-              variant: "warning",
-              persist: true,
-            }
-          ) as number;
-          try {
-            await new Solana(provider, network).createAssociatedTokenAccount(
-              currency
-            );
-          } catch (e) {
-            showNotification(
-              <span>Failed to create a token account: {e}</span>,
-              {
-                variant: "error",
-                persist: true,
-              }
-            ) as number;
-          }
-          closeNotification(key);
+        if (
+          chain == BridgeChain.SOLC &&
+          (await new Solana(provider, network).getAssociatedTokenAccount(
+            currency
+          )) === false
+        ) {
+          setShowSolanaModal(true);
+          setMintingInitialized(false);
+        } else {
+          setMintingInitialized(true);
         }
-        setMintingInitialized(true);
       } else {
         setMintingInitialized(false);
       }
@@ -225,6 +210,13 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   return (
     <>
+      {showSolanaModal && (
+        <SolanaTokenAccountModal
+          currency={currency}
+          provider={provider}
+          network={network}
+        />
+      )}
       <PaperHeader>
         <PaperNav>
           <IconButton onClick={onPrev}>
