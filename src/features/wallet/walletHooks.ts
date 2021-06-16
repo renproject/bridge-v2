@@ -24,6 +24,14 @@ const resolveWallet = (provider: any) => {
     return BridgeWallet.METAMASKW;
   }
 
+  if (provider?.wallet?._providerUrl?.href?.includes("sollet")) {
+    return BridgeWallet.SOLLETW;
+  }
+
+  if (provider?.wallet) {
+    return BridgeWallet.PHANTOMW;
+  }
+
   if (provider?.chainId === "0x61" || provider?.chainId?.indexOf("Binance")) {
     return BridgeWallet.BINANCESMARTW;
   }
