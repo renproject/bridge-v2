@@ -180,6 +180,10 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
           connector: new SolanaConnector({
             providerURL: "https://www.sollet.io",
+            clusterURL:
+              network === RenNetwork.Mainnet
+                ? "https://ren.rpcpool.com/"
+                : undefined,
             network,
           }),
         },
@@ -189,6 +193,10 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           connector: new SolanaConnector({
             debug: true,
             providerURL: (window as any).solana,
+            clusterURL:
+              network === RenNetwork.Mainnet
+                ? "https://ren.rpcpool.com/"
+                : undefined,
             network,
           }),
         },
