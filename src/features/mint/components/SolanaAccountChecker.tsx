@@ -17,25 +17,45 @@ export const SolanaTokenAccountModal: React.FunctionComponent<{
   provider: any;
   network: RenNetwork;
   currency: BridgeCurrency;
-}> = ({ provider, network, currency }) => {
+  onCreated: any;
+}> = ({ provider, network, currency, onCreated }) => {
   const [open, setOpen] = useState(true);
   const [awaiting, setAwaiting] = useState(false);
-  const [creationError, setCreationError] = useState<Error>();
+  const [creationError, setCreationError] = useState<string>();
+  const reset = useCallback(async () => {
+    setCreationError(undefined);
+    setAwaiting(false);
+  }, [setCreationError, setAwaiting]);
 
   const createAccount = useCallback(async () => {
     try {
       setAwaiting(true);
-      await new Solana(provider, network).createAssociatedTokenAccount(
-        currency
-      );
+      const r = await new Solana(
+        provider,
+        network
+      ).createAssociatedTokenAccount(currency);
       setOpen(false);
+      onCreated(r);
     } catch (err) {
-      setCreationError(err);
+      if (err.error?.message) {
+        setCreationError(err.message);
+      } else if (err.includes && err.includes("Attempt to debit an account")) {
+        setCreationError(
+          "No SOL found for this account. Please ensure that you are connected with the correct wallet"
+        );
+      } else {
+        setCreationError("Failed to submit transaction");
+      }
     }
   }, [provider, network]);
   return (
     <>
-      <ErrorDialog open={!!creationError} reason={creationError?.toString()} />
+      <ErrorDialog
+        actionText="Try Again"
+        onAction={reset}
+        open={!!creationError}
+        reason={creationError?.toString()}
+      />
       <BridgeModal open={open} title="Solana Token Account">
         <DialogContent>
           <Typography variant="h5" align="center" gutterBottom>

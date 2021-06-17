@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Solana } from "@renproject/chains-solana";
+import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 import React, {
   FunctionComponent,
   useCallback,
@@ -147,19 +148,51 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const canInitializeMinting = ackChecked && txValid;
 
   const [showSolanaModal, setShowSolanaModal] = useState(false);
+  const [checkingSolana, setCheckingSolana] = useState(false);
+  const [hasSolanaTokenAccount, setSolanaTokenAccount] = useState<any>();
+
+  const onSolanaAccountCreated = useCallback(
+    (a) => {
+      setSolanaTokenAccount(a);
+    },
+    [setSolanaTokenAccount]
+  );
+
+  // FIXME: we might want to extract the solana logic in a nicer manner
+  useEffect(() => {
+    if (chain == BridgeChain.SOLC && canInitializeMinting) {
+      if (hasSolanaTokenAccount) {
+        setMintingInitialized(true);
+        return;
+      }
+      if (hasSolanaTokenAccount === false && !showSolanaModal) {
+        setShowSolanaModal(true);
+        setMintingInitialized(false);
+      }
+    }
+  }, [
+    checkingSolana,
+    showSolanaModal,
+    chain,
+    hasSolanaTokenAccount,
+    setMintingInitialized,
+    setShowSolanaModal,
+  ]);
 
   const handleConfirm = useCallback(async () => {
     if (walletConnected) {
       setTouched(true);
       if (canInitializeMinting) {
-        if (
-          chain == BridgeChain.SOLC &&
-          (await new Solana(provider, network).getAssociatedTokenAccount(
-            currency
-          )) === false
-        ) {
-          setShowSolanaModal(true);
-          setMintingInitialized(false);
+        if (chain == BridgeChain.SOLC) {
+          setCheckingSolana(true);
+          if (!hasSolanaTokenAccount) {
+            setSolanaTokenAccount(
+              await new Solana(provider, network).getAssociatedTokenAccount(
+                currency
+              )
+            );
+          }
+          setCheckingSolana(false);
         } else {
           setMintingInitialized(true);
         }
@@ -178,6 +211,10 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     network,
     provider,
     currency,
+    hasSolanaTokenAccount,
+    setSolanaTokenAccount,
+    setShowSolanaModal,
+    setMintingInitialized,
   ]);
 
   const onMintTxCreated = useCallback(
@@ -215,6 +252,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           currency={currency}
           provider={provider}
           network={network}
+          onCreated={onSolanaAccountCreated}
         />
       )}
       <PaperHeader>
@@ -350,7 +388,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           <ActionButton
             onClick={handleConfirm}
             disabled={
-              walletConnected ? !ackChecked || mintingInitialized : false
+              (walletConnected ? !ackChecked || mintingInitialized : false) ||
+              checkingSolana ||
+              hasSolanaTokenAccount === false
             }
           >
             {!walletConnected
