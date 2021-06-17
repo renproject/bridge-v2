@@ -34,6 +34,7 @@ import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
 import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
@@ -263,6 +264,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     },
     [service]
   );
+  const { showNotification, closeNotification } = useNotifications();
 
   const [submitting, setSubmitting] = useState(false);
   const [timeoutError, setTimeoutError] = useState(false);
@@ -270,9 +272,22 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     setSubmitting(true);
     send({ type: "SUBMIT" });
     setTimeout(() => {
-      setTimeoutError(true);
-    }, 60000);
-  }, [send]);
+      const key = showNotification(
+        <span>
+          No confirmations detected for transaction; you may wish to speed it
+          up. <br />
+          As long as the transaction gets successfully confirmed on the mint
+          chain, you will recieve your {tx.sourceAsset.toUpperCase()}
+        </span>,
+        {
+          variant: "warning",
+          persist: true,
+        }
+      ) as number;
+      // This isn't a great solution because users might end up burning twice
+      // setTimeoutError(true);
+    }, 1 * 60 * 1000);
+  }, [send, showNotification, closeNotification]);
   const handleReload = useCallback(() => {
     history.replace({
       ...location,
