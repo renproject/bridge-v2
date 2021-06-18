@@ -45,8 +45,8 @@ const createAvailabilityFilter = (available: Array<string> | undefined) => (
 const iconStyles = {
   width: 32,
   height: 32,
+  fontSize: 32,
 };
-
 const useCondensedSelectStyles = makeStyles(() => ({
   select: {
     paddingTop: 4,
