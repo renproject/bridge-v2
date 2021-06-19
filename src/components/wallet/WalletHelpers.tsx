@@ -144,7 +144,11 @@ export const WalletConnectingInfo: WalletPickerProps<
     bsc: BridgeWallet.BINANCESMARTW,
     fantom: BridgeWallet.METAMASKW,
     polygon: BridgeWallet.METAMASKW,
-  }[chain as "ethereum" | "bsc" | "fantom" | "polygon"];
+    avalanche: BridgeWallet.METAMASKW,
+    solana: BridgeWallet.SOLLETW,
+  }[
+    chain as "ethereum" | "bsc" | "fantom" | "polygon" | "avalanche" | "solana"
+  ];
   const walletConfig = getWalletConfig(walletSymbol);
 
   const labels = getLabels(chainConfig, walletConfig);

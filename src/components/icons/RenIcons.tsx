@@ -68,6 +68,11 @@ import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
 import { ReactComponent as Polygon } from "./../../assets/icons/polygon-icon.svg";
 import { ReactComponent as PolygonFull } from "./../../assets/icons/polygon-colour-icon.svg";
 import { ReactComponent as PolygonCircle } from "./../../assets/icons/polygon-circle-icon.svg";
+import { ReactComponent as Solana } from "./../../assets/icons/solana-icon.svg";
+import { ReactComponent as SolanaFull } from "./../../assets/icons/solana-colour-icon.svg";
+import { ReactComponent as SolanaCircle } from "./../../assets/icons/solana-circle-icon.svg";
+import { ReactComponent as Sollet } from "./../../assets/icons/sollet.svg";
+import { ReactComponent as Phantom } from "./../../assets/icons/phantom-icon-purple.svg";
 
 import AddIcon from "@material-ui/icons/Add";
 import BlockIcon from "@material-ui/icons/Block";
@@ -356,4 +361,28 @@ export const AvaFullIcon: CustomSvgIconComponent = (props) => (
 
 export const AvaCircleIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={AvaCircle} {...props} />
+);
+
+export const SolanaIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Fantom} {...props} />
+);
+
+export const SolanaGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={SolanaFull} {...props} />
+);
+
+export const SolanaFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Solana} {...props} />
+);
+
+export const SolanaCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={SolanaCircle} {...props} />
+);
+
+export const PhantomFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon viewBox="0 0 128 128" component={Phantom} {...props} />
+);
+
+export const SolletFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon viewBox="0 0 100 100" component={Sollet} {...props} />
 );

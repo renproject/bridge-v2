@@ -13,6 +13,7 @@ import {
   Polygon,
   Avalanche,
 } from "@renproject/chains-ethereum";
+import { Solana } from "@renproject/chains-solana";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
@@ -68,6 +69,12 @@ export const getMintChainMap = (providers: any) => ({
       address: destAddress,
     }) as any;
   },
+  [RenChain.solana]: (context: GatewayMachineContext<any>) => {
+    const { network } = context.tx;
+
+    // Currently Solana will always mint to the connected provider's address
+    return new Solana(providers.solana, network) as any;
+  },
 });
 
 export const mintChainClassMap = {
@@ -76,6 +83,7 @@ export const mintChainClassMap = {
   [RenChain.fantom]: Fantom,
   [RenChain.polygon]: Polygon,
   [RenChain.avalanche]: Avalanche,
+  [RenChain.solana]: Solana,
 };
 
 export const getBurnChainMap: any = (providers: any) => ({
@@ -113,6 +121,12 @@ export const getBurnChainMap: any = (providers: any) => ({
       value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
     }) as any;
   },
+  [RenChain.solana]: (context: BurnMachineContext<any, any>) => {
+    const { network } = context.tx;
+    return new Solana(providers.solana, network).Account({
+      amount: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
+    }) as any;
+  },
 });
 
 export const burnChainClassMap = {
@@ -121,6 +135,7 @@ export const burnChainClassMap = {
   [RenChain.fantom]: Fantom,
   [RenChain.polygon]: Polygon,
   [RenChain.avalanche]: Avalanche,
+  [RenChain.solana]: Solana,
 };
 
 export const releaseChainMap: any = {

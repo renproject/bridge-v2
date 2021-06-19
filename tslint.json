@@ -1,14 +1,8 @@
 {
   "defaultSeverity": "warning",
-  "extends": [
-    "tslint:recommended",
-    "tslint-react"
-  ],
+  "extends": ["tslint:recommended", "tslint-react"],
   "linterOptions": {
-    "exclude": [
-      "config/**/*.js",
-      "node_modules/**/*.ts"
-    ]
+    "exclude": ["config/**/*.js", "node_modules/**/*.ts"]
   },
   "rules": {
     "readonly-keyword": false,
@@ -30,13 +24,9 @@
     "function-name": false,
     "variable-name": false,
     "trailing-comma": false,
-    "quotemark": [
-      true,
-      "single"
-    ],
+    "quotemark": [true, "single"],
     "object-literal-sort-keys": false,
     "no-console": false,
-    "no-debugger": false,
     "max-classes-per-file": false,
     "ter-arrow-parens": false,
     "prefer-array-literal": [
@@ -45,10 +35,7 @@
         "allow-type-parameters": true
       }
     ],
-    "semicolon": [
-      true,
-      "never"
-    ],
+    "semicolon": [true, "never"],
     "ordered-imports": false,
     "no-use-before-declare": false,
     "max-line-length": [

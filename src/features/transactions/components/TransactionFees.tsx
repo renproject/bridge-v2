@@ -156,7 +156,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           <NumberFormatText
             value={targetChainFeeNative}
             spacedSuffix={targetChainCurrency.short}
-            decimalScale={3}
+            decimalScale={4}
           />
         }
         valueEquivalent={
