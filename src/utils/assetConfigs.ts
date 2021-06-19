@@ -1,10 +1,9 @@
 import { SvgIconComponent } from "@material-ui/icons";
 import { RenNetwork } from "@renproject/interfaces";
 import {
-  AvaCircleIcon,
   AvaFullIcon,
-  AvaGreyIcon,
   AvaIcon,
+  AvalancheChainCircleIcon,
   BchFullIcon,
   BchGreyIcon,
   BchIcon,
@@ -572,9 +571,9 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     symbol: BridgeChain.AVAXC,
     short: "AVAX",
     full: "Avalanche",
-    FullIcon: AvaCircleIcon,
-    Icon: AvaGreyIcon,
-    MainIcon: AvaCircleIcon,
+    FullIcon: AvalancheChainCircleIcon,
+    Icon: AvalancheChainCircleIcon,
+    MainIcon: AvalancheChainCircleIcon,
     GreyIcon: NotSetIcon,
     rentxName: RenChain.avalanche,
     blockTime: 3,
