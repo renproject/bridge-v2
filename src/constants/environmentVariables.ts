@@ -1,4 +1,4 @@
-const NETWORK = process.env.REACT_APP_NETWORK || "testnet";
+const NETWORK = "mainnet"; //process.env.REACT_APP_NETWORK || "testnet";
 const INFURA_ID = process.env.REACT_APP_INFURA_ID || "";
 
 const BANDCHAIN_ENDPOINT =
