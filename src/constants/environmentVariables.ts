@@ -19,6 +19,9 @@ const BSC_MM_ENABLED = Boolean(process.env.REACT_APP_BSC_MM_ENABLED);
 const TX_HISTORY_EXPLORATION = Boolean(
   process.env.REACT_TX_HISTORY_EXPLORATION
 );
+const ENABLED_CURRENCIES = process.env.REACT_APP_ENABLED_CURRENCIES?.split(
+  ","
+) || ["*"];
 
 export const env = {
   DEV,
@@ -31,6 +34,7 @@ export const env = {
   MEWCONNECT_ENABLED,
   WALLETCONNECT_ENABLED,
   TX_HISTORY_EXPLORATION,
+  ENABLED_CURRENCIES,
 };
 
 if (DEV) console.debug("env", env, process);

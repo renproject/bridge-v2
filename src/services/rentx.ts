@@ -1,10 +1,12 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
+import { Filecoin } from "@renproject/chains";
 import {
   Bitcoin,
   BitcoinCash,
   Dogecoin,
   Zcash,
+  DigiByte,
 } from "@renproject/chains-bitcoin";
 import {
   BinanceSmartChain,
@@ -14,6 +16,7 @@ import {
   Avalanche,
 } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
+import { Terra } from "@renproject/chains-terra";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
@@ -31,6 +34,9 @@ export const lockChainMap = {
   [RenChain.zcash]: () => Zcash(),
   [RenChain.bitcoinCash]: () => BitcoinCash(),
   [RenChain.dogecoin]: () => Dogecoin(),
+  [RenChain.digibyte]: () => DigiByte(),
+  [RenChain.filecoin]: () => Filecoin(),
+  [RenChain.terra]: () => Terra(),
 };
 
 export const getMintChainMap = (providers: any) => ({
