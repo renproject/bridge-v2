@@ -392,7 +392,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
   [BridgeCurrency.RENLUNA]: {
     symbol: BridgeCurrency.RENLUNA,
     short: "renLUNA",
-    full: "DigiByte",
+    full: "Luna",
     FullIcon: LunaFullIcon,
     GreyIcon: LunaGreyIcon,
     Icon: LunaIcon,

@@ -2,7 +2,7 @@ import { RenNetwork } from "@renproject/interfaces";
 import { BurnSession, GatewaySession } from "@renproject/ren-tx";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
-import { chainsClassMap } from "../../services/rentx";
+import { chainsClassMap, releaseChainClassMap } from "../../services/rentx";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -177,6 +177,17 @@ export const parseTxQueryString: (
   }
 
   return res;
+};
+
+export const getReleaseAssetDecimals = (chain: BridgeChain, asset: string) => {
+  if (!asset) {
+    return 8;
+  }
+  console.log("release chain", chain);
+  const chainConfig = getChainConfig(chain);
+  return releaseChainClassMap[
+    chainConfig.rentxName as keyof typeof releaseChainClassMap
+  ]().assetDecimals(asset.toUpperCase());
 };
 
 export const getChainExplorerLink = (

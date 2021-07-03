@@ -25,6 +25,7 @@ import {
   DepositPhase,
   GatewayStatus,
   getAddressExplorerLink,
+  getReleaseAssetDecimals,
   getChainExplorerLink,
   getTxCreationTimestamp,
   isTxExpired,
@@ -162,7 +163,12 @@ export const getDepositParams = (
           mintTxHash || ""
         ) || "";
     }
-    lockTxAmount = Number(transaction.sourceTxAmount) / 1e8;
+    lockTxAmount =
+      Number(transaction.sourceTxAmount) /
+      Math.pow(
+        10,
+        getReleaseAssetDecimals(lockChainConfig.symbol, tx.sourceAsset)
+      );
     if (transaction.rawSourceTx) {
       lockTxHash = transaction.rawSourceTx.transaction.txHash;
       lockTxLink =
@@ -307,10 +313,15 @@ export const getLockAndMintParams = (
   let mintTxLink: string = "";
   let lockTxHash: string = "";
   let lockTxLink: string = "";
+  let lockTxNativeAmount = "";
   let lockTxAmount = 0;
   let lockProcessingTime = null;
   let lockConfirmations = 0;
   let lockTargetConfirmations = 0;
+  const decimals = getReleaseAssetDecimals(
+    lockChainConfig.symbol,
+    tx.sourceAsset
+  );
   if (transaction) {
     if (
       (transaction as MintedGatewayTransaction<any>).destTxHash !== undefined
@@ -324,7 +335,8 @@ export const getLockAndMintParams = (
           mintTxHash || ""
         ) || "";
     }
-    lockTxAmount = Number(transaction.sourceTxAmount) / 1e8;
+    lockTxNativeAmount = transaction.sourceTxAmount;
+    lockTxAmount = Number(transaction.sourceTxAmount) / Math.pow(10, decimals);
     if (transaction.rawSourceTx) {
       lockTxHash = transaction.rawSourceTx.transaction.txHash;
       lockTxLink =
@@ -393,6 +405,8 @@ export const getLockAndMintParams = (
     lockTargetConfirmations,
     lockProcessingTime,
     lockTxAmount,
+    lockTxNativeAmount,
+    decimals,
     meta,
   };
 };

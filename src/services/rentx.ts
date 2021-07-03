@@ -20,9 +20,11 @@ import { Terra } from "@renproject/chains-terra";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
+import { getReleaseAssetDecimals } from "../features/transactions/transactionsUtils";
 import {
   BridgeCurrency,
   getChainConfig,
+  getChainConfigByRentxName,
   getCurrencyConfig,
   RenChain,
   toReleasedCurrency,
@@ -92,48 +94,42 @@ export const mintChainClassMap = {
   [RenChain.solana]: Solana,
 };
 
-export const getBurnChainMap: any = (providers: any) => ({
-  [RenChain.ethereum]: (context: BurnMachineContext<any, any>) => {
-    return Ethereum(providers.ethereum, context.tx.network).Account({
-      address: context.tx.userAddress,
-      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)), // TODO: crit
-    }) as any;
-  },
-  [RenChain.binanceSmartChain]: (context: BurnMachineContext<any, any>) => {
-    const { network } = context.tx;
-    return new BinanceSmartChain(providers.binanceSmartChain, network).Account({
-      address: context.tx.userAddress,
-      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
-    }) as any;
-  },
-  [RenChain.fantom]: (context: BurnMachineContext<any, any>) => {
-    const { network } = context.tx;
-    return new Fantom(providers.fantom, network).Account({
-      address: context.tx.userAddress,
-      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
-    }) as any;
-  },
-  [RenChain.polygon]: (context: BurnMachineContext<any, any>) => {
-    const { network } = context.tx;
-    return new Polygon(providers.polygon, network).Account({
-      address: context.tx.userAddress,
-      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
-    }) as any;
-  },
-  [RenChain.avalanche]: (context: BurnMachineContext<any, any>) => {
-    const { network } = context.tx;
-    return new Avalanche(providers.avalanche, network).Account({
-      address: context.tx.userAddress,
-      value: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
-    }) as any;
-  },
-  [RenChain.solana]: (context: BurnMachineContext<any, any>) => {
-    const { network } = context.tx;
-    return new Solana(providers.solana, network).Account({
-      amount: String(Math.floor(Number(context.tx.targetAmount) * 1e8)),
-    }) as any;
-  },
-});
+const buildBurner = (
+  chain: keyof typeof burnChainClassMap,
+  providers: any,
+  context: BurnMachineContext<any, any>
+) => {
+  const burnClass = burnChainClassMap[chain](
+    providers[chain],
+    context.tx.network
+  );
+  const releaseChain = getChainConfigByRentxName(context.tx.destChain).symbol;
+  const decimals = getReleaseAssetDecimals(
+    releaseChain,
+    context.tx.sourceAsset
+  );
+  return burnClass.Account({
+    address: context.tx.userAddress,
+    amount: String(
+      Math.floor(Number(context.tx.targetAmount) * Math.pow(10, decimals))
+    ), // FIXME: solana uses amount, other chains use value
+    value: String(
+      Math.floor(Number(context.tx.targetAmount) * Math.pow(10, decimals))
+    ),
+  }) as any;
+};
+
+export const getBurnChainMap: any = (providers: any) =>
+  Object.fromEntries(
+    Object.keys(burnChainClassMap).map((chain: any) => {
+      return [
+        chain as keyof typeof burnChainClassMap,
+        (context: BurnMachineContext<any, any>) => {
+          return buildBurner(chain, providers, context);
+        },
+      ];
+    })
+  );
 
 export const burnChainClassMap = {
   [RenChain.ethereum]: Ethereum,
@@ -157,6 +153,15 @@ export const releaseChainMap: any = {
   [RenChain.dogecoin]: (context: BurnMachineContext<any, any>) => {
     return Dogecoin().Address(context.tx.destAddress) as any;
   },
+  [RenChain.digibyte]: (context: BurnMachineContext<any, any>) => {
+    return DigiByte().Address(context.tx.destAddress) as any;
+  },
+  [RenChain.filecoin]: (context: BurnMachineContext<any, any>) => {
+    return Filecoin().Address(context.tx.destAddress) as any;
+  },
+  [RenChain.terra]: (context: BurnMachineContext<any, any>) => {
+    return Terra().Address(context.tx.destAddress) as any;
+  },
 };
 
 export const releaseChainClassMap = {
@@ -164,6 +169,9 @@ export const releaseChainClassMap = {
   [RenChain.zcash]: Zcash,
   [RenChain.bitcoinCash]: BitcoinCash,
   [RenChain.dogecoin]: Dogecoin,
+  [RenChain.digibyte]: DigiByte,
+  [RenChain.filecoin]: Filecoin,
+  [RenChain.terra]: Terra,
 };
 
 export const chainsClassMap = { ...burnChainClassMap, ...releaseChainClassMap };

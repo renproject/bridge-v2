@@ -32,6 +32,7 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { paths } from "../../../pages/routes";
 import {
+  BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
   toReleasedCurrency,
@@ -44,13 +45,12 @@ import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   createTxQueryString,
+  getReleaseAssetDecimals,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
-import {
-  useSelectedChainWallet,
-} from "../../wallet/walletHooks";
+import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import {
   $multiwalletChain,
   $wallet,
@@ -72,28 +72,47 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
   const network = useSelector($renNetwork);
-  const {
-    chain,
-  } = useSelector($wallet);
+  const { chain } = useSelector($wallet);
   const renChain = useSelector($multiwalletChain);
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
+
+  const destinationCurrency = toReleasedCurrency(currency);
+  const currencyConfig = getCurrencyConfig(currency);
+  const nativeCurrencyConfig = getCurrencyConfig(
+    currency.split("REN")[1] as BridgeCurrency
+  );
+
+  const targetChainConfig = getChainConfig(chain);
+  console.log(currency, targetChainConfig.nativeCurrency);
+  const decimals =
+    targetChainConfig.nativeCurrency === currency
+      ? getReleaseAssetDecimals(
+          targetChainConfig.symbol,
+          targetChainConfig.nativeCurrency
+        )
+      : getReleaseAssetDecimals(
+          nativeCurrencyConfig.sourceChain,
+          nativeCurrencyConfig.symbol
+        );
+
   const { conversionTotal } = getTransactionFees({
-    amount,
+    amount: amount * Math.pow(10, decimals),
     fees,
     type: TxType.BURN,
   });
 
-  const currencyConfig = getCurrencyConfig(currency);
   const chainConfig = getChainConfig(chain);
-  const destinationCurrency = toReleasedCurrency(currency);
   const destinationCurrencyUsdRate = findExchangeRate(
     rates,
     destinationCurrency,
     USD_SYMBOL
   );
-  const destinationAmountUsd = conversionTotal * destinationCurrencyUsdRate;
+
+  const conversionFormatted = conversionTotal / Math.pow(10, decimals);
+
+  const destinationAmountUsd = conversionFormatted * destinationCurrencyUsdRate;
   const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
   const { MainIcon } = destinationCurrencyConfig;
   const tx = useMemo(
@@ -217,7 +236,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
               label="Receiving"
               value={
                 <NumberFormatText
-                  value={conversionTotal}
+                  value={conversionFormatted}
                   spacedSuffix={destinationCurrencyConfig.short}
                 />
               }
