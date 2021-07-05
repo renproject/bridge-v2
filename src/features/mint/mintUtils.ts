@@ -170,7 +170,8 @@ export const getDepositParams = (
         getReleaseAssetDecimals(lockChainConfig.symbol, tx.sourceAsset)
       );
     if (transaction.rawSourceTx) {
-      lockTxHash = transaction.rawSourceTx.transaction.txHash;
+      lockTxHash =
+        transaction.rawSourceTx.transaction.txHash || transaction.sourceTxHash;
       lockTxLink =
         getChainExplorerLink(lockChainConfig.symbol, tx.network, lockTxHash) ||
         "";
@@ -344,7 +345,8 @@ export const getLockAndMintParams = (
     lockTxNativeAmount = transaction.sourceTxAmount;
     lockTxAmount = Number(transaction.sourceTxAmount) / Math.pow(10, decimals);
     if (transaction.rawSourceTx) {
-      lockTxHash = transaction.rawSourceTx.transaction.txHash;
+      lockTxHash =
+        transaction.rawSourceTx.transaction.txHash || transaction.sourceTxHash;
       lockTxLink =
         getChainExplorerLink(lockChainConfig.symbol, tx.network, lockTxHash) ||
         "";
