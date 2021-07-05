@@ -262,6 +262,11 @@ export const getLockAndMintBasicParams = (tx: GatewaySession<any>) => {
   const depositsCount = Object.values(tx.transactions || {}).length;
   const gatewayStatus = getGatewayStatus(tx.expiryTime);
 
+  const decimals = getReleaseAssetDecimals(
+    lockChainConfig.symbol,
+    tx.sourceAsset
+  );
+
   return {
     networkConfig,
     lockCurrencyConfig,
@@ -273,6 +278,7 @@ export const getLockAndMintBasicParams = (tx: GatewaySession<any>) => {
     createdTime,
     depositsCount,
     gatewayStatus,
+    decimals,
   };
 };
 
