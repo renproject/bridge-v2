@@ -109,15 +109,9 @@ export const MintTransactionHistory: FunctionComponent = () => {
   const network = useSelector($renNetwork);
   const opened = useSelector($txHistoryOpened);
   const activeTxId = useSelector($currentTxId);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
 
   const [pending, setPending] = useState(false);
-  useEffect(() => {
-    setPending(true);
-    setTimeout(() => {
-      setPending(false);
-    }, 1000);
-  }, [currency, chain, page]);
 
   const chainConfig = getChainConfig(chain);
 
@@ -148,8 +142,17 @@ export const MintTransactionHistory: FunctionComponent = () => {
     dispatch(setTxHistoryOpened(false));
   }, [dispatch]);
 
-  const rowsPerPage = 3;
+  const rowsPerPage = 4;
   const startDay = rowsPerPage * page;
+  console.log("sd", startDay);
+
+  useEffect(() => {
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, 1000);
+  }, [currency, chain, startDay]);
+
   return (
     <TransactionHistoryDialog
       open={opened}
@@ -200,7 +203,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
       )}
       {walletConnected && (
         <>
-          {[0, 1, 2].map((offset) => (
+          {[0, 1, 2, 3].map((offset) => (
             <GatewayEntryResolver
               key={startDay + offset}
               dayOffset={startDay + offset}
@@ -212,11 +215,11 @@ export const MintTransactionHistory: FunctionComponent = () => {
               pending={pending}
             />
           ))}
-          <Debug it={{ activeTxId }} />
+          <Debug it={{ activeTxId, pending, page, account, startDay }} />
           <Hide when={!featureFlags.enableTxHistoryExploration}>
             <TransactionsPaginationWrapper>
               <SimplePagination
-                count={rowsPerPage * 2}
+                count={rowsPerPage * 7}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onChangePage={handleChangePage}
@@ -239,15 +242,18 @@ type GatewayResolverProps = {
   activeTxId: string;
 };
 
+const forceAccount = localStorage.getItem("overwriteUserAccount");
+
 const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
   dayOffset,
   currency,
   chain,
   network,
-  account,
+  account: userAccount,
   pending,
   activeTxId,
 }) => {
+  const account = forceAccount || userAccount;
   const tx = useMemo(
     () =>
       createMintTransaction({
@@ -285,15 +291,20 @@ export const GatewayEntryMachine: FunctionComponent<GatewayEntryProps> = ({
   const [current, , service] = useMintMachine(tx);
   useEffect(
     () => () => {
-      // console.log("stopping", tx.id);
+      console.log("stopping", tx.id);
       service.stop();
     },
     [service]
   );
   useEffect(() => {
-    // console.log("starting", tx.id);
+    console.log("starting", tx.id);
   }, []);
-  return <GatewayEntry tx={current.context.tx} />;
+  return (
+    <>
+      <Debug force it={current.context.tx} />
+      <GatewayEntry tx={current.context.tx} />
+    </>
+  );
 };
 
 const standardPaddings = {
