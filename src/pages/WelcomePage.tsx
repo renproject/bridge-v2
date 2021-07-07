@@ -9,11 +9,15 @@ import {
   BchFullIcon,
   BinanceChainFullIcon,
   BtcFullIcon,
+  DgbFullIcon,
   DogeFullIcon,
   EmptyCircleIcon,
   EthereumChainFullIcon,
   FantomFullIcon,
+  FilFullIcon,
+  LunaFullIcon,
   PolygonFullIcon,
+  SolanaFullIcon,
   WarningIcon,
   ZecFullIcon,
 } from "../components/icons/RenIcons";
@@ -24,6 +28,12 @@ import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
 import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
+import {
+  getChainConfig,
+  getCurrencyConfig,
+  supportedBurnChains,
+  supportedReleaseCurrencies,
+} from "../utils/assetConfigs";
 import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
@@ -79,7 +89,9 @@ const useStyles = makeStyles((theme) => ({
   },
   assetsList: {
     margin: "12px auto",
+    maxWidth: "40vw",
     display: "flex",
+    flexWrap: "wrap",
     justifyContent: "center",
     [theme.breakpoints.up("md")]: {
       justifyContent: "space-between",
@@ -182,18 +194,17 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               Assets
             </Typography>
             <UnstyledList className={styles.assetsList}>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Bitcoin" Icon={BtcFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Bitcoin Cash" Icon={BchFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="ZCash" Icon={ZecFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Doge" Icon={DogeFullIcon} />
-              </li>
+              {supportedReleaseCurrencies.map((x) => {
+                const curConfig = getCurrencyConfig(x);
+                return (
+                  <li className={styles.assetListItem}>
+                    <IconWithLabel
+                      label={curConfig.full}
+                      Icon={curConfig.FullIcon}
+                    />
+                  </li>
+                );
+              })}
               <li className={styles.assetListItem}>
                 <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
               </li>
@@ -208,28 +219,17 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               Destination
             </Typography>
             <UnstyledList className={styles.assetsList}>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Ethereum" Icon={EthereumChainFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel
-                  label="Binance Smart Chain"
-                  Icon={BinanceChainFullIcon}
-                />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel
-                  iconClassName={styles.avalancheIcon}
-                  label="Avalanche"
-                  Icon={AvalancheChainIcon}
-                />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Fantom" Icon={FantomFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Polygon" Icon={PolygonFullIcon} />
-              </li>
+              {supportedBurnChains.map((x) => {
+                const chainConf = getChainConfig(x);
+                return (
+                  <li className={styles.assetListItem}>
+                    <IconWithLabel
+                      label={chainConf.full}
+                      Icon={chainConf.FullIcon}
+                    />
+                  </li>
+                );
+              })}
               <li className={styles.assetListItem}>
                 <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
               </li>
