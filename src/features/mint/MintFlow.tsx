@@ -3,7 +3,6 @@ import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
-import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { useSetCurrentTxId } from "../transactions/transactionsHooks";
 import { TxConfigurationStep } from "../transactions/transactionsUtils";
 import { MintFeesStep } from "./steps/MintFeesStep";
@@ -27,7 +26,6 @@ const MintConfiguration: FunctionComponent<RouteComponentProps> = () => {
     <>
       {step === TxConfigurationStep.INITIAL && (
         <>
-          <TransactionTypeTabs />
           <MintInitialStep onNext={onInitialNext} />
         </>
       )}
@@ -42,7 +40,6 @@ export const MintFlow: FunctionComponent<RouteComponentProps> = ({ match }) => {
   usePageTitle("Minting");
   return (
     <>
-      <Route exact path={paths.MINT} component={MintConfiguration} />
       <Route exact path={paths.MINT_TRANSACTION} component={MintProcessStep} />
     </>
   );
