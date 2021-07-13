@@ -14,6 +14,7 @@ import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
+  getNativeCurrency,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
@@ -50,9 +51,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
-  const nativeCurrencyConfig = getCurrencyConfig(
-    currency.split("REN").pop() as any
-  );
+  const nativeCurrencyConfig = getCurrencyConfig(getNativeCurrency(currency));
   const exchangeRates = useSelector($exchangeRates);
   const gasPrices = useSelector($gasPrices);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);

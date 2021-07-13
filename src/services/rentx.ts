@@ -108,14 +108,13 @@ const buildBurner = (
     releaseChain,
     context.tx.sourceAsset
   );
+  const amount = String(
+    Math.floor(Number(context.tx.targetAmount) * Math.pow(10, decimals))
+  );
   return burnClass.Account({
     address: context.tx.userAddress,
-    amount: String(
-      Math.floor(Number(context.tx.targetAmount) * Math.pow(10, decimals))
-    ), // FIXME: solana uses amount, other chains use value
-    value: String(
-      Math.floor(Number(context.tx.targetAmount) * Math.pow(10, decimals))
-    ),
+    amount, // FIXME: solana uses amount, other chains use value
+    value: amount,
   }) as any;
 };
 

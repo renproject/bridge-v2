@@ -35,6 +35,7 @@ import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
+  getNativeCurrency,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { useFetchFees } from "../../fees/feesHooks";
@@ -80,9 +81,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const destinationCurrency = toReleasedCurrency(currency);
   const currencyConfig = getCurrencyConfig(currency);
-  const nativeCurrencyConfig = getCurrencyConfig(
-    currency.split("REN")[1] as BridgeCurrency
-  );
+  const nativeCurrencyConfig = getCurrencyConfig(getNativeCurrency(currency));
 
   const targetChainConfig = getChainConfig(chain);
   console.log(currency, targetChainConfig.nativeCurrency);

@@ -855,8 +855,7 @@ export const toReleasedCurrency = (burnedCurrency: BridgeCurrency) => {
     case BridgeCurrency.RENZEC:
       return BridgeCurrency.ZEC;
     default:
-      const fallback =
-        BridgeCurrency[burnedCurrency.split("REN")[1] as BridgeCurrency];
+      const fallback = BridgeCurrency[getNativeCurrency(burnedCurrency)];
       if (fallback) return fallback;
       return BridgeCurrency.UNKNOWN;
   }
@@ -962,4 +961,8 @@ export const bridgeChainToRenChain = (bridgeChain: BridgeChain): RenChain => {
     default:
       return RenChain.unknown;
   }
+};
+
+export const getNativeCurrency = (renAsset: string) => {
+  return renAsset.split("REN").pop() as BridgeCurrency;
 };

@@ -268,6 +268,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
 
   const [submitting, setSubmitting] = useState(false);
   const [timeoutError, setTimeoutError] = useState(false);
+  const [timeoutKey, setTimeoutKey] = useState<number>();
   const handleSubmit = useCallback(() => {
     setSubmitting(true);
     send({ type: "SUBMIT" });
@@ -284,10 +285,11 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
           persist: true,
         }
       ) as number;
+      setTimeoutKey(key);
       // This isn't a great solution because users might end up burning twice
       // setTimeoutError(true);
     }, 1 * 60 * 1000);
-  }, [send, showNotification, closeNotification]);
+  }, [send, setTimeoutKey, showNotification, closeNotification]);
   const handleReload = useCallback(() => {
     history.replace({
       ...location,
@@ -300,13 +302,16 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   }, [history, location]);
 
   useEffect(() => {
+    if (current.value === "accepted") {
+      clearTimeout(timeoutKey);
+    }
     if (current.value === "srcSettling") {
       history.replace({
         pathname: paths.RELEASE_TRANSACTION,
         search: "?" + createTxQueryString(current.context.tx),
       });
     }
-  }, [history, current.value, current.context.tx]);
+  }, [history, timeoutKey, current.value, current.context.tx]);
 
   // const forceState = "accepted";
   const state = current.value as keyof BurnMachineSchema["states"];

@@ -23,6 +23,10 @@ const ENABLED_CURRENCIES = process.env.REACT_APP_ENABLED_CURRENCIES?.split(
   ","
 ) || ["*"];
 
+const V2_DEPRECATION_TIME =
+  new Date(process.env.REACT_APP_V2_DEPRECATION_DATE || "invalid").getTime() ||
+  new Date("2222-12-12").getTime();
+
 export const env = {
   DEV,
   NETWORK,
@@ -35,6 +39,7 @@ export const env = {
   WALLETCONNECT_ENABLED,
   TX_HISTORY_EXPLORATION,
   ENABLED_CURRENCIES,
+  V2_DEPRECATION_TIME,
 };
 
 if (DEV) console.debug("env", env, process);

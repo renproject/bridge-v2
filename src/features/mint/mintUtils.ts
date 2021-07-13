@@ -118,7 +118,7 @@ export const createMintTransaction = ({
     expiryTime: getSessionExpiry(dayOffset),
     transactions: {},
     customParams: {},
-    createdAt: Date.now(),
+    createdAt: Date.now() - dayOffset * 24 * 60 * 60 * 1000,
   };
 
   return tx;
