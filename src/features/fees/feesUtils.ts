@@ -48,7 +48,7 @@ export const getTransactionFees = ({
   if (fees) {
     const renTxTypeFee = type === TxType.MINT ? fees.mint : fees.burn;
     const networkFee = type === TxType.MINT ? fees.lock : fees.release;
-    feeData.networkFee = Number(networkFee) / 1e8;
+    feeData.networkFee = Number(networkFee);
     feeData.renVMFee = Number(renTxTypeFee) / 10000; // percent value
     feeData.renVMFeeAmount = Number(amountNumber * feeData.renVMFee);
     const total = Number(

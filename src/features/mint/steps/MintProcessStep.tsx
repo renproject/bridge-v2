@@ -421,7 +421,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const currentAmount = activeDeposit?.deposit.sourceTxAmount;
   useEffect(() => {
     if (currentAmount) {
-      onActiveAmountChange(Number(currentAmount) / 10 ** 8);
+      onActiveAmountChange(Number(currentAmount) / 10 ** decimals);
     }
   }, [currentAmount, onActiveAmountChange]);
 
@@ -448,9 +448,11 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, [currentDeposit, location, activeDeposit, current.context.tx, history]);
 
-  const { mintCurrencyConfig, lockCurrencyConfig } = getLockAndMintBasicParams(
-    current.context.tx
-  );
+  const {
+    mintCurrencyConfig,
+    lockCurrencyConfig,
+    decimals,
+  } = getLockAndMintBasicParams(current.context.tx);
   const accountExplorerLink = getAddressExplorerLink(
     chain,
     renNetwork,
@@ -458,7 +460,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   );
 
   const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
-  const minimumAmount = (fees.lock / 10 ** 8) * 2;
+  const minimumAmount = (fees.lock / 10 ** decimals) * 2;
 
   return (
     <>

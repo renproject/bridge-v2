@@ -274,6 +274,7 @@ const GatewayEntryResolver: FunctionComponent<GatewayResolverProps> = ({
 
 export type GatewayEntryProps = {
   tx: GatewaySession<any>;
+  service?: any;
   pending?: boolean;
   isActive?: boolean;
   onContinue?: ((depositHash?: string) => void) | (() => void);
@@ -285,15 +286,11 @@ export const GatewayEntryMachine: FunctionComponent<GatewayEntryProps> = ({
   const [current, , service] = useMintMachine(tx);
   useEffect(
     () => () => {
-      // console.log("stopping", tx.id);
       service.stop();
     },
     [service]
   );
-  useEffect(() => {
-    // console.log("starting", tx.id);
-  }, []);
-  return <GatewayEntry tx={current.context.tx} />;
+  return <GatewayEntry service={service} tx={current.context.tx} />;
 };
 
 const standardPaddings = {
@@ -407,6 +404,7 @@ export const useGatewayEntryStyles = makeStyles((theme) => ({
 const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   tx,
   isActive,
+  service,
 }) => {
   const theme = useTheme();
   const styles = useGatewayEntryStyles();
@@ -481,9 +479,11 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   useEffect(() => {
     if (gatewayAddress) {
       if (hasDeposits) {
+        service?.stop();
         setResolving(false);
       } else {
         setTimeout(() => {
+          service?.stop();
           setResolving(false);
         }, 15000);
       }

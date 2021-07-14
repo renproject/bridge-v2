@@ -27,7 +27,11 @@ import {
 } from "../../marketData/marketDataUtils";
 import { mintTooltips } from "../../mint/components/MintHelpers";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
-import { getFeeTooltips, TxType } from "../transactionsUtils";
+import {
+  getFeeTooltips,
+  getReleaseAssetDecimals,
+  TxType,
+} from "../transactionsUtils";
 
 type TransactionFeesProps = {
   type: TxType;
@@ -46,11 +50,18 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
+  const nativeCurrencyConfig = getCurrencyConfig(
+    currency.split("REN").pop() as any
+  );
   const exchangeRates = useSelector($exchangeRates);
   const gasPrices = useSelector($gasPrices);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);
   const gasPrice = findGasPrice(gasPrices, chain);
   const targetChainConfig = getChainConfig(chain);
+  const decimals = getReleaseAssetDecimals(
+    nativeCurrencyConfig.sourceChain,
+    nativeCurrencyConfig.symbol
+  );
 
   const targetChainCurrencyUsdRate = findExchangeRate(
     exchangeRates,
@@ -60,11 +71,16 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const hasAmount = !isNaN(amount) && amount !== 0;
   const amountUsd = amount * currencyUsdRate;
   const { fees, pending } = useFetchFees(currency, type);
-  const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
+  const {
+    renVMFee,
+    renVMFeeAmount,
+    networkFee: nativeNetworkFee,
+  } = getTransactionFees({
     amount,
     fees,
     type,
   });
+  const networkFee = nativeNetworkFee / 10 ** decimals;
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 

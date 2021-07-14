@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Solana } from "@renproject/chains-solana";
-import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 import React, {
   FunctionComponent,
   useCallback,
@@ -60,6 +59,7 @@ import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { setCurrentTxId } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
+  getReleaseAssetDecimals,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
@@ -97,20 +97,26 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       setAmountValue(newValue);
     }
   }, []);
+
+  const lockCurrencyConfig = getCurrencyConfig(currency);
+  const decimals = getReleaseAssetDecimals(
+    lockCurrencyConfig.sourceChain,
+    currency
+  );
   const amount = Number(amountValue);
   const hasAmount = amount !== 0;
   const amountUsd = amount * currencyUsdRate;
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
-    amount,
+    amount: amount * Math.pow(10, decimals),
     fees,
     type: TxType.MINT,
   });
+  const conversionFormatted = conversionTotal / Math.pow(10, decimals);
 
-  const lockCurrencyConfig = getCurrencyConfig(currency);
   const { GreyIcon } = lockCurrencyConfig;
 
-  const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
+  const targetCurrencyAmountUsd = conversionFormatted * currencyUsdRate;
   const destinationChainConfig = getChainConfig(chain);
   const destinationChainNativeCurrencyConfig = getCurrencyConfig(
     destinationChainConfig.nativeCurrency
@@ -342,7 +348,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
               label="Receiving"
               value={
                 <NumberFormatText
-                  value={conversionTotal}
+                  value={conversionFormatted}
                   spacedSuffix={mintedCurrencyConfig.short}
                 />
               }
