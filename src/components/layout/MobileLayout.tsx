@@ -34,6 +34,7 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "flex",
+      alignItems: "center",
     },
   },
   desktopTxHistory: {

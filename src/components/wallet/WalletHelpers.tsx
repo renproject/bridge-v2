@@ -10,6 +10,7 @@ import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback } from "react";
+import { TFunction, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
 import { useSubNetworkName } from "../../features/ui/uiHooks";
@@ -291,16 +292,19 @@ export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndica
   return <div className={className} />;
 };
 
-const getWalletConnectionLabel = (status: WalletConnectionStatusType) => {
+const getWalletConnectionLabel = (
+  status: WalletConnectionStatusType,
+  t: TFunction
+) => {
   switch (status) {
     case "disconnected":
-      return "Connect a Wallet";
+      return t("wallet.connectWallet");
     case "connecting":
-      return "Connecting...";
+      return t("wallet.connecting");
     case "connected":
-      return "Connected";
+      return t("wallet.connected");
     case "wrong_network":
-      return "Wrong Network!";
+      return t("wallet.wrongNetwork");
   }
 };
 
@@ -344,6 +348,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   mobile,
   ...rest
 }) => {
+  const { t } = useTranslation();
   const {
     indicator: indicatorClassName,
     indicatorMobile: indicatorMobileClassName,
@@ -355,7 +360,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   const label =
     status === WalletStatus.CONNECTED
       ? getWalletConfig(wallet).short
-      : getWalletConnectionLabel(status);
+      : getWalletConnectionLabel(status, t);
   const trimmedAddress = trimAddress(account);
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: hoisted,

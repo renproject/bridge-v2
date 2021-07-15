@@ -7,6 +7,7 @@ import TwitterIcon from "@material-ui/icons/Twitter";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { links } from "../../constants/constants";
+import { LanguageSelector } from "../../features/i18n/components/I18nHelpers";
 import { paths } from "../../pages/routes";
 import { CustomLinkProps, Link } from "../links/Links";
 
@@ -117,6 +118,9 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
           <FooterTextLink href={links.LEGACY_BRIDGE} target="_blank">
             Legacy Bridge
           </FooterTextLink>
+        </li>
+        <li>
+          <LanguageSelector />
         </li>
       </ul>
       <ul className={styles.iconLinks}>

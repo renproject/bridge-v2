@@ -28,6 +28,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useWindowSize } from "react-use";
 import { TransactionHistoryMenuIconButton } from "../components/buttons/Buttons";
@@ -50,6 +51,7 @@ import {
 } from "../components/wallet/WalletHelpers";
 import { links } from "../constants/constants";
 import { env } from "../constants/environmentVariables";
+import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
 import { $renNetwork } from "../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../features/network/networkUtils";
 import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
@@ -77,6 +79,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
 }) => {
   const styles = useMobileLayoutStyles();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   useSetNetworkFromParam();
   useSyncMultiwalletNetwork();
@@ -163,6 +166,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
+        <LanguageSelector />
         <TransactionHistoryMenuIconButton
           opened={txHistoryOpened}
           className={styles.desktopTxHistory}
@@ -237,7 +241,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           <TransactionHistoryMenuIconButton
             className={styles.mobileTxHistory}
           />
-          <span>View Transactions</span>
+          <span>{t("menu.viewTransactions")}</span>
         </Button>
       </ListItem>
       <ListItem

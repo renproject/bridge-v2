@@ -1,0 +1,8 @@
+{
+  "header.intro": "Hellou folks",
+  "menu.viewTransactions": "View transactions",
+  "wallet.connectWallet": "Connect a Wallet",
+  "wallet.connecting": "Connecting...",
+  "wallet.connected": "Connected",
+  "wallet.wrongNetwork": "Wrong Network!"
+}
