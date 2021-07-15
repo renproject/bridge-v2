@@ -2,7 +2,7 @@ import { MenuItem, Select } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { languages } from "../../../services/i18n";
+import { nativeLanguageNames } from "../../../i18n/localeBundles";
 
 const useLanguageSelectorStyles = makeStyles(() => ({
   select: {
@@ -35,14 +35,14 @@ export const LanguageSelector: FunctionComponent = () => {
       value={i18n.language}
       classes={classes}
     >
-      {Object.keys(languages).map((languageKey) => (
+      {Object.keys(nativeLanguageNames).map((languageKey) => (
         <MenuItem
           key={languageKey}
           onClick={() => i18n.changeLanguage(languageKey)}
           value={languageKey}
           selected={languageKey === language}
         >
-          {languages[languageKey]}
+          {nativeLanguageNames[languageKey]}
         </MenuItem>
       ))}
     </Select>

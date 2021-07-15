@@ -1,0 +1,8 @@
+{
+  "header.intro": "Hellou Folks",
+  "menu.viewTransactions": "Transaktionen anzeigen",
+  "wallet.connectWallet": "Verbinden Sie eine Brieftasche",
+  "wallet.connecting": "Verbindung...",
+  "wallet.connected": "Verbunden",
+  "wallet.wrongNetwork": "Falsches Netzwerk!"
+}
