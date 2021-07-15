@@ -70,16 +70,12 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const hasAmount = !isNaN(amount) && amount !== 0;
   const amountUsd = amount * currencyUsdRate;
   const { fees, pending } = useFetchFees(currency, type);
-  const {
-    renVMFee,
-    renVMFeeAmount,
-    networkFee: nativeNetworkFee,
-  } = getTransactionFees({
+  const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
     amount,
     fees,
     type,
+    decimals,
   });
-  const networkFee = nativeNetworkFee / 10 ** decimals;
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 

@@ -58,6 +58,7 @@
     "react-scripts": "^4.0.3",
     "react-use": "^15.3.4",
     "redux": "^4.1.0",
+    "text-encoding": "^0.7.0",
     "typescript": "^4.0.3",
     "xstate": "^4.17.0"
   },
@@ -79,7 +80,11 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [">0.2%", "not dead", "not op_mini all"],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.13.0",
     "netlify-cli": "^2.71.0",

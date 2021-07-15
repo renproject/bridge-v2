@@ -97,9 +97,10 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         );
 
   const { conversionTotal } = getTransactionFees({
-    amount: amount * Math.pow(10, decimals),
+    amount,
     fees,
     type: TxType.BURN,
+    decimals,
   });
 
   const chainConfig = getChainConfig(chain);
@@ -109,7 +110,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     USD_SYMBOL
   );
 
-  const conversionFormatted = conversionTotal / Math.pow(10, decimals);
+  const conversionFormatted = conversionTotal;
 
   const destinationAmountUsd = conversionFormatted * destinationCurrencyUsdRate;
   const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);

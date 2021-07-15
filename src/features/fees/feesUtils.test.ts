@@ -13,6 +13,7 @@ test("no fees", () => {
     amount: 1,
     type: TxType.MINT,
     fees: null,
+    decimals: 8,
   });
   const expected = {
     conversionTotal: 1,
@@ -30,10 +31,11 @@ describe("burn", () => {
       amount: 1,
       type,
       fees: mockedFees,
+      decimals: 8,
     });
     const expected = {
       conversionTotal: 0.998,
-      networkFee: 0.001,
+      networkFee: 100000 / 10 ** 8, // native amount
       renVMFee: 0.001,
       renVMFeeAmount: 0.001,
     };
@@ -45,6 +47,7 @@ describe("burn", () => {
       amount: 1000,
       type,
       fees: mockedFees,
+      decimals: 8,
     });
     expect(calculated.renVMFeeAmount).toEqual(1); // 0.001 * amount
     expect(calculated.conversionTotal).toEqual(998.999); /// -1 - 0.001
@@ -55,6 +58,7 @@ describe("burn", () => {
       amount: 1.234,
       type,
       fees: mockedFees,
+      decimals: 8,
     });
     expect(calculated.renVMFeeAmount).toEqual(0.001234);
     expect(calculated.conversionTotal).toEqual(1.231766);
@@ -68,6 +72,7 @@ describe("mint", () => {
       amount: 1,
       type,
       fees: mockedFees,
+      decimals: 8,
     });
     const expected = {
       conversionTotal: 0.997,
@@ -83,6 +88,7 @@ describe("mint", () => {
       amount: 1000,
       type,
       fees: mockedFees,
+      decimals: 8,
     });
     expect(calculated.renVMFeeAmount).toEqual(2); // 0.002 * amount
     expect(calculated.conversionTotal).toEqual(997.999); /// -2 - 0.001

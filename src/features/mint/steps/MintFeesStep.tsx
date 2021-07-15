@@ -108,11 +108,12 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const amountUsd = amount * currencyUsdRate;
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
-    amount: amount * Math.pow(10, decimals),
+    amount,
     fees,
     type: TxType.MINT,
+    decimals,
   });
-  const conversionFormatted = conversionTotal / Math.pow(10, decimals);
+  const conversionFormatted = conversionTotal;
 
   const { GreyIcon } = lockCurrencyConfig;
 
