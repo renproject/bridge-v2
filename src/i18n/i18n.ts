@@ -73,12 +73,15 @@ i18n.use(LanguageDetector).use(initReactI18next); // passes i18n down to react-i
 if (!isDev) {
   i18n.use(HttpApi);
 }
-console.log(defaultBundle);
+console.log("dd", defaultBundle);
 
-const defaultResource = { [DEFAULT_LOCALE]: { translation: defaultBundle } };
+const packResources = (bundleContent: any) => ({
+  [DEFAULT_LOCALE]: { translation: bundleContent },
+});
+const defaultResources = packResources(defaultBundle);
 
 i18n.init({
-  resources: isDev ? defaultResource : undefined,
+  resources: isDev ? defaultResources : undefined,
   lng: DEFAULT_LOCALE, // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
   whitelist: availableLocales, // available languages for browser dector to pick from
   fallbackLng: DEFAULT_LOCALE,
@@ -94,3 +97,14 @@ i18n.init({
 console.log(i18n);
 
 export default i18n;
+
+if (isDev && (module as any).hot) {
+  (module as any).hot.accept("./locales/en.json", (stuff: any) => {
+    const newBundle = require("./locales/en.json");
+    console.log("aaa", stuff, newBundle);
+    i18n.removeResourceBundle(DEFAULT_LOCALE, "translation");
+    i18n.addResourceBundle(DEFAULT_LOCALE, "translation", newBundle);
+    i18n.reloadResources(["en"]).finally();
+    i18n.changeLanguage(DEFAULT_LOCALE).finally();
+  });
+}
