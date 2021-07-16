@@ -31,6 +31,7 @@ import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
   HomeIcon,
+  LanguageIcon,
   QrCodeIcon,
   TxHistoryIcon,
 } from "../icons/RenIcons";
@@ -267,7 +268,7 @@ const useMiddleEllipsisCopyStyles = makeStyles({
     textOverflow: "ellipsis",
     paddingLeft: 15,
     paddingRight: 15,
-  }
+  },
 });
 
 type MiddleEllipsisCopyProps = {
@@ -416,6 +417,17 @@ export const HomeMenuIconButton: FunctionComponent<IconButtonProps> = (
   return (
     <IconButton classes={classes} {...props}>
       <HomeIcon className={icon} />
+    </IconButton>
+  );
+};
+
+export const LanguageMenuIconButton: FunctionComponent<IconButtonProps> = (
+  props
+) => {
+  const { icon, ...classes } = useMenuIconButtonStyles();
+  return (
+    <IconButton classes={classes} {...props}>
+      <LanguageIcon className={icon} />
     </IconButton>
   );
 };

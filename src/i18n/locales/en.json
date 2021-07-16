@@ -1,8 +1,12 @@
 {
   "header.intro": "Hellou folks",
   "menu.viewTransactions": "View transactions",
-  "wallet.connectWallet": "Connect a Wallet",
+  "wallet.connect-wallet": "Connect a Wallet",
   "wallet.connecting": "Connecting...",
   "wallet.connected": "Connected",
-  "wallet.wrongNetwork": "Wrong Network!"
+  "wallet.wrongNetwork": "Wrong Network!",
+  "history.header": "Viewing mint history for",
+  "history.header-separator": "to",
+  "history.please-connect-wallet": "Please connect {{chain, en-handle-an}} {{chain}} compatible wallet to view transactions",
+  "history.connect-wallet": "Connect Wallet"
 }

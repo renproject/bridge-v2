@@ -15,6 +15,11 @@ export const availableLocales = Object.keys(bundles);
 export const nativeLanguageNames: Record<string, string> = {
   en: "English",
   de: "Deutsh",
+  fe: "Française",
+  pl: "Polski",
+  pt: "Portuguese",
+  ru: "русский",
+  cn: "中国人",
 };
 
 export default bundles as Record<string, any>;

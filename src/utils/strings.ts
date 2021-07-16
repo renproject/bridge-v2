@@ -10,6 +10,8 @@ export const trimAddress = (address?: string, chars = 4) => {
   return `${start}...${end}`;
 };
 
-const vowels = "eaiou".split("");
+const vowels = "eaiouh".split("");
 export const isFirstVowel = (str: string) =>
-  Boolean(str) && str.length > 0 && vowels.includes(str.charAt(0).toLowerCase());
+  Boolean(str) &&
+  str.length > 0 &&
+  vowels.includes(str.charAt(0).toLowerCase());

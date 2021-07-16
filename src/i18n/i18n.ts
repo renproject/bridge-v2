@@ -2,6 +2,7 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpApi from "i18next-http-backend";
 import { initReactI18next } from "react-i18next";
+import { getVariationOfAOrAn } from "./i18nUtils";
 import bundles, { availableLocales } from "./localeBundles";
 import defaultBundle from "./locales/en.json";
 
@@ -90,6 +91,13 @@ i18n.init({
   // if you're using a language detector, do not define the lng option
   interpolation: {
     escapeValue: false, // react already safes from xss
+    format: function (value, format, lng) {
+      if (format === "en-handle-an")
+        return !lng || lng === "en" ? getVariationOfAOrAn(value, false) : "";
+      if (format === "en-handle-an-capitalized")
+        return !lng || lng === "en" ? getVariationOfAOrAn(value, true) : "";
+      return value;
+    },
   },
   backend: backendOptions as any,
 });

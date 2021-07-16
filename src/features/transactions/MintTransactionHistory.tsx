@@ -17,6 +17,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
@@ -102,6 +103,7 @@ import {
 } from "./transactionsUtils";
 
 export const MintTransactionHistory: FunctionComponent = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { chain } = useSelector($wallet);
   const { walletConnected, account } = useSelectedChainWallet();
@@ -156,14 +158,14 @@ export const MintTransactionHistory: FunctionComponent = () => {
       onEscapeKeyDown={handleTxHistoryClose}
       onBackdropClick={handleTxHistoryClose}
     >
-      <TransactionsHeader title="Viewing mint history for">
+      <TransactionsHeader title={t("history.header")}>
         <AssetDropdown
           condensed
           available={supportedLockCurrencies}
           value={currency}
           onChange={handleCurrencyChange}
         />
-        <Box mx={2}>to</Box>
+        <Box mx={2}>{t("history.header-separator")}</Box>
         <AssetDropdown
           mode="chain"
           condensed
@@ -178,8 +180,9 @@ export const MintTransactionHistory: FunctionComponent = () => {
             <>
               <MediumWrapper>
                 <Typography variant="body1" align="center">
-                  Please connect {isFirstVowel(chainConfig.full) ? "an" : "a"}{" "}
-                  {chainConfig.full} compatible wallet to view transactions
+                  {t("history.please-connect-wallet", {
+                    chain: chainConfig.full,
+                  })}
                 </Typography>
               </MediumWrapper>
               <BigWrapper>
@@ -190,7 +193,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
                 </MediumWrapper>
                 <ActionButtonWrapper>
                   <ActionButton onClick={handleWalletPickerOpen}>
-                    Connect Wallet
+                    {t("history.connect-wallet")}
                   </ActionButton>
                 </ActionButtonWrapper>
               </BigWrapper>

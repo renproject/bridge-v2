@@ -74,8 +74,17 @@ import CompletedIcon from "@material-ui/icons/Done";
 import DeleteIcon from "@material-ui/icons/Delete";
 import HomeIcon from "@material-ui/icons/Home";
 import WarningIcon from "@material-ui/icons/Warning";
+import LanguageIcon from "@material-ui/icons/Language";
 
-export { CompletedIcon, BlockIcon, AddIcon, DeleteIcon, WarningIcon, HomeIcon };
+export {
+  CompletedIcon,
+  BlockIcon,
+  AddIcon,
+  DeleteIcon,
+  WarningIcon,
+  HomeIcon,
+  LanguageIcon,
+};
 
 export type CustomSvgIconComponent =
   | FunctionComponent<SvgIconProps>

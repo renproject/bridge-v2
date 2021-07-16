@@ -298,13 +298,13 @@ const getWalletConnectionLabel = (
 ) => {
   switch (status) {
     case "disconnected":
-      return t("wallet.connectWallet");
+      return t("wallet.connect-wallet");
     case "connecting":
       return t("wallet.connecting");
     case "connected":
       return t("wallet.connected");
     case "wrong_network":
-      return t("wallet.wrongNetwork");
+      return t("wallet.wrong-network");
   }
 };
 
