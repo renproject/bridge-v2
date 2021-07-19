@@ -270,7 +270,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       transformOrigin={{ vertical: "top", horizontal: "left" }}
     >
       <MenuItem onClick={handleDisconnectWallet}>
-        <Typography color="error">Disconnect wallet</Typography>
+        <Typography color="error">{t("wallet.disconnect")}</Typography>
       </MenuItem>
     </Menu>
   );

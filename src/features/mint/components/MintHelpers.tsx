@@ -7,12 +7,6 @@ import {
 } from "../../../utils/assetConfigs";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 
-export const mintTooltips = {
-  sending: "The amount and asset you’re sending before fees are applied.",
-  to: "The blockchain you’re sending the asset to.",
-  recipientAddress: "The wallet that will receive the minted assets.",
-};
-
 export const getMintDynamicTooltips = (
   chainConfig: BridgeChainConfig,
   chainNativeCurrencyConfig: BridgeCurrencyConfig
@@ -39,12 +33,12 @@ export const GatewayAddressValidityMessage: FunctionComponent<GatewayAddressVali
   const { t } = useTranslation();
   return (
     <span>
-      {t("mint.address-validity-message-1")}
+      {t("mint.address-validity-message-1")}{" "}
       <HMSCountdown milliseconds={milliseconds} />.{" "}
       {t("mint.address-validity-message-2")}.
       <br />
       <br />
-      {t("mint.address-validity-message-3")}.
+      {t("mint.address-validity-message-3", { network: destNetwork })}.
     </span>
   );
 };
@@ -55,7 +49,8 @@ export const GatewayTransactionValidityMessage: FunctionComponent<CountdownProps
   const { t } = useTranslation();
   return (
     <span>
-      {t("mint.gateway-validity")} <HMSCountdown milliseconds={milliseconds} />
+      {t("mint.gateway-validity-message")}{" "}
+      <HMSCountdown milliseconds={milliseconds} />
     </span>
   );
 };

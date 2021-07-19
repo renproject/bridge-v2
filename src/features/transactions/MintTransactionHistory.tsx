@@ -192,7 +192,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
                 </MediumWrapper>
                 <ActionButtonWrapper>
                   <ActionButton onClick={handleWalletPickerOpen}>
-                    {t("history.connect-wallet")}
+                    {t("wallet.connect")}
                   </ActionButton>
                 </ActionButtonWrapper>
               </BigWrapper>

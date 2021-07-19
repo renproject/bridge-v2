@@ -188,19 +188,19 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <BackArrowIcon />
           </IconButton>
         </PaperNav>
-        <PaperTitle>Fees & Confirm</PaperTitle>
+        <PaperTitle>{t("mint.fees-title")}</PaperTitle>
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
         <Grid container alignItems="flex-end">
           <Grid item xs={7}>
             <Typography variant="body1" gutterBottom>
-              Fee calculator
+              {t("fees.calculator-label")}
             </Typography>
           </Grid>
           <Grid item xs={5}>
             <TextField
-              label="Enter an amount"
+              label={t("fees.calculator-amount-label")}
               variant="filled"
               color="primary"
               value={amountValue || ""}
@@ -210,7 +210,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         </Grid>
         <SmallSpacedDivider />
         <Typography variant="body1" gutterBottom>
-          Details
+          {t("mint.details-label")}
         </Typography>
         <LabelWithValue
           label={t("mint.sending-label")}
@@ -249,7 +249,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
-          {t("mint.fees")}
+          {t("fees.label")}
         </Typography>
         <TransactionFees
           chain={chain}
@@ -266,7 +266,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <CenteredProgress />
           ) : (
             <AssetInfo
-              label={t("mint.receiving")}
+              label={t("mint.receiving-label")}
               value={
                 <NumberFormatText
                   value={conversionTotal}
@@ -309,8 +309,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                       title={
                         <>
                           {t("mint.fees-ack-tooltip", {
-                            chain: destinationChainConfig,
-                            currency: destinationChainNativeCurrencyConfig,
+                            chain: destinationChainConfig.full,
+                            currency:
+                              destinationChainNativeCurrencyConfig.short,
                           })}
                         </>
                       }

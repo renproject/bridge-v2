@@ -76,12 +76,15 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     sourceCurrencyConfig.sourceChain
   );
 
-  const tooltips = getFeeTooltips({
-    mintFee: fees.mint / 10000,
-    releaseFee: fees.burn / 10000,
-    sourceCurrency,
-    chain,
-  });
+  const tooltips = getFeeTooltips(
+    {
+      mintFee: fees.mint / 10000,
+      releaseFee: fees.burn / 10000,
+      sourceCurrency,
+      chain,
+    },
+    t
+  );
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18); // gas price to real gas price adjustment
   const targetChainFeeNative = fromGwei(feeInGwei);
@@ -101,7 +104,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     <>
       <Debug it={{ currency, fees }} />
       <LabelWithValue
-        label="RenVM Fee"
+        label={t("fees.ren-fee-label")}
         labelTooltip={tooltips.renVmFee}
         value={
           hasAmount ? (
@@ -130,7 +133,9 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue
-        label={`${sourceCurrencyChainConfig.full} Miner Fee`}
+        label={t("fees.chain-miner-fee-label", {
+          chain: sourceCurrencyChainConfig.full,
+        })}
         labelTooltip={tooltips.sourceChainMinerFee}
         value={
           <NumberFormatText

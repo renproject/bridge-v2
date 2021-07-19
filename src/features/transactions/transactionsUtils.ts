@@ -1,5 +1,6 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnSession, GatewaySession } from "@renproject/ren-tx";
+import { TFunction } from "i18next";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import { chainsClassMap } from "../../services/rentx";
@@ -214,12 +215,10 @@ type GetFeeTooltipsArgs = {
   chain: BridgeChain;
 };
 
-export const getFeeTooltips = ({
-  mintFee,
-  releaseFee,
-  sourceCurrency,
-  chain,
-}: GetFeeTooltipsArgs) => {
+export const getFeeTooltips = (
+  { mintFee, releaseFee, sourceCurrency, chain }: GetFeeTooltipsArgs,
+  t: TFunction
+) => {
   const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
   const sourceCurrencyChainConfig = getChainConfig(
     sourceCurrencyConfig.sourceChain
@@ -229,13 +228,19 @@ export const getFeeTooltips = ({
     renCurrencyChainConfig.nativeCurrency
   );
   return {
-    renVmFee: `RenVM takes a ${toPercent(
-      mintFee
-    )}% fee per mint transaction and ${toPercent(
-      releaseFee
-    )}% per burn transaction. This is shared evenly between all active nodes in the decentralized network.`,
-    sourceChainMinerFee: `The fee required by ${sourceCurrencyChainConfig.full} miners, to move ${sourceCurrencyConfig.short}. This does not go RenVM or the Ren team.`,
-    renCurrencyChainFee: `The estimated cost to perform a transaction on the ${renCurrencyChainConfig.full} network. This fee goes to ${renCurrencyChainConfig.short} miners and is paid in ${renNativeChainCurrencyConfig.short}.`,
+    renVmFee: t("fees.ren-fee-tooltip", {
+      mintFee: toPercent(mintFee),
+      releaseFee: toPercent(releaseFee),
+    }),
+    sourceChainMinerFee: t("fees.chain-miner-fee-tooltip", {
+      chain: sourceCurrencyChainConfig.full,
+      currency: sourceCurrencyConfig.short,
+    }),
+    renCurrencyChainFee: t("fees.ren-currency-chain-fee-tooltip", {
+      chainFull: renCurrencyChainConfig.full,
+      chainShort: renCurrencyChainConfig.short,
+      chainNative: renNativeChainCurrencyConfig.short,
+    }),
   };
 };
 
