@@ -1,5 +1,6 @@
 import { Divider } from "@material-ui/core";
 import React, { FunctionComponent, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -29,6 +30,7 @@ import { $mint, setMintCurrency } from "../mintSlice";
 export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const { currency } = useSelector($mint);
@@ -67,7 +69,9 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         <MintIntro />
         <AssetDropdownWrapper>
           <AssetDropdown
-            label="Send"
+            label={t("mint.send-label")}
+            assetLabel={t("common.asset")}
+            blockchainLabel={t("common.blockchain")}
             available={supportedLockCurrencies}
             value={currency}
             onChange={handleCurrencyChange}
@@ -75,7 +79,9 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         </AssetDropdownWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
-            label="Destination"
+            label={t("mint.destination-label")}
+            assetLabel={t("common.asset")}
+            blockchainLabel={t("common.blockchain")}
             mode="chain"
             available={supportedMintDestinationChains}
             value={chain}
@@ -87,7 +93,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
       <PaperContent darker topPadding bottomPadding>
         <ActionButtonWrapper>
           <ActionButton onClick={handleNextStep}>
-            {walletConnected ? "Next" : "Connect Wallet"}
+            {walletConnected ? t("common.next") : t("wallet.connect")}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

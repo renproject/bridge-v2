@@ -1,5 +1,6 @@
 import { makeStyles, styled, Typography } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import {
   BridgeChainConfig,
   BridgeCurrencyConfig,
@@ -35,14 +36,15 @@ export const GatewayAddressValidityMessage: FunctionComponent<GatewayAddressVali
   milliseconds,
   destNetwork,
 }) => {
+  const { t } = useTranslation();
   return (
     <span>
-      This Gateway Address expires in{" "}
-      <HMSCountdown milliseconds={milliseconds} />. Do not send to it after it
-      has expired. <br />
+      {t("mint.address-validity-message-1")}
+      <HMSCountdown milliseconds={milliseconds} />.{" "}
+      {t("mint.address-validity-message-2")}.
       <br />
-      Once you have deposited funds, you have a further 24 hours to submit the
-      mint transaction to {destNetwork}.
+      <br />
+      {t("mint.address-validity-message-3")}.
     </span>
   );
 };
@@ -50,21 +52,17 @@ export const GatewayAddressValidityMessage: FunctionComponent<GatewayAddressVali
 export const GatewayTransactionValidityMessage: FunctionComponent<CountdownProps> = ({
   milliseconds,
 }) => {
+  const { t } = useTranslation();
   return (
     <span>
-      Complete this transaction within{" "}
-      <HMSCountdown milliseconds={milliseconds} />
+      {t("mint.gateway-validity")} <HMSCountdown milliseconds={milliseconds} />
     </span>
   );
 };
 
 export const MultipleDepositsMessage: FunctionComponent = () => {
-  return (
-    <span>
-      RenBridge has detected multiple deposits for this gateway address. View
-      its progress using the navigation bar at the top of the screen.
-    </span>
-  );
+  const { t } = useTranslation();
+  return <span>{t("mint.multiple-deposits")}</span>;
 };
 
 export const useMintIntroStyles = makeStyles({
@@ -80,10 +78,11 @@ export const useMintIntroStyles = makeStyles({
 
 export const MintIntro: FunctionComponent = () => {
   const styles = useMintIntroStyles();
+  const { t } = useTranslation();
   return (
     <div className={styles.root}>
       <Typography variant="body1" align="center">
-        Select an asset and destination chain, to&nbsp;begin or resume a mint.
+        {t("mint.initial-intro")}
       </Typography>
     </div>
   );

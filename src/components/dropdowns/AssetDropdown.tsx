@@ -99,6 +99,8 @@ type AssetDropdownProps = SelectProps & {
   balances?: Array<AssetBalance>;
   condensed?: boolean;
   label?: string;
+  assetLabel?: string;
+  blockchainLabel?: string;
 };
 
 const getAssetData = (
@@ -125,6 +127,8 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   condensed = false,
   label,
   balances,
+  assetLabel = "Asset",
+  blockchainLabel = "Blockchain",
   ...rest
 }) => {
   const styles = useAssetDropdownStyles();
@@ -184,7 +188,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
                 variant="overline"
                 className={styles.listSubheaderLabel}
               >
-                {mode === "chain" ? "Blockchain" : "Asset"}
+                {mode === "chain" ? blockchainLabel : assetLabel}
               </Typography>
             </Box>
             {balances && balances.length > 0 && (

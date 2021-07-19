@@ -1,7 +1,7 @@
 import { Button, ButtonProps, MenuItem, Select } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import classNames from "classnames";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LanguageMenuIconButton } from "../../../components/buttons/Buttons";
 import { CheckedIcon } from "../../../components/icons/RenIcons";
@@ -102,15 +102,21 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
   const { t, i18n } = useTranslation();
   const { language } = i18n;
 
-  useEffect(() => {
-    console.log("t", t);
-  }, [t]);
+  const handleLanguageChange = useCallback(
+    (event) => {
+      i18n.changeLanguage(event.currentTarget.value);
+      handleClose();
+    },
+    [i18n]
+  );
+
   if (mode === "dialog") {
     return (
       <>
         <LanguageMenuIconButton
           onClick={handleOpen}
           className={buttonClassName}
+          title={language}
         />
         <BridgeModal
           open={open}
@@ -123,7 +129,7 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
               <LanguageButtonWrapper key={languageKey}>
                 <LanguageButton
                   key={languageKey}
-                  onClick={() => i18n.changeLanguage(languageKey)}
+                  onClick={handleLanguageChange}
                   value={languageKey}
                   selected={language === languageKey}
                 >

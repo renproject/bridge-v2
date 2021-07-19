@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
@@ -25,7 +26,6 @@ import {
   findGasPrice,
   USD_SYMBOL,
 } from "../../marketData/marketDataUtils";
-import { mintTooltips } from "../../mint/components/MintHelpers";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { getFeeTooltips, TxType } from "../transactionsUtils";
 
@@ -44,6 +44,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   chain,
   address,
 }) => {
+  const { t } = useTranslation();
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
   const exchangeRates = useSelector($exchangeRates);
@@ -167,8 +168,8 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
       />
       {address && (
         <LabelWithValue
-          label="Recipient Address"
-          labelTooltip={mintTooltips.recipientAddress}
+          label={t("mint.recipient-address-label")}
+          labelTooltip={t("mint.recipient-address-tooltip")}
           value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
         />
       )}

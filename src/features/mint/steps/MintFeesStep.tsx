@@ -16,6 +16,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
@@ -64,10 +65,6 @@ import {
 import { useShakePaper } from "../../ui/uiHooks";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
-import {
-  getMintDynamicTooltips,
-  mintTooltips,
-} from "../components/MintHelpers";
 import { $mint } from "../mintSlice";
 import {
   createMintTransaction,
@@ -77,6 +74,7 @@ import {
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
   const { walletConnected, account } = useSelectedChainWallet();
@@ -110,10 +108,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const destinationChainConfig = getChainConfig(chain);
   const destinationChainNativeCurrencyConfig = getCurrencyConfig(
     destinationChainConfig.nativeCurrency
-  );
-  const mintDynamicTooltips = getMintDynamicTooltips(
-    destinationChainConfig,
-    destinationChainNativeCurrencyConfig
   );
   const mintedCurrency = toMintedCurrency(currency);
 
@@ -219,8 +213,8 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           Details
         </Typography>
         <LabelWithValue
-          label="Sending"
-          labelTooltip={mintTooltips.sending}
+          label={t("mint.sending-label")}
+          labelTooltip={t("mint.sending-tooltip")}
           value={
             hasAmount ? (
               <NumberFormatText value={amount} spacedSuffix={currency} />
@@ -242,20 +236,20 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           }
         />
         <LabelWithValue
-          label="To"
-          labelTooltip={mintTooltips.to}
+          label={t("mint.to-label")}
+          labelTooltip={t("mint.to-tooltip")}
           value={destinationChainConfig.full}
         />
         <LabelWithValue
-          label="Recipient Address"
-          labelTooltip={mintTooltips.recipientAddress}
+          label={t("mint.recipient-address-label")}
+          labelTooltip={t("mint.recipient-address-tooltip")}
           value={
             <MiddleEllipsisText hoverable>{tx.userAddress}</MiddleEllipsisText>
           }
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
-          Fees
+          {t("mint.fees")}
         </Typography>
         <TransactionFees
           chain={chain}
@@ -272,7 +266,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <CenteredProgress />
           ) : (
             <AssetInfo
-              label="Receiving"
+              label={t("mint.receiving")}
               value={
                 <NumberFormatText
                   value={conversionTotal}
@@ -308,9 +302,19 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                     variant="caption"
                     color={showAckError ? "inherit" : "textPrimary"}
                   >
-                    I acknowledge the fees and that this transaction requires{" "}
-                    {destinationChainNativeCurrencyConfig.short}{" "}
-                    <TooltipWithIcon title={mintDynamicTooltips.acknowledge} />
+                    {t("mint.fees-ack-message", {
+                      currency: destinationChainNativeCurrencyConfig.short,
+                    })}
+                    <TooltipWithIcon
+                      title={
+                        <>
+                          {t("mint.fees-ack-tooltip", {
+                            chain: destinationChainConfig,
+                            currency: destinationChainNativeCurrencyConfig,
+                          })}
+                        </>
+                      }
+                    />
                   </Typography>
                 </FormLabel>
               }
@@ -325,8 +329,10 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             }
           >
             {!walletConnected
-              ? "Connect Wallet"
-              : `View ${lockCurrencyConfig.short} Gateway Address`}
+              ? t("wallet.connect")
+              : t("mint.view-gateway-button-label", {
+                  currency: lockCurrencyConfig.short,
+                })}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
