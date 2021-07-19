@@ -33,12 +33,21 @@ const getOptions = (mode: AssetDropdownMode) => {
 const getOptionBySymbol = (symbol: string, mode: AssetDropdownMode) =>
   getOptions(mode).find((option) => option.symbol === symbol);
 
-const createAvailabilityFilter = (available: Array<string> | undefined) => (
-  option: BridgeChainConfig | BridgeCurrencyConfig
-) => {
+const createAvailabilityFilter = (
+  available: Array<string> | undefined,
+  chain?: BridgeChain
+) => (option: BridgeChainConfig | BridgeCurrencyConfig) => {
+  console.log(available, option, chain);
   if (!available) {
     return true;
   }
+  if (
+    chain === BridgeChain.SOLC &&
+    (option.symbol === "RENLUNA" || option.symbol === "RENFIL")
+  ) {
+    return false;
+  }
+
   return available.includes(option.symbol);
 };
 
@@ -98,6 +107,7 @@ type AssetDropdownProps = SelectProps & {
   available?: Array<BridgeCurrency | BridgeChain>;
   balances?: Array<AssetBalance>;
   condensed?: boolean;
+  chain?: BridgeChain;
   label?: string;
 };
 
@@ -130,8 +140,8 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   const styles = useAssetDropdownStyles();
   const condensedSelectClasses = useCondensedSelectStyles();
   const availabilityFilter = useMemo(
-    () => createAvailabilityFilter(available),
-    [available]
+    () => createAvailabilityFilter(available, rest.chain),
+    [available, rest.chain]
   );
   const valueRenderer = useMemo(
     () => (value: any) => {

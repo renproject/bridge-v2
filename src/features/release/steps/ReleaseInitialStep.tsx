@@ -28,6 +28,8 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { releaseChainClassMap } from "../../../services/rentx";
 import {
+  BridgeChain,
+  BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
   supportedBurnChains,
@@ -154,6 +156,10 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   } else {
     enabled = basicCondition;
   }
+  enabled = !(
+    chain == BridgeChain.SOLC &&
+    [BridgeCurrency.RENLUNA, BridgeCurrency.RENFIL].includes(currency)
+  );
   const showMinimalAmountError =
     walletConnected && hasDefinedAmount && !hasMinimalAmount && !pending;
 
@@ -212,6 +218,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <AssetDropdownWrapper>
           <AssetDropdown
             label="Asset"
+            chain={chain}
             available={supportedReleaseCurrencies}
             balances={balances}
             value={currency}
