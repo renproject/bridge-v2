@@ -371,7 +371,7 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
     actionText="Return to submission screen"
     {...props}
   >
-    <span>Return to previous screen to resubmit</span>
+    <span>Retry submission?</span>
   </ErrorDialog>
 );
 

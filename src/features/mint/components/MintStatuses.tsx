@@ -264,6 +264,7 @@ type MintDepositAcceptedStatusProps = {
   tx: ErroringGatewaySession<any>;
   onSubmit?: () => void;
   onReload?: () => void;
+  onRetry?: () => void;
   submitting: boolean;
   submittingError: boolean;
   depositHash: string;
@@ -273,6 +274,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   tx,
   onSubmit = () => {},
   onReload,
+  onRetry,
   submitting,
   submittingError,
   depositHash,
@@ -366,7 +368,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       </ActionButtonWrapper>
       <SubmitErrorDialog
         open={submittingError}
-        onAction={onReload}
+        onAction={onRetry || onReload}
         error={tx.error}
       />
     </>
