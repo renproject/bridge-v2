@@ -37,6 +37,9 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
       alignItems: "center",
     },
   },
+  desktopLanguage: {
+    marginRight: 20,
+  },
   desktopTxHistory: {
     marginRight: 20,
   },

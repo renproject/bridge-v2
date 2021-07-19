@@ -1,21 +1,42 @@
-import {
-  Button,
-  ButtonProps,
-  DialogContent,
-  MenuItem,
-  Select,
-} from "@material-ui/core";
+import { Button, ButtonProps, MenuItem, Select } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
-import { FunctionComponent, useState } from "react";
+import classNames from "classnames";
+import { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LanguageMenuIconButton } from "../../../components/buttons/Buttons";
+import { CheckedIcon } from "../../../components/icons/RenIcons";
 import { SpacedPaperContent } from "../../../components/layout/Paper";
 import { BridgeModal } from "../../../components/modals/BridgeModal";
 import { nativeLanguageNames } from "../../../i18n/localeBundles";
 
-const useLanguageSelectorStyles = makeStyles(() => ({
-  select: {
-    padding: `0 12px`,
+const useLanguageButtonStyles = makeStyles((theme) => ({
+  root: {
+    fontSize: 16,
+    padding: `0px 16px`,
+    height: 48,
+    boxSizing: "border-box",
+    border: `1px solid ${theme.palette.grey["400"]}`,
+    boxShadow: `0px 1px 2px rgba(0, 27, 58, 0.1)`,
+    transitionProperty: "background-color, box-shadow",
+    "&:hover": {
+      border: `2px solid ${theme.palette.primary.main}`,
+      background: "transparent",
+      padding: `0px 15px`,
+    },
+  },
+  label: {
+    justifyContent: "space-between",
+  },
+  selected: {
+    color: theme.palette.common.white,
+    backgroundColor: theme.palette.primary.main,
+    border: `1px solid ${theme.palette.primary.main}`,
+    pointerEvents: "none",
+    cursor: "not-allowed",
+    "&:hover": {
+      border: `1px solid ${theme.palette.primary.main}`,
+      backgroundColor: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -24,22 +45,47 @@ export const LanguageButtonWrapper = styled("div")({
   minWidth: 320,
 });
 
-export const LanguageButton: FunctionComponent<ButtonProps> = ({
+type LanguageButtonProps = ButtonProps & {
+  selected?: boolean;
+};
+
+export const LanguageButton: FunctionComponent<LanguageButtonProps> = ({
+  selected = false,
   children,
   ...props
 }) => {
+  const { selected: selectedClassName, ...classes } = useLanguageButtonStyles();
+  const rootClassName = classNames({
+    [selectedClassName]: selected,
+  });
   return (
-    <Button variant="outlined" size="large" fullWidth {...props}>
+    <Button
+      classes={classes}
+      className={rootClassName}
+      // color={selected ? "primary" : "default"}
+      // variant={selected ? "contained" : "outlined"}
+      fullWidth
+      {...props}
+      endIcon={<CheckedIcon />}
+    >
       {children}
     </Button>
   );
 };
 
+const useLanguageSelectorStyles = makeStyles(() => ({
+  select: {
+    padding: `0 12px`,
+  },
+}));
+
 export type LanguageSelectorProps = {
+  buttonClassName?: string;
   mode?: "select" | "dialog";
 };
 
 export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
+  buttonClassName,
   mode = "select",
 }) => {
   const classes = useLanguageSelectorStyles();
@@ -53,26 +99,33 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
     setOpen(true);
   };
 
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { language } = i18n;
 
+  useEffect(() => {
+    console.log("t", t);
+  }, [t]);
   if (mode === "dialog") {
     return (
       <>
-        <LanguageMenuIconButton onClick={handleOpen} />
+        <LanguageMenuIconButton
+          onClick={handleOpen}
+          className={buttonClassName}
+        />
         <BridgeModal
           open={open}
           maxWidth="xs"
-          title="Choose Language"
+          title={t("languages.choose-language")}
           onClose={handleClose}
         >
-          <SpacedPaperContent topPadding bottomPadding>
+          <SpacedPaperContent topPadding bottomPadding fixedHeight>
             {Object.keys(nativeLanguageNames).map((languageKey) => (
               <LanguageButtonWrapper key={languageKey}>
                 <LanguageButton
                   key={languageKey}
                   onClick={() => i18n.changeLanguage(languageKey)}
                   value={languageKey}
+                  selected={language === languageKey}
                 >
                   {nativeLanguageNames[languageKey]}
                 </LanguageButton>

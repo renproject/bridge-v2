@@ -75,6 +75,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import HomeIcon from "@material-ui/icons/Home";
 import WarningIcon from "@material-ui/icons/Warning";
 import LanguageIcon from "@material-ui/icons/Language";
+import CheckedIcon from "@material-ui/icons/Check";
 
 export {
   CompletedIcon,
@@ -84,6 +85,7 @@ export {
   WarningIcon,
   HomeIcon,
   LanguageIcon,
+  CheckedIcon,
 };
 
 export type CustomSvgIconComponent =

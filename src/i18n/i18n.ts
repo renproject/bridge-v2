@@ -68,7 +68,7 @@ const langDetectorOptions = {
   checkWhitelist: true,
 };
 
-const isDev = process.env.NODE_ENV === "development";
+const isDev = false; // process.env.NODE_ENV === "development";
 
 i18n.use(LanguageDetector).use(initReactI18next); // passes i18n down to react-i18next
 if (!isDev) {
@@ -85,7 +85,7 @@ i18n.init({
   resources: isDev ? defaultResources : undefined,
   lng: DEFAULT_LOCALE, // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
   whitelist: availableLocales, // available languages for browser dector to pick from
-  fallbackLng: DEFAULT_LOCALE,
+  fallbackLng: false,
   detection: langDetectorOptions,
   // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
   // if you're using a language detector, do not define the lng option

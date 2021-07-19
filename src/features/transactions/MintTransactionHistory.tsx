@@ -58,7 +58,6 @@ import {
   toMintedCurrency,
 } from "../../utils/assetConfigs";
 import { getFormattedDateTime, getFormattedHMS } from "../../utils/dates";
-import { isFirstVowel } from "../../utils/strings";
 import {
   CircledProgressWithContent,
   getDepositStatusIcon,

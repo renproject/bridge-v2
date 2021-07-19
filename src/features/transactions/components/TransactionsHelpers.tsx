@@ -143,7 +143,8 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
 
   const handleCancel = useCallback(() => {
     history.push(paths.MINT);
-  }, []);
+  }, [history]);
+
   const txTimeMinutes = lockChainBlockTime * lockChainConfirmations;
   return (
     <NestedDrawer title="Warning" open onClose={handleCancel} fixed={false}>

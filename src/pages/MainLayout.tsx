@@ -166,7 +166,10 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
-        <LanguageSelector mode="dialog" />
+        <LanguageSelector
+          mode="dialog"
+          buttonClassName={styles.desktopLanguage}
+        />
         <TransactionHistoryMenuIconButton
           opened={txHistoryOpened}
           className={styles.desktopTxHistory}

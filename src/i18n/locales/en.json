@@ -4,9 +4,10 @@
   "wallet.connect-wallet": "Connect a Wallet",
   "wallet.connecting": "Connecting...",
   "wallet.connected": "Connected",
-  "wallet.wrongNetwork": "Wrong Network!",
+  "wallet.wrong-network": "Wrong Network!",
   "history.header": "Viewing mint history for",
   "history.header-separator": "to",
   "history.please-connect-wallet": "Please connect {{chain, en-handle-an}} {{chain}} compatible wallet to view transactions",
-  "history.connect-wallet": "Connect Wallet"
+  "history.connect-wallet": "Connect Wallet",
+  "languages.choose-language": "Choose Language"
 }
