@@ -26,7 +26,9 @@
   "fees.ren-fee-tooltip": "RenVM takes a {{mintFee}}% fee per mint transaction and {{releaseFee}}% per burn transaction. This is shared evenly between all active nodes in the decentralized network.",
   "fees.chain-miner-fee-label": "{{chain}} Miner Fee",
   "fees.chain-miner-fee-tooltip": "The fee required by {{chain}} miners, to move {{currency}}. This does not go to RenVM or the Ren team.",
+  "fees.ren-currency-chain-fee-label": "Esti. {{chain}} Fee",
   "fees.ren-currency-chain-fee-tooltip": "The estimated cost to perform a transaction on the {{chainFull}} network. This fee goes to {{chainShort}} miners and is paid in {{chainNative}}.",
+
   "release.tab-name": "Release",
   "release.tab-current-name": "Releasing",
   "common.next": "Next",

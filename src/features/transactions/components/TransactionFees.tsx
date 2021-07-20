@@ -153,7 +153,9 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue
-        label={`Esti. ${targetChainConfig.short} Fee`}
+        label={t("fees.ren-currency-chain-fee-label", {
+          chain: targetChainConfig.short,
+        })}
         labelTooltip={tooltips.renCurrencyChainFee}
         value={
           <NumberFormatText
