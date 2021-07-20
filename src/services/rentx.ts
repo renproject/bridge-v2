@@ -1,6 +1,6 @@
 // A mapping of how to construct parameters for host chains,
 // based on the destination network
-import { Filecoin } from "@renproject/chains";
+import { Filecoin } from "@renproject/chains-filecoin";
 import {
   Bitcoin,
   BitcoinCash,
