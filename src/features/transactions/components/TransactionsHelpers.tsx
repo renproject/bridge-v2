@@ -21,6 +21,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useInterval } from "react-use";
 import {
@@ -75,6 +76,7 @@ type BookmarkPageWarningProps = {
   onClosed?: () => void;
 };
 
+// currently unused
 export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
   onClosed,
 }) => {
@@ -128,6 +130,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
   mintCurrencyLabel,
   mintChainLabel,
 }) => {
+  const { t } = useTranslation();
   const [checked, setChecked] = useState(true);
   const history = useHistory();
 
@@ -147,35 +150,47 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
 
   const txTimeMinutes = lockChainBlockTime * lockChainConfirmations;
   return (
-    <NestedDrawer title="Warning" open onClose={handleCancel} fixed={false}>
+    <NestedDrawer
+      title={t("common.warning")}
+      open
+      onClose={handleCancel}
+      fixed={false}
+    >
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding>
             <SpacedTypography variant="h5" align="center">
-              This deposit address is only open for{" "}
-              <HCountdown milliseconds={timeRemained} />, but you can send to it
-              multiple times within this session
+              {t("mint.gateway-session-popup-message-1")}{" "}
+              <HCountdown milliseconds={timeRemained} />
+              {t("mint.gateway-session-popup-message-2")}
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
               align="center"
               color="textSecondary"
             >
-              Each transaction to this deposit address takes about{" "}
-              <Tooltip title="Block confirmation time depends on factors such as blockchain activity and the fee you set for your transaction">
-                <UnderlinedSpan>about {txTimeMinutes} minutes</UnderlinedSpan>
+              {t("mint.gateway-session-popup-tx-time-message-1")}{" "}
+              <Tooltip
+                title={
+                  <span>{t("mint.gateway-session-popup-tx-time-tooltip")}</span>
+                }
+              >
+                <UnderlinedSpan>
+                  {txTimeMinutes} {t("common.minutes")}
+                </UnderlinedSpan>
               </Tooltip>{" "}
-              to complete. For security reasons, you will need to wait for{" "}
-              {lockChainConfirmations} block confirmations before you can mint{" "}
-              {mintCurrencyLabel} on {mintChainLabel}.
+              {t("mint.gateway-session-popup-tx-time-message-2", {
+                confirmations: lockChainConfirmations,
+                currency: mintCurrencyLabel,
+                chain: mintChainLabel,
+              })}
             </SpacedTypography>{" "}
             <SpacedTypography
               variant="body2"
               align="center"
               color="textSecondary"
             >
-              If you cannot complete this transaction within the required time,
-              please return at a later date.
+              {t("mint.gateway-session-popup-tx-completion-message-1")}
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
@@ -183,8 +198,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
               color="textSecondary"
             >
               <strong>
-                If you do not finish your transactions within this
-                period/session/time frame, you risk losing the deposits
+                {t("mint.gateway-session-popup-tx-completion-message-2")}
               </strong>
             </SpacedTypography>
           </PaperContent>
@@ -205,7 +219,9 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
                   label={
                     <FormLabel htmlFor="ack" component={Typography}>
                       <Typography variant="caption" color="textPrimary">
-                        I can complete this transaction within the time
+                        {t(
+                          "mint.gateway-session-popup-tx-completion-ack-label"
+                        )}
                       </Typography>
                     </FormLabel>
                   }
@@ -214,7 +230,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
             </CheckboxWrapper>
             <ActionButtonWrapper>
               <ActionButton onClick={handleClose} disabled={!checked}>
-                Continue
+                {t("common.continue")}
               </ActionButton>
             </ActionButtonWrapper>
           </PaperContent>
@@ -275,6 +291,7 @@ export const HMSCountdown: FunctionComponent<HMSCountdownProps> = ({
 export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
   milliseconds,
 }) => {
+  const { t } = useTranslation();
   const [count, setCount] = useState(milliseconds);
   useInterval(() => {
     setCount((ms) => ms - 1000);
@@ -283,7 +300,7 @@ export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
 
   return (
     <strong>
-      {hours} {hours > 1 ? "hours" : "hour"}
+      {hours} {t("common.hour", { count: hours })}
     </strong>
   );
 };

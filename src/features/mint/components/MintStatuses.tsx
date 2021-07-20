@@ -8,6 +8,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
@@ -73,6 +74,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   tx,
   minimumAmount,
 }) => {
+  const { t } = useTranslation();
   const [showQr, setShowQr] = useState(false);
   const toggleQr = useCallback(() => {
     setShowQr(!showQr);
@@ -108,7 +110,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   } = getLockAndMintBasicParams(tx);
   const { color } = lockCurrencyConfig;
   const { MainIcon } = lockChainConfig;
-  useSetPaperTitle("Gateway address");
+  useSetPaperTitle(t("mint.gateway-address-title"));
 
   return (
     <>
@@ -119,7 +121,13 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
       </ProgressWrapper>
       <MediumWrapper>
         <BigAssetAmount
-          value={<span>Send {lockCurrencyConfig.short} to</span>}
+          value={
+            <span>
+              {t("mint.gateway-send-to-message", {
+                currency: lockCurrencyConfig.short,
+              })}
+            </span>
+          }
         />
         <Typography
           component="p"
@@ -127,7 +135,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
           align="center"
           color="textSecondary"
         >
-          Minimum amount:{" "}
+          {t("mint.gateway-minimum-amount-label")}:{" "}
           <NumberFormatText
             value={minimumAmount}
             spacedSuffix={lockCurrencyConfig.short}
@@ -150,7 +158,10 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
               </Grow>
             </CenteringSpacedBox>
           )}
-          <CopyContentButton content={tx.gatewayAddress} />
+          <CopyContentButton
+            content={tx.gatewayAddress}
+            copiedMessage={t("common.copied")}
+          />
         </>
       )}
       <Box
@@ -163,17 +174,18 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
         <Typography variant="caption">
           {timeRemained > 0 && (
             <span>
-              Do not send after: <HMSCountdown milliseconds={timeRemained} />
+              {t("mint.gateway-do-not-send-after-label")}:{" "}
+              <HMSCountdown milliseconds={timeRemained} />
             </span>
           )}
-          {timeRemained <= 0 && <span>Expired</span>}
+          {timeRemained <= 0 && <span>{t("mint.expired-label")}</span>}
         </Typography>
         <Box mt={2}>
           <QrCodeIconButton onClick={toggleQr} />
         </Box>
         <BigTopWrapper>
           <TransactionDetailsButton
-            label="Recipient Address"
+            label={t("mint.recipient-address-label")}
             isTx={false}
             address={trimAddress(tx.userAddress, 5)}
             link={mintAddressLink}
@@ -194,6 +206,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
   tx,
   depositHash,
 }) => {
+  const { t } = useTranslation();
   const [, setTitle] = usePaperTitle();
   const {
     lockCurrencyConfig,
@@ -210,8 +223,12 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
 
   const confirmed = lockConfirmations === lockTargetConfirmations;
   useEffect(() => {
-    setTitle(confirmed ? "Confirmed" : "Confirming");
-  }, [setTitle, confirmed]);
+    setTitle(
+      confirmed
+        ? t("mint.deposit-confirmed-label")
+        : t("mint.deposit-confirming-label")
+    );
+  }, [setTitle, confirmed, t]);
 
   return (
     <>

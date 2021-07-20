@@ -208,10 +208,12 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
 
 type CopyContentButtonProps = {
   content: string;
+  copiedMessage?: string;
 };
 
 export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
   content,
+  copiedMessage = "Copied!",
 }) => {
   const styles = useCopyContentButtonStyles();
   const iconClasses = useLightIconButtonStyles();
@@ -231,7 +233,7 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
       <div className={styles.content}>
         {copied && (
           <Fade in={copied} timeout={1200}>
-            <span>Copied!</span>
+            <span>{copiedMessage}</span>
           </Fade>
         )}
         <Hide when={copied} className={styles.contentValue}>
