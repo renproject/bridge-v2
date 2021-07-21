@@ -1,6 +1,7 @@
 import { Container, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { RenLogoFullIcon, RenVMLogoIcon } from "../components/icons/RenIcons";
 import { MobileLayout } from "../components/layout/MobileLayout";
@@ -40,53 +41,60 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: 25,
   },
 }));
+
+const components = {
+  orange: <MarkText color="orange" />,
+  blue: <MarkText color="blue" />,
+  grey: <MarkText color="grey" />,
+};
+
 const AboutPage: FunctionComponent<RouteComponentProps> = () => {
-  usePageTitle("About");
+  const { t } = useTranslation();
+  usePageTitle(t("about.title"));
   const styles = useStyles();
+
+  const bridge = "RenBridge";
+  const renvm = "RenVM";
 
   return (
     <MobileLayout>
       <Container maxWidth="sm" className={styles.root}>
         <Typography variant="h2" component="h1" className={styles.heading}>
-          What is RenBridge?
+          {t("about.what-is-header", { bridge })}
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          RenBridge enables the simple wrapping of digital assets on different
-          blockchains. For example, RenBridge allows users to take{" "}
-          <MarkText color="orange">BTC</MarkText> and put it on{" "}
-          <MarkText color="blue">Ethereum</MarkText>, as an ERC-20 called{" "}
-          <MarkText color="grey">renBTC</MarkText>.
+          <Trans
+            i18nKey="about.what-is-description"
+            values={{ bridge }}
+            components={components}
+          />
         </Typography>
         <Typography variant="h2" className={styles.heading}>
-          How does it work?
+          {t("about.work-header")}
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          Using RenVM, a universal translator, it converts digital assets to the
-          format needed by its destination chain. For example, RenVM takes{" "}
-          <MarkText color="orange">BTC</MarkText>, holds it, and then converts
-          it to an <MarkText color="blue">ERC-20</MarkText> with a 1:1 ratio to
-          ensure your <MarkText color="grey">renBTC</MarkText> is always backed
-          by the same amount of <MarkText color="orange">BTC</MarkText>. Find
-          out more{" "}
+          <Trans
+            i18nKey="about.work-description"
+            values={{ renvm }}
+            components={components}
+          />{" "}
           <Link external href={links.WIKI}>
-            here
+            {t("about.work-link-text")}
           </Link>
           .
         </Typography>
         <Typography variant="h2" className={styles.heading}>
-          How safe is it?
+          {t("about.safety-header")}
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          RenVM holds on to your assets when they are on other blockchains.
-          RenVM is new technology, and{" "}
+          {t("about.safety-description-1", { renvm })}{" "}
           <Link external href={links.SECURITY_AUDITS}>
-            security audits
+            {t("about.safety-audits-link-text")}
           </Link>{" "}
-          don't completely eliminate risks. Please don't supply assets you can't
-          afford to lose!
+          {t("about.safety-description-2")}
         </Typography>
         <Typography variant="body1">
-          If you'd rather use the old version of RenBridge,{" "}
+          {t("about.legacy-message", { bridge })},{" "}
           <Link
             external
             href={links.LEGACY_BRIDGE}

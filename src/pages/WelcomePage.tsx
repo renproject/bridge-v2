@@ -133,7 +133,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         },
       }
     );
-  }, [showNotification]);
+  }, [showNotification, t]);
   const handleAgree = useCallback(() => {
     localStorage.setItem(storageKeys.TERMS_AGREED, "1");
     history.replace(paths.HOME);
