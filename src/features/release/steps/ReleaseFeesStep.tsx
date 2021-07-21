@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
@@ -48,9 +49,7 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
-import {
-  useSelectedChainWallet,
-} from "../../wallet/walletHooks";
+import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import {
   $multiwalletChain,
   $wallet,
@@ -66,15 +65,14 @@ import {
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
   const { account, walletConnected } = useSelectedChainWallet();
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const { amount, currency, address } = useSelector($release);
   const network = useSelector($renNetwork);
-  const {
-    chain,
-  } = useSelector($wallet);
+  const { chain } = useSelector($wallet);
   const renChain = useSelector($multiwalletChain);
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
@@ -151,7 +149,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <BackArrowIcon />
           </IconButton>
         </PaperNav>
-        <PaperTitle>Fees & Confirm</PaperTitle>
+        <PaperTitle>{t("release.fees-title")}</PaperTitle>
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
@@ -166,11 +164,11 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           />
         </BigAssetAmountWrapper>
         <Typography variant="body1" gutterBottom>
-          Details
+          label={t("release.details-label")}
         </Typography>
         <LabelWithValue
-          label="Releasing"
-          labelTooltip={releaseTooltips.releasing}
+          label={t("release.releasing-label")}
+          labelTooltip={t("release.releasing-tooltip")}
           value={
             <NumberFormatText
               value={amount}
@@ -187,18 +185,18 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           }
         />
         <LabelWithValue
-          label="From"
-          labelTooltip={releaseTooltips.from}
+          label={t("release.from-label")}
+          labelTooltip={t("release.from-tooltip")}
           value={chainConfig.full}
         />
         <LabelWithValue
-          label="To"
-          labelTooltip={releaseTooltips.to}
+          label={t("release.to-label")}
+          labelTooltip={t("release.to-tooltip")}
           value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
-          Fees
+          {t("fees.label")}
         </Typography>
         <TransactionFees
           chain={chain}
@@ -214,7 +212,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <CenteredProgress />
           ) : (
             <AssetInfo
-              label="Receiving"
+              label={t("release.receiving-label") + ":"}
               value={
                 <NumberFormatText
                   value={conversionTotal}
@@ -236,10 +234,10 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <ActionButtonWrapper>
           <ActionButton onClick={handleConfirm} disabled={releasingInitialized}>
             {!walletConnected
-              ? "Connect Wallet"
+              ? t("wallet.connect")
               : releasingInitialized
-              ? "Confirming..."
-              : "Confirm"}
+              ? t("release.confirming-label")
+              : t("release.confirm-label")}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
