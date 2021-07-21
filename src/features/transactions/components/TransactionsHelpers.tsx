@@ -387,6 +387,7 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   const { t } = useTranslation();
   return (
     <ErrorDialog
+      title={t("common.error")}
       reason={t("tx.submitting-error-popup-header")}
       actionText={t("tx.submitting-error-popup-action-text")}
       {...props}
@@ -399,22 +400,25 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
 export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   children,
   ...props
-}) => (
-  <ErrorDialog
-    reason={t("tx.general-error-popup-header")}
-    actionText={t("tx.general-error-popup-action-text")}
-    {...props}
-  >
-    <span>
-      {t("tx.general-error-popup-message-1")}{" "}
-      <Link external href={links.BUGS_LOG} color="primary" underline="hover">
-        {t("tx.general-error-popup-submit-label")}
-      </Link>
-      .
-    </span>
-    {children}
-  </ErrorDialog>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <ErrorDialog
+      reason={t("tx.general-error-popup-header")}
+      actionText={t("tx.general-error-popup-action-text")}
+      {...props}
+    >
+      <span>
+        {t("tx.general-error-popup-message-1")}{" "}
+        <Link external href={links.BUGS_LOG} color="primary" underline="hover">
+          {t("tx.general-error-popup-submit-label")}
+        </Link>
+        .
+      </span>
+      {children}
+    </ErrorDialog>
+  );
+};
 
 export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   props
@@ -427,18 +431,15 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
 
   return (
     <ErrorDialog
-      title="Expired"
-      reason="This transaction has expired"
-      actionText="Restart transaction"
+      title={t("tx.expired-error-popup-title")}
+      reason={t("tx.expired-error-popup-header")}
+      actionText={t("tx.expired-error-popup-action-text")}
       {...props}
     >
-      <span>
-        Transactions expire after 24 hours. Please restart the transaction if
-        you wish to continue.
-      </span>
+      <span>{t("tx.expired-error-popup-message-1", { hours: 24 })}</span>
       <ActionButtonWrapper>
         <Button variant="text" color="inherit" onClick={goToHome}>
-          Back to home
+          {t("tx.expired-error-popup-back-to-home")}
         </Button>
       </ActionButtonWrapper>
     </ErrorDialog>
@@ -522,15 +523,16 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   currency,
   ...props
 }) => {
+  const { t } = useTranslation();
   return (
     <WarningDialog
-      reason="Different account detected"
-      alternativeActionText="Continue anyway"
+      title={t("common.warning")}
+      reason={t("tx.address-error-popup-header")}
+      alternativeActionText={t("tx.address-error-popup-action-text")}
       {...props}
     >
       <span>
-        This transaction was created with a different account to the current
-        account (
+        {t("tx.address-error-popup-message-1")} (
         <Link
           external
           href={addressExplorerLink}
@@ -539,9 +541,10 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
         >
           {trimAddress(address, 5)}
         </Link>
-        ). If you do not have access to the account that created the
-        transaction, you will not be able to access the {currency}. Please
-        switch account in your wallet.
+        ).{" "}
+        {t("tx.address-error-popup-message-2", {
+          currency,
+        })}
       </span>
     </WarningDialog>
   );
