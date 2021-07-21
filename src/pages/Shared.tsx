@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ActionButton } from "../components/buttons/Buttons";
 import { CheckboxWrapper } from "../components/inputs/InputHelpers";
 import { PaperContent } from "../components/layout/Paper";
@@ -18,6 +19,7 @@ import { links, storageKeys } from "../constants/constants";
 const legacyAck = Boolean(localStorage.getItem(storageKeys.LEGACY_ACK));
 
 export const LegacyBridgeModal: FunctionComponent = () => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(!legacyAck);
   const [checked, setChecked] = useState(false);
   const handleClose = useCallback(() => {
@@ -33,13 +35,12 @@ export const LegacyBridgeModal: FunctionComponent = () => {
     <BridgeModal open={open} maxWidth="xs" title="RenBridge 2.1">
       <PaperContent topPadding>
         <SpacedTypography variant="h5" align="center" gutterBottom>
-          Welcome to RenBridge 2.1
+          {t("welcome.welcome-to")} RenBridge 2.1
         </SpacedTypography>
         <SpacedTypography variant="body1" align="center">
-          If you're here to complete a transaction you started in the past,
-          you'll need to finish it on RenBridge 2.0,{" "}
+          {t("welcome.legacy-message")} RenBridge 2.0,{" "}
           <StyledLink external color="primary" href={links.LEGACY_BRIDGE}>
-            head here
+            {t("welcome.legacy-head-here")}
           </StyledLink>
         </SpacedTypography>
         <CheckboxWrapper>
@@ -55,7 +56,7 @@ export const LegacyBridgeModal: FunctionComponent = () => {
               }
               label={
                 <FormLabel htmlFor="ack" component={Typography}>
-                  Don't show it again
+                  {t("welcome.legacy-ack-label")}
                 </FormLabel>
               }
             />
@@ -64,7 +65,7 @@ export const LegacyBridgeModal: FunctionComponent = () => {
       </PaperContent>
       <DialogActions disableSpacing>
         <ActionButton onClick={handleClose}>
-          Continue to RenBridge 2.1
+          {t("welcome.continue-to")} RenBridge 2.1
         </ActionButton>
       </DialogActions>
     </BridgeModal>

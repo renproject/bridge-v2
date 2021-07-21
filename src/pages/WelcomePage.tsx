@@ -1,6 +1,7 @@
 import { Container, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
@@ -104,23 +105,24 @@ const AdjustedWarningIcon = styled(WarningIcon)({
 export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
-  usePageTitle("Welcome");
+  const { t } = useTranslation();
+  usePageTitle(t("welcome.title"));
   const { showNotification } = useNotifications();
   const styles = useStyles();
   useEffect(() => {
     showNotification(
       <Typography variant="caption">
-        <AdjustedWarningIcon fontSize="small" /> RenVM is new technology, and{" "}
+        <AdjustedWarningIcon fontSize="small" />{" "}
+        {t("welcome.warning-message-1")}{" "}
         <Link
           href={links.SECURITY_AUDITS}
           target="_blank"
           color="primary"
           underline="hover"
         >
-          security audits
+          {t("welcome.warning-link-text")}
         </Link>{" "}
-        don't completely eliminate risks. Please don’t supply assets you can’t
-        afford to lose.
+        {t("welcome.warning-message-2")}
       </Typography>,
       {
         variant: "specialInfo",
@@ -141,25 +143,25 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
     <MobileLayout withBackground>
       <Container maxWidth="sm">
         <Typography variant="h1" className={styles.heading}>
-          Transfer assets between blockchains
+          {t("welcome.header")}
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          An easy way to bridge cross-chain assets between blockchains.
+          {t("welcome.subheader")}
         </Typography>
         <Typography variant="body1" className={styles.continuation}>
-          To continue, read and agree to the{" "}
+          {t("welcome.continue-text")}{" "}
           <Link
             color="primary"
             underline="hover"
             target="_blank"
             href={links.TERMS_OF_SERVICE}
           >
-            Terms of Service
+            {t("welcome.continue-tos-link-text")}
           </Link>
         </Typography>
         <NarrowCenteredWrapper>
           <ActionButton className={styles.button} onClick={handleAgree}>
-            Agree & Continue
+            {t("welcome.continue-action-text")}
           </ActionButton>
         </NarrowCenteredWrapper>
       </Container>
@@ -171,7 +173,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               component="h2"
               className={styles.label}
             >
-              Assets
+              {t("common.assets")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
               <li className={styles.assetListItem}>
@@ -197,28 +199,31 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               component="h2"
               className={styles.label}
             >
-              Destination
+              {t("common.destination")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
               <li className={styles.assetListItem}>
                 <IconWithLabel label="Ethereum" Icon={EthereumChainFullIcon} />
               </li>
               <li className={styles.assetListItem}>
-                <IconWithLabel label="Binance Smart Chain" Icon={BinanceChainFullIcon} />
+                <IconWithLabel
+                  label="Binance Smart Chain"
+                  Icon={BinanceChainFullIcon}
+                />
               </li>
             </UnstyledList>
           </div>
         </div>
         <div className={styles.legacy}>
           <Typography variant="body1">
-            If you'd rather use the old version of RenBridge,{" "}
+            {t("welcome.legacy-bridge-message")} RenBridge,{" "}
             <Link
               external
               href={links.LEGACY_BRIDGE}
               color="primary"
               underline="hover"
             >
-              head here
+              {t("welcome.legacy-bridge-link-text")}
             </Link>
             .
           </Typography>
