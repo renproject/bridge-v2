@@ -383,30 +383,32 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
 
 export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   props
-) => (
-  <ErrorDialog
-    reason="Error submitting"
-    actionText="Return to submission screen"
-    {...props}
-  >
-    <span>Return to previous screen to resubmit</span>
-  </ErrorDialog>
-);
+) => {
+  const { t } = useTranslation();
+  return (
+    <ErrorDialog
+      reason={t("tx.submitting-error-popup-header")}
+      actionText={t("tx.submitting-error-popup-action-text")}
+      {...props}
+    >
+      <span>{t("tx.submitting-error-popup-message")}</span>
+    </ErrorDialog>
+  );
+};
 
 export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   children,
   ...props
 }) => (
   <ErrorDialog
-    reason="An error has occurred"
-    actionText="Refresh page"
+    reason={t("tx.general-error-popup-header")}
+    actionText={t("tx.general-error-popup-action-text")}
     {...props}
   >
     <span>
-      Please ensure you have this page bookmarked before refreshing. If this
-      error persists, please{" "}
+      {t("tx.general-error-popup-message-1")}{" "}
       <Link external href={links.BUGS_LOG} color="primary" underline="hover">
-        submit a bug here
+        {t("tx.general-error-popup-submit-label")}
       </Link>
       .
     </span>
@@ -417,6 +419,7 @@ export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
 export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   props
 ) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const goToHome = useCallback(() => {
     history.push(paths.HOME);

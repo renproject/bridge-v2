@@ -14,6 +14,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
 import { Actor } from "xstate";
@@ -104,6 +105,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const chain = useSelector($chain);
   const { walletConnected } = useSelectedChainWallet();
@@ -118,9 +120,9 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
     if (!walletConnected) {
-      setPaperTitle("Resume Transaction");
+      setPaperTitle(t("tx.resume-transaction"));
     }
-  }, [walletConnected, setPaperTitle]);
+  }, [walletConnected, setPaperTitle, t]);
 
   const handlePreviousStepClick = useCallback(() => {
     history.goBack();
@@ -264,7 +266,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
               </CenteringSpacedBox>
             </PaperSpacerWrapper>
             <ActionButton onClick={handleWalletPickerOpen}>
-              Connect Wallet
+              {t("wallet.connect")}
             </ActionButton>
           </>
         )}
@@ -522,6 +524,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   machine,
   depositHash,
 }) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();
   const handleSubmitToDestinationChain = useCallback(() => {
@@ -543,7 +546,12 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     .value as keyof DepositMachineSchema<any>["states"];
   if (!machine) {
     // We should always have machines for transactions
-    return <ProgressStatus processing={false} reason="Restoring..." />;
+    return (
+      <ProgressStatus
+        processing={false}
+        reason={t("mint.status-restoring-label")}
+      />
+    );
   }
 
   switch (state) {
@@ -552,7 +560,9 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         <MintDepositConfirmationStatus tx={tx} depositHash={depositHash} />
       );
     case "srcConfirmed": // source sourceChain confirmations ok, but renVM still doesn't accept it
-      return <ProgressStatus reason="Submitting to RenVM" />;
+      return (
+        <ProgressStatus reason={t("mint.status-submitting-to-renvm-label")} />
+      );
     case "errorAccepting":
     case "errorSubmitting":
     case "claiming":
@@ -593,8 +603,12 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         );
       }
     case "restoringDeposit":
-      return <ProgressStatus reason="Restoring deposit" />;
+      return (
+        <ProgressStatus reason={t("mint.status-restoring-deposit-label")} />
+      );
     default:
-      return <ProgressStatus reason={machine.state.value} />;
+      return (
+        <ProgressStatus reason={t(`mint.status-${machine.state.value}`)} />
+      );
   }
 };

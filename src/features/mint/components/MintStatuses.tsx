@@ -294,6 +294,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   submittingError,
   depositHash,
 }) => {
+  const { t } = useTranslation();
   useSetPaperTitle("Submit");
   useSetActionRequired(true);
   const theme = useTheme();
@@ -309,12 +310,20 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
     mintCurrencyConfig,
   } = getLockAndMintParams(tx, depositHash);
 
-  const notificationMessage = `${maxConfirmations(
-    lockConfirmations,
-    lockTargetConfirmations
-  )}/${lockTargetConfirmations} confirmations, ready to submit ${
-    lockCurrencyConfig.short
-  } to ${mintChainConfig.full}?`;
+  // const notificationMessage = `${maxConfirmations(
+  //   lockConfirmations,
+  //   lockTargetConfirmations
+  // )}/${lockTargetConfirmations} confirmations, ready to submit ${
+  //   lockCurrencyConfig.short
+  // } to ${mintChainConfig.full}?`;
+
+  const notificationMessage = t("mint.deposit-accepted-notification-message", {
+    confirmations: maxConfirmations(lockConfirmations, lockTargetConfirmations),
+    targetConfirmations: lockTargetConfirmations,
+    currency: lockCurrencyConfig.short,
+    chain: mintChainConfig.full,
+  });
+
   const { showNotification, closeNotification } = useNotifications();
   useEffectOnce(() => {
     const key = showNotification(notificationMessage);
@@ -366,11 +375,12 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           value={lockTxAmount}
           spacedSuffix={lockCurrencyConfig.full}
         />{" "}
-        Received
+        {t("mint.received-label")}
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Minting" : "Mint"} {mintCurrencyConfig.short}
+          {submitting ? t("mint.minting-label") : t("mint.mint-label")}{" "}
+          {mintCurrencyConfig.short}
           {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
