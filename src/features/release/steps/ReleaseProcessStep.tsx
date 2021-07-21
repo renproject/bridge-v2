@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
 import {
@@ -80,6 +81,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
@@ -94,9 +96,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
     if (!walletConnected) {
-      setPaperTitle("Resume Transaction");
+      setPaperTitle(t("tx.resume-transaction"));
     }
-  }, [walletConnected, setPaperTitle]);
+  }, [walletConnected, setPaperTitle, t]);
 
   useEffect(() => {
     if (txState?.reloadTx) {

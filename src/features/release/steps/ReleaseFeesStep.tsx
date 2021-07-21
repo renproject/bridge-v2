@@ -55,7 +55,6 @@ import {
   $wallet,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
-import { releaseTooltips } from "../components/ReleaseHelpers";
 import { $release, $releaseUsdAmount } from "../releaseSlice";
 import {
   createReleaseTransaction,
