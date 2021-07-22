@@ -8,6 +8,7 @@ import {
 import { BurnSession, GatewaySession } from "@renproject/ren-tx";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -107,6 +108,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   onUpdateTx,
   tx,
 }) => {
+  const { t } = useTranslation();
   const styles = useTransactionMenuStyles();
   const handleClose = useCallback(() => {
     if (onClose) {
@@ -133,13 +135,13 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
               variant="solid"
             />
           </ListItemIcon>
-          <Typography variant="inherit">Transaction Menu</Typography>
+          <Typography variant="inherit">{t("tx.menu-title")}</Typography>
         </BridgeModalTitle>
         <NestedDrawerWrapper>
           <NestedDrawerContent>
             <div className={styles.menuItems}>
               <TransactionMenuItem Icon={AddIcon} onClick={handleUpdateOpen}>
-                Insert/update transaction
+                {t("tx.menu-insert-update-label")}
               </TransactionMenuItem>
             </div>
           </NestedDrawerContent>
