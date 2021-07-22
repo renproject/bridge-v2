@@ -40,7 +40,6 @@ import {
   SimplestPagination,
 } from "../../components/pagination/SimplePagination";
 import { PulseIndicator } from "../../components/progress/ProgressHelpers";
-import { TooltipWithIcon } from "../../components/tooltips/TooltipWithIcon";
 import {
   TransactionsHeader,
   TransactionsPaginationWrapper,
@@ -160,7 +159,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
       <TransactionsHeader title={t("history.header")}>
         <AssetDropdown
           condensed
-          chainLabel={t("common.asset")}
+          assetLabel={t("common.asset")}
           available={supportedLockCurrencies}
           value={currency}
           onChange={handleCurrencyChange}
@@ -168,7 +167,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
         <Box mx={2}>{t("history.header-separator")}</Box>
         <AssetDropdown
           mode="chain"
-          chainLabel={t("common.chain")}
+          blockchainLabel={t("common.blockchain")}
           condensed
           available={supportedMintDestinationChains}
           value={chain}
