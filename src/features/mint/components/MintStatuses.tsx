@@ -160,7 +160,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
           )}
           <CopyContentButton
             content={tx.gatewayAddress}
-            copiedMessage={t("common.copied")}
+            copiedMessage={t("common.copied-ex-message")}
           />
         </>
       )}

@@ -70,8 +70,8 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         <AssetDropdownWrapper>
           <AssetDropdown
             label={t("mint.send-label")}
-            assetLabel={t("common.asset")}
-            blockchainLabel={t("common.blockchain")}
+            assetLabel={t("common.asset-label")}
+            blockchainLabel={t("common.blockchain-label")}
             available={supportedLockCurrencies}
             value={currency}
             onChange={handleCurrencyChange}
@@ -80,8 +80,8 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         <AssetDropdownWrapper>
           <AssetDropdown
             label={t("mint.destination-label")}
-            assetLabel={t("common.asset")}
-            blockchainLabel={t("common.blockchain")}
+            assetLabel={t("common.asset-label")}
+            blockchainLabel={t("common.blockchain-label")}
             mode="chain"
             available={supportedMintDestinationChains}
             value={chain}
@@ -93,7 +93,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
       <PaperContent darker topPadding bottomPadding>
         <ActionButtonWrapper>
           <ActionButton onClick={handleNextStep}>
-            {walletConnected ? t("common.next") : t("wallet.connect")}
+            {walletConnected ? t("common.next-label") : t("wallet.connect")}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

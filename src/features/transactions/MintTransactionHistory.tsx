@@ -159,7 +159,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
       <TransactionsHeader title={t("history.header")}>
         <AssetDropdown
           condensed
-          assetLabel={t("common.asset")}
+          assetLabel={t("common.asset-label")}
           available={supportedLockCurrencies}
           value={currency}
           onChange={handleCurrencyChange}
@@ -167,7 +167,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
         <Box mx={2}>{t("history.header-separator")}</Box>
         <AssetDropdown
           mode="chain"
-          blockchainLabel={t("common.blockchain")}
+          blockchainLabel={t("common.blockchain-label")}
           condensed
           available={supportedMintDestinationChains}
           value={chain}

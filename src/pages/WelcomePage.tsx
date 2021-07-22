@@ -173,7 +173,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               component="h2"
               className={styles.label}
             >
-              {t("common.assets")}
+              {t("common.assets-label")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
               <li className={styles.assetListItem}>
@@ -202,7 +202,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               component="h2"
               className={styles.label}
             >
-              {t("common.destination")}
+              {t("common.destination-label")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
               <li className={styles.assetListItem}>

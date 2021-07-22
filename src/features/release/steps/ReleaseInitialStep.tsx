@@ -202,8 +202,8 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         </Fade>
         <AssetDropdownWrapper>
           <AssetDropdown
-            label={t("common.chain")}
-            blockchainLabel={t("common.blockchain")}
+            label={t("common.chain-label")}
+            blockchainLabel={t("common.blockchain-label")}
             mode="chain"
             available={supportedBurnChains}
             value={chain}
@@ -212,8 +212,8 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         </AssetDropdownWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
-            label={t("common.asset")}
-            assetLabel={t("common.asset")}
+            label={t("common.asset-label")}
+            assetLabel={t("common.asset-label")}
             available={supportedReleaseCurrencies}
             balances={balances}
             value={currency}
@@ -254,7 +254,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             onClick={handleNextStep}
             disabled={walletConnected ? !enabled : false}
           >
-            {walletConnected ? t("common.next") : t("wallet.connect")}
+            {walletConnected ? t("common.next-label") : t("wallet.connect")}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

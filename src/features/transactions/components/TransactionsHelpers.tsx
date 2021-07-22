@@ -151,7 +151,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
   const txTimeMinutes = lockChainBlockTime * lockChainConfirmations;
   return (
     <NestedDrawer
-      title={t("common.warning")}
+      title={t("common.warning-label")}
       open
       onClose={handleCancel}
       fixed={false}
@@ -230,7 +230,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
             </CheckboxWrapper>
             <ActionButtonWrapper>
               <ActionButton onClick={handleClose} disabled={!checked}>
-                {t("common.continue")}
+                {t("common.continue-label")}
               </ActionButton>
             </ActionButtonWrapper>
           </PaperContent>
@@ -387,7 +387,7 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   const { t } = useTranslation();
   return (
     <ErrorDialog
-      title={t("common.error")}
+      title={t("common.error-label")}
       reason={t("tx.submitting-error-popup-header")}
       actionText={t("tx.submitting-error-popup-action-text")}
       {...props}
@@ -526,7 +526,7 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   const { t } = useTranslation();
   return (
     <WarningDialog
-      title={t("common.warning")}
+      title={t("common.warning-label")}
       reason={t("tx.address-error-popup-header")}
       alternativeActionText={t("tx.address-error-popup-action-text")}
       {...props}
