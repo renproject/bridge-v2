@@ -101,7 +101,7 @@ const AboutPage: FunctionComponent<RouteComponentProps> = () => {
             color="primary"
             underline="hover"
           >
-            head here
+            {t("about.legacy-link-text")}
           </Link>
           .
         </Typography>

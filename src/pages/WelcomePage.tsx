@@ -189,7 +189,10 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
                 <IconWithLabel label="Doge" Icon={DogeFullIcon} />
               </li>
               <li className={styles.assetListItem}>
-                <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
+                <IconWithLabel
+                  label={t("welcome.more-soon")}
+                  Icon={EmptyCircleIcon}
+                />
               </li>
             </UnstyledList>
           </div>

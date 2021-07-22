@@ -201,7 +201,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
           <Divider />
           <PaperContent darker topPadding bottomPadding>
             <LabelWithValue
-              label="Releasing"
+              label={t("release.releasing-label")}
               value={
                 <NumberFormatText
                   value={amount}
@@ -217,9 +217,12 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
                 />
               }
             />
-            <LabelWithValue label="From" value={burnChainConfig.full} />
             <LabelWithValue
-              label="To"
+              label={t("release.from-label")}
+              value={burnChainConfig.full}
+            />
+            <LabelWithValue
+              label={t("release.To-label")}
               value={
                 <MiddleEllipsisText hoverable>
                   {tx.destAddress}

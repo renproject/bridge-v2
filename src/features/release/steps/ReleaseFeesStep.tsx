@@ -163,7 +163,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           />
         </BigAssetAmountWrapper>
         <Typography variant="body1" gutterBottom>
-          label={t("release.details-label")}
+          {t("release.details-label")}
         </Typography>
         <LabelWithValue
           label={t("release.releasing-label")}

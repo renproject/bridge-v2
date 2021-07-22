@@ -295,7 +295,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   depositHash,
 }) => {
   const { t } = useTranslation();
-  useSetPaperTitle("Submit");
+  useSetPaperTitle(t("mint.deposit-accepted-submit-title"));
   useSetActionRequired(true);
   const theme = useTheme();
   const {
@@ -309,13 +309,6 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
     mintChainConfig,
     mintCurrencyConfig,
   } = getLockAndMintParams(tx, depositHash);
-
-  // const notificationMessage = `${maxConfirmations(
-  //   lockConfirmations,
-  //   lockTargetConfirmations
-  // )}/${lockTargetConfirmations} confirmations, ready to submit ${
-  //   lockCurrencyConfig.short
-  // } to ${mintChainConfig.full}?`;
 
   const notificationMessage = t("mint.deposit-accepted-notification-message", {
     confirmations: maxConfirmations(lockConfirmations, lockTargetConfirmations),
@@ -413,6 +406,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
   submitting,
   depositHash,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const {
     lockCurrencyConfig,
@@ -431,7 +425,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
       <ProgressWrapper>
         <ProgressWithContent color={theme.customColors.skyBlue} processing>
           <TransactionStatusInfo
-            status="Pending"
+            status={t("mint.status-pending-label")}
             chain={mintChainConfig.full}
             address={
               <Link
@@ -454,7 +448,8 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
-          {submitting ? "Minting" : "Mint"} {mintCurrencyConfig.short}
+          {submitting ? t("mint.minting-label") : t("mint.mint-label")}{" "}
+          {mintCurrencyConfig.short}
           {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
@@ -478,7 +473,8 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   tx,
   depositHash,
 }) => {
-  useSetPaperTitle("Complete");
+  const { t } = useTranslation();
+  useSetPaperTitle(t("mint.complete-title"));
   const history = useHistory();
   const {
     lockCurrencyConfig,
@@ -509,12 +505,18 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
 
   const showNotifications = useCallback(() => {
     if (!pending) {
-      const notificationMessage = `Successfully minted ${conversionTotal} ${mintCurrencyConfig.short} on ${mintChainConfig.full}.`;
+      const notificationMessage = t("mint.success-notification-message", {
+        total: conversionTotal,
+        currency: mintCurrencyConfig.short,
+        chain: mintChainConfig.full,
+      });
       showNotification(
         <span>
           {notificationMessage}{" "}
           <Link external href={mintTxLink}>
-            View {mintChainConfig.full} transaction
+            {t("mint.success-notification-tx-link-text", {
+              chain: mintChainConfig.full,
+            })}
           </Link>
         </span>
       );
@@ -528,6 +530,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     mintChainConfig,
     mintCurrencyConfig,
     mintTxLink,
+    t,
   ]);
 
   useEffect(showNotifications, [showNotifications, pending]);
@@ -539,7 +542,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
-        You received{" "}
+        {t("mint.success-received")}{" "}
         <NumberFormatText
           value={conversionTotal}
           spacedSuffix={mintCurrencyConfig.short}
@@ -557,7 +560,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
           underline="hover"
           href={lockTxLink}
         >
-          {lockChainConfig.full} transaction
+          {lockChainConfig.full} {t("common.transaction")}
         </Link>
         <Link
           external
@@ -566,7 +569,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
           underline="hover"
           href={mintTxLink}
         >
-          {mintChainConfig.full} transaction
+          {mintChainConfig.full} {t("common.transaction")}
         </Link>
       </Box>
     </>
