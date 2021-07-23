@@ -475,20 +475,29 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
     getRemainingGatewayTime(tx.expiryTime)
   );
 
+  const [timer, setTimer] = useState<NodeJS.Timeout>();
   const gatewayAddress = (tx as OpenedGatewaySession<any>).gatewayAddress;
   useEffect(() => {
     if (gatewayAddress) {
       if (hasDeposits) {
-        service?.stop();
+        //
+        //service?.stop();
+        if (timer) {
+          clearTimeout(timer);
+        }
         setResolving(false);
       } else {
-        setTimeout(() => {
-          service?.stop();
-          setResolving(false);
-        }, 15000);
+        if (!timer) {
+          setTimer(
+            setTimeout(() => {
+              service?.stop();
+              setResolving(false);
+            }, 25000)
+          );
+        }
       }
     }
-  }, [gatewayAddress, hasDeposits]);
+  }, [gatewayAddress, timer, hasDeposits]);
 
   const allCompleted = areAllDepositsCompleted(tx);
   const completed = depositStatus === DepositEntryStatus.COMPLETED;
