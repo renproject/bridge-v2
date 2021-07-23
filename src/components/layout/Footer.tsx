@@ -6,6 +6,7 @@ import TelegramIcon from "@material-ui/icons/Telegram";
 import TwitterIcon from "@material-ui/icons/Twitter";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import { links } from "../../constants/constants";
 import { LanguageSelector } from "../../features/i18n/components/I18nHelpers";
 import { paths } from "../../pages/routes";
@@ -89,6 +90,7 @@ const useStyles = makeStyles((theme) => ({
 type FooterProps = { mobile?: boolean };
 
 export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
+  const { t } = useTranslation();
   const styles = useStyles();
   const rootClassName = classNames(styles.root, {
     [styles.rootMobile]: mobile,
@@ -97,26 +99,28 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
     <footer className={rootClassName}>
       <ul className={styles.textLinks}>
         <li>
-          <FooterTextLink to={paths.ABOUT}>About</FooterTextLink>
+          <FooterTextLink to={paths.ABOUT}>
+            {t("navigation.about-label")}
+          </FooterTextLink>
         </li>
         <li>
           <FooterTextLink href={links.DOCS} target="_blank">
-            Docs
+            {t("navigation.docs-label")}
           </FooterTextLink>
         </li>
         <li>
           <FooterTextLink href={links.FAQ} target="_blank">
-            FAQs
+            {t("navigation.faqs-label")}
           </FooterTextLink>
         </li>
         <li>
           <FooterTextLink href={links.WIKI} target="_blank">
-            Wiki
+            {t("navigation.wiki-label")}
           </FooterTextLink>
         </li>
         <li>
           <FooterTextLink href={links.LEGACY_BRIDGE} target="_blank">
-            Legacy Bridge
+            {t("navigation.legacy-bridge-label")}
           </FooterTextLink>
         </li>
         <li>

@@ -64,6 +64,7 @@
   "navigation.faqs-label": "FAQs",
   "navigation.wiki-label": "Wiki",
   "navigation.legacy-bridge-label": "Legacy Bridge",
+  "navigation.report-an-issue-label": "Report an issue",
   "welcome.title": "Welcome",
   "welcome.welcome-to": "Welcome to",
   "welcome.legacy-message": "If you're here to complete a transaction you started in the past, you'll need to finish it on",

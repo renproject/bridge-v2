@@ -4,21 +4,24 @@
 
 const bundles = {
   // @ts-ignore
+  de: () => import(/* webpackChunkName: "de" */ "./locales/de.json"),
   en: () => import(/* webpackChunkName: "en" */ "./locales/en.json"),
-  de: () => import(/* webpackChunkName: "es" */ "./locales/de.json"),
-  // zh: () => import(/* webpackChunkName: "zh" */ './locales/zh.json'),
+  es: () => import(/* webpackChunkName: "es" */ "./locales/es.json"),
+  pt: () => import(/* webpackChunkName: "pt" */ "./locales/pt.json"),
 };
 
 // generate whitelist for i18next
 export const availableLocales = Object.keys(bundles);
+console.log(availableLocales);
 
 export const nativeLanguageNames: Record<string, string> = {
   en: "English",
   de: "Deutsh",
+  pt: "Português",
+  es: "Español",
+  ru: "русский",
   fe: "Française",
   pl: "Polski",
-  pt: "Portuguese",
-  ru: "русский",
   cn: "中国人",
 };
 
