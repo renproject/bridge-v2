@@ -20,8 +20,12 @@ import { Terra } from "@renproject/chains-terra";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
-import { getReleaseAssetDecimals } from "../features/transactions/transactionsUtils";
 import {
+  getMintAssetDecimals,
+  getReleaseAssetDecimals,
+} from "../features/transactions/transactionsUtils";
+import {
+  BridgeChain,
   BridgeCurrency,
   getChainConfig,
   getChainConfigByRentxName,
@@ -104,10 +108,13 @@ const buildBurner = (
     context.tx.network
   );
   const releaseChain = getChainConfigByRentxName(context.tx.destChain).symbol;
-  const decimals = getReleaseAssetDecimals(
-    releaseChain,
-    context.tx.sourceAsset
-  );
+
+  let decimals = getReleaseAssetDecimals(releaseChain, context.tx.sourceAsset);
+
+  if (chain == "solana" && decimals > 9) {
+    decimals = 9;
+  }
+
   const amount = String(
     Math.floor(Number(context.tx.targetAmount) * Math.pow(10, decimals))
   );
