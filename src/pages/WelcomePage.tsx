@@ -48,10 +48,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     color: theme.customColors.textLight,
   },
-  continuation: {
-    marginTop: 48,
-    textAlign: "center",
-  },
   button: {
     maxWidth: 400,
     marginTop: 20,
@@ -166,20 +162,9 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         <Typography variant="body1" className={styles.description}>
           An easy way to bridge cross-chain assets between blockchains.
         </Typography>
-        <Typography variant="body1" className={styles.continuation}>
-          To continue, read and agree to the{" "}
-          <Link
-            color="primary"
-            underline="hover"
-            target="_blank"
-            href={links.TERMS_OF_SERVICE}
-          >
-            Terms of Service
-          </Link>
-        </Typography>
         <NarrowCenteredWrapper>
           <ActionButton className={styles.button} onClick={handleAgree}>
-            Agree & Continue
+            Continue
           </ActionButton>
         </NarrowCenteredWrapper>
       </Container>
