@@ -183,14 +183,19 @@ export const parseTxQueryString: (
   return res;
 };
 
-export const getMintAssetDecimals = (chain: BridgeChain, asset: string) => {
+export const getMintAssetDecimals = (
+  chain: BridgeChain,
+  asset: string,
+  provider: any,
+  network: any
+) => {
   if (!asset) {
     return 8;
   }
   const chainConfig = getChainConfig(chain);
   return mintChainClassMap[
     chainConfig.rentxName as keyof typeof mintChainClassMap
-  ]().assetDecimals(asset.toUpperCase());
+  ](provider, network).assetDecimals(asset.toUpperCase());
 };
 
 export const getReleaseAssetDecimals = (chain: BridgeChain, asset: string) => {
