@@ -192,7 +192,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
           connector: new SolanaConnector({
             debug: true,
-            providerURL: (window as any).solana,
+            providerURL: (window as any).solana || "https://www.phantom.app",
             clusterURL:
               network === RenNetwork.Mainnet
                 ? "https://ren.rpcpool.com/"
