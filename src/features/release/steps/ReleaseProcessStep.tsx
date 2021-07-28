@@ -1,4 +1,5 @@
 import { Divider, IconButton } from "@material-ui/core";
+import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { BurnMachineSchema } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
@@ -8,6 +9,7 @@ import React, {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+import { useAsync } from "react-use";
 import {
   ActionButton,
   ToggleIconButton,
@@ -36,6 +38,7 @@ import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpe
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
+import { getBurnChainMap } from "../../../services/rentx";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
@@ -142,6 +145,18 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
 
+  const { enabledChains } = useMultiwallet();
+  const burnChainMap = useAsync(async () => {
+    const providers = Object.entries(enabledChains).reduce(
+      (c, n) => ({
+        ...c,
+        [n[0]]: n[1].provider,
+      }),
+      {}
+    );
+    return await getBurnChainMap(providers);
+  }, [enabledChains]);
+
   const {
     burnCurrencyConfig,
     burnChainConfig,
@@ -181,7 +196,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
       </PaperHeader>
       <PaperContent bottomPadding>
         {reloading && <ProgressStatus processing />}
-        {walletConnected && !reloading && <ReleaseTransactionStatus tx={tx} />}
+        {walletConnected && !reloading && !burnChainMap.loading && (
+          <ReleaseTransactionStatus tx={tx} burnChainMap={burnChainMap.value} />
+        )}
         {!walletConnected && (
           <>
             <PaperSpacerWrapper>
@@ -249,14 +266,16 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
 
 type ReleaseTransactionStatusProps = {
   tx: AnyBurnSession;
+  burnChainMap: any;
 };
 
 const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
   tx,
+  burnChainMap,
 }) => {
   const history = useHistory();
   const location = useLocation();
-  const [current, send, service] = useBurnMachine(tx);
+  const [current, send, service] = useBurnMachine(tx, burnChainMap);
   useEffect(
     () => () => {
       console.info("stopping tx machine");
