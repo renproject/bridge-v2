@@ -1,33 +1,20 @@
-require("dotenv").config();
-const crowdin = require("@crowdin/crowdin-api-client").default;
 const cp = require("child_process");
+const { client, errorHandler, projectId } = require("./crowdin");
 
 const downloadFile = async function (uri, filename) {
   let command = `curl -o ${filename}  '${uri}'`;
   cp.execSync(command);
 };
 
-const credentials = {
-  token: process.env.CROWDIN_API_TOKEN,
-};
-const projectId = 466534;
-
-const client = new crowdin(credentials);
-
 async function main() {
-  // get project list
   const project = await client.projectsGroupsApi.getProject(projectId);
-  const languageCodes = project.data.targetLanguages.map(
-    (lang) => lang.twoLettersCode
-  );
+
   const languageIds = project.data.targetLanguageIds;
-  console.log("Found language codes:", languageCodes);
-  // const builds = await client.translationsApi.listProjectBuilds(projectId);
-  // console.log(builds.data[0]);
+  console.info("Found language ids:", languageIds);
 
   const files = await client.sourceFilesApi.listProjectFiles(projectId);
   if (files.data.length !== 1) {
-    throw "There is more than one source file. Aborting";
+    throw "There is more than one source file. Aborting.";
   }
   const file = files.data[0];
 
@@ -50,18 +37,11 @@ async function main() {
   }
 }
 
-const errorHandler = (ex) => {
-  console.error("Error", ex);
-  if (ex.errors) {
-    ex.errors.forEach(errorHandler);
-  }
-};
-
 main()
   .then(() => {
-    console.log("Success");
+    console.info("Success!");
   })
-  .catch()
+  .catch(errorHandler)
   .finally(() => {
-    console.log("Finishing.");
+    console.info("Finishing.");
   });
