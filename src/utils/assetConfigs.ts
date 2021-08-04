@@ -49,12 +49,16 @@ import {
   ZecFullIcon,
   ZecGreyIcon,
   ZecIcon,
+  ArbitrumCircleIcon,
+  ArbitrumColorIcon,
+  ArbitrumBlackIcon,
 } from "../components/icons/RenIcons";
 import { env } from "../constants/environmentVariables";
 import * as customColors from "../theme/colors";
 
 // TODO: replace everywhere
 export enum RenChain {
+  arbitrum = "arbitrum",
   avalanche = "avalanche",
   binanceSmartChain = "binanceSmartChain",
   ethereum = "ethereum",
@@ -93,6 +97,7 @@ export enum BridgeCurrency {
   BNB = "BNB",
   AVAX = "AVAX",
   SOL = "SOL",
+  ARBETH = "ARBETH",
   UNKNOWN = "UNKNOWN",
 }
 
@@ -110,6 +115,7 @@ export enum BridgeChain {
   FTMC = "FTMC",
   AVAXC = "AVAXC",
   SOLC = "SOLC",
+  ARBITRUMC = "ARBITRUMC",
   UNKNOWNC = "UNKNOWNC",
 }
 
@@ -197,6 +203,7 @@ const oldNetworkMappings: ChainToNetworkMappings = {
   [RenChain.polygon]: networkMappingLegacy,
   [RenChain.avalanche]: networkMappingLegacy,
   [RenChain.solana]: networkMappingLegacy,
+  [RenChain.arbitrum]: networkMappingLegacy,
 };
 
 const newNetworkMappings: ChainToNetworkMappings = {
@@ -208,6 +215,7 @@ const newNetworkMappings: ChainToNetworkMappings = {
   [RenChain.polygon]: networkMappingLegacy,
   [RenChain.avalanche]: networkMappingLegacy,
   [RenChain.solana]: networkMappingLegacy,
+  [RenChain.arbitrum]: networkMappingLegacy,
 };
 
 export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
@@ -487,6 +495,18 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.SOLC,
     networkMappings: newNetworkMappings,
   },
+  [BridgeCurrency.ARBETH]: {
+    symbol: BridgeCurrency.ARBETH,
+    short: "arbETH",
+    full: "Arbitrum ETH",
+    FullIcon: ArbitrumBlackIcon,
+    GreyIcon: NotSetIcon,
+    Icon: ArbitrumBlackIcon,
+    MainIcon: BtcFullIcon,
+    rentxName: "sol",
+    sourceChain: BridgeChain.ARBITRUMC,
+    networkMappings: newNetworkMappings,
+  },
   [BridgeCurrency.UNKNOWN]: {
     symbol: BridgeCurrency.UNKNOWN,
     short: "UNKNOWN",
@@ -712,6 +732,19 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.SOL,
   },
+  [BridgeChain.ARBITRUMC]: {
+    symbol: BridgeChain.ARBITRUMC,
+    short: "ARB",
+    full: "Arbitrum",
+    FullIcon: ArbitrumCircleIcon,
+    Icon: ArbitrumColorIcon,
+    MainIcon: ArbitrumCircleIcon,
+    GreyIcon: NotSetIcon,
+    rentxName: RenChain.arbitrum,
+    blockTime: 0.25,
+    targetConfirmations: 30,
+    nativeCurrency: BridgeCurrency.ARBETH,
+  },
   [BridgeChain.UNKNOWNC]: {
     symbol: BridgeChain.UNKNOWNC,
     short: "UNKNOWNC",
@@ -811,6 +844,7 @@ export const supportedMintDestinationChains = [
   BridgeChain.FTMC,
   BridgeChain.AVAXC,
   BridgeChain.SOLC,
+  BridgeChain.ARBITRUMC,
 ];
 
 export const supportedBurnChains = [
@@ -820,6 +854,7 @@ export const supportedBurnChains = [
   BridgeChain.AVAXC,
   BridgeChain.SOLC,
   BridgeChain.BSCC,
+  BridgeChain.ARBITRUMC,
 ];
 
 export const supportedReleaseCurrencies = supportedLockCurrencies.map(
@@ -959,6 +994,8 @@ export const bridgeChainToRenChain = (bridgeChain: BridgeChain): RenChain => {
       return RenChain.polygon;
     case BridgeChain.SOLC:
       return RenChain.solana;
+    case BridgeChain.ARBITRUMC:
+      return RenChain.arbitrum;
     default:
       return RenChain.unknown;
   }

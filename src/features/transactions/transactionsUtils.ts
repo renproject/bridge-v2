@@ -179,12 +179,16 @@ export const parseTxQueryString: (
   return res;
 };
 
-export const getReleaseAssetDecimals = (chain: BridgeChain, asset: string) => {
+export const getReleaseAssetDecimals = (
+  chain: BridgeChain,
+  asset: string
+): number => {
   if (!asset) {
     return 8;
   }
   console.log("release chain", chain);
   const chainConfig = getChainConfig(chain);
+  // @ts-expect-error
   return releaseChainClassMap[
     chainConfig.rentxName as keyof typeof releaseChainClassMap
   ]().assetDecimals(asset.toUpperCase());

@@ -15,6 +15,9 @@ import { ReactComponent as BchFull } from "./../../assets/icons/bch-icon.svg";
 import { ReactComponent as BinanceChainFull } from "./../../assets/icons/binancesmartchain-circle-icon.svg";
 import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binancesmartchain-colour-icon.svg";
 import { ReactComponent as BinanceChain } from "./../../assets/icons/binancesmartchain-icon.svg";
+import { ReactComponent as ArbitrumCircle } from "./../../assets/icons/arbitrum-circle.svg";
+import { ReactComponent as ArbitrumColor } from "./../../assets/icons/arbitrum-color.svg";
+import { ReactComponent as ArbitrumBlack } from "./../../assets/icons/arbitrum-black.svg";
 import { ReactComponent as BitcoinInCircle } from "./../../assets/icons/bitcoin-in-circle.svg";
 import { ReactComponent as BrowserNotifications } from "./../../assets/icons/browser-notifications.svg";
 import { ReactComponent as BtcGrey } from "./../../assets/icons/btc-icon-grey.svg";
@@ -200,6 +203,18 @@ export const WalletConnectFullIcon: CustomSvgIconComponent = (props) => (
 export const WalletConnectIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={WalletConnect} {...props} />
 );
+
+export const ArbitrumCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={ArbitrumCircle} {...props} />
+);
+
+export const ArbitrumBlackIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={ArbitrumBlack} {...props} />;
+};
+
+export const ArbitrumColorIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={ArbitrumColor} {...props} />;
+};
 
 export const AvalancheChainIcon: CustomSvgIconComponent = (props) => {
   const scalingProps = getScalingProps(693.26, 257.79);

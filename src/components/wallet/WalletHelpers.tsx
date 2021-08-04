@@ -146,8 +146,16 @@ export const WalletConnectingInfo: WalletPickerProps<
     polygon: BridgeWallet.METAMASKW,
     avalanche: BridgeWallet.METAMASKW,
     solana: BridgeWallet.SOLLETW,
+    arbitrum: BridgeWallet.METAMASKW,
   }[
-    chain as "ethereum" | "bsc" | "fantom" | "polygon" | "avalanche" | "solana"
+    chain as
+      | "ethereum"
+      | "bsc"
+      | "fantom"
+      | "polygon"
+      | "avalanche"
+      | "solana"
+      | "arbitrum"
   ];
   const walletConfig = getWalletConfig(walletSymbol);
 
@@ -595,6 +603,66 @@ export const PolygonMetamaskConnectorInfo: WalletPickerProps<
           explained{" "}
           <Link
             href="https://docs.matic.network/docs/develop/metamask/config-matic/"
+            external
+          >
+            here
+          </Link>
+        </Typography>
+      </SpacedPaperContent>
+      <PaperContent bottomPadding>
+        <ActionButtonWrapper>
+          <Button
+            variant="text"
+            color="primary"
+            onClick={handleBackToWalletPicker}
+          >
+            Use another wallet
+          </Button>
+        </ActionButtonWrapper>
+        <ActionButtonWrapper>
+          <ActionButton onClick={acknowledge}>
+            Continue with MetaMask
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </>
+  );
+};
+
+export const ArbitrumMetamaskConnectorInfo: WalletPickerProps<
+  any,
+  any
+>["DefaultInfo"] = ({ acknowledge, onClose }) => {
+  //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
+  const dispatch = useDispatch();
+  const handleBackToWalletPicker = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      dispatch(setWalletPickerOpened(true));
+    }, 1);
+  }, [dispatch, onClose]);
+  return (
+    <>
+      <BridgeModalTitle
+        title=" "
+        onClose={onClose}
+        onPrev={handleBackToWalletPicker}
+      />
+      <SpacedPaperContent topPadding bottomPadding>
+        <Typography variant="h5" align="center" gutterBottom>
+          Connect Arbitrum with MetaMask
+        </Typography>
+        <Typography
+          variant="body1"
+          align="center"
+          color="textSecondary"
+          gutterBottom
+        >
+          Please ensure that you have added the Arbitrum network to Metamask as
+          explained{" "}
+          <Link
+            // TODO: Update link once mainnet instructions are published.
+            href="https://developer.offchainlabs.com/docs/public_testnet"
             external
           >
             here
