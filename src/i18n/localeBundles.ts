@@ -6,8 +6,10 @@ const bundles = {
   // @ts-ignore
   de: () => import(/* webpackChunkName: "de" */ "./locales/de.json"),
   en: () => import(/* webpackChunkName: "en" */ "./locales/en.json"),
-  es: () => import(/* webpackChunkName: "es" */ "./locales/es.json"),
-  pt: () => import(/* webpackChunkName: "pt" */ "./locales/pt.json"),
+  es: () => import(/* webpackChunkName: "es" */ "./locales/es-ES.json"),
+  pt: () => import(/* webpackChunkName: "pt" */ "./locales/pt-PT.json"),
+  zh: () => import(/* webpackChunkName: "zh" */ "./locales/zh-CN.json"),
+  ru: () => import(/* webpackChunkName: "ru" */ "./locales/ru.json"),
 };
 
 // generate whitelist for i18next

@@ -86,7 +86,7 @@
   "about.what-is-header": "O que é {{bridge}}?",
   "about.what-is-description": "{{bridge}} habilita o embrulho simples de ativos digitais em blocos diferentes. Por exemplo, o {{bridge}} permite que os usuários levem <orange>BTC</orange> e coloquem na <blue>Ethereum</blue>, como um ERC-20 chamado <grey>renBTC</grey>.",
   "about.work-header": "Como é que funciona?",
-  "about.work-description": "Usando {{renvm}}, um tradutor universal, ele converte os arquivos digitais no formato necessário para sua cadeia de destino. Por exemplo, {{renvm}} leva <orange>BTC</orange>, segura, e depois converte-o para um <blue>ERC-20</blue> com uma taxa 1:1 para garantir que suas <grey>renBTC</grey> sejam sempre cobertas pelo mesmo valor de <orange>BTC</orange>. Descubra mais",
+  "about.work-description": "Using {{renvm}}, a universal bridge, it converts digital assets to the format needed by its destination chain. For example, {{renvm}} takes <orange>BTC</orange>, holds it, and then converts it to an <blue>ERC-20</blue> with a 1:1 ratio to ensure your <grey>renBTC</grey> is always backed by the same amount of <orange>BTC</orange>. Find out more",
   "about.work-link-text": "Aqui",
   "about.safety-header": "Quão segura é?",
   "about.safety-description-1": "{{renvm}} se mantém com seus ativos quando eles estão em outras blockchains. {{renvm}} é uma nova tecnologia, e",
