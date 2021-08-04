@@ -107,7 +107,7 @@ console.log(i18n);
 export default i18n;
 
 // HMR for english locale - new keys will be firstly added to en.json
-// then reupload to crowding and translated
+// then reuploaded to crowdin and translated
 if (isDev && (module as any).hot) {
   (module as any).hot.accept(`./locales/en.json`, (stuff: any) => {
     const newBundle = require("./locales/en.json");
