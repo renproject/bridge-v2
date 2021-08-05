@@ -818,8 +818,7 @@ export const supportedBurnChains = [
   BridgeChain.MATICC,
   BridgeChain.FTMC,
   BridgeChain.AVAXC,
-  // FIXME: temporarily disable while migration is in progress
-  // BridgeChain.SOLC,
+  BridgeChain.SOLC,
   BridgeChain.BSCC,
 ];
 
