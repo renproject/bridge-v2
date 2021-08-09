@@ -186,7 +186,6 @@ export const getReleaseAssetDecimals = (
   if (!asset) {
     return 8;
   }
-  console.log("release chain", chain);
   const chainConfig = getChainConfig(chain);
   // @ts-expect-error
   return releaseChainClassMap[

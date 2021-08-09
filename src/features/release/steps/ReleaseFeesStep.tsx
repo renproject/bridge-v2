@@ -85,7 +85,6 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   );
 
   const targetChainConfig = getChainConfig(chain);
-  console.log(currency, targetChainConfig.nativeCurrency);
   const decimals =
     targetChainConfig.nativeCurrency === currency
       ? getReleaseAssetDecimals(

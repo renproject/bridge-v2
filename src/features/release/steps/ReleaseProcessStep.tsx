@@ -259,7 +259,6 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   const [current, send, service] = useBurnMachine(tx);
   useEffect(
     () => () => {
-      console.info("stopping tx machine");
       service.stop();
     },
     [service]
