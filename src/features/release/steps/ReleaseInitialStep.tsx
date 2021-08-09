@@ -80,11 +80,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   );
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
   const { conversionTotal } = getTransactionFees({
-    amount: amount * Math.pow(10, decimals),
+    amount,
     type: TxType.BURN,
     fees,
+    decimals,
   });
-  const conversionFormatted = conversionTotal / Math.pow(10, decimals);
+  const conversionFormatted = conversionTotal;
 
   const usdAmount = useSelector($releaseUsdAmount);
   const handleChainChange = useCallback(

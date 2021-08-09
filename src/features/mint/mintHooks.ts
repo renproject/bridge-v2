@@ -18,7 +18,7 @@ import { cloneTx } from "../transactions/transactionsUtils";
 import { depositSorter } from "./mintUtils";
 
 export const useMintMachine = (mintTransaction: GatewaySession<any>) => {
-  const tx = useMemo(() => {
+  const tx: GatewaySession<any> = useMemo(() => {
     Object.entries(mintTransaction).map((e) => Sentry.setTag(...e));
     Sentry.captureMessage("loaded mint machine");
     return cloneTx(mintTransaction);
@@ -41,7 +41,7 @@ export const useMintMachine = (mintTransaction: GatewaySession<any>) => {
       ...buildMintContextWithMap({
         tx,
         // providers,
-        sdk: getRenJs(network),
+        sdk: getRenJs(network, tx.createdAt),
         fromChainMap: lockChainMap,
         toChainMap: mintChainMap,
       }),

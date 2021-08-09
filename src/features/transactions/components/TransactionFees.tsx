@@ -14,6 +14,7 @@ import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
+  getNativeCurrency,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
@@ -50,9 +51,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
-  const nativeCurrencyConfig = getCurrencyConfig(
-    currency.split("REN").pop() as any
-  );
+  const nativeCurrencyConfig = getCurrencyConfig(getNativeCurrency(currency));
   const exchangeRates = useSelector($exchangeRates);
   const gasPrices = useSelector($gasPrices);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);
@@ -71,16 +70,12 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const hasAmount = !isNaN(amount) && amount !== 0;
   const amountUsd = amount * currencyUsdRate;
   const { fees, pending } = useFetchFees(currency, type);
-  const {
-    renVMFee,
-    renVMFeeAmount,
-    networkFee: nativeNetworkFee,
-  } = getTransactionFees({
+  const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
     amount,
     fees,
     type,
+    decimals,
   });
-  const networkFee = nativeNetworkFee / 10 ** decimals;
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
 

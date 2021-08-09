@@ -458,7 +458,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     mintCurrencyConfig,
     lockChainConfig,
     lockTxLink,
-    lockTxNativeAmount,
+    lockTxAmount,
     mintTxLink,
     decimals,
     mintChainConfig,
@@ -468,11 +468,12 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     TxType.MINT
   );
   const { conversionTotal } = getTransactionFees({
-    amount: Number(lockTxNativeAmount),
+    amount: Number(lockTxAmount),
     fees,
     type: TxType.MINT,
+    decimals,
   });
-  const conversionFormatted = conversionTotal / Math.pow(10, decimals);
+  const conversionFormatted = conversionTotal;
   const handleReturn = useCallback(() => {
     history.push({
       pathname: paths.HOME,

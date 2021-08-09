@@ -31,12 +31,14 @@ type GetTransactionsFeesArgs = {
   amount: number;
   fees: SimpleFee | null;
   type: TxType;
+  decimals: number;
 };
 
 export const getTransactionFees = ({
   amount,
   type,
   fees,
+  decimals,
 }: GetTransactionsFeesArgs) => {
   const amountNumber = Number(amount);
   const feeData: CalculatedFee = {
@@ -48,7 +50,7 @@ export const getTransactionFees = ({
   if (fees) {
     const renTxTypeFee = type === TxType.MINT ? fees.mint : fees.burn;
     const networkFee = type === TxType.MINT ? fees.lock : fees.release;
-    feeData.networkFee = Number(networkFee);
+    feeData.networkFee = Number(networkFee) / 10 ** decimals;
     feeData.renVMFee = Number(renTxTypeFee) / 10000; // percent value
     feeData.renVMFeeAmount = Number(amountNumber * feeData.renVMFee);
     const total = Number(
