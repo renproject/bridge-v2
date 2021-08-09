@@ -198,7 +198,10 @@ export const getMintAssetDecimals = (
   ](provider, network).assetDecimals(asset.toUpperCase());
 };
 
-export const getReleaseAssetDecimals = (chain: BridgeChain, asset: string) => {
+export const getReleaseAssetDecimals = (
+  chain: BridgeChain,
+  asset: string
+): number => {
   if (!asset) {
     return 8;
   }
