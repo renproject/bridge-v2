@@ -69,9 +69,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "eslint --ext js,ts,tsx src",
-    "eject": "react-scripts eject",
-    "i18n:download": "node scripts/crowdinDownload.js",
-    "i18n:upload": "node scripts/crowdinUpload.js"
+    "eject": "react-scripts eject"
   },
   "jest": {
     "transformIgnorePatterns": [
@@ -95,7 +93,6 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.13.0",
-    "@crowdin/crowdin-api-client": "^1.11.3",
     "netlify-cli": "^2.71.0",
     "prettier": "^2.1.1"
   }

@@ -77,8 +77,16 @@ If you want to add a new asset, follow these steps:
   - enable newly added asset in `supportedLockCurrencies`, `supportedReleaseCurrencies`
 
 #### Changing visual appearance
-
+It requires `CROWDIN_API_TOKEN` in your .env
 Most of the visual - related configuration lies in a [theme](src/theme) folder. To find out how to style Material UI, check [this link](https://material-ui.com/customization/theming/). Icons, logos and other images can be found in [assets](src/assets) folder.
+
+#### Updating translations
+It requires installing `crowdin`. You can do that with `npm i -g @crowdin/cli
+`
+
+
+Once added to `en.json`, upload translation with
+`crowdin upload`. After community translations ready, do `crowdin download`. It will automatically download and substitute translations in [locales](src/i18n/locales) folder.
 
 ### Deploying
 
