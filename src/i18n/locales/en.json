@@ -201,5 +201,6 @@
   "release.status-releasing-title": "Releasing from {{renvm}}",
   "release.status-releasing-message": "Processing a transaction on {{chain}} can sometimes take longer due to heavier network load (congestion), please wait patiently.",
   "release.success-notification-message": "Successfully released {{amount}} {{currency}}",
-  "end.x": "x"
+  "end.x": "x",
+  "new.entry": "xyz"
 }

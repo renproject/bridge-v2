@@ -86,7 +86,7 @@
   "about.what-is-header": "Что такое {{bridge}}?",
   "about.what-is-description": "{{bridge}} позволяет легко обертывать крипто активы на разных блокчейнах. Например, {{bridge}} позволяет пользователям взять <orange>BTC</orange> и поместить его на <blue>Ethereum</blue>, в виде ERC-20 под названием <grey>renBTC</grey>.",
   "about.work-header": "Как это работает?",
-  "about.work-description": "Используя {{renvm}}, универсальный мост преобразует цифровые активы в формат, необходимый для его целевой цепи. Например, {{renvm}} принимает <orange>BTC</orange>, держит его, и преобразует в <blue>ERC-20</blue> с коэффициентом 1:1, чтобы гарантировать, что ваш <grey>renBTC</grey> всегда подкреплен таким же количеством <orange>BTC</orange>. Узнать больше",
+  "about.work-description": "Using {{renvm}}, a universal translator, it converts digital assets to the format needed by its destination chain. For example, {{renvm}} takes <orange>BTC</orange>, holds it, and then converts it to an <blue>ERC-20</blue> with a 1:1 ratio to ensure your <grey>renBTC</grey> is always backed by the same amount of <orange>BTC</orange>. Find out more",
   "about.work-link-text": "здесь",
   "about.safety-header": "Насколько это безопасно?",
   "about.safety-description-1": "{{renvm}} хранит ваши активы, пока они находятся на других блокчейнах. {{renvm}} это новая технология, и",
@@ -201,5 +201,6 @@
   "release.status-releasing-title": "Высвобождение из {{renvm}}",
   "release.status-releasing-message": "Обработка транзакции на {{chain}} иногда может занять больше времени из-за большей нагрузки сети (перегрузки), пожалуйста, терпеливо подождите.",
   "release.success-notification-message": "Успешно высвобождено {{amount}} {{currency}}",
-  "end.x": "х"
+  "end.x": "х",
+  "new.entry": "xyz"
 }

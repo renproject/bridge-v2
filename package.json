@@ -70,7 +70,8 @@
     "test": "react-scripts test",
     "lint": "eslint --ext js,ts,tsx src",
     "eject": "react-scripts eject",
-    "i18n:download": "node scripts/crowdinDownload.js"
+    "i18n:download": "node scripts/crowdinDownload.js",
+    "i18n:upload": "node scripts/crowdinUpload.js"
   },
   "jest": {
     "transformIgnorePatterns": [

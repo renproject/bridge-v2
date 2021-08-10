@@ -86,7 +86,7 @@
   "about.what-is-header": "什么是 {{bridge}}？",
   "about.what-is-description": "{{bridge}} 允许在不同的区块链上简单地包装数字资产。 例如， {{bridge}} 允许用户接受 <orange>BTC</orange> 并将其放在 <blue>Ethereum</blue>以 ERC-20 命名的 <grey>renBTC</grey> 格式.",
   "about.work-header": "它是如何工作的？",
-  "about.work-description": "Using {{renvm}}, a universal bridge, it converts digital assets to the format needed by its destination chain. For example, {{renvm}} takes <orange>BTC</orange>, holds it, and then converts it to an <blue>ERC-20</blue> with a 1:1 ratio to ensure your <grey>renBTC</grey> is always backed by the same amount of <orange>BTC</orange>. Find out more",
+  "about.work-description": "Using {{renvm}}, a universal translator, it converts digital assets to the format needed by its destination chain. For example, {{renvm}} takes <orange>BTC</orange>, holds it, and then converts it to an <blue>ERC-20</blue> with a 1:1 ratio to ensure your <grey>renBTC</grey> is always backed by the same amount of <orange>BTC</orange>. Find out more",
   "about.work-link-text": "在这里",
   "about.safety-header": "多么安全？",
   "about.safety-description-1": "{{renvm}} 在其他区块链上保留了您的资产。 {{renvm}} 是新技术和",
@@ -201,5 +201,6 @@
   "release.status-releasing-title": "从 {{renvm}} 发布",
   "release.status-releasing-message": "由于网络负载更重(拥塞)，处理 {{chain}} 的交易有时可能需要更长时间，请耐心等待。",
   "release.success-notification-message": "成功发布了 {{amount}} {{currency}}",
-  "end.x": "x"
+  "end.x": "x",
+  "new.entry": "xyz"
 }

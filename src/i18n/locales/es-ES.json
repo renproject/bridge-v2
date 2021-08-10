@@ -86,7 +86,7 @@
   "about.what-is-header": "¿Qué es {{bridge}}?",
   "about.what-is-description": "{{bridge}} permite el envoltorio simple de activos digitales en diferentes blockchains. Por ejemplo, {{bridge}} permite a los usuarios tomar <orange>BTC</orange> y colocarlo en <blue>Ethereum</blue>, como un ERC llamado <grey>renBTC</grey>.",
   "about.work-header": "¿Cómo funciona?",
-  "about.work-description": "Using {{renvm}}, a universal bridge, it converts digital assets to the format needed by its destination chain. For example, {{renvm}} takes <orange>BTC</orange>, holds it, and then converts it to an <blue>ERC-20</blue> with a 1:1 ratio to ensure your <grey>renBTC</grey> is always backed by the same amount of <orange>BTC</orange>. Find out more",
+  "about.work-description": "Using {{renvm}}, a universal translator, it converts digital assets to the format needed by its destination chain. For example, {{renvm}} takes <orange>BTC</orange>, holds it, and then converts it to an <blue>ERC-20</blue> with a 1:1 ratio to ensure your <grey>renBTC</grey> is always backed by the same amount of <orange>BTC</orange>. Find out more",
   "about.work-link-text": "aqui",
   "about.safety-header": "¿Hasta qué punto es seguro?",
   "about.safety-description-1": "{{renvm}} se aferra a tus activos cuando están en otras blockchains. {{renvm}} es una nueva tecnología, y",
@@ -201,5 +201,6 @@
   "release.status-releasing-title": "Liberando desde {{renvm}}",
   "release.status-releasing-message": "El procesamiento de una transacción en {{chain}} a veces puede tardar más tiempo debido a una carga de red más pesada (congestión), espere pacientemente.",
   "release.success-notification-message": "Liberado con éxito {{amount}} {{currency}}",
-  "end.x": "x"
+  "end.x": "x",
+  "new.entry": "xyz"
 }

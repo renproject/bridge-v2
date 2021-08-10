@@ -1,10 +1,10 @@
 const cp = require("child_process");
 const { client, errorHandler, projectId } = require("./crowdin");
 
-const downloadFile = async function (uri, filename) {
+async function downloadFile(uri, filename) {
   let command = `curl -o ${filename}  '${uri}'`;
   cp.execSync(command);
-};
+}
 
 async function main() {
   const project = await client.projectsGroupsApi.getProject(projectId);
@@ -19,7 +19,6 @@ async function main() {
   const file = files.data[0];
 
   const fileId = file.data.id;
-  console.log(file);
   for (const langId of languageIds) {
     try {
       const translations = await client.translationsApi.exportProjectTranslation(
@@ -30,7 +29,6 @@ async function main() {
         translations.data.url,
         `./src/i18n/locales/${langId}.json`
       );
-      console.log(translations);
     } catch (ex) {
       errorHandler(ex);
     }
