@@ -35,16 +35,18 @@ const useIconWithLabelStyles = makeStyles((theme) => ({
 type IconWithLabelProps = {
   label: string;
   Icon: CustomSvgIconComponent | SvgIconComponent;
+  iconClassName?: string;
 };
 
 export const IconWithLabel: FunctionComponent<IconWithLabelProps> = ({
   label,
   Icon,
+  iconClassName,
 }) => {
   const styles = useIconWithLabelStyles();
   return (
     <span className={styles.root}>
-      <span className={styles.icon}>
+      <span className={classNames(styles.icon, iconClassName)}>
         <Icon fontSize="inherit" />
       </span>
       <Typography className={styles.label}>{label}</Typography>

@@ -9,21 +9,25 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@reduxjs/toolkit": "^1.4.0",
-    "@renproject/chains": "^2.2.0",
-    "@renproject/chains-bitcoin": "^2.1.9",
-    "@renproject/chains-ethereum": "^2.3.0",
-    "@renproject/chains-terra": "^2.1.9",
+    "@renproject/chains-bitcoin": "2.5.1",
+    "@renproject/chains-ethereum": "2.5.1",
+    "@renproject/chains-filecoin": "2.5.1",
+    "@renproject/chains-solana": "2.5.1",
+    "@renproject/chains-terra": "2.5.1",
     "@renproject/fonts": "^1.0.3-rc1",
-    "@renproject/interfaces": "^2.1.9",
-    "@renproject/multiwallet-binancesmartchain-injected-connector": "^2.1.9",
-    "@renproject/multiwallet-ethereum-injected-connector": "^2.2.2",
-    "@renproject/multiwallet-ethereum-mewconnect-connector": "^2.1.9",
-    "@renproject/multiwallet-ethereum-walletconnect-connector": "^2.1.9",
-    "@renproject/multiwallet-ui": "^2.1.9",
-    "@renproject/ren": "^2.3.0",
-    "@renproject/ren-tx": "^2.3.0",
-    "@renproject/rpc": "^2.1.9",
-    "@renproject/utils": "^2.1.9",
+    "@renproject/interfaces": "2.5.1",
+    "@renproject/multiwallet-binancesmartchain-injected-connector": "2.5.1",
+    "@renproject/multiwallet-ethereum-injected-connector": "2.5.1",
+    "@renproject/multiwallet-ethereum-mewconnect-connector": "2.5.1",
+    "@renproject/multiwallet-ethereum-walletconnect-connector": "2.5.1",
+    "@renproject/multiwallet-solana-connector": "2.5.1",
+    "@renproject/multiwallet-ui": "2.5.1",
+    "@renproject/ren": "2.5.1",
+    "@renproject/ren-tx": "2.5.1",
+    "@renproject/rpc": "2.5.1",
+    "@renproject/utils": "2.5.1",
+    "@sentry/react": "^6.5.1",
+    "@solana/web3.js": "^1.18.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -58,6 +62,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "react-use": "^15.3.4",
+    "redux": "^4.1.0",
+    "text-encoding": "^0.7.0",
     "typescript": "^4.0.3",
     "xstate": "^4.17.0"
   },
@@ -79,18 +85,11 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.13.0",
     "netlify-cli": "^2.71.0",

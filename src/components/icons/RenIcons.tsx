@@ -2,6 +2,8 @@ import { SvgIcon, SvgIconProps } from "@material-ui/core";
 import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
 import { getScalingProps } from "../../utils/icons";
+import { ReactComponent as AvalancheChain } from "./../../assets/icons/avalanche-chain.svg";
+import { ReactComponent as AvalancheChainCircle } from "./../../assets/icons/avalanche-chain-circle-icon.svg";
 import { ReactComponent as AvaCircle } from "./../../assets/icons/avalanche-circle-icon.svg";
 import { ReactComponent as Ava } from "./../../assets/icons/avalanche-colour-icon.svg";
 import { ReactComponent as AvaFull } from "./../../assets/icons/avalanche-icon.svg";
@@ -13,6 +15,9 @@ import { ReactComponent as BchFull } from "./../../assets/icons/bch-icon.svg";
 import { ReactComponent as BinanceChainFull } from "./../../assets/icons/binancesmartchain-circle-icon.svg";
 import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binancesmartchain-colour-icon.svg";
 import { ReactComponent as BinanceChain } from "./../../assets/icons/binancesmartchain-icon.svg";
+import { ReactComponent as ArbitrumCircle } from "./../../assets/icons/arbitrum-circle.svg";
+import { ReactComponent as ArbitrumColor } from "./../../assets/icons/arbitrum-color.svg";
+import { ReactComponent as ArbitrumBlack } from "./../../assets/icons/arbitrum-black.svg";
 import { ReactComponent as BitcoinInCircle } from "./../../assets/icons/bitcoin-in-circle.svg";
 import { ReactComponent as BrowserNotifications } from "./../../assets/icons/browser-notifications.svg";
 import { ReactComponent as BtcGrey } from "./../../assets/icons/btc-icon-grey.svg";
@@ -64,9 +69,14 @@ import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconn
 import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
-
 import { ReactComponent as Polygon } from "./../../assets/icons/polygon-icon.svg";
 import { ReactComponent as PolygonFull } from "./../../assets/icons/polygon-colour-icon.svg";
+import { ReactComponent as PolygonCircle } from "./../../assets/icons/polygon-circle-icon.svg";
+import { ReactComponent as Solana } from "./../../assets/icons/solana-icon.svg";
+import { ReactComponent as SolanaFull } from "./../../assets/icons/solana-colour-icon.svg";
+import { ReactComponent as SolanaCircle } from "./../../assets/icons/solana-circle-icon.svg";
+import { ReactComponent as Sollet } from "./../../assets/icons/sollet.svg";
+import { ReactComponent as Phantom } from "./../../assets/icons/phantom-icon-purple.svg";
 
 import AddIcon from "@material-ui/icons/Add";
 import BlockIcon from "@material-ui/icons/Block";
@@ -205,6 +215,30 @@ export const WalletConnectIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={WalletConnect} {...props} />
 );
 
+export const ArbitrumCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={ArbitrumCircle} {...props} />
+);
+
+export const ArbitrumBlackIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={ArbitrumBlack} {...props} />;
+};
+
+export const ArbitrumColorIcon: CustomSvgIconComponent = (props) => {
+  return <SvgIcon component={ArbitrumColor} {...props} />;
+};
+
+export const AvalancheChainIcon: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingProps(693.26, 257.79);
+  return <SvgIcon component={AvalancheChain} {...scalingProps} {...props} />;
+};
+
+export const AvalancheChainCircleIcon: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingProps(960, 960);
+  return (
+    <SvgIcon component={AvalancheChainCircle} {...scalingProps} {...props} />
+  );
+};
+
 export const BinanceChainIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BinanceChain} {...props} />
 );
@@ -331,6 +365,10 @@ export const PolygonFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={PolygonFull} {...props} />
 );
 
+export const PolygonCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={PolygonCircle} {...props} />
+);
+
 export const FantomGreyIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Fantom} {...props} />
 );
@@ -357,4 +395,28 @@ export const AvaFullIcon: CustomSvgIconComponent = (props) => (
 
 export const AvaCircleIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={AvaCircle} {...props} />
+);
+
+export const SolanaIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Fantom} {...props} />
+);
+
+export const SolanaGreyIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={SolanaFull} {...props} />
+);
+
+export const SolanaFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Solana} {...props} />
+);
+
+export const SolanaCircleIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={SolanaCircle} {...props} />
+);
+
+export const PhantomFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon viewBox="0 0 128 128" component={Phantom} {...props} />
+);
+
+export const SolletFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon viewBox="0 0 100 100" component={Sollet} {...props} />
 );

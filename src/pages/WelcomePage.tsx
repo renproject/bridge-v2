@@ -5,16 +5,7 @@ import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
-import {
-  BchFullIcon,
-  BinanceChainFullIcon,
-  BtcFullIcon,
-  DogeFullIcon,
-  EmptyCircleIcon,
-  EthereumChainFullIcon,
-  WarningIcon,
-  ZecFullIcon,
-} from "../components/icons/RenIcons";
+import { EmptyCircleIcon, WarningIcon } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
 import { MobileLayout } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
@@ -22,6 +13,12 @@ import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
 import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
+import {
+  getChainConfig,
+  getCurrencyConfig,
+  supportedBurnChains,
+  supportedReleaseCurrencies,
+} from "../utils/assetConfigs";
 import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,10 +32,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 24,
     textAlign: "center",
     color: theme.customColors.textLight,
-  },
-  continuation: {
-    marginTop: 48,
-    textAlign: "center",
   },
   button: {
     maxWidth: 400,
@@ -77,7 +70,9 @@ const useStyles = makeStyles((theme) => ({
   },
   assetsList: {
     margin: "12px auto",
+    maxWidth: "40vw",
     display: "flex",
+    flexWrap: "wrap",
     justifyContent: "center",
     [theme.breakpoints.up("md")]: {
       justifyContent: "space-between",
@@ -91,6 +86,11 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("md")]: {
       padding: 0,
     },
+  },
+  avalancheIcon: {
+    display: "flex",
+    alignItems: "center",
+    fontSize: 24,
   },
   legacy: {
     marginTop: 70,
@@ -148,20 +148,9 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         <Typography variant="body1" className={styles.description}>
           {t("welcome.subheader")}
         </Typography>
-        <Typography variant="body1" className={styles.continuation}>
-          {t("welcome.continue-text")}{" "}
-          <Link
-            color="primary"
-            underline="hover"
-            target="_blank"
-            href={links.TERMS_OF_SERVICE}
-          >
-            {t("welcome.continue-tos-link-text")}
-          </Link>
-        </Typography>
         <NarrowCenteredWrapper>
           <ActionButton className={styles.button} onClick={handleAgree}>
-            {t("welcome.continue-action-text")}
+            {t("common.continue-label")}
           </ActionButton>
         </NarrowCenteredWrapper>
       </Container>
@@ -176,18 +165,17 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               {t("common.assets-label")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Bitcoin" Icon={BtcFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Bitcoin Cash" Icon={BchFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="ZCash" Icon={ZecFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Doge" Icon={DogeFullIcon} />
-              </li>
+              {supportedReleaseCurrencies.map((x) => {
+                const curConfig = getCurrencyConfig(x);
+                return (
+                  <li className={styles.assetListItem}>
+                    <IconWithLabel
+                      label={curConfig.full}
+                      Icon={curConfig.FullIcon}
+                    />
+                  </li>
+                );
+              })}
               <li className={styles.assetListItem}>
                 <IconWithLabel
                   label={t("welcome.more-soon")}
@@ -205,13 +193,21 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               {t("common.destination-label")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Ethereum" Icon={EthereumChainFullIcon} />
-              </li>
+              {supportedBurnChains.map((x) => {
+                const chainConf = getChainConfig(x);
+                return (
+                  <li className={styles.assetListItem}>
+                    <IconWithLabel
+                      label={chainConf.full}
+                      Icon={chainConf.FullIcon}
+                    />
+                  </li>
+                );
+              })}
               <li className={styles.assetListItem}>
                 <IconWithLabel
-                  label="Binance Smart Chain"
-                  Icon={BinanceChainFullIcon}
+                  label={t("welcome.more-soon")}
+                  Icon={EmptyCircleIcon}
                 />
               </li>
             </UnstyledList>

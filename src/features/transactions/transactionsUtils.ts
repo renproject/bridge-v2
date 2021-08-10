@@ -3,7 +3,11 @@ import { BurnSession, GatewaySession } from "@renproject/ren-tx";
 import { TFunction } from "i18next";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
-import { chainsClassMap } from "../../services/rentx";
+import {
+  chainsClassMap,
+  mintChainClassMap,
+  releaseChainClassMap,
+} from "../../services/rentx";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -178,6 +182,35 @@ export const parseTxQueryString: (
   }
 
   return res;
+};
+
+export const getMintAssetDecimals = (
+  chain: BridgeChain,
+  asset: string,
+  provider: any,
+  network: any
+) => {
+  if (!asset) {
+    return 8;
+  }
+  const chainConfig = getChainConfig(chain);
+  return mintChainClassMap[
+    chainConfig.rentxName as keyof typeof mintChainClassMap
+  ](provider, network).assetDecimals(asset.toUpperCase());
+};
+
+export const getReleaseAssetDecimals = (
+  chain: BridgeChain,
+  asset: string
+): number => {
+  if (!asset) {
+    return 8;
+  }
+  const chainConfig = getChainConfig(chain);
+  // @ts-expect-error
+  return releaseChainClassMap[
+    chainConfig.rentxName as keyof typeof releaseChainClassMap
+  ]().assetDecimals(asset.toUpperCase());
 };
 
 export const getChainExplorerLink = (

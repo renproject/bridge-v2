@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
+import { Solana } from "@renproject/chains-solana";
 import React, {
   FunctionComponent,
   useCallback,
@@ -45,6 +46,7 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import {
+  BridgeChain,
   getChainConfig,
   getCurrencyConfig,
   toMintedCurrency,
@@ -58,6 +60,7 @@ import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { setCurrentTxId } from "../../transactions/transactionsSlice";
 import {
   createTxQueryString,
+  getReleaseAssetDecimals,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
@@ -65,6 +68,7 @@ import {
 import { useShakePaper } from "../../ui/uiHooks";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
+import { SolanaTokenAccountModal } from "../components/SolanaAccountChecker";
 import { $mint } from "../mintSlice";
 import {
   createMintTransaction,
@@ -77,7 +81,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
-  const { walletConnected, account } = useSelectedChainWallet();
+  const { walletConnected, account, provider } = useSelectedChainWallet();
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { currency } = useSelector($mint);
   const [amountValue, setAmountValue] = useState("");
@@ -91,6 +95,12 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       setAmountValue(newValue);
     }
   }, []);
+
+  const lockCurrencyConfig = getCurrencyConfig(currency);
+  const decimals = getReleaseAssetDecimals(
+    lockCurrencyConfig.sourceChain,
+    currency
+  );
   const amount = Number(amountValue);
   const hasAmount = amount !== 0;
   const amountUsd = amount * currencyUsdRate;
@@ -99,12 +109,13 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     amount,
     fees,
     type: TxType.MINT,
+    decimals,
   });
+  const conversionFormatted = conversionTotal;
 
-  const lockCurrencyConfig = getCurrencyConfig(currency);
   const { GreyIcon } = lockCurrencyConfig;
 
-  const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
+  const targetCurrencyAmountUsd = conversionFormatted * currencyUsdRate;
   const destinationChainConfig = getChainConfig(chain);
   const destinationChainNativeCurrencyConfig = getCurrencyConfig(
     destinationChainConfig.nativeCurrency
@@ -137,11 +148,56 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;
 
-  const handleConfirm = useCallback(() => {
+  const [showSolanaModal, setShowSolanaModal] = useState(false);
+  const [checkingSolana, setCheckingSolana] = useState(false);
+  const [hasSolanaTokenAccount, setSolanaTokenAccount] = useState<any>();
+
+  const onSolanaAccountCreated = useCallback(
+    (a) => {
+      setSolanaTokenAccount(a);
+    },
+    [setSolanaTokenAccount]
+  );
+
+  // FIXME: we might want to extract the solana logic in a nicer manner
+  useEffect(() => {
+    if (chain === BridgeChain.SOLC && canInitializeMinting) {
+      if (hasSolanaTokenAccount) {
+        setMintingInitialized(true);
+        return;
+      }
+      if (hasSolanaTokenAccount === false && !showSolanaModal) {
+        setShowSolanaModal(true);
+        setMintingInitialized(false);
+      }
+    }
+  }, [
+    canInitializeMinting,
+    checkingSolana,
+    showSolanaModal,
+    chain,
+    hasSolanaTokenAccount,
+    setMintingInitialized,
+    setShowSolanaModal,
+  ]);
+
+  const handleConfirm = useCallback(async () => {
     if (walletConnected) {
       setTouched(true);
       if (canInitializeMinting) {
-        setMintingInitialized(true);
+        if (chain === BridgeChain.SOLC) {
+          setCheckingSolana(true);
+          if (!hasSolanaTokenAccount) {
+            setSolanaTokenAccount(
+              await new Solana(provider, network).getAssociatedTokenAccount(
+                currency
+              )
+            );
+          }
+          setCheckingSolana(false);
+        } else {
+          setMintingInitialized(true);
+        }
       } else {
         setMintingInitialized(false);
       }
@@ -150,7 +206,18 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       setMintingInitialized(false);
       dispatch(setWalletPickerOpened(true));
     }
-  }, [dispatch, walletConnected, canInitializeMinting]);
+  }, [
+    dispatch,
+    chain,
+    walletConnected,
+    canInitializeMinting,
+    network,
+    provider,
+    currency,
+    hasSolanaTokenAccount,
+    setSolanaTokenAccount,
+    setMintingInitialized,
+  ]);
 
   const onMintTxCreated = useCallback(
     async (tx) => {
@@ -182,6 +249,14 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   return (
     <>
+      {showSolanaModal && (
+        <SolanaTokenAccountModal
+          currency={currency}
+          provider={provider}
+          network={network}
+          onCreated={onSolanaAccountCreated}
+        />
+      )}
       <PaperHeader>
         <PaperNav>
           <IconButton onClick={onPrev}>
@@ -269,7 +344,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
               label={t("mint.receiving-label")}
               value={
                 <NumberFormatText
-                  value={conversionTotal}
+                  value={conversionFormatted}
                   spacedSuffix={mintedCurrencyConfig.short}
                 />
               }
@@ -326,7 +401,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           <ActionButton
             onClick={handleConfirm}
             disabled={
-              walletConnected ? !ackChecked || mintingInitialized : false
+              (walletConnected ? !ackChecked || mintingInitialized : false) ||
+              checkingSolana ||
+              hasSolanaTokenAccount === false
             }
           >
             {!walletConnected

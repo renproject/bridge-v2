@@ -70,10 +70,7 @@ import {
   $walletPickerOpened,
   setWalletPickerOpened,
 } from "../features/wallet/walletSlice";
-import {
-  renNetworkToEthNetwork,
-  walletPickerModalConfig,
-} from "../providers/multiwallet/Multiwallet";
+import { walletPickerModalConfig } from "../providers/multiwallet/Multiwallet";
 
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
@@ -152,7 +149,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WrongNetworkInfo: WalletWrongNetworkInfo,
       WalletEntryButton,
       WalletChainLabel,
-      config: walletPickerModalConfig(renNetworkToEthNetwork(renNetwork) || 1),
+      config: walletPickerModalConfig(renNetwork),
     };
     return options;
   }, [multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);

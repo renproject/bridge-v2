@@ -35,6 +35,7 @@ import { paths } from "../../../pages/routes";
 import {
   getChainConfig,
   getCurrencyConfig,
+  getNativeCurrency,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { useFetchFees } from "../../fees/feesHooks";
@@ -45,6 +46,7 @@ import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
   createTxQueryString,
+  getReleaseAssetDecimals,
   LocationTxState,
   TxConfigurationStepProps,
   TxType,
@@ -76,21 +78,40 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const amountUsd = useSelector($releaseUsdAmount);
   const rates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
+
+  const destinationCurrency = toReleasedCurrency(currency);
+  const currencyConfig = getCurrencyConfig(currency);
+  const nativeCurrencyConfig = getCurrencyConfig(getNativeCurrency(currency));
+
+  const targetChainConfig = getChainConfig(chain);
+  const decimals =
+    targetChainConfig.nativeCurrency === currency
+      ? getReleaseAssetDecimals(
+          targetChainConfig.symbol,
+          targetChainConfig.nativeCurrency
+        )
+      : getReleaseAssetDecimals(
+          nativeCurrencyConfig.sourceChain,
+          nativeCurrencyConfig.symbol
+        );
+
   const { conversionTotal } = getTransactionFees({
     amount,
     fees,
     type: TxType.BURN,
+    decimals,
   });
 
-  const currencyConfig = getCurrencyConfig(currency);
   const chainConfig = getChainConfig(chain);
-  const destinationCurrency = toReleasedCurrency(currency);
   const destinationCurrencyUsdRate = findExchangeRate(
     rates,
     destinationCurrency,
     USD_SYMBOL
   );
-  const destinationAmountUsd = conversionTotal * destinationCurrencyUsdRate;
+
+  const conversionFormatted = conversionTotal;
+
+  const destinationAmountUsd = conversionFormatted * destinationCurrencyUsdRate;
   const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
   const { MainIcon } = destinationCurrencyConfig;
   const tx = useMemo(
@@ -214,7 +235,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
               label={t("release.receiving-label") + ":"}
               value={
                 <NumberFormatText
-                  value={conversionTotal}
+                  value={conversionFormatted}
                   spacedSuffix={destinationCurrencyConfig.short}
                 />
               }
