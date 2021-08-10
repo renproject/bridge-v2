@@ -7,7 +7,10 @@ import { LanguageMenuIconButton } from "../../../components/buttons/Buttons";
 import { CheckedIcon } from "../../../components/icons/RenIcons";
 import { SpacedPaperContent } from "../../../components/layout/Paper";
 import { BridgeModal } from "../../../components/modals/BridgeModal";
-import { nativeLanguageNames } from "../../../i18n/localeBundles";
+import {
+  availableLocales,
+  nativeLanguageNames,
+} from "../../../i18n/localeBundles";
 
 const useLanguageButtonStyles = makeStyles((theme) => ({
   root: {
@@ -104,8 +107,9 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
 
   const handleLanguageChange = useCallback(
     (event) => {
-      i18n.changeLanguage(event.currentTarget.value);
-      handleClose();
+      i18n.changeLanguage(event.currentTarget.value).then(() => {
+        handleClose();
+      });
     },
     [i18n]
   );
@@ -125,7 +129,7 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
           onClose={handleClose}
         >
           <SpacedPaperContent topPadding bottomPadding fixedHeight>
-            {Object.keys(nativeLanguageNames).map((languageKey) => (
+            {availableLocales.map((languageKey) => (
               <LanguageButtonWrapper key={languageKey}>
                 <LanguageButton
                   key={languageKey}
