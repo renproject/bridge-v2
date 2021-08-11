@@ -156,7 +156,7 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
       value={i18n.language}
       classes={classes}
     >
-      {Object.keys(nativeLanguageNames).map((languageKey) => (
+      {availableLocales.map((languageKey) => (
         <MenuItem
           key={languageKey}
           onClick={() => i18n.changeLanguage(languageKey)}
