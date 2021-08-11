@@ -1,11 +1,12 @@
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpApi from "i18next-http-backend";
+import intervalPlural from "i18next-intervalplural-postprocessor";
 import { initReactI18next } from "react-i18next";
 import { getVariationOfAOrAn } from "./i18nUtils";
 import bundles, { availableLocales } from "./localeBundles";
-import defaultBundle from "./locales/en.json";
 
+import defaultBundle from "./locales/en.json";
 const DEFAULT_LOCALE = "en";
 
 // load the right bundle depending on the requested locale
@@ -52,6 +53,7 @@ const backendOptions = {
     }
   },
 };
+
 const langDetectorOptions = {
   // order and from where user language should be detected
   order: ["cookie", "localStorage", "navigator"],
@@ -70,7 +72,8 @@ const langDetectorOptions = {
 
 const isDev = process.env.NODE_ENV === "development";
 
-i18n.use(LanguageDetector).use(initReactI18next); // passes i18n down to react-i18next
+i18n.use(LanguageDetector).use(intervalPlural).use(initReactI18next); // passes i18n down to react-i18next
+
 if (!isDev) {
   i18n.use(HttpApi);
 }
@@ -96,6 +99,10 @@ i18n.init({
       if (format === "en-handle-an-capitalized")
         return !lng || lng === "en" ? getVariationOfAOrAn(value, true) : "";
       return value;
+    },
+    defaultVariables: {
+      bridge: "RenBridge",
+      renvm: "RenVM",
     },
   },
   backend: backendOptions as any,

@@ -385,7 +385,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
         />
       </ActionButtonWrapper>
       <SubmitErrorDialog
-        open={false} // TODO: crit enable: submittingError
+        open={submittingError}
         onAction={onReload}
         error={tx.error}
       />

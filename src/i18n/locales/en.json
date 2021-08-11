@@ -46,6 +46,7 @@
   "common.here": "here",
   "common.hour": "hour",
   "common.hour_plural": "hours",
+  "common.hour_interval": "(1)[hour];(2-inf)[hours];",
   "common.minutes": "minutes",
   "common.warning-label": "Warning",
   "common.error-label": "Error",
@@ -200,7 +201,5 @@
   "release.completed-title": "Completed",
   "release.status-releasing-title": "Releasing from {{renvm}}",
   "release.status-releasing-message": "Processing a transaction on {{chain}} can sometimes take longer due to heavier network load (congestion), please wait patiently.",
-  "release.success-notification-message": "Successfully released {{amount}} {{currency}}",
-  "end.x": "x",
-  "new.entry": "xyz"
+  "release.success-notification-message": "Successfully released {{amount}} {{currency}}"
 }

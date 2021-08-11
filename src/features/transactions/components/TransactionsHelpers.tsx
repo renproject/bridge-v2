@@ -300,7 +300,8 @@ export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
 
   return (
     <strong>
-      {hours} {t("common.hour", { count: hours })}
+      {hours}{" "}
+      {t("common.hour_interval", { postProcess: "interval", count: hours })}
     </strong>
   );
 };
