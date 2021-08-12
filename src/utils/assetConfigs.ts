@@ -52,7 +52,6 @@ import {
   ArbitrumColorIcon,
   ArbitrumBlackIcon,
   BtcDashedIcon,
-  EmptyIcon,
   BchDashedIcon,
   DogeDashedIcon,
   ZecDashedIcon,

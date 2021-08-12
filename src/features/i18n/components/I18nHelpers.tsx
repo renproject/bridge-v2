@@ -114,6 +114,9 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
     [i18n]
   );
 
+  if (availableLocales.length < 2) {
+    return null;
+  }
   if (mode === "dialog") {
     return (
       <>

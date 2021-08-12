@@ -4,12 +4,12 @@
 
 const bundles = {
   // @ts-ignore
-  de: () => import(/* webpackChunkName: "de" */ "./locales/de-DE.json"),
+  // de: () => import(/* webpackChunkName: "de" */ "./locales/de-DE.json"),
   en: () => import(/* webpackChunkName: "en" */ "./locales/en.json"),
   // es: () => import(/* webpackChunkName: "es" */ "./locales/es-ES.json"),
   // pl: () => import(/* webpackChunkName: "pt" */ "./locales/pt-PT.json"),
   // zh: () => import(/* webpackChunkName: "zh" */ "./locales/zh-CN.json"),
-  ru: () => import(/* webpackChunkName: "ru" */ "./locales/ru-RU.json"),
+  // ru: () => import(/* webpackChunkName: "ru" */ "./locales/ru-RU.json"),
 };
 
 // generate whitelist for i18next
