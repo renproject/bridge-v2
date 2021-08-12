@@ -505,6 +505,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     MainIcon: BtcFullIcon,
     rentxName: "sol",
     sourceChain: BridgeChain.ARBITRUMC,
+    bandchainSymbol: "ETH",
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.UNKNOWN]: {
