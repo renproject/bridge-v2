@@ -200,7 +200,5 @@
   "release.completed-title": "已完成",
   "release.status-releasing-title": "从 {{renvm}} 发布",
   "release.status-releasing-message": "由于网络负载更重(拥塞)，处理 {{chain}} 的交易有时可能需要更长时间，请耐心等待。",
-  "release.success-notification-message": "成功发布了 {{amount}} {{currency}}",
-  "end.x": "x",
-  "new.entry": "xyz"
+  "release.success-notification-message": "成功发布了 {{amount}} {{currency}}"
 }
