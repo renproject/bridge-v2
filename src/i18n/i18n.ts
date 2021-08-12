@@ -70,23 +70,23 @@ const langDetectorOptions = {
   checkWhitelist: true,
 };
 
-const isDev = process.env.NODE_ENV === "development";
-
 i18n.use(LanguageDetector).use(intervalPlural).use(initReactI18next); // passes i18n down to react-i18next
 
+// if you want to edit language file with HMR make isDev true and set DEFAULT_LOCALE
+const isDev = false; // process.env.NODE_ENV === "development";
 if (!isDev) {
   i18n.use(HttpApi);
 }
 
-const packResources = (bundleContent: any) => ({
-  [DEFAULT_LOCALE]: { translation: bundleContent },
+const packResources = (locale: string, bundleContent: any) => ({
+  [locale]: { translation: bundleContent },
 });
-const defaultResources = packResources(defaultBundle);
+const defaultResources = packResources(DEFAULT_LOCALE, defaultBundle);
 
 i18n.init({
   resources: isDev ? defaultResources : undefined,
-  lng: DEFAULT_LOCALE, // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
-  whitelist: availableLocales, // available languages for browser dector to pick from
+  lng: isDev ? DEFAULT_LOCALE : undefined, // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+  whitelist: availableLocales, // available languages for browser detector to pick from
   fallbackLng: false,
   detection: langDetectorOptions,
   // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
@@ -108,22 +108,16 @@ i18n.init({
   backend: backendOptions as any,
 });
 
-console.log(i18n);
-
 export default i18n;
 
 // HMR for english locale - new keys will be firstly added to en.json
 // then reuploaded to crowdin and translated
 if (isDev && (module as any).hot) {
-  (module as any).hot.accept(
-    `./locales/${DEFAULT_LOCALE}.json`,
-    (stuff: any) => {
-      const newBundle = require(`./locales/${DEFAULT_LOCALE}.json`);
-      console.log("aaa", stuff, newBundle);
-      i18n.removeResourceBundle(DEFAULT_LOCALE, "translation");
-      i18n.addResourceBundle(DEFAULT_LOCALE, "translation", newBundle);
-      i18n.reloadResources([DEFAULT_LOCALE]).finally();
-      i18n.changeLanguage(DEFAULT_LOCALE).finally();
-    }
-  );
+  (module as any).hot.accept(`./locales/${DEFAULT_LOCALE}.json`, () => {
+    const newBundle = require(`./locales/${DEFAULT_LOCALE}.json`);
+    i18n.removeResourceBundle(DEFAULT_LOCALE, "translation");
+    i18n.addResourceBundle(DEFAULT_LOCALE, "translation", newBundle);
+    i18n.reloadResources([DEFAULT_LOCALE]).finally();
+    i18n.changeLanguage(DEFAULT_LOCALE).finally();
+  });
 }

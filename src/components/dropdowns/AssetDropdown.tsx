@@ -113,9 +113,6 @@ const getAssetData = (
     full = selected.full;
     short = selected.short;
     Icon = selected.MainIcon;
-    // if (Boolean((selected as BridgeCurrencyConfig).DashedIcon)) {
-    //   Icon = (selected as BridgeCurrencyConfig).DashedIcon;
-    // }
   }
   return {
     full,
