@@ -49,7 +49,7 @@ export const useFetchBalances = (currencySymbols: Array<BridgeCurrency>) => {
   }, [dispatch, walletConnected]);
 
   const fetchAssetBalance = useCallback(
-    (currency: BridgeCurrency) => {
+    async (currency: BridgeCurrency) => {
       if (
         provider &&
         account &&
@@ -61,10 +61,11 @@ export const useFetchBalances = (currencySymbols: Array<BridgeCurrency>) => {
         )
       ) {
         const chain = Chain(provider, renNetwork);
+        const decimals = await chain.assetDecimals(currency);
         return chain
           .getBalance(currency, account)
           .then((balance: any) => {
-            return balance.toNumber() / 100000000;
+            return balance.toNumber() / Math.pow(10, decimals);
           })
           .catch(console.error);
       } else {

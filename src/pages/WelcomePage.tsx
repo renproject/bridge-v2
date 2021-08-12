@@ -5,12 +5,19 @@ import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
 import {
+  AvalancheChainIcon,
   BchFullIcon,
   BinanceChainFullIcon,
   BtcFullIcon,
+  DgbFullIcon,
   DogeFullIcon,
   EmptyCircleIcon,
   EthereumChainFullIcon,
+  FantomFullIcon,
+  FilFullIcon,
+  LunaFullIcon,
+  PolygonFullIcon,
+  SolanaFullIcon,
   WarningIcon,
   ZecFullIcon,
 } from "../components/icons/RenIcons";
@@ -21,6 +28,12 @@ import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
 import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
+import {
+  getChainConfig,
+  getCurrencyConfig,
+  supportedBurnChains,
+  supportedReleaseCurrencies,
+} from "../utils/assetConfigs";
 import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
@@ -34,10 +47,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 24,
     textAlign: "center",
     color: theme.customColors.textLight,
-  },
-  continuation: {
-    marginTop: 48,
-    textAlign: "center",
   },
   button: {
     maxWidth: 400,
@@ -76,7 +85,9 @@ const useStyles = makeStyles((theme) => ({
   },
   assetsList: {
     margin: "12px auto",
+    maxWidth: "40vw",
     display: "flex",
+    flexWrap: "wrap",
     justifyContent: "center",
     [theme.breakpoints.up("md")]: {
       justifyContent: "space-between",
@@ -90,6 +101,11 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("md")]: {
       padding: 0,
     },
+  },
+  avalancheIcon: {
+    display: "flex",
+    alignItems: "center",
+    fontSize: 24,
   },
   legacy: {
     marginTop: 70,
@@ -146,20 +162,9 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         <Typography variant="body1" className={styles.description}>
           An easy way to bridge cross-chain assets between blockchains.
         </Typography>
-        <Typography variant="body1" className={styles.continuation}>
-          To continue, read and agree to the{" "}
-          <Link
-            color="primary"
-            underline="hover"
-            target="_blank"
-            href={links.TERMS_OF_SERVICE}
-          >
-            Terms of Service
-          </Link>
-        </Typography>
         <NarrowCenteredWrapper>
           <ActionButton className={styles.button} onClick={handleAgree}>
-            Agree & Continue
+            Continue
           </ActionButton>
         </NarrowCenteredWrapper>
       </Container>
@@ -174,18 +179,17 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               Assets
             </Typography>
             <UnstyledList className={styles.assetsList}>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Bitcoin" Icon={BtcFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Bitcoin Cash" Icon={BchFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="ZCash" Icon={ZecFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Doge" Icon={DogeFullIcon} />
-              </li>
+              {supportedReleaseCurrencies.map((x) => {
+                const curConfig = getCurrencyConfig(x);
+                return (
+                  <li className={styles.assetListItem}>
+                    <IconWithLabel
+                      label={curConfig.full}
+                      Icon={curConfig.FullIcon}
+                    />
+                  </li>
+                );
+              })}
               <li className={styles.assetListItem}>
                 <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
               </li>
@@ -200,11 +204,19 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               Destination
             </Typography>
             <UnstyledList className={styles.assetsList}>
+              {supportedBurnChains.map((x) => {
+                const chainConf = getChainConfig(x);
+                return (
+                  <li className={styles.assetListItem}>
+                    <IconWithLabel
+                      label={chainConf.full}
+                      Icon={chainConf.FullIcon}
+                    />
+                  </li>
+                );
+              })}
               <li className={styles.assetListItem}>
-                <IconWithLabel label="Ethereum" Icon={EthereumChainFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Binance Smart Chain" Icon={BinanceChainFullIcon} />
+                <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
               </li>
             </UnstyledList>
           </div>

@@ -39,6 +39,7 @@ import { getTransactionFees } from "../../fees/feesUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { useRenNetworkTracker } from "../../transactions/transactionsHooks";
 import {
+  getReleaseAssetDecimals,
   isMinimalAmount,
   TxConfigurationStepProps,
   TxType,
@@ -69,12 +70,22 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const balance = getAssetBalance(balances, currency);
   useRenNetworkTracker(currency);
   useFetchBalances(supportedReleaseCurrencies);
+
+  const currencyConfig = getCurrencyConfig(currency);
+  const targetCurrency = toReleasedCurrency(currency);
+  const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const decimals = getReleaseAssetDecimals(
+    targetCurrencyConfig.sourceChain,
+    targetCurrency
+  );
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
   const { conversionTotal } = getTransactionFees({
     amount,
     type: TxType.BURN,
     fees,
+    decimals,
   });
+  const conversionFormatted = conversionTotal;
 
   const usdAmount = useSelector($releaseUsdAmount);
   const handleChainChange = useCallback(
@@ -108,8 +119,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     }
   }, [dispatch, balance]);
 
-  const targetCurrency = toReleasedCurrency(currency);
-  const currencyConfig = getCurrencyConfig(currency);
   const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
   const { MainIcon } = releaseCurrencyConfig;
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
@@ -130,7 +139,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const hasDefinedAmount = amount && amount > 0;
   const hasMinimalAmount = isMinimalAmount(
     amount,
-    conversionTotal,
+    conversionFormatted,
     TxType.BURN
   );
   const basicCondition =
@@ -230,7 +239,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
               label="Receiving:"
               value={
                 <NumberFormatText
-                  value={conversionTotal}
+                  value={conversionFormatted}
                   spacedSuffix={releaseCurrencyConfig.short}
                 />
               }

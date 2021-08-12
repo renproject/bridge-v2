@@ -460,6 +460,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     lockTxLink,
     lockTxAmount,
     mintTxLink,
+    decimals,
     mintChainConfig,
   } = getLockAndMintParams(tx, depositHash);
   const { fees, pending } = useFetchFees(
@@ -467,10 +468,12 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     TxType.MINT
   );
   const { conversionTotal } = getTransactionFees({
-    amount: lockTxAmount,
+    amount: Number(lockTxAmount),
     fees,
     type: TxType.MINT,
+    decimals,
   });
+  const conversionFormatted = conversionTotal;
   const handleReturn = useCallback(() => {
     history.push({
       pathname: paths.HOME,
@@ -482,7 +485,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
 
   const showNotifications = useCallback(() => {
     if (!pending) {
-      const notificationMessage = `Successfully minted ${conversionTotal} ${mintCurrencyConfig.short} on ${mintChainConfig.full}.`;
+      const notificationMessage = `Successfully minted ${conversionFormatted} ${mintCurrencyConfig.short} on ${mintChainConfig.full}.`;
       showNotification(
         <span>
           {notificationMessage}{" "}
@@ -497,7 +500,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     showNotification,
     showBrowserNotification,
     pending,
-    conversionTotal,
+    conversionFormatted,
     mintChainConfig,
     mintCurrencyConfig,
     mintTxLink,
@@ -514,7 +517,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
       <Typography variant="body1" align="center" gutterBottom>
         You received{" "}
         <NumberFormatText
-          value={conversionTotal}
+          value={conversionFormatted}
           spacedSuffix={mintCurrencyConfig.short}
         />
         !

@@ -47,7 +47,11 @@ export type ProgressWithContentProps = {
 };
 
 const getSectionMargin = (sections: number) => {
-  return sections > 100 ? 1 : 2;
+  if (sections < 33) {
+    return 2;
+  }
+  const space = 100 / sections;
+  return 1 + (space - 1) / 100;
 };
 
 const generateSections = (all: number) => {

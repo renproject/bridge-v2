@@ -1,6 +1,12 @@
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
+import { ErrorBoundary } from "./Error";
 
 const useStyles = makeStyles({
   root: {
@@ -64,6 +70,30 @@ const DebugWrapper: FunctionComponent<DebugWrapperProps> = ({
   );
 };
 
+export const DebugRenderer: FunctionComponent<Partial<DebugProps>> = ({
+  it,
+  children,
+}) => {
+  const noClick = useCallback((event) => {
+    event.stopPropagation();
+  }, []);
+  const classes = useStyles();
+  const target = it || children;
+  const string = useMemo(() => {
+    try {
+      const str = JSON.stringify(target, replacer, 2);
+      return str;
+    } catch (e) {
+      return `Failed to stringify: ${e}`;
+    }
+  }, [target]);
+  return (
+    <pre className={classes.root} onClick={noClick}>
+      {string}
+    </pre>
+  );
+};
+
 export const Debug: FunctionComponent<DebugProps> = ({
   it,
   force,
@@ -71,18 +101,13 @@ export const Debug: FunctionComponent<DebugProps> = ({
   wrapper,
   children,
 }) => {
-  const classes = useStyles();
-  const target = it || children;
   const show = !off || force;
-  const noClick = useCallback((event) => {
-    event.stopPropagation();
-  }, []);
   return show && !disable ? (
-    <DebugWrapper enabled={!!wrapper}>
-      <pre className={classes.root} onClick={noClick}>
-        {JSON.stringify(target, replacer, 2)}
-      </pre>
-    </DebugWrapper>
+    <ErrorBoundary>
+      <DebugWrapper enabled={!!wrapper}>
+        <DebugRenderer children={children} it={it} />
+      </DebugWrapper>
+    </ErrorBoundary>
   ) : null;
 };
 

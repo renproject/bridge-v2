@@ -14,6 +14,7 @@ import {
   BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
+  getNativeCurrency,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
 import { fromGwei } from "../../../utils/converters";
@@ -27,7 +28,11 @@ import {
 } from "../../marketData/marketDataUtils";
 import { mintTooltips } from "../../mint/components/MintHelpers";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
-import { getFeeTooltips, TxType } from "../transactionsUtils";
+import {
+  getFeeTooltips,
+  getReleaseAssetDecimals,
+  TxType,
+} from "../transactionsUtils";
 
 type TransactionFeesProps = {
   type: TxType;
@@ -46,11 +51,16 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
+  const nativeCurrencyConfig = getCurrencyConfig(getNativeCurrency(currency));
   const exchangeRates = useSelector($exchangeRates);
   const gasPrices = useSelector($gasPrices);
   const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);
   const gasPrice = findGasPrice(gasPrices, chain);
   const targetChainConfig = getChainConfig(chain);
+  const decimals = getReleaseAssetDecimals(
+    nativeCurrencyConfig.sourceChain,
+    nativeCurrencyConfig.symbol
+  );
 
   const targetChainCurrencyUsdRate = findExchangeRate(
     exchangeRates,
@@ -64,6 +74,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     amount,
     fees,
     type,
+    decimals,
   });
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;
@@ -84,7 +95,10 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18); // gas price to real gas price adjustment
   const targetChainFeeNative = fromGwei(feeInGwei);
-  const targetChainFeeUsd = fromGwei(feeInGwei) * targetChainCurrencyUsdRate;
+  const targetChainFeeUsd = Math.max(
+    fromGwei(feeInGwei) * targetChainCurrencyUsdRate,
+    0.001
+  );
   const targetChainCurrency = getCurrencyConfig(
     targetChainConfig.nativeCurrency
   );
@@ -98,7 +112,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 
   return (
     <>
-      <Debug it={{ currency, fees }} />
+      <Debug it={{ targetChainCurrencyUsdRate, currency, fees }} />
       <LabelWithValue
         label="RenVM Fee"
         labelTooltip={tooltips.renVmFee}
@@ -160,11 +174,11 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           <NumberFormatText
             value={targetChainFeeUsd}
             prefix="$"
-            decimalScale={2}
-            fixedDecimalScale
+            decimalScale={4}
           />
         }
       />
+      <Debug it={{ targetChainFeeUsd }} />
       {address && (
         <LabelWithValue
           label="Recipient Address"

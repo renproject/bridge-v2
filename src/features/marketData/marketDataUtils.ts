@@ -2,6 +2,7 @@ import { env } from "../../constants/environmentVariables";
 import { getBandchain } from "../../services/bandchain";
 import { uniqueArray } from "../../utils/arrays";
 import {
+  BridgeChain,
   BridgeCurrency,
   currenciesConfig,
   getCurrencyConfigByBandchainSymbol,
@@ -13,7 +14,7 @@ const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
   return config.bandchainSymbol || symbol;
 };
 
-const mapToBridgeCurrencySymbol = (symbol: string) => {
+const mapBandchainToCurrencySymbol = (symbol: string) => {
   const config = getCurrencyConfigByBandchainSymbol(symbol);
   return config.symbol;
 };
@@ -22,14 +23,18 @@ export const USD_SYMBOL = "USD";
 
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
-const referencePairs = uniqueArray(
+const bandchainReferencePairs = uniqueArray(
   Object.values(BridgeCurrency)
-    .map(mapToBandchainCurrencySymbol)
     .filter(
       (symbol) =>
         symbol !== BridgeCurrency.UNKNOWN && symbol !== BridgeCurrency.AVAX
     )
+    .map(mapToBandchainCurrencySymbol)
 ).map((symbol: string) => getPair(symbol, USD_SYMBOL));
+
+const coingeckoSymbols = Object.values(currenciesConfig)
+  .filter((entry) => Boolean(entry.coingeckoSymbol))
+  .map((entry) => entry.coingeckoSymbol);
 
 type BandchainExchangeRateEntry = {
   pair: string;
@@ -40,17 +45,31 @@ type BandchainExchangeRateEntry = {
   };
 };
 
-const mapToExchangeData = (
+type CoingeckoExchangeRateEntry = {
+  symbol: string;
+  current_price: number;
+};
+
+const mapBandchainToExchangeData = (
   referenceData: Array<BandchainExchangeRateEntry>
 ) => {
   return referenceData.map((entry: any) => {
     const [base, quote] = entry.pair.split("/");
     const data: ExchangeRate = {
-      pair: getPair(mapToBridgeCurrencySymbol(base), quote),
+      pair: getPair(mapBandchainToCurrencySymbol(base), quote),
       rate: entry.rate,
     };
     return data;
   });
+};
+
+const mapCoingeckoToExchangeData = (
+  entries: Array<CoingeckoExchangeRateEntry>
+) => {
+  return entries.map((entry: any) => ({
+    pair: getPair(entry.symbol, "USD"),
+    rate: entry.current_price,
+  }));
 };
 
 export type ExchangeRate = {
@@ -64,9 +83,26 @@ export type GasPrice = {
 };
 
 export const fetchMarketDataRates = async () => {
-  return getBandchain()
-    .getReferenceData(referencePairs)
-    .then(mapToExchangeData);
+  const bandchain = await getBandchain()
+    .getReferenceData(bandchainReferencePairs)
+    .then(mapBandchainToExchangeData)
+    .catch((error: any) => {
+      console.error(error);
+      return [];
+    });
+
+  const coingecko = await fetch(
+    "https://api.coingecko.com/api/v3" +
+      `/coins/markets?vs_currency=usd&ids=${coingeckoSymbols.join(",")}`
+  )
+    .then((response) => response.json())
+    .then(mapCoingeckoToExchangeData)
+    .catch((error: any) => {
+      console.error(error);
+      return [];
+    });
+
+  return [...bandchain, ...coingecko];
 };
 
 export const findExchangeRate = (
@@ -91,12 +127,57 @@ export type AnyBlockGasPrices = {
   instant: number;
 };
 
-export const fetchEthMarketDataGasPrices = () =>
-  fetch(env.GAS_FEE_ENDPOINT)
+export const fetchMarketDataGasPrices = async () => {
+  const anyBlockEth = await fetch(env.GAS_FEE_ENDPOINT)
     .then((response) => response.json())
-    .then((data: AnyBlockGasPrices) => {
-      return data;
+    .catch((error) => {
+      console.error(error);
+      return {
+        fast: 50, // fallback
+      };
     });
+  const fast = anyBlockEth.fast;
+  const ethPrice = {
+    chain: BridgeChain.ETHC,
+    standard: fast < 20 ? 50 : fast,
+  };
+  const matic = await fetch("https://gasstation-mainnet.matic.network")
+    .then((response) => response.json())
+    .catch((error) => {
+      console.error(error);
+      return {
+        fast: 6, // fallback
+      };
+    });
+  const maticPrice = {
+    chain: BridgeChain.MATICC,
+    standard: matic.fast,
+  };
+  const bscPrice = {
+    chain: BridgeChain.BSCC,
+    standard: 20, // unable to find reliable source, but binance gas price is stable
+  };
+  const avaxPrice = {
+    chain: BridgeChain.AVAXC,
+    standard: 225, // taken from https://docs.avax.network/learn/platform-overview/transaction-fees#fee-schedule
+  };
+  const ftmPrice = {
+    chain: BridgeChain.FTMC,
+    standard: 75, // avg gas price
+  };
+  const solanaPrice = {
+    chain: BridgeChain.SOLC,
+    standard: 6, // extrapolated to make it around 0,001 SOL
+  };
+  return [
+    ethPrice,
+    bscPrice,
+    avaxPrice,
+    ftmPrice,
+    maticPrice,
+    solanaPrice,
+  ] as Array<GasPrice>;
+};
 
 export const findGasPrice = (gasPrices: Array<GasPrice>, chain: string) => {
   const gasEntry = gasPrices.find((entry) => entry.chain === chain);

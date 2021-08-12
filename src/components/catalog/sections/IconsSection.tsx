@@ -1,4 +1,4 @@
-import { Box } from "@material-ui/core";
+import { Box, useTheme } from "@material-ui/core";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import RedditIcon from "@material-ui/icons/Reddit";
@@ -7,6 +7,9 @@ import TwitterIcon from "@material-ui/icons/Twitter";
 import React, { FunctionComponent } from "react";
 import { IconWithLabel } from "../../icons/IconHelpers";
 import {
+  AvaCircleIcon,
+  AvaFullIcon,
+  AvaGreyIcon,
   BackArrowIcon,
   BchFullIcon,
   BchGreyIcon,
@@ -34,6 +37,9 @@ import {
   EthereumChainFullIcon,
   EthereumChainIcon,
   EthereumIcon,
+  FantomCircleIcon,
+  FantomFullIcon,
+  FantomGreyIcon,
   FilFullIcon,
   FilGreyIcon,
   FilIcon,
@@ -41,6 +47,9 @@ import {
   LunaGreyIcon,
   LunaIcon,
   MetamaskFoxIcon,
+  PolygonCircleIcon,
+  PolygonFullIcon,
+  PolygonGreyIcon,
   RenBridgeLogoIcon,
   RenLogoFullIcon,
   RenLogoIcon,
@@ -58,6 +67,8 @@ import {
 import { Section, SeparationWrapper } from "../PresentationHelpers";
 
 export const IconsSection: FunctionComponent = () => {
+  const theme = useTheme();
+
   return (
     <Section header="Icons">
       <SeparationWrapper>
@@ -85,15 +96,31 @@ export const IconsSection: FunctionComponent = () => {
       <SeparationWrapper>
         <BinanceChainFullIcon />
         <EthereumChainFullIcon />
+        <FantomCircleIcon />
+        <PolygonCircleIcon />
+        <AvaCircleIcon />
         <WalletConnectFullIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BinanceChainColorIcon />
         <EthereumChainColorIcon />
+        <FantomFullIcon />
+        <PolygonFullIcon />
+        <AvaFullIcon />
       </SeparationWrapper>
       <SeparationWrapper>
         <BinanceChainIcon />
         <EthereumChainIcon />
+        <FantomGreyIcon />
+        <PolygonGreyIcon />
+        <AvaGreyIcon />
+      </SeparationWrapper>
+      <SeparationWrapper>
+        <BinanceChainIcon style={{ color: theme.customColors.blue }} />
+        <EthereumChainIcon style={{ color: theme.customColors.blue }} />
+        <FantomGreyIcon style={{ color: theme.customColors.blue }} />
+        <PolygonGreyIcon style={{ color: theme.customColors.blue }} />
+        <AvaGreyIcon style={{ color: theme.customColors.blue }} />
       </SeparationWrapper>
       <SeparationWrapper>
         <BtcIcon />
