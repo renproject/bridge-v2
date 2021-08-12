@@ -9,9 +9,10 @@ import { ReactComponent as Ava } from "./../../assets/icons/avalanche-colour-ico
 import { ReactComponent as AvaFull } from "./../../assets/icons/avalanche-icon.svg";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
 import { ReactComponent as Beta } from "./../../assets/icons/icon-beta.svg";
-import { ReactComponent as BchGrey } from "./../../assets/icons/bch-icon-grey.svg";
 import { ReactComponent as Bch } from "./../../assets/icons/bch-icon-nocolour.svg";
+import { ReactComponent as BchDashed } from "./../../assets/icons/tokens/bitcoin-cash-dashed-icon.svg";
 import { ReactComponent as BchFull } from "./../../assets/icons/bch-icon.svg";
+import { ReactComponent as BchGrey } from "./../../assets/icons/bch-icon-grey.svg";
 import { ReactComponent as BinanceChainFull } from "./../../assets/icons/binancesmartchain-circle-icon.svg";
 import { ReactComponent as BinanceChainColor } from "./../../assets/icons/binancesmartchain-colour-icon.svg";
 import { ReactComponent as BinanceChain } from "./../../assets/icons/binancesmartchain-icon.svg";
@@ -20,17 +21,20 @@ import { ReactComponent as ArbitrumColor } from "./../../assets/icons/arbitrum-c
 import { ReactComponent as ArbitrumBlack } from "./../../assets/icons/arbitrum-black.svg";
 import { ReactComponent as BitcoinInCircle } from "./../../assets/icons/bitcoin-in-circle.svg";
 import { ReactComponent as BrowserNotifications } from "./../../assets/icons/browser-notifications.svg";
-import { ReactComponent as BtcGrey } from "./../../assets/icons/btc-icon-grey.svg";
-import { ReactComponent as Btc } from "./../../assets/icons/btc-icon-nocolour.svg";
 import { ReactComponent as Bitcoin } from "./../../assets/icons/btc-icon-only.svg";
+import { ReactComponent as Btc } from "./../../assets/icons/btc-icon-nocolour.svg";
+import { ReactComponent as BtcDashed } from "./../../assets/icons/tokens/bitcoin-dashed-icon.svg";
 import { ReactComponent as BtcFull } from "./../../assets/icons/btc-icon.svg";
+import { ReactComponent as BtcGrey } from "./../../assets/icons/btc-icon-grey.svg";
 import { ReactComponent as EmptyCircle } from "./../../assets/icons/empty-circle-icon.svg";
 import { ReactComponent as Empty } from "./../../assets/icons/empty-icon.svg";
 import { ReactComponent as DgbGrey } from "./../../assets/icons/dgb-icon-grey.svg";
 import { ReactComponent as Dgb } from "./../../assets/icons/dgb-icon-nocolour.svg";
+import { ReactComponent as DgbDashed } from "./../../assets/icons/tokens/digibyte-dashed-icon.svg";
 import { ReactComponent as DgbFull } from "./../../assets/icons/dgb-icon.svg";
 import { ReactComponent as DogeGrey } from "./../../assets/icons/doge-icon-grey.svg";
 import { ReactComponent as Doge } from "./../../assets/icons/doge-icon-nocolour.svg";
+import { ReactComponent as DogeDashed } from "./../../assets/icons/tokens/dogecoin-dashed-icon.svg";
 import { ReactComponent as DogeFull } from "./../../assets/icons/doge-icon.svg";
 import { ReactComponent as DotsGrey } from "./../../assets/icons/dots-icon-grey.svg";
 import { ReactComponent as Dots } from "./../../assets/icons/dots-icon-nocolour.svg";
@@ -38,8 +42,9 @@ import { ReactComponent as DotsFull } from "./../../assets/icons/dots-icon.svg";
 import { ReactComponent as Ethereum } from "./../../assets/icons/eth-icon-only.svg";
 import { ReactComponent as EthereumChainFull } from "./../../assets/icons/ethereum-circle-icon.svg";
 import { ReactComponent as EthereumChainColor } from "./../../assets/icons/ethereum-colour-icon.svg";
-import { ReactComponent as FilGrey } from "./../../assets/icons/fil-icon-grey.svg";
 import { ReactComponent as Fil } from "./../../assets/icons/fil-icon-nocolour.svg";
+import { ReactComponent as FilDashed } from "./../../assets/icons/tokens/filecoin-dashed-icon.svg";
+import { ReactComponent as FilGrey } from "./../../assets/icons/fil-icon-grey.svg";
 import { ReactComponent as FilFull } from "./../../assets/icons/fil-icon.svg";
 import { ReactComponent as Fantom } from "./../../assets/icons/fantom-icon.svg";
 import { ReactComponent as FantomFull } from "./../../assets/icons/fantom-colour-icon.svg";
@@ -47,6 +52,7 @@ import { ReactComponent as FantomCircle } from "./../../assets/icons/fantom-circ
 import { ReactComponent as Gateway } from "./../../assets/icons/gateway-icon.svg";
 import { ReactComponent as LunaGrey } from "./../../assets/icons/luna-icon-grey.svg";
 import { ReactComponent as Luna } from "./../../assets/icons/luna-icon-nocolour.svg";
+import { ReactComponent as LunaDashed } from "./../../assets/icons/tokens/luna-dashed-icon.svg";
 import { ReactComponent as LunaFull } from "./../../assets/icons/luna-icon.svg";
 import { ReactComponent as MetamaskFox } from "./../../assets/icons/metamask-fox.svg";
 import { ReactComponent as MetamaskFull } from "./../../assets/icons/metamask-icon-colour.svg";
@@ -66,8 +72,9 @@ import { ReactComponent as TxSettings } from "./../../assets/icons/tx-settings.s
 import { ReactComponent as WalletConnectFull } from "./../../assets/icons/walletconnect-icon-colour.svg";
 import { ReactComponent as Wallet } from "./../../assets/icons/wallet-icon.svg";
 import { ReactComponent as WalletConnect } from "./../../assets/icons/walletconnect-icon.svg";
-import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as Zec } from "./../../assets/icons/zec-icon-nocolour.svg";
+import { ReactComponent as ZecDashed } from "./../../assets/icons/tokens/zcash-dashed-icon.svg";
+import { ReactComponent as ZecGrey } from "./../../assets/icons/zec-icon-grey.svg";
 import { ReactComponent as ZecFull } from "./../../assets/icons/zec-icon.svg";
 import { ReactComponent as Polygon } from "./../../assets/icons/polygon-icon.svg";
 import { ReactComponent as PolygonFull } from "./../../assets/icons/polygon-colour-icon.svg";
@@ -266,31 +273,45 @@ export const EthereumChainColorIcon: CustomSvgIconComponent = (props) => {
 export const BtcIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Btc} {...props} />
 );
-export const BtcFullIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={BtcFull} {...props} />
+
+export const BtcDashedIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={BtcDashed} {...getScalingProps(274)} {...props} />
 );
 
 export const BtcGreyIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BtcGrey} {...props} />
 );
 
-export const BchFullIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={BchFull} {...props} />
+export const BtcFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={BtcFull} {...props} />
 );
 
 export const BchIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Bch} {...props} />
 );
+
+export const BchDashedIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={BchDashed} {...getScalingProps(256)} {...props} />
+);
+
+export const BchFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={BchFull} {...props} />
+);
+
 export const BchGreyIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={BchGrey} {...props} />
 );
 
-export const DogeFullIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={DogeFull} {...props} />
-);
-
 export const DogeIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Doge} {...props} />
+);
+
+export const DogeDashedIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={DogeDashed} {...getScalingProps(256)} {...props} />
+);
+
+export const DogeFullIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={DogeFull} {...props} />
 );
 
 export const DogeGreyIcon: CustomSvgIconComponent = (props) => (
@@ -298,7 +319,11 @@ export const DogeGreyIcon: CustomSvgIconComponent = (props) => (
 );
 
 export const ZecIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={Zec} {...props} />
+  <SvgIcon component={Zec} {...getScalingProps(256)} {...props} />
+);
+
+export const ZecDashedIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={ZecDashed} {...props} />
 );
 
 export const ZecFullIcon: CustomSvgIconComponent = (props) => (
@@ -311,6 +336,10 @@ export const ZecGreyIcon: CustomSvgIconComponent = (props) => (
 
 export const DgbIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Dgb} {...props} />
+);
+
+export const DgbDashedIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={DgbDashed} {...getScalingProps(256)} {...props} />
 );
 
 export const DgbFullIcon: CustomSvgIconComponent = (props) => (
@@ -337,6 +366,10 @@ export const LunaIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Luna} {...props} />
 );
 
+export const LunaDashedIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={LunaDashed} {...getScalingProps(256)} {...props} />
+);
+
 export const LunaFullIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={LunaFull} {...props} />
 );
@@ -347,6 +380,10 @@ export const LunaGreyIcon: CustomSvgIconComponent = (props) => (
 
 export const FilIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={Fil} {...props} />
+);
+
+export const FilDashedIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={FilDashed} {...getScalingProps(256)} {...props} />
 );
 
 export const FilFullIcon: CustomSvgIconComponent = (props) => (
