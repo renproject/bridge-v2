@@ -319,11 +319,11 @@ export const DogeGreyIcon: CustomSvgIconComponent = (props) => (
 );
 
 export const ZecIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={Zec} {...getScalingProps(256)} {...props} />
+  <SvgIcon component={Zec} {...props} />
 );
 
 export const ZecDashedIcon: CustomSvgIconComponent = (props) => (
-  <SvgIcon component={ZecDashed} {...props} />
+  <SvgIcon component={ZecDashed} {...getScalingProps(256)} {...props} />
 );
 
 export const ZecFullIcon: CustomSvgIconComponent = (props) => (
