@@ -98,6 +98,7 @@
   "notifications.browser-off-tooltip": "Turn off browser notifications in your browser settings.",
   "tx.submitting-error-popup-header": "Error submitting",
   "tx.submitting-error-popup-message": "Return to previous screen to resubmit",
+  "tx.submitting-error-popup-message-signature-rejected-text": "It seems that you rejected signing the transaction. When ready, you can safely return to previous screen and resubmit",
   "tx.submitting-error-popup-action-text": "Return to submission screen",
   "tx.general-error-popup-header": "An error has occured",
   "tx.general-error-popup-message-1": "Please ensure you have this page bookmarked before refreshing. If this error persists, please",

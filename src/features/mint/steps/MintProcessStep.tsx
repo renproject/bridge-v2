@@ -507,6 +507,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       />
       <Debug
         it={{
+          current,
           depositHash,
           fees,
         }}
@@ -547,6 +548,8 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
       },
     });
   }, [history, location]);
+
+  console.log("tx", tx);
 
   const state = machine?.state
     .value as keyof DepositMachineSchema<any>["states"];

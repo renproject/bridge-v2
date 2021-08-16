@@ -34,6 +34,7 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import {
@@ -346,6 +347,8 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
 
   const { MainIcon } = lockChainConfig;
 
+  const error = tx.error || tx.transactions[depositHash].error;
+
   return (
     <>
       <ProgressWrapper>
@@ -384,10 +387,11 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           link={lockTxLink}
         />
       </ActionButtonWrapper>
+      <Debug it={{ error }} />
       <SubmitErrorDialog
         open={submittingError}
         onAction={onReload}
-        error={tx.error}
+        error={error}
       />
     </>
   );
