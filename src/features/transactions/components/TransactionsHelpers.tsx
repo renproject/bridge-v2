@@ -15,12 +15,14 @@ import {
   ErroringBurnSession,
   GatewaySession,
 } from "@renproject/ren-tx";
+import qs from "qs";
 import React, {
   FunctionComponent,
   useCallback,
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useInterval } from "react-use";
 import {
@@ -61,6 +63,7 @@ import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
+import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
 
 export type AnyBurnSession =
   | BurnSession<any, any>
@@ -75,6 +78,7 @@ type BookmarkPageWarningProps = {
   onClosed?: () => void;
 };
 
+// currently unused
 export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
   onClosed,
 }) => {
@@ -128,6 +132,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
   mintCurrencyLabel,
   mintChainLabel,
 }) => {
+  const { t } = useTranslation();
   const [checked, setChecked] = useState(true);
   const history = useHistory();
 
@@ -143,38 +148,51 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
 
   const handleCancel = useCallback(() => {
     history.push(paths.MINT);
-  }, []);
+  }, [history]);
+
   const txTimeMinutes = lockChainBlockTime * lockChainConfirmations;
   return (
-    <NestedDrawer title="Warning" open onClose={handleCancel} fixed={false}>
+    <NestedDrawer
+      title={t("common.warning-label")}
+      open
+      onClose={handleCancel}
+      fixed={false}
+    >
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding>
             <SpacedTypography variant="h5" align="center">
-              This deposit address is only open for{" "}
-              <HCountdown milliseconds={timeRemained} />, but you can send to it
-              multiple times within this session
+              {t("mint.gateway-session-popup-message-1")}{" "}
+              <HCountdown milliseconds={timeRemained} />
+              {t("mint.gateway-session-popup-message-2")}
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
               align="center"
               color="textSecondary"
             >
-              Each transaction to this deposit address takes about{" "}
-              <Tooltip title="Block confirmation time depends on factors such as blockchain activity and the fee you set for your transaction">
-                <UnderlinedSpan>about {txTimeMinutes} minutes</UnderlinedSpan>
+              {t("mint.gateway-session-popup-tx-time-message-1")}{" "}
+              <Tooltip
+                title={
+                  <span>{t("mint.gateway-session-popup-tx-time-tooltip")}</span>
+                }
+              >
+                <UnderlinedSpan>
+                  {txTimeMinutes} {t("common.minutes")}
+                </UnderlinedSpan>
               </Tooltip>{" "}
-              to complete. For security reasons, you will need to wait for{" "}
-              {lockChainConfirmations} block confirmations before you can mint{" "}
-              {mintCurrencyLabel} on {mintChainLabel}.
+              {t("mint.gateway-session-popup-tx-time-message-2", {
+                confirmations: lockChainConfirmations,
+                currency: mintCurrencyLabel,
+                chain: mintChainLabel,
+              })}
             </SpacedTypography>{" "}
             <SpacedTypography
               variant="body2"
               align="center"
               color="textSecondary"
             >
-              If you cannot complete this transaction within the required time,
-              please return at a later date.
+              {t("mint.gateway-session-popup-tx-completion-message-1")}
             </SpacedTypography>
             <SpacedTypography
               variant="body2"
@@ -182,8 +200,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
               color="textSecondary"
             >
               <strong>
-                If you do not finish your transactions within this
-                period/session/time frame, you risk losing the deposits
+                {t("mint.gateway-session-popup-tx-completion-message-2")}
               </strong>
             </SpacedTypography>
           </PaperContent>
@@ -204,7 +221,9 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
                   label={
                     <FormLabel htmlFor="ack" component={Typography}>
                       <Typography variant="caption" color="textPrimary">
-                        I can complete this transaction within the time
+                        {t(
+                          "mint.gateway-session-popup-tx-completion-ack-label"
+                        )}
                       </Typography>
                     </FormLabel>
                   }
@@ -213,7 +232,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
             </CheckboxWrapper>
             <ActionButtonWrapper>
               <ActionButton onClick={handleClose} disabled={!checked}>
-                Continue
+                {t("common.continue-label")}
               </ActionButton>
             </ActionButtonWrapper>
           </PaperContent>
@@ -274,6 +293,7 @@ export const HMSCountdown: FunctionComponent<HMSCountdownProps> = ({
 export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
   milliseconds,
 }) => {
+  const { t } = useTranslation();
   const [count, setCount] = useState(milliseconds);
   useInterval(() => {
     setCount((ms) => ms - 1000);
@@ -282,7 +302,8 @@ export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
 
   return (
     <strong>
-      {hours} {hours > 1 ? "hours" : "hour"}
+      {hours}{" "}
+      {t("common.hour_interval", { postProcess: "interval", count: hours })}
     </strong>
   );
 };
@@ -365,59 +386,81 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
 
 export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   props
-) => (
-  <ErrorDialog
-    reason="Error submitting"
-    actionText="Return to submission screen"
-    {...props}
-  >
-    <span>Return to previous screen to resubmit</span>
-  </ErrorDialog>
-);
+) => {
+  const { t } = useTranslation();
+  return (
+    <ErrorDialog
+      title={t("common.error-label")}
+      reason={t("tx.submitting-error-popup-header")}
+      actionText={t("tx.submitting-error-popup-action-text")}
+      {...props}
+    >
+      <span>{t("tx.submitting-error-popup-message")}</span>
+    </ErrorDialog>
+  );
+};
 
 export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   children,
   ...props
-}) => (
-  <ErrorDialog
-    reason="An error has occurred"
-    actionText="Refresh page"
-    {...props}
-  >
-    <span>
-      Please ensure you have this page bookmarked before refreshing. If this
-      error persists, please{" "}
-      <Link external href={links.BUGS_LOG} color="primary" underline="hover">
-        submit a bug here
-      </Link>
-      .
-    </span>
-    {children}
-  </ErrorDialog>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <ErrorDialog
+      reason={t("tx.general-error-popup-header")}
+      actionText={t("tx.general-error-popup-action-text")}
+      {...props}
+    >
+      <span>
+        {t("tx.general-error-popup-message-1")}{" "}
+        <Link external href={links.BUGS_LOG} color="primary" underline="hover">
+          {t("tx.general-error-popup-submit-label")}
+        </Link>
+        .
+      </span>
+      {children}
+    </ErrorDialog>
+  );
+};
 
 export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   props
 ) => {
+  const { t } = useTranslation();
   const history = useHistory();
+
+  const ammendExpiry = useCallback(() => {
+    // history.location.search
+    const tx = parseTxQueryString(history.location.search);
+    if (!tx) return;
+    tx.expiryTime = Date.now() + 60 * 60 * 24 * 1000;
+    history.push({
+      pathname: paths.MINT_TRANSACTION,
+      search: "?" + createTxQueryString(tx as any),
+    });
+    window.location.reload();
+  }, [history]);
+
   const goToHome = useCallback(() => {
     history.push(paths.HOME);
   }, [history]);
 
   return (
     <ErrorDialog
-      title="Expired"
-      reason="This transaction has expired"
-      actionText="Restart transaction"
+      title={t("tx.expired-error-popup-title")}
+      reason={t("tx.expired-error-popup-header")}
+      actionText={t("tx.expired-error-popup-action-text")}
       {...props}
     >
-      <span>
-        Transactions expire after 24 hours. Please restart the transaction if
-        you wish to continue.
-      </span>
+      <span>{t("tx.expired-error-popup-message-1", { hours: 24 })}</span>
+      <ActionButtonWrapper>
+        <RedButton variant="text" color="secondary" onClick={ammendExpiry}>
+          {t("tx.expired-error-continue-mint")}
+        </RedButton>
+      </ActionButtonWrapper>
       <ActionButtonWrapper>
         <Button variant="text" color="inherit" onClick={goToHome}>
-          Back to home
+          {t("tx.expired-error-popup-back-to-home")}
         </Button>
       </ActionButtonWrapper>
     </ErrorDialog>
@@ -501,15 +544,16 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   currency,
   ...props
 }) => {
+  const { t } = useTranslation();
   return (
     <WarningDialog
-      reason="Different account detected"
-      alternativeActionText="Continue anyway"
+      title={t("common.warning-label")}
+      reason={t("tx.address-error-popup-header")}
+      alternativeActionText={t("tx.address-error-popup-action-text")}
       {...props}
     >
       <span>
-        This transaction was created with a different account to the current
-        account (
+        {t("tx.address-error-popup-message-1")} (
         <Link
           external
           href={addressExplorerLink}
@@ -518,9 +562,10 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
         >
           {trimAddress(address, 5)}
         </Link>
-        ). If you do not have access to the account that created the
-        transaction, you will not be able to access the {currency}. Please
-        switch account in your wallet.
+        ).{" "}
+        {t("tx.address-error-popup-message-2", {
+          currency,
+        })}
       </span>
     </WarningDialog>
   );

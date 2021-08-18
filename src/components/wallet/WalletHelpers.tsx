@@ -10,6 +10,7 @@ import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback } from "react";
+import { TFunction, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
 import { useSubNetworkName } from "../../features/ui/uiHooks";
@@ -17,9 +18,7 @@ import { setWalletPickerOpened } from "../../features/wallet/walletSlice";
 import { createPulseAnimation } from "../../theme/animationUtils";
 import { defaultShadow } from "../../theme/other";
 import {
-  BridgeChainConfig,
   BridgeWallet,
-  BridgeWalletConfig,
   getChainConfigByRentxName,
   getNetworkConfigByRentxName,
   getWalletConfig,
@@ -35,7 +34,7 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../progress/ProgressHelpers";
-import { Debug, DebugComponentProps } from "../utils/Debug";
+import { Debug } from "../utils/Debug";
 import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
@@ -119,22 +118,11 @@ export const WalletChainLabel: WalletPickerProps<
   return <span>{chainConfig.full}</span>;
 };
 
-const getLabels = (
-  chainConfig: BridgeChainConfig,
-  walletConfig: BridgeWalletConfig
-) => {
-  return {
-    initialTitle: "Connecting",
-    actionTitle: `${walletConfig.short} action required`,
-    initialMessage: `Connecting to ${chainConfig.full}`,
-    actionMessage: `When prompted, connect securely via the ${walletConfig.full} browser extension.`,
-  };
-};
-
 export const WalletConnectingInfo: WalletPickerProps<
   any,
   any
 >["ConnectingInfo"] = ({ chain, onClose }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const chainConfig = getChainConfigByRentxName(chain);
 
@@ -159,7 +147,6 @@ export const WalletConnectingInfo: WalletPickerProps<
   ];
   const walletConfig = getWalletConfig(walletSymbol);
 
-  const labels = getLabels(chainConfig, walletConfig);
   const { MainIcon } = walletConfig;
   const [isPassed] = useTimeout(3000);
   const passed = isPassed();
@@ -167,7 +154,13 @@ export const WalletConnectingInfo: WalletPickerProps<
     <>
       <Debug it={{ chainConfig }} />
       <BridgeModalTitle
-        title={passed ? labels.actionTitle : labels.initialTitle}
+        title={
+          passed
+            ? t("wallet.action-required", {
+                wallet: walletConfig.short,
+              })
+            : t("wallet.action-connecting")
+        }
         onClose={onClose}
       />
       <PaperContent bottomPadding>
@@ -182,7 +175,13 @@ export const WalletConnectingInfo: WalletPickerProps<
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h6" align="center">
-          {passed ? labels.actionMessage : labels.initialMessage}
+          {passed
+            ? t("wallet.action-connect-message", {
+                wallet: walletConfig.full,
+              })
+            : t("wallet.action-connecting-to", {
+                chain: chainConfig.full,
+              })}
         </Typography>
       </PaperContent>
     </>
@@ -216,15 +215,14 @@ export const WalletConnectionProgress: FunctionComponent = () => {
 export const WalletWrongNetworkInfo: WalletPickerProps<
   any,
   any
->["WrongNetworkInfo"] = (props) => {
-  const { chain, targetNetwork, onClose } = props;
+>["WrongNetworkInfo"] = ({ chain, targetNetwork, onClose }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const subNetworkName = useSubNetworkName();
   const chainName = getChainConfigByRentxName(chain).full;
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
   return (
     <>
-      <DebugComponentProps {...props} />
       <BridgeModalTitle title="Wrong Network" onClose={onClose} />
       <PaperContent bottomPadding>
         <ProgressWrapper>
@@ -237,11 +235,11 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h5" align="center" gutterBottom>
-          Switch to {chainName} {networkName}
+          {t("wallet.network-switch-message")} {chainName} {networkName}
           {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
-          RenBridge requires you to connect to the {chainName} {networkName}{" "}
+          {t("wallet.network-switch-description")} {chainName} {networkName}{" "}
           {subNetworkName}
         </Typography>
       </PaperContent>
@@ -303,16 +301,19 @@ export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndica
   return <div className={className} />;
 };
 
-const getWalletConnectionLabel = (status: WalletConnectionStatusType) => {
+const getWalletConnectionLabel = (
+  status: WalletConnectionStatusType,
+  t: TFunction
+) => {
   switch (status) {
     case "disconnected":
-      return "Connect a Wallet";
+      return t("wallet.connect-wallet");
     case "connecting":
-      return "Connecting...";
+      return t("wallet.connecting");
     case "connected":
-      return "Connected";
+      return t("wallet.connected");
     case "wrong_network":
-      return "Wrong Network!";
+      return t("wallet.wrong-network");
   }
 };
 
@@ -356,6 +357,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   mobile,
   ...rest
 }) => {
+  const { t } = useTranslation();
   const {
     indicator: indicatorClassName,
     indicatorMobile: indicatorMobileClassName,
@@ -367,7 +369,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   const label =
     status === WalletStatus.CONNECTED
       ? getWalletConfig(wallet).short
-      : getWalletConnectionLabel(status);
+      : getWalletConnectionLabel(status, t);
   const trimmedAddress = trimAddress(account);
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: hoisted,
@@ -393,11 +395,16 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   );
 };
 
+const getBscMmLink = (lang: string) => {
+  return `https://academy.binance.com/${lang}/articles/connecting-metamask-to-binance-smart-chain`;
+};
+
 export const BinanceMetamaskConnectorInfo: WalletPickerProps<
   any,
   any
 >["DefaultInfo"] = ({ acknowledge, onClose }) => {
   //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const handleBackToWalletPicker = useCallback(() => {
     onClose();
@@ -414,7 +421,7 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
       />
       <SpacedPaperContent topPadding bottomPadding>
         <Typography variant="h5" align="center" gutterBottom>
-          Connect BSC with MetaMask
+          {t("wallet.bsc-mm-connect-message")}
         </Typography>
         <Typography
           variant="body1"
@@ -422,13 +429,9 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
           color="textSecondary"
           gutterBottom
         >
-          Please ensure that you have added the Binance Smart Chain network to
-          Metamask as explained{" "}
-          <Link
-            href="https://academy.binance.com/en/articles/connecting-metamask-to-binance-smart-chain"
-            external
-          >
-            here
+          {t("wallet.bsc-mm-connect-description")}{" "}
+          <Link href={getBscMmLink(i18n.language)} external>
+            {t("common.here")}
           </Link>
         </Typography>
       </SpacedPaperContent>

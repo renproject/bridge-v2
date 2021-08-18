@@ -33,6 +33,15 @@ Launches the test runner in the interactive watch mode.<br />
 Builds the app for production to the `build` folder.<br />
 It correctly bundles React in production mode and optimizes the build for the best performance. The build is minified and the filenames include the hashes.<br />
 
+## Updating translations
+
+To update the translations, you need to:
+
+1. Add a `CROWDIN_PERSONAL_TOKEN`, `CROWDIN_PROJECT_ID` in your `.env`.
+2. Install the `crowdin` CLI. You can do that with `npm i -g @crowdin/cli`.
+
+You can then update `en.json` and upload the changes to Crowdin with `crowdin upload`. After community translations are ready, run `crowdin download` to download and substitute translations in the [locales](src/i18n/locales) folder.
+
 ## Architecture
 
 The app was build on top of [CRA](https://reactjs.org/docs/create-a-new-react-app.html), [Material-UI](https://material-ui.com/) with [redux-toolkit](https://redux-toolkit.js.org/) for shared state management.

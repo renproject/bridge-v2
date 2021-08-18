@@ -2,6 +2,7 @@ import * as React from "react";
 
 export class ErrorBoundary extends React.Component {
   state = { hasError: false };
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(props: any) {
     super(props);
   }

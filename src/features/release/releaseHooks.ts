@@ -1,4 +1,3 @@
-import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   buildBurnContextWithMap,
   burnMachine,
@@ -11,10 +10,9 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
-import { getBurnChainMap, releaseChainMap } from "../../services/rentx";
+import { releaseChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
-import { useAsync } from "react-use";
 
 export const useBurnMachine = (
   burnTransaction: BurnSession<any, any>,

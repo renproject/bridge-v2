@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
@@ -55,7 +56,8 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
   generalError,
   pending = false,
 }) => {
-  useSetPaperTitle("Submit");
+  const { t } = useTranslation();
+  useSetPaperTitle(t("release.submit-title"));
   const theme = useTheme();
   const {
     burnChainConfig,
@@ -82,7 +84,10 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
         >
           {pending ? (
             <TransactionStatusInfo
-              status={`Pending ${tx.transaction?.sourceTxConfs} / ${tx.transaction?.sourceTxConfTarget}`}
+              status={t("release.pending-confirmations-message", {
+                confirmations: tx.transaction?.sourceTxConfs,
+                targetConrifmations: tx.transaction?.sourceTxConfTarget,
+              })}
               chain={burnChainConfig.full}
               address={
                 <Link
@@ -102,13 +107,18 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
       </ProgressWrapper>
       {!pending && (
         <Typography variant="body1" align="center" gutterBottom>
-          To receive your {releaseCurrencyConfig.short}, submit a release
-          transaction to {burnChainConfig.full} via your Web3 Wallet.
+          {t("release.submit-tx-message", {
+            currency: releaseCurrencyConfig.short,
+            chain: burnChainConfig.full,
+          })}
         </Typography>
       )}
       <ActionButtonWrapper>
         <ActionButton onClick={handleSubmit} disabled={buttonSubmitting}>
-          {buttonSubmitting ? "Submitting" : "Submit"} to {burnChainConfig.full}
+          {buttonSubmitting
+            ? t("release.submitting-label")
+            : t("release.submit-label")}{" "}
+          {t("release.submit-to-label")} {burnChainConfig.full}
           {buttonSubmitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>
@@ -134,7 +144,8 @@ type ReleaseCompletedStatusProps = {
 export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusProps> = ({
   tx,
 }) => {
-  useSetPaperTitle("Completed");
+  const { t } = useTranslation();
+  useSetPaperTitle(t("release.completed-title"));
   const dispatch = useDispatch();
   const history = useHistory();
   const {
@@ -150,7 +161,10 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
     dispatch(resetRelease());
   }, [dispatch, history]);
 
-  const notificationMessage = `Successfully released ${tx.targetAmount} ${releaseCurrencyConfig.short}`;
+  const notificationMessage = t("release.success-notification-message", {
+    amount: tx.targetAmount,
+    currency: releaseCurrencyConfig.short,
+  });
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
   useEffectOnce(() => {
@@ -159,7 +173,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
         {notificationMessage}{" "}
         <Link external href={releaseTxLink || releaseAddressLink}>
           View {releaseChainConfig.full}{" "}
-          {releaseTxLink ? "transaction" : "address"}
+          {releaseTxLink ? t("common.transaction") : t("common.address")}
         </Link>
       </span>
     );
@@ -184,7 +198,8 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
           underline="hover"
           href={releaseTxLink || releaseAddressLink}
         >
-          {releaseChainConfig.full} {releaseTxLink ? "transaction" : "address"}
+          {releaseChainConfig.full}{" "}
+          {releaseTxLink ? t("common.transaction") : t("common.address")}
         </Link>
         <Link
           external
@@ -193,7 +208,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
           underline="hover"
           href={burnTxLink}
         >
-          {burnChainConfig.full} transaction
+          {burnChainConfig.full} {t("common.transaction")}
         </Link>
       </Box>
       <Debug it={{ tx }} />
@@ -208,6 +223,7 @@ type ReleaseAcceptedStatusProps = {
 export const ReleaseAcceptedStatus: FunctionComponent<ReleaseAcceptedStatusProps> = ({
   tx,
 }) => {
+  const { t } = useTranslation();
   const { burnChainConfig } = getBurnAndReleaseParams(tx);
   const [show, setShow] = useState(false);
   useEffect(() => {
@@ -218,12 +234,12 @@ export const ReleaseAcceptedStatus: FunctionComponent<ReleaseAcceptedStatusProps
   }, []);
   return (
     <>
-      <ProgressStatus reason="Releasing from RenVM" />
+      <ProgressStatus reason={t("release.status-releasing-title")} />
       <Grow in={show}>
         <Typography variant="body2" color="textSecondary" align="center">
-          Processing a transaction on {burnChainConfig.full} can sometimes take
-          longer due to heavier network load (congestion), please wait
-          patiently.
+          {t("release.status-releasing-message", {
+            chain: burnChainConfig.full,
+          })}
         </Typography>
       </Grow>
     </>

@@ -26,6 +26,7 @@ function App() {
           <Route exact path={mainPagePaths} component={MainPage} />
           <Route component={NotFoundPage} />
         </Switch>
+        <LegacyBridgeModal />
       </Suspense>
     </Router>
   );
