@@ -15,6 +15,7 @@ import {
   ErroringBurnSession,
   GatewaySession,
 } from "@renproject/ren-tx";
+import qs from "qs";
 import React, {
   FunctionComponent,
   useCallback,
@@ -62,6 +63,7 @@ import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
+import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
 
 export type AnyBurnSession =
   | BurnSession<any, any>
@@ -426,6 +428,19 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
 ) => {
   const { t } = useTranslation();
   const history = useHistory();
+
+  const ammendExpiry = useCallback(() => {
+    // history.location.search
+    const tx = parseTxQueryString(history.location.search);
+    if (!tx) return;
+    tx.expiryTime = Date.now() + 60 * 60 * 24 * 1000;
+    history.push({
+      pathname: paths.MINT_TRANSACTION,
+      search: "?" + createTxQueryString(tx as any),
+    });
+    window.location.reload();
+  }, [history]);
+
   const goToHome = useCallback(() => {
     history.push(paths.HOME);
   }, [history]);
@@ -438,6 +453,11 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       {...props}
     >
       <span>{t("tx.expired-error-popup-message-1", { hours: 24 })}</span>
+      <ActionButtonWrapper>
+        <RedButton variant="text" color="secondary" onClick={ammendExpiry}>
+          {t("tx.expired-error-continue-mint")}
+        </RedButton>
+      </ActionButtonWrapper>
       <ActionButtonWrapper>
         <Button variant="text" color="inherit" onClick={goToHome}>
           {t("tx.expired-error-popup-back-to-home")}
