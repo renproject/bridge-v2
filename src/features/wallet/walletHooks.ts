@@ -84,7 +84,6 @@ export const useSyncMultiwalletNetwork = () => {
   const renNetwork = useSelector($renNetwork);
   useEffect(() => {
     if (renNetwork !== targetNetwork) {
-      console.info("syncing multiwallet with network", renNetwork);
       setTargetNetwork(
         renNetwork.includes("mainnet")
           ? RenNetwork.Mainnet

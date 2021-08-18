@@ -161,19 +161,26 @@ const useSpacedContentStyles = makeStyles({
   rootSmaller: {
     minHeight: 130,
   },
+  rootFixedHeight: {
+    overflowX: "auto",
+    height: 392 - 2 * 40,
+  },
 });
 
 type SpacedPaperContentProps = PaperContentProps & {
   smaller?: boolean;
+  fixedHeight?: boolean;
 };
 
 export const SpacedPaperContent: FunctionComponent<SpacedPaperContentProps> = ({
   smaller,
+  fixedHeight,
   ...rest
 }) => {
   const styles = useSpacedContentStyles();
   const className = classNames(styles.root, {
     [styles.rootSmaller]: smaller,
+    [styles.rootFixedHeight]: fixedHeight,
   });
   return <PaperContent className={className} {...rest} />;
 };

@@ -1,5 +1,6 @@
 import { Divider, Fade } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -62,6 +63,7 @@ import {
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { walletConnected } = useSelectedChainWallet();
   const { chain, balances } = useSelector($wallet);
@@ -80,11 +82,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   );
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
   const { conversionTotal } = getTransactionFees({
-    amount: amount * Math.pow(10, decimals),
+    amount,
     type: TxType.BURN,
     fees,
+    decimals,
   });
-  const conversionFormatted = conversionTotal / Math.pow(10, decimals);
+  const conversionFormatted = conversionTotal;
 
   const usdAmount = useSelector($releaseUsdAmount);
   const handleChainChange = useCallback(
@@ -177,8 +180,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             errorText={
               showMinimalAmountError ? (
                 <span>
-                  Amount too low{" "}
-                  <TooltipWithIcon title="After fees have been applied, the amount you will receive is too little." />
+                  {t("release.amount-too-low-error")}{" "}
+                  <TooltipWithIcon
+                    title={
+                      <span>{t("release.amount-too-low-error-tooltip")}</span>
+                    }
+                  />
                 </span>
               ) : (
                 ""
@@ -188,7 +195,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         </BigCurrencyInputWrapper>
         <Fade in={walletConnected}>
           <LabelWithValue
-            label={`${currencyConfig.short} Balance`}
+            label={t("release.currency-balance-label", {
+              currency: currencyConfig.short,
+            })}
             value={
               <>
                 {balance !== null && walletConnected && (
@@ -202,7 +211,8 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         </Fade>
         <AssetDropdownWrapper>
           <AssetDropdown
-            label="Chain"
+            label={t("common.chain-label")}
+            blockchainLabel={t("common.blockchain-label")}
             mode="chain"
             available={supportedBurnChains}
             value={chain}
@@ -211,7 +221,8 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         </AssetDropdownWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
-            label="Asset"
+            label={t("common.asset-label")}
+            assetLabel={t("common.asset-label")}
             available={supportedReleaseCurrencies}
             balances={balances}
             value={currency}
@@ -221,8 +232,10 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <BigOutlinedTextFieldWrapper>
           <OutlinedTextField
             error={!!address && !isAddressValid}
-            placeholder={`Enter a Destination ${releaseChainConfig.full} Address`}
-            label="Releasing to"
+            placeholder={t("release.releasing-to-placeholder", {
+              chain: releaseChainConfig.full,
+            })}
+            label={t("release.releasing-to-label")}
             onChange={handleAddressChange}
             value={address}
           />
@@ -235,7 +248,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             <CenteredProgress />
           ) : (
             <AssetInfo
-              label="Receiving:"
+              label={t("release.receiving-label") + ":"}
               value={
                 <NumberFormatText
                   value={conversionFormatted}
@@ -250,7 +263,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             onClick={handleNextStep}
             disabled={walletConnected ? !enabled : false}
           >
-            {walletConnected ? "Next" : "Connect Wallet"}
+            {walletConnected ? t("common.next-label") : t("wallet.connect")}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

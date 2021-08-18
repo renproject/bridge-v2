@@ -31,6 +31,7 @@ import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
   HomeIcon,
+  LanguageIcon,
   QrCodeIcon,
   TxHistoryIcon,
 } from "../icons/RenIcons";
@@ -207,10 +208,12 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
 
 type CopyContentButtonProps = {
   content: string;
+  copiedMessage?: string;
 };
 
 export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
   content,
+  copiedMessage = "Copied!",
 }) => {
   const styles = useCopyContentButtonStyles();
   const iconClasses = useLightIconButtonStyles();
@@ -230,7 +233,7 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
       <div className={styles.content}>
         {copied && (
           <Fade in={copied} timeout={1200}>
-            <span>Copied!</span>
+            <span>{copiedMessage}</span>
           </Fade>
         )}
         <Hide when={copied} className={styles.contentValue}>
@@ -267,7 +270,7 @@ const useMiddleEllipsisCopyStyles = makeStyles({
     textOverflow: "ellipsis",
     paddingLeft: 15,
     paddingRight: 15,
-  }
+  },
 });
 
 type MiddleEllipsisCopyProps = {
@@ -416,6 +419,17 @@ export const HomeMenuIconButton: FunctionComponent<IconButtonProps> = (
   return (
     <IconButton classes={classes} {...props}>
       <HomeIcon className={icon} />
+    </IconButton>
+  );
+};
+
+export const LanguageMenuIconButton: FunctionComponent<IconButtonProps> = (
+  props
+) => {
+  const { icon, ...classes } = useMenuIconButtonStyles();
+  return (
+    <IconButton classes={classes} {...props}>
+      <LanguageIcon className={icon} />
     </IconButton>
   );
 };

@@ -11,6 +11,7 @@ import {
   FantomMetamaskConnectorInfo,
   PolygonMetamaskConnectorInfo,
   AvalancheMetamaskConnectorInfo,
+  ArbitrumMetamaskConnectorInfo,
 } from "../../components/wallet/WalletHelpers";
 import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
@@ -53,6 +54,14 @@ export const avalancheNetworkToRenNetwork = (
     "43114": RenNetwork.Mainnet,
     "43113": RenNetwork.Testnet,
   }[parseInt(id as string).toString() as "43114" | "43113"];
+};
+export const arbitrumNetworkToRenNetwork = (
+  id: string | number
+): RenNetwork => {
+  return {
+    "42161": RenNetwork.Mainnet,
+    "421611": RenNetwork.Testnet,
+  }[parseInt(id as string).toString() as "42161" | "421611"];
 };
 
 export const walletPickerModalConfig = (network: RenNetwork) => {
@@ -192,13 +201,28 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
           connector: new SolanaConnector({
             debug: true,
-            providerURL: (window as any).solana,
+            providerURL: (window as any).solana || "https://www.phantom.app",
             clusterURL:
               network === RenNetwork.Mainnet
                 ? "https://ren.rpcpool.com/"
                 : undefined,
             network,
           }),
+        },
+      ],
+      [RenChain.arbitrum]: [
+        {
+          name: "Metamask",
+          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          info: ArbitrumMetamaskConnectorInfo,
+          connector: (() => {
+            const connector = new EthereumInjectedConnector({
+              networkIdMapper: arbitrumNetworkToRenNetwork,
+              debug: true,
+            });
+            connector.getProvider = () => (window as any).ethereum;
+            return connector;
+          })(),
         },
       ],
     },

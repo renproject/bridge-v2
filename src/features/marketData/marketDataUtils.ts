@@ -165,6 +165,10 @@ export const fetchMarketDataGasPrices = async () => {
     chain: BridgeChain.FTMC,
     standard: 75, // avg gas price
   };
+  const arbPrice = {
+    chain: BridgeChain.ARBITRUMC,
+    standard: 0.4, // avg gas price
+  };
   const solanaPrice = {
     chain: BridgeChain.SOLC,
     standard: 6, // extrapolated to make it around 0,001 SOL
@@ -176,6 +180,7 @@ export const fetchMarketDataGasPrices = async () => {
     ftmPrice,
     maticPrice,
     solanaPrice,
+    arbPrice,
   ] as Array<GasPrice>;
 };
 

@@ -17,6 +17,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
@@ -67,10 +68,6 @@ import {
 import { useShakePaper } from "../../ui/uiHooks";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
-import {
-  getMintDynamicTooltips,
-  mintTooltips,
-} from "../components/MintHelpers";
 import { SolanaTokenAccountModal } from "../components/SolanaAccountChecker";
 import { $mint } from "../mintSlice";
 import {
@@ -81,6 +78,7 @@ import {
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
   const { walletConnected, account, provider } = useSelectedChainWallet();
@@ -108,11 +106,12 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const amountUsd = amount * currencyUsdRate;
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
   const { conversionTotal } = getTransactionFees({
-    amount: amount * Math.pow(10, decimals),
+    amount,
     fees,
     type: TxType.MINT,
+    decimals,
   });
-  const conversionFormatted = conversionTotal / Math.pow(10, decimals);
+  const conversionFormatted = conversionTotal;
 
   const { GreyIcon } = lockCurrencyConfig;
 
@@ -120,10 +119,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const destinationChainConfig = getChainConfig(chain);
   const destinationChainNativeCurrencyConfig = getCurrencyConfig(
     destinationChainConfig.nativeCurrency
-  );
-  const mintDynamicTooltips = getMintDynamicTooltips(
-    destinationChainConfig,
-    destinationChainNativeCurrencyConfig
   );
   const mintedCurrency = toMintedCurrency(currency);
 
@@ -166,7 +161,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   // FIXME: we might want to extract the solana logic in a nicer manner
   useEffect(() => {
-    if (chain == BridgeChain.SOLC && canInitializeMinting) {
+    if (chain === BridgeChain.SOLC && canInitializeMinting) {
       if (hasSolanaTokenAccount) {
         setMintingInitialized(true);
         return;
@@ -177,6 +172,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       }
     }
   }, [
+    canInitializeMinting,
     checkingSolana,
     showSolanaModal,
     chain,
@@ -189,7 +185,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     if (walletConnected) {
       setTouched(true);
       if (canInitializeMinting) {
-        if (chain == BridgeChain.SOLC) {
+        if (chain === BridgeChain.SOLC) {
           setCheckingSolana(true);
           if (!hasSolanaTokenAccount) {
             setSolanaTokenAccount(
@@ -212,6 +208,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [
     dispatch,
+    chain,
     walletConnected,
     canInitializeMinting,
     network,
@@ -219,7 +216,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     currency,
     hasSolanaTokenAccount,
     setSolanaTokenAccount,
-    setShowSolanaModal,
     setMintingInitialized,
   ]);
 
@@ -267,19 +263,19 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <BackArrowIcon />
           </IconButton>
         </PaperNav>
-        <PaperTitle>Fees & Confirm</PaperTitle>
+        <PaperTitle>{t("mint.fees-title")}</PaperTitle>
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
         <Grid container alignItems="flex-end">
           <Grid item xs={7}>
             <Typography variant="body1" gutterBottom>
-              Fee calculator
+              {t("fees.calculator-label")}
             </Typography>
           </Grid>
           <Grid item xs={5}>
             <TextField
-              label="Enter an amount"
+              label={t("fees.calculator-amount-label")}
               variant="filled"
               color="primary"
               value={amountValue || ""}
@@ -289,11 +285,11 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         </Grid>
         <SmallSpacedDivider />
         <Typography variant="body1" gutterBottom>
-          Details
+          {t("mint.details-label")}
         </Typography>
         <LabelWithValue
-          label="Sending"
-          labelTooltip={mintTooltips.sending}
+          label={t("mint.sending-label")}
+          labelTooltip={t("mint.sending-tooltip")}
           value={
             hasAmount ? (
               <NumberFormatText value={amount} spacedSuffix={currency} />
@@ -315,20 +311,20 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           }
         />
         <LabelWithValue
-          label="To"
-          labelTooltip={mintTooltips.to}
+          label={t("mint.to-label")}
+          labelTooltip={t("mint.to-tooltip")}
           value={destinationChainConfig.full}
         />
         <LabelWithValue
-          label="Recipient Address"
-          labelTooltip={mintTooltips.recipientAddress}
+          label={t("mint.recipient-address-label")}
+          labelTooltip={t("mint.recipient-address-tooltip")}
           value={
             <MiddleEllipsisText hoverable>{tx.userAddress}</MiddleEllipsisText>
           }
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
-          Fees
+          {t("fees.label")}
         </Typography>
         <TransactionFees
           chain={chain}
@@ -345,7 +341,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <CenteredProgress />
           ) : (
             <AssetInfo
-              label="Receiving"
+              label={t("mint.receiving-label")}
               value={
                 <NumberFormatText
                   value={conversionFormatted}
@@ -381,9 +377,20 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                     variant="caption"
                     color={showAckError ? "inherit" : "textPrimary"}
                   >
-                    I acknowledge the fees and that this transaction requires{" "}
-                    {destinationChainNativeCurrencyConfig.short}{" "}
-                    <TooltipWithIcon title={mintDynamicTooltips.acknowledge} />
+                    {t("mint.fees-ack-message", {
+                      currency: destinationChainNativeCurrencyConfig.short,
+                    })}
+                    <TooltipWithIcon
+                      title={
+                        <>
+                          {t("mint.fees-ack-tooltip", {
+                            chain: destinationChainConfig.full,
+                            currency:
+                              destinationChainNativeCurrencyConfig.short,
+                          })}
+                        </>
+                      }
+                    />
                   </Typography>
                 </FormLabel>
               }
@@ -400,8 +407,10 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             }
           >
             {!walletConnected
-              ? "Connect Wallet"
-              : `View ${lockCurrencyConfig.short} Gateway Address`}
+              ? t("wallet.connect")
+              : t("mint.view-gateway-button-label", {
+                  currency: lockCurrencyConfig.short,
+                })}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

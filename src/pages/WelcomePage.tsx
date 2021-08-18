@@ -1,26 +1,11 @@
 import { Container, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
 import { IconWithLabel } from "../components/icons/IconHelpers";
-import {
-  AvalancheChainIcon,
-  BchFullIcon,
-  BinanceChainFullIcon,
-  BtcFullIcon,
-  DgbFullIcon,
-  DogeFullIcon,
-  EmptyCircleIcon,
-  EthereumChainFullIcon,
-  FantomFullIcon,
-  FilFullIcon,
-  LunaFullIcon,
-  PolygonFullIcon,
-  SolanaFullIcon,
-  WarningIcon,
-  ZecFullIcon,
-} from "../components/icons/RenIcons";
+import { EmptyCircleIcon, WarningIcon } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
 import { MobileLayout } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
@@ -47,10 +32,6 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 24,
     textAlign: "center",
     color: theme.customColors.textLight,
-  },
-  continuation: {
-    marginTop: 48,
-    textAlign: "center",
   },
   button: {
     maxWidth: 400,
@@ -124,23 +105,24 @@ const AdjustedWarningIcon = styled(WarningIcon)({
 export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
-  usePageTitle("Welcome");
+  const { t } = useTranslation();
+  usePageTitle(t("welcome.title"));
   const { showNotification } = useNotifications();
   const styles = useStyles();
   useEffect(() => {
     showNotification(
       <Typography variant="caption">
-        <AdjustedWarningIcon fontSize="small" /> RenVM is new technology, and{" "}
+        <AdjustedWarningIcon fontSize="small" />{" "}
+        {t("welcome.warning-message-1")}{" "}
         <Link
           href={links.SECURITY_AUDITS}
           target="_blank"
           color="primary"
           underline="hover"
         >
-          security audits
+          {t("welcome.warning-link-text")}
         </Link>{" "}
-        don't completely eliminate risks. Please don’t supply assets you can’t
-        afford to lose.
+        {t("welcome.warning-message-2")}
       </Typography>,
       {
         variant: "specialInfo",
@@ -151,7 +133,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         },
       }
     );
-  }, [showNotification]);
+  }, [showNotification, t]);
   const handleAgree = useCallback(() => {
     localStorage.setItem(storageKeys.TERMS_AGREED, "1");
     history.replace(paths.HOME);
@@ -161,25 +143,14 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
     <MobileLayout withBackground>
       <Container maxWidth="sm">
         <Typography variant="h1" className={styles.heading}>
-          Transfer assets between blockchains
+          {t("welcome.header")}
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          An easy way to bridge cross-chain assets between blockchains.
-        </Typography>
-        <Typography variant="body1" className={styles.continuation}>
-          To continue, read and agree to the{" "}
-          <Link
-            color="primary"
-            underline="hover"
-            target="_blank"
-            href={links.TERMS_OF_SERVICE}
-          >
-            Terms of Service
-          </Link>
+          {t("welcome.subheader")}
         </Typography>
         <NarrowCenteredWrapper>
           <ActionButton className={styles.button} onClick={handleAgree}>
-            Agree & Continue
+            {t("common.continue-label")}
           </ActionButton>
         </NarrowCenteredWrapper>
       </Container>
@@ -191,7 +162,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               component="h2"
               className={styles.label}
             >
-              Assets
+              {t("common.assets-label")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
               {supportedReleaseCurrencies.map((x) => {
@@ -206,7 +177,10 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
                 );
               })}
               <li className={styles.assetListItem}>
-                <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
+                <IconWithLabel
+                  label={t("welcome.more-soon")}
+                  Icon={EmptyCircleIcon}
+                />
               </li>
             </UnstyledList>
           </div>
@@ -216,7 +190,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               component="h2"
               className={styles.label}
             >
-              Destination
+              {t("common.destination-label")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
               {supportedBurnChains.map((x) => {
@@ -231,21 +205,24 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
                 );
               })}
               <li className={styles.assetListItem}>
-                <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
+                <IconWithLabel
+                  label={t("welcome.more-soon")}
+                  Icon={EmptyCircleIcon}
+                />
               </li>
             </UnstyledList>
           </div>
         </div>
         <div className={styles.legacy}>
           <Typography variant="body1">
-            If you'd rather use the old version of RenBridge,{" "}
+            {t("welcome.legacy-bridge-message")} RenBridge,{" "}
             <Link
               external
               href={links.LEGACY_BRIDGE}
               color="primary"
               underline="hover"
             >
-              head here
+              {t("welcome.legacy-bridge-link-text")}
             </Link>
             .
           </Typography>

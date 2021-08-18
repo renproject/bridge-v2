@@ -7,6 +7,9 @@ import TwitterIcon from "@material-ui/icons/Twitter";
 import React, { FunctionComponent } from "react";
 import { IconWithLabel } from "../../icons/IconHelpers";
 import {
+  ArbitrumBlackIcon,
+  ArbitrumCircleIcon,
+  ArbitrumColorIcon,
   AvaCircleIcon,
   AvaFullIcon,
   AvaGreyIcon,
@@ -94,6 +97,7 @@ export const IconsSection: FunctionComponent = () => {
         <WalletConnectIcon />
       </SeparationWrapper>
       <SeparationWrapper>
+        <ArbitrumCircleIcon />
         <BinanceChainFullIcon />
         <EthereumChainFullIcon />
         <FantomCircleIcon />
@@ -102,6 +106,7 @@ export const IconsSection: FunctionComponent = () => {
         <WalletConnectFullIcon />
       </SeparationWrapper>
       <SeparationWrapper>
+        <ArbitrumColorIcon />
         <BinanceChainColorIcon />
         <EthereumChainColorIcon />
         <FantomFullIcon />
@@ -109,6 +114,7 @@ export const IconsSection: FunctionComponent = () => {
         <AvaFullIcon />
       </SeparationWrapper>
       <SeparationWrapper>
+        <ArbitrumBlackIcon />
         <BinanceChainIcon />
         <EthereumChainIcon />
         <FantomGreyIcon />
@@ -116,6 +122,7 @@ export const IconsSection: FunctionComponent = () => {
         <AvaGreyIcon />
       </SeparationWrapper>
       <SeparationWrapper>
+        <ArbitrumBlackIcon style={{ color: theme.customColors.blue }} />
         <BinanceChainIcon style={{ color: theme.customColors.blue }} />
         <EthereumChainIcon style={{ color: theme.customColors.blue }} />
         <FantomGreyIcon style={{ color: theme.customColors.blue }} />

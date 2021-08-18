@@ -1,4 +1,5 @@
 import { Divider, IconButton } from "@material-ui/core";
+import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { BurnMachineSchema } from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
@@ -6,8 +7,10 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+import { useAsync } from "react-use";
 import {
   ActionButton,
   ToggleIconButton,
@@ -36,6 +39,7 @@ import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpe
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
+import { getBurnChainMap } from "../../../services/rentx";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
@@ -81,6 +85,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
@@ -95,9 +100,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
     if (!walletConnected) {
-      setPaperTitle("Resume Transaction");
+      setPaperTitle(t("tx.resume-transaction"));
     }
-  }, [walletConnected, setPaperTitle]);
+  }, [walletConnected, setPaperTitle, t]);
 
   useEffect(() => {
     if (txState?.reloadTx) {
@@ -142,6 +147,18 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     dispatch(setWalletPickerOpened(true));
   }, [dispatch]);
 
+  const { enabledChains } = useMultiwallet();
+  const burnChainMap = useAsync(async () => {
+    const providers = Object.entries(enabledChains).reduce(
+      (c, n) => ({
+        ...c,
+        [n[0]]: n[1].provider,
+      }),
+      {}
+    );
+    return await getBurnChainMap(providers);
+  }, [enabledChains]);
+
   const {
     burnCurrencyConfig,
     burnChainConfig,
@@ -181,7 +198,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
       </PaperHeader>
       <PaperContent bottomPadding>
         {reloading && <ProgressStatus processing />}
-        {walletConnected && !reloading && <ReleaseTransactionStatus tx={tx} />}
+        {walletConnected && !reloading && !burnChainMap.loading && (
+          <ReleaseTransactionStatus tx={tx} burnChainMap={burnChainMap.value} />
+        )}
         {!walletConnected && (
           <>
             <PaperSpacerWrapper>
@@ -200,7 +219,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
           <Divider />
           <PaperContent darker topPadding bottomPadding>
             <LabelWithValue
-              label="Releasing"
+              label={t("release.releasing-label")}
               value={
                 <NumberFormatText
                   value={amount}
@@ -216,9 +235,12 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
                 />
               }
             />
-            <LabelWithValue label="From" value={burnChainConfig.full} />
             <LabelWithValue
-              label="To"
+              label={t("release.from-label")}
+              value={burnChainConfig.full}
+            />
+            <LabelWithValue
+              label={t("release.To-label")}
               value={
                 <MiddleEllipsisText hoverable>
                   {tx.destAddress}
@@ -249,25 +271,27 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
 
 type ReleaseTransactionStatusProps = {
   tx: AnyBurnSession;
+  burnChainMap: any;
 };
 
 const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
   tx,
+  burnChainMap,
 }) => {
   const history = useHistory();
   const location = useLocation();
-  const [current, send, service] = useBurnMachine(tx);
+  const [current, send, service] = useBurnMachine(tx, burnChainMap);
   useEffect(
     () => () => {
-      console.info("stopping tx machine");
       service.stop();
     },
     [service]
   );
-  const { showNotification, closeNotification } = useNotifications();
+  const { showNotification } = useNotifications();
 
   const [submitting, setSubmitting] = useState(false);
-  const [timeoutError, setTimeoutError] = useState(false);
+  const [timeoutError] = useState(false);
+  const [timeoutKey, setTimeoutKey] = useState<number>();
   const handleSubmit = useCallback(() => {
     setSubmitting(true);
     send({ type: "SUBMIT" });
@@ -284,10 +308,11 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
           persist: true,
         }
       ) as number;
+      setTimeoutKey(key);
       // This isn't a great solution because users might end up burning twice
       // setTimeoutError(true);
     }, 1 * 60 * 1000);
-  }, [send, showNotification, closeNotification]);
+  }, [send, setTimeoutKey, showNotification, tx.sourceAsset]);
   const handleReload = useCallback(() => {
     history.replace({
       ...location,
@@ -300,13 +325,16 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   }, [history, location]);
 
   useEffect(() => {
+    if (current.value === "accepted") {
+      clearTimeout(timeoutKey);
+    }
     if (current.value === "srcSettling") {
       history.replace({
         pathname: paths.RELEASE_TRANSACTION,
         search: "?" + createTxQueryString(current.context.tx),
       });
     }
-  }, [history, current.value, current.context.tx]);
+  }, [history, timeoutKey, current.value, current.context.tx]);
 
   // const forceState = "accepted";
   const state = current.value as keyof BurnMachineSchema["states"];
