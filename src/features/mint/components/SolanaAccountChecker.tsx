@@ -1,10 +1,8 @@
 import React, { useCallback, useState } from "react";
 import {
-  Box,
   Button,
   DialogActions,
   DialogContent,
-  Link,
   Typography,
 } from "@material-ui/core";
 import { BridgeModal } from "../../../components/modals/BridgeModal";
@@ -47,7 +45,7 @@ export const SolanaTokenAccountModal: React.FunctionComponent<{
         setCreationError("Failed to submit transaction");
       }
     }
-  }, [provider, network]);
+  }, [provider, network, currency, onCreated]);
   return (
     <>
       <ErrorDialog

@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
@@ -32,7 +33,6 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { paths } from "../../../pages/routes";
 import {
-  BridgeCurrency,
   getChainConfig,
   getCurrencyConfig,
   getNativeCurrency,
@@ -57,7 +57,6 @@ import {
   $wallet,
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
-import { releaseTooltips } from "../components/ReleaseHelpers";
 import { $release, $releaseUsdAmount } from "../releaseSlice";
 import {
   createReleaseTransaction,
@@ -67,6 +66,7 @@ import {
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
   const { account, walletConnected } = useSelectedChainWallet();
@@ -84,7 +84,6 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const nativeCurrencyConfig = getCurrencyConfig(getNativeCurrency(currency));
 
   const targetChainConfig = getChainConfig(chain);
-  console.log(currency, targetChainConfig.nativeCurrency);
   const decimals =
     targetChainConfig.nativeCurrency === currency
       ? getReleaseAssetDecimals(
@@ -170,7 +169,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <BackArrowIcon />
           </IconButton>
         </PaperNav>
-        <PaperTitle>Fees & Confirm</PaperTitle>
+        <PaperTitle>{t("release.fees-title")}</PaperTitle>
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
@@ -185,11 +184,11 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           />
         </BigAssetAmountWrapper>
         <Typography variant="body1" gutterBottom>
-          Details
+          {t("release.details-label")}
         </Typography>
         <LabelWithValue
-          label="Releasing"
-          labelTooltip={releaseTooltips.releasing}
+          label={t("release.releasing-label")}
+          labelTooltip={t("release.releasing-tooltip")}
           value={
             <NumberFormatText
               value={amount}
@@ -206,18 +205,18 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           }
         />
         <LabelWithValue
-          label="From"
-          labelTooltip={releaseTooltips.from}
+          label={t("release.from-label")}
+          labelTooltip={t("release.from-tooltip")}
           value={chainConfig.full}
         />
         <LabelWithValue
-          label="To"
-          labelTooltip={releaseTooltips.to}
+          label={t("release.to-label")}
+          labelTooltip={t("release.to-tooltip")}
           value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
         />
         <SpacedDivider />
         <Typography variant="body1" gutterBottom>
-          Fees
+          {t("fees.label")}
         </Typography>
         <TransactionFees
           chain={chain}
@@ -233,7 +232,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <CenteredProgress />
           ) : (
             <AssetInfo
-              label="Receiving"
+              label={t("release.receiving-label") + ":"}
               value={
                 <NumberFormatText
                   value={conversionFormatted}
@@ -255,10 +254,10 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <ActionButtonWrapper>
           <ActionButton onClick={handleConfirm} disabled={releasingInitialized}>
             {!walletConnected
-              ? "Connect Wallet"
+              ? t("wallet.connect")
               : releasingInitialized
-              ? "Confirming..."
-              : "Confirm"}
+              ? t("release.confirming-label")
+              : t("release.confirm-label")}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>

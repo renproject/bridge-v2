@@ -1,6 +1,7 @@
 import { Container, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { MobileLayout } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
@@ -35,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
-  usePageTitle("Not Found");
+  const { t } = useTranslation();
+  usePageTitle(t("navigation.404-title"));
   const styles = useStyles();
 
   return (
@@ -56,7 +58,7 @@ export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
           variant="body1"
           className={styles.description}
         >
-          We couldn't find this page
+          {t("navigation.404-header")}
         </Typography>
         <Typography
           align="center"
@@ -64,19 +66,19 @@ export const NotFoundPage: FunctionComponent<RouteComponentProps> = () => {
           variant="body1"
           className={styles.supplement}
         >
-          Try visiting{" "}
+          {t("navigation.404-message-1")}{" "}
           <Link color="primary" to="/" underline="hover">
             RenBridge
           </Link>{" "}
-          - or{" "}
+          - {t("navigation.404-message-or")}{" "}
           <Link
             color="primary"
             href="mailto:support@renproject.io"
             underline="hover"
           >
-            get in touch
+            {t("navigation.404-message-link-text")}
           </Link>{" "}
-          if you believe there is an issue
+          {t("navigation.404-message-2")}
         </Typography>
       </Container>
     </MobileLayout>

@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
 import { useAsync } from "react-use";
@@ -84,6 +85,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
@@ -98,9 +100,9 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [paperTitle, setPaperTitle] = usePaperTitle();
   useEffect(() => {
     if (!walletConnected) {
-      setPaperTitle("Resume Transaction");
+      setPaperTitle(t("tx.resume-transaction"));
     }
-  }, [walletConnected, setPaperTitle]);
+  }, [walletConnected, setPaperTitle, t]);
 
   useEffect(() => {
     if (txState?.reloadTx) {
@@ -217,7 +219,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
           <Divider />
           <PaperContent darker topPadding bottomPadding>
             <LabelWithValue
-              label="Releasing"
+              label={t("release.releasing-label")}
               value={
                 <NumberFormatText
                   value={amount}
@@ -233,9 +235,12 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
                 />
               }
             />
-            <LabelWithValue label="From" value={burnChainConfig.full} />
             <LabelWithValue
-              label="To"
+              label={t("release.from-label")}
+              value={burnChainConfig.full}
+            />
+            <LabelWithValue
+              label={t("release.To-label")}
               value={
                 <MiddleEllipsisText hoverable>
                   {tx.destAddress}
@@ -278,15 +283,14 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   const [current, send, service] = useBurnMachine(tx, burnChainMap);
   useEffect(
     () => () => {
-      console.info("stopping tx machine");
       service.stop();
     },
     [service]
   );
-  const { showNotification, closeNotification } = useNotifications();
+  const { showNotification } = useNotifications();
 
   const [submitting, setSubmitting] = useState(false);
-  const [timeoutError, setTimeoutError] = useState(false);
+  const [timeoutError] = useState(false);
   const [timeoutKey, setTimeoutKey] = useState<number>();
   const handleSubmit = useCallback(() => {
     setSubmitting(true);
@@ -308,7 +312,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
       // This isn't a great solution because users might end up burning twice
       // setTimeoutError(true);
     }, 1 * 60 * 1000);
-  }, [send, setTimeoutKey, showNotification, closeNotification]);
+  }, [send, setTimeoutKey, showNotification, tx.sourceAsset]);
   const handleReload = useCallback(() => {
     history.replace({
       ...location,

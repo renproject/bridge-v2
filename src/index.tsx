@@ -10,6 +10,7 @@ import { TitleProviders } from "./providers/TitleProviders";
 import * as serviceWorker from "./serviceWorker";
 import store from "./store/store";
 import { lightTheme } from "./theme/theme";
+import "./i18n/i18n";
 import * as Sentry from "@sentry/react";
 
 // process.env.NODE_ENV !== "production" &&

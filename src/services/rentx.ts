@@ -14,18 +14,15 @@ import {
   Fantom,
   Polygon,
   Avalanche,
+  Arbitrum,
 } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
 import { Terra } from "@renproject/chains-terra";
 import { RenNetwork } from "@renproject/interfaces";
 import { BurnMachineContext, GatewayMachineContext } from "@renproject/ren-tx";
 import { mapFees } from "../features/fees/feesUtils";
+import { getReleaseAssetDecimals } from "../features/transactions/transactionsUtils";
 import {
-  getMintAssetDecimals,
-  getReleaseAssetDecimals,
-} from "../features/transactions/transactionsUtils";
-import {
-  BridgeChain,
   BridgeCurrency,
   getChainConfig,
   getChainConfigByRentxName,
@@ -87,6 +84,13 @@ export const getMintChainMap = (providers: any) => ({
     // Currently Solana will always mint to the connected provider's address
     return new Solana(providers.solana, network) as any;
   },
+  [RenChain.arbitrum]: (context: GatewayMachineContext<any>) => {
+    const { destAddress, network } = context.tx;
+
+    return new Arbitrum(providers.arbitrum, network).Account({
+      address: destAddress,
+    }) as any;
+  },
 });
 
 export const mintChainClassMap = {
@@ -96,6 +100,7 @@ export const mintChainClassMap = {
   [RenChain.polygon]: Polygon,
   [RenChain.avalanche]: Avalanche,
   [RenChain.solana]: Solana,
+  [RenChain.arbitrum]: Arbitrum,
 };
 
 const buildBurner = (
@@ -111,7 +116,7 @@ const buildBurner = (
 
   let decimals = getReleaseAssetDecimals(releaseChain, context.tx.sourceAsset);
 
-  if (chain == "solana" && decimals > 9) {
+  if (chain === "solana" && decimals > 9) {
     decimals = 9;
   }
 
@@ -144,6 +149,7 @@ export const burnChainClassMap = {
   [RenChain.polygon]: Polygon,
   [RenChain.avalanche]: Avalanche,
   [RenChain.solana]: Solana,
+  [RenChain.arbitrum]: Arbitrum,
 };
 
 export const releaseChainMap: any = {
@@ -178,6 +184,7 @@ export const releaseChainClassMap = {
   [RenChain.digibyte]: DigiByte,
   [RenChain.filecoin]: Filecoin,
   [RenChain.terra]: Terra,
+  [RenChain.arbitrum]: Arbitrum,
 };
 
 export const chainsClassMap = { ...burnChainClassMap, ...releaseChainClassMap };

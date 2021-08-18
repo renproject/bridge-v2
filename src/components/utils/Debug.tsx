@@ -11,6 +11,7 @@ import { ErrorBoundary } from "./Error";
 const useStyles = makeStyles({
   root: {
     background: "lightgray",
+    whiteSpace: "break-spaces",
   },
   wrapper: {
     background: "gray",
@@ -64,9 +65,11 @@ const DebugWrapper: FunctionComponent<DebugWrapperProps> = ({
     [classes.wrapperEnabled]: show,
   });
   return (
-    <div className={className} onClick={toggleShow}>
-      {children}
-    </div>
+    <ErrorBoundary>
+      <div className={className} onClick={toggleShow}>
+        {children}
+      </div>
+    </ErrorBoundary>
   );
 };
 
