@@ -234,11 +234,7 @@ export const ReleaseAcceptedStatus: FunctionComponent<ReleaseAcceptedStatusProps
   }, []);
   return (
     <>
-      <ProgressStatus
-        reason={t("release.status-releasing-title", {
-          renvm: "RenVM",
-        })}
-      />
+      <ProgressStatus reason={t("release.status-releasing-title")} />
       <Grow in={show}>
         <Typography variant="body2" color="textSecondary" align="center">
           {t("release.status-releasing-message", {

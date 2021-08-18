@@ -53,31 +53,20 @@ const AboutPage: FunctionComponent<RouteComponentProps> = () => {
   usePageTitle(t("about.title"));
   const styles = useStyles();
 
-  const bridge = "RenBridge";
-  const renvm = "RenVM";
-
   return (
     <MobileLayout>
       <Container maxWidth="sm" className={styles.root}>
         <Typography variant="h2" component="h1" className={styles.heading}>
-          {t("about.what-is-header", { bridge })}
+          {t("about.what-is-header")}
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          <Trans
-            i18nKey="about.what-is-description"
-            values={{ bridge }}
-            components={components}
-          />
+          <Trans i18nKey="about.what-is-description" components={components} />
         </Typography>
         <Typography variant="h2" className={styles.heading}>
           {t("about.work-header")}
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          <Trans
-            i18nKey="about.work-description"
-            values={{ renvm }}
-            components={components}
-          />{" "}
+          <Trans i18nKey="about.work-description" components={components} />{" "}
           <Link external href={links.WIKI}>
             {t("about.work-link-text")}
           </Link>
@@ -87,14 +76,14 @@ const AboutPage: FunctionComponent<RouteComponentProps> = () => {
           {t("about.safety-header")}
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          {t("about.safety-description-1", { renvm })}{" "}
+          {t("about.safety-description-1")}{" "}
           <Link external href={links.SECURITY_AUDITS}>
             {t("about.safety-audits-link-text")}
           </Link>{" "}
           {t("about.safety-description-2")}
         </Typography>
         <Typography variant="body1">
-          {t("about.legacy-message", { bridge })},{" "}
+          {t("about.legacy-message")},{" "}
           <Link
             external
             href={links.LEGACY_BRIDGE}
@@ -103,7 +92,6 @@ const AboutPage: FunctionComponent<RouteComponentProps> = () => {
           >
             {t("about.legacy-link-text")}
           </Link>
-          .
         </Typography>
         <div className={styles.logos}>
           <span className={styles.ren}>

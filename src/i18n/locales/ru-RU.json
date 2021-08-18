@@ -200,7 +200,5 @@
   "release.completed-title": "Выполнено",
   "release.status-releasing-title": "Высвобождение из {{renvm}}",
   "release.status-releasing-message": "Обработка транзакции на {{chain}} иногда может занять больше времени из-за большей нагрузки сети (перегрузки), пожалуйста, терпеливо подождите.",
-  "release.success-notification-message": "Успешно высвобождено {{amount}} {{currency}}",
-  "end.x": "х",
-  "new.entry": "xyz"
+  "release.success-notification-message": "Успешно высвобождено {{amount}} {{currency}}"
 }

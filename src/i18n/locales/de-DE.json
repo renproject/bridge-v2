@@ -200,7 +200,5 @@
   "release.completed-title": "Abgeschlossen",
   "release.status-releasing-title": "Freigabe von {{renvm}}",
   "release.status-releasing-message": "Die Verarbeitung einer Transaktion auf {{chain}} kann manchmal länger dauern, da das Netzwerk schwerer ist (Überlastung), bitte warten Sie geduldig.",
-  "release.success-notification-message": "Erfolgreich freigegeben {{amount}} {{currency}}",
-  "end.x": "x",
-  "new.entry": "xyz"
+  "release.success-notification-message": "Erfolgreich freigegeben {{amount}} {{currency}}"
 }

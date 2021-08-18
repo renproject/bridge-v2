@@ -200,7 +200,5 @@
   "release.completed-title": "Concluído",
   "release.status-releasing-title": "Liberando de {{renvm}}",
   "release.status-releasing-message": "Processar uma transação em {{chain}} às vezes pode demorar mais devido a carga mais pesada da rede (congestionamento), por favor, aguarde pacientemente.",
-  "release.success-notification-message": "Lançado com sucesso em {{amount}} {{currency}}",
-  "end.x": "x",
-  "new.entry": "xyz"
+  "release.success-notification-message": "Lançado com sucesso em {{amount}} {{currency}}"
 }

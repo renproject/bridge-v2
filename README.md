@@ -37,7 +37,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 To update the translations, you need to:
 
-1. Add a `CROWDIN_API_TOKEN` in your `.env`.
+1. Add a `CROWDIN_PERSONAL_TOKEN`, `CROWDIN_PROJECT_ID` in your `.env`.
 2. Install the `crowdin` CLI. You can do that with `npm i -g @crowdin/cli`.
 
 You can then update `en.json` and upload the changes to Crowdin with `crowdin upload`. After community translations are ready, run `crowdin download` to download and substitute translations in the [locales](src/i18n/locales) folder.
