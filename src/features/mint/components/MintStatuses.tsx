@@ -301,6 +301,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   useSetActionRequired(true);
   const theme = useTheme();
   const {
+    error,
     lockCurrencyConfig,
     lockChainConfig,
     lockTxHash,
@@ -389,7 +390,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       <SubmitErrorDialog
         open={submittingError}
         onAction={onRetry || onReload}
-        error={tx.error}
+        error={error || tx.error}
       />
     </>
   );

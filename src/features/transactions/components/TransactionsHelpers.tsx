@@ -389,11 +389,9 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
 ) => (
   <ErrorDialog
     reason="Error submitting"
-    actionText="Return to submission screen"
+    actionText="Retry?"
     {...props}
-  >
-    <span>Retry submission?</span>
-  </ErrorDialog>
+  ></ErrorDialog>
 );
 
 export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
