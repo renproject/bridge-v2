@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
@@ -26,7 +27,6 @@ import {
   findGasPrice,
   USD_SYMBOL,
 } from "../../marketData/marketDataUtils";
-import { mintTooltips } from "../../mint/components/MintHelpers";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import {
   getFeeTooltips,
@@ -49,6 +49,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   chain,
   address,
 }) => {
+  const { t } = useTranslation();
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
   const nativeCurrencyConfig = getCurrencyConfig(getNativeCurrency(currency));
@@ -86,12 +87,15 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     sourceCurrencyConfig.sourceChain
   );
 
-  const tooltips = getFeeTooltips({
-    mintFee: fees.mint / 10000,
-    releaseFee: fees.burn / 10000,
-    sourceCurrency,
-    chain,
-  });
+  const tooltips = getFeeTooltips(
+    {
+      mintFee: fees.mint / 10000,
+      releaseFee: fees.burn / 10000,
+      sourceCurrency,
+      chain,
+    },
+    t
+  );
 
   const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18); // gas price to real gas price adjustment
   const targetChainFeeNative = fromGwei(feeInGwei);
@@ -114,7 +118,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     <>
       <Debug it={{ targetChainCurrencyUsdRate, currency, fees }} />
       <LabelWithValue
-        label="RenVM Fee"
+        label={t("fees.ren-fee-label")}
         labelTooltip={tooltips.renVmFee}
         value={
           hasAmount ? (
@@ -143,7 +147,9 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue
-        label={`${sourceCurrencyChainConfig.full} Miner Fee`}
+        label={t("fees.chain-miner-fee-label", {
+          chain: sourceCurrencyChainConfig.full,
+        })}
         labelTooltip={tooltips.sourceChainMinerFee}
         value={
           <NumberFormatText
@@ -161,7 +167,9 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         }
       />
       <LabelWithValue
-        label={`Esti. ${targetChainConfig.short} Fee`}
+        label={t("fees.ren-currency-chain-fee-label", {
+          chain: targetChainConfig.short,
+        })}
         labelTooltip={tooltips.renCurrencyChainFee}
         value={
           <NumberFormatText
@@ -181,8 +189,8 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
       <Debug it={{ targetChainFeeUsd }} />
       {address && (
         <LabelWithValue
-          label="Recipient Address"
-          labelTooltip={mintTooltips.recipientAddress}
+          label={t("mint.recipient-address-label")}
+          labelTooltip={t("mint.recipient-address-tooltip")}
           value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
         />
       )}

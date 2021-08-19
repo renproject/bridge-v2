@@ -1,4 +1,3 @@
-import { useMultiwallet } from "@renproject/multiwallet-ui";
 import {
   buildBurnContextWithMap,
   burnMachine,
@@ -11,11 +10,14 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { env } from "../../constants/environmentVariables";
 import { getRenJs } from "../../services/renJs";
-import { getBurnChainMap, releaseChainMap } from "../../services/rentx";
+import { releaseChainMap } from "../../services/rentx";
 import { $renNetwork } from "../network/networkSlice";
 import { cloneTx } from "../transactions/transactionsUtils";
 
-export const useBurnMachine = (burnTransaction: BurnSession<any, any>) => {
+export const useBurnMachine = (
+  burnTransaction: BurnSession<any, any>,
+  burnChainMap: any
+) => {
   if (
     burnTransaction.transaction &&
     Object.keys(burnTransaction.transaction).length === 0
@@ -27,33 +29,25 @@ export const useBurnMachine = (burnTransaction: BurnSession<any, any>) => {
     Sentry.captureMessage(JSON.stringify(burnTransaction));
     return cloneTx(burnTransaction);
   }, [burnTransaction]);
-  const { enabledChains } = useMultiwallet();
   const network = useSelector($renNetwork);
-  const burnChainMap = useMemo(() => {
-    const providers = Object.entries(enabledChains).reduce(
-      (c, n) => ({
-        ...c,
-        [n[0]]: n[1].provider,
-      }),
-      {}
-    );
-    return getBurnChainMap(providers);
-  }, [enabledChains]);
 
-  return useMachine(burnMachine, {
-    context: {
-      ...buildBurnContextWithMap({
-        tx,
-        sdk: getRenJs(network),
-        fromChainMap: burnChainMap,
-        toChainMap: releaseChainMap,
-        // If we already have a transaction, we need to autoSubmit
-        // to check the tx status
-      }),
-      autoSubmit: !!burnTransaction.transaction,
-    },
-    devTools: env.XSTATE_DEVTOOLS,
-  });
+  return useMachine(
+    burnChainMap.loading ? ({} as typeof burnMachine) : burnMachine,
+    {
+      context: {
+        ...buildBurnContextWithMap({
+          tx,
+          sdk: getRenJs(network),
+          fromChainMap: burnChainMap,
+          toChainMap: releaseChainMap,
+          // If we already have a transaction, we need to autoSubmit
+          // to check the tx status
+        }),
+        autoSubmit: !!burnTransaction.transaction,
+      },
+      devTools: env.XSTATE_DEVTOOLS,
+    }
+  );
 };
 
 export type BurnMachineSchemaState = keyof BurnMachineSchema["states"];

@@ -8,6 +8,7 @@ import {
 import { BurnSession, GatewaySession } from "@renproject/ren-tx";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -107,6 +108,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   onUpdateTx,
   tx,
 }) => {
+  const { t } = useTranslation();
   const styles = useTransactionMenuStyles();
   const handleClose = useCallback(() => {
     if (onClose) {
@@ -133,13 +135,13 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
               variant="solid"
             />
           </ListItemIcon>
-          <Typography variant="inherit">Transaction Menu</Typography>
+          <Typography variant="inherit">{t("tx.menu-title")}</Typography>
         </BridgeModalTitle>
         <NestedDrawerWrapper>
           <NestedDrawerContent>
             <div className={styles.menuItems}>
               <TransactionMenuItem Icon={AddIcon} onClick={handleUpdateOpen}>
-                Insert/update transaction
+                {t("tx.menu-insert-update-label")}
               </TransactionMenuItem>
             </div>
           </NestedDrawerContent>
@@ -182,6 +184,7 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
   onClose,
   onUpdateTx,
 }) => {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState("");
   const [vout, setVout] = useState("");
   const [hash, setHash] = useState("");
@@ -209,32 +212,36 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
   }, [onUpdateTx, hash, vout, amount]);
 
   return (
-    <NestedDrawer title="Update Transaction Hash" open={open} onClose={onClose}>
+    <NestedDrawer
+      title={t("tx.menu-update-tx-title")}
+      open={open}
+      onClose={onClose}
+    >
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label="Amount (sats)"
+                label={t("tx.menu-update-tx-amount-label")}
                 value={amount}
                 onChange={handleAmountChange}
-                placeholder="Enter amount in sats"
+                placeholder={t("tx.menu-update-tx-amount-placeholder")}
               />
             </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label="Transaction Hash"
+                label={t("tx.menu-update-tx-hash-label")}
                 value={hash}
                 onChange={handleHashChange}
-                placeholder="Enter transaction hash"
+                placeholder={t("tx.menu-update-tx-hash-placeholder")}
               />
             </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label="vOut"
+                label={t("tx.menu-update-tx-vout-label")}
                 value={vout}
                 onChange={handleVoutChange}
-                placeholder="Enter transaction vOut"
+                placeholder={t("tx.menu-update-tx-vout-placeholder")}
               />
             </OutlinedTextFieldWrapper>
           </PaperContent>
@@ -248,12 +255,15 @@ export const UpdateTransactionDrawer: FunctionComponent<UpdateTransactionDrawerP
                 onClick={handleUpdateTx}
                 disabled={updating || !valid}
               >
-                {updating ? "Updating..." : "Update"} transaction
+                {updating
+                  ? t("tx.menu-update-tx-updating-dots")
+                  : t("tx.menu-update-tx-update")}{" "}
+                transaction
               </RedButton>
             </ActionButtonWrapper>
             <ActionButtonWrapper>
               <ActionButton onClick={onClose} disabled={updating}>
-                Cancel
+                {t("common.cancel-label")}
               </ActionButton>
             </ActionButtonWrapper>
           </PaperContent>

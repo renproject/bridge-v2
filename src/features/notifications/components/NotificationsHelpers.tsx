@@ -5,6 +5,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -78,6 +79,7 @@ export const BrowserNotificationButton: FunctionComponent<BrowserNotificationBut
   onTooltipClose,
   tooltipOpened,
 }) => {
+  const { t } = useTranslation();
   return (
     <ClickAwayListener onClickAway={onTooltipClose}>
       <Tooltip
@@ -86,7 +88,7 @@ export const BrowserNotificationButton: FunctionComponent<BrowserNotificationBut
         disableFocusListener
         disableHoverListener
         disableTouchListener
-        title="Turn off browser notifications in your browser settings."
+        title={<span>{t("notifications.browser-off-tooltip")}</span>}
       >
         <span>
           <ToggleIconButton

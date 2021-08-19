@@ -40,7 +40,6 @@ import {
   PolygonFullIcon,
   PolygonGreyIcon,
   SolanaCircleIcon,
-  SolanaFullIcon,
   SolanaGreyIcon,
   SolletFullIcon,
   PhantomFullIcon,
@@ -49,12 +48,23 @@ import {
   ZecFullIcon,
   ZecGreyIcon,
   ZecIcon,
+  ArbitrumCircleIcon,
+  ArbitrumColorIcon,
+  ArbitrumBlackIcon,
+  BtcDashedIcon,
+  BchDashedIcon,
+  DogeDashedIcon,
+  ZecDashedIcon,
+  DgbDashedIcon,
+  FilDashedIcon,
+  LunaDashedIcon,
 } from "../components/icons/RenIcons";
 import { env } from "../constants/environmentVariables";
 import * as customColors from "../theme/colors";
 
 // TODO: replace everywhere
 export enum RenChain {
+  arbitrum = "arbitrum",
   avalanche = "avalanche",
   binanceSmartChain = "binanceSmartChain",
   ethereum = "ethereum",
@@ -93,6 +103,7 @@ export enum BridgeCurrency {
   BNB = "BNB",
   AVAX = "AVAX",
   SOL = "SOL",
+  ARBETH = "ARBETH",
   UNKNOWN = "UNKNOWN",
 }
 
@@ -110,6 +121,7 @@ export enum BridgeChain {
   FTMC = "FTMC",
   AVAXC = "AVAXC",
   SOLC = "SOLC",
+  ARBITRUMC = "ARBITRUMC",
   UNKNOWNC = "UNKNOWNC",
 }
 
@@ -197,6 +209,7 @@ const oldNetworkMappings: ChainToNetworkMappings = {
   [RenChain.polygon]: networkMappingLegacy,
   [RenChain.avalanche]: networkMappingLegacy,
   [RenChain.solana]: networkMappingLegacy,
+  [RenChain.arbitrum]: networkMappingLegacy,
 };
 
 const newNetworkMappings: ChainToNetworkMappings = {
@@ -208,6 +221,7 @@ const newNetworkMappings: ChainToNetworkMappings = {
   [RenChain.polygon]: networkMappingLegacy,
   [RenChain.avalanche]: networkMappingLegacy,
   [RenChain.solana]: networkMappingLegacy,
+  [RenChain.arbitrum]: networkMappingLegacy,
 };
 
 export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
@@ -231,7 +245,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     FullIcon: BtcFullIcon,
     GreyIcon: BtcGreyIcon,
     Icon: BtcIcon,
-    MainIcon: BtcGreyIcon,
+    MainIcon: BtcDashedIcon,
     rentxName: "renBTC",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BTC,
@@ -257,7 +271,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     FullIcon: BchFullIcon,
     GreyIcon: BchGreyIcon,
     Icon: BchIcon,
-    MainIcon: BchGreyIcon,
+    MainIcon: BchDashedIcon,
     rentxName: "renBCH",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BCH,
@@ -295,7 +309,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     FullIcon: DogeFullIcon,
     GreyIcon: DogeGreyIcon,
     Icon: DogeIcon,
-    MainIcon: DogeGreyIcon,
+    MainIcon: DogeDashedIcon,
     rentxName: "renDOGE",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DOGE,
@@ -321,7 +335,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     FullIcon: ZecFullIcon,
     GreyIcon: ZecGreyIcon,
     Icon: ZecIcon,
-    MainIcon: ZecGreyIcon,
+    MainIcon: ZecDashedIcon,
     rentxName: "renZEC",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.ZEC,
@@ -346,7 +360,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     FullIcon: DgbFullIcon,
     GreyIcon: DgbGreyIcon,
     Icon: DgbIcon,
-    MainIcon: DgbGreyIcon,
+    MainIcon: DgbDashedIcon,
     rentxName: "renDGB",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DGB,
@@ -371,7 +385,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     FullIcon: FilFullIcon,
     GreyIcon: FilGreyIcon,
     Icon: FilIcon,
-    MainIcon: FilGreyIcon,
+    MainIcon: FilDashedIcon,
     rentxName: "renFIL",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.FIL,
@@ -396,7 +410,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     FullIcon: LunaFullIcon,
     GreyIcon: LunaGreyIcon,
     Icon: LunaIcon,
-    MainIcon: LunaGreyIcon,
+    MainIcon: LunaDashedIcon,
     rentxName: "renLUNA",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.LUNA,
@@ -485,6 +499,19 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     MainIcon: BtcFullIcon,
     rentxName: "sol",
     sourceChain: BridgeChain.SOLC,
+    networkMappings: newNetworkMappings,
+  },
+  [BridgeCurrency.ARBETH]: {
+    symbol: BridgeCurrency.ARBETH,
+    short: "arbETH",
+    full: "Arbitrum ETH",
+    FullIcon: ArbitrumBlackIcon,
+    GreyIcon: NotSetIcon,
+    Icon: ArbitrumBlackIcon,
+    MainIcon: BtcFullIcon,
+    rentxName: "sol",
+    sourceChain: BridgeChain.ARBITRUMC,
+    bandchainSymbol: "ETH",
     networkMappings: newNetworkMappings,
   },
   [BridgeCurrency.UNKNOWN]: {
@@ -712,6 +739,19 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     targetConfirmations: 30,
     nativeCurrency: BridgeCurrency.SOL,
   },
+  [BridgeChain.ARBITRUMC]: {
+    symbol: BridgeChain.ARBITRUMC,
+    short: "ARB",
+    full: "Arbitrum",
+    FullIcon: ArbitrumCircleIcon,
+    Icon: ArbitrumColorIcon,
+    MainIcon: ArbitrumCircleIcon,
+    GreyIcon: NotSetIcon,
+    rentxName: RenChain.arbitrum,
+    blockTime: 0.25,
+    targetConfirmations: 30,
+    nativeCurrency: BridgeCurrency.ARBETH,
+  },
   [BridgeChain.UNKNOWNC]: {
     symbol: BridgeChain.UNKNOWNC,
     short: "UNKNOWNC",
@@ -811,6 +851,7 @@ export const supportedMintDestinationChains = [
   BridgeChain.FTMC,
   BridgeChain.AVAXC,
   BridgeChain.SOLC,
+  BridgeChain.ARBITRUMC,
 ];
 
 export const supportedBurnChains = [
@@ -820,6 +861,7 @@ export const supportedBurnChains = [
   BridgeChain.AVAXC,
   BridgeChain.SOLC,
   BridgeChain.BSCC,
+  BridgeChain.ARBITRUMC,
 ];
 
 export const supportedReleaseCurrencies = supportedLockCurrencies.map(
@@ -958,6 +1000,8 @@ export const bridgeChainToRenChain = (bridgeChain: BridgeChain): RenChain => {
       return RenChain.polygon;
     case BridgeChain.SOLC:
       return RenChain.solana;
+    case BridgeChain.ARBITRUMC:
+      return RenChain.arbitrum;
     default:
       return RenChain.unknown;
   }

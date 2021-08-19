@@ -17,6 +17,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
@@ -39,7 +40,6 @@ import {
   SimplestPagination,
 } from "../../components/pagination/SimplePagination";
 import { PulseIndicator } from "../../components/progress/ProgressHelpers";
-import { TooltipWithIcon } from "../../components/tooltips/TooltipWithIcon";
 import {
   TransactionsHeader,
   TransactionsPaginationWrapper,
@@ -57,7 +57,6 @@ import {
   toMintedCurrency,
 } from "../../utils/assetConfigs";
 import { getFormattedDateTime, getFormattedHMS } from "../../utils/dates";
-import { isFirstVowel } from "../../utils/strings";
 import {
   CircledProgressWithContent,
   getDepositStatusIcon,
@@ -102,6 +101,7 @@ import {
 } from "./transactionsUtils";
 
 export const MintTransactionHistory: FunctionComponent = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { chain } = useSelector($wallet);
   const { walletConnected, account } = useSelectedChainWallet();
@@ -156,16 +156,18 @@ export const MintTransactionHistory: FunctionComponent = () => {
       onEscapeKeyDown={handleTxHistoryClose}
       onBackdropClick={handleTxHistoryClose}
     >
-      <TransactionsHeader title="Viewing mint history for">
+      <TransactionsHeader title={t("history.header")}>
         <AssetDropdown
           condensed
+          assetLabel={t("common.asset-label")}
           available={supportedLockCurrencies}
           value={currency}
           onChange={handleCurrencyChange}
         />
-        <Box mx={2}>to</Box>
+        <Box mx={2}>{t("history.header-separator")}</Box>
         <AssetDropdown
           mode="chain"
+          blockchainLabel={t("common.blockchain-label")}
           condensed
           available={supportedMintDestinationChains}
           value={chain}
@@ -178,8 +180,9 @@ export const MintTransactionHistory: FunctionComponent = () => {
             <>
               <MediumWrapper>
                 <Typography variant="body1" align="center">
-                  Please connect {isFirstVowel(chainConfig.full) ? "an" : "a"}{" "}
-                  {chainConfig.full} compatible wallet to view transactions
+                  {t("history.please-connect-wallet", {
+                    chain: chainConfig.full,
+                  })}
                 </Typography>
               </MediumWrapper>
               <BigWrapper>
@@ -190,7 +193,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
                 </MediumWrapper>
                 <ActionButtonWrapper>
                   <ActionButton onClick={handleWalletPickerOpen}>
-                    Connect Wallet
+                    {t("wallet.connect")}
                   </ActionButton>
                 </ActionButtonWrapper>
               </BigWrapper>
@@ -406,6 +409,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   isActive,
   service,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const styles = useGatewayEntryStyles();
   const dispatch = useDispatch();
@@ -475,20 +479,29 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
     getRemainingGatewayTime(tx.expiryTime)
   );
 
+  const [timer, setTimer] = useState<NodeJS.Timeout>();
   const gatewayAddress = (tx as OpenedGatewaySession<any>).gatewayAddress;
   useEffect(() => {
     if (gatewayAddress) {
       if (hasDeposits) {
-        service?.stop();
+        //
+        //service?.stop();
+        if (timer) {
+          clearTimeout(timer);
+        }
         setResolving(false);
       } else {
-        setTimeout(() => {
-          service?.stop();
-          setResolving(false);
-        }, 15000);
+        if (!timer) {
+          setTimer(
+            setTimeout(() => {
+              service?.stop();
+              setResolving(false);
+            }, 25000)
+          );
+        }
       }
     }
-  }, [gatewayAddress, hasDeposits]);
+  }, [service, gatewayAddress, timer, hasDeposits]);
 
   const allCompleted = areAllDepositsCompleted(tx);
   const completed = depositStatus === DepositEntryStatus.COMPLETED;
@@ -547,8 +560,11 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
               {hasDeposits && (
                 <>
                   <Typography className={styles.detailsTitle} component="div">
-                    Mint {lockTxAmount} {mintCurrencyConfig.short} on{" "}
-                    {mintChainConfig.full}
+                    {t("history.mint-entry-label", {
+                      amount: lockTxAmount,
+                      currency: mintCurrencyConfig.short,
+                      chain: mintChainConfig.full,
+                    })}
                     <div className={styles.links}>
                       {Boolean(lockTxLink) && (
                         <Link
@@ -558,7 +574,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
                           underline="hover"
                           className={styles.link}
                         >
-                          {lockChainConfig.full} transaction
+                          {lockChainConfig.full} {t("common.transaction")}
                         </Link>
                       )}
                       {Boolean(mintTxLink) && (
@@ -569,7 +585,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
                           underline="hover"
                           className={styles.link}
                         >
-                          {mintChainConfig.full} transaction
+                          {mintChainConfig.full} {t("common.transaction")}
                         </Link>
                       )}
                     </div>
@@ -597,7 +613,7 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
                     <Skeleton width={200} />
                   ) : (
                     <Typography className={styles.detailsTitle}>
-                      No deposits found...
+                      {t("history.no-deposits-message")}
                     </Typography>
                   )}
                 </>
@@ -615,14 +631,16 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
                 <>
                   {depositStatus === DepositEntryStatus.ACTION_REQUIRED && (
                     <SmallActionButton onClick={handleContinue}>
-                      Action required!
+                      {t("history.action-required-label")}
                     </SmallActionButton>
                   )}
                   {depositStatus === DepositEntryStatus.PENDING &&
                     lockConfirmations < lockTargetConfirmations && (
                       <Typography color="textPrimary" variant="caption">
-                        {lockConfirmations}/{lockTargetConfirmations}{" "}
-                        Confirmations
+                        {t("history.mint-entry-confirmations", {
+                          confirmations: lockConfirmations,
+                          targetConfirmations: lockTargetConfirmations,
+                        })}
                       </Typography>
                     )}
                 </>
@@ -669,13 +687,15 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
   status,
   timeToGatewayExpiration = 0,
 }) => {
+  const { t } = useTranslation();
+  const label = t("history.time-remaining-label") + ": ";
   switch (status) {
     case GatewayStatus.CURRENT:
       return (
         <SuccessChip
           label={
             <span>
-              Time remaining:{" "}
+              {label}
               <strong>
                 {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
               </strong>
@@ -688,7 +708,7 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
         <WarningChip
           label={
             <span>
-              Time remaining:{" "}
+              {label}
               <strong>
                 {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
               </strong>
@@ -701,7 +721,7 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
         <ErrorChip
           label={
             <span>
-              Time remaining:{" "}
+              {label}
               <strong>
                 {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
               </strong>
@@ -710,69 +730,7 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
         />
       );
     case GatewayStatus.EXPIRED:
-      return <Chip label="Gateway expired" />;
-    default:
-      return null;
-  }
-};
-
-type GatewayLabelProps = {
-  status: GatewayStatus;
-  timeToGatewayExpiration?: number;
-};
-export const GatewayLabel: FunctionComponent<GatewayLabelProps> = ({
-  status,
-  timeToGatewayExpiration = 0,
-}) => {
-  switch (status) {
-    case GatewayStatus.CURRENT:
-      return (
-        <Typography>
-          Current Gateway{" "}
-          <TooltipWithIcon title="To ensure funds stay secure, Gateway Addresses refresh every 24 hours. Make sure a Gateway Address has not expired before sending assets to it." />
-        </Typography>
-      );
-    case GatewayStatus.PREVIOUS:
-      return (
-        <Typography>
-          Previous Gateway{" "}
-          <TooltipWithIcon
-            title={
-              <span>
-                Transactions listed here have{" "}
-                {getFormattedHMS(timeToGatewayExpiration)} hours left to be
-                confirmed. Please speed up or cancel the transactions if they
-                will not be confirmed before this time elapses.
-              </span>
-            }
-          />
-        </Typography>
-      );
-    case GatewayStatus.EXPIRING:
-      return (
-        <Typography>
-          Expiring Gateway{" "}
-          <TooltipWithIcon
-            title={
-              <span>
-                You have{" "}
-                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}{" "}
-                hours left to mint any deposits listed here. After this period,
-                your funds will be lost. Any transactions completed before the
-                Gateway Address expires are safe and remain on the destination
-                chain.
-              </span>
-            }
-          />
-        </Typography>
-      );
-    case GatewayStatus.EXPIRED:
-      return (
-        <Typography>
-          Expired Gateway{" "}
-          <TooltipWithIcon title={<span>This gateway has expired.</span>} />
-        </Typography>
-      );
+      return <Chip label={t("history.gateway-expired-label")} />;
     default:
       return null;
   }
