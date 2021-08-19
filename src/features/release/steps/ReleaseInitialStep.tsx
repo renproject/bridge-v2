@@ -1,5 +1,18 @@
-import { Divider, Fade } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useMemo } from "react";
+import {
+  Checkbox,
+  Divider,
+  Fade,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Typography,
+} from "@material-ui/core";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,6 +28,7 @@ import {
   BigCurrencyInput,
   BigCurrencyInputWrapper,
 } from "../../../components/inputs/BigCurrencyInput";
+import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
 import {
   BigOutlinedTextFieldWrapper,
   OutlinedTextField,
@@ -137,6 +151,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     return () => true;
   }, [releaseChainConfig.rentxName, network]);
 
+  const requiresAck = releaseChainConfig.memo === true;
+  const [ackChecked, setAckChecked] = useState(false);
+  const showAckError = requiresAck && !ackChecked;
+  const handleAckCheckboxChange = useCallback((event) => {
+    setAckChecked(event.target.checked);
+  }, []);
+
   const isAddressValid = validateAddress(address);
   const hasDefinedAmount = amount && amount > 0;
   const hasMinimalAmount = isMinimalAmount(
@@ -144,11 +165,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     conversionFormatted,
     TxType.BURN
   );
+  const ackCondition = requiresAck ? ackChecked : true;
   const basicCondition =
     hasDefinedAmount &&
     address &&
     isAddressValid &&
     hasMinimalAmount &&
+    ackCondition &&
     !pending;
   const hasBalance = balance !== null && amount <= Number(balance);
   let enabled;
@@ -239,6 +262,35 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             onChange={handleAddressChange}
             value={address}
           />
+          <Fade in={requiresAck}>
+            <CheckboxWrapper>
+              <FormControl error={showAckError}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={ackChecked}
+                      onChange={handleAckCheckboxChange}
+                      name="ack"
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <FormLabel htmlFor="ack" component={Typography}>
+                      <Typography
+                        color={showAckError ? "inherit" : "textPrimary"}
+                        variant="caption"
+                      >
+                        {t("release.memo-ack-message")}
+                        <TooltipWithIcon
+                          title={<>{t("release.memo-ack-tooltip")} </>}
+                        />
+                      </Typography>
+                    </FormLabel>
+                  }
+                />
+              </FormControl>
+            </CheckboxWrapper>
+          </Fade>{" "}
         </BigOutlinedTextFieldWrapper>
       </PaperContent>
       <Divider />

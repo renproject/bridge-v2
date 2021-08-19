@@ -186,6 +186,8 @@
   "release.fees-title": "Fees & Confirm",
   "release.releasing-label": "Releasing",
   "release.releasing-tooltip": "The amount and asset you're releasing before fees are applied.",
+  "release.memo-ack-message": "I confirm, that this transaction does not require a memo",
+  "release.memo-ack-tooltip": "Some transactions require an additional parameter for the transfer. An example is a transfer to an exchange (ex. Coinbase, Binance). Currently {{bridge}} does not support it.",
   "release.to-label": "To",
   "release.to-tooltip": "The wallet address you're receiving the assets to.",
   "release.from-label": "From",
