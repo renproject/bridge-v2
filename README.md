@@ -42,6 +42,11 @@ To update the translations, you need to:
 
 You can then update `en.json` and upload the changes to Crowdin with `crowdin upload`. After community translations are ready, run `crowdin download` to download and substitute translations in the [locales](src/i18n/locales) folder.
 
+Alternatively you can use [i18next-parser](https://github.com/i18next/i18next-parser) to scan files for newly added keys and update `en.json` file.
+
+`i18next 'src/**/*.tsx'`
+
+
 ## Architecture
 
 The app was build on top of [CRA](https://reactjs.org/docs/create-a-new-react-app.html), [Material-UI](https://material-ui.com/) with [redux-toolkit](https://redux-toolkit.js.org/) for shared state management.
