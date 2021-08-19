@@ -27,3 +27,6 @@ yarn-error.log*
 
 # Local Netlify folder
 .netlify
+
+#i18n old keys
+en_old.json

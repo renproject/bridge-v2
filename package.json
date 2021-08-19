@@ -76,7 +76,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "lint": "eslint --ext js,ts,tsx src",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "scan": "i18next 'src/**/*.{tsx,ts}'"
   },
   "jest": {
     "transformIgnorePatterns": [
