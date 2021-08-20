@@ -40,7 +40,7 @@ const getInitialSystemStatus = (
 let initialState: UiState = {
   paperShaking: false,
   systemMonitor: {
-    dialogOpened: true,
+    dialogOpened: false,
     systems: {
       [SystemType.Lightnode]: getInitialSystemStatus(
         SystemType.Lightnode,
