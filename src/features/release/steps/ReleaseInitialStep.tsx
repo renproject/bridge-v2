@@ -280,7 +280,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
                         color={showAckError ? "inherit" : "textPrimary"}
                         variant="caption"
                       >
-                        {t("release.memo-ack-message")}
+                        {t("release.memo-ack-message")}{" "}
                         <TooltipWithIcon
                           title={<>{t("release.memo-ack-tooltip")} </>}
                         />

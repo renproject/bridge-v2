@@ -1,11 +1,16 @@
-import { DialogContent, Typography } from "@material-ui/core";
+import { Button, DialogContent, Typography } from "@material-ui/core";
 import { FunctionComponent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { FooterTextLink } from "../../components/layout/Footer";
+import { MediumWrapper } from "../../components/layout/LayoutHelpers";
+import { Link } from "../../components/links/Links";
 import { BridgeModal } from "../../components/modals/BridgeModal";
+import { TooltipWithIcon } from "../../components/tooltips/TooltipWithIcon";
 import {
   IndicatorStatus,
   StatusIndicator,
+  SystemInfo,
 } from "./components/SystemMonitorHelpers";
 import {
   $systemMonitor,
@@ -17,17 +22,19 @@ import {
 const criticalSystems = [SystemType.Lightnode];
 const supplementalSystems = [SystemType.Coingecko, SystemType.Bandchain];
 
-const systemToIndicatorStatus = (status: SystemStatus) => {
-  switch (status) {
-    case SystemStatus.Pending:
-      return IndicatorStatus.Info;
-    case SystemStatus.Operational:
-      return IndicatorStatus.Success;
-    case SystemStatus.Unknown:
-      return IndicatorStatus.Warning;
-    case SystemStatus.Failure:
-      return IndicatorStatus.Error;
-  }
+export const SystemMonitorFooterButton: FunctionComponent = () => {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+
+  const handleOpen = useCallback(() => {
+    dispatch(setSystemMonitorOpened(true));
+  }, [dispatch]);
+
+  return (
+    <FooterTextLink onClick={handleOpen}>
+      {t("ui.monitor.footer-button-label")}
+    </FooterTextLink>
+  );
 };
 
 export const SystemMonitor: FunctionComponent = () => {
@@ -35,7 +42,7 @@ export const SystemMonitor: FunctionComponent = () => {
   const { t } = useTranslation();
   const { systems, dialogOpened } = useSelector($systemMonitor);
   const handleClose = useCallback(() => {
-    setSystemMonitorOpened(false);
+    dispatch(setSystemMonitorOpened(false));
   }, [dispatch]);
 
   return (
@@ -43,36 +50,50 @@ export const SystemMonitor: FunctionComponent = () => {
       open={dialogOpened}
       onClose={handleClose}
       title={t("ui.monitor.dialog-header")}
+      maxWidth="xs"
     >
       <DialogContent>
-        <Typography variant="body1">
+        <Typography variant="body2" paragraph>
           {t("ui.monitor.dialog-description")}
         </Typography>
-        <Typography variant="body2">
-          {t("ui.monitor.dialog-critical-systems-title")}
+        <Typography variant="caption">
+          {t("ui.monitor.dialog-systems-critical-title")}{" "}
+          <TooltipWithIcon
+            title={t("ui.monitor.dialog-systems-critical-tooltip")}
+          />
         </Typography>
-        {criticalSystems.map((type) => {
-          const system = systems[type];
-          return (
-            <div key={system.name}>
-              {system.name}:{system.status}
-            </div>
-          );
-        })}
-        <Typography variant="body2">
-          {t("ui.monitor.dialog-supplemental-systems-title")}
-        </Typography>
-        {supplementalSystems.map((type) => {
-          const system = systems[type];
-          return (
-            <div key={system.name}>
-              {system.name}:{system.status}
-              <StatusIndicator
-                status={systemToIndicatorStatus(system.status)}
+        <MediumWrapper>
+          {criticalSystems.map((type) => {
+            const system = systems[type];
+            return (
+              <SystemInfo
+                key={type}
+                status={system.status}
+                name={system.name}
+                type={type}
               />
-            </div>
-          );
-        })}
+            );
+          })}
+        </MediumWrapper>
+        <Typography variant="caption">
+          {t("ui.monitor.dialog-systems-supplemental-title")}{" "}
+          <TooltipWithIcon
+            title={t("ui.monitor.dialog-systems-supplemental-tooltip")}
+          />
+        </Typography>
+        <MediumWrapper>
+          {supplementalSystems.map((type) => {
+            const system = systems[type];
+            return (
+              <SystemInfo
+                key={type}
+                status={system.status}
+                name={system.name}
+                type={type}
+              />
+            );
+          })}
+        </MediumWrapper>
       </DialogContent>
     </BridgeModal>
   );

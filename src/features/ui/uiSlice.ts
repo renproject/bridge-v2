@@ -4,9 +4,9 @@ import { RootState } from "../../store/rootReducer";
 export type FlowType = "mint" | "burn" | null;
 
 export enum SystemType {
+  Lightnode = "lightnode",
   Bandchain = "bandchain",
   Coingecko = "coingecko",
-  Lightnode = "lightnode",
 }
 
 export enum SystemStatus {
@@ -42,9 +42,18 @@ let initialState: UiState = {
   systemMonitor: {
     dialogOpened: true,
     systems: {
-      [SystemType.Bandchain]: getInitialSystemStatus(SystemType.Bandchain),
-      [SystemType.Coingecko]: getInitialSystemStatus(SystemType.Coingecko),
-      [SystemType.Lightnode]: getInitialSystemStatus(SystemType.Lightnode),
+      [SystemType.Lightnode]: getInitialSystemStatus(
+        SystemType.Lightnode,
+        SystemStatus.Pending
+      ),
+      [SystemType.Bandchain]: getInitialSystemStatus(
+        SystemType.Bandchain,
+        SystemStatus.Unknown
+      ),
+      [SystemType.Coingecko]: getInitialSystemStatus(
+        SystemType.Coingecko,
+        SystemStatus.Pending
+      ),
     },
   },
 };
@@ -72,7 +81,11 @@ const slice = createSlice({
   },
 });
 
-export const { setPaperShaking, setSystemMonitorOpened } = slice.actions;
+export const {
+  setPaperShaking,
+  setSystemMonitorOpened,
+  setSystemMonitorStatus,
+} = slice.actions;
 
 export const uiReducer = slice.reducer;
 
