@@ -538,6 +538,10 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
     machine.send({ type: "CLAIM" });
   }, [machine]);
 
+  const handleRetry = useCallback(() => {
+    machine.send({ type: "CLAIM" });
+  }, [machine]);
+
   const handleReload = useCallback(() => {
     history.replace({
       ...location,
@@ -579,6 +583,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
           tx={tx as ErroringGatewaySession<any>}
           onSubmit={handleSubmitToDestinationChain}
           onReload={handleReload}
+          onRetry={handleRetry}
           depositHash={depositHash}
           submitting={state === "claiming"}
           submittingError={
