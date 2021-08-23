@@ -391,7 +391,8 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       <Debug it={{ error }} />
       <SubmitErrorDialog
         open={submittingError}
-        onAction={onRetry || onReload}
+        onAction={onReload}
+        onAlternativeAction={onRetry}
         error={error || tx.error}
       />
     </>

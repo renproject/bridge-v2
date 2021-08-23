@@ -340,9 +340,11 @@ export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
 
 type ErrorWithActionProps = DialogProps & {
   title?: string;
-  onAction?: () => void;
   reason?: string;
+  onAction?: () => void;
+  onAlternativeAction?: () => void;
   actionText?: string;
+  alternativeActionText?: string;
   error?: any;
 };
 
@@ -350,8 +352,10 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   title = "Error",
   open,
   reason = "",
-  actionText = "",
   onAction,
+  onAlternativeAction,
+  actionText = "",
+  alternativeActionText = "",
   error,
   children,
 }) => {
@@ -378,6 +382,13 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
         <ActionButtonWrapper>
           <ActionButton onClick={onAction}>{actionText}</ActionButton>
         </ActionButtonWrapper>
+        {Boolean(onAlternativeAction) && (
+          <ActionButtonWrapper>
+            <ActionButton color="secondary" onClick={onAlternativeAction}>
+              {alternativeActionText}
+            </ActionButton>
+          </ActionButtonWrapper>
+        )}
       </PaperContent>
     </BridgeModal>
   );
@@ -396,6 +407,9 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       title={t("common.error-label")}
       reason={t("tx.submitting-error-popup-header")}
       actionText={t("tx.submitting-error-popup-action-text")}
+      alternativeActionText={t(
+        "tx.submitting-error-popup-alternative-action-text"
+      )}
       {...props}
     >
       <span>{message}</span>
