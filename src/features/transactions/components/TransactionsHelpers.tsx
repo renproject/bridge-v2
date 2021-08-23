@@ -458,7 +458,7 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       <span>{t("tx.expired-error-popup-message-1", { hours: 24 })}</span>
       <ActionButtonWrapper>
         <RedButton variant="text" color="secondary" onClick={ammendExpiry}>
-          {t("tx.expired-error-continue-mint")}
+          {t("tx.expired-error-popup-continue-mint")}
         </RedButton>
       </ActionButtonWrapper>
       <ActionButtonWrapper>
