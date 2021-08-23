@@ -78,7 +78,7 @@
   "mint.initial-intro": "Select an asset and destination chain, to begin or resume a mint.",
   "mint.mint-label": "Mint",
   "mint.minting-label": "Minting",
-  "mint.multiple-deposits": "",
+  "mint.multiple-deposits": "{{bridge}} has detected multiple deposits for this gateway address. View its progress using the navigation bar at the top of the screen.",
   "mint.received-label": "Received",
   "mint.receiving-label": "Receiving",
   "mint.recipient-address-label": "Recipient Address",

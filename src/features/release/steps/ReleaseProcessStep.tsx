@@ -240,7 +240,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
               value={burnChainConfig.full}
             />
             <LabelWithValue
-              label={t("release.To-label")}
+              label={t("release.to-label")}
               value={
                 <MiddleEllipsisText hoverable>
                   {tx.destAddress}

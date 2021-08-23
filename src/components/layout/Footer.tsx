@@ -9,7 +9,7 @@ import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { links } from "../../constants/constants";
 import { LanguageSelector } from "../../features/i18n/components/I18nHelpers";
-import { SystemMonitorFooterButton } from "../../features/ui/SystemMonitor";
+// import { SystemMonitorFooterButton } from "../../features/ui/SystemMonitor";
 import { paths } from "../../pages/routes";
 import { CustomLinkProps, Link } from "../links/Links";
 
@@ -124,9 +124,9 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
             {t("navigation.legacy-bridge-label")}
           </FooterTextLink>
         </li>
-        <li>
-          <SystemMonitorFooterButton />
-        </li>
+        {/*<li>*/}
+        {/*  <SystemMonitorFooterButton />*/}
+        {/*</li>*/}
         <li>
           <LanguageSelector />
         </li>
