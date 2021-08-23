@@ -1,23 +1,13 @@
-import { Button, DialogContent, Typography } from "@material-ui/core";
+import { DialogContent, Typography } from "@material-ui/core";
 import { FunctionComponent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { FooterTextLink } from "../../components/layout/Footer";
 import { MediumWrapper } from "../../components/layout/LayoutHelpers";
-import { Link } from "../../components/links/Links";
 import { BridgeModal } from "../../components/modals/BridgeModal";
 import { TooltipWithIcon } from "../../components/tooltips/TooltipWithIcon";
-import {
-  IndicatorStatus,
-  StatusIndicator,
-  SystemInfo,
-} from "./components/SystemMonitorHelpers";
-import {
-  $systemMonitor,
-  setSystemMonitorOpened,
-  SystemStatus,
-  SystemType,
-} from "./uiSlice";
+import { SystemInfo } from "./components/SystemMonitorHelpers";
+import { $systemMonitor, setSystemMonitorOpened, SystemType } from "./uiSlice";
 
 const criticalSystems = [SystemType.Lightnode];
 const supplementalSystems = [SystemType.Coingecko, SystemType.Bandchain];

@@ -15,7 +15,6 @@ import {
   ErroringBurnSession,
   GatewaySession,
 } from "@renproject/ren-tx";
-import qs from "qs";
 import React, {
   FunctionComponent,
   useCallback,

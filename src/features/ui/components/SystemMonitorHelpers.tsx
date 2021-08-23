@@ -1,4 +1,4 @@
-import { Box, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";

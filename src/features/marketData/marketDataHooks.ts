@@ -83,7 +83,7 @@ export const useExchangeRates = () => {
         //FIXME: handle this properly
         console.error(e);
       });
-  }, [dispatch]);
+  }, [dispatch, fetchMarketDataRates]);
 
   useEffect(fetchData, [fetchData]);
   useInterval(fetchData, dataRefreshInterval * 1000);
