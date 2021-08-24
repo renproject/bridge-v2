@@ -82,7 +82,7 @@ export const getMintChainMap = (providers: any, timestamp = 0) => ({
   [RenChain.solana]: (context: GatewayMachineContext<any>) => {
     const { network } = context.tx;
 
-    const includeAddressInPayload = timestamp < env.V2_DEPRECATION_TIME;
+    const includeAddressInPayload = timestamp < env.REVERT_SOLANA_PAYLOADS_DATE;
 
     // Currently Solana will always mint to the connected provider's address
     return new Solana(providers.solana, network, {
