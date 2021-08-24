@@ -185,10 +185,11 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
       ],
       [RenChain.solana]: [
         {
-          name: "Sollet.io",
-          logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
+          name: "Phantom",
+          logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
           connector: new SolanaConnector({
-            providerURL: "https://www.sollet.io",
+            debug: true,
+            providerURL: (window as any).solana || "https://www.phantom.app",
             clusterURL:
               network === RenNetwork.Mainnet
                 ? "https://ren.rpcpool.com/"
@@ -197,11 +198,10 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           }),
         },
         {
-          name: "Phantom",
-          logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
+          name: "Sollet.io",
+          logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
           connector: new SolanaConnector({
-            debug: true,
-            providerURL: (window as any).solana || "https://www.phantom.app",
+            providerURL: "https://www.sollet.io",
             clusterURL:
               network === RenNetwork.Mainnet
                 ? "https://ren.rpcpool.com/"

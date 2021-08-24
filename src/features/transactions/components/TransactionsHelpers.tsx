@@ -15,7 +15,6 @@ import {
   ErroringBurnSession,
   GatewaySession,
 } from "@renproject/ren-tx";
-import qs from "qs";
 import React, {
   FunctionComponent,
   useCallback,
@@ -341,9 +340,11 @@ export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
 
 type ErrorWithActionProps = DialogProps & {
   title?: string;
-  onAction?: () => void;
   reason?: string;
+  onAction?: () => void;
+  onAlternativeAction?: () => void;
   actionText?: string;
+  alternativeActionText?: string;
   error?: any;
 };
 
@@ -351,8 +352,10 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   title = "Error",
   open,
   reason = "",
-  actionText = "",
   onAction,
+  onAlternativeAction,
+  actionText = "",
+  alternativeActionText = "",
   error,
   children,
 }) => {
@@ -379,6 +382,13 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
         <ActionButtonWrapper>
           <ActionButton onClick={onAction}>{actionText}</ActionButton>
         </ActionButtonWrapper>
+        {Boolean(onAlternativeAction) && (
+          <ActionButtonWrapper>
+            <ActionButton color="secondary" onClick={onAlternativeAction}>
+              {alternativeActionText}
+            </ActionButton>
+          </ActionButtonWrapper>
+        )}
       </PaperContent>
     </BridgeModal>
   );
@@ -388,14 +398,21 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   props
 ) => {
   const { t } = useTranslation();
+  let message = t("tx.submitting-error-popup-message");
+  if (props.error?.code === 4001) {
+    message = t("tx.submitting-error-popup-message-signature-rejected-text");
+  }
   return (
     <ErrorDialog
       title={t("common.error-label")}
       reason={t("tx.submitting-error-popup-header")}
       actionText={t("tx.submitting-error-popup-action-text")}
+      alternativeActionText={t(
+        "tx.submitting-error-popup-alternative-action-text"
+      )}
       {...props}
     >
-      <span>{t("tx.submitting-error-popup-message")}</span>
+      <span>{message}</span>
     </ErrorDialog>
   );
 };
@@ -455,7 +472,7 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       <span>{t("tx.expired-error-popup-message-1", { hours: 24 })}</span>
       <ActionButtonWrapper>
         <RedButton variant="text" color="secondary" onClick={ammendExpiry}>
-          {t("tx.expired-error-continue-mint")}
+          {t("tx.expired-error-popup-continue-mint")}
         </RedButton>
       </ActionButtonWrapper>
       <ActionButtonWrapper>

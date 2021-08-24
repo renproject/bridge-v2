@@ -31,6 +31,7 @@ import {
   toReleasedCurrency,
 } from "../utils/assetConfigs";
 import { getRenJs } from "./renJs";
+import { env } from "../constants/environmentVariables";
 
 export const lockChainMap = {
   [RenChain.bitcoin]: () => Bitcoin(),
@@ -42,7 +43,7 @@ export const lockChainMap = {
   [RenChain.terra]: () => Terra(),
 };
 
-export const getMintChainMap = (providers: any) => ({
+export const getMintChainMap = (providers: any, timestamp = 0) => ({
   [RenChain.ethereum]: (context: GatewayMachineContext<any>) => {
     const { destAddress, network } = context.tx;
 
@@ -81,8 +82,12 @@ export const getMintChainMap = (providers: any) => ({
   [RenChain.solana]: (context: GatewayMachineContext<any>) => {
     const { network } = context.tx;
 
+    const includeAddressInPayload = timestamp < env.V2_DEPRECATION_TIME;
+
     // Currently Solana will always mint to the connected provider's address
-    return new Solana(providers.solana, network) as any;
+    return new Solana(providers.solana, network, {
+      includeAddressInPayload,
+    }) as any;
   },
   [RenChain.arbitrum]: (context: GatewayMachineContext<any>) => {
     const { destAddress, network } = context.tx;

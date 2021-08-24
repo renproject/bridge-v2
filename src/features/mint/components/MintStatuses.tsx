@@ -34,6 +34,7 @@ import {
   TransactionStatusInfo,
 } from "../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import {
@@ -281,6 +282,7 @@ type MintDepositAcceptedStatusProps = {
   tx: ErroringGatewaySession<any>;
   onSubmit?: () => void;
   onReload?: () => void;
+  onRetry?: () => void;
   submitting: boolean;
   submittingError: boolean;
   depositHash: string;
@@ -290,6 +292,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   tx,
   onSubmit = () => {},
   onReload,
+  onRetry,
   submitting,
   submittingError,
   depositHash,
@@ -299,6 +302,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   useSetActionRequired(true);
   const theme = useTheme();
   const {
+    error,
     lockCurrencyConfig,
     lockChainConfig,
     lockTxHash,
@@ -384,10 +388,12 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           link={lockTxLink}
         />
       </ActionButtonWrapper>
+      <Debug it={{ error }} />
       <SubmitErrorDialog
         open={submittingError}
         onAction={onReload}
-        error={tx.error}
+        onAlternativeAction={onRetry}
+        error={error || tx.error}
       />
     </>
   );

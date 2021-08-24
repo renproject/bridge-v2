@@ -247,7 +247,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   );
 };
 
-const createIndicatorClass = (className: string, color: string) => {
+export const createIndicatorClass = (className: string, color: string) => {
   const { pulsingStyles, pulsingKeyframes } = createPulseAnimation(
     color,
     3,

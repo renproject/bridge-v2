@@ -9,13 +9,17 @@ const useStyles = makeStyles((theme) => ({
     display: "inline-flex",
     fontSize: 13,
     color: theme.palette.grey[600],
-    verticalAlign: "middle"
+    verticalAlign: "middle",
+    marginTop: -2,
   },
 }));
 
-type TooltipWithIconProps = Omit<TooltipProps, "children">;
+type TooltipWithIconProps = Omit<TooltipProps, "children"> & {
+  title: TooltipProps["title"] | any;
+};
 
 export const TooltipWithIcon: FunctionComponent<TooltipWithIconProps> = ({
+  title,
   placement = "top-end",
   className,
   ...rest
@@ -23,7 +27,12 @@ export const TooltipWithIcon: FunctionComponent<TooltipWithIconProps> = ({
   const styles = useStyles();
   const resolvedClassName = classNames(styles.root, className);
   return (
-    <Tooltip className={resolvedClassName} placement={placement} {...rest}>
+    <Tooltip
+      title={title}
+      className={resolvedClassName}
+      placement={placement}
+      {...rest}
+    >
       <span>
         <TooltipIcon fontSize="inherit" color="inherit" />
       </span>
