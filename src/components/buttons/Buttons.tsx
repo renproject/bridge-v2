@@ -479,15 +479,18 @@ const useActionButtonStyles = makeStyles({
   root: { maxWidth: 360 },
 });
 
-export const ActionButton: FunctionComponent<ButtonProps> = ({ ...props }) => {
+export const ActionButton: FunctionComponent<ButtonProps> = ({
+  color = "primary",
+  ...props
+}) => {
   const styles = useActionButtonStyles();
   return (
     <Button
       className={styles.root}
       variant="contained"
       size="large"
-      color="primary"
       fullWidth
+      color={color}
       {...props}
     />
   );

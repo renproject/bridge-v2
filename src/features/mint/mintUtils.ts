@@ -316,6 +316,7 @@ export const getLockAndMintParams = (
       transaction = sortedDeposits[0];
     }
   }
+  let error;
   let mintTxHash: string = "";
   let mintTxLink: string = "";
   let lockTxHash: string = "";
@@ -330,6 +331,7 @@ export const getLockAndMintParams = (
     tx.sourceAsset
   );
   if (transaction) {
+    error = transaction.error;
     if (
       (transaction as MintedGatewayTransaction<any>).destTxHash !== undefined
     ) {
@@ -399,6 +401,7 @@ export const getLockAndMintParams = (
   }
 
   return {
+    error,
     networkConfig,
     mintCurrencyConfig,
     lockCurrencyConfig,

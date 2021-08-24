@@ -125,6 +125,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
       <SubmitErrorDialog
         open={Boolean(submittingError)}
         onAction={onReload}
+        onAlternativeAction={onSubmit}
         error={(tx as ErroringBurnSession<any, any>).error}
       />
       <GeneralErrorDialog

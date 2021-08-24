@@ -23,7 +23,7 @@ export const USD_SYMBOL = "USD";
 
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
-const bandchainReferencePairs = uniqueArray(
+export const bandchainReferencePairs = uniqueArray(
   Object.values(BridgeCurrency)
     .filter(
       (symbol) =>
@@ -32,11 +32,11 @@ const bandchainReferencePairs = uniqueArray(
     .map(mapToBandchainCurrencySymbol)
 ).map((symbol: string) => getPair(symbol, USD_SYMBOL));
 
-const coingeckoSymbols = Object.values(currenciesConfig)
+export const coingeckoSymbols = Object.values(currenciesConfig)
   .filter((entry) => Boolean(entry.coingeckoSymbol))
   .map((entry) => entry.coingeckoSymbol);
 
-type BandchainExchangeRateEntry = {
+export type BandchainExchangeRateEntry = {
   pair: string;
   rate: number;
   updated: {
@@ -45,12 +45,12 @@ type BandchainExchangeRateEntry = {
   };
 };
 
-type CoingeckoExchangeRateEntry = {
+export type CoingeckoExchangeRateEntry = {
   symbol: string;
   current_price: number;
 };
 
-const mapBandchainToExchangeData = (
+export const mapBandchainToExchangeData = (
   referenceData: Array<BandchainExchangeRateEntry>
 ) => {
   return referenceData.map((entry: any) => {
@@ -63,7 +63,7 @@ const mapBandchainToExchangeData = (
   });
 };
 
-const mapCoingeckoToExchangeData = (
+export const mapCoingeckoToExchangeData = (
   entries: Array<CoingeckoExchangeRateEntry>
 ) => {
   return entries.map((entry: any) => ({

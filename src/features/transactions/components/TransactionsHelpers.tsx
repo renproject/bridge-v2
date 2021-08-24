@@ -62,6 +62,7 @@ import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
+import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
 
 export type AnyBurnSession =
   | BurnSession<any, any>
@@ -339,9 +340,11 @@ export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
 
 type ErrorWithActionProps = DialogProps & {
   title?: string;
-  onAction?: () => void;
   reason?: string;
+  onAction?: () => void;
+  onAlternativeAction?: () => void;
   actionText?: string;
+  alternativeActionText?: string;
   error?: any;
 };
 
@@ -349,8 +352,10 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   title = "Error",
   open,
   reason = "",
-  actionText = "",
   onAction,
+  onAlternativeAction,
+  actionText = "",
+  alternativeActionText = "",
   error,
   children,
 }) => {
@@ -377,6 +382,13 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
         <ActionButtonWrapper>
           <ActionButton onClick={onAction}>{actionText}</ActionButton>
         </ActionButtonWrapper>
+        {Boolean(onAlternativeAction) && (
+          <ActionButtonWrapper>
+            <ActionButton color="secondary" onClick={onAlternativeAction}>
+              {alternativeActionText}
+            </ActionButton>
+          </ActionButtonWrapper>
+        )}
       </PaperContent>
     </BridgeModal>
   );
@@ -395,6 +407,9 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       title={t("common.error-label")}
       reason={t("tx.submitting-error-popup-header")}
       actionText={t("tx.submitting-error-popup-action-text")}
+      alternativeActionText={t(
+        "tx.submitting-error-popup-alternative-action-text"
+      )}
       {...props}
     >
       <span>{message}</span>
@@ -430,6 +445,19 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
 ) => {
   const { t } = useTranslation();
   const history = useHistory();
+
+  const ammendExpiry = useCallback(() => {
+    // history.location.search
+    const tx = parseTxQueryString(history.location.search);
+    if (!tx) return;
+    tx.expiryTime = Date.now() + 60 * 60 * 24 * 1000;
+    history.push({
+      pathname: paths.MINT_TRANSACTION,
+      search: "?" + createTxQueryString(tx as any),
+    });
+    window.location.reload();
+  }, [history]);
+
   const goToHome = useCallback(() => {
     history.push(paths.HOME);
   }, [history]);
@@ -442,6 +470,11 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       {...props}
     >
       <span>{t("tx.expired-error-popup-message-1", { hours: 24 })}</span>
+      <ActionButtonWrapper>
+        <RedButton variant="text" color="secondary" onClick={ammendExpiry}>
+          {t("tx.expired-error-popup-continue-mint")}
+        </RedButton>
+      </ActionButtonWrapper>
       <ActionButtonWrapper>
         <Button variant="text" color="inherit" onClick={goToHome}>
           {t("tx.expired-error-popup-back-to-home")}
