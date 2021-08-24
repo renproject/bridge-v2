@@ -34,7 +34,7 @@ export const useMintMachine = (mintTransaction: GatewaySession<any>) => {
       {}
     );
     return getMintChainMap(providers, tx.createdAt);
-  }, [enabledChains]);
+  }, [enabledChains, tx.createdAt]);
 
   return useMachine(mintMachine, {
     context: {
