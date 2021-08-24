@@ -648,7 +648,6 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     blockTime: 1,
     targetConfirmations: 40,
     nativeCurrency: BridgeCurrency.FIL,
-    memo: true,
   },
   [BridgeChain.LUNAC]: {
     symbol: BridgeChain.LUNAC,
