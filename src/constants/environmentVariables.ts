@@ -27,6 +27,11 @@ const V2_DEPRECATION_TIME =
   new Date(process.env.REACT_APP_V2_DEPRECATION_DATE || "invalid").getTime() ||
   new Date("2222-12-12").getTime();
 
+const REVERT_SOLANA_PAYLOADS_DATE =
+  new Date(
+    process.env.REACT_APP_REVERT_SOLANA_PAYLOADS_DATE || "invalid"
+  ).getTime() || new Date("2222-12-12").getTime();
+
 export const env = {
   DEV,
   NETWORK,
@@ -40,6 +45,7 @@ export const env = {
   TX_HISTORY_EXPLORATION,
   ENABLED_CURRENCIES,
   V2_DEPRECATION_TIME,
+  REVERT_SOLANA_PAYLOADS_DATE,
 };
 
 if (DEV) console.debug("env", env, process);
