@@ -240,7 +240,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
               value={burnChainConfig.full}
             />
             <LabelWithValue
-              label={t("release.To-label")}
+              label={t("release.to-label")}
               value={
                 <MiddleEllipsisText hoverable>
                   {tx.destAddress}
@@ -278,6 +278,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   tx,
   burnChainMap,
 }) => {
+  const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();
   const [current, send, service] = useBurnMachine(tx, burnChainMap);
@@ -298,10 +299,10 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
     setTimeout(() => {
       const key = showNotification(
         <span>
-          No confirmations detected for transaction; you may wish to speed it
-          up. <br />
-          As long as the transaction gets successfully confirmed on the mint
-          chain, you will recieve your {tx.sourceAsset.toUpperCase()}
+          {t("release.no-confirmations-message-1")} <br />
+          {t("release.no-confirmations-message-2", {
+            currency: tx.sourceAsset.toUpperCase(),
+          })}
         </span>,
         {
           variant: "warning",
@@ -312,7 +313,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
       // This isn't a great solution because users might end up burning twice
       // setTimeoutError(true);
     }, 1 * 60 * 1000);
-  }, [send, setTimeoutKey, showNotification, tx.sourceAsset]);
+  }, [t, send, setTimeoutKey, showNotification, tx.sourceAsset]);
   const handleReload = useCallback(() => {
     history.replace({
       ...location,

@@ -567,6 +567,7 @@ export type BridgeChainConfig = LabelsConfig &
     blockTime: number;
     nativeCurrency: BridgeCurrency;
     targetConfirmations: number;
+    memo?: boolean;
   };
 
 export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
@@ -660,6 +661,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     blockTime: 1,
     targetConfirmations: 40,
     nativeCurrency: BridgeCurrency.LUNA,
+    memo: true,
   },
   [BridgeChain.BSCC]: {
     symbol: BridgeChain.BSCC,

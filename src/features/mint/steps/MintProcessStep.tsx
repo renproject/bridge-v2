@@ -507,6 +507,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       />
       <Debug
         it={{
+          current,
           depositHash,
           fees,
         }}
@@ -534,6 +535,10 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   const history = useHistory();
   const location = useLocation();
   const handleSubmitToDestinationChain = useCallback(() => {
+    machine.send({ type: "CLAIM" });
+  }, [machine]);
+
+  const handleRetry = useCallback(() => {
     machine.send({ type: "CLAIM" });
   }, [machine]);
 
@@ -578,6 +583,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
           tx={tx as ErroringGatewaySession<any>}
           onSubmit={handleSubmitToDestinationChain}
           onReload={handleReload}
+          onRetry={handleRetry}
           depositHash={depositHash}
           submitting={state === "claiming"}
           submittingError={
