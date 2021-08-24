@@ -42,6 +42,7 @@ export const SolanaTokenAccountModal: React.FunctionComponent<{
           "No SOL found for this account. Please ensure that you are connected with the correct wallet"
         );
       } else {
+        console.error(err);
         setCreationError("Failed to submit transaction");
       }
     }

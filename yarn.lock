@@ -3315,10 +3315,10 @@
     elliptic "^6.5.4"
     lowercase-keys "^2.0.0"
 
-"@renproject/chains-solana@2.5.2":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-solana/-/chains-solana-2.5.2.tgz#80de5849bf06043b239c7e90847707b85541b3fe"
-  integrity sha512-USJRYOPzpFgvqtEB4x+CahsUTaxJG/jL1oxmAys+KT60/ESGdoKbqzY622eo9Gwj98JH7i5eV+vi5vCEb5JTrQ==
+"@renproject/chains-solana@2.5.4-alpha.0":
+  version "2.5.4-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-solana/-/chains-solana-2.5.4-alpha.0.tgz#0408448574ea885684c209037c7907b43a6f713b"
+  integrity sha512-r6RFnBBkgI4+wsE3Mg0Ek8s2OsTH14zM3DYWADXAnuAECLzG5vU/SKvd3mh6l7XeX89yXcOuceVSiMPA0mHbeQ==
   dependencies:
     "@project-serum/associated-token" "^0.1.1"
     "@project-serum/borsh" "^0.2.2"
