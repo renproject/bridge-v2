@@ -3265,13 +3265,13 @@
     redux-thunk "^2.3.0"
     reselect "^4.0.0"
 
-"@renproject/chains-bitcoin@2.5.2":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-bitcoin/-/chains-bitcoin-2.5.2.tgz#9a3733954b7b18abba3ade124608934ec351a002"
-  integrity sha512-QRK/ax3uAuMlAdd+BN/J9o7TwET3tkAaOhUBmQlR+Ik9yJrtETO77gFe03ctoBtsQcYxCYKomQdHIy2ZIVPFRA==
+"@renproject/chains-bitcoin@2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-bitcoin/-/chains-bitcoin-2.5.4.tgz#0b0e22962f5f47e340830de8b1150213c33a01d7"
+  integrity sha512-1adm8RNCW9Vt42TqtHAcBeNd5bNRbHRQHvy9l6oMzHcREl4Hu2B8XYxLjwu2S7avsItQsD3Y0DvLvNrqH1Ip9A==
   dependencies:
     "@renproject/interfaces" "^2.5.2"
-    "@renproject/rpc" "^2.5.2"
+    "@renproject/rpc" "^2.5.4"
     "@renproject/utils" "^2.5.2"
     "@types/bs58" "^4.0.1"
     "@types/cashaddrjs" "^0.3.0"
@@ -3297,15 +3297,15 @@
     bn.js "^5.2.0"
     ethers "^5.4.5"
 
-"@renproject/chains-filecoin@2.5.2", "@renproject/chains-filecoin@^2.5.2":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-filecoin/-/chains-filecoin-2.5.2.tgz#c26848540787552f54f3b07673b02bc2ff063820"
-  integrity sha512-AUCNCeJNJAu8G7jLENdGZ0ELsBKr1HvcXVwFGyBeb7hE/akSg+8ktmqkgbaRTVFwWqHvjY+faPC59t4+iQQKTA==
+"@renproject/chains-filecoin@2.5.4", "@renproject/chains-filecoin@^2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-filecoin/-/chains-filecoin-2.5.4.tgz#6226b3d208b13071010ae289536a7886f54adaa2"
+  integrity sha512-3jzZHGRuDwnPH6mH/5jtB5hi8Uoa8RHsEmNlN5Q6A2xnRDZ5llxbkIxRhFtcs8nybqLc9hDSjgcXJq5D5Utycg==
   dependencies:
     "@glif/filecoin-address" "^1.1.0"
     "@glif/filecoin-rpc-client" "^1.1.0"
     "@renproject/interfaces" "^2.5.2"
-    "@renproject/rpc" "^2.5.2"
+    "@renproject/rpc" "^2.5.4"
     "@renproject/utils" "^2.5.2"
     "@types/elliptic" "^6.4.12"
     "@types/node" ">=10"
@@ -3315,17 +3315,17 @@
     elliptic "^6.5.4"
     lowercase-keys "^2.0.0"
 
-"@renproject/chains-solana@2.5.4-alpha.0":
-  version "2.5.4-alpha.0"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-solana/-/chains-solana-2.5.4-alpha.0.tgz#0408448574ea885684c209037c7907b43a6f713b"
-  integrity sha512-r6RFnBBkgI4+wsE3Mg0Ek8s2OsTH14zM3DYWADXAnuAECLzG5vU/SKvd3mh6l7XeX89yXcOuceVSiMPA0mHbeQ==
+"@renproject/chains-solana@2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-solana/-/chains-solana-2.5.4.tgz#4eb1553eda1bb0f25ec1a2fa444ac4c4d03049a5"
+  integrity sha512-VyLPOYKcqEWBlgRhXLsp/yAtkO+ASdld0kLvlqBJXCADGCIghWgDNOBOuOGfcOMvSugxGXfH5KzmCnwQeZY9Ng==
   dependencies:
     "@project-serum/associated-token" "^0.1.1"
     "@project-serum/borsh" "^0.2.2"
-    "@renproject/chains-filecoin" "^2.5.2"
-    "@renproject/chains-terra" "^2.5.2"
+    "@renproject/chains-filecoin" "^2.5.4"
+    "@renproject/chains-terra" "^2.5.4"
     "@renproject/interfaces" "^2.5.2"
-    "@renproject/rpc" "^2.5.2"
+    "@renproject/rpc" "^2.5.4"
     "@renproject/utils" "^2.5.2"
     "@solana/spl-token" "^0.1.5"
     "@solana/web3.js" "^1.19.0"
@@ -3337,13 +3337,13 @@
     bs58 "^4.0.1"
     tweetnacl "^1.0.3"
 
-"@renproject/chains-terra@2.5.2", "@renproject/chains-terra@^2.5.2":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-terra/-/chains-terra-2.5.2.tgz#83b27b5c4929fd790ef72212c43fcf2d3ee7a05b"
-  integrity sha512-ojbNBxmy9EXFeidzMDWdrvF5s/biJ1wezM+86kwrOmmqdCbIYn5cqVC178JHmPXBw4t/qCkK1wTW4wUZLBNF4A==
+"@renproject/chains-terra@2.5.4", "@renproject/chains-terra@^2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-terra/-/chains-terra-2.5.4.tgz#62cb0fec5722a56de93ecc39be3115bdc60dff8b"
+  integrity sha512-eq0wCba74JOgOO2TG45BdvFuJDjQocawFMtpVInVxkzIpWFw6403NP6zvSHd+dBA1qCsfSoNjE9cGoWco4808g==
   dependencies:
     "@renproject/interfaces" "^2.5.2"
-    "@renproject/rpc" "^2.5.2"
+    "@renproject/rpc" "^2.5.4"
     "@renproject/utils" "^2.5.2"
     "@terra-money/terra.js" "1.3.6"
     "@types/elliptic" "^6.4.12"
@@ -3456,21 +3456,21 @@
     axios "^0.21.1"
     immutable "^4.0.0-rc.14"
 
-"@renproject/ren-tx@2.5.3":
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.5.3.tgz#2d6c3e3f1585ad9cb753704267ffbc46835ec0c6"
-  integrity sha512-t3kEH4QXSm2erTTg73yf3rpNgSVDWX428gLDjxoVRz1UCXAF6QjZdbaCcBKxpdruWKqPZoTv+8oejyTDlFd+iQ==
+"@renproject/ren-tx@2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.5.4.tgz#e2cab0a34676d4b413c9f890e1a052cee9123694"
+  integrity sha512-ADvrN4ncJEIUkKUkjICe+D2rh8WCmiblexvhUlbkvNICcguhxibTjWDAXgOqikMXDYKhE517Zslv3fzcUcAcyA==
   dependencies:
     bignumber.js "^9.0.1"
 
-"@renproject/ren@2.5.3":
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.5.3.tgz#d22260ced197f85b76627a621f15a7f9d26fb0ec"
-  integrity sha512-UYTt7YaLyhBWwdVVezKsxjwpPoI5w+/af5HRhv9xNJ+eIF2b2vJ26pbHSbsxblVCd9ZlYPbFYoD5hu2e8yFA9w==
+"@renproject/ren@2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.5.4.tgz#3812bf06bf1c8d4f136e9b6422ef553015123119"
+  integrity sha512-XqrN4m22qYmwLZ/shVdwxMgpuNpJljVFj9/rAJrO2a2UdAj9J64eujJA3kHBC8b41wOuzwws8JFitPXshuI9sA==
   dependencies:
     "@renproject/interfaces" "^2.5.2"
     "@renproject/provider" "^2.5.2"
-    "@renproject/rpc" "^2.5.2"
+    "@renproject/rpc" "^2.5.4"
     "@renproject/utils" "^2.5.2"
     "@types/bn.js" "^5.1.0"
     "@types/node" ">=10"
@@ -3479,10 +3479,10 @@
     ethers "^5.4.3"
     immutable "^4.0.0-rc.14"
 
-"@renproject/rpc@2.5.2", "@renproject/rpc@^2.5.2":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@renproject/rpc/-/rpc-2.5.2.tgz#7b1c4cc879f7898a736ea35a7aabef9a2c571c92"
-  integrity sha512-9ZEAMn0xDqI0hpcx6x3ry1l/36JSpYLT+PNtJRYkMyNlf3wGagyKm8HGnNxg+njYNUbeGb6JTniPqIMUz8P9VA==
+"@renproject/rpc@2.5.4", "@renproject/rpc@^2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@renproject/rpc/-/rpc-2.5.4.tgz#6ee7161f8aac65cd097d6cadb6ee586065c4c8f9"
+  integrity sha512-BUnFfByt+Ddv++DGY4D/9IGePltzvri0VGDNu+wXL9ArQLQw5Nqv4YvtYAXIZLGamKgyQPW0HWDbYf9RxGDVAA==
   dependencies:
     "@renproject/interfaces" "^2.5.2"
     "@renproject/provider" "^2.5.2"
