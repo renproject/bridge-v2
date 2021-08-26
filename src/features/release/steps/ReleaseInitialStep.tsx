@@ -49,6 +49,7 @@ import {
   supportedReleaseCurrencies,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
+import { useReleaseChainHelpers } from "../../chain/chainHooks";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $renNetwork } from "../../network/networkSlice";
@@ -138,18 +139,10 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
   const { MainIcon } = releaseCurrencyConfig;
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
-  const validateAddress = useMemo(() => {
-    const ChainClass = (releaseChainClassMap as any)[
-      releaseChainConfig.rentxName
-    ];
-    if (ChainClass) {
-      const chainInstance = ChainClass();
-      return (address: any) => {
-        return chainInstance.utils.addressIsValid(address, network);
-      };
-    }
-    return () => true;
-  }, [releaseChainConfig.rentxName, network]);
+  const { validateAddress } = useReleaseChainHelpers(
+    network,
+    releaseChainConfig.rentxName
+  );
 
   const requiresAck = releaseChainConfig.memo === true;
   const [ackChecked, setAckChecked] = useState(false);

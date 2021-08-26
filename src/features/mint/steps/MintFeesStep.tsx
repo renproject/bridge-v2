@@ -51,6 +51,7 @@ import {
   getCurrencyConfig,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
+import { useRenTokenHelpers } from "../../chain/chainHooks";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
@@ -113,16 +114,14 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   });
   const conversionFormatted = conversionTotal;
 
-  const { GreyIcon } = lockCurrencyConfig;
-
   const targetCurrencyAmountUsd = conversionFormatted * currencyUsdRate;
   const destinationChainConfig = getChainConfig(chain);
   const destinationChainNativeCurrencyConfig = getCurrencyConfig(
     destinationChainConfig.nativeCurrency
   );
   const mintedCurrency = toMintedCurrency(currency);
-
   const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
+  const { MainIcon } = mintedCurrencyConfig;
 
   const [ackChecked, setAckChecked] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -247,6 +246,9 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [onMintTxCreated, mintingInitialized, tx, creatingMintTx]);
 
+  const helpers = useRenTokenHelpers(chain, network, provider, currency);
+  (window as any).h3 = helpers;
+  console.log(helpers);
   return (
     <>
       {showSolanaModal && (
@@ -357,7 +359,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                   fixedDecimalScale
                 />
               }
-              Icon={<GreyIcon fontSize="inherit" />}
+              Icon={<MainIcon fontSize="inherit" />}
             />
           ))}
         <CheckboxWrapper>
