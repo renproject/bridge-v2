@@ -195,15 +195,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     provider,
     releaseCurrencyConfig.symbol
   );
-  const [addTokenPending, setAddTokenPending] = useState(false);
-  const handleAddToken = useCallback(() => {
-    if (addToken !== null) {
-      setAddTokenPending(true);
-      addToken().finally(() => {
-        setAddTokenPending(false);
-      });
-    }
-  }, [addToken]);
 
   return (
     <>
@@ -266,10 +257,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             onChange={handleCurrencyChange}
           />
           <AddTokenButton
-            onClick={handleAddToken}
+            onAddToken={addToken}
             wallet={walletConfig.short}
             currency={burnedCurrencyConfig.short}
-            pending={addTokenPending}
           />
         </AssetDropdownWrapper>
         <BigOutlinedTextFieldWrapper>

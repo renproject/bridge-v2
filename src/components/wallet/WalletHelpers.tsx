@@ -11,7 +11,7 @@ import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { Skeleton } from "@material-ui/lab";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
-import React, { FunctionComponent, useCallback } from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
@@ -696,34 +696,43 @@ export const ArbitrumMetamaskConnectorInfo: WalletPickerProps<
 };
 
 type AddTokenButtonProps = {
-  onClick: () => void | null;
+  onAddToken: (() => Promise<unknown>) | null;
   wallet: string;
   currency: string;
-  pending?: boolean;
 };
 
 export const AddTokenButton: FunctionComponent<AddTokenButtonProps> = ({
-  onClick,
+  onAddToken,
   wallet,
   currency,
-  pending,
 }) => {
   const { t } = useTranslation();
+
+  const [pending, setPending] = useState(false);
+  const handleAddToken = useCallback(() => {
+    if (onAddToken !== null) {
+      setPending(true);
+      onAddToken().finally(() => {
+        setPending(false);
+      });
+    }
+  }, [onAddToken]);
+
+  const show = onAddToken !== null;
+
   const params = {
     wallet: wallet,
     currency: currency,
   };
   return (
-    <Typography align="center">
-      {pending ? (
-        <Link onClick={onClick} color="textSecondary" variant="caption">
-          {t("wallet.add-token-button-pending-label", params)}
+    <Fade in={show}>
+      <Typography align="center">
+        <Link color="textSecondary" variant="caption" onClick={handleAddToken}>
+          {pending
+            ? t("wallet.add-token-button-pending-label", params)
+            : t("wallet.add-token-button-label", params)}
         </Link>
-      ) : (
-        <Link color="textSecondary" variant="caption">
-          {t("wallet.add-token-button-label", params)}
-        </Link>
-      )}
-    </Typography>
+      </Typography>
+    </Fade>
   );
 };

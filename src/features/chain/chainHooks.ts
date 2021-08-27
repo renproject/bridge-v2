@@ -59,7 +59,8 @@ export const useRenTokenHelpers = (
 
   useEffect(() => {
     const ChainClass = (mintChainClassMap as any)[chainConfig.rentxName];
-    if (ChainClass) {
+    if (ChainClass && network && provider) {
+      console.log(provider, chainConfig.rentxName, network);
       const chainInstance = ChainClass(provider, network);
       chainInstance
         .resolveTokenGatewayContract(nativeCurrency.toUpperCase())
@@ -94,7 +95,11 @@ export const useRenTokenHelpers = (
       },
     };
     console.log(params);
-    return () => provider.request({ method: "wallet_watchAsset", params });
+    return () =>
+      provider.request({
+        method: "wallet_watchAsset",
+        params,
+      });
   }, [address, decimals, provider, mintCurrencyName]);
 
   const helpers = { address, decimals, addToken };

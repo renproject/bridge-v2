@@ -353,7 +353,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <div>
               {addToken !== null && (
                 <AddTokenButton
-                  onClick={addToken}
+                  onAddToken={addToken}
                   wallet={walletConfig.short}
                   currency={mintedCurrencyConfig.short}
                 />
