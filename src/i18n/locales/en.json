@@ -184,6 +184,8 @@
   "wallet.action-connecting": "Connecting",
   "wallet.action-connecting-to": "Connecting to {{chain}}",
   "wallet.action-required": "{{wallet}} action required",
+  "wallet.add-token-button-label": "add {{currency}} to {{wallet}}",
+  "wallet.add-token-button-pending-label": "adding {{currency}} to {{wallet}}...",
   "wallet.bsc-mm-connect-description": "Please ensure that you have added the Binance Smart Chain network to Metamask as explained",
   "wallet.bsc-mm-connect-message": "Connect BSC with MetaMask",
   "wallet.connect": "Connect Wallet",

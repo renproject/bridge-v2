@@ -7,12 +7,7 @@ import {
   FormLabel,
   Typography,
 } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -41,15 +36,19 @@ import {
   AssetInfo,
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
-import { releaseChainClassMap } from "../../../services/rentx";
+import { AddTokenButton } from "../../../components/wallet/WalletHelpers";
 import {
   getChainConfig,
   getCurrencyConfig,
+  getWalletConfig,
   supportedBurnChains,
   supportedReleaseCurrencies,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
-import { useReleaseChainHelpers } from "../../chain/chainHooks";
+import {
+  useReleaseChainHelpers,
+  useRenTokenHelpers,
+} from "../../chain/chainHooks";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $renNetwork } from "../../network/networkSlice";
@@ -80,7 +79,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { walletConnected } = useSelectedChainWallet();
+  const {
+    walletConnected,
+    provider,
+    symbol: walletSymbol,
+  } = useSelectedChainWallet();
+  const walletConfig = getWalletConfig(walletSymbol);
   const { chain, balances } = useSelector($wallet);
   const network = useSelector($renNetwork);
   const { currency, amount, address } = useSelector($release);
@@ -88,12 +92,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   useRenNetworkTracker(currency);
   useFetchBalances(supportedReleaseCurrencies);
 
-  const currencyConfig = getCurrencyConfig(currency);
-  const targetCurrency = toReleasedCurrency(currency);
-  const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const burnedCurrencyConfig = getCurrencyConfig(currency);
+  const releasedCurrency = toReleasedCurrency(currency);
+  const releasedCurrencyConfig = getCurrencyConfig(releasedCurrency);
   const decimals = getReleaseAssetDecimals(
-    targetCurrencyConfig.sourceChain,
-    targetCurrency
+    releasedCurrencyConfig.sourceChain,
+    releasedCurrency
   );
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
   const { conversionTotal } = getTransactionFees({
@@ -136,7 +140,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     }
   }, [dispatch, balance]);
 
-  const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const releaseCurrencyConfig = getCurrencyConfig(releasedCurrency);
   const { MainIcon } = releaseCurrencyConfig;
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
   const { validateAddress } = useReleaseChainHelpers(
@@ -184,13 +188,30 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       onNext();
     }
   }, [dispatch, onNext, walletConnected, basicCondition, hasBalance]);
+
+  const { addToken } = useRenTokenHelpers(
+    chain,
+    network,
+    provider,
+    releaseCurrencyConfig.symbol
+  );
+  const [addTokenPending, setAddTokenPending] = useState(false);
+  const handleAddToken = useCallback(() => {
+    if (addToken !== null) {
+      setAddTokenPending(true);
+      addToken().finally(() => {
+        setAddTokenPending(false);
+      });
+    }
+  }, [addToken]);
+
   return (
     <>
       <PaperContent>
         <BigCurrencyInputWrapper>
           <BigCurrencyInput
             onChange={handleAmountChange}
-            symbol={currencyConfig.short}
+            symbol={burnedCurrencyConfig.short}
             usdValue={usdAmount}
             value={amount}
             errorText={
@@ -212,7 +233,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <Fade in={walletConnected}>
           <LabelWithValue
             label={t("release.currency-balance-label", {
-              currency: currencyConfig.short,
+              currency: burnedCurrencyConfig.short,
             })}
             value={
               <>
@@ -243,6 +264,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             balances={balances}
             value={currency}
             onChange={handleCurrencyChange}
+          />
+          <AddTokenButton
+            onClick={handleAddToken}
+            wallet={walletConfig.short}
+            currency={burnedCurrencyConfig.short}
+            pending={addTokenPending}
           />
         </AssetDropdownWrapper>
         <BigOutlinedTextFieldWrapper>

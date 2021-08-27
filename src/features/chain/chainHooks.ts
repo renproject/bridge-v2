@@ -71,13 +71,18 @@ export const useRenTokenHelpers = (
         .then(setDecimals)
         .catch(console.error);
     }
-  }, [chainConfig.rentxName, network, provider]);
+  }, [chainConfig.rentxName, network, provider, nativeCurrency]);
 
   (window as any).p3 = provider;
 
   const addToken = useMemo(() => {
-    if (!provider.isMetaMask || address === "" || decimals === null) {
-      return () => {};
+    if (
+      !provider ||
+      !provider.isMetaMask ||
+      address === "" ||
+      decimals === null
+    ) {
+      return null;
     }
     const params = {
       type: "ERC20",
@@ -85,11 +90,14 @@ export const useRenTokenHelpers = (
         address,
         decimals,
         symbol: mintCurrencyName,
+        image: `https://deploy-preview-115--bridge-v2-staging.netlify.app/tokens/${mintCurrencyName}.svg`,
       },
     };
     console.log(params);
     return () => provider.request({ method: "wallet_watchAsset", params });
   }, [address, decimals, provider, mintCurrencyName]);
 
-  return { address, decimals, addToken };
+  const helpers = { address, decimals, addToken };
+  (window as any).h3 = helpers;
+  return helpers;
 };

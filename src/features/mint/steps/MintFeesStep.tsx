@@ -24,6 +24,7 @@ import {
   ActionButton,
   ActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
+import { AssetDropdownWrapper } from "../../../components/dropdowns/AssetDropdown";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
@@ -34,6 +35,7 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
@@ -44,11 +46,13 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
+import { AddTokenButton } from "../../../components/wallet/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import {
   BridgeChain,
   getChainConfig,
   getCurrencyConfig,
+  getWalletConfig,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
 import { useRenTokenHelpers } from "../../chain/chainHooks";
@@ -82,7 +86,13 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
-  const { walletConnected, account, provider } = useSelectedChainWallet();
+  const {
+    walletConnected,
+    account,
+    provider,
+    symbol: walletSymbol,
+  } = useSelectedChainWallet();
+  const walletConfig = getWalletConfig(walletSymbol);
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { currency } = useSelector($mint);
   const [amountValue, setAmountValue] = useState("");
@@ -246,9 +256,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [onMintTxCreated, mintingInitialized, tx, creatingMintTx]);
 
-  const helpers = useRenTokenHelpers(chain, network, provider, currency);
-  (window as any).h3 = helpers;
-  console.log(helpers);
+  const { addToken } = useRenTokenHelpers(chain, network, provider, currency);
   return (
     <>
       {showSolanaModal && (
@@ -342,25 +350,34 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           (pending ? (
             <CenteredProgress />
           ) : (
-            <AssetInfo
-              label={t("mint.receiving-label")}
-              value={
-                <NumberFormatText
-                  value={conversionFormatted}
-                  spacedSuffix={mintedCurrencyConfig.short}
+            <div>
+              {addToken !== null && (
+                <AddTokenButton
+                  onClick={addToken}
+                  wallet={walletConfig.short}
+                  currency={mintedCurrencyConfig.short}
                 />
-              }
-              valueEquivalent={
-                <NumberFormatText
-                  prefix=" = $"
-                  value={targetCurrencyAmountUsd}
-                  spacedSuffix="USD"
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              }
-              Icon={<MainIcon fontSize="inherit" />}
-            />
+              )}
+              <AssetInfo
+                label={t("mint.receiving-label")}
+                value={
+                  <NumberFormatText
+                    value={conversionFormatted}
+                    spacedSuffix={mintedCurrencyConfig.short}
+                  />
+                }
+                valueEquivalent={
+                  <NumberFormatText
+                    prefix=" = $"
+                    value={targetCurrencyAmountUsd}
+                    spacedSuffix="USD"
+                    decimalScale={2}
+                    fixedDecimalScale
+                  />
+                }
+                Icon={<MainIcon fontSize="inherit" />}
+              />
+            </div>
           ))}
         <CheckboxWrapper>
           <FormControl error={showAckError}>

@@ -1,12 +1,14 @@
 import {
   Button,
   ButtonProps,
+  Fade,
   Theme,
   Typography,
   useTheme,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import { Skeleton } from "@material-ui/lab";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback } from "react";
@@ -26,6 +28,7 @@ import {
 } from "../../utils/assetConfigs";
 import { trimAddress } from "../../utils/strings";
 import { ActionButton, ActionButtonWrapper } from "../buttons/Buttons";
+import { AssetDropdownWrapper } from "../dropdowns/AssetDropdown";
 import { WalletIcon } from "../icons/RenIcons";
 import { PaperContent, SpacedPaperContent } from "../layout/Paper";
 import { Link } from "../links/Links";
@@ -689,5 +692,38 @@ export const ArbitrumMetamaskConnectorInfo: WalletPickerProps<
         </ActionButtonWrapper>
       </PaperContent>
     </>
+  );
+};
+
+type AddTokenButtonProps = {
+  onClick: () => void | null;
+  wallet: string;
+  currency: string;
+  pending?: boolean;
+};
+
+export const AddTokenButton: FunctionComponent<AddTokenButtonProps> = ({
+  onClick,
+  wallet,
+  currency,
+  pending,
+}) => {
+  const { t } = useTranslation();
+  const params = {
+    wallet: wallet,
+    currency: currency,
+  };
+  return (
+    <Typography align="center">
+      {pending ? (
+        <Link onClick={onClick} color="textSecondary" variant="caption">
+          {t("wallet.add-token-button-pending-label", params)}
+        </Link>
+      ) : (
+        <Link color="textSecondary" variant="caption">
+          {t("wallet.add-token-button-label", params)}
+        </Link>
+      )}
+    </Typography>
   );
 };
