@@ -91,7 +91,7 @@ export const useRenTokenHelpers = (
         address,
         decimals,
         symbol: mintCurrencyName,
-        image: `https://deploy-preview-115--bridge-v2-staging.netlify.app/tokens/${mintCurrencyName}.svg`,
+        image: `https://deploy-preview-116--bridge-v2-staging.netlify.app/tokens/${mintCurrencyName}.svg`,
       },
     };
     console.log(params);
