@@ -91,6 +91,7 @@ export const useRenTokenHelpers = (
         address,
         decimals,
         symbol: mintCurrencyName,
+        // TODO: crit update when on production
         image: `https://deploy-preview-116--bridge-v2-staging.netlify.app/tokens/${mintCurrencyName}.svg`,
       },
     };
