@@ -168,6 +168,8 @@ export const useSwitchChainHelpers = (
               method: "wallet_addEthereumChain",
               params,
             });
+          } else {
+            throw error;
           }
           // handle other "switch" errors
         }

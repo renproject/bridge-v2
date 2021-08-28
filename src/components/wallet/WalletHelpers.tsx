@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ButtonProps,
   Fade,
@@ -262,7 +263,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h5" align="center" gutterBottom>
-          {t("wallet.network-switch-message")} {chainConfig.full} {networkName}
+          {t("wallet.network-switch-label")} {chainConfig.full} {networkName}
           {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
@@ -270,17 +271,29 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           {networkName} {subNetworkName}
         </Typography>
         {addOrSwitchChain !== null && (
-          <ActionButtonWrapper>
-            <ActionButton onClick={handleSwitch} disabled={pending || switched}>
-              {pending || switched
-                ? t("wallet.network-switching-message", {
-                    network: subNetworkName || networkName,
-                  })
-                : t("wallet.network-switch-message", {
-                    network: subNetworkName || networkName,
-                  })}
-            </ActionButton>
-          </ActionButtonWrapper>
+          <div>
+            <ActionButtonWrapper>
+              <ActionButton
+                onClick={handleSwitch}
+                disabled={pending || switched}
+              >
+                {pending || switched
+                  ? t("wallet.network-switching-label", {
+                      network: subNetworkName || networkName,
+                    })
+                  : t("wallet.network-switch-label", {
+                      network: subNetworkName || networkName,
+                    })}
+              </ActionButton>
+            </ActionButtonWrapper>
+            <Fade in={pending} timeout={{ enter: 2000 }}>
+              <Box textAlign="center">
+                <Typography variant="caption" color="textSecondary">
+                  {t("wallet.network-switching-message")}
+                </Typography>
+              </Box>
+            </Fade>
+          </div>
         )}
       </PaperContent>
     </>
