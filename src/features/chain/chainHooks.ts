@@ -142,12 +142,14 @@ export const useSwitchChainHelpers = (
       const chainId = "0x" + details.networkID.toString(16);
       const chainName = details.chainLabel;
       const rpcUrls = [details.infura];
+      const blockExplorerUrls = [details.etherscan];
 
       const params = [
         {
           chainId,
           chainName,
           rpcUrls,
+          blockExplorerUrls,
         },
       ];
       console.log(params);
@@ -158,11 +160,13 @@ export const useSwitchChainHelpers = (
             params: [{ chainId }],
           });
         } catch (error) {
+          console.log("catched", error);
           // This error code indicates that the chain has not been added to MetaMask.
           if (error.code === 4902) {
+            console.log("fallback");
             await provider.request({
               method: "wallet_addEthereumChain",
-              params: [params],
+              params,
             });
           }
           // handle other "switch" errors
