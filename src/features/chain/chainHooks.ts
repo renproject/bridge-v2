@@ -28,22 +28,7 @@ export const useReleaseChainHelpers = (
   return helpers;
 };
 
-export const getMintAssetTokenAddress = (
-  chain: BridgeChain,
-  asset: string,
-  provider: any,
-  network: any
-) => {
-  if (!asset) {
-    return 8;
-  }
-  const chainConfig = getChainConfig(chain);
-  return (mintChainClassMap[
-    chainConfig.rentxName as keyof typeof mintChainClassMap
-  ](provider, network) as any).getTokenContractAddress(asset.toUpperCase());
-};
-
-export const useRenTokenHelpers = (
+export const useRenAssetHelpers = (
   chain: BridgeChain,
   network: string,
   provider: any,
@@ -105,5 +90,90 @@ export const useRenTokenHelpers = (
 
   const helpers = { address, decimals, addToken };
   (window as any).h3 = helpers;
+  return helpers;
+};
+
+// TODO: finish
+// const params = [
+//   {
+//     chainId: "0x1e",
+//     chainName: "RSK Mainnet",
+//     nativeCurrency: {
+//       name: "RSK BTC",
+//       symbol: "RBTC",
+//       decimals: 18,
+//     },
+//     rpcUrls: ["https://public-node.rsk.co"],
+//     blockExplorerUrls: ["https://explorer.rsk.co"],
+//   },
+// ];
+//
+// provider
+//   .request({ method: "wallet_addEthereumChain", params })
+//   .then(() => console.log("Success"))
+//   .catch((error: Error) => console.log("Error", error.message));
+
+export const useSwitchChainHelpers = (
+  chain: BridgeChain,
+  network: string,
+  provider: any
+) => {
+  const chainConfig = getChainConfig(chain);
+
+  useEffect(() => {
+    const ChainClass = (mintChainClassMap as any)[chainConfig.rentxName];
+    if (ChainClass && network && provider) {
+      console.log(provider, chainConfig.rentxName, network);
+      const chainInstance = ChainClass(provider, network);
+      (window as any).c4 = chainInstance;
+    }
+  }, [chainConfig.rentxName, network, provider]);
+
+  (window as any).p3 = provider;
+
+  const addOrSwitchChain = useMemo(() => {
+    const ChainClass = (mintChainClassMap as any)[chainConfig.rentxName];
+    if (ChainClass && network && provider) {
+      console.log(provider, chainConfig.rentxName, network);
+      const chainInstance = ChainClass(provider, network);
+      console.log(chainInstance);
+      const details = chainInstance.renNetworkDetails;
+      console.log(details);
+      const chainId = "0x" + details.networkID.toString(16);
+      const chainName = details.chainLabel;
+      const rpcUrls = [details.infura];
+
+      const params = [
+        {
+          chainId,
+          chainName,
+          rpcUrls,
+        },
+      ];
+      console.log(params);
+      return async () => {
+        try {
+          await provider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId }],
+          });
+        } catch (error) {
+          // This error code indicates that the chain has not been added to MetaMask.
+          if (error.code === 4902) {
+            await provider.request({
+              method: "wallet_addEthereumChain",
+              params: [params],
+            });
+          }
+          // handle other "switch" errors
+        }
+      };
+    } else {
+      return null;
+    }
+  }, [chainConfig.rentxName, network, provider]);
+
+  const helpers = { addOrSwitchChain };
+  (window as any).h4 = helpers;
   return helpers;
 };

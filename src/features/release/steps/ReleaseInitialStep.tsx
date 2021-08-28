@@ -47,7 +47,7 @@ import {
 } from "../../../utils/assetConfigs";
 import {
   useReleaseChainHelpers,
-  useRenTokenHelpers,
+  useRenAssetHelpers,
 } from "../../chain/chainHooks";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
@@ -189,7 +189,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     }
   }, [dispatch, onNext, walletConnected, basicCondition, hasBalance]);
 
-  const { addToken } = useRenTokenHelpers(
+  const { addToken } = useRenAssetHelpers(
     chain,
     network,
     provider,

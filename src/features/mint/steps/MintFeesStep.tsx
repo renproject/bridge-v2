@@ -24,7 +24,6 @@ import {
   ActionButton,
   ActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
-import { AssetDropdownWrapper } from "../../../components/dropdowns/AssetDropdown";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import { CheckboxWrapper } from "../../../components/inputs/InputHelpers";
@@ -35,7 +34,6 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
-import { Link } from "../../../components/links/Links";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
@@ -55,7 +53,7 @@ import {
   getWalletConfig,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
-import { useRenTokenHelpers } from "../../chain/chainHooks";
+import { useRenAssetHelpers } from "../../chain/chainHooks";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
@@ -256,7 +254,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [onMintTxCreated, mintingInitialized, tx, creatingMintTx]);
 
-  const { addToken } = useRenTokenHelpers(chain, network, provider, currency);
+  const { addToken } = useRenAssetHelpers(chain, network, provider, currency);
   return (
     <>
       {showSolanaModal && (

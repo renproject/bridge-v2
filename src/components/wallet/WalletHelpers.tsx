@@ -8,14 +8,15 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
-import { Skeleton } from "@material-ui/lab";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
+import { useSwitchChainHelpers } from "../../features/chain/chainHooks";
 import { useSubNetworkName } from "../../features/ui/uiHooks";
+import { useSelectedChainWallet } from "../../features/wallet/walletHooks";
 import { setWalletPickerOpened } from "../../features/wallet/walletSlice";
 import { createPulseAnimation } from "../../theme/animationUtils";
 import { defaultShadow } from "../../theme/other";
@@ -28,7 +29,6 @@ import {
 } from "../../utils/assetConfigs";
 import { trimAddress } from "../../utils/strings";
 import { ActionButton, ActionButtonWrapper } from "../buttons/Buttons";
-import { AssetDropdownWrapper } from "../dropdowns/AssetDropdown";
 import { WalletIcon } from "../icons/RenIcons";
 import { PaperContent, SpacedPaperContent } from "../layout/Paper";
 import { Link } from "../links/Links";
@@ -222,8 +222,32 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const { t } = useTranslation();
   const theme = useTheme();
   const subNetworkName = useSubNetworkName();
-  const chainName = getChainConfigByRentxName(chain).full;
+  const chainConfig = getChainConfigByRentxName(chain);
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
+
+  const { provider } = useSelectedChainWallet();
+
+  const { addOrSwitchChain } = useSwitchChainHelpers(
+    chainConfig.symbol,
+    targetNetwork,
+    provider
+  );
+  const [pending, setPending] = useState(false);
+  const [switched, setSwitched] = useState(false);
+  const handleSwitch = useCallback(() => {
+    console.log(addOrSwitchChain);
+    if (addOrSwitchChain !== null) {
+      setPending(true);
+      addOrSwitchChain()
+        .then(() => {
+          setSwitched(true);
+        })
+        .finally(() => {
+          setPending(false);
+        });
+    }
+  }, [addOrSwitchChain]);
+
   return (
     <>
       <BridgeModalTitle title="Wrong Network" onClose={onClose} />
@@ -238,13 +262,26 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h5" align="center" gutterBottom>
-          {t("wallet.network-switch-message")} {chainName} {networkName}
+          {t("wallet.network-switch-message")} {chainConfig.full} {networkName}
           {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
-          {t("wallet.network-switch-description")} {chainName} {networkName}{" "}
-          {subNetworkName}
+          {t("wallet.network-switch-description")} {chainConfig.full}{" "}
+          {networkName} {subNetworkName}
         </Typography>
+        {addOrSwitchChain !== null && (
+          <ActionButtonWrapper>
+            <ActionButton onClick={handleSwitch} disabled={pending || switched}>
+              {pending || switched
+                ? t("wallet.network-switching-message", {
+                    network: subNetworkName || networkName,
+                  })
+                : t("wallet.network-switch-message", {
+                    network: subNetworkName || networkName,
+                  })}
+            </ActionButton>
+          </ActionButtonWrapper>
+        )}
       </PaperContent>
     </>
   );

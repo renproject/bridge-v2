@@ -559,7 +559,12 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         !
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>Back to home</ActionButton>
+        <ActionButton onClick={handleReturn}>
+          {t("mint.back-to-home")}
+        </ActionButton>
+        <ActionButton color="secondary" onClick={handleReturn}>
+          {t("mint.back-to-gateway-address")}
+        </ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link
