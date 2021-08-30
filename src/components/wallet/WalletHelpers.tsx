@@ -3,11 +3,12 @@ import {
   Button,
   ButtonProps,
   Fade,
+  FormHelperText,
   Theme,
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, styled } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
@@ -29,7 +30,11 @@ import {
   getWalletConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { trimAddress } from "../../utils/strings";
-import { ActionButton, ActionButtonWrapper } from "../buttons/Buttons";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+  SecondaryActionButton,
+} from "../buttons/Buttons";
 import { WalletIcon } from "../icons/RenIcons";
 import { PaperContent, SpacedPaperContent } from "../layout/Paper";
 import { Link } from "../links/Links";
@@ -228,20 +233,26 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
 
   const { provider } = useSelectedChainWallet();
 
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<any>(false);
   const { addOrSwitchChain } = useSwitchChainHelpers(
     chainConfig.symbol,
     targetNetwork,
     provider
   );
-  const [pending, setPending] = useState(false);
-  const [switched, setSwitched] = useState(false);
+  const [success, setSuccess] = useState(false);
   const handleSwitch = useCallback(() => {
     console.log(addOrSwitchChain);
     if (addOrSwitchChain !== null) {
+      setError(false);
       setPending(true);
       addOrSwitchChain()
         .then(() => {
-          setSwitched(true);
+          setError(false);
+          setSuccess(true);
+        })
+        .catch((error) => {
+          setError(error);
         })
         .finally(() => {
           setPending(false);
@@ -270,35 +281,54 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           {t("wallet.network-switch-description")} {chainConfig.full}{" "}
           {networkName} {subNetworkName}
         </Typography>
-        {addOrSwitchChain !== null && (
-          <div>
-            <ActionButtonWrapper>
+        <Box mt={2}>
+          {addOrSwitchChain !== null && (
+            <div>
+              <Box minHeight={19}>
+                <Fade in={pending || Boolean(error)} timeout={{ enter: 2000 }}>
+                  <Box textAlign="center">
+                    {pending && (
+                      <CenteredFormHelperText>
+                        {t("wallet.network-switching-message", {
+                          wallet: "MetaMask",
+                        })}
+                      </CenteredFormHelperText>
+                    )}
+                    {Boolean(error) && (
+                      <CenteredFormHelperText error>
+                        {error.code === 4001 &&
+                          t("wallet.operation-safely-rejected-message")}
+                        {error.code === -32002 &&
+                          t("wallet.operation-not-finished-message")}
+                      </CenteredFormHelperText>
+                    )}
+                  </Box>
+                </Fade>
+              </Box>
               <ActionButton
                 onClick={handleSwitch}
-                disabled={pending || switched}
+                disabled={pending || success}
               >
-                {pending || switched
+                {pending || success
                   ? t("wallet.network-switching-label", {
                       network: subNetworkName || networkName,
+                      wallet: "MetaMask",
                     })
                   : t("wallet.network-switch-label", {
                       network: subNetworkName || networkName,
                     })}
               </ActionButton>
-            </ActionButtonWrapper>
-            <Fade in={pending} timeout={{ enter: 2000 }}>
-              <Box textAlign="center">
-                <Typography variant="caption" color="textSecondary">
-                  {t("wallet.network-switching-message")}
-                </Typography>
-              </Box>
-            </Fade>
-          </div>
-        )}
+            </div>
+          )}
+        </Box>
       </PaperContent>
     </>
   );
 };
+
+const CenteredFormHelperText = styled(FormHelperText)({
+  textAlign: "center",
+});
 
 export const createIndicatorClass = (className: string, color: string) => {
   const { pulsingStyles, pulsingKeyframes } = createPulseAnimation(
@@ -776,13 +806,11 @@ export const AddTokenButton: FunctionComponent<AddTokenButtonProps> = ({
   };
   return (
     <Fade in={show}>
-      <Typography align="center">
-        <Link color="textSecondary" variant="caption" onClick={handleAddToken}>
-          {pending
-            ? t("wallet.add-token-button-pending-label", params)
-            : t("wallet.add-token-button-label", params)}
-        </Link>
-      </Typography>
+      <SecondaryActionButton disabled={pending} onClick={handleAddToken}>
+        {pending
+          ? t("wallet.add-token-button-pending-label", params)
+          : t("wallet.add-token-button-label", params)}
+      </SecondaryActionButton>
     </Fade>
   );
 };

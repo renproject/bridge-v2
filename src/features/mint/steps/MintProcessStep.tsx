@@ -346,6 +346,10 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, []);
 
+  const handleGoToGateway = useCallback(() => {
+    setCurrentDeposit("gateway");
+  }, []);
+
   useEffect(() => {
     onMachineSendReady(send);
   }, [onMachineSendReady, send]);
@@ -480,6 +484,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
             deposit={activeDeposit.deposit}
             machine={activeDeposit.machine}
             depositHash={currentDeposit}
+            onGoToGateway={handleGoToGateway}
           />
         ) : (
           <MintDepositToStatus
@@ -521,6 +526,7 @@ type MintTransactionDepositStatusProps = {
   deposit: GatewayTransaction<any>;
   machine: Actor<typeof mintMachine>;
   depositHash: string;
+  onGoToGateway: () => void;
 };
 
 export const forceState = "srcSettling" as keyof DepositMachineSchema<any>["states"];
@@ -530,6 +536,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   deposit,
   machine,
   depositHash,
+  onGoToGateway,
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -602,7 +609,13 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
       );
     case "completed":
       if ((deposit as any).destTxHash !== undefined) {
-        return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
+        return (
+          <MintCompletedStatus
+            tx={tx}
+            depositHash={depositHash}
+            onGoToGateway={onGoToGateway}
+          />
+        );
       } else {
         // FIXME: actually an error case, this shouldn't happen in this state
         return (

@@ -1,4 +1,5 @@
 import {
+  Box,
   Checkbox,
   Divider,
   Fade,
@@ -256,11 +257,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             value={currency}
             onChange={handleCurrencyChange}
           />
-          <AddTokenButton
-            onAddToken={addToken}
-            wallet={walletConfig.short}
-            currency={burnedCurrencyConfig.short}
-          />
         </AssetDropdownWrapper>
         <BigOutlinedTextFieldWrapper>
           <OutlinedTextField
@@ -321,6 +317,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             />
           ))}
         <ActionButtonWrapper>
+          <Box mb={1}>
+            <AddTokenButton
+              onAddToken={addToken}
+              wallet={walletConfig.short}
+              currency={burnedCurrencyConfig.short}
+            />
+          </Box>
           <ActionButton
             onClick={handleNextStep}
             disabled={walletConnected ? !enabled : false}

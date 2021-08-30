@@ -17,6 +17,7 @@ import {
   BigQrCode,
   CopyContentButton,
   QrCodeIconButton,
+  SecondaryActionButton,
   TransactionDetailsButton,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
@@ -473,11 +474,13 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 type MintCompletedStatusProps = {
   tx: GatewaySession<any>;
   depositHash: string;
+  onGoToGateway: () => void;
 };
 
 export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = ({
   tx,
   depositHash,
+  onGoToGateway,
 }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.complete-title"));
@@ -503,7 +506,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     decimals,
   });
   const conversionFormatted = conversionTotal;
-  const handleReturn = useCallback(() => {
+  const handleGoToHome = useCallback(() => {
     history.push({
       pathname: paths.HOME,
     });
@@ -559,11 +562,13 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         !
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>
+        <Box mb={1}>
+          <SecondaryActionButton onClick={onGoToGateway}>
+            {t("mint.back-to-gateway-address")}
+          </SecondaryActionButton>
+        </Box>
+        <ActionButton onClick={handleGoToHome}>
           {t("mint.back-to-home")}
-        </ActionButton>
-        <ActionButton color="secondary" onClick={handleReturn}>
-          {t("mint.back-to-gateway-address")}
         </ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>

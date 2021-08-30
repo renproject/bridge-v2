@@ -1,4 +1,5 @@
 import {
+  Box,
   Checkbox,
   Divider,
   FormControl,
@@ -349,13 +350,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             <CenteredProgress />
           ) : (
             <div>
-              {addToken !== null && (
-                <AddTokenButton
-                  onAddToken={addToken}
-                  wallet={walletConfig.short}
-                  currency={mintedCurrencyConfig.short}
-                />
-              )}
               <AssetInfo
                 label={t("mint.receiving-label")}
                 value={
@@ -415,6 +409,15 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           </FormControl>
         </CheckboxWrapper>
         <ActionButtonWrapper>
+          {addToken !== null && (
+            <Box mb={1}>
+              <AddTokenButton
+                onAddToken={addToken}
+                wallet={walletConfig.short}
+                currency={mintedCurrencyConfig.short}
+              />
+            </Box>
+          )}
           <ActionButton
             onClick={handleConfirm}
             disabled={

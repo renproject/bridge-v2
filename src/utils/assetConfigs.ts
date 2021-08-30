@@ -187,6 +187,7 @@ export type BridgeCurrencyConfig = LabelsConfig &
     bandchainSymbol?: string;
     coingeckoSymbol?: string;
     networkMappings: ChainToNetworkMappings;
+    decimals?: number;
     ethTestnet?: EthTestnet | null;
   };
 
@@ -440,6 +441,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     coingeckoSymbol: "avalanche-2",
     sourceChain: BridgeChain.AVAXC,
     networkMappings: newNetworkMappings,
+    decimals: 9,
   },
   [BridgeCurrency.MATIC]: {
     symbol: BridgeCurrency.MATIC,
@@ -452,6 +454,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "matic",
     sourceChain: BridgeChain.MATICC,
     networkMappings: newNetworkMappings,
+    decimals: 18,
   },
   [BridgeCurrency.FTM]: {
     symbol: BridgeCurrency.FTM,
@@ -464,18 +467,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "ftm",
     sourceChain: BridgeChain.FTMC,
     networkMappings: newNetworkMappings,
-  },
-  [BridgeCurrency.ETH]: {
-    symbol: BridgeCurrency.ETH,
-    short: "ETH",
-    full: "Ether",
-    FullIcon: EthereumIcon,
-    GreyIcon: NotSetIcon,
-    Icon: EthereumIcon,
-    MainIcon: BtcFullIcon,
-    rentxName: "eth",
-    sourceChain: BridgeChain.ETHC,
-    networkMappings: newNetworkMappings,
+    decimals: 18,
   },
   [BridgeCurrency.BNB]: {
     symbol: BridgeCurrency.BNB,
@@ -500,6 +492,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "sol",
     sourceChain: BridgeChain.SOLC,
     networkMappings: newNetworkMappings,
+    decimals: 9,
   },
   [BridgeCurrency.ARBETH]: {
     symbol: BridgeCurrency.ARBETH,
@@ -513,6 +506,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ARBITRUMC,
     bandchainSymbol: "ETH",
     networkMappings: newNetworkMappings,
+    decimals: 18,
   },
   [BridgeCurrency.UNKNOWN]: {
     symbol: BridgeCurrency.UNKNOWN,
