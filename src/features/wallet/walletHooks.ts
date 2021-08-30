@@ -107,7 +107,7 @@ export const useReleaseChainHelpers = (
   network: string,
   chainRentxName: string
 ) => {
-  const helpers = useMemo(() => {
+  return useMemo(() => {
     let validateAddress = (address: any) => true;
     const ChainClass = (releaseChainClassMap as any)[chainRentxName];
     if (ChainClass) {
@@ -115,12 +115,9 @@ export const useReleaseChainHelpers = (
       validateAddress = (address: any) => {
         return chain.utils.addressIsValid(address, network);
       };
-      console.log(chain);
     }
     return { validateAddress };
   }, [chainRentxName, network]);
-  console.log(helpers);
-  return helpers;
 };
 
 export const useRenAssetHelpers = (
@@ -215,7 +212,7 @@ export const useSwitchChainHelpers = (
           },
         },
       ];
-      console.log(params);
+
       return async () => {
         try {
           await provider.request({
