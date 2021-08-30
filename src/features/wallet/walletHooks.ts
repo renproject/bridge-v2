@@ -188,20 +188,14 @@ export const useSwitchChainHelpers = (
 ) => {
   const chainConfig = getChainConfig(chain);
 
-  (window as any).p3 = provider;
-
   const addOrSwitchChain = useMemo(() => {
     const ChainClass = (mintChainClassMap as any)[chainConfig.rentxName];
     if (ChainClass && network && provider) {
-      console.log(provider, chainConfig.rentxName, network);
       const nativeCurrencyConfig = getCurrencyConfig(
         chainConfig.nativeCurrency
       );
       const chainInstance = ChainClass(provider, network);
-      (window as any).eci = chainInstance;
-      console.log(chainInstance);
       const details = chainInstance.renNetworkDetails;
-      console.log(details);
       const chainId = "0x" + details.networkID.toString(16);
       const chainName = details.chainLabel;
       const rpcUrl = details.publicProvider() || details.infura;
