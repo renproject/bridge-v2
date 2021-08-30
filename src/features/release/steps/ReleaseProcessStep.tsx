@@ -293,27 +293,37 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   const [submitting, setSubmitting] = useState(false);
   const [timeoutError] = useState(false);
   const [timeoutKey, setTimeoutKey] = useState<number>();
-  const handleSubmit = useCallback(() => {
-    setSubmitting(true);
-    send({ type: "SUBMIT" });
-    setTimeout(() => {
-      const key = showNotification(
-        <span>
-          {t("release.no-confirmations-message-1")} <br />
-          {t("release.no-confirmations-message-2", {
-            currency: tx.sourceAsset.toUpperCase(),
-          })}
-        </span>,
-        {
-          variant: "warning",
-          persist: true,
-        }
-      ) as number;
-      setTimeoutKey(key);
-      // This isn't a great solution because users might end up burning twice
-      // setTimeoutError(true);
-    }, 1 * 60 * 1000);
-  }, [t, send, setTimeoutKey, showNotification, tx.sourceAsset]);
+  const handleSubmit = useCallback(
+    (type = "SUBMIT") => {
+      console.log("submitting", type);
+
+      setSubmitting(true);
+      send({ type });
+      setTimeout(() => {
+        const key = showNotification(
+          <span>
+            {t("release.no-confirmations-message-1")} <br />
+            {t("release.no-confirmations-message-2", {
+              currency: tx.sourceAsset.toUpperCase(),
+            })}
+          </span>,
+          {
+            variant: "warning",
+            persist: true,
+          }
+        ) as number;
+        setTimeoutKey(key);
+        // This isn't a great solution because users might end up burning twice
+        // setTimeoutError(true);
+      }, 1 * 60 * 1000);
+    },
+    [t, send, setTimeoutKey, showNotification, tx.sourceAsset]
+  );
+
+  const handleResubmit = useCallback(() => {
+    handleSubmit("RETRY");
+  }, [handleSubmit]);
+
   const handleReload = useCallback(() => {
     history.replace({
       ...location,
@@ -354,6 +364,16 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
         />
       );
     case "errorBurning":
+      return (
+        <ReleaseProgressStatus
+          tx={current.context.tx}
+          pending
+          submittingError
+          onSubmit={handleSubmit}
+          onResubmit={handleResubmit}
+          onReload={handleReload}
+        />
+      );
     case "errorReleasing":
     case "srcSettling":
       return (
