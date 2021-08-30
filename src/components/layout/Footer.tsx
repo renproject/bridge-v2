@@ -119,11 +119,6 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
             {t("navigation.wiki-label")}
           </FooterTextLink>
         </li>
-        <li>
-          <FooterTextLink href={links.LEGACY_BRIDGE} target="_blank">
-            {t("navigation.legacy-bridge-label")}
-          </FooterTextLink>
-        </li>
         {/*<li>*/}
         {/*  <SystemMonitorFooterButton />*/}
         {/*</li>*/}
