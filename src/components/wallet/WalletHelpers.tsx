@@ -16,9 +16,11 @@ import React, { FunctionComponent, useCallback, useState } from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
-import { useSwitchChainHelpers } from "../../features/chain/chainHooks";
 import { useSubNetworkName } from "../../features/ui/uiHooks";
-import { useSelectedChainWallet } from "../../features/wallet/walletHooks";
+import {
+  useSelectedChainWallet,
+  useSwitchChainHelpers,
+} from "../../features/wallet/walletHooks";
 import { setWalletPickerOpened } from "../../features/wallet/walletSlice";
 import { createPulseAnimation } from "../../theme/animationUtils";
 import { defaultShadow } from "../../theme/other";
@@ -242,7 +244,6 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   );
   const [success, setSuccess] = useState(false);
   const handleSwitch = useCallback(() => {
-    console.log(addOrSwitchChain);
     if (addOrSwitchChain !== null) {
       setError(false);
       setPending(true);

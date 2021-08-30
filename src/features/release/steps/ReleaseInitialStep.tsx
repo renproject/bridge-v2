@@ -46,10 +46,6 @@ import {
   supportedReleaseCurrencies,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
-import {
-  useReleaseChainHelpers,
-  useRenAssetHelpers,
-} from "../../chain/chainHooks";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $renNetwork } from "../../network/networkSlice";
@@ -60,7 +56,11 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
-import { useSelectedChainWallet } from "../../wallet/walletHooks";
+import {
+  useReleaseChainHelpers,
+  useRenAssetHelpers,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import {
   $wallet,
   setChain,

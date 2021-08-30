@@ -54,7 +54,6 @@ import {
   getWalletConfig,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
-import { useRenAssetHelpers } from "../../chain/chainHooks";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
@@ -70,7 +69,10 @@ import {
   TxType,
 } from "../../transactions/transactionsUtils";
 import { useShakePaper } from "../../ui/uiHooks";
-import { useSelectedChainWallet } from "../../wallet/walletHooks";
+import {
+  useRenAssetHelpers,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import { SolanaTokenAccountModal } from "../components/SolanaAccountChecker";
 import { $mint } from "../mintSlice";
@@ -409,7 +411,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           </FormControl>
         </CheckboxWrapper>
         <ActionButtonWrapper>
-          {addToken !== null && (
+          {walletConnected && addToken !== null && (
             <Box mb={1}>
               <AddTokenButton
                 onAddToken={addToken}
