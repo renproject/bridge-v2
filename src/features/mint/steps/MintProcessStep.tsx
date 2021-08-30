@@ -36,7 +36,7 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { WalletConnectionProgress } from "../../wallet/components/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";

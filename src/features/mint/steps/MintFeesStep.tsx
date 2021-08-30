@@ -45,7 +45,7 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { AddTokenButton } from "../../../components/wallet/WalletHelpers";
+import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import {
   BridgeChain,

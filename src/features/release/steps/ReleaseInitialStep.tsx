@@ -37,7 +37,7 @@ import {
   AssetInfo,
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
-import { AddTokenButton } from "../../../components/wallet/WalletHelpers";
+import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import {
   getChainConfig,
   getCurrencyConfig,

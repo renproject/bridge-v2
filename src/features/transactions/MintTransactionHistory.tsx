@@ -45,7 +45,7 @@ import {
   TransactionsPaginationWrapper,
 } from "../../components/transactions/TransactionsGrid";
 import { Debug } from "../../components/utils/Debug";
-import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
+import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { featureFlags } from "../../constants/featureFlags";
 import { paths } from "../../pages/routes";
 import {

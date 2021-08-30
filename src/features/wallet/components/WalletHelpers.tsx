@@ -16,37 +16,40 @@ import React, { FunctionComponent, useCallback, useState } from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
-import { useSubNetworkName } from "../../features/ui/uiHooks";
-import {
-  useSelectedChainWallet,
-  useSwitchChainHelpers,
-} from "../../features/wallet/walletHooks";
-import { setWalletPickerOpened } from "../../features/wallet/walletSlice";
-import { createPulseAnimation } from "../../theme/animationUtils";
-import { defaultShadow } from "../../theme/other";
+import { useSubNetworkName } from "../../ui/uiHooks";
+import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
+import { setWalletPickerOpened } from "../walletSlice";
+import { createPulseAnimation } from "../../../theme/animationUtils";
+import { defaultShadow } from "../../../theme/other";
 import {
   BridgeWallet,
   getChainConfigByRentxName,
   getNetworkConfigByRentxName,
   getWalletConfig,
   getWalletConfigByRentxName,
-} from "../../utils/assetConfigs";
-import { trimAddress } from "../../utils/strings";
+} from "../../../utils/assetConfigs";
+import { trimAddress } from "../../../utils/strings";
 import {
   ActionButton,
   ActionButtonWrapper,
   SecondaryActionButton,
-} from "../buttons/Buttons";
-import { WalletIcon } from "../icons/RenIcons";
-import { PaperContent, SpacedPaperContent } from "../layout/Paper";
-import { Link } from "../links/Links";
-import { BridgeModalTitle } from "../modals/BridgeModal";
+} from "../../../components/buttons/Buttons";
+import { WalletIcon } from "../../../components/icons/RenIcons";
+import {
+  PaperContent,
+  SpacedPaperContent,
+} from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import { BridgeModalTitle } from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
-} from "../progress/ProgressHelpers";
-import { Debug } from "../utils/Debug";
-import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
+} from "../../../components/progress/ProgressHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import {
+  WalletConnectionStatusType,
+  WalletStatus,
+} from "../../../components/utils/types";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
