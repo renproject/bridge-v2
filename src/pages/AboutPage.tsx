@@ -82,17 +82,6 @@ const AboutPage: FunctionComponent<RouteComponentProps> = () => {
           </Link>{" "}
           {t("about.safety-description-2")}
         </Typography>
-        <Typography variant="body1">
-          {t("about.legacy-message")},{" "}
-          <Link
-            external
-            href={links.LEGACY_BRIDGE}
-            color="primary"
-            underline="hover"
-          >
-            {t("about.legacy-link-text")}
-          </Link>
-        </Typography>
         <div className={styles.logos}>
           <span className={styles.ren}>
             <RenLogoFullIcon fontSize="inherit" />
