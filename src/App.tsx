@@ -4,7 +4,6 @@ import { AppLoader } from "./components/progress/AppLoader";
 import { SystemMonitor } from "./features/ui/SystemMonitor";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
-import { LegacyBridgeModal } from "./pages/Shared";
 import { WelcomePage } from "./pages/WelcomePage";
 
 const MainPage = lazy(() => import("./pages/MainPage"));
@@ -27,7 +26,6 @@ function App() {
           <Route exact path={mainPagePaths} component={MainPage} />
           <Route component={NotFoundPage} />
         </Switch>
-        <LegacyBridgeModal />
         <SystemMonitor />
       </Suspense>
     </Router>
