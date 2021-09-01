@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
-  ActionButtonWrapper,
+  MultipleActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import {
   AssetDropdown,
@@ -37,7 +37,6 @@ import {
   AssetInfo,
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
-import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -56,6 +55,7 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
+import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import {
   useReleaseChainHelpers,
   useRenAssetHelpers,
@@ -316,7 +316,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
               Icon={<MainIcon fontSize="inherit" />}
             />
           ))}
-        <ActionButtonWrapper>
+        <MultipleActionButtonWrapper>
           <Box mb={1}>
             <AddTokenButton
               onAddToken={addToken}
@@ -330,7 +330,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
           >
             {walletConnected ? t("common.next-label") : t("wallet.connect")}
           </ActionButton>
-        </ActionButtonWrapper>
+        </MultipleActionButtonWrapper>
       </PaperContent>
     </>
   );

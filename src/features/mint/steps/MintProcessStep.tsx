@@ -1,11 +1,11 @@
 import { Divider, IconButton } from "@material-ui/core";
 import {
-  mintMachine,
   DepositMachineSchema,
+  ErroringGatewaySession,
   GatewaySession,
   GatewayTransaction,
+  mintMachine,
   OpenedGatewaySession,
-  ErroringGatewaySession,
 } from "@renproject/ren-tx";
 import * as Sentry from "@sentry/react";
 import React, {
@@ -36,7 +36,6 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
-import { WalletConnectionProgress } from "../../wallet/components/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
@@ -75,6 +74,7 @@ import {
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
+import { WalletConnectionProgress } from "../../wallet/components/WalletHelpers";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import {
   $chain,
@@ -92,7 +92,7 @@ import {
   MintDepositConfirmationStatus,
   MintDepositToStatus,
 } from "../components/MintStatuses";
-import { DepositNavigation } from "../components/MultipleDepositsHelpers";
+import { ResponsiveDepositNavigation } from "../components/MultipleDepositsHelpers";
 import { useDepositPagination, useMintMachine } from "../mintHooks";
 import { resetMint } from "../mintSlice";
 import {
@@ -473,7 +473,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   return (
     <>
       <DepositWrapper>
-        <DepositNavigation
+        <ResponsiveDepositNavigation
           value={currentDeposit}
           onChange={handleCurrentDepositChange}
           tx={current.context.tx}

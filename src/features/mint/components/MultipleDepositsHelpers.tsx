@@ -1,17 +1,21 @@
 import {
+  Box,
   ButtonBase,
   ButtonProps,
+  Fade,
   lighten,
   makeStyles,
   styled,
   Theme,
+  Typography,
+  useMediaQuery,
   useTheme,
+  withStyles,
 } from "@material-ui/core";
 import {
   ToggleButton,
   ToggleButtonGroup,
   ToggleButtonGroupProps,
-  ToggleButtonProps,
 } from "@material-ui/lab";
 import { GatewaySession } from "@renproject/ren-tx";
 import classNames from "classnames";
@@ -113,6 +117,9 @@ type CircledIconContainerProps = {
   className?: string;
 };
 
+const depositsBreakpoint = "md";
+const transition = "all 1s ease-out";
+
 const useCircledIconContainerStyles = makeStyles<
   Theme,
   CircledIconContainerProps
@@ -148,34 +155,55 @@ export const CircledIconContainer: FunctionComponent<CircledIconContainerProps> 
   return <div className={classNames(styles.root, className)}>{children}</div>;
 };
 
-const useDepositToggleButtonStyles = makeStyles((theme) => ({
+export const DepositToggleButton = withStyles((theme) => ({
   root: {
+    transition,
     background: theme.palette.common.white,
     padding: `2px 15px 2px 15px`,
+    [theme.breakpoints.up(depositsBreakpoint)]: {
+      padding: 12,
+      minWidth: 240,
+      textAlign: "left",
+      boxShadow: `0px 1px 3px rgba(0, 27, 58, 0.05)`,
+      border: `2px solid ${theme.palette.common.white}!important`,
+      "&:hover": {
+        background: theme.palette.common.white,
+        border: `2px solid ${theme.palette.primary.main}!important`,
+      },
+    },
+    [theme.breakpoints.up("lg")]: {
+      minWidth: 280,
+    },
     "&:first-child": {
       paddingLeft: 2,
       marginRight: 1,
+      [theme.breakpoints.up(depositsBreakpoint)]: {
+        paddingLeft: 12,
+        marginRight: 0,
+      },
     },
     "&:last-child": {
       paddingRight: 2,
+      [theme.breakpoints.up(depositsBreakpoint)]: {
+        paddingRight: 12,
+      },
     },
   },
-}));
-
-export const DepositToggleButton: FunctionComponent<ToggleButtonProps> = ({
-  value,
-  className,
-  ...rest
-}) => {
-  const styles = useDepositToggleButtonStyles();
-  return (
-    <ToggleButton
-      className={classNames(styles.root, className)}
-      value={value}
-      {...rest}
-    />
-  );
-};
+  selected: {
+    [theme.breakpoints.up(depositsBreakpoint)]: {
+      background: `${theme.palette.common.white}!important`,
+      border: `2px solid ${theme.palette.primary.main}!important`,
+    },
+  },
+  label: {
+    [theme.breakpoints.up(depositsBreakpoint)]: {
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-start",
+    },
+  },
+}))(ToggleButton);
 
 export const DepositIndicator: FunctionComponent = () => {
   const theme = useTheme();
@@ -225,7 +253,28 @@ export const CircledProgressWithContent: FunctionComponent<CircledProgressWithCo
   );
 };
 
-const useDepositNavigationStyles = makeStyles({
+type DepositNavigationProps = ToggleButtonGroupProps & {
+  tx: GatewaySession<any>;
+};
+
+export const DepositNavigationResolver: FunctionComponent<DepositNavigationProps> = (
+  props
+) => {
+  const theme = useTheme();
+  const desktop = useMediaQuery(theme.breakpoints.up("md"));
+  return (
+    <>
+      {/*<Fade in={!desktop}>*/}
+      {/*  <MobileDepositNavigation {...props} />*/}
+      {/*</Fade>*/}
+      <Fade in={desktop}>
+        <ResponsiveDepositNavigation {...props} />
+      </Fade>
+    </>
+  );
+};
+
+const useMobileDepositNavigationStyles = makeStyles({
   root: {
     position: "absolute",
     left: 0,
@@ -237,16 +286,12 @@ const useDepositNavigationStyles = makeStyles({
   },
 });
 
-type DepositNavigationProps = ToggleButtonGroupProps & {
-  tx: GatewaySession<any>;
-};
-
-export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
+export const MobileDepositNavigation: FunctionComponent<DepositNavigationProps> = ({
   value,
   onChange,
   tx,
 }) => {
-  const styles = useDepositNavigationStyles();
+  const styles = useMobileDepositNavigationStyles();
   const theme = useTheme();
   const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
 
@@ -309,6 +354,162 @@ export const DepositNavigation: FunctionComponent<DepositNavigationProps> = ({
           );
         })}
       </ToggleButtonGroup>
+    </div>
+  );
+};
+
+const StyledToggleButtonGroup = withStyles((theme) => ({
+  root: {
+    transition,
+    [theme.breakpoints.up(depositsBreakpoint)]: {
+      boxShadow: "none",
+      borderRadius: 0,
+    },
+  },
+  grouped: {
+    transition,
+    [theme.breakpoints.up(depositsBreakpoint)]: {
+      marginBottom: 16,
+      border: "none",
+      "&:not(:first-child)": {
+        borderRadius: 46,
+      },
+      "&:first-child": {
+        borderRadius: 46,
+      },
+    },
+  },
+}))(ToggleButtonGroup);
+
+const useResponsiveDepositNavigationStyles = makeStyles((theme) => ({
+  root: {
+    transition,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: -152,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    [theme.breakpoints.up(depositsBreakpoint)]: {
+      display: "block",
+      top: -72,
+      left: 390,
+    },
+  },
+}));
+
+const MoreInfoBox = withStyles((theme) => ({
+  root: {
+    display: "none",
+    [theme.breakpoints.up(depositsBreakpoint)]: {
+      marginLeft: 12,
+      display: "flex",
+    },
+  },
+}))(Box);
+
+export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationProps> = ({
+  value,
+  onChange,
+  tx,
+}) => {
+  const styles = useResponsiveDepositNavigationStyles();
+  const theme = useTheme();
+  const mobile = !useMediaQuery(theme.breakpoints.up(depositsBreakpoint));
+
+  const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
+
+  const {
+    lockChainConfig,
+    mintChainConfig,
+    lockCurrencyConfig,
+  } = getLockAndMintBasicParams(tx);
+
+  return (
+    <div className={styles.root}>
+      <StyledToggleButtonGroup
+        exclusive
+        size="large"
+        onChange={onChange}
+        value={value}
+        orientation={mobile ? "horizontal" : "vertical"}
+      >
+        <DepositToggleButton value="gateway">
+          <CircledIconContainer>
+            <DepositIndicator />
+          </CircledIconContainer>
+          <MoreInfoBox>
+            <Typography variant="body1" color="textPrimary">
+              Gateway Address
+            </Typography>
+          </MoreInfoBox>
+        </DepositToggleButton>
+        {sortedDeposits.map((deposit) => {
+          const hash = deposit.sourceTxHash;
+          const { mintCurrencyConfig } = getLockAndMintBasicParams(tx);
+
+          const {
+            lockConfirmations,
+            lockTargetConfirmations,
+            lockTxAmount,
+            depositStatus,
+            depositPhase,
+          } = getDepositParams(tx, deposit);
+          const StatusIcon = getDepositStatusIcon({
+            depositStatus,
+            depositPhase,
+            mintChainConfig,
+            lockChainConfig,
+          });
+          const isProcessing = depositPhase === DepositPhase.NONE;
+          const requiresAction =
+            depositStatus === DepositEntryStatus.ACTION_REQUIRED;
+          const completed = depositStatus === DepositEntryStatus.COMPLETED;
+          const confirmationProps = completed
+            ? {}
+            : {
+                confirmations: lockConfirmations,
+                targetConfirmations: lockTargetConfirmations,
+              };
+          return (
+            <DepositToggleButton key={hash} value={hash}>
+              <CircledProgressWithContent
+                color={
+                  completed ? theme.customColors.blue : lockCurrencyConfig.color
+                }
+                {...confirmationProps}
+                processing={isProcessing}
+                indicator={requiresAction}
+              >
+                <StatusIcon fontSize="large" />
+              </CircledProgressWithContent>
+              <MoreInfoBox>
+                {completed && (
+                  <div>
+                    <Typography color="primary" variant="body1">
+                      Completed
+                    </Typography>
+                    <Typography color="textSecondary" variant="body2">
+                      Minted {lockTxAmount} {mintCurrencyConfig.short}
+                    </Typography>
+                  </div>
+                )}
+                {!completed && requiresAction && (
+                  <div>
+                    <Typography color="textPrimary" variant="body1">
+                      Action required!
+                    </Typography>
+                    <Typography color="textSecondary" variant="body2">
+                      Mint {lockTxAmount} {mintCurrencyConfig.short}
+                    </Typography>
+                  </div>
+                )}
+              </MoreInfoBox>
+            </DepositToggleButton>
+          );
+        })}
+      </StyledToggleButtonGroup>
     </div>
   );
 };

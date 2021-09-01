@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   ActionButton,
-  ActionButtonWrapper,
+  MultipleActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
@@ -45,7 +45,6 @@ import {
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import {
   BridgeChain,
@@ -69,6 +68,7 @@ import {
   TxType,
 } from "../../transactions/transactionsUtils";
 import { useShakePaper } from "../../ui/uiHooks";
+import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import {
   useRenAssetHelpers,
   useSelectedChainWallet,
@@ -410,7 +410,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             />
           </FormControl>
         </CheckboxWrapper>
-        <ActionButtonWrapper>
+        <MultipleActionButtonWrapper>
           {walletConnected && addToken !== null && (
             <Box mb={1}>
               <AddTokenButton
@@ -434,7 +434,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                   currency: lockCurrencyConfig.short,
                 })}
           </ActionButton>
-        </ActionButtonWrapper>
+        </MultipleActionButtonWrapper>
       </PaperContent>
       <Debug it={{ tx }} />
     </>

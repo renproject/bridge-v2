@@ -16,6 +16,7 @@ import {
   ActionButtonWrapper,
   BigQrCode,
   CopyContentButton,
+  MultipleActionButtonWrapper,
   QrCodeIconButton,
   SecondaryActionButton,
   TransactionDetailsButton,
@@ -561,7 +562,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         />
         !
       </Typography>
-      <ActionButtonWrapper>
+      <MultipleActionButtonWrapper>
         <Box mb={1}>
           <SecondaryActionButton onClick={onGoToGateway}>
             {t("mint.back-to-gateway-address")}
@@ -570,7 +571,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         <ActionButton onClick={handleGoToHome}>
           {t("mint.back-to-home")}
         </ActionButton>
-      </ActionButtonWrapper>
+      </MultipleActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link
           external

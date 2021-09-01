@@ -223,8 +223,5 @@
   "mint.multiple-deposits-message": "RenBridge has detected multiple deposits for this gateway address. View its progress using the navigation bar at the top of the screen.",
   "navigation.report-an-issue-label": "Report an issue",
   "release.confirmed-label": "Confirmed",
-  "tx.address-error-popup-back-to-home": "Back to home",
-  "welcome.continue-action-text": "Agree & Continue",
-  "welcome.continue-text": "To continue, read and agree to the",
-  "welcome.continue-tos-link-text": "Terms of Service"
+  "tx.address-error-popup-back-to-home": "Back to home"
 }

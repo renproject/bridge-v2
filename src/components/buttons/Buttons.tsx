@@ -500,6 +500,13 @@ export const ActionButtonWrapper = styled("div")(() => ({
   marginTop: 20,
   display: "flex",
   justifyContent: "center",
+  flexDirection: "row",
+}));
+
+export const MultipleActionButtonWrapper = styled("div")(() => ({
+  marginTop: 20,
+  display: "flex",
+  justifyContent: "center",
   flexDirection: "column",
 }));
 
