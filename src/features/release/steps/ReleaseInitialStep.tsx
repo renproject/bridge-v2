@@ -1,5 +1,4 @@
 import {
-  Box,
   Checkbox,
   Divider,
   Fade,
@@ -13,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
-  MultipleActionButtonWrapper,
+  ActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import {
   AssetDropdown,
@@ -40,7 +39,6 @@ import {
 import {
   getChainConfig,
   getCurrencyConfig,
-  getWalletConfig,
   supportedBurnChains,
   supportedReleaseCurrencies,
   toReleasedCurrency,
@@ -55,10 +53,8 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
-import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import {
   useReleaseChainHelpers,
-  useRenAssetHelpers,
   useSelectedChainWallet,
 } from "../../wallet/walletHooks";
 import {
@@ -80,12 +76,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const {
-    walletConnected,
-    provider,
-    symbol: walletSymbol,
-  } = useSelectedChainWallet();
-  const walletConfig = getWalletConfig(walletSymbol);
+  const { walletConnected } = useSelectedChainWallet();
   const { chain, balances } = useSelector($wallet);
   const network = useSelector($renNetwork);
   const { currency, amount, address } = useSelector($release);
@@ -189,13 +180,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       onNext();
     }
   }, [dispatch, onNext, walletConnected, basicCondition, hasBalance]);
-
-  const { addToken } = useRenAssetHelpers(
-    chain,
-    network,
-    provider,
-    releaseCurrencyConfig.symbol
-  );
 
   return (
     <>
@@ -316,21 +300,14 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
               Icon={<MainIcon fontSize="inherit" />}
             />
           ))}
-        <MultipleActionButtonWrapper>
-          <Box mb={1}>
-            <AddTokenButton
-              onAddToken={addToken}
-              wallet={walletConfig.short}
-              currency={burnedCurrencyConfig.short}
-            />
-          </Box>
+        <ActionButtonWrapper>
           <ActionButton
             onClick={handleNextStep}
             disabled={walletConnected ? !enabled : false}
           >
             {walletConnected ? t("common.next-label") : t("wallet.connect")}
           </ActionButton>
-        </MultipleActionButtonWrapper>
+        </ActionButtonWrapper>
       </PaperContent>
     </>
   );

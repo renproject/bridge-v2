@@ -119,7 +119,7 @@ type CircledIconContainerProps = {
   className?: string;
 };
 
-const depositsBreakpoint = "md";
+export const depositNavigationBreakpoint = "md";
 const transition = "all 1s ease-out";
 
 const useCircledIconContainerStyles = makeStyles<
@@ -162,7 +162,7 @@ export const DepositToggleButton = withStyles((theme) => ({
     transition,
     background: theme.palette.common.white,
     padding: `2px 15px 2px 15px`,
-    [theme.breakpoints.up(depositsBreakpoint)]: {
+    [theme.breakpoints.up(depositNavigationBreakpoint)]: {
       padding: 12,
       minWidth: 240,
       textAlign: "left",
@@ -179,26 +179,26 @@ export const DepositToggleButton = withStyles((theme) => ({
     "&:first-child": {
       paddingLeft: 2,
       marginRight: 1,
-      [theme.breakpoints.up(depositsBreakpoint)]: {
+      [theme.breakpoints.up(depositNavigationBreakpoint)]: {
         paddingLeft: 12,
         marginRight: 0,
       },
     },
     "&:last-child": {
       paddingRight: 2,
-      [theme.breakpoints.up(depositsBreakpoint)]: {
+      [theme.breakpoints.up(depositNavigationBreakpoint)]: {
         paddingRight: 12,
       },
     },
   },
   selected: {
-    [theme.breakpoints.up(depositsBreakpoint)]: {
+    [theme.breakpoints.up(depositNavigationBreakpoint)]: {
       background: `${theme.palette.common.white}!important`,
       border: `2px solid ${theme.palette.primary.main}!important`,
     },
   },
   label: {
-    [theme.breakpoints.up(depositsBreakpoint)]: {
+    [theme.breakpoints.up(depositNavigationBreakpoint)]: {
       width: "100%",
       display: "flex",
       alignItems: "center",
@@ -276,39 +276,34 @@ export const DepositNavigationResolver: FunctionComponent<DepositNavigationProps
   );
 };
 
-const useMobileDepositNavigationStyles = makeStyles({
-  root: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: -152,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
-
 const StyledToggleButtonGroup = withStyles((theme) => ({
   root: {
     transition,
-    [theme.breakpoints.up(depositsBreakpoint)]: {
+    [theme.breakpoints.up(depositNavigationBreakpoint)]: {
       background: theme.customColors.whiteDarker,
       borderRadius: 20,
     },
   },
   grouped: {
     transition,
-    [theme.breakpoints.up(depositsBreakpoint)]: {
-      marginBottom: 16,
+    [theme.breakpoints.up(depositNavigationBreakpoint)]: {
       border: "none",
       "&:first-child": {
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
       },
+      "&:only-child": {
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+      },
       "&:not(:first-child)": {
         borderRadius: 46,
         marginLeft: 12,
         marginRight: 12,
+        marginTop: 12,
+      },
+      "&:last-child:not(:only-child)": {
+        marginBottom: 12,
       },
     },
   },
@@ -324,7 +319,7 @@ const useResponsiveDepositNavigationStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    [theme.breakpoints.up(depositsBreakpoint)]: {
+    [theme.breakpoints.up(depositNavigationBreakpoint)]: {
       display: "block",
       top: -72,
       left: 390,
@@ -336,7 +331,7 @@ const useMoreInfoStyles = makeStyles((theme) => ({
   root: {
     display: "none",
     marginLeft: 12,
-    [theme.breakpoints.up(depositsBreakpoint)]: {
+    [theme.breakpoints.up(depositNavigationBreakpoint)]: {
       display: "flex",
     },
   },
@@ -365,7 +360,9 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
   const { t } = useTranslation();
   const styles = useResponsiveDepositNavigationStyles();
   const theme = useTheme();
-  const mobile = !useMediaQuery(theme.breakpoints.up(depositsBreakpoint));
+  const mobile = !useMediaQuery(
+    theme.breakpoints.up(depositNavigationBreakpoint)
+  );
 
   const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
 
@@ -421,8 +418,6 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
           const requiresAction =
             depositStatus === DepositEntryStatus.ACTION_REQUIRED;
           const completed = depositStatus === DepositEntryStatus.COMPLETED;
-          const isPendingConfirmations =
-            lockConfirmations < lockTargetConfirmations;
           const confirmationProps = completed
             ? {}
             : {
@@ -463,7 +458,7 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
                   {lockTxAmount} {lockCurrencyConfig.short}
                 </Typography>
                 <Typography variant="body2" color="primary">
-                  {t("mint.deposit-navigation-mint-ready-label")}
+                  {t("mint.deposit-navigation-ready-to-mint-label")}
                 </Typography>
               </div>
             );

@@ -19,7 +19,6 @@ import {
   CopyContentButton,
   MultipleActionButtonWrapper,
   QrCodeIconButton,
-  SecondaryActionButton,
   TransactionDetailsButton,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
@@ -48,10 +47,7 @@ import {
 import { orangeLight } from "../../../theme/colors";
 import {
   getChainConfigByRentxName,
-  getCurrencyConfig,
-  getCurrencyConfigByRentxName,
   getWalletConfig,
-  toMintedCurrency,
 } from "../../../utils/assetConfigs";
 import { getHours } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
@@ -434,19 +430,6 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const mintedCurrency = toMintedCurrency(
-    getCurrencyConfigByRentxName(tx.sourceAsset).symbol
-  );
-  const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
-  const { chain } = useSelector($wallet);
-  const network = useSelector($renNetwork);
-  const {
-    walletConnected,
-    provider,
-    symbol: walletSymbol,
-  } = useSelectedChainWallet();
-  const walletConfig = getWalletConfig(walletSymbol);
-
   const {
     lockCurrencyConfig,
     lockChainConfig,
@@ -458,13 +441,6 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
     mintChainConfig,
     mintCurrencyConfig,
   } = getLockAndMintParams(tx, depositHash);
-
-  const { addToken } = useRenAssetHelpers(
-    chain,
-    network,
-    provider,
-    mintedCurrency
-  );
 
   return (
     <>
@@ -492,22 +468,13 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
           spacedSuffix={lockCurrencyConfig.full}
         />
       </Typography>
-      <MultipleActionButtonWrapper>
-        {walletConnected && addToken !== null && (
-          <Box mb={1}>
-            <AddTokenButton
-              onAddToken={addToken}
-              wallet={walletConfig.short}
-              currency={mintedCurrencyConfig.short}
-            />
-          </Box>
-        )}
+      <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
           {submitting ? t("mint.minting-label") : t("mint.mint-label")}{" "}
           {mintCurrencyConfig.short}
           {submitting && "..."}
         </ActionButton>
-      </MultipleActionButtonWrapper>
+      </ActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
           label={lockChainConfig.short}
@@ -533,6 +500,16 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.complete-title"));
   const history = useHistory();
+
+  const { chain } = useSelector($wallet);
+  const network = useSelector($renNetwork);
+  const {
+    walletConnected,
+    provider,
+    symbol: walletSymbol,
+  } = useSelectedChainWallet();
+  const walletConfig = getWalletConfig(walletSymbol);
+
   const {
     lockCurrencyConfig,
     mintCurrencyConfig,
@@ -594,6 +571,14 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
   ]);
 
   useEffect(showNotifications, [showNotifications, pending]);
+
+  const { addToken } = useRenAssetHelpers(
+    chain,
+    network,
+    provider,
+    lockCurrencyConfig.symbol
+  );
+
   return (
     <>
       <ProgressWrapper>
@@ -610,11 +595,15 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         !
       </Typography>
       <MultipleActionButtonWrapper>
-        <Box mb={1}>
-          <SecondaryActionButton onClick={onGoToGateway}>
-            {t("mint.back-to-gateway-address")}
-          </SecondaryActionButton>
-        </Box>
+        {walletConnected && addToken !== null && (
+          <Box mb={1}>
+            <AddTokenButton
+              onAddToken={addToken}
+              wallet={walletConfig.short}
+              currency={mintCurrencyConfig.short}
+            />
+          </Box>
+        )}
         <ActionButton onClick={handleGoToHome}>
           {t("mint.back-to-home")}
         </ActionButton>

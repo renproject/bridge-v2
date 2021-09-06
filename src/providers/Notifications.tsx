@@ -50,7 +50,7 @@ export const NotificationsProvider: FunctionComponent = ({ children }) => (
   <NotistackSnackbarProvider
     anchorOrigin={{
       vertical: "top",
-      horizontal: "right",
+      horizontal: "left",
     }}
     maxSnack={4}
     domRoot={document.getElementById("notifications") || undefined}
