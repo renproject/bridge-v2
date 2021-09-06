@@ -10,6 +10,8 @@ import { RenNetwork } from "@renproject/interfaces";
 import { BridgeCurrency } from "../../../utils/assetConfigs";
 import { Solana } from "@renproject/chains-solana";
 import { ErrorDialog } from "../../transactions/components/TransactionsHelpers";
+import { Link } from "../../../components/links/Links";
+import { links } from "../../../constants/constants";
 
 export const SolanaTokenAccountModal: React.FunctionComponent<{
   provider: any;
@@ -66,6 +68,15 @@ export const SolanaTokenAccountModal: React.FunctionComponent<{
           </Typography>
           <Typography variant="body2" align="center" gutterBottom>
             This will require you to sign a transaction and spend some SOL.
+          </Typography>
+          <br />
+          <Typography variant="body2" align="center" gutterBottom>
+            IMPORTANT: If you are using a Ledger hardware wallet, you will need
+            to enable blind signing in your Ledger's Solana app settings (
+            <Link external href={links.LEDGER_BLIND_SIGNING}>
+              instructions
+            </Link>
+            ) and then reload the page.
           </Typography>
           {awaiting && (
             <Typography variant="body1" align="center" gutterBottom>

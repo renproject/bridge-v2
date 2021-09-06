@@ -16,6 +16,8 @@ export const links = {
   SOCIAL_GITHUB: "https://github.com/renproject",
   SOCIAL_TELEGRAM: "https://t.me/renproject",
   SOCIAL_REDDIT: "https://www.reddit.com/r/renproject",
+  LEDGER_BLIND_SIGNING:
+    "https://support.ledger.com/hc/en-us/articles/360016265659-Solana-SOL-?docs=true",
 };
 
 export const MINT_GAS_UNIT_COST = 153400;
