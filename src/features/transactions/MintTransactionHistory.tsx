@@ -70,6 +70,7 @@ import { $mint, setMintCurrency } from "../mint/mintSlice";
 import {
   areAllDepositsCompleted,
   createMintTransaction,
+  GATEWAY_EXPIRY_OFFSET_MS,
   getDepositParams,
   getLockAndMintBasicParams,
   getRemainingGatewayTime,
@@ -697,7 +698,9 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
             <span>
               {label}
               <strong>
-                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+                {getFormattedHMS(
+                  timeToGatewayExpiration + GATEWAY_EXPIRY_OFFSET_MS
+                )}
               </strong>
             </span>
           }
@@ -710,7 +713,9 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
             <span>
               {label}
               <strong>
-                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+                {getFormattedHMS(
+                  timeToGatewayExpiration + GATEWAY_EXPIRY_OFFSET_MS
+                )}
               </strong>
             </span>
           }
@@ -723,7 +728,9 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
             <span>
               {label}
               <strong>
-                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+                {getFormattedHMS(
+                  timeToGatewayExpiration + GATEWAY_EXPIRY_OFFSET_MS
+                )}
               </strong>
             </span>
           }

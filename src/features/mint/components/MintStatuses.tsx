@@ -9,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
@@ -45,11 +46,18 @@ import {
   useSetPaperTitle,
 } from "../../../providers/TitleProviders";
 import { orangeLight } from "../../../theme/colors";
-import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
+import {
+  getChainConfigByRentxName,
+  getCurrencyConfig,
+  getCurrencyConfigByRentxName,
+  getWalletConfig,
+  toMintedCurrency,
+} from "../../../utils/assetConfigs";
 import { getHours } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
+import { $renNetwork } from "../../network/networkSlice";
 import { useBrowserNotifications } from "../../notifications/notificationsUtils";
 import {
   HMSCountdown,
@@ -57,11 +65,18 @@ import {
   SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
+import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import {
+  useRenAssetHelpers,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
+import { $wallet } from "../../wallet/walletSlice";
+import {
+  GATEWAY_EXPIRY_OFFSET_MS,
   getLockAndMintBasicParams,
   getLockAndMintParams,
   getRemainingGatewayTime,
-  getRemainingMintTime,
+  getRemainingTime,
 } from "../mintUtils";
 import {
   GatewayAddressValidityMessage,
@@ -178,7 +193,9 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
           {timeRemained > 0 && (
             <span>
               {t("mint.gateway-do-not-send-after-label")}:{" "}
-              <HMSCountdown milliseconds={timeRemained} />
+              <strong>
+                <HMSCountdown milliseconds={timeRemained} />
+              </strong>
             </span>
           )}
           {timeRemained <= 0 && <span>{t("mint.expired-label")}</span>}
@@ -330,11 +347,11 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       closeNotification(key);
     };
   });
-  const [mintTimeRemained] = useState(getRemainingMintTime(tx.expiryTime));
+  const [mintTimeRemained] = useState(getRemainingTime(tx.expiryTime));
 
   useEffect(() => {
     let key = 0;
-    if (mintTimeRemained < 24 * 3600 * 1000) {
+    if (mintTimeRemained < GATEWAY_EXPIRY_OFFSET_MS) {
       key = showNotification(
         <GatewayTransactionValidityMessage milliseconds={mintTimeRemained} />,
         {
@@ -416,6 +433,20 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
+
+  const mintedCurrency = toMintedCurrency(
+    getCurrencyConfigByRentxName(tx.sourceAsset).symbol
+  );
+  const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
+  const { chain } = useSelector($wallet);
+  const network = useSelector($renNetwork);
+  const {
+    walletConnected,
+    provider,
+    symbol: walletSymbol,
+  } = useSelectedChainWallet();
+  const walletConfig = getWalletConfig(walletSymbol);
+
   const {
     lockCurrencyConfig,
     lockChainConfig,
@@ -427,6 +458,13 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
     mintChainConfig,
     mintCurrencyConfig,
   } = getLockAndMintParams(tx, depositHash);
+
+  const { addToken } = useRenAssetHelpers(
+    chain,
+    network,
+    provider,
+    mintedCurrency
+  );
 
   return (
     <>
@@ -454,13 +492,22 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
           spacedSuffix={lockCurrencyConfig.full}
         />
       </Typography>
-      <ActionButtonWrapper>
+      <MultipleActionButtonWrapper>
+        {walletConnected && addToken !== null && (
+          <Box mb={1}>
+            <AddTokenButton
+              onAddToken={addToken}
+              wallet={walletConfig.short}
+              currency={mintedCurrencyConfig.short}
+            />
+          </Box>
+        )}
         <ActionButton onClick={onSubmit} disabled={submitting}>
           {submitting ? t("mint.minting-label") : t("mint.mint-label")}{" "}
           {mintCurrencyConfig.short}
           {submitting && "..."}
         </ActionButton>
-      </ActionButtonWrapper>
+      </MultipleActionButtonWrapper>
       <ActionButtonWrapper>
         <TransactionDetailsButton
           label={lockChainConfig.short}

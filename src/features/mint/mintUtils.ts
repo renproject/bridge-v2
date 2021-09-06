@@ -34,6 +34,8 @@ import {
   TxPhase,
 } from "../transactions/transactionsUtils";
 
+export const GATEWAY_EXPIRY_OFFSET_MS = 24 * 3600 * 1000;
+
 type CreateMintTransactionParams = {
   currency: BridgeCurrency;
   mintedCurrency: BridgeCurrency; // TODO: Can be probably derived from mintedCurrencyChain
@@ -47,14 +49,14 @@ type CreateMintTransactionParams = {
 };
 
 export const getSessionDay = (dayOffset = 0) =>
-  Math.floor(Date.now() / 1000 / 60 / 60 / 24) - dayOffset;
+  Math.floor(Date.now() / GATEWAY_EXPIRY_OFFSET_MS) - dayOffset;
 
 // user has 72 hours from the start of a session day to complete the tx
 // a gateway is only valid for 48 hours however.
 //
 // FIXME: once ren-tx takes the two-stage expiry into account, update this
 export const getSessionExpiry = (dayOffset = 0) =>
-  (getSessionDay(dayOffset) + 3) * 60 * 60 * 24 * 1000;
+  (getSessionDay(dayOffset) + 3) * GATEWAY_EXPIRY_OFFSET_MS;
 
 const generateNonce = (dayOffset = 0, dayIndex = 0) => {
   const nonce = dayIndex + getSessionDay(dayOffset) * 1000;
@@ -66,18 +68,18 @@ const generateNonce = (dayOffset = 0, dayIndex = 0) => {
 // submission leeway
 // FIXME: once ren-tx takes the two stages into account, fix this
 export const getRemainingGatewayTime = (expiryTime: number) =>
-  Math.ceil(expiryTime - 24 * 60 * 60 * 1000 - Number(new Date()));
+  Math.ceil(expiryTime - GATEWAY_EXPIRY_OFFSET_MS - Number(new Date()));
 
-export const getRemainingMintTime = (expiryTime: number) =>
+export const getRemainingTime = (expiryTime: number) =>
   Math.ceil(expiryTime - Number(new Date()));
 
 export const getGatewayStatus = (expiryTime: number) => {
   const remaining = getRemainingGatewayTime(expiryTime);
-  if (remaining > 24 * 60 * 60 * 1000) {
+  if (remaining > GATEWAY_EXPIRY_OFFSET_MS) {
     return GatewayStatus.CURRENT; // newest gateway
   } else if (remaining > 0) {
     return GatewayStatus.PREVIOUS; // depositing still possible
-  } else if (remaining > -24 * 60 * 60 * 1000) {
+  } else if (remaining > -GATEWAY_EXPIRY_OFFSET_MS) {
     return GatewayStatus.EXPIRING; // just mint operation permitted
   } else {
     // totally expired gateway
@@ -118,7 +120,7 @@ export const createMintTransaction = ({
     expiryTime: getSessionExpiry(dayOffset),
     transactions: {},
     customParams: {},
-    createdAt: Date.now() - dayOffset * 24 * 60 * 60 * 1000,
+    createdAt: Date.now() - dayOffset * GATEWAY_EXPIRY_OFFSET_MS,
   };
 
   return tx;

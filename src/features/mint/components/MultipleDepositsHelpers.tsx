@@ -1,5 +1,4 @@
 import {
-  Box,
   ButtonBase,
   ButtonProps,
   Fade,
@@ -20,6 +19,7 @@ import {
 import { GatewaySession } from "@renproject/ren-tx";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
+import { useTranslation } from "react-i18next";
 import {
   CompletedIcon,
   EmptyIcon,
@@ -33,6 +33,7 @@ import {
   PulseIndicator,
 } from "../../../components/progress/ProgressHelpers";
 import { BridgeChainConfig } from "../../../utils/assetConfigs";
+import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 import {
   DepositEntryStatus,
   DepositPhase,
@@ -41,6 +42,7 @@ import {
   depositSorter,
   getDepositParams,
   getLockAndMintBasicParams,
+  getRemainingGatewayTime,
 } from "../mintUtils";
 
 const useBigNavButtonStyles = makeStyles((theme) => ({
@@ -286,84 +288,12 @@ const useMobileDepositNavigationStyles = makeStyles({
   },
 });
 
-export const MobileDepositNavigation: FunctionComponent<DepositNavigationProps> = ({
-  value,
-  onChange,
-  tx,
-}) => {
-  const styles = useMobileDepositNavigationStyles();
-  const theme = useTheme();
-  const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
-
-  const {
-    lockChainConfig,
-    mintChainConfig,
-    lockCurrencyConfig,
-  } = getLockAndMintBasicParams(tx);
-
-  return (
-    <div className={styles.root}>
-      <ToggleButtonGroup
-        exclusive
-        size="large"
-        onChange={onChange}
-        value={value}
-      >
-        <DepositToggleButton value="gateway">
-          <CircledIconContainer>
-            <DepositIndicator />
-          </CircledIconContainer>
-        </DepositToggleButton>
-        {sortedDeposits.map((deposit) => {
-          const hash = deposit.sourceTxHash;
-          const {
-            lockConfirmations,
-            lockTargetConfirmations,
-            depositStatus,
-            depositPhase,
-          } = getDepositParams(tx, deposit);
-          const StatusIcon = getDepositStatusIcon({
-            depositStatus,
-            depositPhase,
-            mintChainConfig,
-            lockChainConfig,
-          });
-          const isProcessing = depositPhase === DepositPhase.NONE;
-          const requiresAction =
-            depositStatus === DepositEntryStatus.ACTION_REQUIRED;
-          const completed = depositStatus === DepositEntryStatus.COMPLETED;
-          const confirmationProps = completed
-            ? {}
-            : {
-                confirmations: lockConfirmations,
-                targetConfirmations: lockTargetConfirmations,
-              };
-          return (
-            <DepositToggleButton key={hash} value={hash}>
-              <CircledProgressWithContent
-                color={
-                  completed ? theme.customColors.blue : lockCurrencyConfig.color
-                }
-                {...confirmationProps}
-                processing={isProcessing}
-                indicator={requiresAction}
-              >
-                <StatusIcon fontSize="large" />
-              </CircledProgressWithContent>
-            </DepositToggleButton>
-          );
-        })}
-      </ToggleButtonGroup>
-    </div>
-  );
-};
-
 const StyledToggleButtonGroup = withStyles((theme) => ({
   root: {
     transition,
     [theme.breakpoints.up(depositsBreakpoint)]: {
-      boxShadow: "none",
-      borderRadius: 0,
+      background: theme.customColors.whiteDarker,
+      borderRadius: 20,
     },
   },
   grouped: {
@@ -371,11 +301,14 @@ const StyledToggleButtonGroup = withStyles((theme) => ({
     [theme.breakpoints.up(depositsBreakpoint)]: {
       marginBottom: 16,
       border: "none",
+      "&:first-child": {
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+      },
       "&:not(:first-child)": {
         borderRadius: 46,
-      },
-      "&:first-child": {
-        borderRadius: 46,
+        marginLeft: 12,
+        marginRight: 12,
       },
     },
   },
@@ -399,32 +332,44 @@ const useResponsiveDepositNavigationStyles = makeStyles((theme) => ({
   },
 }));
 
-const MoreInfoBox = withStyles((theme) => ({
+const useMoreInfoStyles = makeStyles((theme) => ({
   root: {
     display: "none",
+    marginLeft: 12,
     [theme.breakpoints.up(depositsBreakpoint)]: {
-      marginLeft: 12,
       display: "flex",
     },
   },
-}))(Box);
+  gateway: {
+    marginLeft: 23,
+  },
+}));
+
+type MoreInfoProps = {
+  gateway?: boolean;
+};
+
+const MoreInfo: FunctionComponent<MoreInfoProps> = ({ gateway, children }) => {
+  const styles = useMoreInfoStyles();
+  const className = classNames(styles.root, {
+    [styles.gateway]: gateway,
+  });
+  return <div className={className}>{children}</div>;
+};
 
 export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationProps> = ({
   value,
   onChange,
   tx,
 }) => {
+  const { t } = useTranslation();
   const styles = useResponsiveDepositNavigationStyles();
   const theme = useTheme();
   const mobile = !useMediaQuery(theme.breakpoints.up(depositsBreakpoint));
 
   const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
 
-  const {
-    lockChainConfig,
-    mintChainConfig,
-    lockCurrencyConfig,
-  } = getLockAndMintBasicParams(tx);
+  const { lockChainConfig, mintChainConfig } = getLockAndMintBasicParams(tx);
 
   return (
     <div className={styles.root}>
@@ -439,15 +384,25 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
           <CircledIconContainer>
             <DepositIndicator />
           </CircledIconContainer>
-          <MoreInfoBox>
-            <Typography variant="body1" color="textPrimary">
-              Gateway Address
-            </Typography>
-          </MoreInfoBox>
+          <MoreInfo gateway>
+            <div>
+              <Typography variant="body1" color="textPrimary">
+                Gateway Address
+              </Typography>
+              <Typography variant="body2">
+                {t("mint.deposit-navigation-active-for-label")}:{" "}
+                <Typography variant="body2" component="span" color="primary">
+                  <HMSCountdown
+                    milliseconds={getRemainingGatewayTime(tx.expiryTime)}
+                  />
+                </Typography>
+              </Typography>
+            </div>
+          </MoreInfo>
         </DepositToggleButton>
         {sortedDeposits.map((deposit) => {
           const hash = deposit.sourceTxHash;
-          const { mintCurrencyConfig } = getLockAndMintBasicParams(tx);
+          const { lockCurrencyConfig } = getLockAndMintBasicParams(tx);
 
           const {
             lockConfirmations,
@@ -466,12 +421,55 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
           const requiresAction =
             depositStatus === DepositEntryStatus.ACTION_REQUIRED;
           const completed = depositStatus === DepositEntryStatus.COMPLETED;
+          const isPendingConfirmations =
+            lockConfirmations < lockTargetConfirmations;
           const confirmationProps = completed
             ? {}
             : {
                 confirmations: lockConfirmations,
                 targetConfirmations: lockTargetConfirmations,
               };
+
+          let InfoContent: any = null;
+          if (depositStatus === DepositEntryStatus.COMPLETED) {
+            InfoContent = (
+              <div>
+                <Typography variant="body1" color="textPrimary">
+                  {lockTxAmount} {lockCurrencyConfig.short}
+                </Typography>
+                <Typography variant="body2" color="primary">
+                  {t("mint.deposit-navigation-completed-label")}
+                </Typography>
+              </div>
+            );
+          } else if (depositStatus === DepositEntryStatus.PENDING) {
+            InfoContent = (
+              <div>
+                <Typography variant="body1" color="textPrimary">
+                  {lockTxAmount} {lockCurrencyConfig.short}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {t("mint.deposit-navigation-confirmations-label", {
+                    confirmations: lockConfirmations,
+                    targetConfirmations: lockTargetConfirmations,
+                  })}
+                </Typography>
+              </div>
+            );
+          } else if (depositStatus === DepositEntryStatus.ACTION_REQUIRED) {
+            InfoContent = (
+              <div>
+                <Typography variant="body1" color="textPrimary">
+                  {lockTxAmount} {lockCurrencyConfig.short}
+                </Typography>
+                <Typography variant="body2" color="primary">
+                  {t("mint.deposit-navigation-mint-ready-label")}
+                </Typography>
+              </div>
+            );
+          }
+
+          const Info = () => InfoContent;
           return (
             <DepositToggleButton key={hash} value={hash}>
               <CircledProgressWithContent
@@ -484,28 +482,9 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
               >
                 <StatusIcon fontSize="large" />
               </CircledProgressWithContent>
-              <MoreInfoBox>
-                {completed && (
-                  <div>
-                    <Typography color="primary" variant="body1">
-                      Completed
-                    </Typography>
-                    <Typography color="textSecondary" variant="body2">
-                      Minted {lockTxAmount} {mintCurrencyConfig.short}
-                    </Typography>
-                  </div>
-                )}
-                {!completed && requiresAction && (
-                  <div>
-                    <Typography color="textPrimary" variant="body1">
-                      Action required!
-                    </Typography>
-                    <Typography color="textSecondary" variant="body2">
-                      Mint {lockTxAmount} {mintCurrencyConfig.short}
-                    </Typography>
-                  </div>
-                )}
-              </MoreInfoBox>
+              <MoreInfo>
+                <Info />
+              </MoreInfo>
             </DepositToggleButton>
           );
         })}

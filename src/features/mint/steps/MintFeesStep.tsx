@@ -1,5 +1,4 @@
 import {
-  Box,
   Checkbox,
   Divider,
   FormControl,
@@ -50,7 +49,6 @@ import {
   BridgeChain,
   getChainConfig,
   getCurrencyConfig,
-  getWalletConfig,
   toMintedCurrency,
 } from "../../../utils/assetConfigs";
 import { useFetchFees } from "../../fees/feesHooks";
@@ -68,11 +66,7 @@ import {
   TxType,
 } from "../../transactions/transactionsUtils";
 import { useShakePaper } from "../../ui/uiHooks";
-import { AddTokenButton } from "../../wallet/components/WalletHelpers";
-import {
-  useRenAssetHelpers,
-  useSelectedChainWallet,
-} from "../../wallet/walletHooks";
+import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { $wallet, setWalletPickerOpened } from "../../wallet/walletSlice";
 import { SolanaTokenAccountModal } from "../components/SolanaAccountChecker";
 import { $mint } from "../mintSlice";
@@ -87,13 +81,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
-  const {
-    walletConnected,
-    account,
-    provider,
-    symbol: walletSymbol,
-  } = useSelectedChainWallet();
-  const walletConfig = getWalletConfig(walletSymbol);
+  const { walletConnected, account, provider } = useSelectedChainWallet();
   const [mintingInitialized, setMintingInitialized] = useState(false);
   const { currency } = useSelector($mint);
   const [amountValue, setAmountValue] = useState("");
@@ -257,7 +245,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [onMintTxCreated, mintingInitialized, tx, creatingMintTx]);
 
-  const { addToken } = useRenAssetHelpers(chain, network, provider, currency);
   return (
     <>
       {showSolanaModal && (
@@ -411,15 +398,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           </FormControl>
         </CheckboxWrapper>
         <MultipleActionButtonWrapper>
-          {walletConnected && addToken !== null && (
-            <Box mb={1}>
-              <AddTokenButton
-                onAddToken={addToken}
-                wallet={walletConfig.short}
-                currency={mintedCurrencyConfig.short}
-              />
-            </Box>
-          )}
           <ActionButton
             onClick={handleConfirm}
             disabled={

@@ -34,8 +34,10 @@ export const GatewayAddressValidityMessage: FunctionComponent<GatewayAddressVali
   return (
     <span>
       {t("mint.address-validity-message-1")}{" "}
-      <HMSCountdown milliseconds={milliseconds} />.{" "}
-      {t("mint.address-validity-message-2")}.
+      <strong>
+        <HMSCountdown milliseconds={milliseconds} />
+      </strong>
+      . {t("mint.address-validity-message-2")}.
       <br />
       <br />
       {t("mint.address-validity-message-3", { network: destNetwork })}.
@@ -50,7 +52,9 @@ export const GatewayTransactionValidityMessage: FunctionComponent<CountdownProps
   return (
     <span>
       {t("mint.gateway-validity-message")}{" "}
-      <HMSCountdown milliseconds={milliseconds} />
+      <strong>
+        <HMSCountdown milliseconds={milliseconds} />
+      </strong>
     </span>
   );
 };

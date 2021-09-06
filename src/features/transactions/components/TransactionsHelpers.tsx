@@ -62,6 +62,10 @@ import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
+import {
+  GATEWAY_EXPIRY_OFFSET_MS,
+  getRemainingTime,
+} from "../../mint/mintUtils";
 import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
 
 export type AnyBurnSession =
@@ -286,7 +290,24 @@ export const HMSCountdown: FunctionComponent<HMSCountdownProps> = ({
   }, 1000);
   const time = getFormattedHMS(count);
 
-  return <strong>{time}</strong>;
+  return <span>{time}</span>;
+};
+
+// alternative version with recalculating remaining time every rerender
+// may be more accurate than HMSCountdown
+type HMSCountdownToProps = { timestamp: number };
+
+export const HMSCountdownTo: FunctionComponent<HMSCountdownToProps> = ({
+  timestamp,
+}) => {
+  const [time, setTime] = useState(
+    getFormattedHMS(getRemainingTime(timestamp))
+  );
+  useInterval(() => {
+    setTime(getFormattedHMS(getRemainingTime(timestamp)));
+  }, 1000);
+
+  return <span>{time}</span>;
 };
 
 export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
@@ -450,7 +471,7 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
     // history.location.search
     const tx = parseTxQueryString(history.location.search);
     if (!tx) return;
-    tx.expiryTime = Date.now() + 60 * 60 * 24 * 1000;
+    tx.expiryTime = Date.now() + GATEWAY_EXPIRY_OFFSET_MS;
     history.push({
       pathname: paths.MINT_TRANSACTION,
       search: "?" + createTxQueryString(tx as any),
