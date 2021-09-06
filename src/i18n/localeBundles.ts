@@ -6,7 +6,7 @@ const bundles = {
   // @ts-ignore
   de: () => import(/* webpackChunkName: "de" */ "./locales/de-DE.json"),
   en: () => import(/* webpackChunkName: "en" */ "./locales/en.json"),
-  es: () => import(/* webpackChunkName: "es" */ "./locales/es-ES.json"),
+  es: () => import(/* webpackChunkName: "es-ES" */ "./locales/es-ES.json"),
   pt: () => import(/* webpackChunkName: "pt" */ "./locales/pt-PT.json"),
   zh: () => import(/* webpackChunkName: "zh" */ "./locales/zh-CN.json"),
   ru: () => import(/* webpackChunkName: "ru" */ "./locales/ru-RU.json"),
