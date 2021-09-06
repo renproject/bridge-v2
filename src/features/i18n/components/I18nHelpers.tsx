@@ -7,6 +7,7 @@ import { LanguageMenuIconButton } from "../../../components/buttons/Buttons";
 import { CheckedIcon } from "../../../components/icons/RenIcons";
 import { SpacedPaperContent } from "../../../components/layout/Paper";
 import { BridgeModal } from "../../../components/modals/BridgeModal";
+import { enableAllTranslations } from "../../../i18n/i18n";
 import {
   availableLocales,
   enabledLocales,
@@ -87,9 +88,6 @@ export type LanguageSelectorProps = {
   buttonClassName?: string;
   mode?: "select" | "dialog";
 };
-
-const enableAllTranslations =
-  window.location.hostname !== "bridge.renproject.io";
 
 export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
   buttonClassName,
