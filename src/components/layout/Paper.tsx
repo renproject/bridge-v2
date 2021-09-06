@@ -9,12 +9,18 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useShakingStyles } from "../../theme/animationUtils";
 
+export const depositNavigationBreakpoint = "md";
+
 const useBridgePaperStyles = makeStyles((theme) => {
   return {
     root: {
       maxWidth: 400,
       margin: "70px auto 0",
       position: "relative",
+      transition: "margin 1s ease-out",
+      [theme.breakpoints.up(depositNavigationBreakpoint)]: {
+        marginTop: 0,
+      },
     },
   };
 });
@@ -171,7 +177,6 @@ type SpacedPaperContentProps = PaperContentProps & {
   smaller?: boolean;
   fixedHeight?: boolean;
 };
-
 export const SpacedPaperContent: FunctionComponent<SpacedPaperContentProps> = ({
   smaller,
   fixedHeight,

@@ -15,6 +15,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   ToggleButtonGroupProps,
+  ToggleButtonProps,
 } from "@material-ui/lab";
 import { GatewaySession } from "@renproject/ren-tx";
 import classNames from "classnames";
@@ -27,6 +28,7 @@ import {
   NavigateNextIcon,
   NavigatePrevIcon,
 } from "../../../components/icons/RenIcons";
+import { depositNavigationBreakpoint } from "../../../components/layout/Paper";
 import {
   ProgressWithContent,
   ProgressWithContentProps,
@@ -119,7 +121,6 @@ type CircledIconContainerProps = {
   className?: string;
 };
 
-export const depositNavigationBreakpoint = "md";
 const transition = "all 1s ease-out";
 
 const useCircledIconContainerStyles = makeStyles<
@@ -157,7 +158,10 @@ export const CircledIconContainer: FunctionComponent<CircledIconContainerProps> 
   return <div className={classNames(styles.root, className)}>{children}</div>;
 };
 
-export const DepositToggleButton = withStyles((theme) => ({
+export const useDepositToggleButtonStyles = makeStyles<
+  Theme,
+  DepositToggleButtonProps
+>((theme) => ({
   root: {
     transition,
     background: theme.palette.common.white,
@@ -170,7 +174,10 @@ export const DepositToggleButton = withStyles((theme) => ({
       border: `2px solid ${theme.palette.common.white}!important`,
       "&:hover": {
         background: theme.palette.common.white,
-        border: `2px solid ${theme.palette.primary.main}!important`,
+        border: (props) =>
+          props.gateway
+            ? "2px solid transparent"
+            : `2px solid ${theme.palette.primary.main}!important`,
       },
     },
     [theme.breakpoints.up("lg")]: {
@@ -194,7 +201,10 @@ export const DepositToggleButton = withStyles((theme) => ({
   selected: {
     [theme.breakpoints.up(depositNavigationBreakpoint)]: {
       background: `${theme.palette.common.white}!important`,
-      border: `2px solid ${theme.palette.primary.main}!important`,
+      border: (props) =>
+        props.gateway
+          ? "2px solid transparent"
+          : `2px solid ${theme.palette.primary.main}!important`,
     },
   },
   label: {
@@ -205,7 +215,19 @@ export const DepositToggleButton = withStyles((theme) => ({
       justifyContent: "flex-start",
     },
   },
-}))(ToggleButton);
+}));
+
+type DepositToggleButtonProps = ToggleButtonProps & {
+  gateway?: boolean;
+};
+
+const DepositToggleButton: FunctionComponent<DepositToggleButtonProps> = ({
+  gateway,
+  ...props
+}) => {
+  const classes = useDepositToggleButtonStyles({ gateway });
+  return <ToggleButton classes={classes} {...props} />;
+};
 
 export const DepositIndicator: FunctionComponent = () => {
   const theme = useTheme();
@@ -377,7 +399,7 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
         value={value}
         orientation={mobile ? "horizontal" : "vertical"}
       >
-        <DepositToggleButton value="gateway">
+        <DepositToggleButton gateway value="gateway">
           <CircledIconContainer>
             <DepositIndicator />
           </CircledIconContainer>
