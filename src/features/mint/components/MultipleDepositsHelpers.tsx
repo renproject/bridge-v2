@@ -71,6 +71,7 @@ const useBigNavButtonStyles = makeStyles((theme) => ({
 type BigNavButtonProps = ButtonProps & {
   direction: "next" | "prev";
 };
+
 export const BigNavButton: FunctionComponent<BigNavButtonProps> = ({
   direction,
   disabled,

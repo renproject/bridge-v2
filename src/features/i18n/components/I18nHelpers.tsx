@@ -9,6 +9,7 @@ import { SpacedPaperContent } from "../../../components/layout/Paper";
 import { BridgeModal } from "../../../components/modals/BridgeModal";
 import {
   availableLocales,
+  enabledLocales,
   nativeLanguageNames,
 } from "../../../i18n/localeBundles";
 
@@ -69,7 +70,7 @@ export const LanguageButton: FunctionComponent<LanguageButtonProps> = ({
       // variant={selected ? "contained" : "outlined"}
       fullWidth
       {...props}
-      endIcon={<CheckedIcon />}
+      endIcon={selected ? <CheckedIcon /> : null}
     >
       {children}
     </Button>
@@ -86,6 +87,9 @@ export type LanguageSelectorProps = {
   buttonClassName?: string;
   mode?: "select" | "dialog";
 };
+
+const enableAllTranslations =
+  window.location.hostname !== "bridge.renproject.io";
 
 export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
   buttonClassName,
@@ -114,9 +118,14 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
     [i18n]
   );
 
-  if (availableLocales.length < 2) {
+  const resolvedAvailableLocales = enableAllTranslations
+    ? availableLocales
+    : enabledLocales;
+
+  if (resolvedAvailableLocales.length < 2) {
     return null;
   }
+
   if (mode === "dialog") {
     return (
       <>
@@ -132,7 +141,7 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
           onClose={handleClose}
         >
           <SpacedPaperContent topPadding bottomPadding fixedHeight>
-            {availableLocales.map((languageKey) => (
+            {resolvedAvailableLocales.map((languageKey) => (
               <LanguageButtonWrapper key={languageKey}>
                 <LanguageButton
                   key={languageKey}
@@ -159,7 +168,7 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
       value={i18n.language}
       classes={classes}
     >
-      {availableLocales.map((languageKey) => (
+      {resolvedAvailableLocales.map((languageKey) => (
         <MenuItem
           key={languageKey}
           onClick={() => i18n.changeLanguage(languageKey)}
