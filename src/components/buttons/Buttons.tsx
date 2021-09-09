@@ -534,6 +534,7 @@ const useSecondaryActionButtonStyles = makeStyles((theme) => ({
     borderRadius: 16,
     color: theme.palette.text.primary,
     borderWidth: "2px!important",
+    fontSize: 14,
   },
   outlined: {
     border: `2px solid ${theme.palette.primary.main}`,

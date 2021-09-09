@@ -407,7 +407,7 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
           <MoreInfo gateway>
             <div>
               <Typography variant="body1" color="textPrimary">
-                Gateway Address
+                {t("mint.deposit-navigation-gateway-address-label")}
               </Typography>
               <Typography variant="body2">
                 {t("mint.deposit-navigation-active-for-label")}:{" "}
@@ -437,7 +437,9 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
             mintChainConfig,
             lockChainConfig,
           });
-          const isProcessing = depositPhase === DepositPhase.NONE;
+          const isProcessing =
+            depositPhase === DepositPhase.NONE ||
+            depositStatus === DepositEntryStatus.COMPLETING;
           const requiresAction =
             depositStatus === DepositEntryStatus.ACTION_REQUIRED;
           const completed = depositStatus === DepositEntryStatus.COMPLETED;
@@ -457,6 +459,17 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
                 </Typography>
                 <Typography variant="body2" color="primary">
                   {t("mint.deposit-navigation-completed-label")}
+                </Typography>
+              </div>
+            );
+          } else if (depositStatus === DepositEntryStatus.COMPLETING) {
+            InfoContent = (
+              <div>
+                <Typography variant="body1" color="textPrimary">
+                  {lockTxAmount} {lockCurrencyConfig.short}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {t("mint.deposit-navigation-completing-label")}
                 </Typography>
               </div>
             );

@@ -195,7 +195,11 @@ export const getDepositParams = (
     // it has lockTxHash - there is deposit
     if (mintTxHash) {
       // mint tx hash present - completed
-      depositStatus = DepositEntryStatus.COMPLETED;
+      if ((transaction as any)?.completedAt) {
+        depositStatus = DepositEntryStatus.COMPLETED;
+      } else {
+        depositStatus = DepositEntryStatus.COMPLETING;
+      }
       depositPhase = DepositPhase.MINT;
     } else if (
       lockTargetConfirmations &&

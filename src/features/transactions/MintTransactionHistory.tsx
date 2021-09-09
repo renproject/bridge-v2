@@ -505,7 +505,9 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   }, [service, gatewayAddress, timer, hasDeposits]);
 
   const allCompleted = areAllDepositsCompleted(tx);
-  const completed = depositStatus === DepositEntryStatus.COMPLETED;
+  const completed =
+    depositStatus === DepositEntryStatus.COMPLETED ||
+    depositStatus === DepositEntryStatus.COMPLETING;
   const confirmationProps = completed
     ? {}
     : {
