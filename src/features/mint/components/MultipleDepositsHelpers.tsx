@@ -51,7 +51,7 @@ const useBigNavButtonStyles = makeStyles((theme) => ({
   root: {
     color: theme.palette.primary.main,
     fontSize: 90,
-    transition: "all 1s",
+    transition: "all 1s, border 0.5s",
     display: "inline-flex",
     cursor: "pointer",
     "&:hover": {
@@ -122,7 +122,7 @@ type CircledIconContainerProps = {
   className?: string;
 };
 
-const transition = "all 1s ease-out";
+const transition = "all 1s ease-out, border 0.5s ease-out";
 
 const useCircledIconContainerStyles = makeStyles<
   Theme,
