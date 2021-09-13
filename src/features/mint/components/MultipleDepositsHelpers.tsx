@@ -443,12 +443,14 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
           const requiresAction =
             depositStatus === DepositEntryStatus.ACTION_REQUIRED;
           const completed = depositStatus === DepositEntryStatus.COMPLETED;
-          const confirmationProps = completed
-            ? {}
-            : {
-                confirmations: lockConfirmations,
-                targetConfirmations: lockTargetConfirmations,
-              };
+          const completing = depositStatus === DepositEntryStatus.COMPLETING;
+          const confirmationProps =
+            completed || completing
+              ? {}
+              : {
+                  confirmations: lockConfirmations,
+                  targetConfirmations: lockTargetConfirmations,
+                };
 
           let InfoContent: any = null;
           if (depositStatus === DepositEntryStatus.COMPLETED) {

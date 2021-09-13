@@ -4,7 +4,6 @@ import { ErroringGatewaySession } from "@renproject/ren-tx/src/types/mint";
 import QRCode from "qrcode.react";
 import React, {
   FunctionComponent,
-  ReactText,
   useCallback,
   useEffect,
   useState,
@@ -338,14 +337,10 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   });
 
   const { showNotification, closeNotification } = useNotifications();
-  const [notificationKey, setNotificationKey] = useState<ReactText>("");
   useEffectOnce(() => {
-    if (notificationKey) {
-      const key = showNotification(notificationMessage);
-      setNotificationKey(key);
-    }
+    const key = showNotification(notificationMessage);
     return () => {
-      closeNotification(notificationKey);
+      closeNotification(key);
     };
   });
   const [mintTimeRemained] = useState(getRemainingTime(tx.expiryTime));
@@ -575,7 +570,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     t,
   ]);
 
-  useEffect(showNotifications, [showNotifications, pending]);
+  useEffectOnce(showNotifications);
 
   const { addToken } = useRenAssetHelpers(
     chain,
