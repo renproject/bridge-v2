@@ -68,7 +68,7 @@ export const SolanaTokenAccountModal: React.FunctionComponent<{
             {t("mint.solana-token-account-required-description-1")}
           </Typography>
           <Typography variant="body2" align="center" gutterBottom>
-            {t("mint.solana-token-account-required-description-2")}
+            {t("mint.solana-token-account-required-description-2")}G{" "}
           </Typography>
           <br />
           <Typography variant="body2" align="center" gutterBottom>

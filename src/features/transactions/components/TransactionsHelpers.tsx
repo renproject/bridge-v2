@@ -505,6 +505,40 @@ export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   );
 };
 
+export const GatewayAddressTimeoutErrorDialog: FunctionComponent<ErrorWithActionProps> = (
+  props
+) => {
+  const { t } = useTranslation();
+  const history = useHistory();
+
+  const handleReload = useCallback(() => {
+    // history.location.search
+    window.location.reload();
+  }, [history]);
+
+  const handleGoToHome = useCallback(() => {
+    history.push(paths.HOME);
+  }, [history]);
+
+  return (
+    <ErrorDialog
+      title={t("mint.gateway-address-timeout-error-popup-title")}
+      reason={t("mint.gateway-address-timeout-error-popup-message")}
+      actionText={t("mint.gateway-address-timeout-error-popup-reload-label")}
+      onAction={handleReload}
+      alternativeActionText={t(
+        "mint.gateway-address-timeout-error-popup-go-to-home-label"
+      )}
+      onAlternativeAction={handleGoToHome}
+      {...props}
+    >
+      <Typography variant="body1" color="textSecondary">
+        {t("mint.gateway-address-timeout-error-popup-description")}
+      </Typography>
+    </ErrorDialog>
+  );
+};
+
 type WarningWithActionsProps = DialogProps & {
   title?: string;
   reason?: string;

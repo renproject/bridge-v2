@@ -1,4 +1,5 @@
 import { Box, Grow, Typography, useTheme } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import { GatewaySession, OpenedGatewaySession } from "@renproject/ren-tx";
 import { ErroringGatewaySession } from "@renproject/ren-tx/src/types/mint";
 import QRCode from "qrcode.react";
@@ -143,20 +144,26 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
             </span>
           }
         />
-        <Typography
-          component="p"
-          variant="caption"
-          align="center"
-          color="textSecondary"
-        >
-          {t("mint.gateway-minimum-amount-label")}:{" "}
-          <NumberFormatText
-            value={minimumAmount}
-            spacedSuffix={lockCurrencyConfig.short}
-          />
-        </Typography>
+        {Boolean(minimumAmount) ? (
+          <Typography
+            component="p"
+            variant="caption"
+            align="center"
+            color="textSecondary"
+          >
+            {t("mint.gateway-minimum-amount-label")}:{" "}
+            <NumberFormatText
+              value={minimumAmount}
+              spacedSuffix={lockCurrencyConfig.short}
+            />
+          </Typography>
+        ) : (
+          <Box display="flex" justifyContent="center">
+            <Skeleton variant="text" width={200} height={20} />
+          </Box>
+        )}
       </MediumWrapper>
-      {!!tx.gatewayAddress && (
+      {Boolean(tx.gatewayAddress) ? (
         <>
           {showQr && (
             <CenteringSpacedBox>
@@ -177,6 +184,8 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
             copiedMessage={t("common.copied-ex-message")}
           />
         </>
+      ) : (
+        <Skeleton variant="rect" height={45} />
       )}
       <Box
         mt={2}

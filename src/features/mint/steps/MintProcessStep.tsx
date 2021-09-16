@@ -58,6 +58,7 @@ import {
 import {
   ExpiredErrorDialog,
   FinishTransactionWarning,
+  GatewayAddressTimeoutErrorDialog,
   ProgressStatus,
   WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
@@ -469,6 +470,21 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
   const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
   const minimumAmount = (fees.lock / 10 ** decimals) * 2;
+  console.log(current.context);
+  console.log(activeDeposit);
+
+  const [gatewayTimeout, setGatewayTimeout] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setGatewayTimeout(true);
+    }, 30 * 1000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+  const gatewayTimeoutError =
+    gatewayTimeout &&
+    !(current.context.tx as OpenedGatewaySession<any>).gatewayAddress;
 
   return (
     <>
@@ -493,6 +509,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           />
         )}
       </DepositWrapper>
+      {gatewayTimeoutError && <GatewayAddressTimeoutErrorDialog open />}
       {
         // We want to allow users to finish mints for deposits that have been detected
         // If there are no deposits, and the gateway is expired (timeRemained < 0),
@@ -562,6 +579,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
 
   const state = machine?.state
     .value as keyof DepositMachineSchema<any>["states"];
+  console.info(state);
   if (!machine) {
     // We should always have machines for transactions
     return (
