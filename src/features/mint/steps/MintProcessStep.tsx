@@ -470,9 +470,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
   const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
   const minimumAmount = (fees.lock / 10 ** decimals) * 2;
-  console.log(current);
-  console.log(current.context);
-  console.log(activeDeposit);
 
   const getewayInitializeError = current.value === "srcInitializeError";
   const [gatewayTimeout, setGatewayTimeout] = useState(false);

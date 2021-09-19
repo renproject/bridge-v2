@@ -15,7 +15,6 @@ const bundles = {
 // generate whitelist for i18next
 export const availableLocales = Object.keys(bundles);
 export const enabledLocales = ["en"];
-// console.log("aa", availableLocales);
 
 export const nativeLanguageNames: Record<string, string> = {
   en: "English",
