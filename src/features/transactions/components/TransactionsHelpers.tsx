@@ -514,7 +514,7 @@ export const GatewayAddressTimeoutErrorDialog: FunctionComponent<ErrorWithAction
   const handleReload = useCallback(() => {
     // history.location.search
     window.location.reload();
-  }, [history]);
+  }, []);
 
   const handleGoToHome = useCallback(() => {
     history.push(paths.HOME);

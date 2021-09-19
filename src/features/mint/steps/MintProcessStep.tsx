@@ -470,9 +470,11 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
   const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
   const minimumAmount = (fees.lock / 10 ** decimals) * 2;
+  console.log(current);
   console.log(current.context);
   console.log(activeDeposit);
 
+  const getewayInitializeError = current.value === "srcInitializeError";
   const [gatewayTimeout, setGatewayTimeout] = useState(false);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -482,9 +484,10 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       clearTimeout(timeout);
     };
   }, []);
-  const gatewayTimeoutError =
-    gatewayTimeout &&
-    !(current.context.tx as OpenedGatewaySession<any>).gatewayAddress;
+  const gatewayError =
+    getewayInitializeError ||
+    (gatewayTimeout &&
+      !(current.context.tx as OpenedGatewaySession<any>).gatewayAddress);
 
   return (
     <>
@@ -509,7 +512,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           />
         )}
       </DepositWrapper>
-      {gatewayTimeoutError && <GatewayAddressTimeoutErrorDialog open />}
+      {gatewayError && <GatewayAddressTimeoutErrorDialog open />}
       {
         // We want to allow users to finish mints for deposits that have been detected
         // If there are no deposits, and the gateway is expired (timeRemained < 0),
