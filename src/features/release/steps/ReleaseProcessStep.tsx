@@ -306,7 +306,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
         </span>,
         {
           variant: "warning",
-          persist: true,
+          persist: false,
         }
       ) as number;
       setTimeoutKey(key);

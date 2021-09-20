@@ -382,7 +382,7 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
 }) => {
   return (
     <BridgeModal open={open} title={title} maxWidth="xs">
-      <SpacedPaperContent>
+      <SpacedPaperContent autoOverflow>
         <ErrorIconWrapper>
           <WarningIcon fontSize="inherit" color="inherit" />
         </ErrorIconWrapper>

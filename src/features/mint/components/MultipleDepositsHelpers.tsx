@@ -12,6 +12,7 @@ import {
   withStyles,
 } from "@material-ui/core";
 import {
+  Skeleton,
   ToggleButton,
   ToggleButtonGroup,
   ToggleButtonGroupProps,
@@ -481,12 +482,16 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
                 <Typography variant="body1" color="textPrimary">
                   {lockTxAmount} {lockCurrencyConfig.short}
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {t("mint.deposit-navigation-confirmations-label", {
-                    confirmations: lockConfirmations,
-                    targetConfirmations: lockTargetConfirmations,
-                  })}
-                </Typography>
+                {lockTargetConfirmations !== 0 ? (
+                  <Typography variant="body2" color="textSecondary">
+                    {t("mint.deposit-navigation-confirmations-label", {
+                      confirmations: lockConfirmations,
+                      targetConfirmations: lockTargetConfirmations,
+                    })}
+                  </Typography>
+                ) : (
+                  <Skeleton variant="text" width={100} height={14} />
+                )}
               </div>
             );
           } else if (depositStatus === DepositEntryStatus.ACTION_REQUIRED) {
