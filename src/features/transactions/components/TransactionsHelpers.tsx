@@ -343,6 +343,7 @@ type ErrorDetailsProps = {
 export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
   error,
 }) => {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
   const handleToggle = useCallback(() => {
     setVisible(!visible);
@@ -350,6 +351,7 @@ export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
   return (
     <div>
       <Button variant="text" size="small" onClick={handleToggle}>
+        {visible ? t("common.show-less") : t("common.show-more")}
         Show {visible ? "less" : "more"}
       </Button>
       <Hide when={!visible}>
