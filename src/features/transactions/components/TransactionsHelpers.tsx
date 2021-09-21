@@ -352,7 +352,6 @@ export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
     <div>
       <Button variant="text" size="small" onClick={handleToggle}>
         {visible ? t("common.show-less") : t("common.show-more")}
-        Show {visible ? "less" : "more"}
       </Button>
       <Hide when={!visible}>
         <Debug force it={{ error }} />

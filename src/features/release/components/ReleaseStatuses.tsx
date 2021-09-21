@@ -40,6 +40,7 @@ export const a = 1;
 type ReleaseProgressStatusProps = {
   tx: AnyBurnSession;
   onSubmit?: () => void;
+  onResubmit?: () => void;
   onReload?: () => void;
   submittingError?: boolean;
   generalError?: boolean;
@@ -50,6 +51,7 @@ type ReleaseProgressStatusProps = {
 export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps> = ({
   tx,
   onSubmit,
+  onResubmit,
   onReload,
   submitting = false,
   submittingError,
@@ -125,7 +127,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
       <SubmitErrorDialog
         open={Boolean(submittingError)}
         onAction={onReload}
-        onAlternativeAction={onSubmit}
+        onAlternativeAction={onResubmit}
         error={(tx as ErroringBurnSession<any, any>).error}
       />
       <GeneralErrorDialog

@@ -3456,17 +3456,17 @@
     axios "^0.21.1"
     immutable "^4.0.0-rc.14"
 
-"@renproject/ren-tx@2.5.6":
-  version "2.5.6"
-  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.5.6.tgz#0468055ad1dbad84485adf53459d31a3f49fcbb0"
-  integrity sha512-Hkuzv5fvYoEYCVAE7pTHp0WEhuj3L0HUo8o18Y8OPwn1VPAW0/NM/t2XawZEEY1qXqiL2WD57ZjtaVxwhjTJ9Q==
+"@renproject/ren-tx@2.5.7":
+  version "2.5.7"
+  resolved "https://registry.yarnpkg.com/@renproject/ren-tx/-/ren-tx-2.5.7.tgz#20813ffc7e9cfc2bf329ed5d52fa1aa18d028f1f"
+  integrity sha512-X9uQ/ww7X8O5+WX1/0bq7fCMZtcWDctoBqZ+KX0KEJwm8OMAgUyLLh1NfE0+R1mSsQa9lcd8QOp+b3OWCE2fxw==
   dependencies:
     bignumber.js "^9.0.1"
 
-"@renproject/ren@2.5.6":
-  version "2.5.6"
-  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.5.6.tgz#1c0f16dfc4b636430af4397033340e12440710fb"
-  integrity sha512-DvDZ9TAoyARAqNUsEmGFKWoacf9wn5A1n3B8JPluFNWVqsp7NKTl1MkgpL0YCtvR4+5/i1wiFXO0aKW0CdVG5A==
+"@renproject/ren@2.5.7":
+  version "2.5.7"
+  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-2.5.7.tgz#83572f8bf9ccccaffb55f7e9c99070f04ba857b6"
+  integrity sha512-bfby9erwdNaYvWgIHZI6bb153eD+SZ0KQYKDcEtKysJOrx76NBRmHsoMZd9OcFCyflo7JWPgjH1BDCcBNj5qKg==
   dependencies:
     "@renproject/interfaces" "^2.5.2"
     "@renproject/provider" "^2.5.2"
