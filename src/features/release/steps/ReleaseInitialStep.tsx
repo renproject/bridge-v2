@@ -181,6 +181,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     }
   }, [dispatch, onNext, walletConnected, basicCondition, hasBalance]);
 
+  const showAddressError = !!address && !isAddressValid;
   return (
     <>
       <PaperContent>
@@ -244,7 +245,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         </AssetDropdownWrapper>
         <BigOutlinedTextFieldWrapper>
           <OutlinedTextField
-            error={!!address && !isAddressValid}
+            error={showAddressError}
+            helperText={
+              showAddressError
+                ? t("release.releasing-to-error-text")
+                : undefined
+            }
             placeholder={t("release.releasing-to-placeholder", {
               chain: releaseChainConfig.full,
             })}
