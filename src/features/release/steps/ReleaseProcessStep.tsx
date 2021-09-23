@@ -295,7 +295,7 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   const [timeoutKey, setTimeoutKey] = useState<number>();
   const handleSubmit = useCallback(
     (type = "SUBMIT") => {
-      console.log("submitting", type);
+      console.info("submitting", type);
 
       setSubmitting(true);
       send({ type });
