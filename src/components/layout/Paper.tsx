@@ -9,12 +9,18 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useShakingStyles } from "../../theme/animationUtils";
 
+export const depositNavigationBreakpoint = "md";
+
 const useBridgePaperStyles = makeStyles((theme) => {
   return {
     root: {
       maxWidth: 400,
       margin: "70px auto 0",
       position: "relative",
+      transition: "margin 1s ease-out",
+      [theme.breakpoints.up(depositNavigationBreakpoint)]: {
+        marginTop: 0,
+      },
     },
   };
 });
@@ -162,25 +168,29 @@ const useSpacedContentStyles = makeStyles({
     minHeight: 130,
   },
   rootFixedHeight: {
-    overflowX: "auto",
     height: 392 - 2 * 40,
+  },
+  autoOverflow: {
+    overflowY: "auto",
   },
 });
 
 type SpacedPaperContentProps = PaperContentProps & {
   smaller?: boolean;
   fixedHeight?: boolean;
+  autoOverflow?: boolean;
 };
-
 export const SpacedPaperContent: FunctionComponent<SpacedPaperContentProps> = ({
   smaller,
   fixedHeight,
+  autoOverflow,
   ...rest
 }) => {
   const styles = useSpacedContentStyles();
   const className = classNames(styles.root, {
     [styles.rootSmaller]: smaller,
     [styles.rootFixedHeight]: fixedHeight,
+    [styles.autoOverflow]: autoOverflow,
   });
   return <PaperContent className={className} {...rest} />;
 };

@@ -1,41 +1,55 @@
 import {
+  Box,
   Button,
   ButtonProps,
+  Fade,
+  FormHelperText,
   Theme,
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, styled } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
-import React, { FunctionComponent, useCallback } from "react";
-import { TFunction, useTranslation } from "react-i18next";
+import React, { FunctionComponent, useCallback, useState } from "react";
+import { TFunction, Trans, useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTimeout } from "react-use";
-import { useSubNetworkName } from "../../features/ui/uiHooks";
-import { setWalletPickerOpened } from "../../features/wallet/walletSlice";
-import { createPulseAnimation } from "../../theme/animationUtils";
-import { defaultShadow } from "../../theme/other";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+  SecondaryActionButton,
+} from "../../../components/buttons/Buttons";
+import { WalletIcon } from "../../../components/icons/RenIcons";
+import {
+  PaperContent,
+  SpacedPaperContent,
+} from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
+import { BridgeModalTitle } from "../../../components/modals/BridgeModal";
+import {
+  ProgressWithContent,
+  ProgressWrapper,
+} from "../../../components/progress/ProgressHelpers";
+import { Debug } from "../../../components/utils/Debug";
+import {
+  WalletConnectionStatusType,
+  WalletStatus,
+} from "../../../components/utils/types";
+import { createPulseAnimation } from "../../../theme/animationUtils";
+import { defaultShadow } from "../../../theme/other";
 import {
   BridgeWallet,
   getChainConfigByRentxName,
   getNetworkConfigByRentxName,
   getWalletConfig,
   getWalletConfigByRentxName,
-} from "../../utils/assetConfigs";
-import { trimAddress } from "../../utils/strings";
-import { ActionButton, ActionButtonWrapper } from "../buttons/Buttons";
-import { WalletIcon } from "../icons/RenIcons";
-import { PaperContent, SpacedPaperContent } from "../layout/Paper";
-import { Link } from "../links/Links";
-import { BridgeModalTitle } from "../modals/BridgeModal";
-import {
-  ProgressWithContent,
-  ProgressWrapper,
-} from "../progress/ProgressHelpers";
-import { Debug } from "../utils/Debug";
-import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
+} from "../../../utils/assetConfigs";
+import { trimAddress } from "../../../utils/strings";
+import { useSubNetworkName } from "../../ui/uiHooks";
+import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
+import { setWalletPickerOpened } from "../walletSlice";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
@@ -219,11 +233,43 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const { t } = useTranslation();
   const theme = useTheme();
   const subNetworkName = useSubNetworkName();
-  const chainName = getChainConfigByRentxName(chain).full;
+  const chainConfig = getChainConfigByRentxName(chain);
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
+
+  const { provider } = useSelectedChainWallet();
+
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<any>(false);
+  const { addOrSwitchChain } = useSwitchChainHelpers(
+    chainConfig.symbol,
+    targetNetwork,
+    provider
+  );
+  const [success, setSuccess] = useState(false);
+  const handleSwitch = useCallback(() => {
+    if (addOrSwitchChain !== null) {
+      setError(false);
+      setPending(true);
+      addOrSwitchChain()
+        .then(() => {
+          setError(false);
+          setSuccess(true);
+        })
+        .catch((error) => {
+          setError(error);
+        })
+        .finally(() => {
+          setPending(false);
+        });
+    }
+  }, [addOrSwitchChain]);
+
   return (
     <>
-      <BridgeModalTitle title="Wrong Network" onClose={onClose} />
+      <BridgeModalTitle
+        title={t("wallet.wrong-network-title")}
+        onClose={onClose}
+      />
       <PaperContent bottomPadding>
         <ProgressWrapper>
           <ProgressWithContent
@@ -235,17 +281,61 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h5" align="center" gutterBottom>
-          {t("wallet.network-switch-message")} {chainName} {networkName}
+          {t("wallet.network-switch-label")} {chainConfig.full} {networkName}
           {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
-          {t("wallet.network-switch-description")} {chainName} {networkName}{" "}
-          {subNetworkName}
+          {t("wallet.network-switch-description")} {chainConfig.full}{" "}
+          {networkName} {subNetworkName}
         </Typography>
+        <Box mt={2}>
+          {addOrSwitchChain !== null && (
+            <div>
+              <Box minHeight={19}>
+                <Fade in={pending || Boolean(error)} timeout={{ enter: 2000 }}>
+                  <Box textAlign="center">
+                    {pending && (
+                      <CenteredFormHelperText>
+                        {t("wallet.network-switching-message", {
+                          wallet: "MetaMask",
+                        })}
+                      </CenteredFormHelperText>
+                    )}
+                    {Boolean(error) && (
+                      <CenteredFormHelperText error>
+                        {error.code === 4001 &&
+                          t("wallet.operation-safely-rejected-message")}
+                        {error.code === -32002 &&
+                          t("wallet.operation-not-finished-message")}
+                      </CenteredFormHelperText>
+                    )}
+                  </Box>
+                </Fade>
+              </Box>
+              <ActionButton
+                onClick={handleSwitch}
+                disabled={pending || success}
+              >
+                {pending || success
+                  ? t("wallet.network-switching-label", {
+                      network: subNetworkName || networkName,
+                      wallet: "MetaMask",
+                    })
+                  : t("wallet.network-switch-label", {
+                      network: subNetworkName || networkName,
+                    })}
+              </ActionButton>
+            </div>
+          )}
+        </Box>
       </PaperContent>
     </>
   );
 };
+
+const CenteredFormHelperText = styled(FormHelperText)({
+  textAlign: "center",
+});
 
 export const createIndicatorClass = (className: string, color: string) => {
   const { pulsingStyles, pulsingKeyframes } = createPulseAnimation(
@@ -395,6 +485,77 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   );
 };
 
+const useBackToWalletPicker = (onClose: () => void) => {
+  const dispatch = useDispatch();
+  const handleBackToWalletPicker = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      dispatch(setWalletPickerOpened(true));
+    }, 1);
+  }, [dispatch, onClose]);
+  return handleBackToWalletPicker;
+};
+
+type AbstractConnectorInfoProps = {
+  wallet: string;
+  network: string;
+  link: string;
+  onBack: () => void;
+  onClose: () => void;
+  acknowledge: () => void;
+};
+
+const AbstractConnectorInfo: FunctionComponent<AbstractConnectorInfoProps> = ({
+  wallet,
+  network,
+  link,
+  onBack,
+  onClose,
+  acknowledge,
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <BridgeModalTitle title=" " onClose={onClose} onPrev={onBack} />
+      <SpacedPaperContent topPadding bottomPadding>
+        <Typography variant="h5" align="center" gutterBottom>
+          {t("wallet.connect-network-with-wallet-message", {
+            wallet,
+            network,
+          })}
+        </Typography>
+        <Typography
+          variant="body1"
+          align="center"
+          color="textSecondary"
+          gutterBottom
+        >
+          <Trans
+            i18nKey="wallet.ensure-network-added-message"
+            values={{
+              network,
+              wallet,
+            }}
+            components={[<Link href={link} external />]}
+          />
+        </Typography>
+      </SpacedPaperContent>
+      <PaperContent bottomPadding>
+        <ActionButtonWrapper>
+          <Button variant="text" color="primary" onClick={onBack}>
+            {t("wallet.use-another-wallet-label")}
+          </Button>
+        </ActionButtonWrapper>
+        <ActionButtonWrapper>
+          <ActionButton onClick={acknowledge}>
+            {t("wallet.continue-with-wallet-label", { wallet })}
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    </>
+  );
+};
+
 const getBscMmLink = (lang: string) => {
   return `https://academy.binance.com/${lang}/articles/connecting-metamask-to-binance-smart-chain`;
 };
@@ -405,20 +566,11 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
 >["DefaultInfo"] = ({ acknowledge, onClose }) => {
   //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
   const { t, i18n } = useTranslation();
-  const dispatch = useDispatch();
-  const handleBackToWalletPicker = useCallback(() => {
-    onClose();
-    setTimeout(() => {
-      dispatch(setWalletPickerOpened(true));
-    }, 1);
-  }, [dispatch, onClose]);
+  const handleBack = useBackToWalletPicker(onClose);
+  const wallet = "MetaMask";
   return (
     <>
-      <BridgeModalTitle
-        title=" "
-        onClose={onClose}
-        onPrev={handleBackToWalletPicker}
-      />
+      <BridgeModalTitle title=" " onClose={onClose} onPrev={handleBack} />
       <SpacedPaperContent topPadding bottomPadding>
         <Typography variant="h5" align="center" gutterBottom>
           {t("wallet.bsc-mm-connect-message")}
@@ -437,17 +589,13 @@ export const BinanceMetamaskConnectorInfo: WalletPickerProps<
       </SpacedPaperContent>
       <PaperContent bottomPadding>
         <ActionButtonWrapper>
-          <Button
-            variant="text"
-            color="primary"
-            onClick={handleBackToWalletPicker}
-          >
-            Use another wallet
+          <Button variant="text" color="primary" onClick={handleBack}>
+            {t("wallet.use-another-wallet-label")}
           </Button>
         </ActionButtonWrapper>
         <ActionButtonWrapper>
           <ActionButton onClick={acknowledge}>
-            Continue with MetaMask
+            {t("wallet.continue-with-wallet-label", { wallet })}
           </ActionButton>
         </ActionButtonWrapper>
       </PaperContent>
@@ -459,58 +607,20 @@ export const AvalancheMetamaskConnectorInfo: WalletPickerProps<
   any,
   any
 >["DefaultInfo"] = ({ acknowledge, onClose }) => {
-  //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
-  const dispatch = useDispatch();
-  const handleBackToWalletPicker = useCallback(() => {
-    onClose();
-    setTimeout(() => {
-      dispatch(setWalletPickerOpened(true));
-    }, 1);
-  }, [dispatch, onClose]);
+  const handleBack = useBackToWalletPicker(onClose);
+  const wallet = "MetaMask";
+  const network = "Avalanche";
+  const link =
+    "https://support.avax.network/en/articles/4626956-how-do-i-set-up-metamask-on-avalanche";
   return (
-    <>
-      <BridgeModalTitle
-        title=" "
-        onClose={onClose}
-        onPrev={handleBackToWalletPicker}
-      />
-      <SpacedPaperContent topPadding bottomPadding>
-        <Typography variant="h5" align="center" gutterBottom>
-          Connect Avalanche with MetaMask
-        </Typography>
-        <Typography
-          variant="body1"
-          align="center"
-          color="textSecondary"
-          gutterBottom
-        >
-          Please ensure that you have added the Avalanche network to Metamask as
-          explained{" "}
-          <Link
-            href="https://support.avax.network/en/articles/4626956-how-do-i-set-up-metamask-on-avalanche"
-            external
-          >
-            here
-          </Link>
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <ActionButtonWrapper>
-          <Button
-            variant="text"
-            color="primary"
-            onClick={handleBackToWalletPicker}
-          >
-            Use another wallet
-          </Button>
-        </ActionButtonWrapper>
-        <ActionButtonWrapper>
-          <ActionButton onClick={acknowledge}>
-            Continue with MetaMask
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
-    </>
+    <AbstractConnectorInfo
+      network={network}
+      wallet={wallet}
+      onBack={handleBack}
+      onClose={onClose}
+      acknowledge={acknowledge}
+      link={link}
+    />
   );
 };
 
@@ -518,58 +628,19 @@ export const FantomMetamaskConnectorInfo: WalletPickerProps<
   any,
   any
 >["DefaultInfo"] = ({ acknowledge, onClose }) => {
-  //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
-  const dispatch = useDispatch();
-  const handleBackToWalletPicker = useCallback(() => {
-    onClose();
-    setTimeout(() => {
-      dispatch(setWalletPickerOpened(true));
-    }, 1);
-  }, [dispatch, onClose]);
+  const handleBack = useBackToWalletPicker(onClose);
+  const wallet = "MetaMask";
+  const network = "Fantom";
+  const link = "https://docs.fantom.foundation/tutorials/set-up-metamask";
   return (
-    <>
-      <BridgeModalTitle
-        title=" "
-        onClose={onClose}
-        onPrev={handleBackToWalletPicker}
-      />
-      <SpacedPaperContent topPadding bottomPadding>
-        <Typography variant="h5" align="center" gutterBottom>
-          Connect Fantom with MetaMask
-        </Typography>
-        <Typography
-          variant="body1"
-          align="center"
-          color="textSecondary"
-          gutterBottom
-        >
-          Please ensure that you have added the Fantom network to Metamask as
-          explained{" "}
-          <Link
-            href="https://docs.fantom.foundation/tutorials/set-up-metamask"
-            external
-          >
-            here
-          </Link>
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <ActionButtonWrapper>
-          <Button
-            variant="text"
-            color="primary"
-            onClick={handleBackToWalletPicker}
-          >
-            Use another wallet
-          </Button>
-        </ActionButtonWrapper>
-        <ActionButtonWrapper>
-          <ActionButton onClick={acknowledge}>
-            Continue with MetaMask
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
-    </>
+    <AbstractConnectorInfo
+      network={network}
+      wallet={wallet}
+      onBack={handleBack}
+      onClose={onClose}
+      acknowledge={acknowledge}
+      link={link}
+    />
   );
 };
 
@@ -577,58 +648,19 @@ export const PolygonMetamaskConnectorInfo: WalletPickerProps<
   any,
   any
 >["DefaultInfo"] = ({ acknowledge, onClose }) => {
-  //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
-  const dispatch = useDispatch();
-  const handleBackToWalletPicker = useCallback(() => {
-    onClose();
-    setTimeout(() => {
-      dispatch(setWalletPickerOpened(true));
-    }, 1);
-  }, [dispatch, onClose]);
+  const handleBack = useBackToWalletPicker(onClose);
+  const wallet = "MetaMask";
+  const network = "Polygon";
+  const link = "https://docs.matic.network/docs/develop/metamask/config-matic/";
   return (
-    <>
-      <BridgeModalTitle
-        title=" "
-        onClose={onClose}
-        onPrev={handleBackToWalletPicker}
-      />
-      <SpacedPaperContent topPadding bottomPadding>
-        <Typography variant="h5" align="center" gutterBottom>
-          Connect Polygon with MetaMask
-        </Typography>
-        <Typography
-          variant="body1"
-          align="center"
-          color="textSecondary"
-          gutterBottom
-        >
-          Please ensure that you have added the Polygon network to Metamask as
-          explained{" "}
-          <Link
-            href="https://docs.matic.network/docs/develop/metamask/config-matic/"
-            external
-          >
-            here
-          </Link>
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <ActionButtonWrapper>
-          <Button
-            variant="text"
-            color="primary"
-            onClick={handleBackToWalletPicker}
-          >
-            Use another wallet
-          </Button>
-        </ActionButtonWrapper>
-        <ActionButtonWrapper>
-          <ActionButton onClick={acknowledge}>
-            Continue with MetaMask
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
-    </>
+    <AbstractConnectorInfo
+      network={network}
+      wallet={wallet}
+      onBack={handleBack}
+      onClose={onClose}
+      acknowledge={acknowledge}
+      link={link}
+    />
   );
 };
 
@@ -636,58 +668,59 @@ export const ArbitrumMetamaskConnectorInfo: WalletPickerProps<
   any,
   any
 >["DefaultInfo"] = ({ acknowledge, onClose }) => {
-  //TODO: not very elegant solution, Dialog should be extended with onBack/onPrev action
-  const dispatch = useDispatch();
-  const handleBackToWalletPicker = useCallback(() => {
-    onClose();
-    setTimeout(() => {
-      dispatch(setWalletPickerOpened(true));
-    }, 1);
-  }, [dispatch, onClose]);
+  const handleBack = useBackToWalletPicker(onClose);
+  const wallet = "MetaMask";
+  const network = "Arbitrum";
+  // TODO: Update link once mainnet instructions are published.
+  const link = "https://developer.offchainlabs.com/docs/public_testnet";
   return (
-    <>
-      <BridgeModalTitle
-        title=" "
-        onClose={onClose}
-        onPrev={handleBackToWalletPicker}
-      />
-      <SpacedPaperContent topPadding bottomPadding>
-        <Typography variant="h5" align="center" gutterBottom>
-          Connect Arbitrum with MetaMask
-        </Typography>
-        <Typography
-          variant="body1"
-          align="center"
-          color="textSecondary"
-          gutterBottom
-        >
-          Please ensure that you have added the Arbitrum network to Metamask as
-          explained{" "}
-          <Link
-            // TODO: Update link once mainnet instructions are published.
-            href="https://developer.offchainlabs.com/docs/public_testnet"
-            external
-          >
-            here
-          </Link>
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <ActionButtonWrapper>
-          <Button
-            variant="text"
-            color="primary"
-            onClick={handleBackToWalletPicker}
-          >
-            Use another wallet
-          </Button>
-        </ActionButtonWrapper>
-        <ActionButtonWrapper>
-          <ActionButton onClick={acknowledge}>
-            Continue with MetaMask
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
-    </>
+    <AbstractConnectorInfo
+      network={network}
+      wallet={wallet}
+      onBack={handleBack}
+      onClose={onClose}
+      acknowledge={acknowledge}
+      link={link}
+    />
+  );
+};
+
+type AddTokenButtonProps = {
+  onAddToken: (() => Promise<unknown>) | null;
+  wallet: string;
+  currency: string;
+};
+
+export const AddTokenButton: FunctionComponent<AddTokenButtonProps> = ({
+  onAddToken,
+  wallet,
+  currency,
+}) => {
+  const { t } = useTranslation();
+
+  const [pending, setPending] = useState(false);
+  const handleAddToken = useCallback(() => {
+    if (onAddToken !== null) {
+      setPending(true);
+      onAddToken().finally(() => {
+        setPending(false);
+      });
+    }
+  }, [onAddToken]);
+
+  const show = onAddToken !== null;
+
+  const params = {
+    wallet: wallet,
+    currency: currency,
+  };
+  return (
+    <Fade in={show}>
+      <SecondaryActionButton disabled={pending} onClick={handleAddToken}>
+        {pending
+          ? t("wallet.add-token-button-pending-label", params)
+          : t("wallet.add-token-button-label", params)}
+      </SecondaryActionButton>
+    </Fade>
   );
 };

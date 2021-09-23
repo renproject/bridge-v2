@@ -19,5 +19,6 @@ export const getRenJs = (network: RenNetwork, timestamp = 0) => {
       useV2TransactionFormat: forceV2,
     });
   }
+  (window as any).renJS = cache[network];
   return cache[network] as RenJS;
 };

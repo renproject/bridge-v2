@@ -48,7 +48,7 @@ import {
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
-} from "../components/wallet/WalletHelpers";
+} from "../features/wallet/components/WalletHelpers";
 import { links } from "../constants/constants";
 import { env } from "../constants/environmentVariables";
 import { LanguageSelector } from "../features/i18n/components/I18nHelpers";

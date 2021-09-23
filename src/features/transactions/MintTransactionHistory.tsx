@@ -45,7 +45,7 @@ import {
   TransactionsPaginationWrapper,
 } from "../../components/transactions/TransactionsGrid";
 import { Debug } from "../../components/utils/Debug";
-import { WalletConnectionProgress } from "../../components/wallet/WalletHelpers";
+import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { featureFlags } from "../../constants/featureFlags";
 import { paths } from "../../pages/routes";
 import {
@@ -70,6 +70,7 @@ import { $mint, setMintCurrency } from "../mint/mintSlice";
 import {
   areAllDepositsCompleted,
   createMintTransaction,
+  GATEWAY_EXPIRY_OFFSET_MS,
   getDepositParams,
   getLockAndMintBasicParams,
   getRemainingGatewayTime,
@@ -504,7 +505,9 @@ const GatewayEntry: FunctionComponent<GatewayEntryProps> = ({
   }, [service, gatewayAddress, timer, hasDeposits]);
 
   const allCompleted = areAllDepositsCompleted(tx);
-  const completed = depositStatus === DepositEntryStatus.COMPLETED;
+  const completed =
+    depositStatus === DepositEntryStatus.COMPLETED ||
+    depositStatus === DepositEntryStatus.COMPLETING;
   const confirmationProps = completed
     ? {}
     : {
@@ -697,7 +700,9 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
             <span>
               {label}
               <strong>
-                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+                {getFormattedHMS(
+                  timeToGatewayExpiration + GATEWAY_EXPIRY_OFFSET_MS
+                )}
               </strong>
             </span>
           }
@@ -710,7 +715,9 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
             <span>
               {label}
               <strong>
-                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+                {getFormattedHMS(
+                  timeToGatewayExpiration + GATEWAY_EXPIRY_OFFSET_MS
+                )}
               </strong>
             </span>
           }
@@ -723,7 +730,9 @@ export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
             <span>
               {label}
               <strong>
-                {getFormattedHMS(timeToGatewayExpiration + 24 * 3600 * 1000)}
+                {getFormattedHMS(
+                  timeToGatewayExpiration + GATEWAY_EXPIRY_OFFSET_MS
+                )}
               </strong>
             </span>
           }

@@ -500,6 +500,14 @@ export const ActionButtonWrapper = styled("div")(() => ({
   marginTop: 20,
   display: "flex",
   justifyContent: "center",
+  flexDirection: "row",
+}));
+
+export const MultipleActionButtonWrapper = styled("div")(() => ({
+  marginTop: 20,
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
 }));
 
 const useSmallActionButtonStyles = makeStyles({
@@ -519,6 +527,28 @@ export const SmallActionButton: FunctionComponent<ButtonProps> = (props) => {
       {...props}
     />
   );
+};
+
+const useSecondaryActionButtonStyles = makeStyles((theme) => ({
+  root: {
+    borderRadius: 16,
+    color: theme.palette.text.primary,
+    borderWidth: "2px!important",
+    fontSize: 14,
+  },
+  outlined: {
+    border: `2px solid ${theme.palette.primary.main}`,
+    "&$disabled": {
+      border: `2px solid ${theme.palette.action.disabledBackground}`,
+    },
+  },
+}));
+
+export const SecondaryActionButton: FunctionComponent<ButtonProps> = (
+  props
+) => {
+  const classes = useSecondaryActionButtonStyles();
+  return <Button fullWidth variant="outlined" {...props} classes={classes} />;
 };
 
 export const RedButton = withStyles((theme) => ({

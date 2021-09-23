@@ -12,7 +12,7 @@ import {
   PolygonMetamaskConnectorInfo,
   AvalancheMetamaskConnectorInfo,
   ArbitrumMetamaskConnectorInfo,
-} from "../../components/wallet/WalletHelpers";
+} from "../../features/wallet/components/WalletHelpers";
 import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
 import { RenChain } from "../../utils/assetConfigs";

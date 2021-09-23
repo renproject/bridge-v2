@@ -57,6 +57,7 @@ export enum DepositPhase {
 export enum DepositEntryStatus {
   PENDING = "pending",
   ACTION_REQUIRED = "action_required",
+  COMPLETING = "completing",
   COMPLETED = "completed",
   EXPIRED = "expired",
 }

@@ -33,7 +33,13 @@ code {
 
 #notifications > div {
   position: fixed;
-  top: 78px;
+  top: 115px;
+}
+
+@media screen and (min-width: 1300px) {
+  #notifications > div {
+    left: calc((100% - 1184px)/2 + 24px);
+  }
 }
 
 .loader {

@@ -175,6 +175,9 @@ export const overrides = (palette: Palette): Overrides => {
       text: {
         borderRadius: 4,
       },
+      rect: {
+        borderRadius: 20,
+      },
     },
     MuiSnackbar: {
       anchorOriginTopCenter: {

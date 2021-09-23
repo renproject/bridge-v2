@@ -1,11 +1,11 @@
 import { Divider, IconButton } from "@material-ui/core";
 import {
-  mintMachine,
   DepositMachineSchema,
+  ErroringGatewaySession,
   GatewaySession,
   GatewayTransaction,
+  mintMachine,
   OpenedGatewaySession,
-  ErroringGatewaySession,
 } from "@renproject/ren-tx";
 import * as Sentry from "@sentry/react";
 import React, {
@@ -36,7 +36,6 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import { Debug } from "../../../components/utils/Debug";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
@@ -59,6 +58,7 @@ import {
 import {
   ExpiredErrorDialog,
   FinishTransactionWarning,
+  GatewayAddressTimeoutErrorDialog,
   ProgressStatus,
   WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
@@ -75,6 +75,7 @@ import {
   TxType,
   useTxParam,
 } from "../../transactions/transactionsUtils";
+import { WalletConnectionProgress } from "../../wallet/components/WalletHelpers";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import {
   $chain,
@@ -92,7 +93,7 @@ import {
   MintDepositConfirmationStatus,
   MintDepositToStatus,
 } from "../components/MintStatuses";
-import { DepositNavigation } from "../components/MultipleDepositsHelpers";
+import { ResponsiveDepositNavigation } from "../components/MultipleDepositsHelpers";
 import { useDepositPagination, useMintMachine } from "../mintHooks";
 import { resetMint } from "../mintSlice";
 import {
@@ -346,6 +347,10 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, []);
 
+  const handleGoToGateway = useCallback(() => {
+    setCurrentDeposit("gateway");
+  }, []);
+
   useEffect(() => {
     onMachineSendReady(send);
   }, [onMachineSendReady, send]);
@@ -466,10 +471,25 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const { fees } = useFetchFees(lockCurrencyConfig.symbol, TxType.MINT);
   const minimumAmount = (fees.lock / 10 ** decimals) * 2;
 
+  const getewayInitializeError = current.value === "srcInitializeError";
+  const [gatewayTimeout, setGatewayTimeout] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setGatewayTimeout(true);
+    }, 30 * 1000);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+  const gatewayError =
+    getewayInitializeError ||
+    (gatewayTimeout &&
+      !(current.context.tx as OpenedGatewaySession<any>).gatewayAddress);
+
   return (
     <>
       <DepositWrapper>
-        <DepositNavigation
+        <ResponsiveDepositNavigation
           value={currentDeposit}
           onChange={handleCurrentDepositChange}
           tx={current.context.tx}
@@ -480,6 +500,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
             deposit={activeDeposit.deposit}
             machine={activeDeposit.machine}
             depositHash={currentDeposit}
+            onGoToGateway={handleGoToGateway}
           />
         ) : (
           <MintDepositToStatus
@@ -488,6 +509,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           />
         )}
       </DepositWrapper>
+      {gatewayError && <GatewayAddressTimeoutErrorDialog open />}
       {
         // We want to allow users to finish mints for deposits that have been detected
         // If there are no deposits, and the gateway is expired (timeRemained < 0),
@@ -521,6 +543,7 @@ type MintTransactionDepositStatusProps = {
   deposit: GatewayTransaction<any>;
   machine: Actor<typeof mintMachine>;
   depositHash: string;
+  onGoToGateway: () => void;
 };
 
 export const forceState = "srcSettling" as keyof DepositMachineSchema<any>["states"];
@@ -530,6 +553,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   deposit,
   machine,
   depositHash,
+  onGoToGateway,
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -555,6 +579,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
 
   const state = machine?.state
     .value as keyof DepositMachineSchema<any>["states"];
+  console.info(state);
   if (!machine) {
     // We should always have machines for transactions
     return (
@@ -602,7 +627,13 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
       );
     case "completed":
       if ((deposit as any).destTxHash !== undefined) {
-        return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
+        return (
+          <MintCompletedStatus
+            tx={tx}
+            depositHash={depositHash}
+            onGoToGateway={onGoToGateway}
+          />
+        );
       } else {
         // FIXME: actually an error case, this shouldn't happen in this state
         return (
