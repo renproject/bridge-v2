@@ -85,7 +85,7 @@ import {
 import {
   ErrorChip,
   SuccessChip,
-  TransactionHistoryDialog,
+  WideDialog,
   WarningChip,
   WarningLabel,
 } from "./components/TransactionHistoryHelpers";
@@ -152,7 +152,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
   const rowsPerPage = 3;
   const startDay = rowsPerPage * page;
   return (
-    <TransactionHistoryDialog
+    <WideDialog
       open={opened}
       onEscapeKeyDown={handleTxHistoryClose}
       onBackdropClick={handleTxHistoryClose}
@@ -229,7 +229,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
           </Hide>
         </>
       )}
-    </TransactionHistoryDialog>
+    </WideDialog>
   );
 };
 
