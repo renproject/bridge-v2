@@ -35,7 +35,7 @@ import {
 import { resetRelease } from "../releaseSlice";
 import { getBurnAndReleaseParams } from "../releaseUtils";
 
-export const a = 1;
+const enableResubmitting = false;
 
 type ReleaseProgressStatusProps = {
   tx: AnyBurnSession;
@@ -127,7 +127,7 @@ export const ReleaseProgressStatus: FunctionComponent<ReleaseProgressStatusProps
       <SubmitErrorDialog
         open={Boolean(submittingError)}
         onAction={onReload}
-        onAlternativeAction={onResubmit}
+        onAlternativeAction={enableResubmitting ? onResubmit : undefined}
         error={(tx as ErroringBurnSession<any, any>).error}
       />
       <GeneralErrorDialog
