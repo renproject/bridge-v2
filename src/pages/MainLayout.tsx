@@ -41,6 +41,7 @@ import {
 } from "../components/layout/MobileLayout";
 import { externalLinkAttributes } from "../components/links/Links";
 import { Debug } from "../components/utils/Debug";
+import { IssuesResolverModal } from "../features/transactions/IssuesResolverModal";
 import {
   useWalletPickerStyles,
   WalletChainLabel,
@@ -57,6 +58,7 @@ import { useSetNetworkFromParam } from "../features/network/networkUtils";
 import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
 import {
   $transactionsData,
+  setIssueResolverOpened,
   setTxHistoryOpened,
 } from "../features/transactions/transactionsSlice";
 import { useSubNetworkName } from "../features/ui/uiHooks";
@@ -279,6 +281,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     >
       {children}
       <MintTransactionHistory />
+      <IssuesResolverModal />
       <Debug
         it={{
           debugNetworkName,
@@ -297,17 +300,22 @@ export const IssueFab = styled(Fab)({
   bottom: 20,
 });
 
-export const ConnectedMainLayout: FunctionComponent = ({ children }) => (
-  <MultiwalletProvider>
-    <MainLayout>{children}</MainLayout>
-    <IssueFab
-      size="small"
-      color="primary"
-      href={links.BUGS_LOG}
-      title="Report an issue"
-      {...externalLinkAttributes}
-    >
-      <Feedback fontSize="small" />
-    </IssueFab>
-  </MultiwalletProvider>
-);
+export const ConnectedMainLayout: FunctionComponent = ({ children }) => {
+  const dispatch = useDispatch();
+  const handleOpen = useCallback(() => {
+    dispatch(setIssueResolverOpened(true));
+  }, [dispatch]);
+  return (
+    <MultiwalletProvider>
+      <MainLayout>{children}</MainLayout>
+      <IssueFab
+        size="small"
+        color="primary"
+        onClick={handleOpen}
+        title="Report an issue"
+      >
+        <Feedback fontSize="small" />
+      </IssueFab>
+    </MultiwalletProvider>
+  );
+};

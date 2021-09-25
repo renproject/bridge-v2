@@ -4,7 +4,7 @@ import { Route } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
-import { useSetCurrentTxId } from "../transactions/transactionsHooks";
+import { useSetCurrentSessionData } from "../transactions/transactionsHooks";
 import { TxConfigurationStep } from "../transactions/transactionsUtils";
 import { MintFeesStep } from "./steps/MintFeesStep";
 import { MintInitialStep } from "./steps/MintInitialStep";
@@ -14,7 +14,7 @@ const MintConfiguration: FunctionComponent<RouteComponentProps> = () => {
   const [step, setStep] = useState(TxConfigurationStep.INITIAL);
 
   // clear the current tx so that history starts processing again
-  useSetCurrentTxId("");
+  useSetCurrentSessionData("");
 
   const onInitialNext = useCallback(() => {
     setStep(TxConfigurationStep.FEES);

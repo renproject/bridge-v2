@@ -22,6 +22,7 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
     minHeight: `calc(100vh - ${headerHeight + footerHeight}px)`,
   },
   logo: {
+    marginTop: 12, // adjusting vertical top
     display: "flex",
     alignItems: "center",
     marginRight: 40,

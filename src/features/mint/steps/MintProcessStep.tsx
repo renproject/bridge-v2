@@ -63,7 +63,7 @@ import {
   WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
 import {
-  useSetCurrentTxId,
+  useSetCurrentSessionData,
   useTransactionMenuControl,
 } from "../../transactions/transactionsHooks";
 import {
@@ -116,7 +116,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [tx, setTx] = useState<GatewaySession<any>>(
     parsedTx as GatewaySession<any>
   );
-  useSetCurrentTxId(tx.id);
+  useSetCurrentSessionData(tx.id, tx);
 
   usePageTitle(getMintTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();

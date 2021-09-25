@@ -58,7 +58,7 @@ import {
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
 import {
-  useSetCurrentTxId,
+  useSetCurrentSessionData,
   useTransactionMenuControl,
 } from "../../transactions/transactionsHooks";
 import {
@@ -94,7 +94,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx, setTx] = useState<AnyBurnSession>(parsedTx as AnyBurnSession); // TODO Partial<GatewaySession>
-  useSetCurrentTxId(tx.id);
+  useSetCurrentSessionData(tx.id, tx);
 
   usePageTitle(getReleaseTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();

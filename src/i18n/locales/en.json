@@ -88,6 +88,7 @@
   "mint.gateway-session-popup-tx-time-tooltip": "Block confirmation time depends on factors such as blockchain activity and the fee you set for your transaction",
   "mint.gateway-validity-message": "Complete this transaction within",
   "mint.initial-intro": "Select an asset and destination chain, to begin or resume a mint.",
+  "mint.initial-intro-description": "Soemthing something",
   "mint.mint-label": "Mint",
   "mint.minting-label": "Minting",
   "mint.multiple-deposits": "{{bridge}} has detected multiple deposits for this gateway address. View its progress using the navigation bar.",
