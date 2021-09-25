@@ -242,6 +242,19 @@ export const getAddressExplorerLink = (
   ].utils.addressExplorerLink(address, network);
 };
 
+export const getRenExplorerLink = (
+  network: RenNetwork | "testnet" | "mainnet",
+  depositHash: string
+) => {
+  const networkSubdomain =
+    network === "testnet" ? "explorer-testnet" : "explorer";
+  const txPart =
+    depositHash !== "" && depositHash !== "gateway"
+      ? `#/tx/${depositHash}`
+      : "";
+  return `https://${networkSubdomain}.renproject.io/${txPart}`;
+};
+
 type GetFeeTooltipsArgs = {
   mintFee: number;
   releaseFee: number;

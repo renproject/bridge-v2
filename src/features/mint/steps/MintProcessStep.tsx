@@ -116,7 +116,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [tx, setTx] = useState<GatewaySession<any>>(
     parsedTx as GatewaySession<any>
   );
-  useSetCurrentSessionData(tx.id, tx);
 
   usePageTitle(getMintTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
@@ -411,6 +410,8 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, [account, current.context.tx.userAddress]);
 
+  console.log(currentDeposit);
+
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction<any>;
     machine: Actor<typeof mintMachine>;
@@ -424,6 +425,11 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     Sentry.captureMessage(`loaded deposit${deposit.sourceTxHash}`);
     return { deposit, machine } as any;
   }, [currentDeposit, current.context]);
+
+  useSetCurrentSessionData(
+    current.context.tx.id,
+    activeDeposit?.deposit.renVMHash || ""
+  );
 
   const currentAmount = activeDeposit?.deposit.sourceTxAmount;
 

@@ -94,7 +94,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx, setTx] = useState<AnyBurnSession>(parsedTx as AnyBurnSession); // TODO Partial<GatewaySession>
-  useSetCurrentSessionData(tx.id, tx);
 
   usePageTitle(getReleaseTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();

@@ -90,7 +90,7 @@ import {
   WarningLabel,
 } from "./components/TransactionHistoryHelpers";
 import {
-  $currentTxId,
+  $currentSession,
   $txHistoryOpened,
   setTxHistoryOpened,
 } from "./transactionsSlice";
@@ -109,7 +109,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
   const { currency } = useSelector($mint);
   const network = useSelector($renNetwork);
   const opened = useSelector($txHistoryOpened);
-  const activeTxId = useSelector($currentTxId);
+  const { txId: activeTxId } = useSelector($currentSession);
   const [page, setPage] = useState(0);
 
   const [pending, setPending] = useState(false);

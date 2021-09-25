@@ -6,6 +6,7 @@ type TransactionsState = {
   currentTxId: string; // TODO: crit: deprecated
   currentSession: {
     txId: string;
+    depositHash: string;
     data: any;
   };
   issueResolver: {
@@ -18,6 +19,7 @@ let initialState: TransactionsState = {
   currentTxId: "",
   currentSession: {
     txId: "",
+    depositHash: "",
     data: undefined,
   },
   issueResolver: {
@@ -41,6 +43,9 @@ const slice = createSlice({
     setCurrentSessionTxId(state, action: PayloadAction<string>) {
       state.currentSession.txId = action.payload;
     },
+    setCurrentSessionDepositHash(state, action: PayloadAction<string>) {
+      state.currentSession.depositHash = action.payload;
+    },
     setCurrentSessionData(state, action: PayloadAction<any>) {
       state.currentSession.data = action.payload;
     },
@@ -52,6 +57,7 @@ export const {
   setCurrentTxId,
   setIssueResolverOpened,
   setCurrentSessionData,
+  setCurrentSessionDepositHash,
   setCurrentSessionTxId,
 } = slice.actions;
 

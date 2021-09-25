@@ -11,10 +11,8 @@ import { $renNetwork, setRenNetwork } from "../network/networkSlice";
 import { useSelectedChainWallet } from "../wallet/walletHooks";
 import { $multiwalletChain } from "../wallet/walletSlice";
 import {
-  $currentTxId,
-  setCurrentSessionData,
+  setCurrentSessionDepositHash,
   setCurrentSessionTxId,
-  setCurrentTxId,
 } from "./transactionsSlice";
 
 export const useTransactionMenuControl = () => {
@@ -55,16 +53,8 @@ export const useRenNetworkTracker = (currency: BridgeCurrency) => {
   }, [dispatch, renChain, currency, renNetwork]);
 };
 
-export const useSetCurrentSessionData = (id: string, data: any = undefined) => {
+export const useSetCurrentSessionData = (txId: string, depositHash = "") => {
   const dispatch = useDispatch();
-  const currentId = useSelector($currentTxId);
-  useEffect(() => {
-    if (id !== currentId) {
-      dispatch(setCurrentTxId(id));
-      dispatch(setCurrentSessionTxId(id));
-    }
-    if (data) {
-      dispatch(setCurrentSessionData(data));
-    }
-  }, [dispatch, id, currentId]);
+  dispatch(setCurrentSessionTxId(txId));
+  dispatch(setCurrentSessionDepositHash(depositHash));
 };
