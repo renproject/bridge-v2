@@ -41,7 +41,7 @@ const useIssueResolverStyles = makeStyles((theme) => ({
 
 const MaxBox = styled("div")({
   maxWidth: 370,
-  margin: "0 auto",
+  margin: "12px auto 0 auto",
 });
 
 export const IssuesResolver: FunctionComponent = () => {
@@ -69,8 +69,12 @@ export const IssuesResolver: FunctionComponent = () => {
       </BridgeModalTitle>
       <DialogContent className={styles.content} dividers>
         <MaxBox>
+          <Typography variant="body2">
+            {t("tx.issue-resolver-description-1")}{" "}
+            <strong>30 {t("common.minutes-short")}</strong>
+          </Typography>
           <Typography variant="body2" gutterBottom>
-            {t("tx.issue-resolver-description")}
+            {t("tx.issue-resolver-description-2")}
           </Typography>
           <Box display="flex" justifyContent="center" mb={2}>
             <FundsChip>{t("tx.issue-resolver-funds-label")}</FundsChip>
