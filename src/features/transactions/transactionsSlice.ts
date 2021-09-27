@@ -23,7 +23,7 @@ let initialState: TransactionsState = {
     data: undefined,
   },
   issueResolver: {
-    dialogOpened: true,
+    dialogOpened: false,
   },
 };
 

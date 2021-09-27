@@ -12,6 +12,8 @@ export const links = {
   FAQ: "https://docs.renproject.io/darknodes/faq/renbridge-faq",
   SECURITY_AUDITS: "https://github.com/renproject/ren/wiki/Audits",
   BUGS_LOG: "https://renprotocol.typeform.com/to/YdmFyB",
+  REN_EXPLORER_GUIDE:
+    "https://renproject.notion.site/Using-RenVM-s-Explorer-to-Solve-RenBridge-Issues-b190709927934b1f8dbd62e6df42f3ed",
   SOCIAL_TWITTER: "https://twitter.com/renprotocol",
   SOCIAL_GITHUB: "https://github.com/renproject",
   SOCIAL_TELEGRAM: "https://t.me/renproject",

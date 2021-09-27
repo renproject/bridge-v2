@@ -57,10 +57,7 @@ import {
   AnyBurnSession,
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
-import {
-  useSetCurrentSessionData,
-  useTransactionMenuControl,
-} from "../../transactions/transactionsHooks";
+import { useTransactionMenuControl } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getReleaseTxPageTitle,

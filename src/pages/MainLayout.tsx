@@ -41,7 +41,21 @@ import {
 } from "../components/layout/MobileLayout";
 import { externalLinkAttributes } from "../components/links/Links";
 import { Debug } from "../components/utils/Debug";
-import { IssuesResolverModal } from "../features/transactions/IssuesResolverModal";
+import { links } from "../constants/constants";
+import { env } from "../constants/environmentVariables";
+import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
+import { $renNetwork } from "../features/network/networkSlice";
+import { useSetNetworkFromParam } from "../features/network/networkUtils";
+import {
+  IssueResolverButton,
+  IssuesResolver,
+} from "../features/transactions/IssuesResolver";
+import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
+import {
+  $transactionsData,
+  setTxHistoryOpened,
+} from "../features/transactions/transactionsSlice";
+import { useSubNetworkName } from "../features/ui/uiHooks";
 import {
   useWalletPickerStyles,
   WalletChainLabel,
@@ -50,18 +64,6 @@ import {
   WalletEntryButton,
   WalletWrongNetworkInfo,
 } from "../features/wallet/components/WalletHelpers";
-import { links } from "../constants/constants";
-import { env } from "../constants/environmentVariables";
-import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
-import { $renNetwork } from "../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../features/network/networkUtils";
-import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
-import {
-  $transactionsData,
-  setIssueResolverOpened,
-  setTxHistoryOpened,
-} from "../features/transactions/transactionsSlice";
-import { useSubNetworkName } from "../features/ui/uiHooks";
 import {
   useSelectedChainWallet,
   useSyncMultiwalletNetwork,
@@ -165,6 +167,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
+        <IssueResolverButton className={styles.desktopIssueResolver} />
         <LanguageSelector
           mode="dialog"
           buttonClassName={styles.desktopLanguage}
@@ -281,7 +284,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     >
       {children}
       <MintTransactionHistory />
-      <IssuesResolverModal />
+      <IssuesResolver />
       <Debug
         it={{
           debugNetworkName,
@@ -301,17 +304,14 @@ export const IssueFab = styled(Fab)({
 });
 
 export const ConnectedMainLayout: FunctionComponent = ({ children }) => {
-  const dispatch = useDispatch();
-  const handleOpen = useCallback(() => {
-    dispatch(setIssueResolverOpened(true));
-  }, [dispatch]);
   return (
     <MultiwalletProvider>
       <MainLayout>{children}</MainLayout>
       <IssueFab
         size="small"
         color="primary"
-        onClick={handleOpen}
+        href={links.BUGS_LOG}
+        {...externalLinkAttributes}
         title="Report an issue"
       >
         <Feedback fontSize="small" />

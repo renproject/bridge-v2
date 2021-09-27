@@ -30,6 +30,7 @@ import { defaultShadow } from "../../theme/other";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
+  CustomSvgIconComponent,
   HomeIcon,
   LanguageIcon,
   QrCodeIcon,
@@ -468,6 +469,38 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
   return (
     <IconButton className={resolvedClassName} classes={classes} {...props}>
       <Icon className={iconClassName} />
+      {indicator && !opened && (
+        <PulseIndicator className={indicatorClassname} pulsing />
+      )}
+    </IconButton>
+  );
+};
+
+type ClosableMenuIconButtonProps = IconButtonProps & {
+  Icon: CustomSvgIconComponent;
+  opened?: boolean;
+  indicator?: boolean;
+};
+
+export const ClosableMenuIconButton: FunctionComponent<ClosableMenuIconButtonProps> = ({
+  opened,
+  indicator,
+  className,
+  Icon,
+  ...props
+}) => {
+  const { icon: iconClassName, ...classes } = useMenuIconButtonStyles();
+  const {
+    hoisted: hoistedClassName,
+    indicator: indicatorClassname,
+  } = useTransactionHistoryIconButtonStyles();
+  const ResolvedIcon = opened ? CloseIcon : Icon;
+  const resolvedClassName = classNames(className, {
+    [hoistedClassName]: opened,
+  });
+  return (
+    <IconButton className={resolvedClassName} classes={classes} {...props}>
+      <ResolvedIcon className={iconClassName} />
       {indicator && !opened && (
         <PulseIndicator className={indicatorClassname} pulsing />
       )}

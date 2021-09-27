@@ -38,6 +38,9 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
       alignItems: "center",
     },
   },
+  desktopIssueResolver: {
+    marginRight: 20,
+  },
   desktopLanguage: {
     marginRight: 20,
   },
