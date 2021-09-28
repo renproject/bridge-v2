@@ -1,4 +1,4 @@
-import { Box, Button } from '@material-ui/core'
+import { Box, Button } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import {
   BigQrCode,
@@ -6,7 +6,6 @@ import {
   QrCodeIconButton,
   ToggleIconButton,
   TransactionDetailsButton,
-  TransactionHistoryMenuIconButton,
   TxHistoryIconButton,
 } from "../../buttons/Buttons";
 import { QrCodeIcon } from "../../icons/RenIcons";
@@ -58,7 +57,6 @@ export const ButtonsSection: FunctionComponent = () => {
           />
           <TxHistoryIconButton />
           <QrCodeIconButton />
-          <TransactionHistoryMenuIconButton />
         </SeparationWrapper>
         <SeparationWrapper>
           <CopyContentButton content="1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm1LU14szcGuMwxVNet1rm" />
@@ -78,9 +76,7 @@ export const ButtonsSection: FunctionComponent = () => {
             <QrCodeIcon fontSize="inherit" />
           </BigQrCode>
         </SeparationWrapper>
-        <Box maxWidth={200}>
-
-        </Box>
+        <Box maxWidth={200}></Box>
       </Section>
     </>
   );

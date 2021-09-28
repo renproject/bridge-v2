@@ -1,4 +1,4 @@
-import { Box, DialogContent, Fab, Fade, Typography } from "@material-ui/core";
+import { DialogContent, Fab, Fade, Typography } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import { Feedback } from "@material-ui/icons";
 import React, { FunctionComponent, useCallback } from "react";
@@ -14,6 +14,7 @@ import { externalLinkAttributes, Link } from "../../components/links/Links";
 import { BridgeModalTitle } from "../../components/modals/BridgeModal";
 import { Debug } from "../../components/utils/Debug";
 import { links } from "../../constants/constants";
+import { $renNetwork } from "../network/networkSlice";
 import { WideDialog } from "./components/TransactionHistoryHelpers";
 import {
   $currentSession,
@@ -22,7 +23,7 @@ import {
 } from "./transactionsSlice";
 import { getRenExplorerLink } from "./transactionsUtils";
 
-const FundsChip = styled("p")(({ theme }) => ({
+export const FundsChip = styled("p")(({ theme }) => ({
   padding: `16px 47px`,
   border: `1px solid ${theme.palette.primary.light}`,
   borderRadius: 20,
@@ -42,12 +43,13 @@ const useIssueResolverStyles = makeStyles((theme) => ({
 
 const MaxBox = styled("div")({
   maxWidth: 370,
-  margin: "12px auto 0 auto",
+  margin: "0 auto",
 });
 
 export const IssuesResolver: FunctionComponent = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const network = useSelector($renNetwork);
   const { dialogOpened } = useSelector($issueResolver);
   const { data, txId, depositHash } = useSelector($currentSession);
   const styles = useIssueResolverStyles();
@@ -58,7 +60,7 @@ export const IssuesResolver: FunctionComponent = () => {
 
   const deposit = data?.transactions[depositHash] || {};
 
-  const explorer = getRenExplorerLink("testnet", depositHash);
+  const explorer = getRenExplorerLink(network, depositHash);
   return (
     <WideDialog
       open={dialogOpened}
@@ -68,29 +70,31 @@ export const IssuesResolver: FunctionComponent = () => {
       <BridgeModalTitle onClose={handleClose}>
         {t("tx.issue-resolver-title")}
       </BridgeModalTitle>
-      <DialogContent className={styles.content} dividers>
-        <MaxBox>
-          <Typography variant="body2">
-            {t("tx.issue-resolver-description-1")}{" "}
-            <strong>30 {t("common.minutes-short")}</strong>
-          </Typography>
-          <Typography variant="body2" gutterBottom>
-            {t("tx.issue-resolver-description-2")}
-          </Typography>
-          <Box display="flex" justifyContent="center" mb={2}>
-            <FundsChip>{t("tx.issue-resolver-funds-label")}</FundsChip>
-          </Box>
-          <Typography variant="body2" color="textSecondary" gutterBottom>
-            {t("tx.issue-resolver-instructions-text")}
-          </Typography>
-        </MaxBox>
-      </DialogContent>
+      {/*<DialogContent className={styles.content} dividers>*/}
+      {/*  <MaxBox>*/}
+      {/*    <Typography variant="body2">*/}
+      {/*      {t("tx.issue-resolver-description-1")}{" "}*/}
+      {/*      <strong>30 {t("common.minutes-short")}</strong>*/}
+      {/*    </Typography>*/}
+      {/*    <Typography variant="body2" gutterBottom>*/}
+      {/*      {t("tx.issue-resolver-description-2")}*/}
+      {/*    </Typography>*/}
+      {/*    <Box display="flex" justifyContent="center" mb={2}>*/}
+      {/*      <FundsChip>{t("tx.issue-resolver-funds-label")}</FundsChip>*/}
+      {/*    </Box>*/}
+      {/*    <Typography variant="body2" color="textSecondary" gutterBottom>*/}
+      {/*      {t("tx.issue-resolver-instructions-text")}*/}
+      {/*    </Typography>*/}
+      {/*  </MaxBox>*/}
+      {/*</DialogContent>*/}
       <DialogContent className={styles.content}>
-        <Typography variant="body1" gutterBottom>
-          {t("tx.issue-resolver-viewing-deposit-header", { depositHash })}
-        </Typography>
+        {depositHash !== "" && (
+          <Typography variant="body1" gutterBottom>
+            {t("tx.issue-resolver-viewing-deposit-header", { depositHash })}
+          </Typography>
+        )}
         <MaxBox>
-          <Typography variant="body2">
+          <Typography variant="body2" color="textSecondary">
             {t("tx.issue-resolver-viewing-deposit-description")}
           </Typography>
         </MaxBox>

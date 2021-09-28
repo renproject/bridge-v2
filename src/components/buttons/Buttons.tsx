@@ -446,36 +446,6 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   },
 }));
 
-type TransactionHistoryMenuIconButtonProps = IconButtonProps & {
-  opened?: boolean;
-  indicator?: boolean;
-};
-
-export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = ({
-  opened,
-  indicator,
-  className,
-  ...props
-}) => {
-  const { icon: iconClassName, ...classes } = useMenuIconButtonStyles();
-  const {
-    hoisted: hoistedClassName,
-    indicator: indicatorClassname,
-  } = useTransactionHistoryIconButtonStyles();
-  const Icon = opened ? CloseIcon : TxHistoryIcon;
-  const resolvedClassName = classNames(className, {
-    [hoistedClassName]: opened,
-  });
-  return (
-    <IconButton className={resolvedClassName} classes={classes} {...props}>
-      <Icon className={iconClassName} />
-      {indicator && !opened && (
-        <PulseIndicator className={indicatorClassname} pulsing />
-      )}
-    </IconButton>
-  );
-};
-
 type ClosableMenuIconButtonProps = IconButtonProps & {
   Icon: CustomSvgIconComponent;
   opened?: boolean;
