@@ -1,5 +1,6 @@
-import { Box, DialogContent, Fade, Typography } from "@material-ui/core";
+import { Box, DialogContent, Fab, Fade, Typography } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
+import { Feedback } from "@material-ui/icons";
 import React, { FunctionComponent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -119,11 +120,25 @@ export const IssuesResolver: FunctionComponent = () => {
   );
 };
 
-type IssueResolverButtonProps = {
+const IssueFab = styled(Fab)(({ theme }) => ({
+  position: "fixed",
+  right: 16,
+  bottom: 20,
+  [theme.breakpoints.up("sm")]: {
+    right: 72,
+  },
+  "@media (min-width: 1280px)": {
+    right: `calc((100% - 1280px)/2 + 72px)`,
+  },
+}));
+
+type IssuesResolverButtonProps = {
+  mode?: "menu" | "fab";
   className?: string;
 };
 
-export const IssueResolverButton: FunctionComponent<IssueResolverButtonProps> = ({
+export const IssuesResolverButton: FunctionComponent<IssuesResolverButtonProps> = ({
+  mode = "menu",
   className,
 }) => {
   const dispatch = useDispatch();
@@ -134,10 +149,24 @@ export const IssueResolverButton: FunctionComponent<IssueResolverButtonProps> = 
     dispatch(setIssueResolverOpened(!issueResolverOpened));
   }, [dispatch, issueResolverOpened]);
 
+  const buttonTitle = t("tx.issue-resolver-button-title");
+
+  if (mode === "fab") {
+    return (
+      <IssueFab
+        size="small"
+        color="primary"
+        onClick={handleIssueResolverToggle}
+        title={buttonTitle}
+      >
+        <Feedback fontSize="small" />
+      </IssueFab>
+    );
+  }
   return (
     <Fade in={!!depositHash}>
       <ClosableMenuIconButton
-        title={t("tx.issue-resolver-button-title")}
+        title={buttonTitle}
         className={className}
         Icon={SyncProblemIcon}
         opened={issueResolverOpened}

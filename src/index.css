@@ -31,7 +31,7 @@ code {
     monospace;
 }
 
-#notifications > div {
+#notifications > div:not([class^="center"]) {
   position: fixed;
   top: 115px;
 }
