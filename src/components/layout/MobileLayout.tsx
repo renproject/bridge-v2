@@ -137,7 +137,7 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
         <Container maxWidth="lg">
           <header className={styles.grow}>
             <AppBar position="static" color="transparent">
-              <Toolbar>
+              <Toolbar disableGutters>
                 <div className={styles.logo}>
                   <Link to="/">
                     <RenBridgeLogoIcon />

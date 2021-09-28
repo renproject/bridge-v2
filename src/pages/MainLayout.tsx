@@ -28,10 +28,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useWindowSize } from "react-use";
-import {
-  ClosableMenuIconButton,
-  TransactionHistoryMenuIconButton,
-} from "../components/buttons/Buttons";
+import { ClosableMenuIconButton } from "../components/buttons/Buttons";
 import { RenBridgeLogoIcon, TxHistoryIcon } from "../components/icons/RenIcons";
 import { Footer } from "../components/layout/Footer";
 import {
@@ -241,7 +238,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
         onClick={handleTxHistoryToggle}
       >
         <Button className={styles.mobileMenuButton} component="div">
-          <TransactionHistoryMenuIconButton
+          <ClosableMenuIconButton
+            Icon={TxHistoryIcon}
             className={styles.mobileTxHistory}
           />
           <span>{t("menu.viewTransactions")}</span>

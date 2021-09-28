@@ -123,12 +123,12 @@ export const IssuesResolver: FunctionComponent = () => {
 const IssueFab = styled(Fab)(({ theme }) => ({
   position: "fixed",
   right: 16,
-  bottom: 20,
+  bottom: 48,
   [theme.breakpoints.up("sm")]: {
-    right: 72,
+    right: 48,
   },
   "@media (min-width: 1280px)": {
-    right: `calc((100% - 1280px)/2 + 72px)`,
+    right: `calc((100% - 1280px)/2 + 48px)`,
   },
 }));
 
