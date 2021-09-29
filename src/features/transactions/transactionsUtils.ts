@@ -214,6 +214,8 @@ export const getReleaseAssetDecimals = (
   ]().assetDecimals(asset.toUpperCase());
 };
 
+const arbiscanUrl = "https://arbiscan.io";
+
 export const getChainExplorerLink = (
   chain: BridgeChain,
   network: RenNetwork | "testnet" | "mainnet",
@@ -221,6 +223,9 @@ export const getChainExplorerLink = (
 ) => {
   if (!txId) {
     return "";
+  }
+  if (chain === BridgeChain.ARBITRUMC && network === "mainnet") {
+    return arbiscanUrl + "/tx/" + txId;
   }
   const chainConfig = getChainConfig(chain);
   return (chainsClassMap as any)[
@@ -235,6 +240,9 @@ export const getAddressExplorerLink = (
 ) => {
   if (!address) {
     return "";
+  }
+  if (chain === BridgeChain.ARBITRUMC && network === "mainnet") {
+    return arbiscanUrl + "/address/" + address;
   }
   const chainConfig = getChainConfig(chain);
   return (chainsClassMap as any)[
