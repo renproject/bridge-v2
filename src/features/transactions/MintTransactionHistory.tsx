@@ -85,12 +85,12 @@ import {
 import {
   ErrorChip,
   SuccessChip,
-  TransactionHistoryDialog,
+  WideDialog,
   WarningChip,
   WarningLabel,
 } from "./components/TransactionHistoryHelpers";
 import {
-  $currentTxId,
+  $currentSession,
   $txHistoryOpened,
   setTxHistoryOpened,
 } from "./transactionsSlice";
@@ -109,7 +109,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
   const { currency } = useSelector($mint);
   const network = useSelector($renNetwork);
   const opened = useSelector($txHistoryOpened);
-  const activeTxId = useSelector($currentTxId);
+  const { txId: activeTxId } = useSelector($currentSession);
   const [page, setPage] = useState(0);
 
   const [pending, setPending] = useState(false);
@@ -152,7 +152,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
   const rowsPerPage = 3;
   const startDay = rowsPerPage * page;
   return (
-    <TransactionHistoryDialog
+    <WideDialog
       open={opened}
       onEscapeKeyDown={handleTxHistoryClose}
       onBackdropClick={handleTxHistoryClose}
@@ -229,7 +229,7 @@ export const MintTransactionHistory: FunctionComponent = () => {
           </Hide>
         </>
       )}
-    </TransactionHistoryDialog>
+    </WideDialog>
   );
 };
 

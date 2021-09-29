@@ -22,6 +22,7 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
     minHeight: `calc(100vh - ${headerHeight + footerHeight}px)`,
   },
   logo: {
+    marginTop: 12, // adjusting vertical top
     display: "flex",
     alignItems: "center",
     marginRight: 40,
@@ -36,6 +37,9 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
       display: "flex",
       alignItems: "center",
     },
+  },
+  desktopIssueResolver: {
+    marginRight: 20,
   },
   desktopLanguage: {
     marginRight: 20,
@@ -133,7 +137,7 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
         <Container maxWidth="lg">
           <header className={styles.grow}>
             <AppBar position="static" color="transparent">
-              <Toolbar>
+              <Toolbar disableGutters>
                 <div className={styles.logo}>
                   <Link to="/">
                     <RenBridgeLogoIcon />

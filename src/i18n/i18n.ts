@@ -106,6 +106,7 @@ i18n.init({
     defaultVariables: {
       bridge: "RenBridge",
       renvm: "RenVM",
+      renexplorer: "RenVM Explorer",
     },
   },
   backend: backendOptions as any,

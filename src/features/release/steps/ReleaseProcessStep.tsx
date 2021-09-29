@@ -57,10 +57,7 @@ import {
   AnyBurnSession,
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
-import {
-  useSetCurrentTxId,
-  useTransactionMenuControl,
-} from "../../transactions/transactionsHooks";
+import { useTransactionMenuControl } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getReleaseTxPageTitle,
@@ -94,7 +91,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx, setTx] = useState<AnyBurnSession>(parsedTx as AnyBurnSession); // TODO Partial<GatewaySession>
-  useSetCurrentTxId(tx.id);
 
   usePageTitle(getReleaseTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
