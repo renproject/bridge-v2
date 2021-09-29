@@ -410,8 +410,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
   }, [account, current.context.tx.userAddress]);
 
-  console.log(currentDeposit);
-
   const activeDeposit = useMemo<{
     deposit: GatewayTransaction<any>;
     machine: Actor<typeof mintMachine>;
