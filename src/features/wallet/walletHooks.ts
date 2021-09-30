@@ -195,7 +195,13 @@ export const useSwitchChainHelpers = (
       );
       const chainInstance = ChainClass(provider, network);
       const details = chainInstance.renNetworkDetails;
-      const chainId = "0x" + details.networkID.toString(16);
+      // Temporary work-around to fix RenJS returning the wrong chainID for
+      // Avalanche mainnet.
+      let detailsNetworkID =
+        chainConfig.full === "Avalanche" && network === "mainnet"
+          ? 43114
+          : details.networkID;
+      const chainId = "0x" + detailsNetworkID.toString(16);
       const networkCapitalized =
         network.slice(0, 1).toUpperCase() + network.slice(1);
       const chainName =
@@ -204,7 +210,7 @@ export const useSwitchChainHelpers = (
           : `${chainConfig.full} ${networkCapitalized}`;
       const rpcUrl = details.publicProvider() || details.infura;
       const rpcUrls = [rpcUrl];
-      const blockExplorerUrls = [details.etherscan];
+      const blockExplorerUrls = [details.etherscan + "/"];
 
       const params = [
         {

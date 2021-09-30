@@ -433,7 +433,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
   [BridgeCurrency.AVAX]: {
     symbol: BridgeCurrency.AVAX,
     short: "AVAX",
-    full: "Avaer",
+    full: "Avalanche",
     FullIcon: AvaIcon,
     GreyIcon: NotSetIcon,
     Icon: AvaIcon,
@@ -442,7 +442,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     coingeckoSymbol: "avalanche-2",
     sourceChain: BridgeChain.AVAXC,
     networkMappings: newNetworkMappings,
-    decimals: 9,
+    decimals: 18,
   },
   [BridgeCurrency.MATIC]: {
     symbol: BridgeCurrency.MATIC,
