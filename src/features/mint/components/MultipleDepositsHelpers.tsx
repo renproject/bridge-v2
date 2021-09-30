@@ -3,51 +3,51 @@ import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
-    ButtonBase,
-    ButtonProps,
-    Fade,
-    lighten,
-    makeStyles,
-    styled,
-    Theme,
-    Typography,
-    useMediaQuery,
-    useTheme,
-    withStyles,
+  ButtonBase,
+  ButtonProps,
+  Fade,
+  lighten,
+  makeStyles,
+  styled,
+  Theme,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  withStyles,
 } from "@material-ui/core";
 import {
-    Skeleton,
-    ToggleButton,
-    ToggleButtonGroup,
-    ToggleButtonGroupProps,
-    ToggleButtonProps,
+  Skeleton,
+  ToggleButton,
+  ToggleButtonGroup,
+  ToggleButtonGroupProps,
+  ToggleButtonProps,
 } from "@material-ui/lab";
 import { GatewaySession } from "@renproject/ren-tx";
 
 import {
-    CompletedIcon,
-    EmptyIcon,
-    GatewayIcon,
-    NavigateNextIcon,
-    NavigatePrevIcon,
+  CompletedIcon,
+  EmptyIcon,
+  GatewayIcon,
+  NavigateNextIcon,
+  NavigatePrevIcon,
 } from "../../../components/icons/RenIcons";
 import { depositNavigationBreakpoint } from "../../../components/layout/Paper";
 import {
-    ProgressWithContent,
-    ProgressWithContentProps,
-    PulseIndicator,
+  ProgressWithContent,
+  ProgressWithContentProps,
+  PulseIndicator,
 } from "../../../components/progress/ProgressHelpers";
 import { BridgeChainConfig } from "../../../utils/assetConfigs";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 import {
-    DepositEntryStatus,
-    DepositPhase,
+  DepositEntryStatus,
+  DepositPhase,
 } from "../../transactions/transactionsUtils";
 import {
-    depositSorter,
-    getDepositParams,
-    getLockAndMintBasicParams,
-    getRemainingGatewayTime,
+  depositSorter,
+  getDepositParams,
+  getLockAndMintBasicParams,
+  getRemainingGatewayTime,
 } from "../mintUtils";
 
 const useBigNavButtonStyles = makeStyles((theme) => ({
