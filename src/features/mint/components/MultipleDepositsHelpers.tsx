@@ -1,51 +1,53 @@
-import {
-  ButtonBase,
-  ButtonProps,
-  Fade,
-  lighten,
-  makeStyles,
-  styled,
-  Theme,
-  Typography,
-  useMediaQuery,
-  useTheme,
-  withStyles,
-} from "@material-ui/core";
-import {
-  Skeleton,
-  ToggleButton,
-  ToggleButtonGroup,
-  ToggleButtonGroupProps,
-  ToggleButtonProps,
-} from "@material-ui/lab";
-import { GatewaySession } from "@renproject/ren-tx";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+
 import {
-  CompletedIcon,
-  EmptyIcon,
-  GatewayIcon,
-  NavigateNextIcon,
-  NavigatePrevIcon,
+    ButtonBase,
+    ButtonProps,
+    Fade,
+    lighten,
+    makeStyles,
+    styled,
+    Theme,
+    Typography,
+    useMediaQuery,
+    useTheme,
+    withStyles,
+} from "@material-ui/core";
+import {
+    Skeleton,
+    ToggleButton,
+    ToggleButtonGroup,
+    ToggleButtonGroupProps,
+    ToggleButtonProps,
+} from "@material-ui/lab";
+import { GatewaySession } from "@renproject/ren-tx";
+
+import {
+    CompletedIcon,
+    EmptyIcon,
+    GatewayIcon,
+    NavigateNextIcon,
+    NavigatePrevIcon,
 } from "../../../components/icons/RenIcons";
 import { depositNavigationBreakpoint } from "../../../components/layout/Paper";
 import {
-  ProgressWithContent,
-  ProgressWithContentProps,
-  PulseIndicator,
+    ProgressWithContent,
+    ProgressWithContentProps,
+    PulseIndicator,
 } from "../../../components/progress/ProgressHelpers";
 import { BridgeChainConfig } from "../../../utils/assetConfigs";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 import {
-  DepositEntryStatus,
-  DepositPhase,
+    DepositEntryStatus,
+    DepositPhase,
 } from "../../transactions/transactionsUtils";
 import {
-  depositSorter,
-  getDepositParams,
-  getLockAndMintBasicParams,
-  getRemainingGatewayTime,
+    depositSorter,
+    getDepositParams,
+    getLockAndMintBasicParams,
+    getRemainingGatewayTime,
 } from "../mintUtils";
 
 const useBigNavButtonStyles = makeStyles((theme) => ({
@@ -500,9 +502,10 @@ export const ResponsiveDepositNavigation: FunctionComponent<DepositNavigationPro
                 <Typography variant="body1" color="textPrimary">
                   {lockTxAmount} {lockCurrencyConfig.short}
                 </Typography>
-                <Typography variant="body2" color="primary">
+                {/* TODO: Differentiate between submitting and ready to mint */}
+                {/* <Typography variant="body2" color="primary">
                   {t("mint.deposit-navigation-ready-to-mint-label")}
-                </Typography>
+                </Typography> */}
               </div>
             );
           }
