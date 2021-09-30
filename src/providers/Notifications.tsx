@@ -1,3 +1,4 @@
+import { makeStyles } from "@material-ui/core/styles";
 import {
   OptionsObject,
   SnackbarProvider as NotistackSnackbarProvider,
@@ -46,19 +47,35 @@ export const useNotifications = () => {
   return { showNotification, enqueueDefaultSnackbar, closeNotification };
 };
 
-export const NotificationsProvider: FunctionComponent = ({ children }) => (
-  <NotistackSnackbarProvider
-    anchorOrigin={{
-      vertical: "top",
-      horizontal: "left",
-    }}
-    maxSnack={4}
-    domRoot={document.getElementById("notifications") || undefined}
-    autoHideDuration={20000}
-  >
-    {children}
-  </NotistackSnackbarProvider>
-);
+const useNotificationProviderStyles = makeStyles({
+  containerRoot: {
+    position: "fixed",
+    top: "115px",
+  },
+  containerAnchorOriginTopLeft: {
+    "@media (min-width: 1300px)": {
+      left: `calc((100% - 1184px)/2 + 24px)`,
+    },
+  },
+});
+
+export const NotificationsProvider: FunctionComponent = ({ children }) => {
+  const classes = useNotificationProviderStyles();
+  return (
+    <NotistackSnackbarProvider
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "left",
+      }}
+      classes={classes}
+      maxSnack={4}
+      domRoot={document.getElementById("notifications") || undefined}
+      autoHideDuration={20000}
+    >
+      {children}
+    </NotistackSnackbarProvider>
+  );
+};
 
 const getFavicon = (alert: boolean, ext = "png", size = 0) => {
   const mode = alert ? "-alert" : "";

@@ -31,17 +31,6 @@ code {
     monospace;
 }
 
-#notifications > div:not([class^="center"]) {
-  position: fixed;
-  top: 115px;
-}
-
-@media screen and (min-width: 1300px) {
-  #notifications > div {
-    left: calc((100% - 1184px)/2 + 24px);
-  }
-}
-
 .loader {
   position: absolute;
   top: 50vh;
