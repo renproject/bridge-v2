@@ -247,7 +247,13 @@ export const useSwitchChainHelpers = (
     } else {
       return null;
     }
-  }, [network, provider, chainConfig.rentxName, chainConfig.nativeCurrency]);
+  }, [
+    chainConfig.rentxName,
+    chainConfig.nativeCurrency,
+    chainConfig.full,
+    network,
+    provider,
+  ]);
 
   return { addOrSwitchChain };
 };
