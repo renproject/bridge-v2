@@ -74,8 +74,10 @@ i18n.use(LanguageDetector).use(intervalPlural).use(initReactI18next); // passes 
 
 // if you want to edit language file with HMR make hasTranslations=false and
 // set DEFAULT_LOCALE to edited language key
-const hasTranslations = false; // process.env.NODE_ENV === "development";
-if (hasTranslations) {
+export const enableAllTranslations =
+  window.location.hostname !== "bridge.renproject.io";
+
+if (enableAllTranslations) {
   i18n.use(HttpApi);
 }
 
@@ -85,10 +87,10 @@ const packResources = (locale: string, bundleContent: any) => ({
 const defaultResources = packResources(DEFAULT_LOCALE, defaultBundle);
 
 i18n.init({
-  resources: !hasTranslations ? defaultResources : undefined,
-  lng: !hasTranslations ? DEFAULT_LOCALE : undefined, // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+  resources: !enableAllTranslations ? defaultResources : undefined,
+  lng: !enableAllTranslations ? DEFAULT_LOCALE : undefined, // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
   whitelist: availableLocales, // available languages for browser detector to pick from
-  fallbackLng: false,
+  fallbackLng: enableAllTranslations ? false : "en",
   detection: langDetectorOptions,
   // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
   // if you're using a language detector, do not define the lng option
@@ -104,6 +106,7 @@ i18n.init({
     defaultVariables: {
       bridge: "RenBridge",
       renvm: "RenVM",
+      renexplorer: "RenVM Explorer",
     },
   },
   backend: backendOptions as any,
@@ -113,7 +116,7 @@ export default i18n;
 
 // HMR for english locale - new keys will be firstly added to en.json
 // then reuploaded to crowdin and translated
-if (hasTranslations && (module as any).hot) {
+if (process.env.NODE_ENV === "development" && (module as any).hot) {
   (module as any).hot.accept(`./locales/${DEFAULT_LOCALE}.json`, () => {
     const newBundle = require(`./locales/${DEFAULT_LOCALE}.json`);
     i18n.removeResourceBundle(DEFAULT_LOCALE, "translation");

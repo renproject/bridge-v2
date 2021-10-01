@@ -7,12 +7,7 @@ import {
   FormLabel,
   Typography,
 } from "@material-ui/core";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useMemo,
-  useState,
-} from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -41,7 +36,6 @@ import {
   AssetInfo,
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
-import { releaseChainClassMap } from "../../../services/rentx";
 import {
   getChainConfig,
   getCurrencyConfig,
@@ -59,7 +53,10 @@ import {
   TxConfigurationStepProps,
   TxType,
 } from "../../transactions/transactionsUtils";
-import { useSelectedChainWallet } from "../../wallet/walletHooks";
+import {
+  useReleaseChainHelpers,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
 import {
   $wallet,
   setChain,
@@ -87,12 +84,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   useRenNetworkTracker(currency);
   useFetchBalances(supportedReleaseCurrencies);
 
-  const currencyConfig = getCurrencyConfig(currency);
-  const targetCurrency = toReleasedCurrency(currency);
-  const targetCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const burnedCurrencyConfig = getCurrencyConfig(currency);
+  const releasedCurrency = toReleasedCurrency(currency);
+  const releasedCurrencyConfig = getCurrencyConfig(releasedCurrency);
   const decimals = getReleaseAssetDecimals(
-    targetCurrencyConfig.sourceChain,
-    targetCurrency
+    releasedCurrencyConfig.sourceChain,
+    releasedCurrency
   );
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
   const { conversionTotal } = getTransactionFees({
@@ -135,21 +132,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     }
   }, [dispatch, balance]);
 
-  const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const releaseCurrencyConfig = getCurrencyConfig(releasedCurrency);
   const { MainIcon } = releaseCurrencyConfig;
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
-  const validateAddress = useMemo(() => {
-    const ChainClass = (releaseChainClassMap as any)[
-      releaseChainConfig.rentxName
-    ];
-    if (ChainClass) {
-      const chainInstance = ChainClass();
-      return (address: any) => {
-        return chainInstance.utils.addressIsValid(address, network);
-      };
-    }
-    return () => true;
-  }, [releaseChainConfig.rentxName, network]);
+  const { validateAddress } = useReleaseChainHelpers(
+    network,
+    releaseChainConfig.rentxName
+  );
 
   const requiresAck = releaseChainConfig.memo === true;
   const [ackChecked, setAckChecked] = useState(false);
@@ -191,13 +180,15 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       onNext();
     }
   }, [dispatch, onNext, walletConnected, basicCondition, hasBalance]);
+
+  const showAddressError = !!address && !isAddressValid;
   return (
     <>
       <PaperContent>
         <BigCurrencyInputWrapper>
           <BigCurrencyInput
             onChange={handleAmountChange}
-            symbol={currencyConfig.short}
+            symbol={burnedCurrencyConfig.short}
             usdValue={usdAmount}
             value={amount}
             errorText={
@@ -219,7 +210,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <Fade in={walletConnected}>
           <LabelWithValue
             label={t("release.currency-balance-label", {
-              currency: currencyConfig.short,
+              currency: burnedCurrencyConfig.short,
             })}
             value={
               <>
@@ -254,7 +245,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         </AssetDropdownWrapper>
         <BigOutlinedTextFieldWrapper>
           <OutlinedTextField
-            error={!!address && !isAddressValid}
+            error={showAddressError}
+            helperText={
+              showAddressError
+                ? t("release.releasing-to-error-text")
+                : undefined
+            }
             placeholder={t("release.releasing-to-placeholder", {
               chain: releaseChainConfig.full,
             })}

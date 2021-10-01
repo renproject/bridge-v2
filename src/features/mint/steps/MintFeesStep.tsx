@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   ActionButton,
-  ActionButtonWrapper,
+  MultipleActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
@@ -113,16 +113,14 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   });
   const conversionFormatted = conversionTotal;
 
-  const { GreyIcon } = lockCurrencyConfig;
-
   const targetCurrencyAmountUsd = conversionFormatted * currencyUsdRate;
   const destinationChainConfig = getChainConfig(chain);
   const destinationChainNativeCurrencyConfig = getCurrencyConfig(
     destinationChainConfig.nativeCurrency
   );
   const mintedCurrency = toMintedCurrency(currency);
-
   const mintedCurrencyConfig = getCurrencyConfig(mintedCurrency);
+  const { MainIcon } = mintedCurrencyConfig;
 
   const [ackChecked, setAckChecked] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -340,25 +338,27 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           (pending ? (
             <CenteredProgress />
           ) : (
-            <AssetInfo
-              label={t("mint.receiving-label")}
-              value={
-                <NumberFormatText
-                  value={conversionFormatted}
-                  spacedSuffix={mintedCurrencyConfig.short}
-                />
-              }
-              valueEquivalent={
-                <NumberFormatText
-                  prefix=" = $"
-                  value={targetCurrencyAmountUsd}
-                  spacedSuffix="USD"
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              }
-              Icon={<GreyIcon fontSize="inherit" />}
-            />
+            <div>
+              <AssetInfo
+                label={t("mint.receiving-label")}
+                value={
+                  <NumberFormatText
+                    value={conversionFormatted}
+                    spacedSuffix={mintedCurrencyConfig.short}
+                  />
+                }
+                valueEquivalent={
+                  <NumberFormatText
+                    prefix=" = $"
+                    value={targetCurrencyAmountUsd}
+                    spacedSuffix="USD"
+                    decimalScale={2}
+                    fixedDecimalScale
+                  />
+                }
+                Icon={<MainIcon fontSize="inherit" />}
+              />
+            </div>
           ))}
         <CheckboxWrapper>
           <FormControl error={showAckError}>
@@ -397,7 +397,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
             />
           </FormControl>
         </CheckboxWrapper>
-        <ActionButtonWrapper>
+        <MultipleActionButtonWrapper>
           <ActionButton
             onClick={handleConfirm}
             disabled={
@@ -412,7 +412,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
                   currency: lockCurrencyConfig.short,
                 })}
           </ActionButton>
-        </ActionButtonWrapper>
+        </MultipleActionButtonWrapper>
       </PaperContent>
       <Debug it={{ tx }} />
     </>

@@ -5,11 +5,14 @@ import {
   DialogContent,
   Typography,
 } from "@material-ui/core";
+import { Trans, useTranslation } from "react-i18next";
 import { BridgeModal } from "../../../components/modals/BridgeModal";
 import { RenNetwork } from "@renproject/interfaces";
 import { BridgeCurrency } from "../../../utils/assetConfigs";
 import { Solana } from "@renproject/chains-solana";
 import { ErrorDialog } from "../../transactions/components/TransactionsHelpers";
+import { Link } from "../../../components/links/Links";
+import { links } from "../../../constants/constants";
 
 export const SolanaTokenAccountModal: React.FunctionComponent<{
   provider: any;
@@ -17,6 +20,7 @@ export const SolanaTokenAccountModal: React.FunctionComponent<{
   currency: BridgeCurrency;
   onCreated: any;
 }> = ({ provider, network, currency, onCreated }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(true);
   const [awaiting, setAwaiting] = useState(false);
   const [creationError, setCreationError] = useState<string>();
@@ -58,18 +62,33 @@ export const SolanaTokenAccountModal: React.FunctionComponent<{
       <BridgeModal open={open} title="Solana Token Account">
         <DialogContent>
           <Typography variant="h5" align="center" gutterBottom>
-            Solana Associated Token Account Required
+            {t("mint.solana-token-account-required-title")}
           </Typography>
           <Typography variant="body2" align="center" gutterBottom>
-            Solana requires the creation of an account for each new token you
-            want to interact with.
+            {t("mint.solana-token-account-required-description-1")}
           </Typography>
           <Typography variant="body2" align="center" gutterBottom>
-            This will require you to sign a transaction and spend some SOL.
+            {t("mint.solana-token-account-required-description-2")}G{" "}
+          </Typography>
+          <br />
+          <Typography variant="body2" align="center" gutterBottom>
+            <Trans
+              i18nKey="mint.solana-token-account-ledger-description"
+              components={[<Link external href={links.LEDGER_BLIND_SIGNING} />]}
+            />
+          </Typography>
+          <br />
+          <Typography
+            variant="body2"
+            align="center"
+            color="textSecondary"
+            gutterBottom
+          >
+            {t("mint.solana-token-account-sol-required-message")}
           </Typography>
           {awaiting && (
             <Typography variant="body1" align="center" gutterBottom>
-              Please check your wallet to confirm the transaction
+              {t("mint.solana-token-account-check-wallet-message")}
             </Typography>
           )}
         </DialogContent>
@@ -82,7 +101,7 @@ export const SolanaTokenAccountModal: React.FunctionComponent<{
             onClick={createAccount}
             fullWidth
           >
-            Create Token Account
+            {t("mint.solana-token-account-create-token-account-label")}
           </Button>
         </DialogActions>
       </BridgeModal>

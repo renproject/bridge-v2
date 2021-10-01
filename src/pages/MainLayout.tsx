@@ -2,7 +2,6 @@ import {
   Button,
   Divider,
   Drawer,
-  Fab,
   ListItem,
   Menu,
   MenuItem,
@@ -10,8 +9,6 @@ import {
   useTheme,
 } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import { styled } from "@material-ui/core/styles";
-import { Feedback } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
 import {
@@ -31,16 +28,29 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useWindowSize } from "react-use";
-import { TransactionHistoryMenuIconButton } from "../components/buttons/Buttons";
-import { RenBridgeLogoIcon } from "../components/icons/RenIcons";
+import { ClosableMenuIconButton } from "../components/buttons/Buttons";
+import { RenBridgeLogoIcon, TxHistoryIcon } from "../components/icons/RenIcons";
 import { Footer } from "../components/layout/Footer";
 import {
   MainLayoutVariantProps,
   MobileLayout,
   useMobileLayoutStyles,
 } from "../components/layout/MobileLayout";
-import { externalLinkAttributes } from "../components/links/Links";
 import { Debug } from "../components/utils/Debug";
+import { env } from "../constants/environmentVariables";
+import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
+import { $renNetwork } from "../features/network/networkSlice";
+import { useSetNetworkFromParam } from "../features/network/networkUtils";
+import {
+  IssuesResolver,
+  IssuesResolverButton,
+} from "../features/transactions/IssuesResolver";
+import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
+import {
+  $transactionsData,
+  setTxHistoryOpened,
+} from "../features/transactions/transactionsSlice";
+import { useSubNetworkName } from "../features/ui/uiHooks";
 import {
   useWalletPickerStyles,
   WalletChainLabel,
@@ -48,18 +58,7 @@ import {
   WalletConnectionStatusButton,
   WalletEntryButton,
   WalletWrongNetworkInfo,
-} from "../components/wallet/WalletHelpers";
-import { links } from "../constants/constants";
-import { env } from "../constants/environmentVariables";
-import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
-import { $renNetwork } from "../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../features/network/networkUtils";
-import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
-import {
-  $transactionsData,
-  setTxHistoryOpened,
-} from "../features/transactions/transactionsSlice";
-import { useSubNetworkName } from "../features/ui/uiHooks";
+} from "../features/wallet/components/WalletHelpers";
 import {
   useSelectedChainWallet,
   useSyncMultiwalletNetwork,
@@ -167,7 +166,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           mode="dialog"
           buttonClassName={styles.desktopLanguage}
         />
-        <TransactionHistoryMenuIconButton
+        <ClosableMenuIconButton
+          Icon={TxHistoryIcon}
           opened={txHistoryOpened}
           className={styles.desktopTxHistory}
           onClick={handleTxHistoryToggle}
@@ -238,7 +238,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
         onClick={handleTxHistoryToggle}
       >
         <Button className={styles.mobileMenuButton} component="div">
-          <TransactionHistoryMenuIconButton
+          <ClosableMenuIconButton
+            Icon={TxHistoryIcon}
             className={styles.mobileTxHistory}
           />
           <span>{t("menu.viewTransactions")}</span>
@@ -279,6 +280,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     >
       {children}
       <MintTransactionHistory />
+      <IssuesResolver />
+      <IssuesResolverButton mode="fab" />
       <Debug
         it={{
           debugNetworkName,
@@ -291,23 +294,10 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   );
 };
 
-export const IssueFab = styled(Fab)({
-  position: "fixed",
-  right: 30,
-  bottom: 20,
-});
-
-export const ConnectedMainLayout: FunctionComponent = ({ children }) => (
-  <MultiwalletProvider>
-    <MainLayout>{children}</MainLayout>
-    <IssueFab
-      size="small"
-      color="primary"
-      href={links.BUGS_LOG}
-      title="Report an issue"
-      {...externalLinkAttributes}
-    >
-      <Feedback fontSize="small" />
-    </IssueFab>
-  </MultiwalletProvider>
-);
+export const ConnectedMainLayout: FunctionComponent = ({ children }) => {
+  return (
+    <MultiwalletProvider>
+      <MainLayout>{children}</MainLayout>
+    </MultiwalletProvider>
+  );
+};

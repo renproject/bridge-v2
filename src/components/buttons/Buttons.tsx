@@ -30,6 +30,7 @@ import { defaultShadow } from "../../theme/other";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
+  CustomSvgIconComponent,
   HomeIcon,
   LanguageIcon,
   QrCodeIcon,
@@ -445,15 +446,17 @@ const useTransactionHistoryIconButtonStyles = makeStyles((theme) => ({
   },
 }));
 
-type TransactionHistoryMenuIconButtonProps = IconButtonProps & {
+type ClosableMenuIconButtonProps = IconButtonProps & {
+  Icon: CustomSvgIconComponent;
   opened?: boolean;
   indicator?: boolean;
 };
 
-export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHistoryMenuIconButtonProps> = ({
+export const ClosableMenuIconButton: FunctionComponent<ClosableMenuIconButtonProps> = ({
   opened,
   indicator,
   className,
+  Icon,
   ...props
 }) => {
   const { icon: iconClassName, ...classes } = useMenuIconButtonStyles();
@@ -461,13 +464,13 @@ export const TransactionHistoryMenuIconButton: FunctionComponent<TransactionHist
     hoisted: hoistedClassName,
     indicator: indicatorClassname,
   } = useTransactionHistoryIconButtonStyles();
-  const Icon = opened ? CloseIcon : TxHistoryIcon;
+  const ResolvedIcon = opened ? CloseIcon : Icon;
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: opened,
   });
   return (
     <IconButton className={resolvedClassName} classes={classes} {...props}>
-      <Icon className={iconClassName} />
+      <ResolvedIcon className={iconClassName} />
       {indicator && !opened && (
         <PulseIndicator className={indicatorClassname} pulsing />
       )}
@@ -500,6 +503,14 @@ export const ActionButtonWrapper = styled("div")(() => ({
   marginTop: 20,
   display: "flex",
   justifyContent: "center",
+  flexDirection: "row",
+}));
+
+export const MultipleActionButtonWrapper = styled("div")(() => ({
+  marginTop: 20,
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
 }));
 
 const useSmallActionButtonStyles = makeStyles({
@@ -519,6 +530,28 @@ export const SmallActionButton: FunctionComponent<ButtonProps> = (props) => {
       {...props}
     />
   );
+};
+
+const useSecondaryActionButtonStyles = makeStyles((theme) => ({
+  root: {
+    borderRadius: 16,
+    color: theme.palette.text.primary,
+    borderWidth: "2px!important",
+    fontSize: 14,
+  },
+  outlined: {
+    border: `2px solid ${theme.palette.primary.main}`,
+    "&$disabled": {
+      border: `2px solid ${theme.palette.action.disabledBackground}`,
+    },
+  },
+}));
+
+export const SecondaryActionButton: FunctionComponent<ButtonProps> = (
+  props
+) => {
+  const classes = useSecondaryActionButtonStyles();
+  return <Button fullWidth variant="outlined" {...props} classes={classes} />;
 };
 
 export const RedButton = withStyles((theme) => ({

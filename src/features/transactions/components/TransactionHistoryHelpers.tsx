@@ -8,7 +8,7 @@ import {
 import { DialogProps } from "@material-ui/core/Dialog/Dialog";
 import React, { FunctionComponent } from "react";
 
-const useTransactionHistoryDialogStyles = makeStyles((theme) => ({
+const useWideDialogStyles = makeStyles((theme) => ({
   paper: {
     marginTop: 0, // 82,
     background: theme.customColors.greyHeaderBackground,
@@ -18,10 +18,8 @@ const useTransactionHistoryDialogStyles = makeStyles((theme) => ({
   },
 }));
 
-export const TransactionHistoryDialog: FunctionComponent<DialogProps> = (
-  props
-) => {
-  const classes = useTransactionHistoryDialogStyles();
+export const WideDialog: FunctionComponent<DialogProps> = (props) => {
+  const classes = useWideDialogStyles();
   return <Dialog maxWidth="sm" fullWidth classes={classes} {...props} />;
 };
 

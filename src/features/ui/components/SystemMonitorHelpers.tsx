@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
-import { createIndicatorClass } from "../../../components/wallet/WalletHelpers";
+import { createIndicatorClass } from "../../wallet/components/WalletHelpers";
 import { SystemStatus, SystemType } from "../uiSlice";
 
 export enum IndicatorStatus {

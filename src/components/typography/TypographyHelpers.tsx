@@ -276,6 +276,6 @@ export const SpacedTypography = styled(Typography)({
   marginBottom: "1.4em",
 });
 
-export const UnderlinedSpan = styled('span')({
+export const UnderlinedSpan = styled("span")({
   textDecoration: "underline",
 });

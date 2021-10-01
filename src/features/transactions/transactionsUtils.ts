@@ -57,6 +57,7 @@ export enum DepositPhase {
 export enum DepositEntryStatus {
   PENDING = "pending",
   ACTION_REQUIRED = "action_required",
+  COMPLETING = "completing",
   COMPLETED = "completed",
   EXPIRED = "expired",
 }
@@ -213,6 +214,8 @@ export const getReleaseAssetDecimals = (
   ]().assetDecimals(asset.toUpperCase());
 };
 
+const arbiscanUrl = "https://arbiscan.io";
+
 export const getChainExplorerLink = (
   chain: BridgeChain,
   network: RenNetwork | "testnet" | "mainnet",
@@ -220,6 +223,9 @@ export const getChainExplorerLink = (
 ) => {
   if (!txId) {
     return "";
+  }
+  if (chain === BridgeChain.ARBITRUMC && network === "mainnet") {
+    return arbiscanUrl + "/tx/" + txId;
   }
   const chainConfig = getChainConfig(chain);
   return (chainsClassMap as any)[
@@ -235,10 +241,26 @@ export const getAddressExplorerLink = (
   if (!address) {
     return "";
   }
+  if (chain === BridgeChain.ARBITRUMC && network === "mainnet") {
+    return arbiscanUrl + "/address/" + address;
+  }
   const chainConfig = getChainConfig(chain);
   return (chainsClassMap as any)[
     chainConfig.rentxName
   ].utils.addressExplorerLink(address, network);
+};
+
+export const getRenExplorerLink = (
+  network: RenNetwork | "testnet" | "mainnet",
+  depositHash: string
+) => {
+  const networkSubdomain =
+    network === "testnet" ? "explorer-testnet" : "explorer";
+  const txPart =
+    depositHash !== "" && depositHash !== "gateway"
+      ? `#/tx/${depositHash}`
+      : "";
+  return `https://${networkSubdomain}.renproject.io/${txPart}`;
 };
 
 type GetFeeTooltipsArgs = {

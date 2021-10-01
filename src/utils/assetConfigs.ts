@@ -1,63 +1,64 @@
 import { SvgIconComponent } from "@material-ui/icons";
 import { RenNetwork } from "@renproject/interfaces";
+
 import {
+  ArbitrumBlackIcon,
+  ArbitrumCircleIcon,
+  ArbitrumColorIcon,
   AvaFullIcon,
   AvaIcon,
   AvalancheChainCircleIcon,
+  BchDashedIcon,
   BchFullIcon,
   BchGreyIcon,
   BchIcon,
   BinanceChainFullIcon,
   BinanceChainIcon,
   BitcoinIcon,
+  BtcDashedIcon,
   BtcFullIcon,
   BtcGreyIcon,
   BtcIcon,
   CustomSvgIconComponent,
+  DgbDashedIcon,
   DgbFullIcon,
   DgbGreyIcon,
   DgbIcon,
+  DogeDashedIcon,
   DogeFullIcon,
   DogeGreyIcon,
   DogeIcon,
   DotsFullIcon,
   DotsGreyIcon,
   DotsIcon,
-  FilFullIcon,
-  FilGreyIcon,
-  FilIcon,
-  LunaFullIcon,
-  LunaGreyIcon,
-  LunaIcon,
   EthereumChainFullIcon,
   EthereumIcon,
   FantomCircleIcon,
   FantomFullIcon,
   FantomGreyIcon,
+  FilDashedIcon,
+  FilFullIcon,
+  FilGreyIcon,
+  FilIcon,
+  LunaDashedIcon,
+  LunaFullIcon,
+  LunaGreyIcon,
+  LunaIcon,
   MetamaskFullIcon,
   MewFullIcon,
+  PhantomFullIcon,
   PolygonCircleIcon,
   PolygonFullIcon,
   PolygonGreyIcon,
   SolanaCircleIcon,
   SolanaGreyIcon,
   SolletFullIcon,
-  PhantomFullIcon,
   TooltipIcon as NotSetIcon,
   WalletConnectFullIcon,
+  ZecDashedIcon,
   ZecFullIcon,
   ZecGreyIcon,
   ZecIcon,
-  ArbitrumCircleIcon,
-  ArbitrumColorIcon,
-  ArbitrumBlackIcon,
-  BtcDashedIcon,
-  BchDashedIcon,
-  DogeDashedIcon,
-  ZecDashedIcon,
-  DgbDashedIcon,
-  FilDashedIcon,
-  LunaDashedIcon,
 } from "../components/icons/RenIcons";
 import { env } from "../constants/environmentVariables";
 import * as customColors from "../theme/colors";
@@ -187,6 +188,7 @@ export type BridgeCurrencyConfig = LabelsConfig &
     bandchainSymbol?: string;
     coingeckoSymbol?: string;
     networkMappings: ChainToNetworkMappings;
+    decimals?: number;
     ethTestnet?: EthTestnet | null;
   };
 
@@ -431,7 +433,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
   [BridgeCurrency.AVAX]: {
     symbol: BridgeCurrency.AVAX,
     short: "AVAX",
-    full: "Avaer",
+    full: "Avalanche",
     FullIcon: AvaIcon,
     GreyIcon: NotSetIcon,
     Icon: AvaIcon,
@@ -440,6 +442,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     coingeckoSymbol: "avalanche-2",
     sourceChain: BridgeChain.AVAXC,
     networkMappings: newNetworkMappings,
+    decimals: 18,
   },
   [BridgeCurrency.MATIC]: {
     symbol: BridgeCurrency.MATIC,
@@ -452,6 +455,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "matic",
     sourceChain: BridgeChain.MATICC,
     networkMappings: newNetworkMappings,
+    decimals: 18,
   },
   [BridgeCurrency.FTM]: {
     symbol: BridgeCurrency.FTM,
@@ -464,18 +468,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "ftm",
     sourceChain: BridgeChain.FTMC,
     networkMappings: newNetworkMappings,
-  },
-  [BridgeCurrency.ETH]: {
-    symbol: BridgeCurrency.ETH,
-    short: "ETH",
-    full: "Ether",
-    FullIcon: EthereumIcon,
-    GreyIcon: NotSetIcon,
-    Icon: EthereumIcon,
-    MainIcon: BtcFullIcon,
-    rentxName: "eth",
-    sourceChain: BridgeChain.ETHC,
-    networkMappings: newNetworkMappings,
+    decimals: 18,
   },
   [BridgeCurrency.BNB]: {
     symbol: BridgeCurrency.BNB,
@@ -488,6 +481,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "eth",
     sourceChain: BridgeChain.BSCC,
     networkMappings: newNetworkMappings,
+    decimals: 18,
   },
   [BridgeCurrency.SOL]: {
     symbol: BridgeCurrency.SOL,
@@ -500,6 +494,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "sol",
     sourceChain: BridgeChain.SOLC,
     networkMappings: newNetworkMappings,
+    decimals: 9,
   },
   [BridgeCurrency.ARBETH]: {
     symbol: BridgeCurrency.ARBETH,
@@ -513,6 +508,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ARBITRUMC,
     bandchainSymbol: "ETH",
     networkMappings: newNetworkMappings,
+    decimals: 18,
   },
   [BridgeCurrency.UNKNOWN]: {
     symbol: BridgeCurrency.UNKNOWN,

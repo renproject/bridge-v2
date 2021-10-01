@@ -35,7 +35,7 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { WalletStatus } from "../../../components/utils/types";
-import { WalletConnectionProgress } from "../../../components/wallet/WalletHelpers";
+import { WalletConnectionProgress } from "../../wallet/components/WalletHelpers";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
@@ -57,10 +57,7 @@ import {
   AnyBurnSession,
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
-import {
-  useSetCurrentTxId,
-  useTransactionMenuControl,
-} from "../../transactions/transactionsHooks";
+import { useTransactionMenuControl } from "../../transactions/transactionsHooks";
 import {
   createTxQueryString,
   getReleaseTxPageTitle,
@@ -94,7 +91,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx, setTx] = useState<AnyBurnSession>(parsedTx as AnyBurnSession); // TODO Partial<GatewaySession>
-  useSetCurrentTxId(tx.id);
 
   usePageTitle(getReleaseTxPageTitle(tx));
   const [paperTitle, setPaperTitle] = usePaperTitle();
@@ -293,27 +289,37 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
   const [submitting, setSubmitting] = useState(false);
   const [timeoutError] = useState(false);
   const [timeoutKey, setTimeoutKey] = useState<number>();
-  const handleSubmit = useCallback(() => {
-    setSubmitting(true);
-    send({ type: "SUBMIT" });
-    setTimeout(() => {
-      const key = showNotification(
-        <span>
-          {t("release.no-confirmations-message-1")} <br />
-          {t("release.no-confirmations-message-2", {
-            currency: tx.sourceAsset.toUpperCase(),
-          })}
-        </span>,
-        {
-          variant: "warning",
-          persist: true,
-        }
-      ) as number;
-      setTimeoutKey(key);
-      // This isn't a great solution because users might end up burning twice
-      // setTimeoutError(true);
-    }, 1 * 60 * 1000);
-  }, [t, send, setTimeoutKey, showNotification, tx.sourceAsset]);
+  const handleSubmit = useCallback(
+    (type = "SUBMIT") => {
+      console.info("submitting", type);
+
+      setSubmitting(true);
+      send({ type });
+      setTimeout(() => {
+        const key = showNotification(
+          <span>
+            {t("release.no-confirmations-message-1")} <br />
+            {t("release.no-confirmations-message-2", {
+              currency: tx.sourceAsset.toUpperCase(),
+            })}
+          </span>,
+          {
+            variant: "warning",
+            persist: false,
+          }
+        ) as number;
+        setTimeoutKey(key);
+        // This isn't a great solution because users might end up burning twice
+        // setTimeoutError(true);
+      }, 1 * 60 * 1000);
+    },
+    [t, send, setTimeoutKey, showNotification, tx.sourceAsset]
+  );
+
+  const handleResubmit = useCallback(() => {
+    handleSubmit("RETRY");
+  }, [handleSubmit]);
+
   const handleReload = useCallback(() => {
     history.replace({
       ...location,
@@ -354,6 +360,16 @@ const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps>
         />
       );
     case "errorBurning":
+      return (
+        <ReleaseProgressStatus
+          tx={current.context.tx}
+          pending
+          submittingError
+          onSubmit={handleSubmit}
+          onResubmit={handleResubmit}
+          onReload={handleReload}
+        />
+      );
     case "errorReleasing":
     case "srcSettling":
       return (

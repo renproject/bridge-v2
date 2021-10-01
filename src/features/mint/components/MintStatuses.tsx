@@ -1,4 +1,5 @@
 import { Box, Grow, Typography, useTheme } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import { GatewaySession, OpenedGatewaySession } from "@renproject/ren-tx";
 import { ErroringGatewaySession } from "@renproject/ren-tx/src/types/mint";
 import QRCode from "qrcode.react";
@@ -9,6 +10,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
@@ -16,6 +18,7 @@ import {
   ActionButtonWrapper,
   BigQrCode,
   CopyContentButton,
+  MultipleActionButtonWrapper,
   QrCodeIconButton,
   TransactionDetailsButton,
 } from "../../../components/buttons/Buttons";
@@ -43,11 +46,15 @@ import {
   useSetPaperTitle,
 } from "../../../providers/TitleProviders";
 import { orangeLight } from "../../../theme/colors";
-import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
+import {
+  getChainConfigByRentxName,
+  getWalletConfig,
+} from "../../../utils/assetConfigs";
 import { getHours } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
+import { $renNetwork } from "../../network/networkSlice";
 import { useBrowserNotifications } from "../../notifications/notificationsUtils";
 import {
   HMSCountdown,
@@ -55,11 +62,18 @@ import {
   SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
 import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
+import { AddTokenButton } from "../../wallet/components/WalletHelpers";
 import {
+  useRenAssetHelpers,
+  useSelectedChainWallet,
+} from "../../wallet/walletHooks";
+import { $wallet } from "../../wallet/walletSlice";
+import {
+  GATEWAY_EXPIRY_OFFSET_MS,
   getLockAndMintBasicParams,
   getLockAndMintParams,
   getRemainingGatewayTime,
-  getRemainingMintTime,
+  getRemainingTime,
 } from "../mintUtils";
 import {
   GatewayAddressValidityMessage,
@@ -130,20 +144,26 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
             </span>
           }
         />
-        <Typography
-          component="p"
-          variant="caption"
-          align="center"
-          color="textSecondary"
-        >
-          {t("mint.gateway-minimum-amount-label")}:{" "}
-          <NumberFormatText
-            value={minimumAmount}
-            spacedSuffix={lockCurrencyConfig.short}
-          />
-        </Typography>
+        {Boolean(minimumAmount) ? (
+          <Typography
+            component="p"
+            variant="caption"
+            align="center"
+            color="textSecondary"
+          >
+            {t("mint.gateway-minimum-amount-label")}:{" "}
+            <NumberFormatText
+              value={minimumAmount}
+              spacedSuffix={lockCurrencyConfig.short}
+            />
+          </Typography>
+        ) : (
+          <Box display="flex" justifyContent="center">
+            <Skeleton variant="text" width={200} height={20} />
+          </Box>
+        )}
       </MediumWrapper>
-      {!!tx.gatewayAddress && (
+      {Boolean(tx.gatewayAddress) ? (
         <>
           {showQr && (
             <CenteringSpacedBox>
@@ -164,6 +184,8 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
             copiedMessage={t("common.copied-ex-message")}
           />
         </>
+      ) : (
+        <Skeleton variant="rect" height={45} />
       )}
       <Box
         mt={2}
@@ -176,7 +198,9 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
           {timeRemained > 0 && (
             <span>
               {t("mint.gateway-do-not-send-after-label")}:{" "}
-              <HMSCountdown milliseconds={timeRemained} />
+              <strong>
+                <HMSCountdown milliseconds={timeRemained} />
+              </strong>
             </span>
           )}
           {timeRemained <= 0 && <span>{t("mint.expired-label")}</span>}
@@ -328,11 +352,11 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
       closeNotification(key);
     };
   });
-  const [mintTimeRemained] = useState(getRemainingMintTime(tx.expiryTime));
+  const [mintTimeRemained] = useState(getRemainingTime(tx.expiryTime));
 
   useEffect(() => {
     let key = 0;
-    if (mintTimeRemained < 24 * 3600 * 1000) {
+    if (mintTimeRemained < GATEWAY_EXPIRY_OFFSET_MS) {
       key = showNotification(
         <GatewayTransactionValidityMessage milliseconds={mintTimeRemained} />,
         {
@@ -414,6 +438,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
+
   const {
     lockCurrencyConfig,
     lockChainConfig,
@@ -473,15 +498,27 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 type MintCompletedStatusProps = {
   tx: GatewaySession<any>;
   depositHash: string;
+  onGoToGateway: () => void;
 };
 
 export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = ({
   tx,
   depositHash,
+  onGoToGateway,
 }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.complete-title"));
   const history = useHistory();
+
+  const { chain } = useSelector($wallet);
+  const network = useSelector($renNetwork);
+  const {
+    walletConnected,
+    provider,
+    symbol: walletSymbol,
+  } = useSelectedChainWallet();
+  const walletConfig = getWalletConfig(walletSymbol);
+
   const {
     lockCurrencyConfig,
     mintCurrencyConfig,
@@ -503,7 +540,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     decimals,
   });
   const conversionFormatted = conversionTotal;
-  const handleReturn = useCallback(() => {
+  const handleGoToHome = useCallback(() => {
     history.push({
       pathname: paths.HOME,
     });
@@ -542,7 +579,15 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     t,
   ]);
 
-  useEffect(showNotifications, [showNotifications, pending]);
+  useEffectOnce(showNotifications);
+
+  const { addToken } = useRenAssetHelpers(
+    chain,
+    network,
+    provider,
+    lockCurrencyConfig.symbol
+  );
+
   return (
     <>
       <ProgressWrapper>
@@ -558,9 +603,20 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
         />
         !
       </Typography>
-      <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>Back to home</ActionButton>
-      </ActionButtonWrapper>
+      <MultipleActionButtonWrapper>
+        {walletConnected && addToken !== null && (
+          <Box mb={1}>
+            <AddTokenButton
+              onAddToken={addToken}
+              wallet={walletConfig.short}
+              currency={mintCurrencyConfig.short}
+            />
+          </Box>
+        )}
+        <ActionButton onClick={handleGoToHome}>
+          {t("mint.back-to-home")}
+        </ActionButton>
+      </MultipleActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link
           external
