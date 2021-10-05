@@ -1573,6 +1573,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.0.0":
+  version "7.15.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.4.tgz#fd17d16bfdf878e6dd02d19753a39fa8a8d9c84a"
+  integrity sha512-99catp6bHCaxr4sJ/DbTGgHS4+Rs2RVd2g7iOap6SLGPDknRK9ztKNsE/Fg6QhSeh1FGE5f6gHGQmvvn3I3xhw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.1", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
   version "7.12.13"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.13.tgz#0a21452352b02542db0ffb928ac2d3ca7cb6d66d"
@@ -3412,7 +3419,7 @@
   resolved "https://registry.yarnpkg.com/@renproject/fonts/-/fonts-1.0.3-rc1.tgz#66d9d782bfb2e220b9db4f6ac01d39884fb4d4e5"
   integrity sha512-nua2aANNcXgV4SENTf0cRJBx4NGcSyq3ithc3Qf4URMPrlJPQ+N/PWCsPxOd+O3DzH9F4h2UksYhlcSZrH4x2A==
 
-"@renproject/interfaces@2.5.9", "@renproject/interfaces@^2.5.9":
+"@renproject/interfaces@2.5.9", "@renproject/interfaces@^2.5.2", "@renproject/interfaces@^2.5.9":
   version "2.5.9"
   resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.5.9.tgz#4c8d02fc6376f48e6d69f3a1ddf4c680d9f0bd61"
   integrity sha512-9ts8xbzZeshg/ZORmmf1iBJBx3z7E9Sh92nrE5N4WYC7jFQj9ig8z5uGI0zdqG8M/q/pETa2o/Db3b5/Q/gezQ==
@@ -3430,7 +3437,7 @@
     "@renproject/multiwallet-base-connector" "^2.5.9"
     "@types/node" ">=10"
 
-"@renproject/multiwallet-base-connector@^2.5.9":
+"@renproject/multiwallet-base-connector@^2.5.2", "@renproject/multiwallet-base-connector@^2.5.9":
   version "2.5.9"
   resolved "https://registry.yarnpkg.com/@renproject/multiwallet-base-connector/-/multiwallet-base-connector-2.5.9.tgz#b87ba7aa65b5937de6fec4eb7e2ab1a22cfa3747"
   integrity sha512-SgkuQVJ1yMaF9Xt1VEmPM3vKYf7+xuTtIJbElUr6QrEkvVD6t7vGuMX0j7qjV3jAG1m/T6L0q69aOwJPaTAlnA==
@@ -3491,13 +3498,14 @@
     "@renproject/multiwallet-base-connector" "^2.5.9"
     "@types/node" ">=10"
 
-"@renproject/multiwallet-ui@2.5.9":
-  version "2.5.9"
-  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-ui/-/multiwallet-ui-2.5.9.tgz#e7464277dd073bb35534bc1a9d659cb639b00cbb"
-  integrity sha512-nJ75kNCVCvOwrUFMi1bop4lZomjMvc2rvuCKNAmuUv9SBKVqEcpw6HpN/BVCRaY9US9R7q+h6PPmT0xu0ts3AA==
+"@renproject/multiwallet-ui@2.5.10-alpha.0":
+  version "2.5.10-alpha.0"
+  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-ui/-/multiwallet-ui-2.5.10-alpha.0.tgz#6daddf47dda23f91882893d1b69e5c244dcdf034"
+  integrity sha512-ycYhh0tiqCe4WWE/xIr9vE+8c+kYnJr/JH1vxASrijBdzdblhyHZrLGwmhJmZVbfL6Ooyfz5XpnaNAWNO1uA9A==
   dependencies:
-    "@renproject/interfaces" "^2.5.9"
-    "@renproject/multiwallet-base-connector" "^2.5.9"
+    "@renproject/interfaces" "^2.5.2"
+    "@renproject/multiwallet-base-connector" "^2.5.2"
+    babel-plugin-import "^1.13.3"
 
 "@renproject/provider@^2.5.9":
   version "2.5.9"
@@ -5868,6 +5876,14 @@ babel-plugin-dynamic-import-node@^2.3.3:
   integrity sha512-jZVI+s9Zg3IqA/kdi0i6UDCybUI3aSBLnglhYbSSjKlV7yF1F/5LWv8MakQmvYpnbJDS6fcBL2KzHSxNCMtWSQ==
   dependencies:
     object.assign "^4.1.0"
+
+babel-plugin-import@^1.13.3:
+  version "1.13.3"
+  resolved "https://registry.yarnpkg.com/babel-plugin-import/-/babel-plugin-import-1.13.3.tgz#9dbbba7d1ac72bd412917a830d445e00941d26d7"
+  integrity sha512-1qCWdljJOrDRH/ybaCZuDgySii4yYrtQ8OJQwrcDqdt0y67N30ng3X3nABg6j7gR7qUJgcMa9OMhc4AGViDwWw==
+  dependencies:
+    "@babel/helper-module-imports" "^7.0.0"
+    "@babel/runtime" "^7.0.0"
 
 babel-plugin-istanbul@^6.0.0:
   version "6.0.0"

@@ -21,7 +21,7 @@
     "@renproject/multiwallet-ethereum-mewconnect-connector": "2.5.9",
     "@renproject/multiwallet-ethereum-walletconnect-connector": "2.5.9",
     "@renproject/multiwallet-solana-connector": "2.5.9",
-    "@renproject/multiwallet-ui": "2.5.9",
+    "@renproject/multiwallet-ui": "2.5.10-alpha.0",
     "@renproject/ren": "2.5.9",
     "@renproject/ren-tx": "2.5.9",
     "@renproject/rpc": "2.5.9",
