@@ -215,6 +215,25 @@ export const getReleaseAssetDecimals = (
 };
 
 const arbiscanUrl = "https://arbiscan.io";
+const arbiscanTestnetUrl = "https://testnet.arbiscan.io";
+
+const getArbiscanAddressExplorerUrl = (
+  network: RenNetwork | "testnet" | "mainnet",
+  address: string
+) => {
+  return `${
+    network === "mainnet" ? arbiscanUrl : arbiscanTestnetUrl
+  }/address/${address}`;
+};
+
+const getArbiscanChainExplorerUrl = (
+  network: RenNetwork | "testnet" | "mainnet",
+  txId: string
+) => {
+  return `${
+    network === "mainnet" ? arbiscanUrl : arbiscanTestnetUrl
+  }/tx/${txId}`;
+};
 
 export const getChainExplorerLink = (
   chain: BridgeChain,
@@ -224,8 +243,8 @@ export const getChainExplorerLink = (
   if (!txId) {
     return "";
   }
-  if (chain === BridgeChain.ARBITRUMC && network === "mainnet") {
-    return arbiscanUrl + "/tx/" + txId;
+  if (chain === BridgeChain.ARBITRUMC) {
+    return getArbiscanChainExplorerUrl(network, txId);
   }
   const chainConfig = getChainConfig(chain);
   return (chainsClassMap as any)[
@@ -241,8 +260,8 @@ export const getAddressExplorerLink = (
   if (!address) {
     return "";
   }
-  if (chain === BridgeChain.ARBITRUMC && network === "mainnet") {
-    return arbiscanUrl + "/address/" + address;
+  if (chain === BridgeChain.ARBITRUMC) {
+    return getArbiscanAddressExplorerUrl(network, address);
   }
   const chainConfig = getChainConfig(chain);
   return (chainsClassMap as any)[
