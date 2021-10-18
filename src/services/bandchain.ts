@@ -1,4 +1,4 @@
-import Client from "@bandprotocol/bandchain.js/lib/client";
+import { Client } from "@bandprotocol/bandchain.js";
 
 let bandchainInstance: any | null = null;
 
