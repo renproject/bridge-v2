@@ -80,15 +80,12 @@ export const useExchangeRates = () => {
         dispatch(setExchangeRates(rates));
       })
       .catch((e) => {
-        //FIXME: handle this properly
         console.error(e);
       });
   }, [dispatch, fetchMarketDataRates]);
 
   useEffect(fetchData, [fetchData]);
   useInterval(fetchData, dataRefreshInterval * 1000);
-
-  return null;
 };
 
 export const useGasPrices = () => {
@@ -101,6 +98,4 @@ export const useGasPrices = () => {
   }, [dispatch]);
 
   useEffect(fetchData, [fetchData]);
-
-  return null;
 };
