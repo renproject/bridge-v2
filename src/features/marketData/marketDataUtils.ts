@@ -1,5 +1,5 @@
+import { ReferenceData } from "@bandprotocol/bandchain.js/lib/data";
 import { env } from "../../constants/environmentVariables";
-import { getBandchain } from "../../services/bandchain";
 import { uniqueArray } from "../../utils/arrays";
 import {
   BridgeChain,
@@ -36,22 +36,15 @@ export const coingeckoSymbols = Object.values(currenciesConfig)
   .filter((entry) => Boolean(entry.coingeckoSymbol))
   .map((entry) => entry.coingeckoSymbol);
 
-export type BandchainExchangeRateEntry = {
-  pair: string;
-  rate: number;
-  updated: {
-    base: number;
-    quote: number;
-  };
-};
+export type BandchainReferenceData = ReferenceData;
 
-export type CoingeckoExchangeRateEntry = {
+export type CoingeckoReferenceData = {
   symbol: string;
   current_price: number;
 };
 
 export const mapBandchainToExchangeData = (
-  referenceData: Array<BandchainExchangeRateEntry>
+  referenceData: Array<BandchainReferenceData>
 ) => {
   return referenceData.map((entry: any) => {
     const [base, quote] = entry.pair.split("/");
@@ -64,7 +57,7 @@ export const mapBandchainToExchangeData = (
 };
 
 export const mapCoingeckoToExchangeData = (
-  entries: Array<CoingeckoExchangeRateEntry>
+  entries: Array<CoingeckoReferenceData>
 ) => {
   return entries.map((entry: any) => ({
     pair: getPair(entry.symbol, "USD"),
@@ -80,29 +73,6 @@ export type ExchangeRate = {
 export type GasPrice = {
   chain: string;
   standard: number;
-};
-
-export const fetchMarketDataRates = async () => {
-  const bandchain = await getBandchain()
-    .getReferenceData(bandchainReferencePairs)
-    .then(mapBandchainToExchangeData)
-    .catch((error: any) => {
-      console.error(error);
-      return [];
-    });
-
-  const coingecko = await fetch(
-    "https://api.coingecko.com/api/v3" +
-      `/coins/markets?vs_currency=usd&ids=${coingeckoSymbols.join(",")}`
-  )
-    .then((response) => response.json())
-    .then(mapCoingeckoToExchangeData)
-    .catch((error: any) => {
-      console.error(error);
-      return [];
-    });
-
-  return [...bandchain, ...coingecko];
 };
 
 export const findExchangeRate = (
