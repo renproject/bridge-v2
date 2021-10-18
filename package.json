@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/core": "^7.15.8",
-    "@babel/helper-call-delegate": "^7.12.1",
     "@bandprotocol/bandchain.js": "2.0.1",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
@@ -94,6 +92,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/helper-call-delegate": "^7.12.1",
     "@babel/plugin-transform-modules-commonjs": "^7.13.0",
     "@babel/preset-env": "^7.15.8",
     "netlify-cli": "^2.71.0",
