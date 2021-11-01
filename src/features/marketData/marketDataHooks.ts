@@ -25,7 +25,7 @@ export const useExchangeRates = () => {
 
   const fetchMarketDataRates = useCallback(async () => {
     const bandchain = await getBandchain()
-      .getReferenceData(bandchainReferencePairs, 3, 4)
+      .getReferenceData(bandchainReferencePairs, 10, 16)
       .then((data: Array<BandchainReferenceData>) => {
         dispatch(
           setSystemMonitorStatus({
