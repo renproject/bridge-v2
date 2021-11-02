@@ -149,9 +149,12 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WalletEntryButton,
       WalletChainLabel,
       config: walletPickerModalConfig(renNetwork),
+      connectingTitle: t("wallet.connecting"),
+      wrongNetworkTitle: t("wallet.wrong-network-title"),
+      connectWalletTitle: t("wallet.connect-wallet"),
     };
     return options;
-  }, [multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);
+  }, [t, multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);
 
   const debugWallet = useWallet(multiwalletChain); //remove
   const debugMultiwallet = useMultiwallet(); //remove

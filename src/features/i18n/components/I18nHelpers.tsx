@@ -151,6 +151,15 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
                 </LanguageButton>
               </LanguageButtonWrapper>
             ))}
+            {enableAllTranslations && (
+              <LanguageButton
+                onClick={handleLanguageChange}
+                value="non-existent"
+                selected={language === "non-existent"}
+              >
+                Non existent
+              </LanguageButton>
+            )}
           </SpacedPaperContent>
         </BridgeModal>
       </>
@@ -176,6 +185,15 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
           {nativeLanguageNames[languageKey]}
         </MenuItem>
       ))}
+      {enableAllTranslations && (
+        <MenuItem
+          onClick={() => i18n.changeLanguage("non-existent")}
+          value="non-existent"
+          selected={language === "non-existent"}
+        >
+          Non existent
+        </MenuItem>
+      )}
     </Select>
   );
 };

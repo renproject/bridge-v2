@@ -9,9 +9,9 @@ import {
 } from "../ui/uiSlice";
 import { setExchangeRates, setGasPrices } from "./marketDataSlice";
 import {
-  BandchainExchangeRateEntry,
+  BandchainReferenceData,
   bandchainReferencePairs,
-  CoingeckoExchangeRateEntry,
+  CoingeckoReferenceData,
   coingeckoSymbols,
   fetchMarketDataGasPrices,
   mapBandchainToExchangeData,
@@ -25,8 +25,8 @@ export const useExchangeRates = () => {
 
   const fetchMarketDataRates = useCallback(async () => {
     const bandchain = await getBandchain()
-      .getReferenceData(bandchainReferencePairs)
-      .then((data: Array<BandchainExchangeRateEntry>) => {
+      .getReferenceData(bandchainReferencePairs, 10, 16)
+      .then((data: Array<BandchainReferenceData>) => {
         dispatch(
           setSystemMonitorStatus({
             type: SystemType.Bandchain,
@@ -52,7 +52,7 @@ export const useExchangeRates = () => {
         `/coins/markets?vs_currency=usd&ids=${coingeckoSymbols.join(",")}`
     )
       .then((response) => response.json())
-      .then((data: Array<CoingeckoExchangeRateEntry>) => {
+      .then((data: Array<CoingeckoReferenceData>) => {
         dispatch(
           setSystemMonitorStatus({
             type: SystemType.Coingecko,
@@ -80,15 +80,12 @@ export const useExchangeRates = () => {
         dispatch(setExchangeRates(rates));
       })
       .catch((e) => {
-        //FIXME: handle this properly
         console.error(e);
       });
   }, [dispatch, fetchMarketDataRates]);
 
   useEffect(fetchData, [fetchData]);
   useInterval(fetchData, dataRefreshInterval * 1000);
-
-  return null;
 };
 
 export const useGasPrices = () => {
@@ -101,6 +98,4 @@ export const useGasPrices = () => {
   }, [dispatch]);
 
   useEffect(fetchData, [fetchData]);
-
-  return null;
 };

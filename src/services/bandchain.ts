@@ -1,11 +1,13 @@
-import BandChain from '@bandprotocol/bandchain.js'
-import { env } from '../constants/environmentVariables'
+import { Client } from "@bandprotocol/bandchain.js";
 
-let bandchainInstance: typeof BandChain | null = null;
+let bandchainInstance: any | null = null;
+
+// BandChain's Proof-of-Authority REST endpoint
+const endpoint = "https://laozi-testnet4.bandchain.org/grpc-web";
 
 export const getBandchain = () => {
   if (bandchainInstance === null) {
-    bandchainInstance = new BandChain(env.BANDCHAIN_ENDPOINT);
+    bandchainInstance = new Client(endpoint);
   }
   return bandchainInstance;
 };
