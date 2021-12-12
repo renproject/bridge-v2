@@ -208,7 +208,6 @@ export const getReleaseAssetDecimals = (
     return 8;
   }
   const chainConfig = getChainConfig(chain);
-  // @ts-expect-error
   return releaseChainClassMap[
     chainConfig.rentxName as keyof typeof releaseChainClassMap
   ]().assetDecimals(asset.toUpperCase());

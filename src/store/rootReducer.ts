@@ -1,4 +1,5 @@
 import { combineReducers } from "@reduxjs/toolkit";
+import { gatewayReducer } from "../features/gateway/gatewaySlice";
 import { networkReducer } from "../features/network/networkSlice";
 import { releaseReducer } from "../features/release/releaseSlice";
 import { marketDataReducer } from "../features/marketData/marketDataSlice";
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   ui: uiReducer,
   network: networkReducer,
   wallet: walletReducer,
+  gateway: gatewayReducer,
   mint: mintReducer,
   release: releaseReducer,
   marketData: marketDataReducer,

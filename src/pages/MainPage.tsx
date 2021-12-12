@@ -7,12 +7,11 @@ import {
   BridgePurePaper,
 } from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
+import { GatewayFlow } from "../features/gateway/GatewayFlow";
 import {
   useExchangeRates,
   useGasPrices,
 } from "../features/marketData/marketDataHooks";
-import { MintFlow } from "../features/mint/MintFlow";
-import { ReleaseFlow } from "../features/release/ReleaseFlow";
 import { $ui } from "../features/ui/uiSlice";
 import { PaperTitleProvider } from "../providers/TitleProviders";
 import { ConnectedMainLayout } from "./MainLayout";
@@ -33,16 +32,15 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
   const { paperShaking } = useSelector($ui);
   return (
     <>
-      <ConnectedMainLayout>
-        <PaperTitleProvider>
-          <BridgePaperWrapper>
-            <BridgePurePaper shaking={paperShaking}>
-              <Route path={paths.MINT} component={MintFlow} />
-              <Route path={paths.RELEASE} component={ReleaseFlow} />
-            </BridgePurePaper>
-          </BridgePaperWrapper>
-        </PaperTitleProvider>
-      </ConnectedMainLayout>
+      {/*<ConnectedMainLayout>*/}
+      <PaperTitleProvider>
+        <BridgePaperWrapper>
+          <BridgePurePaper shaking={paperShaking}>
+            <Route path={[paths.MINT, paths.RELEASE]} component={GatewayFlow} />
+          </BridgePurePaper>
+        </BridgePaperWrapper>
+      </PaperTitleProvider>
+      {/*</ConnectedMainLayout>*/}
     </>
   );
 };

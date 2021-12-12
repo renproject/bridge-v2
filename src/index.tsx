@@ -36,15 +36,17 @@ if (process.env.REACT_APP_SENTRY_DSN) {
 const render = () => {
   const App = require("./App").default;
   ReactDOM.render(
-    <Provider store={store}>
-      <MuiThemeProvider theme={lightTheme}>
-        <TitleProviders>
-          <NotificationsProvider>
-            <App />
-          </NotificationsProvider>
-        </TitleProviders>
-      </MuiThemeProvider>
-    </Provider>,
+    <>
+      <Provider store={store}>
+        <MuiThemeProvider theme={lightTheme}>
+          <TitleProviders>
+            <NotificationsProvider>
+              <App />
+            </NotificationsProvider>
+          </TitleProviders>
+        </MuiThemeProvider>
+      </Provider>
+    </>,
     document.getElementById("root")
   );
 };
