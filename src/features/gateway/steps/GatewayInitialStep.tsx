@@ -15,7 +15,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   return (
     <>
       <PaperContent bottomPadding>
-        <MintIntro />
+        {/*// TODO: fix rentx deps*/}
+        {/*<MintIntro />*/}
         <RichDropdown
           label={t("mint.send-label")}
           assetLabel={t("common.asset-label")}

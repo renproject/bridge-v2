@@ -35,8 +35,8 @@ const GatewayConfigurationSteps: FunctionComponent<GatewayConfigurationProps> = 
       {step === GatewayConfigurationStep.INITIAL && (
         <>
           <TransactionTypeTabs />
-          <span>aaa</span>
-          {/*<GatewayInitialStep />*/}
+          {/*<span>aaa</span>*/}
+          <GatewayInitialStep />
         </>
       )}
       {step === GatewayConfigurationStep.FEES && <span> fees {mode}</span>}
