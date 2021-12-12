@@ -4,6 +4,7 @@ import { Route } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
+import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 
 export enum GatewayConfigurationStep {
   INITIAL = "initial",
@@ -34,7 +35,8 @@ const GatewayConfigurationSteps: FunctionComponent<GatewayConfigurationProps> = 
       {step === GatewayConfigurationStep.INITIAL && (
         <>
           <TransactionTypeTabs />
-          <span>initial {mode}</span>
+          <span>aaa</span>
+          {/*<GatewayInitialStep />*/}
         </>
       )}
       {step === GatewayConfigurationStep.FEES && <span> fees {mode}</span>}
