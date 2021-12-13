@@ -8,6 +8,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@reduxjs/toolkit": "^1.4.0",
+    "@renproject/chains": "^3.0.0-alpha.4",
     "@renproject/chains-bitcoin": "^3.0.0-alpha.4",
     "@renproject/chains-ethereum": "^3.0.0-alpha.4",
     "@renproject/fonts": "^1.0.3-rc1",

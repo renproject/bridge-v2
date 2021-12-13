@@ -67,8 +67,8 @@ const useRichDropdownStyles = makeStyles((theme) => ({
 
 export type OptionData = {
   value: string;
-  short: string;
-  full: string;
+  shortName: string;
+  fullName: string;
   Icon: CustomSvgIconComponent;
 };
 
@@ -103,7 +103,7 @@ const getOptionDataDefault: GetOptionDataFn = (option) => {
   let short = "Select";
   let Icon = EmptyCircleIcon;
 
-  return { value: option, full, short, Icon };
+  return { value: option, fullName: full, shortName: short, Icon };
 };
 
 const getAssetBalanceDefault: GetAssetBalanceFn = (option, balances = []) => {
@@ -128,7 +128,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
 
   const valueRenderer = useMemo(
     () => (option: any) => {
-      const { value, Icon, full, short } = getOptionData(option);
+      const { value, Icon, fullName, shortName } = getOptionData(option);
       const selected = false;
       return (
         <Box display="flex" alignItems="center" width="100%">
@@ -144,7 +144,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
           </Box>
           <Box flexGrow={1}>
             <Typography variant="body2">
-              {selected && mode === "chain" ? full : short}
+              {selected && mode === "chain" ? fullName : shortName}
             </Typography>
           </Box>
         </Box>
@@ -194,7 +194,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
         </ListSubheader>
         {options
           .map((option) => getOptionData(option))
-          .map(({ value, Icon, full, short }) => {
+          .map(({ value, Icon, fullName, shortName }) => {
             return (
               <MenuItem key={value} value={value}>
                 <Box display="flex" alignItems="center" width="100%">
@@ -203,14 +203,14 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
                   </Box>
                   <Box flexGrow={1}>
                     <Typography variant="body1" className={styles.assetName}>
-                      {mode === "chain" ? full : short}
+                      {mode === "chain" ? fullName : shortName}
                     </Typography>
                     {mode !== "chain" && (
                       <Typography
                         color="textSecondary"
                         className={styles.assetFullName}
                       >
-                        {full}
+                        {fullName}
                       </Typography>
                     )}
                   </Box>

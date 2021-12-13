@@ -3,6 +3,9 @@ import {
   OptionData,
 } from "../../../components/dropdowns/RichDropdown";
 import { getCurrencyConfigByRentxName } from "../../../utils/assetConfigs";
+import { allAssetChains } from "../../../utils/chainsConfig";
+
+console.log(allAssetChains);
 
 export const getAssetOptionData: GetOptionDataFn = (name) => {
   const asset = getCurrencyConfigByRentxName(name);
@@ -10,8 +13,8 @@ export const getAssetOptionData: GetOptionDataFn = (name) => {
 
   const data: OptionData = {
     Icon,
-    full,
-    short,
+    fullName: full,
+    shortName: short,
     value: name,
   };
 
