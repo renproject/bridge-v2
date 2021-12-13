@@ -65,21 +65,21 @@ const useRichDropdownStyles = makeStyles((theme) => ({
   },
 }));
 
-type OptionData = {
+export type OptionData = {
   value: string;
   short: string;
   full: string;
   Icon: CustomSvgIconComponent;
 };
 
-type GetOptionData = (option: string) => OptionData;
+export type GetOptionDataFn = (option: string) => OptionData;
 
 export type DropdownAssetBalance = {
   asset: string;
   balance: number;
 };
 
-type GetAssetBalance = (
+export type GetAssetBalanceFn = (
   option: string,
   balances?: Array<DropdownAssetBalance>
 ) => number | null;
@@ -88,17 +88,17 @@ type RichDropdownMode = "currency" | "chain";
 
 type RichDropdownProps = SelectProps & {
   options?: Array<GatewayAsset | GatewayChain>;
-  getOptionData?: GetOptionData;
+  getOptionData?: GetOptionDataFn;
   mode?: RichDropdownMode;
   balances?: Array<DropdownAssetBalance>;
-  getAssetBalance?: GetAssetBalance;
+  getAssetBalance?: GetAssetBalanceFn;
   condensed?: boolean;
   label?: string;
   assetLabel?: string;
   blockchainLabel?: string;
 };
 
-const getOptionDataDefault: GetOptionData = (option) => {
+const getOptionDataDefault: GetOptionDataFn = (option) => {
   let full = "Select";
   let short = "Select";
   let Icon = EmptyCircleIcon;
@@ -106,7 +106,7 @@ const getOptionDataDefault: GetOptionData = (option) => {
   return { value: option, full, short, Icon };
 };
 
-const getAssetBalanceDefault: GetAssetBalance = (option, balances = []) => {
+const getAssetBalanceDefault: GetAssetBalanceFn = (option, balances = []) => {
   const entry = balances.find((entry) => entry.asset === option);
   return entry?.balance || null;
 };
