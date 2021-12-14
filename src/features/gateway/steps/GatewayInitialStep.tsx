@@ -6,6 +6,10 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouteMatch } from "react-router-dom";
 import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
+import {
   RichDropdown,
   RichDropdownWrapper,
 } from "../../../components/dropdowns/RichDropdown";
@@ -115,6 +119,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const renAsset = `ren${asset}`;
   const showAddressError = false;
 
+  const handleNext = useCallback(() => {
+    if (onNext) {
+      onNext();
+    }
+  }, []);
+
   return (
     <>
       <PaperContent bottomPadding>
@@ -208,6 +218,11 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         </Collapse>
       </PaperContent>
       <Divider />
+      <PaperContent darker bottomPadding topPadding>
+        <ActionButton onClick={handleNext}>
+          {t("common.next-label")}
+        </ActionButton>
+      </PaperContent>
     </>
   );
 };

@@ -345,13 +345,9 @@ type TransactionDetailsButtonProps = ButtonProps & {
   link?: string;
 };
 
-export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButtonProps> = ({
-  label,
-  address,
-  isTx = true,
-  link = "",
-  size,
-}) => {
+export const TransactionDetailsButton: FunctionComponent<
+  TransactionDetailsButtonProps
+> = ({ label, address, isTx = true, link = "", size }) => {
   const styles = useTransactionDetailsButtonStyles();
 
   const buttonClassName = classNames(styles.button, {
@@ -452,18 +448,12 @@ type ClosableMenuIconButtonProps = IconButtonProps & {
   indicator?: boolean;
 };
 
-export const ClosableMenuIconButton: FunctionComponent<ClosableMenuIconButtonProps> = ({
-  opened,
-  indicator,
-  className,
-  Icon,
-  ...props
-}) => {
+export const ClosableMenuIconButton: FunctionComponent<
+  ClosableMenuIconButtonProps
+> = ({ opened, indicator, className, Icon, ...props }) => {
   const { icon: iconClassName, ...classes } = useMenuIconButtonStyles();
-  const {
-    hoisted: hoistedClassName,
-    indicator: indicatorClassname,
-  } = useTransactionHistoryIconButtonStyles();
+  const { hoisted: hoistedClassName, indicator: indicatorClassname } =
+    useTransactionHistoryIconButtonStyles();
   const ResolvedIcon = opened ? CloseIcon : Icon;
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: opened,
