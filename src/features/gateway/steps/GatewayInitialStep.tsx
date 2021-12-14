@@ -1,6 +1,6 @@
 import { Asset, Chain } from "@renproject/chains";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Collapse, Divider, Grow, Slide } from "@material-ui/core";
+import { Collapse, Divider, Fade, Grow, Slide } from "@material-ui/core";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,13 +20,14 @@ import {
   getAssetOptionData,
   getChainOptionData,
 } from "../components/DropdownHelpers";
+import { MintIntro } from "../components/MintHelpers";
 import { $gateway, setAsset, setFrom, setTo } from "../gatewaySlice";
 import { GatewayStepProps } from "./stepUtils";
 
 const assets = supportedLockAssets;
 const chains = Object.keys(chainsConfig);
 
-const forceShow = true;
+const forceShowDropdowns = false;
 
 export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   onNext,
@@ -73,11 +74,10 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   return (
     <>
       <PaperContent bottomPadding>
-        {/*// TODO: fix rentx deps*/}
-        {/*<MintIntro />*/}
+        {isMint && <MintIntro />}
         <RichDropdownWrapper>
           <RichDropdown
-            label={t("mint.send-label")}
+            label={isMint ? t("mint.mint-label") : t("release.release-label")}
             supplementalLabel={t("common.asset-label")}
             options={assets}
             getOptionData={getAssetOptionData}
@@ -88,7 +88,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             // onChange={handleCurrencyChange}
           />
         </RichDropdownWrapper>
-        <Collapse in={!hideFrom || forceShow}>
+        <Collapse in={!hideFrom || forceShowDropdowns}>
           <RichDropdownWrapper>
             <RichDropdown
               label={t("release.from-label")}
@@ -104,7 +104,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             />
           </RichDropdownWrapper>
         </Collapse>
-        <Collapse in={!hideTo || forceShow}>
+        <Collapse in={!hideTo || forceShowDropdowns}>
           <RichDropdownWrapper>
             <RichDropdown
               label={t("release.to-label")}

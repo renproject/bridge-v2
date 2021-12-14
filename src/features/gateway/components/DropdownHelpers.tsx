@@ -37,12 +37,12 @@ export const getChainOptionData: GetOptionDataFn = (name: string) => {
     };
   }
   const config = getChainConfig(name as Chain);
-  const { Icon, fullName, shortName } = config;
+  const { Icon, fullName } = config;
 
   return {
     Icon,
     fullName,
-    shortName,
+    shortName: fullName,
     value: name,
   } as OptionData;
 };

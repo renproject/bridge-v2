@@ -144,6 +144,7 @@
   "release.pending-confirmations-message": "Pending {{confirmations}}/{{targetConfirmations}}",
   "release.receiving-label": "Receiving",
   "release.releasing-label": "Releasing",
+  "release.release-label": "Release",
   "release.releasing-to-error-text": "please enter a valid address",
   "release.releasing-to-label": "Releasing to",
   "release.releasing-to-placeholder": "Enter a Destination {{currency}} Address",
