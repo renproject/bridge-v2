@@ -99,6 +99,8 @@ export const assetsConfig = Object.fromEntries(
   ])
 );
 
+console.log("assetsConfig", assetsConfig);
+
 export const getAssetConfig = (asset: Asset) => {
   const config = assetsConfig[asset];
   if (!config) {

@@ -80,18 +80,15 @@ export type GetAssetBalanceFn = (
   balances?: Array<DropdownAssetBalance>
 ) => number | null;
 
-type RichDropdownMode = "currency" | "chain";
-
 type RichDropdownProps = SelectProps & {
   options?: Array<string>;
   getOptionData?: GetOptionDataFn;
-  mode?: RichDropdownMode;
+  multipleNames?: boolean;
   balances?: Array<DropdownAssetBalance>;
   getAssetBalance?: GetAssetBalanceFn;
   condensed?: boolean;
   label?: string;
-  assetLabel?: string;
-  blockchainLabel?: string;
+  supplementalLabel?: string;
 };
 
 const getOptionDataDefault: GetOptionDataFn = (option) => {
@@ -108,15 +105,14 @@ const getAssetBalanceDefault: GetAssetBalanceFn = (option, balances = []) => {
 };
 
 export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
-  mode = "currency",
+  multipleNames = true,
   options = [],
   getOptionData = getOptionDataDefault,
   condensed = false,
   label,
   balances = [],
   getAssetBalance = getAssetBalanceDefault,
-  assetLabel = "Asset",
-  blockchainLabel = "Blockchain",
+  supplementalLabel = "Options",
   ...rest
 }) => {
   const styles = useRichDropdownStyles();
@@ -124,8 +120,8 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
 
   const valueRenderer = useMemo(
     () => (option: any) => {
-      const { value, Icon, fullName, shortName } = getOptionData(option);
-      const selected = false;
+      const { Icon, fullName, shortName } = getOptionData(option);
+      // const selected = false;
       return (
         <Box display="flex" alignItems="center" width="100%">
           {!condensed && (
@@ -140,13 +136,13 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
           </Box>
           <Box flexGrow={1}>
             <Typography variant="body2">
-              {selected && mode === "chain" ? fullName : shortName}
+              {multipleNames ? shortName : fullName}
             </Typography>
           </Box>
         </Box>
       );
     },
-    [mode, styles, label, condensed]
+    [multipleNames, styles, label, condensed]
   );
   return (
     <div>
@@ -173,7 +169,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
                 variant="overline"
                 className={styles.listSubheaderLabel}
               >
-                {mode === "chain" ? blockchainLabel : assetLabel}
+                {supplementalLabel}
               </Typography>
             </Box>
             {balances && balances.length > 0 && (
@@ -199,9 +195,9 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
                   </Box>
                   <Box flexGrow={1}>
                     <Typography variant="body1" className={styles.assetName}>
-                      {mode === "chain" ? fullName : shortName}
+                      {multipleNames ? shortName : fullName}
                     </Typography>
-                    {mode !== "chain" && (
+                    {multipleNames && (
                       <Typography
                         color="textSecondary"
                         className={styles.assetFullName}

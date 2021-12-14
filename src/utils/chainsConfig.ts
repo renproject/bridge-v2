@@ -1,5 +1,81 @@
 import { Asset, Chain, chains } from "@renproject/chains";
-import { AssetChainsConfig } from "./tokensConfig";
+import {
+  ArbitrumCircleIcon,
+  AvalancheChainCircleIcon,
+  BchFullIcon,
+  BinanceChainFullIcon,
+  BitcoinIcon,
+  CustomSvgIconComponent,
+  EmptyCircleIcon,
+  EthereumIcon,
+  FantomCircleIcon,
+  PolygonFullIcon,
+  ZecIcon,
+} from "../components/icons/RenIcons";
+import {
+  AssetChainsConfig,
+  AssetIconsConfig,
+  AssetLabelsConfig,
+  assetsConfig,
+} from "./tokensConfig";
+
+export type ChainIconsConfig = {
+  Icon: CustomSvgIconComponent;
+};
+
+export type ChainLabelsConfig = {
+  fullName: string;
+};
+
+type ChainBaseConfig = ChainIconsConfig & ChainLabelsConfig & {};
+
+const unsetChainConfig: ChainBaseConfig = {
+  Icon: EmptyCircleIcon,
+  fullName: "Unset full name",
+};
+
+const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
+  Arbitrum: {
+    Icon: ArbitrumCircleIcon,
+    fullName: "Arbitrum",
+  },
+  Avalanche: {
+    Icon: AvalancheChainCircleIcon,
+    fullName: "Avalanche",
+  },
+  BinanceSmartChain: {
+    Icon: BinanceChainFullIcon,
+    fullName: "Binance Smarct Chain",
+  },
+  Bitcoin: {
+    Icon: BitcoinIcon,
+    fullName: "Bitcoin",
+  },
+  BitcoinCash: {
+    Icon: BchFullIcon,
+    fullName: "Bitcoin Cash",
+  },
+  DigiByte: unsetChainConfig,
+  Dogecoin: unsetChainConfig,
+  Ethereum: {
+    Icon: EthereumIcon,
+    fullName: "Ethereum",
+  },
+  Fantom: {
+    Icon: FantomCircleIcon,
+    fullName: "Fantom",
+  },
+  Filecoin: unsetChainConfig,
+  Goerli: unsetChainConfig,
+  Polygon: {
+    Icon: PolygonFullIcon,
+    fullName: "Polygon",
+  },
+  Terra: unsetChainConfig,
+  Zcash: { Icon: ZecIcon, fullName: "Zcash" },
+};
+
+export const chainsConfig = chainsBaseConfig;
 
 const mintChains: Array<Chain> = [
   Chain.Ethereum,
@@ -9,6 +85,14 @@ const mintChains: Array<Chain> = [
   Chain.Avalanche,
   Chain.Arbitrum,
 ];
+
+export const getChainConfig = (chain: Chain) => {
+  const config = chainsConfig[chain];
+  if (!config) {
+    throw new Error(`Chain config not found for ${chain}`);
+  }
+  return config;
+};
 
 type AssetChainsData = AssetChainsConfig & {
   asset: Asset;
