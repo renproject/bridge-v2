@@ -1,22 +1,30 @@
+import { Asset } from "@renproject/chains";
 import {
   GetOptionDataFn,
   OptionData,
 } from "../../../components/dropdowns/RichDropdown";
+import { EmptyCircleIcon } from "../../../components/icons/RenIcons";
 import { getCurrencyConfigByRentxName } from "../../../utils/assetConfigs";
-import { allAssetChains } from "../../../utils/chainsConfig";
+import { assetsConfig, getAssetConfig } from "../../../utils/tokensConfig";
 
-console.log(allAssetChains);
+console.log(assetsConfig);
 
-export const getAssetOptionData: GetOptionDataFn = (name) => {
-  const asset = getCurrencyConfigByRentxName(name);
-  const { Icon, full, short } = asset;
+export const getAssetOptionData: GetOptionDataFn = (name: string) => {
+  if (!name) {
+    return {
+      Icon: EmptyCircleIcon,
+      fullName: "Select",
+      shortName: "Select",
+      value: name,
+    };
+  }
+  const config = getAssetConfig(name as Asset);
+  const { Icon, fullName, shortName } = config;
 
-  const data: OptionData = {
+  return {
     Icon,
-    fullName: full,
-    shortName: short,
+    fullName,
+    shortName,
     value: name,
-  };
-
-  return data;
+  } as OptionData;
 };

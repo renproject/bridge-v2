@@ -1,12 +1,10 @@
-import { Asset } from "@renproject/chains";
-import { Bitcoin, BitcoinCash } from "@renproject/chains-bitcoin";
-import { Ethereum } from "@renproject/chains-ethereum";
+import { Asset, Chain } from "@renproject/chains";
 import {
   BtcIcon,
   CustomSvgIconComponent,
   EmptyCircleIcon,
 } from "../components/icons/RenIcons";
-import { allAssetChains } from "./chainsConfig";
+import { getAssetChainsConfig } from "./chainsConfig";
 
 export type AssetIconsConfig = {
   Icon: CustomSvgIconComponent;
@@ -26,18 +24,15 @@ export type MarketDataConfig = {
   coingeckoSymbol?: string;
 };
 
-type AssetConfig = AssetIconsConfig & AssetLabelsConfig & {};
+type AssetBaseConfig = AssetIconsConfig & AssetLabelsConfig & {};
 
-console.log("aac", allAssetChains);
-
-const unsetAssetConfig: AssetConfig = {
+const unsetAssetConfig: AssetBaseConfig = {
   Icon: EmptyCircleIcon,
   shortName: "USN",
   fullName: "Unset full name",
 };
 
-//TODO: rename to assetsConfig when refactor done
-const tokensConfig: Record<Asset, AssetConfig> = {
+const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   AVAX: unsetAssetConfig,
   ArbETH: unsetAssetConfig,
   BADGER: unsetAssetConfig,
@@ -71,4 +66,27 @@ const tokensConfig: Record<Asset, AssetConfig> = {
   USDT: unsetAssetConfig,
   ZEC: unsetAssetConfig,
   gETH: unsetAssetConfig,
+};
+
+export type AssetChainsConfig = {
+  lockChain: Chain;
+  mintChains: Array<Chain>;
+};
+
+export const assetsConfig = Object.fromEntries(
+  Object.entries(assetsBaseConfig).map(([asset, config]) => [
+    asset,
+    {
+      ...config,
+      ...getAssetChainsConfig(asset as Asset),
+    },
+  ])
+);
+
+export const getAssetConfig = (asset: Asset) => {
+  const config = assetsConfig[asset];
+  if (!config) {
+    throw new Error(`Asset config not found for ${asset}`);
+  }
+  return config;
 };

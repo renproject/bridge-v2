@@ -11,6 +11,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   onNext,
 }) => {
   const { t } = useTranslation();
+  const assetLabel = t("mint.send-label");
 
   return (
     <>
@@ -18,7 +19,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {/*// TODO: fix rentx deps*/}
         {/*<MintIntro />*/}
         <RichDropdown
-          label={t("mint.send-label")}
+          label={assetLabel}
           assetLabel={t("common.asset-label")}
           blockchainLabel={t("common.blockchain-label")}
           getOptionData={getAssetOptionData}
