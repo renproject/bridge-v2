@@ -9,10 +9,6 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useMemo } from "react";
-import {
-  GatewayAsset,
-  GatewayChain,
-} from "../../features/gateway/gatewayUtils";
 import { NumberFormatText } from "../formatting/NumberFormatText";
 import { CustomSvgIconComponent, EmptyCircleIcon } from "../icons/RenIcons";
 
@@ -87,7 +83,7 @@ export type GetAssetBalanceFn = (
 type RichDropdownMode = "currency" | "chain";
 
 type RichDropdownProps = SelectProps & {
-  options?: Array<GatewayAsset | GatewayChain>;
+  options?: Array<string>;
   getOptionData?: GetOptionDataFn;
   mode?: RichDropdownMode;
   balances?: Array<DropdownAssetBalance>;

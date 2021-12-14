@@ -4,10 +4,7 @@ import {
   OptionData,
 } from "../../../components/dropdowns/RichDropdown";
 import { EmptyCircleIcon } from "../../../components/icons/RenIcons";
-import { getCurrencyConfigByRentxName } from "../../../utils/assetConfigs";
-import { assetsConfig, getAssetConfig } from "../../../utils/tokensConfig";
-
-console.log(assetsConfig);
+import { getAssetConfig } from "../../../utils/tokensConfig";
 
 export const getAssetOptionData: GetOptionDataFn = (name: string) => {
   if (!name) {

@@ -1,9 +1,13 @@
 import { Asset, Chain } from "@renproject/chains";
 import {
+  BchFullIcon,
+  BtcFullIcon,
   BtcIcon,
   CustomSvgIconComponent,
   EmptyCircleIcon,
+  ZecFullIcon,
 } from "../components/icons/RenIcons";
+import { env } from "../constants/environmentVariables";
 import { getAssetChainsConfig } from "./chainsConfig";
 
 export type AssetIconsConfig = {
@@ -28,7 +32,7 @@ type AssetBaseConfig = AssetIconsConfig & AssetLabelsConfig & {};
 
 const unsetAssetConfig: AssetBaseConfig = {
   Icon: EmptyCircleIcon,
-  shortName: "USN",
+  shortName: "???",
   fullName: "Unset full name",
 };
 
@@ -36,16 +40,24 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   AVAX: unsetAssetConfig,
   ArbETH: unsetAssetConfig,
   BADGER: unsetAssetConfig,
-  BCH: unsetAssetConfig,
+  BCH: {
+    Icon: BchFullIcon,
+    shortName: "BCH",
+    fullName: "Bitcoin Cash",
+  },
   BNB: unsetAssetConfig,
   BTC: {
-    Icon: BtcIcon,
+    Icon: BtcFullIcon,
     shortName: "BTC",
     fullName: "Bitcoin",
   },
   BUSD: unsetAssetConfig,
   CRV: unsetAssetConfig,
-  DAI: unsetAssetConfig,
+  DAI: {
+    Icon: EmptyCircleIcon,
+    shortName: "DAI",
+    fullName: "Dai",
+  },
   DGB: unsetAssetConfig,
   DOGE: unsetAssetConfig,
   ETH: unsetAssetConfig,
@@ -64,7 +76,11 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   UNI: unsetAssetConfig,
   USDC: unsetAssetConfig,
   USDT: unsetAssetConfig,
-  ZEC: unsetAssetConfig,
+  ZEC: {
+    Icon: ZecFullIcon,
+    shortName: "ZEC",
+    fullName: "Zcash",
+  },
   gETH: unsetAssetConfig,
 };
 
@@ -90,3 +106,23 @@ export const getAssetConfig = (asset: Asset) => {
   }
   return config;
 };
+
+export const supportedLockAssets =
+  env.ENABLED_ASSETS[0] === "*"
+    ? [
+        Asset.BTC,
+        Asset.BCH,
+        // Asset.DGB,
+        // Asset.DOGE,
+        // Asset.FIL,
+        // Asset.LUNA,
+        Asset.ZEC,
+        Asset.DAI,
+      ]
+    : env.ENABLED_ASSETS.filter((x) => {
+        const included = Object.keys(assetsConfig).includes(x);
+        if (!included) {
+          console.error("Unknown asset:", x);
+        }
+        return included;
+      }).map((x) => x as Asset);
