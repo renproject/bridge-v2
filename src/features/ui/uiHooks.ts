@@ -11,7 +11,7 @@ import {
 } from "../../utils/assetConfigs";
 import { $mintCurrency } from "../mint-old/mintSlice";
 import { $renNetwork } from "../network/networkSlice";
-import { $releaseCurrency } from "../release/releaseSlice";
+import { $releaseCurrency } from "../release-old/releaseSlice";
 import { $chain } from "../wallet/walletSlice";
 import { setPaperShaking } from "./uiSlice";
 

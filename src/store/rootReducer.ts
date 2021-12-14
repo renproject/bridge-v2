@@ -1,7 +1,7 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { gatewayReducer } from "../features/gateway/gatewaySlice";
 import { networkReducer } from "../features/network/networkSlice";
-import { releaseReducer } from "../features/release/releaseSlice";
+import { releaseReducer } from "../features/release-old/releaseSlice";
 import { marketDataReducer } from "../features/marketData/marketDataSlice";
 import { mintReducer } from "../features/mint-old/mintSlice";
 import { transactionsReducer } from "../features/transactions/transactionsSlice";
