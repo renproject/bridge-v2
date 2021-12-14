@@ -60,13 +60,13 @@ import { getFormattedDateTime, getFormattedHMS } from "../../utils/dates";
 import {
   CircledProgressWithContent,
   getDepositStatusIcon,
-} from "../mint/components/MultipleDepositsHelpers";
+} from "../mint-old/components/MultipleDepositsHelpers";
 import {
   useDepositPagination,
   useIntervalCountdown,
   useMintMachine,
-} from "../mint/mintHooks";
-import { $mint, setMintCurrency } from "../mint/mintSlice";
+} from "../mint-old/mintHooks";
+import { $mint, setMintCurrency } from "../mint-old/mintSlice";
 import {
   areAllDepositsCompleted,
   createMintTransaction,
@@ -74,7 +74,7 @@ import {
   getDepositParams,
   getLockAndMintBasicParams,
   getRemainingGatewayTime,
-} from "../mint/mintUtils";
+} from "../mint-old/mintUtils";
 import { $renNetwork } from "../network/networkSlice";
 import { useSelectedChainWallet } from "../wallet/walletHooks";
 import {

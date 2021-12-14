@@ -3,7 +3,7 @@ import { gatewayReducer } from "../features/gateway/gatewaySlice";
 import { networkReducer } from "../features/network/networkSlice";
 import { releaseReducer } from "../features/release/releaseSlice";
 import { marketDataReducer } from "../features/marketData/marketDataSlice";
-import { mintReducer } from "../features/mint/mintSlice";
+import { mintReducer } from "../features/mint-old/mintSlice";
 import { transactionsReducer } from "../features/transactions/transactionsSlice";
 import { uiReducer } from "../features/ui/uiSlice";
 import { walletReducer } from "../features/wallet/walletSlice";

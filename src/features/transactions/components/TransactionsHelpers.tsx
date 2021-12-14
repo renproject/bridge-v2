@@ -65,7 +65,7 @@ import { trimAddress } from "../../../utils/strings";
 import {
   GATEWAY_EXPIRY_OFFSET_MS,
   getRemainingTime,
-} from "../../mint/mintUtils";
+} from "../../mint-old/mintUtils";
 import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
 
 export type AnyBurnSession =
