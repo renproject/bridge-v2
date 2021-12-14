@@ -1,14 +1,16 @@
 import { Asset, Chain } from "@renproject/chains";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Divider } from "@material-ui/core";
+import { Collapse, Divider, Grow, Slide } from "@material-ui/core";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouteMatch } from "react-router-dom";
 import {
   RichDropdown,
   RichDropdownWrapper,
 } from "../../../components/dropdowns/RichDropdown";
 import { PaperContent } from "../../../components/layout/Paper";
+import { paths } from "../../../pages/routes";
 import { chainsConfig } from "../../../utils/chainsConfig";
 import {
   getAssetConfig,
@@ -18,36 +20,55 @@ import {
   getAssetOptionData,
   getChainOptionData,
 } from "../components/DropdownHelpers";
-import { $gateway, setAsset, setFrom } from "../gatewaySlice";
+import { $gateway, setAsset, setFrom, setTo } from "../gatewaySlice";
 import { GatewayStepProps } from "./stepUtils";
 
 const assets = supportedLockAssets;
 const chains = Object.keys(chainsConfig);
 
+const forceShow = true;
+
 export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   onNext,
 }) => {
   const dispatch = useDispatch();
+  const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const { asset, from } = useSelector($gateway);
+  const { asset, from, to } = useSelector($gateway);
   const handleAssetChange = useCallback((event) => {
     dispatch(setAsset(event.target.value as Asset));
   }, []);
   const handleFromChange = useCallback((event) => {
     dispatch(setFrom(event.target.value as Chain));
   }, []);
+  const handleToChange = useCallback((event) => {
+    dispatch(setTo(event.target.value as Chain));
+  }, []);
+
+  const isMint = path === paths.MINT;
+  const isRelease = path === paths.RELEASE;
 
   const [fromChains, setFromChains] = useState(chains);
+  const [toChains, setToChains] = useState(chains);
+
   useEffect(() => {
     const config = getAssetConfig(asset);
-    if (config.lockChain === Chain.Ethereum) {
-      setFromChains(config.mintChains);
-      dispatch(setFrom(config.mintChains[0]));
-    } else {
-      setFromChains([config.lockChain]);
-      dispatch(setFrom(config.lockChain));
+    const { lockChain, mintChains } = config;
+    if (isMint) {
+      setFromChains([lockChain]);
+      dispatch(setFrom(lockChain));
+      setToChains(mintChains);
+      dispatch(setTo(mintChains[0]));
+    } else if (isRelease) {
+      setFromChains(mintChains);
+      dispatch(setFrom(mintChains[0]));
+      setToChains([lockChain]);
+      dispatch(setTo(lockChain));
     }
-  }, [asset]);
+  }, [asset, isMint, isRelease]);
+
+  const hideFrom = isMint && fromChains.length === 1;
+  const hideTo = isRelease && toChains.length === 1;
 
   return (
     <>
@@ -67,20 +88,38 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             // onChange={handleCurrencyChange}
           />
         </RichDropdownWrapper>
-        <RichDropdownWrapper>
-          <RichDropdown
-            label={t("release.from-label")}
-            supplementalLabel={t("common.blockchain-label")}
-            getOptionData={getChainOptionData}
-            options={fromChains}
-            value={from}
-            onChange={handleFromChange}
-            multipleNames={false}
-            // available={supportedLockCurrencies}
-            // value={currency}
-            // onChange={handleCurrencyChange}
-          />
-        </RichDropdownWrapper>
+        <Collapse in={!hideFrom || forceShow}>
+          <RichDropdownWrapper>
+            <RichDropdown
+              label={t("release.from-label")}
+              supplementalLabel={t("common.blockchain-label")}
+              getOptionData={getChainOptionData}
+              options={fromChains}
+              value={from}
+              onChange={handleFromChange}
+              multipleNames={false}
+              // available={supportedLockCurrencies}
+              // value={currency}
+              // onChange={handleCurrencyChange}
+            />
+          </RichDropdownWrapper>
+        </Collapse>
+        <Collapse in={!hideTo || forceShow}>
+          <RichDropdownWrapper>
+            <RichDropdown
+              label={t("release.to-label")}
+              supplementalLabel={t("common.blockchain-label")}
+              getOptionData={getChainOptionData}
+              options={toChains}
+              value={to}
+              onChange={handleToChange}
+              multipleNames={false}
+              // available={supportedLockCurrencies}
+              // value={currency}
+              // onChange={handleCurrencyChange}
+            />
+          </RichDropdownWrapper>
+        </Collapse>
       </PaperContent>
       <Divider />
     </>
