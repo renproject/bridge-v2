@@ -6,16 +6,16 @@ type GatewayState = {
   asset: Asset;
   from: Chain;
   to: Chain;
-  amount: number; //maybe string?
-  address: string;
+  amount: string; //maybe string?
+  toAddress: string;
 };
 
 let initialState: GatewayState = {
   asset: Asset.BTC,
   from: Chain.Bitcoin,
   to: Chain.Ethereum,
-  amount: 0,
-  address: "",
+  amount: "",
+  toAddress: "",
 };
 
 const slice = createSlice({
@@ -31,11 +31,11 @@ const slice = createSlice({
     setTo(state, action: PayloadAction<Chain>) {
       state.to = action.payload;
     },
-    setAmount(state, action: PayloadAction<number>) {
+    setAmount(state, action: PayloadAction<string>) {
       state.amount = action.payload;
     },
-    setAddress(state, action: PayloadAction<string>) {
-      state.address = action.payload;
+    setToAddress(state, action: PayloadAction<string>) {
+      state.toAddress = action.payload;
     },
     resetGateway(state, action: PayloadAction<GatewayState | undefined>) {
       if (action.payload) {
@@ -43,13 +43,13 @@ const slice = createSlice({
         state.from = action.payload.from;
         state.to = action.payload.to;
         state.amount = action.payload.amount;
-        state.address = action.payload.address;
+        state.toAddress = action.payload.toAddress;
       } else {
         state.asset = initialState.asset;
         state.from = initialState.from;
         state.to = initialState.to;
         state.amount = initialState.amount;
-        state.address = initialState.address;
+        state.toAddress = initialState.toAddress;
       }
     },
   },
@@ -60,7 +60,7 @@ export const {
   setFrom,
   setTo,
   setAmount,
-  setAddress,
+  setToAddress,
   resetGateway,
 } = slice.actions;
 

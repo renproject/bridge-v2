@@ -9,9 +9,18 @@ import {
   RichDropdown,
   RichDropdownWrapper,
 } from "../../../components/dropdowns/RichDropdown";
+import {
+  BigCurrencyInput,
+  BigCurrencyInputWrapper,
+} from "../../../components/inputs/BigCurrencyInput";
+import {
+  BigOutlinedTextFieldWrapper,
+  OutlinedTextField,
+} from "../../../components/inputs/OutlinedTextField";
 import { PaperContent } from "../../../components/layout/Paper";
+import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { paths } from "../../../pages/routes";
-import { chainsConfig } from "../../../utils/chainsConfig";
+import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import {
   getAssetConfig,
   supportedLockAssets,
@@ -21,7 +30,14 @@ import {
   getChainOptionData,
 } from "../components/DropdownHelpers";
 import { MintIntro } from "../components/MintHelpers";
-import { $gateway, setAsset, setFrom, setTo } from "../gatewaySlice";
+import {
+  $gateway,
+  setToAddress,
+  setAmount,
+  setAsset,
+  setFrom,
+  setTo,
+} from "../gatewaySlice";
 import { GatewayStepProps } from "./stepUtils";
 
 const assets = supportedLockAssets;
@@ -35,16 +51,37 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const dispatch = useDispatch();
   const { path } = useRouteMatch();
   const { t } = useTranslation();
-  const { asset, from, to } = useSelector($gateway);
-  const handleAssetChange = useCallback((event) => {
-    dispatch(setAsset(event.target.value as Asset));
-  }, []);
-  const handleFromChange = useCallback((event) => {
-    dispatch(setFrom(event.target.value as Chain));
-  }, []);
-  const handleToChange = useCallback((event) => {
-    dispatch(setTo(event.target.value as Chain));
-  }, []);
+  const { asset, from, to, amount, toAddress } = useSelector($gateway);
+  const handleAssetChange = useCallback(
+    (event) => {
+      dispatch(setAsset(event.target.value as Asset));
+    },
+    [dispatch]
+  );
+  const handleFromChange = useCallback(
+    (event) => {
+      dispatch(setFrom(event.target.value as Chain));
+    },
+    [dispatch]
+  );
+  const handleToChange = useCallback(
+    (event) => {
+      dispatch(setTo(event.target.value as Chain));
+    },
+    [dispatch]
+  );
+  const handleAmountChange = useCallback(
+    (value) => {
+      dispatch(setAmount(value));
+    },
+    [dispatch]
+  );
+  const handleAddressChange = useCallback(
+    (event) => {
+      dispatch(setToAddress(event.target.value));
+    },
+    [dispatch]
+  );
 
   const isMint = path === paths.MINT;
   const isRelease = path === paths.RELEASE;
@@ -71,10 +108,41 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const hideFrom = isMint && fromChains.length === 1;
   const hideTo = isRelease && toChains.length === 1;
 
+  const toChainConfig = getChainConfig(to);
+  // TODO: fix
+  const showMinimalAmountError = false;
+  const usdAmount = 420.69;
+  const renAsset = `ren${asset}`;
+  const showAddressError = false;
+
   return (
     <>
       <PaperContent bottomPadding>
         {isMint && <MintIntro />}
+        {isRelease && (
+          <BigCurrencyInputWrapper>
+            <BigCurrencyInput
+              onChange={handleAmountChange}
+              symbol={renAsset}
+              usdValue={420.69}
+              value={amount}
+              errorText={
+                showMinimalAmountError ? (
+                  <span>
+                    {t("release.amount-too-low-error")}{" "}
+                    <TooltipWithIcon
+                      title={
+                        <span>{t("release.amount-too-low-error-tooltip")}</span>
+                      }
+                    />
+                  </span>
+                ) : (
+                  ""
+                )
+              }
+            />
+          </BigCurrencyInputWrapper>
+        )}
         <RichDropdownWrapper>
           <RichDropdown
             label={isMint ? t("mint.mint-label") : t("release.release-label")}
@@ -119,6 +187,24 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               // onChange={handleCurrencyChange}
             />
           </RichDropdownWrapper>
+        </Collapse>
+        <Collapse in={isRelease}>
+          <BigOutlinedTextFieldWrapper>
+            <OutlinedTextField
+              error={showAddressError}
+              helperText={
+                showAddressError
+                  ? t("release.releasing-to-error-text")
+                  : undefined
+              }
+              placeholder={t("release.releasing-to-placeholder", {
+                chain: toChainConfig.fullName,
+              })}
+              label={t("release.releasing-to-label")}
+              onChange={handleAddressChange}
+              value={toAddress}
+            />
+          </BigOutlinedTextFieldWrapper>
         </Collapse>
       </PaperContent>
       <Divider />
