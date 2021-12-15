@@ -13,7 +13,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import MenuIcon from "@material-ui/icons/Menu";
 import {
   MultiwalletProvider,
-  useMultiwallet,
   WalletPickerModal,
   WalletPickerProps,
 } from "@renproject/multiwallet-ui";
@@ -79,29 +78,27 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const { chain, pickerOpened } = useSelector($wallet);
   const { status, account, connected, deactivateConnector, wallet } =
     useWallet(chain);
+
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
+  const handleMobileMenuClose = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+  const handleMobileMenuOpen = useCallback(() => {
+    setMobileMenuOpen(true);
+  }, []);
+  const { width } = useWindowSize();
+  const theme = useTheme();
+  useEffect(() => {
+    if (width > theme.breakpoints.values["sm"]) {
+      setMobileMenuOpen(false);
+    }
+  }, [width, theme.breakpoints]);
+
   const { txHistoryOpened } = useSelector($transactionsData);
-  //
-  // const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
-  // const handleMobileMenuClose = useCallback(() => {
-  //   setMobileMenuOpen(false);
-  // }, []);
-  // const handleMobileMenuOpen = useCallback(() => {
-  //   setMobileMenuOpen(true);
-  // }, []);
-  // const { width } = useWindowSize();
-  // const theme = useTheme();
-  // useEffect(() => {
-  //   if (width > theme.breakpoints.values["sm"]) {
-  //     setMobileMenuOpen(false);
-  //   }
-  // }, [width, theme.breakpoints]);
-  //
   // const handleTxHistoryToggle = useCallback(() => {
   //   dispatch(setTxHistoryOpened(!txHistoryOpened));
   // }, [dispatch, txHistoryOpened]);
-  //
-  // const multiwalletChain = useSelector($multiwalletChain);
-  // const renNetwork = useSelector($renNetwork);
+
   const [walletMenuAnchor, setWalletMenuAnchor] = useState<null | HTMLElement>(
     null
   );
@@ -150,9 +147,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   // const debugWallet = useWallet(multiwalletChain); //remove
   // const debugMultiwallet = useMultiwallet(); //remove
   // const debugNetworkName = useSubNetworkName();
-  //
-  // const drawerId = "main-menu-mobile";
-  //
+
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
@@ -176,77 +171,77 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
         <WalletPickerModal open={pickerOpened} options={walletPickerOptions} />
       </div>
       <div className={styles.mobileMenu}>
-        {/*<IconButton*/}
-        {/*  aria-label="show more"*/}
-        {/*  aria-controls={drawerId}*/}
-        {/*  aria-haspopup="true"*/}
-        {/*  onClick={handleMobileMenuOpen}*/}
-        {/*  color="inherit"*/}
-        {/*>*/}
-        {/*  <MenuIcon />*/}
-        {/*</IconButton>*/}
+        <IconButton
+          aria-label="show more"
+          aria-controls="main-menu-mobile"
+          aria-haspopup="true"
+          onClick={handleMobileMenuOpen}
+          color="inherit"
+        >
+          <MenuIcon />
+        </IconButton>
       </div>
     </>
   );
-  // const DrawerMenu = (
-  //   <Drawer
-  //     anchor="right"
-  //     id={drawerId}
-  //     keepMounted
-  //     open={mobileMenuOpen}
-  //     onClose={handleMobileMenuClose}
-  //     PaperProps={{ className: styles.drawerPaper }}
-  //   >
-  //     <div className={styles.drawerHeader}>
-  //       <RenBridgeLogoIcon className={styles.drawerLogo} />
-  //       <IconButton
-  //         aria-label="close"
-  //         className={styles.drawerClose}
-  //         onClick={handleMobileMenuClose}
-  //       >
-  //         <CloseIcon />
-  //       </IconButton>
-  //     </div>
-  //     <Divider />
-  //     <ListItem
-  //       divider
-  //       className={styles.drawerListItem}
-  //       button
-  //       onClick={handleWalletButtonClick}
-  //     >
-  //       <WalletConnectionStatusButton
-  //         className={styles.mobileMenuButton}
-  //         mobile
-  //         status={status}
-  //         account={account}
-  //         wallet={symbol}
-  //       />
-  //     </ListItem>
-  //     <ListItem
-  //       divider
-  //       className={styles.drawerListItem}
-  //       button
-  //       onClick={handleTxHistoryToggle}
-  //     >
-  //       <Button className={styles.mobileMenuButton} component="div">
-  //         <ClosableMenuIconButton
-  //           Icon={TxHistoryIcon}
-  //           className={styles.mobileTxHistory}
-  //         />
-  //         <span>{t("menu.viewTransactions")}</span>
-  //       </Button>
-  //     </ListItem>
-  //     <ListItem
-  //       className={classNames(
-  //         styles.drawerListItem,
-  //         styles.drawerFooterListItem
-  //       )}
-  //     >
-  //       <Footer mobile />
-  //     </ListItem>
-  //   </Drawer>
-  // );
-  //
+  const DrawerMenu = (
+    <Drawer
+      id="main-menu-mobile"
+      anchor="right"
+      keepMounted
+      open={mobileMenuOpen}
+      onClose={handleMobileMenuClose}
+      PaperProps={{ className: styles.drawerPaper }}
+    >
+      <div className={styles.drawerHeader}>
+        <RenBridgeLogoIcon className={styles.drawerLogo} />
+        <IconButton
+          aria-label="close"
+          className={styles.drawerClose}
+          onClick={handleMobileMenuClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </div>
+      <Divider />
+      <ListItem
+        divider
+        className={styles.drawerListItem}
+        button
+        onClick={handleWalletButtonClick}
+      >
+        <WalletConnectionStatusButton
+          className={styles.mobileMenuButton}
+          mobile
+          status={status}
+          account={account}
+          wallet={wallet}
+        />
+      </ListItem>
+      {/*<ListItem*/}
+      {/*  divider*/}
+      {/*  className={styles.drawerListItem}*/}
+      {/*  button*/}
+      {/*  onClick={handleTxHistoryToggle}*/}
+      {/*>*/}
+      {/*  <Button className={styles.mobileMenuButton} component="div">*/}
+      {/*    <ClosableMenuIconButton*/}
+      {/*      Icon={TxHistoryIcon}*/}
+      {/*      className={styles.mobileTxHistory}*/}
+      {/*    />*/}
+      {/*    <span>{t("menu.viewTransactions")}</span>*/}
+      {/*  </Button>*/}
+      {/*</ListItem>*/}
+      <ListItem
+        className={classNames(
+          styles.drawerListItem,
+          styles.drawerFooterListItem
+        )}
+      >
+        <Footer mobile />
+      </ListItem>
+    </Drawer>
+  );
+
   const WalletMenu = (
     <Menu
       id="wallet-menu"
@@ -266,7 +261,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   return (
     <MobileLayout
       ToolbarMenu={ToolbarMenu}
-      // DrawerMenu={DrawerMenu}
+      DrawerMenu={DrawerMenu}
       WalletMenu={WalletMenu}
     >
       {children}
