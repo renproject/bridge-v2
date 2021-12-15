@@ -1,3 +1,4 @@
+import { Chain } from "@renproject/chains";
 import { RenNetwork } from "@renproject/interfaces";
 import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
@@ -15,7 +16,6 @@ import {
 } from "../../features/wallet/components/WalletHelpers";
 import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
-import { RenChain } from "../../utils/assetConfigs"; //TODO: change
 
 const networkMapping: Record<number, RenNetwork[]> = {
   1: [RenNetwork.Mainnet],
@@ -68,7 +68,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
   const targetEthChainId = renNetworkToEthNetwork(network) || 1;
   return {
     chains: {
-      [RenChain.ethereum]: [
+      [Chain.Ethereum]: [
         {
           name: "Metamask",
           logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4s",
@@ -110,7 +110,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
             ]
           : []),
       ],
-      [RenChain.fantom]: [
+      [Chain.Fantom]: [
         {
           name: "Metamask",
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
@@ -125,7 +125,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           })(),
         },
       ],
-      [RenChain.polygon]: [
+      [Chain.Polygon]: [
         {
           name: "Metamask",
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
@@ -140,7 +140,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           })(),
         },
       ],
-      [RenChain.avalanche]: [
+      [Chain.Avalanche]: [
         {
           name: "Metamask",
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
@@ -155,7 +155,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           })(),
         },
       ],
-      [RenChain.binanceSmartChain]: [
+      [Chain.BinanceSmartChain]: [
         {
           name: "BinanceSmartWallet",
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
@@ -180,34 +180,34 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
             ]
           : []),
       ],
-      [RenChain.solana]: [
-        {
-          name: "Phantom",
-          logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
-          connector: new SolanaConnector({
-            debug: true,
-            providerURL: (window as any).solana || "https://www.phantom.app",
-            clusterURL:
-              network === RenNetwork.Mainnet
-                ? "https://ren.rpcpool.com/"
-                : undefined,
-            network,
-          }),
-        },
-        {
-          name: "Sollet.io",
-          logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
-          connector: new SolanaConnector({
-            providerURL: "https://www.sollet.io",
-            clusterURL:
-              network === RenNetwork.Mainnet
-                ? "https://ren.rpcpool.com/"
-                : undefined,
-            network,
-          }),
-        },
-      ],
-      [RenChain.arbitrum]: [
+      // [Chain.Solana]: [
+      //   {
+      //     name: "Phantom",
+      //     logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
+      //     connector: new SolanaConnector({
+      //       debug: true,
+      //       providerURL: (window as any).solana || "https://www.phantom.app",
+      //       clusterURL:
+      //         network === RenNetwork.Mainnet
+      //           ? "https://ren.rpcpool.com/"
+      //           : undefined,
+      //       network,
+      //     }),
+      //   },
+      //   {
+      //     name: "Sollet.io",
+      //     logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
+      //     connector: new SolanaConnector({
+      //       providerURL: "https://www.sollet.io",
+      //       clusterURL:
+      //         network === RenNetwork.Mainnet
+      //           ? "https://ren.rpcpool.com/"
+      //           : undefined,
+      //       network,
+      //     }),
+      //   },
+      // ],
+      [Chain.Arbitrum]: [
         {
           name: "Metamask",
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",

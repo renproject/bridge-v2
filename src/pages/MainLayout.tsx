@@ -63,10 +63,7 @@ import {
   useSyncWalletNetwork,
   useWallet,
 } from "../features/wallet/walletHooks";
-import {
-  $wallet,
-  setPickerOpened as setWalletPickerOpened,
-} from "../features/wallet/walletSlice";
+import { $wallet, setPickerOpened } from "../features/wallet/walletSlice";
 import { walletPickerModalConfig } from "../providers/multiwallet/Multiwallet";
 
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
@@ -109,7 +106,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     null
   );
   const handleWalletPickerClose = useCallback(() => {
-    dispatch(setWalletPickerOpened(false));
+    dispatch(setPickerOpened(false));
   }, [dispatch]);
   const handleWalletMenuClose = useCallback(() => {
     setWalletMenuAnchor(null);
@@ -120,7 +117,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       if (connected) {
         setWalletMenuAnchor(event.currentTarget);
       } else {
-        dispatch(setWalletPickerOpened(true));
+        dispatch(setPickerOpened(true));
       }
     },
     [dispatch, connected]
@@ -130,10 +127,11 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     deactivateConnector();
     handleWalletMenuClose();
   }, [deactivateConnector, handleWalletMenuClose]);
+
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
       targetNetwork: network,
-      chain: chain,
+      chain,
       onClose: handleWalletPickerClose,
       pickerClasses,
       // DefaultInfo: DebugComponentProps,
