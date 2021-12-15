@@ -39,7 +39,7 @@ import {
 import { Debug } from "../components/utils/Debug";
 import { env } from "../constants/environmentVariables";
 import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
-import { $renNetwork } from "../features/network/networkSlice";
+import { $network } from "../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../features/network/networkHooks";
 import {
   IssuesResolver,
@@ -72,15 +72,17 @@ import { walletPickerModalConfig } from "../providers/multiwallet/Multiwallet";
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
 }) => {
-  const styles = useMobileLayoutStyles();
-  const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const styles = useMobileLayoutStyles();
+  const pickerClasses = useWalletPickerStyles();
   useSetNetworkFromParam();
   useSyncWalletNetwork();
-  const { chain } = useSelector($wallet);
+  const { network } = useSelector($network);
+  const { chain, pickerOpened } = useSelector($wallet);
   const { status, account, connected, deactivateConnector, wallet } =
     useWallet(chain);
-  // const { txHistoryOpened } = useSelector($transactionsData);
+  const { txHistoryOpened } = useSelector($transactionsData);
   //
   // const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   // const handleMobileMenuClose = useCallback(() => {
@@ -102,9 +104,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   // }, [dispatch, txHistoryOpened]);
   //
   // const multiwalletChain = useSelector($multiwalletChain);
-  // const walletPickerOpen = useSelector($walletPickerOpened);
   // const renNetwork = useSelector($renNetwork);
-  // const pickerClasses = useWalletPickerStyles();
   const [walletMenuAnchor, setWalletMenuAnchor] = useState<null | HTMLElement>(
     null
   );
@@ -114,85 +114,82 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const handleWalletMenuClose = useCallback(() => {
     setWalletMenuAnchor(null);
   }, []);
-  //
-  // const handleWalletButtonClick = useCallback(
-  //   (event: React.MouseEvent<HTMLElement>) => {
-  //     if (walletConnected) {
-  //       setWalletMenuAnchor(event.currentTarget);
-  //     } else {
-  //       dispatch(setWalletPickerOpened(true));
-  //     }
-  //   },
-  //   [dispatch, walletConnected]
-  // );
-  //
+
+  const handleWalletButtonClick = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (connected) {
+        setWalletMenuAnchor(event.currentTarget);
+      } else {
+        dispatch(setWalletPickerOpened(true));
+      }
+    },
+    [dispatch, connected]
+  );
+
   const handleDisconnectWallet = useCallback(() => {
     deactivateConnector();
     handleWalletMenuClose();
   }, [deactivateConnector, handleWalletMenuClose]);
-  // const walletPickerOptions = useMemo(() => {
-  //   const options: WalletPickerProps<any, any> = {
-  //     targetNetwork: renNetwork,
-  //     chain: multiwalletChain,
-  //     onClose: handleWalletPickerClose,
-  //     pickerClasses,
-  //     // DefaultInfo: DebugComponentProps,
-  //     ConnectingInfo: WalletConnectingInfo,
-  //     WrongNetworkInfo: WalletWrongNetworkInfo,
-  //     WalletEntryButton,
-  //     WalletChainLabel,
-  //     config: walletPickerModalConfig(renNetwork),
-  //     connectingTitle: t("wallet.connecting"),
-  //     wrongNetworkTitle: t("wallet.wrong-network-title"),
-  //     connectWalletTitle: t("wallet.connect-wallet"),
-  //   };
-  //   return options;
-  // }, [t, multiwalletChain, handleWalletPickerClose, pickerClasses, renNetwork]);
-  //
+  const walletPickerOptions = useMemo(() => {
+    const options: WalletPickerProps<any, any> = {
+      targetNetwork: network,
+      chain: chain,
+      onClose: handleWalletPickerClose,
+      pickerClasses,
+      // DefaultInfo: DebugComponentProps,
+      ConnectingInfo: WalletConnectingInfo,
+      WrongNetworkInfo: WalletWrongNetworkInfo,
+      WalletEntryButton,
+      WalletChainLabel,
+      config: walletPickerModalConfig(network),
+      connectingTitle: t("wallet.connecting"),
+      wrongNetworkTitle: t("wallet.wrong-network-title"),
+      connectWalletTitle: t("wallet.connect-wallet"),
+    };
+    return options;
+  }, [t, pickerClasses, handleWalletPickerClose, network, chain]);
+
   // const debugWallet = useWallet(multiwalletChain); //remove
   // const debugMultiwallet = useMultiwallet(); //remove
   // const debugNetworkName = useSubNetworkName();
   //
   // const drawerId = "main-menu-mobile";
   //
-  // const ToolbarMenu = (
-  //   <>
-  //     <div className={styles.desktopMenu}>
-  //       <LanguageSelector
-  //         mode="dialog"
-  //         buttonClassName={styles.desktopLanguage}
-  //       />
-  //       <ClosableMenuIconButton
-  //         Icon={TxHistoryIcon}
-  //         opened={txHistoryOpened}
-  //         className={styles.desktopTxHistory}
-  //         onClick={handleTxHistoryToggle}
-  //       />
-  //       <WalletConnectionStatusButton
-  //         onClick={handleWalletButtonClick}
-  //         hoisted={txHistoryOpened}
-  //         status={status}
-  //         account={account}
-  //         wallet={symbol}
-  //       />
-  //       <WalletPickerModal
-  //         open={walletPickerOpen}
-  //         options={walletPickerOptions}
-  //       />
-  //     </div>
-  //     <div className={styles.mobileMenu}>
-  //       <IconButton
-  //         aria-label="show more"
-  //         aria-controls={drawerId}
-  //         aria-haspopup="true"
-  //         onClick={handleMobileMenuOpen}
-  //         color="inherit"
-  //       >
-  //         <MenuIcon />
-  //       </IconButton>
-  //     </div>
-  //   </>
-  // );
+  const ToolbarMenu = (
+    <>
+      <div className={styles.desktopMenu}>
+        <LanguageSelector
+          mode="dialog"
+          buttonClassName={styles.desktopLanguage}
+        />
+        {/*<ClosableMenuIconButton*/}
+        {/*  Icon={TxHistoryIcon}*/}
+        {/*  opened={txHistoryOpened}*/}
+        {/*  className={styles.desktopTxHistory}*/}
+        {/*  onClick={handleTxHistoryToggle}*/}
+        {/*/>*/}
+        <WalletConnectionStatusButton
+          onClick={handleWalletButtonClick}
+          hoisted={txHistoryOpened}
+          status={status}
+          account={account}
+          wallet={wallet}
+        />
+        <WalletPickerModal open={pickerOpened} options={walletPickerOptions} />
+      </div>
+      <div className={styles.mobileMenu}>
+        {/*<IconButton*/}
+        {/*  aria-label="show more"*/}
+        {/*  aria-controls={drawerId}*/}
+        {/*  aria-haspopup="true"*/}
+        {/*  onClick={handleMobileMenuOpen}*/}
+        {/*  color="inherit"*/}
+        {/*>*/}
+        {/*  <MenuIcon />*/}
+        {/*</IconButton>*/}
+      </div>
+    </>
+  );
   // const DrawerMenu = (
   //   <Drawer
   //     anchor="right"
@@ -270,7 +267,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   );
   return (
     <MobileLayout
-      // ToolbarMenu={ToolbarMenu}
+      ToolbarMenu={ToolbarMenu}
       // DrawerMenu={DrawerMenu}
       WalletMenu={WalletMenu}
     >

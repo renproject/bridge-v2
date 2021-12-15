@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import { Chain } from "@renproject/chains";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
@@ -33,10 +34,6 @@ import {
   ProgressWrapper,
 } from "../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import {
-  WalletConnectionStatusType,
-  WalletStatus,
-} from "../../../components/utils/types";
 import { createPulseAnimation } from "../../../theme/animationUtils";
 import { defaultShadow } from "../../../theme/other";
 import {
@@ -47,9 +44,12 @@ import {
   getWalletConfigByRentxName,
 } from "../../../utils/assetConfigs";
 import { trimAddress } from "../../../utils/strings";
+import { Wallet } from "../../../utils/walletsConfig";
 import { useSubNetworkName } from "../../ui/uiHooks";
-import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
-import { setWalletPickerOpened } from "../walletSlice";
+import { useWallet } from "../walletHooks";
+// import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
+import { setPickerOpened } from "../walletSlice";
+import { WalletStatus } from "../walletUtils";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
@@ -236,15 +236,16 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const chainConfig = getChainConfigByRentxName(chain);
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
 
-  const { provider } = useSelectedChainWallet();
+  const { provider } = useWallet(chain as Chain);
 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<any>(false);
-  const { addOrSwitchChain } = useSwitchChainHelpers(
-    chainConfig.symbol,
-    targetNetwork,
-    provider
-  );
+  // const { addOrSwitchChain } = () => {} // useSwitchChainHelpers(
+  //   chainConfig.symbol,
+  //   targetNetwork,
+  //   provider
+  // );
+  const addOrSwitchChain = useCallback(async () => {}, []); //TODO: crit
   const [success, setSuccess] = useState(false);
   const handleSwitch = useCallback(() => {
     if (addOrSwitchChain !== null) {
@@ -255,7 +256,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           setError(false);
           setSuccess(true);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           setError(error);
         })
         .finally(() => {
@@ -373,28 +374,25 @@ const useWalletConnectionIndicatorStyles = makeStyles((theme) => {
 });
 
 type WalletConnectionIndicatorProps = {
-  status?: WalletConnectionStatusType;
+  status?: WalletStatus;
   className?: string; // TODO: find a better way
 };
 
-export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndicatorProps> = ({
-  status,
-  className: classNameProp,
-}) => {
-  const styles = useWalletConnectionIndicatorStyles() as WalletConnectionIndicatorStyles;
+export const WalletConnectionIndicator: FunctionComponent<
+  WalletConnectionIndicatorProps
+> = ({ status, className: classNameProp }) => {
+  const styles =
+    useWalletConnectionIndicatorStyles() as WalletConnectionIndicatorStyles;
   const className = classNames(styles.root, classNameProp, {
-    [styles.connected]: status === WalletStatus.CONNECTED,
-    [styles.wrongNetwork]: status === WalletStatus.WRONG_NETWORK,
-    [styles.disconnected]: status === WalletStatus.DISCONNECTED,
-    [styles.connecting]: status === WalletStatus.CONNECTING,
+    [styles.connected]: status === WalletStatus.Connected,
+    [styles.wrongNetwork]: status === WalletStatus.WrongNetwork,
+    [styles.disconnected]: status === WalletStatus.Disconnected,
+    [styles.connecting]: status === WalletStatus.Connecting,
   });
   return <div className={className} />;
 };
 
-const getWalletConnectionLabel = (
-  status: WalletConnectionStatusType,
-  t: TFunction
-) => {
+const getWalletConnectionLabel = (status: WalletStatus, t: TFunction) => {
   switch (status) {
     case "disconnected":
       return t("wallet.connect-wallet");
@@ -431,22 +429,16 @@ const useWalletConnectionStatusButtonStyles = makeStyles<Theme>((theme) => ({
 }));
 
 type WalletConnectionStatusButtonProps = ButtonProps & {
-  status: WalletConnectionStatusType;
-  wallet: BridgeWallet;
+  status: WalletStatus;
+  wallet: Wallet;
   hoisted?: boolean;
   account?: string;
   mobile?: boolean;
 };
 
-export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionStatusButtonProps> = ({
-  status,
-  account,
-  wallet,
-  hoisted,
-  className,
-  mobile,
-  ...rest
-}) => {
+export const WalletConnectionStatusButton: FunctionComponent<
+  WalletConnectionStatusButtonProps
+> = ({ status, account, wallet, hoisted, className, mobile, ...rest }) => {
   const { t } = useTranslation();
   const {
     indicator: indicatorClassName,
@@ -457,8 +449,8 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   } = useWalletConnectionStatusButtonStyles();
 
   const label =
-    status === WalletStatus.CONNECTED
-      ? getWalletConfig(wallet).short
+    status === WalletStatus.Connected
+      ? `${wallet} TODO: Wallet` //getWalletConfig(wallet).short
       : getWalletConnectionLabel(status, t);
   const trimmedAddress = trimAddress(account);
   const resolvedClassName = classNames(className, {
@@ -487,13 +479,12 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
 
 const useBackToWalletPicker = (onClose: () => void) => {
   const dispatch = useDispatch();
-  const handleBackToWalletPicker = useCallback(() => {
+  return useCallback(() => {
     onClose();
     setTimeout(() => {
-      dispatch(setWalletPickerOpened(true));
+      dispatch(setPickerOpened(true));
     }, 1);
   }, [dispatch, onClose]);
-  return handleBackToWalletPicker;
 };
 
 type AbstractConnectorInfoProps = {

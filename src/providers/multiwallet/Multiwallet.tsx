@@ -15,7 +15,7 @@ import {
 } from "../../features/wallet/components/WalletHelpers";
 import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
-import { RenChain } from "../../utils/assetConfigs";
+import { RenChain } from "../../utils/assetConfigs"; //TODO: change
 
 const networkMapping: Record<number, RenNetwork[]> = {
   1: [RenNetwork.Mainnet],
@@ -81,8 +81,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           ? [
               {
                 name: "MEW",
-                logo:
-                  "https://avatars1.githubusercontent.com/u/24321658?s=60&v=4s",
+                logo: "https://avatars1.githubusercontent.com/u/24321658?s=60&v=4s",
                 connector: new EthereumMEWConnectConnector({
                   debug: env.DEV,
                   rpc: {
@@ -98,8 +97,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           ? [
               {
                 name: "WalletConnect",
-                logo:
-                  "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
+                logo: "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
                 connector: new EthereumWalletConnectConnector({
                   rpc: {
                     42: `https://kovan.infura.io/v3/${env.INFURA_ID}`,
@@ -169,8 +167,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           ? [
               {
                 name: "Metamask",
-                logo:
-                  "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+                logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
                 info: BinanceMetamaskConnectorInfo,
                 connector: (() => {
                   const connector = new BinanceSmartChainInjectedConnector({

@@ -10,9 +10,9 @@ import {
   toMintedCurrency,
 } from "../../utils/assetConfigs";
 import { $mintCurrency } from "../mint-old/mintSlice";
-import { $renNetwork } from "../network/networkSlice";
+import { $network } from "../network/networkSlice";
 import { $releaseCurrency } from "../release-old/releaseSlice";
-import { $chain } from "../wallet/walletSlice";
+import { $wallet } from "../wallet/walletSlice";
 import { setPaperShaking } from "./uiSlice";
 
 export const useShakePaper = (shake: boolean, timeout = 600) => {
@@ -41,20 +41,21 @@ export const useLocationFlow = () => {
 };
 
 export const useSubNetworkName = () => {
-  const flow = useLocationFlow();
-  const chain = useSelector($chain);
-  const renNetwork = useSelector($renNetwork);
-  const mintCurrency = useSelector($mintCurrency);
-  const releaseCurrency = useSelector($releaseCurrency);
-  if (
-    chain !== BridgeChain.ETHC ||
-    flow == null ||
-    isMainnetNetwork(renNetwork)
-  ) {
-    return "";
-  }
-  const renCurrency =
-    flow === "mint" ? toMintedCurrency(mintCurrency) : releaseCurrency;
-  const currencyConfig = getCurrencyConfig(renCurrency);
-  return currencyConfig.ethTestnet || EthTestnet.KOVAN;
+  // const flow = useLocationFlow();
+  // const { chain } = useSelector($wallet);
+  return "TODO: useSubNetworkName"; //TODO: crit finish
+  // const network = useSelector($network);
+  // const mintCurrency = useSelector($mintCurrency);
+  // const releaseCurrency = useSelector($releaseCurrency);
+  // if (
+  //   chain !== BridgeChain.ETHC ||
+  //   flow == null ||
+  //   isMainnetNetwork(renNetwork)
+  // ) {
+  //   return "";
+  // }
+  // const renCurrency =
+  //   flow === "mint" ? toMintedCurrency(mintCurrency) : releaseCurrency;
+  // const currencyConfig = getCurrencyConfig(renCurrency);
+  // return currencyConfig.ethTestnet || EthTestnet.KOVAN;
 };
