@@ -93,6 +93,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   useEffect(() => {
     const config = getAssetConfig(asset);
     const { lockChain, mintChains } = config;
+    // consider using // or BitcoinBaseChain.isDepositAsset or similar methods
     if (isMint) {
       setFromChains([lockChain]);
       dispatch(setFrom(lockChain));

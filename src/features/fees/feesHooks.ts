@@ -16,7 +16,7 @@ import { SimpleFee } from "./feesUtils";
 const feesCache: Record<string, SimpleFee> = {};
 export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
   const multiwalletChain = useSelector($multiwalletChain);
-  const { provider, walletConnected } = useWallet(multiwalletChain);
+  const { provider, connected } = useWallet(multiwalletChain);
   const renNetwork = useSelector($renNetwork);
   const initialFees: SimpleFee = {
     mint: 0,
@@ -32,7 +32,7 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
       const cacheKey = `${currency}-${txType}-${renNetwork}`;
       if (
         provider &&
-        walletConnected &&
+        connected &&
         isSupportedByCurrentNetwork(currency, renNetwork, multiwalletChain)
       ) {
         if (feesCache[cacheKey]) {
@@ -53,7 +53,7 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
       }
     },
     1000,
-    [currency, provider, walletConnected, renNetwork, txType, multiwalletChain]
+    [currency, provider, connected, renNetwork, txType, multiwalletChain]
   );
 
   return { fees, pending };

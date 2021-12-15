@@ -40,7 +40,7 @@ import { Debug } from "../components/utils/Debug";
 import { env } from "../constants/environmentVariables";
 import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
 import { $renNetwork } from "../features/network/networkSlice";
-import { useSetNetworkFromParam } from "../features/network/networkUtils";
+import { useSetNetworkFromParam } from "../features/network/networkHooks";
 import {
   IssuesResolver,
   IssuesResolverButton,
@@ -60,14 +60,12 @@ import {
   WalletWrongNetworkInfo,
 } from "../features/wallet/components/WalletHelpers";
 import {
-  useSelectedChainWallet,
-  useSyncMultiwalletNetwork,
+  useSyncWalletNetwork,
   useWallet,
 } from "../features/wallet/walletHooks";
 import {
-  $multiwalletChain,
-  $walletPickerOpened,
-  setWalletPickerOpened,
+  $wallet,
+  setPickerOpened as setWalletPickerOpened,
 } from "../features/wallet/walletSlice";
 import { walletPickerModalConfig } from "../providers/multiwallet/Multiwallet";
 
@@ -78,9 +76,10 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   useSetNetworkFromParam();
-  // useSyncMultiwalletNetwork();
-  // const { status, account, walletConnected, deactivateConnector, symbol } =
-  //   useSelectedChainWallet();
+  useSyncWalletNetwork();
+  const { chain } = useSelector($wallet);
+  const { status, account, connected, deactivateConnector, wallet } =
+    useWallet(chain);
   // const { txHistoryOpened } = useSelector($transactionsData);
   //
   // const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
@@ -106,14 +105,15 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   // const walletPickerOpen = useSelector($walletPickerOpened);
   // const renNetwork = useSelector($renNetwork);
   // const pickerClasses = useWalletPickerStyles();
-  // const [walletMenuAnchor, setWalletMenuAnchor] =
-  //   React.useState<null | HTMLElement>(null);
-  // const handleWalletPickerClose = useCallback(() => {
-  //   dispatch(setWalletPickerOpened(false));
-  // }, [dispatch]);
-  // const handleWalletMenuClose = useCallback(() => {
-  //   setWalletMenuAnchor(null);
-  // }, []);
+  const [walletMenuAnchor, setWalletMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
+  const handleWalletPickerClose = useCallback(() => {
+    dispatch(setWalletPickerOpened(false));
+  }, [dispatch]);
+  const handleWalletMenuClose = useCallback(() => {
+    setWalletMenuAnchor(null);
+  }, []);
   //
   // const handleWalletButtonClick = useCallback(
   //   (event: React.MouseEvent<HTMLElement>) => {
@@ -126,10 +126,10 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   //   [dispatch, walletConnected]
   // );
   //
-  // const handleDisconnectWallet = useCallback(() => {
-  //   deactivateConnector();
-  //   handleWalletMenuClose();
-  // }, [deactivateConnector, handleWalletMenuClose]);
+  const handleDisconnectWallet = useCallback(() => {
+    deactivateConnector();
+    handleWalletMenuClose();
+  }, [deactivateConnector, handleWalletMenuClose]);
   // const walletPickerOptions = useMemo(() => {
   //   const options: WalletPickerProps<any, any> = {
   //     targetNetwork: renNetwork,
@@ -252,27 +252,27 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   //   </Drawer>
   // );
   //
-  // const WalletMenu = (
-  //   <Menu
-  //     id="wallet-menu"
-  //     getContentAnchorEl={null}
-  //     anchorEl={walletMenuAnchor}
-  //     keepMounted
-  //     open={Boolean(walletMenuAnchor)}
-  //     onClose={handleWalletMenuClose}
-  //     anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-  //     transformOrigin={{ vertical: "top", horizontal: "left" }}
-  //   >
-  //     <MenuItem onClick={handleDisconnectWallet}>
-  //       <Typography color="error">{t("wallet.disconnect")}</Typography>
-  //     </MenuItem>
-  //   </Menu>
-  // );
+  const WalletMenu = (
+    <Menu
+      id="wallet-menu"
+      getContentAnchorEl={null}
+      anchorEl={walletMenuAnchor}
+      keepMounted
+      open={Boolean(walletMenuAnchor)}
+      onClose={handleWalletMenuClose}
+      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      transformOrigin={{ vertical: "top", horizontal: "left" }}
+    >
+      <MenuItem onClick={handleDisconnectWallet}>
+        <Typography color="error">{t("wallet.disconnect")}</Typography>
+      </MenuItem>
+    </Menu>
+  );
   return (
     <MobileLayout
-    // ToolbarMenu={ToolbarMenu}
-    // DrawerMenu={DrawerMenu}
-    // WalletMenu={WalletMenu}
+      // ToolbarMenu={ToolbarMenu}
+      // DrawerMenu={DrawerMenu}
+      WalletMenu={WalletMenu}
     >
       {children}
       {/*<MintTransactionHistory />*/}

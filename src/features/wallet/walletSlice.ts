@@ -1,24 +1,20 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Asset, Chain } from "@renproject/chains";
 import { RootState } from "../../store/rootReducer";
-import {
-  BridgeChain,
-  BridgeCurrency,
-  getChainConfig,
-} from "../../utils/assetConfigs";
 
 export type AssetBalance = {
-  symbol: BridgeCurrency;
+  symbol: Asset;
   balance: number;
 };
 
 type WalletState = {
-  chain: BridgeChain;
+  chain: Chain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
 };
 
 let initialState: WalletState = {
-  chain: BridgeChain.ETHC,
+  chain: Chain.Ethereum,
   pickerOpened: false,
   balances: [],
 };
@@ -27,10 +23,10 @@ const slice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    setChain(state, action: PayloadAction<BridgeChain>) {
+    setChain(state, action: PayloadAction<Chain>) {
       state.chain = action.payload;
     },
-    setWalletPickerOpened(state, action: PayloadAction<boolean>) {
+    setPickerOpened(state, action: PayloadAction<boolean>) {
       state.pickerOpened = action.payload;
     },
     addOrUpdateBalance(state, action: PayloadAction<AssetBalance>) {
@@ -49,22 +45,9 @@ const slice = createSlice({
   },
 });
 
-export const {
-  setChain,
-  setWalletPickerOpened,
-  addOrUpdateBalance,
-  resetBalances,
-} = slice.actions;
+export const { setChain, setPickerOpened, addOrUpdateBalance, resetBalances } =
+  slice.actions;
 
 export const walletReducer = slice.reducer;
 
 export const $wallet = (state: RootState) => state.wallet;
-export const $chain = createSelector($wallet, (wallet) => wallet.chain);
-export const $walletPickerOpened = createSelector(
-  $wallet,
-  (wallet) => wallet.pickerOpened
-);
-export const $multiwalletChain = createSelector($chain, (chain) => {
-  const chainConfig = getChainConfig(chain);
-  return chainConfig.rentxName;
-});
