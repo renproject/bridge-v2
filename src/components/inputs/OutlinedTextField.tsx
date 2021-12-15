@@ -20,14 +20,21 @@ export const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const OutlinedTextField: FunctionComponent<TextFieldProps> = (props) => {
+export const OutlinedTextField: FunctionComponent<TextFieldProps> = ({
+  InputProps,
+  ...props
+}) => {
   const { input, ...classes } = useStyles();
   return (
     <TextField
       classes={classes}
       variant="outlined"
       InputProps={
-        { notched: false, classes: { root: input } } as OutlinedInputProps
+        {
+          notched: false,
+          classes: { root: input },
+          ...InputProps,
+        } as OutlinedInputProps
       }
       fullWidth
       {...props}

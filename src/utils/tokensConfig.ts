@@ -109,6 +109,15 @@ export const getAssetConfig = (asset: Asset) => {
   return config;
 };
 
+// TODO: invent naming similar to renJS, Noah
+export const getRenAssetName = (asset: Asset) => `ren${asset}`;
+export const getLockAssetName = (renAsset: string) => {
+  if (renAsset.indexOf("ren") !== 0) {
+    throw new Error(`Unable to convert asset to origin (locked): ${renAsset}`);
+  }
+  return renAsset.substr(3);
+};
+
 export const supportedLockAssets =
   env.ENABLED_ASSETS[0] === "*"
     ? [

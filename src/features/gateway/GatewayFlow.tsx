@@ -5,6 +5,7 @@ import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
+import { GatewayFeesStep } from "./steps/GatwayFeesStep";
 
 export enum GatewayConfigurationStep {
   INITIAL = "initial",
@@ -15,18 +16,18 @@ type GatewayConfigurationProps = {
   mode: "mint" | "release";
 };
 
-const GatewayConfigurationSteps: FunctionComponent<GatewayConfigurationProps> = ({
-  mode,
-}) => {
+const GatewayConfigurationSteps: FunctionComponent<
+  GatewayConfigurationProps
+> = ({ mode }) => {
   const [step, setStep] = useState(GatewayConfigurationStep.INITIAL);
 
   // clear the current tx so that history starts processing again
   // useSetCurrentSessionData("");
 
-  const onInitialNext = useCallback(() => {
+  const handleInitialNext = useCallback(() => {
     setStep(GatewayConfigurationStep.FEES);
   }, []);
-  const onFeesPrev = useCallback(() => {
+  const handleFeesPrev = useCallback(() => {
     setStep(GatewayConfigurationStep.INITIAL);
   }, []);
 
@@ -35,11 +36,12 @@ const GatewayConfigurationSteps: FunctionComponent<GatewayConfigurationProps> = 
       {step === GatewayConfigurationStep.INITIAL && (
         <>
           <TransactionTypeTabs />
-          {/*<span>aaa</span>*/}
-          <GatewayInitialStep />
+          <GatewayInitialStep onNext={handleInitialNext} />
         </>
       )}
-      {step === GatewayConfigurationStep.FEES && <span> fees {mode}</span>}
+      {step === GatewayConfigurationStep.FEES && (
+        <GatewayFeesStep onPrev={handleFeesPrev} />
+      )}
     </>
   );
 };
