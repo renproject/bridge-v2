@@ -32,15 +32,18 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
   const { paperShaking } = useSelector($ui);
   return (
     <>
-      {/*<ConnectedMainLayout>*/}
-      <PaperTitleProvider>
-        <BridgePaperWrapper>
-          <BridgePurePaper shaking={paperShaking}>
-            <Route path={[paths.MINT, paths.RELEASE]} component={GatewayFlow} />
-          </BridgePurePaper>
-        </BridgePaperWrapper>
-      </PaperTitleProvider>
-      {/*</ConnectedMainLayout>*/}
+      <ConnectedMainLayout>
+        <PaperTitleProvider>
+          <BridgePaperWrapper>
+            <BridgePurePaper shaking={paperShaking}>
+              <Route
+                path={[paths.MINT, paths.RELEASE]}
+                component={GatewayFlow}
+              />
+            </BridgePurePaper>
+          </BridgePaperWrapper>
+        </PaperTitleProvider>
+      </ConnectedMainLayout>
     </>
   );
 };

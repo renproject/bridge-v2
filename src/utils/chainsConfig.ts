@@ -7,6 +7,7 @@ import {
   BitcoinIcon,
   CustomSvgIconComponent,
   EmptyCircleIcon,
+  EthereumChainFullIcon,
   EthereumIcon,
   FantomCircleIcon,
   PolygonFullIcon,
@@ -58,7 +59,7 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   DigiByte: unsetChainConfig,
   Dogecoin: unsetChainConfig,
   Ethereum: {
-    Icon: EthereumIcon,
+    Icon: EthereumChainFullIcon,
     fullName: "Ethereum",
   },
   Fantom: {

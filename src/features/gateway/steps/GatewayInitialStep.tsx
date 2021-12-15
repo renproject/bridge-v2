@@ -5,10 +5,7 @@ import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouteMatch } from "react-router-dom";
-import {
-  ActionButton,
-  ActionButtonWrapper,
-} from "../../../components/buttons/Buttons";
+import { ActionButton } from "../../../components/buttons/Buttons";
 import {
   RichDropdown,
   RichDropdownWrapper,
