@@ -77,7 +77,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const styles = useMobileLayoutStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  // useSetNetworkFromParam();
+  useSetNetworkFromParam();
   // useSyncMultiwalletNetwork();
   // const { status, account, walletConnected, deactivateConnector, symbol } =
   //   useSelectedChainWallet();

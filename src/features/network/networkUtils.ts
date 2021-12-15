@@ -1,16 +1,11 @@
-import { RenNetwork } from "@renproject/interfaces";
+import { RenNetwork } from "@renproject/utils";
 import queryString from "query-string";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { setRenNetwork } from "./networkSlice";
 
-export const supportedParamNetworks = [
-  RenNetwork.Mainnet,
-  RenNetwork.Testnet,
-  RenNetwork.TestnetVDot3,
-  RenNetwork.MainnetVDot3,
-];
+export const supportedParamNetworks = [RenNetwork.Mainnet, RenNetwork.Testnet];
 
 export const useSetNetworkFromParam = () => {
   const location = useLocation();
