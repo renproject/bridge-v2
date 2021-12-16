@@ -3,8 +3,8 @@ import queryString from "query-string";
 import { useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { getDefaultChains } from "../chain/chainUtils";
 import { setNetwork } from "./networkSlice";
-import { alterEthereumBaseChainSigner, getDefaultChains } from "./networkUtils";
 
 const supportedParamNetworks = [RenNetwork.Mainnet, RenNetwork.Testnet];
 

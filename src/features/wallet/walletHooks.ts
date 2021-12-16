@@ -51,6 +51,7 @@ export const useWallet: UseWallet = (chain) => {
   const deactivateConnector =
     enabledChains[chain]?.connector.deactivate || emptyFn;
 
+  (window as any).p = provider;
   return {
     account,
     status,

@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
+import { Skeleton } from "@material-ui/lab";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
 import {
@@ -147,7 +148,9 @@ export const ProgressWrapper = styled("div")({
   marginBottom: 20,
 });
 
-export const ProgressWithContent: FunctionComponent<ProgressWithContentProps> = ({
+export const ProgressWithContent: FunctionComponent<
+  ProgressWithContentProps
+> = ({
   color,
   value = 100,
   processing,
@@ -243,11 +246,9 @@ type TransactionStatusInfoProps = {
   status?: string;
 };
 
-export const TransactionStatusInfo: FunctionComponent<TransactionStatusInfoProps> = ({
-  status = "Pending",
-  chain,
-  address,
-}) => {
+export const TransactionStatusInfo: FunctionComponent<
+  TransactionStatusInfoProps
+> = ({ status = "Pending", chain, address }) => {
   const styles = useTransactionStatusInfoStyles();
   return (
     <div className={styles.root}>
@@ -353,7 +354,9 @@ export type TransactionStatusIndicatorProps = {
   targetConfirmations?: number;
 };
 
-export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndicatorProps> = ({
+export const TransactionStatusIndicator: FunctionComponent<
+  TransactionStatusIndicatorProps
+> = ({
   needsAction,
   showConfirmations = true,
   confirmations,
@@ -382,3 +385,7 @@ export const TransactionStatusIndicator: FunctionComponent<TransactionStatusIndi
     </div>
   );
 };
+
+export const InlineSkeleton = styled(Skeleton)({
+  display: "inline-block",
+});
