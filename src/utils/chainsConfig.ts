@@ -8,17 +8,27 @@ import {
   CustomSvgIconComponent,
   EmptyCircleIcon,
   EthereumChainFullIcon,
-  EthereumIcon,
   FantomCircleIcon,
   PolygonFullIcon,
   ZecIcon,
 } from "../components/icons/RenIcons";
-import {
-  AssetChainsConfig,
-  AssetIconsConfig,
-  AssetLabelsConfig,
-  assetsConfig,
-} from "./tokensConfig";
+import { AssetChainsConfig } from "./tokensConfig";
+
+export const supportedBitcoinChains: Array<Chain> = [
+  Chain.Bitcoin,
+  Chain.BitcoinCash,
+  Chain.Dogecoin,
+  Chain.Zcash,
+];
+
+export const supportedEthereumChains: Array<Chain> = [
+  Chain.Arbitrum,
+  Chain.Avalanche,
+  Chain.BinanceSmartChain,
+  Chain.Ethereum,
+  Chain.Fantom,
+  Chain.Polygon,
+];
 
 export type ChainIconsConfig = {
   Icon: CustomSvgIconComponent;
@@ -56,7 +66,6 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     Icon: BchFullIcon,
     fullName: "Bitcoin Cash",
   },
-  DigiByte: unsetChainConfig,
   Dogecoin: unsetChainConfig,
   Ethereum: {
     Icon: EthereumChainFullIcon,
@@ -66,26 +75,18 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     Icon: FantomCircleIcon,
     fullName: "Fantom",
   },
-  Filecoin: unsetChainConfig,
-  Goerli: unsetChainConfig,
   Polygon: {
     Icon: PolygonFullIcon,
     fullName: "Polygon",
   },
-  Terra: unsetChainConfig,
   Zcash: { Icon: ZecIcon, fullName: "Zcash" },
+  DigiByte: unsetChainConfig,
+  Filecoin: unsetChainConfig,
+  Goerli: unsetChainConfig,
+  Terra: unsetChainConfig,
 };
 
 export const chainsConfig = chainsBaseConfig;
-
-const mintChains: Array<Chain> = [
-  Chain.Ethereum,
-  Chain.BinanceSmartChain,
-  Chain.Polygon,
-  Chain.Fantom,
-  Chain.Avalanche,
-  Chain.Arbitrum,
-];
 
 export const getChainConfig = (chain: Chain) => {
   const config = chainsConfig[chain];
@@ -98,6 +99,15 @@ export const getChainConfig = (chain: Chain) => {
 type AssetChainsData = AssetChainsConfig & {
   asset: Asset;
 };
+
+const mintChains: Array<Chain> = [
+  Chain.Ethereum,
+  Chain.BinanceSmartChain,
+  Chain.Polygon,
+  Chain.Fantom,
+  Chain.Avalanche,
+  Chain.Arbitrum,
+];
 
 export const assetChainsArray = Object.values(chains).reduce(
   (acc, chain) => [

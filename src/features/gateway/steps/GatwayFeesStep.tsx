@@ -1,6 +1,6 @@
 import { Divider, IconButton } from "@material-ui/core";
 import { Asset } from "@renproject/chains";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
@@ -38,22 +38,33 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const { Icon, shortName } = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
 
+  const [amount, setAmount] = useState("42");
+  const handleAmountChange = useCallback((event) => {
+    const newValue = event.target.value.replace(",", ".");
+    if (!isNaN(newValue)) {
+      setAmount(newValue);
+    }
+  }, []);
+
   const balance = 42.1;
   const showBalance = true;
   const receivingFormatted = "42.0";
   const receivingFormattedUsd = "69.0";
 
+  const Header = (
+    <PaperHeader>
+      <PaperNav>
+        <IconButton onClick={onPrev}>
+          <BackArrowIcon />
+        </IconButton>
+      </PaperNav>
+      <PaperTitle>{t("mint.fees-title")}</PaperTitle>
+      <PaperActions />
+    </PaperHeader>
+  );
   return (
     <>
-      <PaperHeader>
-        <PaperNav>
-          <IconButton onClick={onPrev}>
-            <BackArrowIcon />
-          </IconButton>
-        </PaperNav>
-        <PaperTitle>{t("mint.fees-title")}</PaperTitle>
-        <PaperActions />
-      </PaperHeader>
+      {Header}
       <PaperContent bottomPadding>
         {showBalance && (
           <LabelWithValue
@@ -62,7 +73,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           />
         )}
         <OutlinedTextField
-          value={42}
+          value={amount}
+          onChange={handleAmountChange}
           label="How much will you send?"
           InputProps={{ endAdornment: shortName }}
         />

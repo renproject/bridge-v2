@@ -26,6 +26,7 @@ import {
   getAssetConfig,
   supportedLockAssets,
 } from "../../../utils/tokensConfig";
+import { useWallet } from "../../wallet/walletHooks";
 import {
   getAssetOptionData,
   getChainOptionData,
@@ -40,6 +41,7 @@ import {
   setTo,
 } from "../gatewaySlice";
 import { GatewayStepProps } from "./stepUtils";
+import { setPickerOpened } from "../../wallet/walletSlice";
 
 const assets = supportedLockAssets;
 const chains = Object.keys(chainsConfig);
@@ -121,7 +123,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     if (onNext) {
       onNext();
     }
-  }, []);
+  }, [onNext]);
+
+  const { connected } = useWallet(isMint ? to : from);
+  const handleConnect = useCallback(() => {
+    dispatch(setPickerOpened(true));
+  }, [dispatch]);
 
   return (
     <>
@@ -159,9 +166,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             getOptionData={getAssetOptionData}
             value={asset}
             onChange={handleAssetChange}
-            // available={supportedLockCurrencies}
-            // value={currency}
-            // onChange={handleCurrencyChange}
           />
         </RichDropdownWrapper>
         <Collapse in={!hideFrom || forceShowDropdowns}>
@@ -174,9 +178,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               value={from}
               onChange={handleFromChange}
               multipleNames={false}
-              // available={supportedLockCurrencies}
-              // value={currency}
-              // onChange={handleCurrencyChange}
             />
           </RichDropdownWrapper>
         </Collapse>
@@ -190,9 +191,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               value={to}
               onChange={handleToChange}
               multipleNames={false}
-              // available={supportedLockCurrencies}
-              // value={currency}
-              // onChange={handleCurrencyChange}
             />
           </RichDropdownWrapper>
         </Collapse>
@@ -217,9 +215,15 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       </PaperContent>
       <Divider />
       <PaperContent darker bottomPadding topPadding>
-        <ActionButton onClick={handleNext}>
-          {t("common.next-label")}
-        </ActionButton>
+        {connected ? (
+          <ActionButton onClick={handleNext}>
+            {t("common.next-label")}
+          </ActionButton>
+        ) : (
+          <ActionButton onClick={handleConnect}>
+            {t("wallet.connect")}
+          </ActionButton>
+        )}
       </PaperContent>
     </>
   );
