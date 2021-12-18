@@ -60,7 +60,7 @@ export const useGateway = ({
       .catch((error) => {
         setError(error);
       });
-  }, [network]);
+  }, [network, chains, provider]);
 
   // initialize gateway
   useEffect(() => {

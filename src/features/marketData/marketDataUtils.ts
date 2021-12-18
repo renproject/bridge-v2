@@ -4,7 +4,6 @@ import { env } from "../../constants/environmentVariables";
 import { uniqueArray } from "../../utils/arrays";
 import {
   BridgeChain,
-  BridgeCurrency,
   currenciesConfig,
   getCurrencyConfigByBandchainSymbol,
 } from "../../utils/assetConfigs";

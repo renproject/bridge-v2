@@ -2,7 +2,6 @@ import { Asset, Chain } from "@renproject/chains";
 import {
   BchFullIcon,
   BtcFullIcon,
-  BtcIcon,
   CustomSvgIconComponent,
   DogeFullIcon,
   EmptyCircleIcon,

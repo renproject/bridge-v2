@@ -142,7 +142,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
         </Box>
       );
     },
-    [multipleNames, styles, label, condensed]
+    [multipleNames, styles, label, condensed, getOptionData]
   );
   return (
     <div>

@@ -39,7 +39,6 @@ import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
 import { useSetNetworkFromParam } from "../features/network/networkHooks";
 import { $network } from "../features/network/networkSlice";
 import { $transactionsData } from "../features/transactions/transactionsSlice";
-
 import {
   useWalletPickerStyles,
   WalletChainLabel,

@@ -1,7 +1,11 @@
+import { Collapse, Divider } from "@material-ui/core";
 import { Asset, Chain } from "@renproject/chains";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Collapse, Divider, Fade, Grow, Slide } from "@material-ui/core";
-import { FunctionComponent } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouteMatch } from "react-router-dom";
@@ -24,6 +28,7 @@ import { paths } from "../../../pages/routes";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import { getAssetConfig, supportedAssets } from "../../../utils/tokensConfig";
 import { useWallet } from "../../wallet/walletHooks";
+import { setPickerOpened } from "../../wallet/walletSlice";
 import {
   getAssetOptionData,
   getChainOptionData,
@@ -31,14 +36,13 @@ import {
 import { MintIntro } from "../components/MintHelpers";
 import {
   $gateway,
-  setToAddress,
   setAmount,
   setAsset,
   setFrom,
   setTo,
+  setToAddress,
 } from "../gatewaySlice";
 import { GatewayStepProps } from "./stepUtils";
-import { setPickerOpened } from "../../wallet/walletSlice";
 
 const assets = supportedAssets;
 const chains = Object.keys(chainsConfig);
@@ -104,7 +108,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       setToChains([lockChain]);
       dispatch(setTo(lockChain));
     }
-  }, [asset, isMint, isRelease]);
+  }, [dispatch, asset, isMint, isRelease]);
 
   const hideFrom = isMint && fromChains.length === 1;
   const hideTo = isRelease && toChains.length === 1;
@@ -112,7 +116,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const toChainConfig = getChainConfig(to);
   // TODO: fix
   const showMinimalAmountError = false;
-  const usdAmount = 420.69;
   const renAsset = `ren${asset}`;
   const showAddressError = false;
 

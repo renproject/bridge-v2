@@ -10,7 +10,6 @@ import {
 } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
-import { Chain } from "@renproject/chains";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
@@ -46,7 +45,6 @@ import {
 import { trimAddress } from "../../../utils/strings";
 import { Wallet } from "../../../utils/walletsConfig";
 import { useSubNetworkName } from "../../ui/uiHooks";
-import { useWallet } from "../walletHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import { setPickerOpened } from "../walletSlice";
 import { WalletStatus } from "../walletUtils";
@@ -236,7 +234,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const chainConfig = getChainConfigByRentxName(chain);
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
 
-  const { provider } = useWallet(chain as Chain);
+  // const { provider } = useWallet(chain as Chain);
 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<any>(false);

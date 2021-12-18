@@ -3,12 +3,8 @@ import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
 import { getBandchain } from "../../services/bandchain";
 import { useReportSystemStatus } from "../ui/uiHooks";
-import {
-  setSystemMonitorStatus,
-  SystemStatus,
-  SystemType,
-} from "../ui/uiSlice";
-import { setExchangeRates, setGasPrices } from "./marketDataSlice";
+import { SystemStatus, SystemType } from "../ui/uiSlice";
+import { setGasPrices, updateExchangeRates } from "./marketDataSlice";
 import {
   BandchainReferenceData,
   bandchainReferencePairs,
@@ -40,23 +36,23 @@ export const useExchangeRates = () => {
       .then((data: Array<BandchainReferenceData>) => {
         report(SystemType.Bandchain, SystemStatus.Operational);
         const rates = mapBandchainToExchangeRate(data);
-        dispatch(setExchangeRates(rates));
+        dispatch(updateExchangeRates(rates));
       })
       .catch((error: any) => {
         report(SystemType.Bandchain, SystemStatus.Failure);
         console.error(error);
       });
 
-    // fetchCoingeckoExchangeRates()
-    //   .then((data: Array<CoingeckoReferenceData>) => {
-    //     report(SystemType.Coingecko, SystemStatus.Operational);
-    //     const rates = mapCoingeckoToExchangeData(data);
-    //     dispatch(setExchangeRates(rates));
-    //   })
-    //   .catch((error: any) => {
-    //     report(SystemType.Coingecko, SystemStatus.Failure);
-    //     console.error(error);
-    //   });
+    fetchCoingeckoExchangeRates()
+      .then((data: Array<CoingeckoReferenceData>) => {
+        report(SystemType.Coingecko, SystemStatus.Operational);
+        const rates = mapCoingeckoToExchangeRate(data);
+        dispatch(updateExchangeRates(rates));
+      })
+      .catch((error: any) => {
+        report(SystemType.Coingecko, SystemStatus.Failure);
+        console.error(error);
+      });
   }, [dispatch, report]);
 
   useEffect(fetchData, [fetchData]);

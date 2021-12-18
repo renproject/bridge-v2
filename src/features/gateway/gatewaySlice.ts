@@ -1,4 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Asset, Chain } from "@renproject/chains";
 import { RootState } from "../../store/rootReducer";
 

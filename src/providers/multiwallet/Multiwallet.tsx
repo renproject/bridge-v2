@@ -3,19 +3,18 @@ import { RenNetwork } from "@renproject/interfaces";
 import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 import { EthereumMEWConnectConnector } from "@renproject/multiwallet-ethereum-mewconnect-connector";
-import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
 import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
 import React, { FunctionComponent } from "react";
+import { env } from "../../constants/environmentVariables";
+import { featureFlags } from "../../constants/featureFlags";
 import {
+  ArbitrumMetamaskConnectorInfo,
+  AvalancheMetamaskConnectorInfo,
   BinanceMetamaskConnectorInfo,
   FantomMetamaskConnectorInfo,
   PolygonMetamaskConnectorInfo,
-  AvalancheMetamaskConnectorInfo,
-  ArbitrumMetamaskConnectorInfo,
 } from "../../features/wallet/components/WalletHelpers";
-import { env } from "../../constants/environmentVariables";
-import { featureFlags } from "../../constants/featureFlags";
 
 const networkMapping: Record<number, RenNetwork[]> = {
   1: [RenNetwork.Mainnet],

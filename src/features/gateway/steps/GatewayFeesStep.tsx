@@ -1,22 +1,11 @@
 import { Divider, Fade, IconButton } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
-import { Ethereum } from "@renproject/chains-ethereum";
-import BigNumber from "bignumber.js";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import { OutlinedTextField } from "../../../components/inputs/OutlinedTextField";
-import {
-  MediumTopWrapper,
-  MediumWrapper,
-} from "../../../components/layout/LayoutHelpers";
+import { MediumTopWrapper } from "../../../components/layout/LayoutHelpers";
 import {
   PaperActions,
   PaperContent,
@@ -30,14 +19,9 @@ import {
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import {
-  assetsConfig,
-  getAssetConfig,
-  getRenAssetName,
-} from "../../../utils/tokensConfig";
-import { $exchangeRates, $marketData } from "../../marketData/marketDataSlice";
+import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
+import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
-import { useChains } from "../../network/networkHooks";
 import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
 import { useGateway, useGatewayFees } from "../gatewayHooks";
@@ -64,7 +48,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const { connected } = useWallet(to);
 
-  const { gateway, transactions } = useGateway({
+  const { gateway } = useGateway({
     asset,
     from,
     to,
@@ -74,13 +58,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   });
 
   const fees = useGatewayFees(gateway, amount);
-  const {
-    balance,
-    balancePending,
-    outputAmount,
-    minimumAmount,
-    amountsPending,
-  } = fees;
+  const { balance, balancePending, outputAmount } = fees;
 
   const rates = useSelector($exchangeRates);
   const outputAmountUsdRate = findAssetExchangeRate(rates, asset);
