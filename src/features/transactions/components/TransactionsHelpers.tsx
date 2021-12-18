@@ -62,11 +62,12 @@ import { paths } from "../../../pages/routes";
 import { usePaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
-import {
-  GATEWAY_EXPIRY_OFFSET_MS,
-  getRemainingTime,
-} from "../../mint-old/mintUtils";
-import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
+import { getRemainingTime } from "../../../utils/time";
+// import {
+//   GATEWAY_EXPIRY_OFFSET_MS,
+//   getRemainingTime,
+// } from "../../mint-old/mintUtils";
+// import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
 
 export type AnyBurnSession =
   | BurnSession<any, any>
@@ -82,9 +83,9 @@ type BookmarkPageWarningProps = {
 };
 
 // currently unused
-export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
-  onClosed,
-}) => {
+export const BookmarkPageWarning: FunctionComponent<
+  BookmarkPageWarningProps
+> = ({ onClosed }) => {
   const handleClose = useCallback(() => {
     if (onClosed) {
       onClosed();
@@ -126,7 +127,9 @@ type FinishTransactionWarningProps = {
   mintChainLabel: string;
 };
 
-export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarningProps> = ({
+export const FinishTransactionWarning: FunctionComponent<
+  FinishTransactionWarningProps
+> = ({
   onClosed,
   timeRemained,
   lockChainBlockTime,
@@ -462,53 +465,9 @@ export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   );
 };
 
-export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
-  props
-) => {
-  const { t } = useTranslation();
-  const history = useHistory();
-
-  const ammendExpiry = useCallback(() => {
-    // history.location.search
-    const tx = parseTxQueryString(history.location.search);
-    if (!tx) return;
-    tx.expiryTime = Date.now() + GATEWAY_EXPIRY_OFFSET_MS;
-    history.push({
-      pathname: paths.MINT_TRANSACTION,
-      search: "?" + createTxQueryString(tx as any),
-    });
-    window.location.reload();
-  }, [history]);
-
-  const goToHome = useCallback(() => {
-    history.push(paths.HOME);
-  }, [history]);
-
-  return (
-    <ErrorDialog
-      title={t("tx.expired-error-popup-title")}
-      reason={t("tx.expired-error-popup-header")}
-      actionText={t("tx.expired-error-popup-action-text")}
-      {...props}
-    >
-      <span>{t("tx.expired-error-popup-message-1", { hours: 24 })}</span>
-      <ActionButtonWrapper>
-        <RedButton variant="text" color="secondary" onClick={ammendExpiry}>
-          {t("tx.expired-error-popup-continue-mint")}
-        </RedButton>
-      </ActionButtonWrapper>
-      <ActionButtonWrapper>
-        <Button variant="text" color="inherit" onClick={goToHome}>
-          {t("tx.expired-error-popup-back-to-home")}
-        </Button>
-      </ActionButtonWrapper>
-    </ErrorDialog>
-  );
-};
-
-export const GatewayAddressTimeoutErrorDialog: FunctionComponent<ErrorWithActionProps> = (
-  props
-) => {
+export const GatewayAddressTimeoutErrorDialog: FunctionComponent<
+  ErrorWithActionProps
+> = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -611,12 +570,9 @@ type WrongAddressWarningDialogProps = WarningWithActionsProps & {
   currency: string;
 };
 
-export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDialogProps> = ({
-  address,
-  addressExplorerLink,
-  currency,
-  ...props
-}) => {
+export const WrongAddressWarningDialog: FunctionComponent<
+  WrongAddressWarningDialogProps
+> = ({ address, addressExplorerLink, currency, ...props }) => {
   const { t } = useTranslation();
   return (
     <WarningDialog
@@ -645,9 +601,9 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
 };
 
 // POC - keep
-export const PageLeaveWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
-  ...props
-}) => {
+export const PageLeaveWarningDialog: FunctionComponent<
+  WarningWithActionsProps
+> = ({ ...props }) => {
   // const [warned, setWarned] = useState(false);
   // const [leaveWarningOpened, setLeaveWarningOpened] = useState(false);
   // const handleLeaveWarningClose = useCallback(() => {

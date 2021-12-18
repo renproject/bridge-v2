@@ -17,7 +17,7 @@ import {
 import React, { FunctionComponent, useCallback } from "react";
 import { useAlertFavicon } from "../../providers/Notifications";
 import { darkTheme, lightTheme } from "../../theme/theme";
-import { AssetDropdown } from "../dropdowns/AssetDropdown";
+import { RichDropdown } from "../dropdowns/RichDropdown";
 import { BridgePurePaper, PaperContent } from "../layout/Paper";
 import { Debug } from "../utils/Debug";
 import { Cartesian, RandomText, Section } from "./PresentationHelpers";
@@ -82,24 +82,8 @@ export const Catalog: FunctionComponent = () => {
                 <div>
                   <Box height={200}>
                     <Box pb={1}>
-                      <AssetDropdown
-                        defaultValue="BTC"
-                        label="Send"
-                      />
+                      <RichDropdown defaultValue="BTC" label="Send" />
                     </Box>
-                    <Box pb={1}>
-                      <AssetDropdown
-                        mode="chain"
-                        defaultValue="ETHC"
-                        label="Destination Chain"
-                      />
-                    </Box>
-                    <AssetDropdown
-                      condensed
-                      mode="chain"
-                      defaultValue="ETHC"
-                      label="Destination Chain"
-                    />
                   </Box>
                   <Button
                     variant="contained"
@@ -113,12 +97,6 @@ export const Catalog: FunctionComponent = () => {
               )}
               {tab === TabPhase.RELEASE && (
                 <div>
-                  <Box height={200}>
-                    <AssetDropdown
-                      defaultValue="BCH"
-                      label="Receive"
-                    />
-                  </Box>
                   <Button
                     variant="contained"
                     color="primary"

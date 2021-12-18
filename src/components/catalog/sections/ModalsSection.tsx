@@ -6,11 +6,11 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
-import {
-  ExpiredErrorDialog,
-  GeneralErrorDialog,
-  SubmitErrorDialog,
-} from "../../../features/transactions/components/TransactionsHelpers";
+// import {
+//   ExpiredErrorDialog,
+//   GeneralErrorDialog,
+//   SubmitErrorDialog,
+// } from "../../../features/transactions/components/TransactionsHelpers";
 import { ActionButton } from "../../buttons/Buttons";
 import { Link } from "../../links/Links";
 import { BridgeModal } from "../../modals/BridgeModal";
@@ -124,9 +124,9 @@ export const ModalsSection: FunctionComponent = () => {
           activeStep={activeStep}
         />
       </BridgeModal>
-      <SubmitErrorDialog open={false} onAction={() => {}} />
-      <GeneralErrorDialog open={false} onAction={() => {}} />
-      <ExpiredErrorDialog open={false} onAction={() => {}} />
+      {/*<SubmitErrorDialog open={false} onAction={() => {}} />*/}
+      {/*<GeneralErrorDialog open={false} onAction={() => {}} />*/}
+      {/*<ExpiredErrorDialog open={false} onAction={() => {}} />*/}
     </Section>
   );
 };

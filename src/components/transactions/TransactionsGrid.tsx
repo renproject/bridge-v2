@@ -1,12 +1,6 @@
 import { Chip, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useCallback, useState } from "react";
-import { TxEntryStatus } from "../../features/transactions/transactionsUtils";
-import { BridgeChain } from "../../utils/assetConfigs";
-import { SmallActionButton } from "../buttons/Buttons";
-import { Link } from "../links/Links";
-import { SimplePagination } from "../pagination/SimplePagination";
-import { TransactionStatusIndicator } from "../progress/ProgressHelpers";
 import { TransactionStatusType } from "../utils/types";
 
 type TransactionType = "mint" | "release";
@@ -80,9 +74,9 @@ const useTransactionsStatusHeaderStyles = makeStyles((theme) => ({
   },
 }));
 
-export const TransactionsStatusHeader: FunctionComponent<TransactionsHeaderProps> = ({
-  title,
-}) => {
+export const TransactionsStatusHeader: FunctionComponent<
+  TransactionsHeaderProps
+> = ({ title }) => {
   const styles = useTransactionsStatusHeaderStyles();
   return (
     <div className={styles.root}>
@@ -99,7 +93,7 @@ export const TransactionsPaginationWrapper = styled("div")(({ theme }) => ({
   ...standardPaddings,
   paddingTop: 10,
   paddingBottom: 10,
-  backgroundColor: theme.customColors.greyHeaderBackground
+  backgroundColor: theme.customColors.greyHeaderBackground,
 }));
 
 export const useTransactionEntryStyles = makeStyles((theme) => ({
@@ -164,93 +158,3 @@ export const useTransactionEntryStyles = makeStyles((theme) => ({
   },
   status: {},
 }));
-
-type TransactionEntryProps = {
-  chain: BridgeChain;
-  status: TxEntryStatus;
-  confirmations?: number;
-};
-
-export const TransactionEntry: FunctionComponent<TransactionEntryProps> = ({
-  confirmations,
-}) => {
-  const styles = useTransactionEntryStyles();
-  return (
-    <div className={styles.root}>
-      <div className={styles.details}>
-        <div className={styles.datetime}>
-          <Chip size="small" label="04/02/20" className={styles.date} />
-          <Chip size="small" label="23:45:32 UTC" />
-        </div>
-        <div className={styles.description}>
-          <Typography variant="body2" className={styles.title}>
-            Mint 0.9877 renBTC on Ethereum
-          </Typography>
-        </div>
-        <div className={styles.links}>
-          <Link href="" external color="primary" className={styles.link}>
-            Bitcoin transaction
-          </Link>
-          <Link href="" external color="primary" className={styles.link}>
-            Ethereum transaction
-          </Link>
-        </div>
-      </div>
-      <div className={styles.actions}>
-        <SmallActionButton>Submit</SmallActionButton>
-      </div>
-      <div className={styles.status}>
-        <TransactionStatusIndicator confirmations={confirmations} />
-      </div>
-    </div>
-  );
-};
-
-export const TransactionsGrid: FunctionComponent<any> = () => {
-  const pending = 3;
-  const completed = 2;
-
-  const [page, setPage] = useState(0);
-  const handleChangePage = useCallback((event: unknown, newPage: number) => {
-    setPage(newPage);
-  }, []);
-
-  const itemsCount = 15;
-  const itemsPerPage = 4;
-  return (
-    <div>
-      <TransactionsHeader title="Transactions" />
-      <TransactionsStatusHeader title={`Pending (${pending})`} />
-      <div>
-        <TransactionEntry
-          chain={BridgeChain.BTCC}
-          status={TxEntryStatus.COMPLETED}
-          confirmations={2}
-        />
-        <TransactionEntry
-          chain={BridgeChain.BSCC}
-          status={TxEntryStatus.PENDING}
-        />
-      </div>
-      <TransactionsStatusHeader title={`Completed (${completed})`} />
-      <div>
-        <TransactionEntry
-          chain={BridgeChain.BTCC}
-          status={TxEntryStatus.COMPLETED}
-        />
-        <TransactionEntry
-          chain={BridgeChain.BSCC}
-          status={TxEntryStatus.COMPLETED}
-        />
-      </div>
-      <TransactionsPaginationWrapper>
-        <SimplePagination
-          count={itemsCount}
-          rowsPerPage={itemsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-        />
-      </TransactionsPaginationWrapper>
-    </div>
-  );
-};

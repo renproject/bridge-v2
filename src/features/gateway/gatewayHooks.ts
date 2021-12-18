@@ -147,7 +147,7 @@ export const useGatewayFees = (
 
     const minimumAmountBn = gateway.fees.minimumAmount.shiftedBy(-decimals);
     setMinimumAmount(minimumAmountBn.toFixed());
-    console.log(`gateway amount minimum: ${estimatedOutputBn}`);
+    console.log(`gateway amount minimum: ${minimumAmountBn}`);
     setAmountsPending(false);
   }, [gateway, decimals, amount]);
 

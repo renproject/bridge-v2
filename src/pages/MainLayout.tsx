@@ -1,5 +1,4 @@
 import {
-  Button,
   Divider,
   Drawer,
   ListItem,
@@ -27,8 +26,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useWindowSize } from "react-use";
-import { ClosableMenuIconButton } from "../components/buttons/Buttons";
-import { RenBridgeLogoIcon, TxHistoryIcon } from "../components/icons/RenIcons";
+import { RenBridgeLogoIcon } from "../components/icons/RenIcons";
 import { Footer } from "../components/layout/Footer";
 import {
   MainLayoutVariantProps,
@@ -38,18 +36,10 @@ import {
 import { Debug } from "../components/utils/Debug";
 import { env } from "../constants/environmentVariables";
 import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
-import { $network } from "../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../features/network/networkHooks";
-import {
-  IssuesResolver,
-  IssuesResolverButton,
-} from "../features/transactions/IssuesResolver";
-import { MintTransactionHistory } from "../features/transactions/MintTransactionHistory";
-import {
-  $transactionsData,
-  setTxHistoryOpened,
-} from "../features/transactions/transactionsSlice";
-import { useSubNetworkName } from "../features/ui/uiHooks";
+import { $network } from "../features/network/networkSlice";
+import { $transactionsData } from "../features/transactions/transactionsSlice";
+
 import {
   useWalletPickerStyles,
   WalletChainLabel,

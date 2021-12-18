@@ -3,7 +3,7 @@ import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
-import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
+import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 import { GatewayFeesStep } from "./steps/GatewayFeesStep";
 
