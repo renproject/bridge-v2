@@ -19,6 +19,10 @@ const slice = createSlice({
     setExchangeRates(state, action: PayloadAction<Array<ExchangeRate>>) {
       state.exchangeRates = action.payload;
     },
+    updateExchangeRates(state, action: PayloadAction<Array<ExchangeRate>>) {
+      // TODO: finish updating
+      state.exchangeRates = action.payload;
+    },
     setGasPrices(state, action: PayloadAction<Array<GasPrice>>) {
       state.gasPrices = action.payload;
     },

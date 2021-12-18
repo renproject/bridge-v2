@@ -1,4 +1,5 @@
 import { ReferenceData } from "@bandprotocol/bandchain.js/lib/data";
+import { Asset } from "@renproject/chains";
 import { env } from "../../constants/environmentVariables";
 import { uniqueArray } from "../../utils/arrays";
 import {
@@ -7,12 +8,11 @@ import {
   currenciesConfig,
   getCurrencyConfigByBandchainSymbol,
 } from "../../utils/assetConfigs";
-
-// move to assetConfig
-const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
-  const config = currenciesConfig[symbol];
-  return config.bandchainSymbol || symbol;
-};
+import {
+  AssetRateService,
+  assetsConfig,
+  supportedAssets,
+} from "../../utils/tokensConfig";
 
 const mapBandchainToCurrencySymbol = (symbol: string) => {
   const config = getCurrencyConfigByBandchainSymbol(symbol);
@@ -24,13 +24,15 @@ export const USD_SYMBOL = "USD";
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
 export const bandchainReferencePairs = uniqueArray(
-  Object.values(BridgeCurrency)
+  Object.entries(assetsConfig)
+    .filter(([asset]) => supportedAssets.includes(asset as Asset))
     .filter(
-      (symbol) =>
-        symbol !== BridgeCurrency.UNKNOWN && symbol !== BridgeCurrency.AVAX
+      ([asset, config]) => config.rateService === AssetRateService.Bandchain
     )
-    .map(mapToBandchainCurrencySymbol)
+    .map(([asset, config]) => config.rateSymbol || asset)
 ).map((symbol: string) => getPair(symbol, USD_SYMBOL));
+
+console.log("bandchainReferencePairs", bandchainReferencePairs);
 
 export const coingeckoSymbols = Object.values(currenciesConfig)
   .filter((entry) => Boolean(entry.coingeckoSymbol))
@@ -47,9 +49,9 @@ export const mapBandchainToExchangeData = (
   referenceData: Array<BandchainReferenceData>
 ) => {
   return referenceData.map((entry: any) => {
-    const [base, quote] = entry.pair.split("/");
+    const [rateSymbol, quote] = entry.pair.split("/");
     const data: ExchangeRate = {
-      pair: getPair(mapBandchainToCurrencySymbol(base), quote),
+      pair: getPair(mapBandchainToCurrencySymbol(rateSymbol), quote),
       rate: entry.rate,
     };
     return data;
@@ -77,14 +79,14 @@ export type GasPrice = {
 
 export const findExchangeRate = (
   exchangeRates: Array<ExchangeRate>,
-  base: BridgeCurrency,
+  base: Asset,
   quote = USD_SYMBOL
 ) => {
-  const baseBandchainSymbol = mapToBandchainCurrencySymbol(base);
+  const symbol = assetsConfig[base].rateSymbol || base;
   const rateEntry = exchangeRates.find(
-    (entry) => entry.pair === getPair(baseBandchainSymbol, quote)
+    (entry) => entry.pair === getPair(symbol, quote)
   );
-  return rateEntry?.rate || 0;
+  return rateEntry?.rate;
 };
 
 export type AnyBlockGasPrices = {

@@ -1,19 +1,13 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import {
-  BridgeChain,
-  EthTestnet,
-  getCurrencyConfig,
-  isMainnetNetwork,
-  toMintedCurrency,
-} from "../../utils/assetConfigs";
-import { $mintCurrency } from "../mint-old/mintSlice";
-import { $network } from "../network/networkSlice";
-import { $releaseCurrency } from "../release-old/releaseSlice";
-import { $wallet } from "../wallet/walletSlice";
-import { setPaperShaking } from "./uiSlice";
+  setPaperShaking,
+  setSystemMonitorStatus,
+  SystemStatus,
+  SystemType,
+} from "./uiSlice";
 
 export const useShakePaper = (shake: boolean, timeout = 600) => {
   const dispatch = useDispatch();
@@ -28,6 +22,21 @@ export const useShakePaper = (shake: boolean, timeout = 600) => {
       dispatch(setPaperShaking(false));
     };
   }, [dispatch, shake, timeout]);
+};
+
+export const useReportSystemStatus = () => {
+  const dispatch = useDispatch();
+  return useCallback(
+    (type: SystemType, status: SystemStatus) => {
+      dispatch(
+        setSystemMonitorStatus({
+          type,
+          status,
+        })
+      );
+    },
+    [dispatch]
+  );
 };
 
 export const useLocationFlow = () => {

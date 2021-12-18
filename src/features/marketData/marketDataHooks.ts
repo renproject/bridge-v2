@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
 import { getBandchain } from "../../services/bandchain";
+import { useReportSystemStatus } from "../ui/uiHooks";
 import {
   setSystemMonitorStatus,
   SystemStatus,
@@ -20,69 +21,43 @@ import {
 
 const dataRefreshInterval = 30; // seconds
 
+const fetchBandchainExchangeRates = () => {
+  return getBandchain().getReferenceData(bandchainReferencePairs, 10, 16);
+};
+
+const fetchCoingeckoExchangeRates = async () => {
+  return fetch(
+    "https://api.coingecko.com/api/v3" +
+      `/coins/markets?vs_currency=usd&ids=${coingeckoSymbols.join(",")}`
+  ).then((response) => response.json());
+};
+
 export const useExchangeRates = () => {
   const dispatch = useDispatch();
-
-  const fetchMarketDataRates = useCallback(async () => {
-    const bandchain = await getBandchain()
-      .getReferenceData(bandchainReferencePairs, 10, 16)
-      .then((data: Array<BandchainReferenceData>) => {
-        dispatch(
-          setSystemMonitorStatus({
-            type: SystemType.Bandchain,
-            status: SystemStatus.Operational,
-          })
-        );
-
-        return mapBandchainToExchangeData(data);
-      })
-      .catch((error: any) => {
-        console.error(error);
-        dispatch(
-          setSystemMonitorStatus({
-            type: SystemType.Bandchain,
-            status: SystemStatus.Failure,
-          })
-        );
-        return [];
-      });
-
-    const coingecko = await fetch(
-      "https://api.coingecko.com/api/v3" +
-        `/coins/markets?vs_currency=usd&ids=${coingeckoSymbols.join(",")}`
-    )
-      .then((response) => response.json())
-      .then((data: Array<CoingeckoReferenceData>) => {
-        dispatch(
-          setSystemMonitorStatus({
-            type: SystemType.Coingecko,
-            status: SystemStatus.Operational,
-          })
-        );
-        return mapCoingeckoToExchangeData(data);
-      })
-      .catch((error: any) => {
-        dispatch(
-          setSystemMonitorStatus({
-            type: SystemType.Coingecko,
-            status: SystemStatus.Failure,
-          })
-        );
-        return [];
-      });
-
-    return [...bandchain, ...coingecko];
-  }, [dispatch]);
-
+  const report = useReportSystemStatus();
   const fetchData = useCallback(() => {
-    fetchMarketDataRates()
-      .then((rates) => {
+    fetchBandchainExchangeRates()
+      .then((data: Array<BandchainReferenceData>) => {
+        report(SystemType.Bandchain, SystemStatus.Operational);
+        const rates = mapBandchainToExchangeData(data);
         dispatch(setExchangeRates(rates));
       })
-      .catch((e) => {
-        console.error(e);
+      .catch((error: any) => {
+        report(SystemType.Bandchain, SystemStatus.Failure);
+        console.error(error);
       });
-  }, [dispatch, fetchMarketDataRates]);
+
+    // fetchCoingeckoExchangeRates()
+    //   .then((data: Array<CoingeckoReferenceData>) => {
+    //     report(SystemType.Coingecko, SystemStatus.Operational);
+    //     const rates = mapCoingeckoToExchangeData(data);
+    //     dispatch(setExchangeRates(rates));
+    //   })
+    //   .catch((error: any) => {
+    //     report(SystemType.Coingecko, SystemStatus.Failure);
+    //     console.error(error);
+    //   });
+  }, [dispatch, report]);
 
   useEffect(fetchData, [fetchData]);
   useInterval(fetchData, dataRefreshInterval * 1000);

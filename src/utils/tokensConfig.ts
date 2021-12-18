@@ -4,6 +4,7 @@ import {
   BtcFullIcon,
   BtcIcon,
   CustomSvgIconComponent,
+  DogeFullIcon,
   EmptyCircleIcon,
   ZecFullIcon,
 } from "../components/icons/RenIcons";
@@ -19,20 +20,23 @@ export type AssetLabelsConfig = {
   fullName: string;
 };
 
-// export type AssetChainConfig = {
-//   sourceChain: string;
-// };
+export enum AssetRateService {
+  Bandchain = "Bandchain",
+  Coingecko = "Coingecko",
+}
 
-export type MarketDataConfig = {
-  bandchainSymbol?: string;
-  coingeckoSymbol?: string;
+export type AssetRateConfig = {
+  rateService?: AssetRateService;
+  rateSymbol?: string;
 };
 
-type AssetBaseConfig = AssetIconsConfig & AssetLabelsConfig & {};
+type AssetBaseConfig = AssetIconsConfig &
+  AssetLabelsConfig &
+  AssetRateConfig & {};
 
 const unsetAssetConfig: AssetBaseConfig = {
   Icon: EmptyCircleIcon,
-  shortName: "???",
+  shortName: "UNSET",
   fullName: "Unset full name",
 };
 
@@ -44,12 +48,14 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     Icon: BchFullIcon,
     shortName: "BCH",
     fullName: "Bitcoin Cash",
+    rateService: AssetRateService.Bandchain,
   },
   BNB: unsetAssetConfig,
   BTC: {
     Icon: BtcFullIcon,
     shortName: "BTC",
     fullName: "Bitcoin",
+    rateService: AssetRateService.Bandchain,
   },
   BUSD: unsetAssetConfig,
   CRV: unsetAssetConfig,
@@ -59,7 +65,12 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     fullName: "Dai",
   },
   DGB: unsetAssetConfig,
-  DOGE: unsetAssetConfig,
+  DOGE: {
+    Icon: DogeFullIcon,
+    shortName: "DOGE",
+    fullName: "Dogecoin",
+    rateService: AssetRateService.Bandchain,
+  },
   ETH: unsetAssetConfig,
   EURT: unsetAssetConfig,
   FIL: unsetAssetConfig,
@@ -110,7 +121,7 @@ export const getAssetConfig = (asset: Asset) => {
 };
 
 // TODO: invent naming similar to renJS, Noah
-export const getRenAssetName = (asset: Asset) => `ren${asset}`;
+export const getRenAssetName = (asset: Asset) => `ren${asset}`; //or mint?
 export const getLockAssetName = (renAsset: string) => {
   if (renAsset.indexOf("ren") !== 0) {
     throw new Error(`Unable to convert asset to origin (locked): ${renAsset}`);
@@ -118,7 +129,7 @@ export const getLockAssetName = (renAsset: string) => {
   return renAsset.substr(3);
 };
 
-export const supportedLockAssets =
+export const supportedAssets =
   env.ENABLED_ASSETS[0] === "*"
     ? [
         Asset.BTC,
@@ -137,3 +148,5 @@ export const supportedLockAssets =
         }
         return included;
       }).map((x) => x as Asset);
+
+console.log("supportedAssets", supportedAssets);

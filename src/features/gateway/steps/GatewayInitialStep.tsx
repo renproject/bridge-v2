@@ -22,10 +22,7 @@ import { PaperContent } from "../../../components/layout/Paper";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { paths } from "../../../pages/routes";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
-import {
-  getAssetConfig,
-  supportedLockAssets,
-} from "../../../utils/tokensConfig";
+import { getAssetConfig, supportedAssets } from "../../../utils/tokensConfig";
 import { useWallet } from "../../wallet/walletHooks";
 import {
   getAssetOptionData,
@@ -43,7 +40,7 @@ import {
 import { GatewayStepProps } from "./stepUtils";
 import { setPickerOpened } from "../../wallet/walletSlice";
 
-const assets = supportedLockAssets;
+const assets = supportedAssets;
 const chains = Object.keys(chainsConfig);
 
 const forceShowDropdowns = false;
