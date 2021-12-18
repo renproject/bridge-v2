@@ -1,8 +1,8 @@
+import { Chain } from "@renproject/chains";
 import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
 import { getBandchain } from "../../services/bandchain";
-import { BridgeChain } from "../../utils/assetConfigs";
 import { useReportSystemStatus } from "../ui/uiHooks";
 import { SystemStatus, SystemType } from "../ui/uiSlice";
 import { setGasPrices, updateExchangeRates } from "./marketDataSlice";
@@ -81,7 +81,7 @@ export const useGasPrices = () => {
       });
     const fast = anyBlockEth.fast;
     const ethPrice = {
-      chain: BridgeChain.ETHC,
+      chain: Chain.Ethereum,
       standard: fast < 20 ? 50 : fast,
     };
     const matic = await fetch("https://gasstation-mainnet.matic.network")
@@ -97,36 +97,36 @@ export const useGasPrices = () => {
         };
       });
     const maticPrice = {
-      chain: BridgeChain.MATICC,
+      chain: Chain.Polygon,
       standard: matic.fast,
     };
     const bscPrice = {
-      chain: BridgeChain.BSCC,
+      chain: Chain.BinanceSmartChain,
       standard: 20, // unable to find reliable source, but binance gas price is stable
     };
     const avaxPrice = {
-      chain: BridgeChain.AVAXC,
+      chain: Chain.Avalanche,
       standard: 225, // taken from https://docs.avax.network/learn/platform-overview/transaction-fees#fee-schedule
     };
     const ftmPrice = {
-      chain: BridgeChain.FTMC,
+      chain: Chain.Fantom,
       standard: 75, // avg gas price
     };
     const arbPrice = {
-      chain: BridgeChain.ARBITRUMC,
+      chain: Chain.Arbitrum,
       standard: 0.4, // avg gas price
     };
-    const solanaPrice = {
-      chain: BridgeChain.SOLC,
-      standard: 6, // extrapolated to make it around 0,001 SOL
-    };
+    // const solanaPrice = {
+    //   chain: Chain.Solana,
+    //   standard: 6, // extrapolated to make it around 0,001 SOL
+    // };
     const gasPrices = [
       ethPrice,
       bscPrice,
       avaxPrice,
       ftmPrice,
       maticPrice,
-      solanaPrice,
+      // solanaPrice,
       arbPrice,
     ] as Array<GasPrice>;
 

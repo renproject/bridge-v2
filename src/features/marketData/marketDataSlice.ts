@@ -4,7 +4,7 @@ import { ExchangeRate, GasPrice } from "./marketDataUtils";
 
 type MarketDataState = {
   exchangeRates: Array<ExchangeRate>;
-  gasPrices: Array<GasPrice>;
+  gasPrices: Array<GasPrice>; // consider Record<EVMChain|GasChain, number>
 };
 
 let initialState: MarketDataState = {

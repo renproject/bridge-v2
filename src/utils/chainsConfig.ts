@@ -14,22 +14,6 @@ import {
 } from "../components/icons/RenIcons";
 import { AssetChainsConfig } from "./tokensConfig";
 
-export const supportedBitcoinChains: Array<Chain> = [
-  Chain.Bitcoin,
-  Chain.BitcoinCash,
-  Chain.Dogecoin,
-  Chain.Zcash,
-];
-
-export const supportedEthereumChains: Array<Chain> = [
-  Chain.Arbitrum,
-  Chain.Avalanche,
-  Chain.BinanceSmartChain,
-  Chain.Ethereum,
-  Chain.Fantom,
-  Chain.Polygon,
-];
-
 export type ChainIconsConfig = {
   Icon: CustomSvgIconComponent;
 };
@@ -131,3 +115,19 @@ export const getAssetChainsConfig = (asset: Asset) => {
     mintChains: info.mintChains,
   } as AssetChainsConfig;
 };
+
+export const supportedBitcoinChains: Array<Chain> = [
+  Chain.Bitcoin,
+  Chain.BitcoinCash,
+  Chain.Dogecoin,
+  Chain.Zcash,
+];
+
+export const supportedEthereumChains: Array<Chain> = [
+  Chain.Arbitrum,
+  Chain.Avalanche,
+  Chain.BinanceSmartChain,
+  Chain.Ethereum,
+  Chain.Fantom,
+  Chain.Polygon,
+];

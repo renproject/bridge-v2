@@ -1,5 +1,5 @@
 import { ReferenceData } from "@bandprotocol/bandchain.js/lib/data";
-import { Asset } from "@renproject/chains";
+import { Asset, Chain } from "@renproject/chains";
 import { uniqueArray } from "../../utils/arrays";
 import {
   currenciesConfig,
@@ -70,7 +70,7 @@ export type ExchangeRate = {
 };
 
 export type GasPrice = {
-  chain: string;
+  chain: Chain;
   standard: number;
 };
 
