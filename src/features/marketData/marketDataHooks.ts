@@ -2,6 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
 import { getBandchain } from "../../services/bandchain";
+import { BridgeChain } from "../../utils/assetConfigs";
 import { useReportSystemStatus } from "../ui/uiHooks";
 import { SystemStatus, SystemType } from "../ui/uiSlice";
 import { setGasPrices, updateExchangeRates } from "./marketDataSlice";
@@ -10,7 +11,7 @@ import {
   bandchainReferencePairs,
   CoingeckoReferenceData,
   coingeckoSymbols,
-  fetchMarketDataGasPrices,
+  GasPrice,
   mapBandchainToExchangeRate,
   mapCoingeckoToExchangeRate,
 } from "./marketDataUtils";
@@ -61,12 +62,78 @@ export const useExchangeRates = () => {
 
 export const useGasPrices = () => {
   const dispatch = useDispatch();
+  const report = useReportSystemStatus();
 
-  const fetchData = useCallback(() => {
-    fetchMarketDataGasPrices().then((prices) => {
-      dispatch(setGasPrices(prices));
-    });
-  }, [dispatch]);
+  const fetchData = useCallback(async () => {
+    const anyBlockEth = await fetch(
+      "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty"
+    )
+      .then((response) => {
+        report(SystemType.Anyblock, SystemStatus.Operational);
+        return response.json();
+      })
+      .catch((error) => {
+        console.error(error);
+        report(SystemType.Anyblock, SystemStatus.Failure);
+        return {
+          fast: 50, // fallback
+        };
+      });
+    const fast = anyBlockEth.fast;
+    const ethPrice = {
+      chain: BridgeChain.ETHC,
+      standard: fast < 20 ? 50 : fast,
+    };
+    const matic = await fetch("https://gasstation-mainnet.matic.network")
+      .then((response) => {
+        report(SystemType.MaticGasStation, SystemStatus.Operational);
+        return response.json();
+      })
+      .catch((error) => {
+        console.error(error);
+        report(SystemType.MaticGasStation, SystemStatus.Failure);
+        return {
+          fast: 6, // fallback
+        };
+      });
+    const maticPrice = {
+      chain: BridgeChain.MATICC,
+      standard: matic.fast,
+    };
+    const bscPrice = {
+      chain: BridgeChain.BSCC,
+      standard: 20, // unable to find reliable source, but binance gas price is stable
+    };
+    const avaxPrice = {
+      chain: BridgeChain.AVAXC,
+      standard: 225, // taken from https://docs.avax.network/learn/platform-overview/transaction-fees#fee-schedule
+    };
+    const ftmPrice = {
+      chain: BridgeChain.FTMC,
+      standard: 75, // avg gas price
+    };
+    const arbPrice = {
+      chain: BridgeChain.ARBITRUMC,
+      standard: 0.4, // avg gas price
+    };
+    const solanaPrice = {
+      chain: BridgeChain.SOLC,
+      standard: 6, // extrapolated to make it around 0,001 SOL
+    };
+    const gasPrices = [
+      ethPrice,
+      bscPrice,
+      avaxPrice,
+      ftmPrice,
+      maticPrice,
+      solanaPrice,
+      arbPrice,
+    ] as Array<GasPrice>;
 
-  useEffect(fetchData, [fetchData]);
+    dispatch(setGasPrices(gasPrices));
+  }, [dispatch, report]);
+
+  useEffect(() => {
+    fetchData().finally();
+  }, [fetchData]);
 };

@@ -62,7 +62,6 @@ export const systemToIndicatorStatus = (status: SystemStatus) => {
 };
 
 type SystemInfoProps = {
-  type: SystemType;
   status: SystemStatus;
   name: string;
   description?: string;
@@ -81,7 +80,6 @@ const useSystemInfoStyles = makeStyles(() => ({
 }));
 
 export const SystemInfo: FunctionComponent<SystemInfoProps> = ({
-  type,
   status,
   name,
   description,

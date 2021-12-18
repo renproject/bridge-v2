@@ -1,9 +1,7 @@
 import { ReferenceData } from "@bandprotocol/bandchain.js/lib/data";
 import { Asset } from "@renproject/chains";
-import { env } from "../../constants/environmentVariables";
 import { uniqueArray } from "../../utils/arrays";
 import {
-  BridgeChain,
   currenciesConfig,
   getCurrencyConfigByBandchainSymbol,
 } from "../../utils/assetConfigs";
@@ -96,63 +94,6 @@ export type AnyBlockGasPrices = {
   standard: number;
   fast: number;
   instant: number;
-};
-
-export const fetchMarketDataGasPrices = async () => {
-  const anyBlockEth = await fetch(env.GAS_FEE_ENDPOINT)
-    .then((response) => response.json())
-    .catch((error) => {
-      console.error(error);
-      return {
-        fast: 50, // fallback
-      };
-    });
-  const fast = anyBlockEth.fast;
-  const ethPrice = {
-    chain: BridgeChain.ETHC,
-    standard: fast < 20 ? 50 : fast,
-  };
-  const matic = await fetch("https://gasstation-mainnet.matic.network")
-    .then((response) => response.json())
-    .catch((error) => {
-      console.error(error);
-      return {
-        fast: 6, // fallback
-      };
-    });
-  const maticPrice = {
-    chain: BridgeChain.MATICC,
-    standard: matic.fast,
-  };
-  const bscPrice = {
-    chain: BridgeChain.BSCC,
-    standard: 20, // unable to find reliable source, but binance gas price is stable
-  };
-  const avaxPrice = {
-    chain: BridgeChain.AVAXC,
-    standard: 225, // taken from https://docs.avax.network/learn/platform-overview/transaction-fees#fee-schedule
-  };
-  const ftmPrice = {
-    chain: BridgeChain.FTMC,
-    standard: 75, // avg gas price
-  };
-  const arbPrice = {
-    chain: BridgeChain.ARBITRUMC,
-    standard: 0.4, // avg gas price
-  };
-  const solanaPrice = {
-    chain: BridgeChain.SOLC,
-    standard: 6, // extrapolated to make it around 0,001 SOL
-  };
-  return [
-    ethPrice,
-    bscPrice,
-    avaxPrice,
-    ftmPrice,
-    maticPrice,
-    solanaPrice,
-    arbPrice,
-  ] as Array<GasPrice>;
 };
 
 export const findGasPrice = (gasPrices: Array<GasPrice>, chain: string) => {

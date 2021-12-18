@@ -4,9 +4,11 @@ import { RootState } from "../../store/rootReducer";
 export type FlowType = "mint" | "burn" | null;
 
 export enum SystemType {
-  Lightnode = "lightnode",
-  Bandchain = "bandchain",
-  Coingecko = "coingecko",
+  Lightnode = "Lightnode",
+  Bandchain = "Bandchain",
+  Coingecko = "Coingecko",
+  Anyblock = "Anyblock",
+  MaticGasStation = "MaticGasStation",
 }
 
 export enum SystemStatus {
@@ -16,44 +18,24 @@ export enum SystemStatus {
   Failure = "failure",
 }
 
-type SystemData = {
-  name: SystemType | string;
-  status: SystemStatus;
-};
-
 type UiState = {
   paperShaking: boolean;
   systemMonitor: {
     dialogOpened: boolean;
-    systems: Record<string, SystemData>;
+    systems: Record<SystemType, SystemStatus>;
   };
 };
-
-const getInitialSystemStatus = (
-  type: SystemType,
-  status = SystemStatus.Unknown
-) => ({
-  name: type,
-  status,
-});
 
 let initialState: UiState = {
   paperShaking: false,
   systemMonitor: {
     dialogOpened: false,
     systems: {
-      [SystemType.Lightnode]: getInitialSystemStatus(
-        SystemType.Lightnode,
-        SystemStatus.Pending
-      ),
-      [SystemType.Bandchain]: getInitialSystemStatus(
-        SystemType.Bandchain,
-        SystemStatus.Unknown
-      ),
-      [SystemType.Coingecko]: getInitialSystemStatus(
-        SystemType.Coingecko,
-        SystemStatus.Pending
-      ),
+      [SystemType.Lightnode]: SystemStatus.Unknown,
+      [SystemType.Bandchain]: SystemStatus.Pending,
+      [SystemType.Coingecko]: SystemStatus.Pending,
+      [SystemType.Anyblock]: SystemStatus.Pending,
+      [SystemType.MaticGasStation]: SystemStatus.Pending,
     },
   },
 };
@@ -75,8 +57,7 @@ const slice = createSlice({
         status: SystemStatus;
       }>
     ) {
-      state.systemMonitor.systems[action.payload.type].status =
-        action.payload.status;
+      state.systemMonitor.systems[action.payload.type] = action.payload.status;
     },
   },
 });

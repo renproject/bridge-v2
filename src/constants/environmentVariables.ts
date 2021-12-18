@@ -1,10 +1,5 @@
 const NETWORK = process.env.REACT_APP_NETWORK || "testnet";
 const INFURA_ID = process.env.REACT_APP_INFURA_ID || "";
-
-const GAS_FEE_ENDPOINT =
-  process.env.REACT_APP_GAS_FEE_ENDPOINT ||
-  "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty";
-
 const DEV = Boolean(process.env.NODE_ENV === "development");
 
 const XSTATE_DEVTOOLS = Boolean(process.env.REACT_APP_XSTATE_DEVTOOLS || DEV);
@@ -39,7 +34,6 @@ export const env = {
   DEV,
   NETWORK,
   INFURA_ID,
-  GAS_FEE_ENDPOINT,
   XSTATE_DEVTOOLS,
   BSC_MM_ENABLED,
   MEWCONNECT_ENABLED,
