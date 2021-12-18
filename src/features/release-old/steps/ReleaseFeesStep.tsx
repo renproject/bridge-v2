@@ -41,7 +41,10 @@ import {
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
+import {
+  findAssetExchangeRate,
+  USD_SYMBOL,
+} from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
@@ -103,7 +106,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   });
 
   const chainConfig = getChainConfig(chain);
-  const destinationCurrencyUsdRate = findExchangeRate(
+  const destinationCurrencyUsdRate = findAssetExchangeRate(
     rates,
     destinationCurrency,
     USD_SYMBOL

@@ -36,6 +36,7 @@ import {
   getRenAssetName,
 } from "../../../utils/tokensConfig";
 import { $exchangeRates, $marketData } from "../../marketData/marketDataSlice";
+import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useChains } from "../../network/networkHooks";
 import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
@@ -80,8 +81,13 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     minimumAmount,
     amountsPending,
   } = fees;
+
   const rates = useSelector($exchangeRates);
-  const outputAmountUsd = Number(outputAmount) * 69.42; // TODO
+  const outputAmountUsdRate = findAssetExchangeRate(rates, asset);
+  const outputAmountUsd =
+    outputAmountUsdRate !== null
+      ? Number(outputAmount) * outputAmountUsdRate
+      : null;
 
   const Header = (
     <PaperHeader>
@@ -150,13 +156,15 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               />
             }
             valueEquivalent={
-              <NumberFormatText
-                prefix=" = $"
-                value={outputAmountUsd}
-                spacedSuffix="USD"
-                decimalScale={2}
-                fixedDecimalScale
-              />
+              outputAmountUsd !== null ? (
+                <NumberFormatText
+                  prefix=" = $"
+                  value={outputAmountUsd}
+                  spacedSuffix="USD"
+                  decimalScale={2}
+                  fixedDecimalScale
+                />
+              ) : null
             }
             Icon={<Icon fontSize="inherit" />}
           />
@@ -166,7 +174,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       <PaperContent topPadding bottomPadding>
         <span>Feessss</span>
       </PaperContent>
-      <Debug it={{ fees, transactions }} />
+      <Debug it={{ fees }} />
     </>
   );
 };

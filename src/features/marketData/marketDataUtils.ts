@@ -45,7 +45,7 @@ export type CoingeckoReferenceData = {
   current_price: number;
 };
 
-export const mapBandchainToExchangeData = (
+export const mapBandchainToExchangeRate = (
   referenceData: Array<BandchainReferenceData>
 ) => {
   return referenceData.map((entry: any) => {
@@ -58,7 +58,7 @@ export const mapBandchainToExchangeData = (
   });
 };
 
-export const mapCoingeckoToExchangeData = (
+export const mapCoingeckoToExchangeRate = (
   entries: Array<CoingeckoReferenceData>
 ) => {
   return entries.map((entry: any) => ({
@@ -77,16 +77,16 @@ export type GasPrice = {
   standard: number;
 };
 
-export const findExchangeRate = (
+export const findAssetExchangeRate = (
   exchangeRates: Array<ExchangeRate>,
   base: Asset,
   quote = USD_SYMBOL
 ) => {
-  const symbol = assetsConfig[base].rateSymbol || base;
+  const rateSymbol = assetsConfig[base].rateSymbol || base;
   const rateEntry = exchangeRates.find(
-    (entry) => entry.pair === getPair(symbol, quote)
+    (entry) => entry.pair === getPair(rateSymbol, quote)
   );
-  return rateEntry?.rate;
+  return rateEntry?.rate || null;
 };
 
 export type AnyBlockGasPrices = {

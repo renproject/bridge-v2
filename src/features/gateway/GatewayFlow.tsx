@@ -5,7 +5,7 @@ import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "../transactions/components/TransactionTypeTabs";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
-import { GatewayFeesStep } from "./steps/GatwayFeesStep";
+import { GatewayFeesStep } from "./steps/GatewayFeesStep";
 
 export enum GatewayConfigurationStep {
   INITIAL = "initial",

@@ -15,8 +15,8 @@ import {
   CoingeckoReferenceData,
   coingeckoSymbols,
   fetchMarketDataGasPrices,
-  mapBandchainToExchangeData,
-  mapCoingeckoToExchangeData,
+  mapBandchainToExchangeRate,
+  mapCoingeckoToExchangeRate,
 } from "./marketDataUtils";
 
 const dataRefreshInterval = 30; // seconds
@@ -39,7 +39,7 @@ export const useExchangeRates = () => {
     fetchBandchainExchangeRates()
       .then((data: Array<BandchainReferenceData>) => {
         report(SystemType.Bandchain, SystemStatus.Operational);
-        const rates = mapBandchainToExchangeData(data);
+        const rates = mapBandchainToExchangeRate(data);
         dispatch(setExchangeRates(rates));
       })
       .catch((error: any) => {

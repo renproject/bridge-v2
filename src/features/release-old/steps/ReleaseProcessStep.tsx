@@ -42,7 +42,7 @@ import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import { getBurnChainMap } from "../../../services/rentx";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
+import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import {
   BrowserNotificationButton,
   BrowserNotificationsDrawer,
@@ -116,11 +116,8 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   }, [history]);
   const sourceChain = parsedTx?.sourceChain;
 
-  const {
-    menuOpened,
-    handleMenuOpen,
-    handleMenuClose,
-  } = useTransactionMenuControl();
+  const { menuOpened, handleMenuOpen, handleMenuClose } =
+    useTransactionMenuControl();
 
   const {
     modalOpened,
@@ -155,13 +152,10 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     return await getBurnChainMap(providers);
   }, [enabledChains]);
 
-  const {
-    burnCurrencyConfig,
-    burnChainConfig,
-    releaseCurrencyConfig,
-  } = getBurnAndReleaseParams(tx);
+  const { burnCurrencyConfig, burnChainConfig, releaseCurrencyConfig } =
+    getBurnAndReleaseParams(tx);
   const amount = Number(tx.targetAmount);
-  const releaseCurrencyUsdRate = findExchangeRate(
+  const releaseCurrencyUsdRate = findAssetExchangeRate(
     rates,
     releaseCurrencyConfig.symbol
   );
@@ -270,10 +264,9 @@ type ReleaseTransactionStatusProps = {
   burnChainMap: any;
 };
 
-const ReleaseTransactionStatus: FunctionComponent<ReleaseTransactionStatusProps> = ({
-  tx,
-  burnChainMap,
-}) => {
+const ReleaseTransactionStatus: FunctionComponent<
+  ReleaseTransactionStatusProps
+> = ({ tx, burnChainMap }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();

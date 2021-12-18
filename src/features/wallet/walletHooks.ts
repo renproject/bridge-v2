@@ -19,6 +19,9 @@ type WalletData = ReturnType<typeof useMultiwallet> & {
 };
 
 const resolveWalletByProvider = (provider: any) => {
+  if (!provider) {
+    return Wallet.Metamask; // TODO: is it valid ?
+  }
   if (provider?.isMetaMask) {
     return Wallet.Metamask;
   }
@@ -34,7 +37,7 @@ const resolveWalletByProvider = (provider: any) => {
   if (provider?.isMewConnect || provider?.isMEWConnect) {
     return Wallet.MewConnect;
   }
-  console.warn("Unresolved wallet");
+  console.warn("Unresolved wallet", provider);
   return Wallet.Metamask; // throw error?
 };
 

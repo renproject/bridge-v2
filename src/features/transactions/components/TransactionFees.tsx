@@ -23,7 +23,7 @@ import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
 import {
-  findExchangeRate,
+  findAssetExchangeRate,
   findGasPrice,
   USD_SYMBOL,
 } from "../../marketData/marketDataUtils";
@@ -55,7 +55,11 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   const nativeCurrencyConfig = getCurrencyConfig(getNativeCurrency(currency));
   const exchangeRates = useSelector($exchangeRates);
   const gasPrices = useSelector($gasPrices);
-  const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);
+  const currencyUsdRate = findAssetExchangeRate(
+    exchangeRates,
+    currency,
+    USD_SYMBOL
+  );
   const gasPrice = findGasPrice(gasPrices, chain);
   const targetChainConfig = getChainConfig(chain);
   const decimals = getReleaseAssetDecimals(
@@ -63,7 +67,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     nativeCurrencyConfig.symbol
   );
 
-  const targetChainCurrencyUsdRate = findExchangeRate(
+  const targetChainCurrencyUsdRate = findAssetExchangeRate(
     exchangeRates,
     targetChainConfig.nativeCurrency,
     USD_SYMBOL

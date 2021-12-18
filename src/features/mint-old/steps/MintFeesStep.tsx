@@ -54,7 +54,7 @@ import {
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
+import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { setCurrentTxId } from "../../transactions/transactionsSlice";
@@ -88,7 +88,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const { chain } = useSelector($wallet);
   const network = useSelector($renNetwork);
   const exchangeRates = useSelector($exchangeRates);
-  const currencyUsdRate = findExchangeRate(exchangeRates, currency);
+  const currencyUsdRate = findAssetExchangeRate(exchangeRates, currency);
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value.replace(",", ".");
     if (!isNaN(newValue)) {

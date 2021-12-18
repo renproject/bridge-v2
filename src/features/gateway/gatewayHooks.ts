@@ -133,6 +133,7 @@ export const useGatewayFees = (
   }, [gateway]);
 
   useEffect(() => {
+    console.log(`gateway amounts effect`, gateway, amount);
     setAmountsPending(true);
     if (!gateway || !decimals) {
       return;
@@ -142,13 +143,13 @@ export const useGatewayFees = (
       .estimateOutput(new BigNumber(amount).shiftedBy(decimals))
       .shiftedBy(-decimals);
     setOutputAmount(estimatedOutputBn.toFixed());
-    console.log(`gateway estimated output: ${estimatedOutputBn}`);
+    console.log(`gateway amount estimated output: ${estimatedOutputBn}`);
 
     const minimumAmountBn = gateway.fees.minimumAmount.shiftedBy(-decimals);
     setMinimumAmount(minimumAmountBn.toFixed());
-    console.log(`gateway minimum amount: ${estimatedOutputBn}`);
+    console.log(`gateway amount minimum: ${estimatedOutputBn}`);
     setAmountsPending(false);
-  }, [gateway, amount]);
+  }, [gateway, decimals, amount]);
 
   return {
     decimals,
