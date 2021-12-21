@@ -24,7 +24,11 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
-import { useGateway, useGatewayFees } from "../gatewayHooks";
+import {
+  useGateway,
+  useGatewayFees,
+  useGatewayFeesWithRates,
+} from "../gatewayHooks";
 import { $gateway } from "../gatewaySlice";
 import { GatewayStepProps } from "./stepUtils";
 
@@ -48,7 +52,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const { connected } = useWallet(to);
 
-  const { gateway } = useGateway({
+  const { renJs, gateway } = useGateway({
     asset,
     from,
     to,
@@ -57,15 +61,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     nonce: 1,
   });
 
-  const fees = useGatewayFees(gateway, amount);
-  const { balance, balancePending, outputAmount } = fees;
-
-  const rates = useSelector($exchangeRates);
-  const outputAmountUsdRate = findAssetExchangeRate(rates, asset);
-  const outputAmountUsd =
-    outputAmountUsdRate !== null
-      ? Number(outputAmount) * outputAmountUsdRate
-      : null;
+  const fees = useGatewayFeesWithRates(gateway, amount);
+  const { balance, balancePending, outputAmount, outputAmountUsd } = fees;
 
   const Header = (
     <PaperHeader>
