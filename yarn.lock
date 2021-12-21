@@ -4442,6 +4442,11 @@
   resolved "https://registry.yarnpkg.com/@renproject/fonts/-/fonts-1.0.3-rc1.tgz#66d9d782bfb2e220b9db4f6ac01d39884fb4d4e5"
   integrity sha512-nua2aANNcXgV4SENTf0cRJBx4NGcSyq3ithc3Qf4URMPrlJPQ+N/PWCsPxOd+O3DzH9F4h2UksYhlcSZrH4x2A==
 
+"@renproject/icons@^0.0.1-alpha.3":
+  version "0.0.1-alpha.3"
+  resolved "https://registry.yarnpkg.com/@renproject/icons/-/icons-0.0.1-alpha.3.tgz#ca4cf98d062324133a3d106f8797033bbda0abe5"
+  integrity sha512-anLhjjKdpm1WaJxH/JDCt1mC1mV/0eUijJkBR5IR8ZKGPfuE7GTp4+wvxXgn2FPyGQzQo2QrJjA4Moj72SNtGg==
+
 "@renproject/interfaces@2.5.9", "@renproject/interfaces@^2.5.2", "@renproject/interfaces@^2.5.9":
   version "2.5.9"
   resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.5.9.tgz#4c8d02fc6376f48e6d69f3a1ddf4c680d9f0bd61"

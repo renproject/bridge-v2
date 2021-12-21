@@ -1,17 +1,35 @@
 import { Asset, Chain } from "@renproject/chains";
 import {
-  BchFullIcon,
-  BtcFullIcon,
+  Bch,
+  Bnb,
+  Btc,
+  Dai,
+  Doge,
+  Eth,
+  RenBch,
+  RenBnb,
+  RenBtc,
+  RenDai,
+  RenDoge,
+  RenEth,
+  RenZec,
+  Zec,
+} from "@renproject/icons";
+import {
+  nativeTokenIcon,
+  wrappedTokenIcon,
+} from "../components/icons/IconHelpers";
+import {
   CustomSvgIconComponent,
-  DogeFullIcon,
   EmptyCircleIcon,
-  ZecFullIcon,
 } from "../components/icons/RenIcons";
+
 import { env } from "../constants/environmentVariables";
 import { getAssetChainsConfig } from "./chainsConfig";
 
 export type AssetIconsConfig = {
   Icon: CustomSvgIconComponent;
+  RenIcon: CustomSvgIconComponent;
 };
 
 export type AssetLabelsConfig = {
@@ -35,6 +53,7 @@ type AssetBaseConfig = AssetIconsConfig &
 
 const unsetAssetConfig: AssetBaseConfig = {
   Icon: EmptyCircleIcon,
+  RenIcon: EmptyCircleIcon,
   shortName: "UNSET",
   fullName: "Unset full name",
 };
@@ -44,14 +63,22 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   ArbETH: unsetAssetConfig,
   BADGER: unsetAssetConfig,
   BCH: {
-    Icon: BchFullIcon,
+    Icon: nativeTokenIcon(Bch),
+    RenIcon: wrappedTokenIcon(RenBch),
     shortName: "BCH",
     fullName: "Bitcoin Cash",
     rateService: AssetRateService.Bandchain,
   },
-  BNB: unsetAssetConfig,
+  BNB: {
+    Icon: nativeTokenIcon(Bnb),
+    RenIcon: wrappedTokenIcon(RenBnb),
+    shortName: "BNB",
+    fullName: "Binance Coin",
+    rateService: AssetRateService.Bandchain,
+  },
   BTC: {
-    Icon: BtcFullIcon,
+    Icon: nativeTokenIcon(Btc),
+    RenIcon: wrappedTokenIcon(RenBtc),
     shortName: "BTC",
     fullName: "Bitcoin",
     rateService: AssetRateService.Bandchain,
@@ -59,18 +86,25 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   BUSD: unsetAssetConfig,
   CRV: unsetAssetConfig,
   DAI: {
-    Icon: EmptyCircleIcon,
+    Icon: nativeTokenIcon(Dai),
+    RenIcon: wrappedTokenIcon(RenDai),
     shortName: "DAI",
     fullName: "Dai",
   },
   DGB: unsetAssetConfig,
   DOGE: {
-    Icon: DogeFullIcon,
+    Icon: nativeTokenIcon(Doge),
+    RenIcon: wrappedTokenIcon(RenDoge),
     shortName: "DOGE",
     fullName: "Dogecoin",
     rateService: AssetRateService.Bandchain,
   },
-  ETH: unsetAssetConfig,
+  ETH: {
+    Icon: nativeTokenIcon(Eth),
+    RenIcon: wrappedTokenIcon(RenEth),
+    shortName: "ETH",
+    fullName: "Ether",
+  },
   EURT: unsetAssetConfig,
   FIL: unsetAssetConfig,
   FTM: unsetAssetConfig,
@@ -87,9 +121,10 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   USDC: unsetAssetConfig,
   USDT: unsetAssetConfig,
   ZEC: {
-    Icon: ZecFullIcon,
+    Icon: nativeTokenIcon(Zec),
+    RenIcon: wrappedTokenIcon(RenZec),
     shortName: "ZEC",
-    fullName: "Zcash",
+    fullName: "Zcash.",
   },
   gETH: unsetAssetConfig,
 };
