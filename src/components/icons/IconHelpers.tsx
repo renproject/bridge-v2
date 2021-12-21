@@ -1,23 +1,23 @@
-import { IconProps, SvgIcon, Typography } from "@material-ui/core";
+import {
+  IconProps,
+  SvgIcon,
+  SvgIconProps,
+  Typography,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SvgIconComponent } from "@material-ui/icons";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
-import { getScalingProps } from "../../utils/icons";
+import { getPaddedScalingProps, getScalingProps } from "../../utils/icons";
 import { CustomSvgIconComponent } from "./RenIcons";
 
-const useMuiIconStyles = makeStyles({
-  root: {},
-  margined: {},
-});
-
-export const createIcon = (
+export const createPaddedIcon = (
   Icon: FunctionComponent,
   viewBoxWidth = 24,
   viewBoxHeight = viewBoxWidth
 ) => {
   const GeneratedIcon: CustomSvgIconComponent = (props) => {
-    const { viewBox } = getScalingProps(viewBoxWidth, viewBoxHeight);
+    const { viewBox } = getPaddedScalingProps(viewBoxWidth, viewBoxHeight);
     return <SvgIcon component={Icon} viewBox={viewBox} {...props} />;
   };
   return GeneratedIcon;
@@ -27,11 +27,11 @@ const nativeTokenIconSize = 200;
 const wrappedTokenIconSize = 256;
 
 export const nativeTokenIcon = (Icon: FunctionComponent) => {
-  return createIcon(Icon, nativeTokenIconSize);
+  return createPaddedIcon(Icon, nativeTokenIconSize);
 };
 
 export const wrappedTokenIcon = (Icon: FunctionComponent) => {
-  return createIcon(Icon, wrappedTokenIconSize);
+  return createPaddedIcon(Icon, wrappedTokenIconSize);
 };
 
 const useIconWithLabelStyles = makeStyles((theme) => ({
