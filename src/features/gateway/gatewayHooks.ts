@@ -262,20 +262,32 @@ export const useGatewayFeesWithRates = (
         : null
     );
 
-    setFromChainFeeAmountUsd(
-      fees.fromChainFeeAmount !== null
-        ? new BigNumber(fees.fromChainFeeAmount)
-            .multipliedBy(assetUsdRate)
-            .toFixed()
-        : null
-    );
-    setToChainFeeAmountUsd(
-      fees.toChainFeeAmount !== null
-        ? new BigNumber(fees.toChainFeeAmount)
-            .multipliedBy(assetUsdRate)
-            .toFixed()
-        : null
-    );
+    if (fees.fromChainFeeAsset !== null) {
+      const fromChainAssetUsdRate = findAssetExchangeRate(
+        rates,
+        fees.fromChainFeeAsset
+      );
+      setFromChainFeeAmountUsd(
+        fees.fromChainFeeAmount !== null && fromChainAssetUsdRate !== null
+          ? new BigNumber(fees.fromChainFeeAmount)
+              .multipliedBy(fromChainAssetUsdRate)
+              .toFixed()
+          : null
+      );
+    }
+    if (fees.toChainFeeAsset !== null) {
+      const toChainAssetUsdRate = findAssetExchangeRate(
+        rates,
+        fees.toChainFeeAsset
+      );
+      setToChainFeeAmountUsd(
+        fees.toChainFeeAmount !== null && toChainAssetUsdRate !== null
+          ? new BigNumber(fees.toChainFeeAmount)
+              .multipliedBy(toChainAssetUsdRate)
+              .toFixed()
+          : null
+      );
+    }
   }, [gateway, amount, fees, rates]);
 
   return {

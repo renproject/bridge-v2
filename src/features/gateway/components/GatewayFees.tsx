@@ -121,7 +121,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           fromChainFeeAmount !== null && fromChainFeeAsset !== null ? (
             <NumberFormatText
               value={fromChainFeeAmount}
-              spacedSuffix={assetsConfig[fromChainFeeAsset].fullName}
+              spacedSuffix={assetsConfig[fromChainFeeAsset].shortName}
             />
           ) : (
             ""
@@ -131,6 +131,34 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           fromChainFeeAmountUsd !== null ? (
             <NumberFormatText
               value={fromChainFeeAmountUsd}
+              prefix="$"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          ) : (
+            ""
+          )
+        }
+      />
+      <LabelWithValue
+        label={t("fees.ren-currency-chain-fee-label", {
+          chain: toChainConfig.fullName,
+        })}
+        labelTooltip={tooltips.sourceChainMinerFee}
+        value={
+          toChainFeeAmount !== null && toChainFeeAsset !== null ? (
+            <NumberFormatText
+              value={toChainFeeAmount}
+              spacedSuffix={assetsConfig[toChainFeeAsset].shortName}
+            />
+          ) : (
+            ""
+          )
+        }
+        valueEquivalent={
+          toChainFeeAmountUsd !== null ? (
+            <NumberFormatText
+              value={toChainFeeAmountUsd}
               prefix="$"
               decimalScale={2}
               fixedDecimalScale
