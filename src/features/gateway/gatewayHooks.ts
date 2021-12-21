@@ -102,19 +102,19 @@ export const useGateway = ({
 
 export const useGatewayFees = (
   gateway: Gateway | null,
-  amount: string | number | BigNumber
+  amount: string | number | BigNumber | null
 ) => {
   const [decimals, setDecimals] = useState(0);
   const [balancePending, setBalancePending] = useState(false);
   const [balance, setBalance] = useState("");
   const [minimumAmount, setMinimumAmount] = useState("");
-  const [outputAmount, setOutputAmount] = useState("");
-  const [renVMFeePercentage, setRenVMFeePercentage] = useState<number | null>(
+  const [outputAmount, setOutputAmount] = useState<string | null>(null);
+  const [renVMFeePercent, setRenVMFeePercent] = useState<number | null>(null);
+  const [renVMFeeAmount, setRenVMFeeAmount] = useState<string | null>(null);
+  const [fromChainFeeAmount, setFromChainFeeAmount] = useState<string | null>(
     null
   );
-  const [renVMFeeAmount, setRenVMFeeAmount] = useState("");
-  const [fromChainFeeAmount, setFromChainFeeAmount] = useState("");
-  const [toChainFeeAmount, setToChainFeeAmount] = useState("");
+  const [toChainFeeAmount, setToChainFeeAmount] = useState<string | null>(null);
   const [fromChainFeeAsset, setFromChainFeeAsset] = useState<Asset | null>(
     null
   );
@@ -152,6 +152,12 @@ export const useGatewayFees = (
     }
     const isLock = gateway.inputType === InputType.Lock;
     const isMint = gateway.outputType === OutputType.Mint;
+    console.log("amount", amount, isNaN(Number(amount)));
+    if (amount === "" || amount === null || isNaN(Number(amount))) {
+      setOutputAmount(null);
+      setRenVMFeeAmount(null);
+      return;
+    }
     const amountBn = new BigNumber(amount);
 
     const estimatedOutputBn = gateway.fees
@@ -162,9 +168,11 @@ export const useGatewayFees = (
     console.log(`gateway amount estimated output: ${estimatedOutputBn}`);
 
     const renVMFee = isMint ? gateway.fees.mint : gateway.fees.burn;
-    const renVMFeePercentageBn = new BigNumber(renVMFee).div(10000);
-    setRenVMFeePercentage(renVMFeePercentageBn.toNumber());
-    const renVMFeeAmountBn = renVMFeePercentageBn.multipliedBy(amountBn);
+    const renVMFeePercentBn = new BigNumber(renVMFee)
+      .div(10000)
+      .multipliedBy(100);
+    setRenVMFeePercent(renVMFeePercentBn.toNumber());
+    const renVMFeeAmountBn = renVMFeePercentBn.div(100).multipliedBy(amountBn);
     setRenVMFeeAmount(renVMFeeAmountBn.toFixed());
 
     const minimumAmountBn = gateway.fees.minimumAmount.shiftedBy(-decimals);
@@ -175,7 +183,7 @@ export const useGatewayFees = (
     setFromChainFeeAmount(fromChainFeeBn.shiftedBy(-decimals).toFixed());
 
     const toChainFeeBn = isLock ? gateway.fees.release : gateway.fees.lock;
-    setToChainFeeAmount(toChainFeeBn.toFixed());
+    setToChainFeeAmount(toChainFeeBn.shiftedBy(-decimals).toFixed());
 
     const feeAssets = getNativeFeeAssets(gateway);
     setFromChainFeeAsset(feeAssets.fromChainFeeAsset);
@@ -188,7 +196,7 @@ export const useGatewayFees = (
     balance,
     minimumAmount,
     outputAmount,
-    renVMFeePercentage,
+    renVMFeePercent,
     renVMFeeAmount,
     fromChainFeeAmount,
     fromChainFeeAsset,
@@ -239,22 +247,34 @@ export const useGatewayFeesWithRates = (
       new BigNumber(fees.balance).multipliedBy(assetUsdRate).toFixed()
     );
     setOutputAmountUsd(
-      new BigNumber(fees.outputAmount).multipliedBy(assetUsdRate).toFixed()
+      fees.outputAmount !== null
+        ? new BigNumber(fees.outputAmount).multipliedBy(assetUsdRate).toFixed()
+        : null
     );
     setMinimumAmountUsd(
       new BigNumber(fees.minimumAmount).multipliedBy(assetUsdRate).toFixed()
     );
     setRenVMFeeAmountUsd(
-      new BigNumber(fees.renVMFeeAmount).multipliedBy(assetUsdRate).toFixed()
+      fees.renVMFeeAmount !== null
+        ? new BigNumber(fees.renVMFeeAmount)
+            .multipliedBy(assetUsdRate)
+            .toFixed()
+        : null
     );
 
     setFromChainFeeAmountUsd(
-      new BigNumber(fees.fromChainFeeAmount)
-        .multipliedBy(assetUsdRate)
-        .toFixed()
+      fees.fromChainFeeAmount !== null
+        ? new BigNumber(fees.fromChainFeeAmount)
+            .multipliedBy(assetUsdRate)
+            .toFixed()
+        : null
     );
     setToChainFeeAmountUsd(
-      new BigNumber(fees.toChainFeeAmount).multipliedBy(assetUsdRate).toFixed()
+      fees.toChainFeeAmount !== null
+        ? new BigNumber(fees.toChainFeeAmount)
+            .multipliedBy(assetUsdRate)
+            .toFixed()
+        : null
     );
   }, [gateway, amount, fees, rates]);
 
@@ -264,7 +284,7 @@ export const useGatewayFeesWithRates = (
     outputAmountUsd,
     minimumAmountUsd,
     renVMFeeAmountUsd,
-    fromChainFeeUsd: fromChainFeeAmountUsd,
-    toChainFeeUsd: toChainFeeAmountUsd,
+    fromChainFeeAmountUsd,
+    toChainFeeAmountUsd,
   };
 };

@@ -1,4 +1,4 @@
-import { Divider, Fade, IconButton } from "@material-ui/core";
+import { Divider, Fade, IconButton, Typography } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -24,6 +24,7 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
+import { GatewayFees } from "../components/GatewayFees";
 import {
   useGateway,
   useGatewayFees,
@@ -147,7 +148,10 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
-        <span>Feessss</span>
+        <Typography variant="body2" paragraph>
+          Fees
+        </Typography>
+        <GatewayFees {...fees} asset={asset} />
       </PaperContent>
       <Debug it={{ fees }} />
     </>
