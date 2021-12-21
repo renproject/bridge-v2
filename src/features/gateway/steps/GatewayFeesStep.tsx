@@ -151,7 +151,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
         <Typography variant="body2" paragraph>
           Fees
         </Typography>
-        <GatewayFees {...fees} asset={asset} />
+        <GatewayFees {...fees} asset={asset} from={from} to={to} />
       </PaperContent>
       <Debug it={{ fees }} />
     </>

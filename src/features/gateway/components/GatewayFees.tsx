@@ -4,6 +4,7 @@ import { FunctionComponent } from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { chainsConfig } from "../../../utils/chainsConfig";
 import { toPercent } from "../../../utils/converters";
 import { assetsConfig } from "../../../utils/tokensConfig";
 import { useGatewayFees, useGatewayFeesWithRates } from "../gatewayHooks";
@@ -48,18 +49,30 @@ export const getFeeTooltips = (
 
 type GatewayFeesProps = ReturnType<typeof useGatewayFeesWithRates> & {
   asset: Asset;
+  from: Chain;
+  to: Chain;
 };
 
 export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   asset,
+  from,
+  to,
   outputAmount,
   outputAmountUsd,
   renVMFeeAmount,
   renVMFeeAmountUsd,
   renVMFeePercent,
+  fromChainFeeAmount,
+  fromChainFeeAsset,
+  fromChainFeeAmountUsd,
+  toChainFeeAmount,
+  toChainFeeAsset,
+  toChainFeeAmountUsd,
 }) => {
   const { t } = useTranslation();
   const assetConfig = assetsConfig[asset];
+  const fromChainConfig = chainsConfig[from];
+  const toChainConfig = chainsConfig[to];
   const tooltips = getFeeTooltips(
     {
       mintFee: 37,
@@ -90,6 +103,34 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           renVMFeeAmountUsd !== null ? (
             <NumberFormatText
               value={renVMFeeAmountUsd}
+              prefix="$"
+              decimalScale={2}
+              fixedDecimalScale
+            />
+          ) : (
+            ""
+          )
+        }
+      />
+      <LabelWithValue
+        label={t("fees.chain-miner-fee-label", {
+          chain: fromChainConfig.fullName,
+        })}
+        labelTooltip={tooltips.sourceChainMinerFee}
+        value={
+          fromChainFeeAmount !== null && fromChainFeeAsset !== null ? (
+            <NumberFormatText
+              value={fromChainFeeAmount}
+              spacedSuffix={assetsConfig[fromChainFeeAsset].fullName}
+            />
+          ) : (
+            ""
+          )
+        }
+        valueEquivalent={
+          fromChainFeeAmountUsd !== null ? (
+            <NumberFormatText
+              value={fromChainFeeAmountUsd}
               prefix="$"
               decimalScale={2}
               fixedDecimalScale
