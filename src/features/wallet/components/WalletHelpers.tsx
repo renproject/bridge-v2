@@ -43,9 +43,14 @@ import {
   getWalletConfigOld,
   getWalletConfigByRentxName,
 } from "../../../utils/assetConfigs";
-import { chainsConfig } from "../../../utils/chainsConfig";
+import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
-import { Wallet, walletsConfig } from "../../../utils/walletsConfig";
+import {
+  getDefaultWalletForChain,
+  getWalletConfig,
+  Wallet,
+  walletsConfig,
+} from "../../../utils/walletsConfig";
 import { useSubNetworkName } from "../../ui/uiHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import { setPickerOpened } from "../walletSlice";
@@ -106,7 +111,7 @@ export const WalletEntryButton: WalletPickerProps<
   any
 >["WalletEntryButton"] = ({ onClick, name, logo }) => {
   const { icon: iconClassName, ...classes } = useWalletEntryButtonStyles();
-  const walletConfig = walletsConfig[name as Wallet];
+  const walletConfig = getWalletConfig(name as Wallet);
   const { Icon } = walletConfig;
   return (
     <Button
@@ -128,7 +133,7 @@ export const WalletChainLabel: WalletPickerProps<
   any,
   any
 >["WalletChainLabel"] = ({ chain }) => {
-  const chainConfig = chainsConfig[chain as Chain];
+  const chainConfig = getChainConfig(chain as Chain);
   return <span>{chainConfig.fullName}</span>;
 };
 
@@ -138,30 +143,13 @@ export const WalletConnectingInfo: WalletPickerProps<
 >["ConnectingInfo"] = ({ chain, onClose }) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chainConfig = chainsConfig[chain as Chain];
+  const chainConfig = getChainConfig(chain as Chain);
 
   // TODO: There should be better mapping.
-  const walletSymbol: Wallet = {
-    ethereum: BridgeWallet.METAMASKW,
-    bsc: BridgeWallet.BINANCESMARTW,
-    fantom: BridgeWallet.METAMASKW,
-    polygon: BridgeWallet.METAMASKW,
-    avalanche: BridgeWallet.METAMASKW,
-    solana: BridgeWallet.SOLLETW,
-    arbitrum: BridgeWallet.METAMASKW,
-  }[
-    chain as
-      | "ethereum"
-      | "bsc"
-      | "fantom"
-      | "polygon"
-      | "avalanche"
-      | "solana"
-      | "arbitrum"
-  ];
-  const walletConfig = getWalletConfigOld(walletSymbol);
+  const wallet = getDefaultWalletForChain(chain as Chain);
+  const walletConfig = getWalletConfig(wallet);
 
-  const { MainIcon } = walletConfig;
+  const { Icon } = walletConfig;
   const [isPassed] = useTimeout(3000);
   const passed = isPassed();
   return (
@@ -171,7 +159,7 @@ export const WalletConnectingInfo: WalletPickerProps<
         title={
           passed
             ? t("wallet.action-required", {
-                wallet: walletConfig.short,
+                wallet: walletConfig.shortName,
               })
             : t("wallet.action-connecting")
         }
@@ -185,7 +173,7 @@ export const WalletConnectingInfo: WalletPickerProps<
             fontSize="big"
             processing
           >
-            <MainIcon fontSize="inherit" />
+            <Icon fontSize="inherit" />
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h6" align="center">
@@ -450,7 +438,7 @@ export const WalletConnectionStatusButton: FunctionComponent<
 
   const label =
     status === WalletStatus.Connected
-      ? `${wallet} TODO: Wallet` //getWalletConfig(wallet).short
+      ? getWalletConfig(wallet).shortName
       : getWalletConnectionLabel(status, t);
   const trimmedAddress = trimAddress(account);
   const resolvedClassName = classNames(className, {

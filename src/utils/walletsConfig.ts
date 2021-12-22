@@ -1,6 +1,6 @@
 // TODO: move to multiwallet
-import { Asset, Chain } from "@renproject/chains";
-import { MetaMask } from "@renproject/icons";
+import { Chain } from "@renproject/chains";
+import { BinanceChainWallet, MetaMask } from "@renproject/icons";
 import { walletIcon } from "../components/icons/IconHelpers";
 import {
   CustomSvgIconComponent,
@@ -9,7 +9,7 @@ import {
 import { assetsConfig } from "./tokensConfig";
 
 export enum Wallet {
-  Metamask = "Metamask",
+  MetaMask = "MetaMask",
   WalletConnect = "WalletConnect",
   MewConnect = "MewConnect",
   BinanceSmartChain = "BinanceSmartChain",
@@ -34,9 +34,14 @@ const unsetWalletConfig: WalletBaseConfig = {
 };
 
 const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
-  BinanceSmartChain: unsetWalletConfig,
-  Metamask: {
-    fullName: "MetaMask Wallets",
+  BinanceSmartChain: {
+    fullName: "Binance Chain Wallet",
+    shortName: "Binance Wallet",
+    Icon: walletIcon(BinanceChainWallet),
+  },
+  MetaMask: {
+    fullName: "MetaMask Wallet",
+    shortName: "MetaMask",
     Icon: walletIcon(MetaMask),
   },
   MewConnect: unsetWalletConfig,
@@ -48,9 +53,28 @@ const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
 export const walletsConfig = walletsBaseConfig;
 
 export const getWalletConfig = (wallet: Wallet) => {
-  const config = assetsConfig[wallet];
+  const config = walletsConfig[wallet];
   if (!config) {
     throw new Error(`Wallet config not found for ${wallet}`);
   }
   return config;
+};
+
+const defaultChainWallets: Partial<Record<Chain, Wallet>> = {
+  [Chain.Ethereum]: Wallet.MetaMask,
+  [Chain.BinanceSmartChain]: Wallet.BinanceSmartChain,
+  [Chain.Fantom]: Wallet.MetaMask,
+  [Chain.Polygon]: Wallet.MetaMask,
+  [Chain.Avalanche]: Wallet.MetaMask,
+  [Chain.Arbitrum]: Wallet.MetaMask,
+  // [Chain.Solana]: Wallet.Sollet
+};
+
+export const getDefaultWalletForChain = (chain: Chain) => {
+  const wallet = defaultChainWallets[chain];
+  if (wallet) {
+    return wallet;
+  }
+  console.warn(`Unable to find default wallet for chain: ${chain})`);
+  return Wallet.MetaMask;
 };

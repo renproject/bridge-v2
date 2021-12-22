@@ -15,6 +15,7 @@ import {
   FantomMetamaskConnectorInfo,
   PolygonMetamaskConnectorInfo,
 } from "../../features/wallet/components/WalletHelpers";
+import { Wallet } from "../../utils/walletsConfig";
 
 const networkMapping: Record<number, RenNetwork[]> = {
   1: [RenNetwork.Mainnet],
@@ -69,7 +70,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
     chains: {
       [Chain.Ethereum]: [
         {
-          name: "Metamask",
+          name: Wallet.MetaMask,
           logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4s",
           connector: new EthereumInjectedConnector({
             debug: env.DEV,
@@ -79,7 +80,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
         ...(featureFlags.enableMEWConnect
           ? [
               {
-                name: "MEW",
+                name: Wallet.MewConnect,
                 logo: "https://avatars1.githubusercontent.com/u/24321658?s=60&v=4s",
                 connector: new EthereumMEWConnectConnector({
                   debug: env.DEV,
@@ -95,7 +96,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
         ...(featureFlags.enableWalletConnect
           ? [
               {
-                name: "WalletConnect",
+                name: Wallet.WalletConnect,
                 logo: "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
                 connector: new EthereumWalletConnectConnector({
                   rpc: {
@@ -111,7 +112,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
       ],
       [Chain.Fantom]: [
         {
-          name: "Metamask",
+          name: Wallet.MetaMask,
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
           info: FantomMetamaskConnectorInfo,
           connector: (() => {
@@ -126,7 +127,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
       ],
       [Chain.Polygon]: [
         {
-          name: "Metamask",
+          name: Wallet.MetaMask,
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
           info: PolygonMetamaskConnectorInfo,
           connector: (() => {
@@ -141,7 +142,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
       ],
       [Chain.Avalanche]: [
         {
-          name: "Metamask",
+          name: Wallet.MetaMask,
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
           info: AvalancheMetamaskConnectorInfo,
           connector: (() => {
@@ -156,7 +157,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
       ],
       [Chain.BinanceSmartChain]: [
         {
-          name: "BinanceSmartWallet",
+          name: Wallet.BinanceSmartChain,
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
           connector: new BinanceSmartChainInjectedConnector({ debug: true }),
         },
@@ -164,7 +165,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
         ...(featureFlags.enableBSCMetamask
           ? [
               {
-                name: "Metamask",
+                name: Wallet.MetaMask,
                 logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
                 info: BinanceMetamaskConnectorInfo,
                 connector: (() => {
@@ -207,7 +208,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
       // ],
       [Chain.Arbitrum]: [
         {
-          name: "Metamask",
+          name: Wallet.MetaMask,
           logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
           info: ArbitrumMetamaskConnectorInfo,
           connector: (() => {
