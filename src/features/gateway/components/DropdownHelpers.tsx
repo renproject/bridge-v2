@@ -7,7 +7,10 @@ import { EmptyCircleIcon } from "../../../components/icons/RenIcons";
 import { getChainConfig } from "../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../utils/tokensConfig";
 
-export const getAssetOptionData: GetOptionDataFn = (name: string) => {
+export const getAssetOptionData: GetOptionDataFn = (
+  name: string,
+  wrappedAsset = false
+) => {
   if (!name) {
     return {
       Icon: EmptyCircleIcon,
@@ -17,12 +20,12 @@ export const getAssetOptionData: GetOptionDataFn = (name: string) => {
     };
   }
   const config = getAssetConfig(name as Asset);
-  const { Icon, fullName, shortName } = config;
+  const { fullName, shortName } = config;
 
   return {
-    Icon,
+    Icon: wrappedAsset ? config.RenIcon : config.Icon,
     fullName,
-    shortName,
+    shortName: wrappedAsset ? "kuwa" : shortName,
     value: name,
   } as OptionData;
 };

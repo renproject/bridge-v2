@@ -28,7 +28,6 @@ type ChainBaseConfig = ChainIconsConfig & ChainLabelsConfig & {};
 const unsetChainConfig: ChainBaseConfig = {
   Icon: EmptyCircleIcon,
   fullName: "Unset full name",
-  shortName: "UNSET",
 };
 
 const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
@@ -56,7 +55,6 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Ethereum: {
     Icon: EthereumChainFullIcon,
     fullName: "Ethereum",
-    shortName: "ETHs",
   },
   Fantom: {
     Icon: FantomCircleIcon,

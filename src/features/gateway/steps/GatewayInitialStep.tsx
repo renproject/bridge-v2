@@ -1,5 +1,6 @@
 import { Collapse, Divider } from "@material-ui/core";
 import { Asset, Chain } from "@renproject/chains";
+import BigNumber from "bignumber.js";
 import React, {
   FunctionComponent,
   useCallback,
@@ -26,7 +27,14 @@ import { PaperContent } from "../../../components/layout/Paper";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { paths } from "../../../pages/routes";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
-import { getAssetConfig, supportedAssets } from "../../../utils/tokensConfig";
+import {
+  assetsConfig,
+  getAssetConfig,
+  getRenAssetName,
+  supportedAssets,
+} from "../../../utils/tokensConfig";
+import { $exchangeRates } from "../../marketData/marketDataSlice";
+import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useWallet } from "../../wallet/walletHooks";
 import { setPickerOpened } from "../../wallet/walletSlice";
 import {
@@ -116,7 +124,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const toChainConfig = getChainConfig(to);
   // TODO: fix
   const showMinimalAmountError = false;
-  const renAsset = `ren${asset}`;
+  const renAsset = getRenAssetName(asset);
   const showAddressError = false;
 
   const handleNext = useCallback(() => {
@@ -130,6 +138,13 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     dispatch(setPickerOpened(true));
   }, [dispatch]);
 
+  const rates = useSelector($exchangeRates);
+  const assetUsdRate = findAssetExchangeRate(rates, asset);
+  const amountUsd =
+    assetUsdRate !== null
+      ? new BigNumber(amount).multipliedBy(assetUsdRate).toFixed()
+      : "";
+
   return (
     <>
       <PaperContent bottomPadding>
@@ -139,7 +154,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             <BigCurrencyInput
               onChange={handleAmountChange}
               symbol={renAsset}
-              usdValue={420.69}
+              usdValue={amountUsd}
               value={amount}
               errorText={
                 showMinimalAmountError ? (
