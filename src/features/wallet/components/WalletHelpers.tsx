@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import { Chain } from "@renproject/chains";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
@@ -42,8 +43,9 @@ import {
   getWalletConfig,
   getWalletConfigByRentxName,
 } from "../../../utils/assetConfigs";
+import { chainsConfig } from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
-import { Wallet } from "../../../utils/walletsConfig";
+import { Wallet, walletsConfig } from "../../../utils/walletsConfig";
 import { useSubNetworkName } from "../../ui/uiHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import { setPickerOpened } from "../walletSlice";
@@ -104,8 +106,8 @@ export const WalletEntryButton: WalletPickerProps<
   any
 >["WalletEntryButton"] = ({ onClick, name, logo }) => {
   const { icon: iconClassName, ...classes } = useWalletEntryButtonStyles();
-  const walletConfig = getWalletConfigByRentxName(name);
-  const { MainIcon } = walletConfig;
+  const walletConfig = walletsConfig[name as Wallet];
+  const { Icon } = walletConfig;
   return (
     <Button
       classes={classes}
@@ -114,9 +116,9 @@ export const WalletEntryButton: WalletPickerProps<
       fullWidth
       onClick={onClick}
     >
-      <span>{walletConfig.full}</span>{" "}
+      <span>{walletConfig.fullName}</span>{" "}
       <span className={iconClassName}>
-        <MainIcon fontSize="inherit" />
+        <Icon fontSize="inherit" />
       </span>
     </Button>
   );
@@ -126,8 +128,8 @@ export const WalletChainLabel: WalletPickerProps<
   any,
   any
 >["WalletChainLabel"] = ({ chain }) => {
-  const chainConfig = getChainConfigByRentxName(chain);
-  return <span>{chainConfig.full}</span>;
+  const chainConfig = chainsConfig[chain as Chain];
+  return <span>{chainConfig.fullName}</span>;
 };
 
 export const WalletConnectingInfo: WalletPickerProps<
@@ -136,10 +138,10 @@ export const WalletConnectingInfo: WalletPickerProps<
 >["ConnectingInfo"] = ({ chain, onClose }) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chainConfig = getChainConfigByRentxName(chain);
+  const chainConfig = chainsConfig[chain as Chain];
 
   // TODO: There should be better mapping.
-  const walletSymbol: BridgeWallet = {
+  const walletSymbol: Wallet = {
     ethereum: BridgeWallet.METAMASKW,
     bsc: BridgeWallet.BINANCESMARTW,
     fantom: BridgeWallet.METAMASKW,
@@ -189,10 +191,10 @@ export const WalletConnectingInfo: WalletPickerProps<
         <Typography variant="h6" align="center">
           {passed
             ? t("wallet.action-connect-message", {
-                wallet: walletConfig.full,
+                wallet: "TODO: wacm", //walletConfig.fullName,
               })
             : t("wallet.action-connecting-to", {
-                chain: chainConfig.full,
+                chain: chainConfig.fullName,
               })}
         </Typography>
       </PaperContent>
