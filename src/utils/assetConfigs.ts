@@ -767,7 +767,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
 
 const unknownChainConfig = chainsConfig[BridgeChain.UNKNOWNC];
 
-export const getChainConfig = (symbol: BridgeChain) =>
+export const getChainConfigOld = (symbol: BridgeChain) =>
   chainsConfig[symbol] || unknownChainConfig;
 
 export const getChainRentxName = (symbol: BridgeChain) =>
@@ -977,7 +977,7 @@ export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
 
 const unknownWalletConfig = walletsConfig[BridgeWallet.UNKNOWNW];
 
-export const getWalletConfig = (symbol: BridgeWallet) =>
+export const getWalletConfigOld = (symbol: BridgeWallet) =>
   walletsConfig[symbol] || unknownWalletConfig;
 
 export const getWalletConfigByRentxName = (name: string) =>

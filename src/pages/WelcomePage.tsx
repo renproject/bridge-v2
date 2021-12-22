@@ -14,7 +14,7 @@ import { links, storageKeys } from "../constants/constants";
 import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
 import {
-  getChainConfig,
+  getChainConfigOld,
   getCurrencyConfig,
   supportedBurnChains,
   supportedReleaseCurrencies,
@@ -190,7 +190,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
             </Typography>
             <UnstyledList className={styles.assetsList}>
               {supportedBurnChains.map((x) => {
-                const chainConf = getChainConfig(x);
+                const chainConf = getChainConfigOld(x);
                 return (
                   <li className={styles.assetListItem}>
                     <IconWithLabel

@@ -40,7 +40,7 @@ import {
   BridgeWallet,
   getChainConfigByRentxName,
   getNetworkConfigByRentxName,
-  getWalletConfig,
+  getWalletConfigOld,
   getWalletConfigByRentxName,
 } from "../../../utils/assetConfigs";
 import { chainsConfig } from "../../../utils/chainsConfig";
@@ -159,7 +159,7 @@ export const WalletConnectingInfo: WalletPickerProps<
       | "solana"
       | "arbitrum"
   ];
-  const walletConfig = getWalletConfig(walletSymbol);
+  const walletConfig = getWalletConfigOld(walletSymbol);
 
   const { MainIcon } = walletConfig;
   const [isPassed] = useTimeout(3000);
