@@ -1,51 +1,12 @@
 import { Asset, Chain } from "@renproject/chains";
-import { Gateway } from "@renproject/ren";
 import { FunctionComponent } from "react";
-import { TFunction, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { chainsConfig } from "../../../utils/chainsConfig";
-import { toPercent } from "../../../utils/converters";
 import { assetsConfig } from "../../../utils/tokensConfig";
-import { useGatewayFees, useGatewayFeesWithRates } from "../gatewayHooks";
-
-type GetFeeTooltipsArgs = {
-  mintFee?: number;
-  releaseFee?: number;
-  // fromChainFeeAsset: Asset;
-  // toChainFeeAsset: Asset;
-  // fromChain: Chain;
-  // toChain: Chain;
-};
-
-export const getFeeTooltips = (
-  { mintFee, releaseFee }: GetFeeTooltipsArgs,
-  t: TFunction
-) => {
-  // const sourceCurrencyConfig = getCurrencyConfig(sourceCurrency);
-  // const sourceCurrencyChainConfig = getChainConfig(
-  //   sourceCurrencyConfig.sourceChain
-  // );
-  // const renCurrencyChainConfig = getChainConfig(chain);
-  // const renNativeChainCurrencyConfig = getCurrencyConfig(
-  //   renCurrencyChainConfig.nativeCurrency
-  // );
-  return {
-    renVmFee: t("fees.ren-fee-tooltip", {
-      // mintFee: toPercent(mintFee),
-      // releaseFee: toPercent(releaseFee),
-    }),
-    sourceChainMinerFee: t("fees.chain-miner-fee-tooltip", {
-      // chain: fromChain,
-      // currency: sourceCurrencyConfig.short,
-    }),
-    renCurrencyChainFee: t("fees.ren-currency-chain-fee-tooltip", {
-      // chainFull: renCurrencyChainConfig.full,
-      // chainShort: renCurrencyChainConfig.short,
-      // chainNative: renNativeChainCurrencyConfig.short,
-    }),
-  };
-};
+import { useGatewayFeesWithRates } from "../gatewayHooks";
 
 type GatewayFeesProps = ReturnType<typeof useGatewayFeesWithRates> & {
   asset: Asset;
@@ -68,24 +29,44 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   toChainFeeAmount,
   toChainFeeAsset,
   toChainFeeAmountUsd,
+  mintFeePercent,
+  burnFeePercent,
 }) => {
   const { t } = useTranslation();
   const assetConfig = assetsConfig[asset];
   const fromChainConfig = chainsConfig[from];
   const toChainConfig = chainsConfig[to];
-  const tooltips = getFeeTooltips(
-    {
-      mintFee: 37,
-      releaseFee: 10,
-    },
-    t
-  );
-  const hasAmount = false;
+
+  const renVMFeeTooltip =
+    mintFeePercent !== null && burnFeePercent !== null
+      ? t("fees.ren-fee-tooltip", {
+          mintFee: mintFeePercent,
+          releaseFee: burnFeePercent,
+        })
+      : "";
+
+  // TODO: better translation keys
+  const fromChainFeeTooltip =
+    fromChainFeeAsset !== null
+      ? t("fees.chain-miner-fee-tooltip", {
+          chain: chainsConfig[from].fullName,
+          currency: fromChainFeeAsset,
+        })
+      : "";
+  const toChainFeeTooltip =
+    toChainFeeAsset !== null
+      ? t("fees.ren-currency-chain-fee-tooltip", {
+          chainFull: chainsConfig[to].fullName,
+          chainShort: chainsConfig[to].fullName,
+          chainNative: assetsConfig[toChainFeeAsset].shortName,
+        })
+      : "";
+
   return (
     <>
       <LabelWithValue
         label={t("fees.ren-fee-label")}
-        labelTooltip={tooltips.renVmFee}
+        labelTooltip={renVMFeeTooltip}
         value={
           renVMFeeAmount ? (
             <NumberFormatText
@@ -96,7 +77,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           ) : renVMFeePercent !== null ? (
             <span>{renVMFeePercent}%</span>
           ) : (
-            ""
+            <InlineSkeleton width={100} height={17} />
           )
         }
         valueEquivalent={
@@ -116,7 +97,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
         label={t("fees.chain-miner-fee-label", {
           chain: fromChainConfig.fullName,
         })}
-        labelTooltip={tooltips.sourceChainMinerFee}
+        labelTooltip={fromChainFeeTooltip}
         value={
           fromChainFeeAmount !== null && fromChainFeeAsset !== null ? (
             <NumberFormatText
@@ -124,7 +105,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
               spacedSuffix={assetsConfig[fromChainFeeAsset].shortName}
             />
           ) : (
-            ""
+            <InlineSkeleton width={120} height={17} />
           )
         }
         valueEquivalent={
@@ -144,7 +125,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
         label={t("fees.ren-currency-chain-fee-label", {
           chain: toChainConfig.fullName,
         })}
-        labelTooltip={tooltips.sourceChainMinerFee}
+        labelTooltip={toChainFeeTooltip}
         value={
           toChainFeeAmount !== null && toChainFeeAsset !== null ? (
             <NumberFormatText
@@ -152,7 +133,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
               spacedSuffix={assetsConfig[toChainFeeAsset].shortName}
             />
           ) : (
-            ""
+            <InlineSkeleton width={110} height={17} />
           )
         }
         valueEquivalent={

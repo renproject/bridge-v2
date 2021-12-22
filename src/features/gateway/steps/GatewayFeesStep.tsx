@@ -20,16 +20,10 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
-import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
 import { GatewayFees } from "../components/GatewayFees";
-import {
-  useGateway,
-  useGatewayFees,
-  useGatewayFeesWithRates,
-} from "../gatewayHooks";
+import { useGateway, useGatewayFeesWithRates } from "../gatewayHooks";
 import { $gateway } from "../gatewaySlice";
 import { GatewayStepProps } from "./stepUtils";
 
@@ -53,7 +47,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const { connected } = useWallet(to);
 
-  const { renJs, gateway } = useGateway({
+  const { gateway } = useGateway({
     asset,
     from,
     to,

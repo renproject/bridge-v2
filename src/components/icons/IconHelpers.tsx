@@ -1,14 +1,9 @@
-import {
-  IconProps,
-  SvgIcon,
-  SvgIconProps,
-  Typography,
-} from "@material-ui/core";
+import { IconProps, SvgIcon, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SvgIconComponent } from "@material-ui/icons";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
-import { getPaddedScalingProps, getScalingProps } from "../../utils/icons";
+import { getPaddedScalingProps } from "../../utils/icons";
 import { CustomSvgIconComponent } from "./RenIcons";
 
 export const createPaddedIcon = (

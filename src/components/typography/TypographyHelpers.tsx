@@ -3,6 +3,7 @@ import { makeStyles, styled } from "@material-ui/core/styles";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
 import MiddleEllipsis from "react-middle-ellipsis";
+import { InlineSkeleton } from "../progress/ProgressHelpers";
 import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
 type LabelWithValueProps = {
@@ -10,6 +11,7 @@ type LabelWithValueProps = {
   labelTooltip?: string;
   value: string | number | ReactNode;
   valueEquivalent?: string | number | ReactNode;
+  loading?: boolean;
 };
 
 const useLabelWithValueStyles = makeStyles((theme) => ({
@@ -52,6 +54,7 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   labelTooltip,
   value,
   valueEquivalent,
+  loading,
   ...rest
 }) => {
   const styles = useLabelWithValueStyles();
@@ -66,9 +69,17 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
         )}
       </div>
       <div className={styles.valueWrapper}>
-        <span className={styles.value}>{value}</span>
-        {valueEquivalent && (
-          <span className={styles.valueEquivalent}>({valueEquivalent})</span>
+        {!loading ? (
+          <>
+            <span className={styles.value}>{value}</span>
+            {valueEquivalent && (
+              <span className={styles.valueEquivalent}>
+                ({valueEquivalent})
+              </span>
+            )}
+          </>
+        ) : (
+          <InlineSkeleton />
         )}
       </div>
     </div>

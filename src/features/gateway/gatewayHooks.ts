@@ -109,6 +109,8 @@ export const useGatewayFees = (
   const [balance, setBalance] = useState("");
   const [minimumAmount, setMinimumAmount] = useState("");
   const [outputAmount, setOutputAmount] = useState<string | null>(null);
+  const [mintFeePercent, setMintFeePercent] = useState<number | null>(null);
+  const [burnFeePercent, setBurnFeePercent] = useState<number | null>(null);
   const [renVMFeePercent, setRenVMFeePercent] = useState<number | null>(null);
   const [renVMFeeAmount, setRenVMFeeAmount] = useState<string | null>(null);
   const [fromChainFeeAmount, setFromChainFeeAmount] = useState<string | null>(
@@ -167,6 +169,12 @@ export const useGatewayFees = (
     setOutputAmount(estimatedOutputBn.toFixed());
     console.log(`gateway amount estimated output: ${estimatedOutputBn}`);
 
+    setMintFeePercent(
+      new BigNumber(gateway.fees.mint).div(10000).multipliedBy(100).toNumber()
+    );
+    setBurnFeePercent(
+      new BigNumber(gateway.fees.burn).div(10000).multipliedBy(100).toNumber()
+    );
     const renVMFee = isMint ? gateway.fees.mint : gateway.fees.burn;
     const renVMFeePercentBn = new BigNumber(renVMFee)
       .div(10000)
@@ -196,6 +204,8 @@ export const useGatewayFees = (
     balance,
     minimumAmount,
     outputAmount,
+    mintFeePercent,
+    burnFeePercent,
     renVMFeePercent,
     renVMFeeAmount,
     fromChainFeeAmount,
@@ -206,7 +216,7 @@ export const useGatewayFees = (
   };
 };
 
-//TODO: crit finish when field ready
+//TODO: crit finish when field ready Noah
 const getNativeFeeAssets = (gateway: Gateway) => {
   return {
     fromChainFeeAsset: Object.values(gateway.fromChain.assets)[0] as Asset,
