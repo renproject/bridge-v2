@@ -84,8 +84,14 @@ export const getChainConfig = (chain: Chain) => {
 type AssetChainsData = AssetChainsConfig & {
   asset: Asset;
 };
+export const supportedBitcoinChains: Array<Chain> = [
+  Chain.Bitcoin,
+  Chain.BitcoinCash,
+  Chain.Dogecoin,
+  Chain.Zcash,
+];
 
-const mintChains: Array<Chain> = [
+export const supportedEthereumChains: Array<Chain> = [
   Chain.Ethereum,
   Chain.BinanceSmartChain,
   Chain.Polygon,
@@ -94,6 +100,11 @@ const mintChains: Array<Chain> = [
   Chain.Arbitrum,
 ];
 
+const mintChains = supportedEthereumChains;
+
+export const isChainConnectionRequired = (chain: Chain) =>
+  supportedEthereumChains.includes(chain);
+
 export const assetChainsArray = Object.values(chains).reduce(
   (acc, chain) => [
     ...acc,
@@ -101,6 +112,9 @@ export const assetChainsArray = Object.values(chains).reduce(
       asset: asset as Asset,
       lockChain: chain.chain as Chain,
       mintChains: mintChains.filter((mintChain) => mintChain !== chain.chain),
+      lockChainConnectionRequired: isChainConnectionRequired(
+        chain.chain as Chain
+      ),
     })),
   ],
   [] as Array<AssetChainsData>
@@ -114,21 +128,6 @@ export const getAssetChainsConfig = (asset: Asset) => {
   return {
     lockChain: info.lockChain,
     mintChains: info.mintChains,
+    lockChainConnectionRequired: info.lockChainConnectionRequired,
   } as AssetChainsConfig;
 };
-
-export const supportedBitcoinChains: Array<Chain> = [
-  Chain.Bitcoin,
-  Chain.BitcoinCash,
-  Chain.Dogecoin,
-  Chain.Zcash,
-];
-
-export const supportedEthereumChains: Array<Chain> = [
-  Chain.Arbitrum,
-  Chain.Avalanche,
-  Chain.BinanceSmartChain,
-  Chain.Ethereum,
-  Chain.Fantom,
-  Chain.Polygon,
-];

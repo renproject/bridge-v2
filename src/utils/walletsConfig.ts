@@ -6,7 +6,6 @@ import {
   CustomSvgIconComponent,
   EmptyCircleIcon,
 } from "../components/icons/RenIcons";
-import { assetsConfig } from "./tokensConfig";
 
 export enum Wallet {
   MetaMask = "MetaMask",
@@ -35,7 +34,7 @@ const unsetWalletConfig: WalletBaseConfig = {
 
 const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
   BinanceSmartChain: {
-    fullName: "Binance Chain Wallet",
+    fullName: "Binance Wallet",
     shortName: "Binance Wallet",
     Icon: walletIcon(BinanceChainWallet),
   },

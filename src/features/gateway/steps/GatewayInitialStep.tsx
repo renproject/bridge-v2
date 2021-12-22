@@ -28,15 +28,14 @@ import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { paths } from "../../../pages/routes";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import {
-  assetsConfig,
   getAssetConfig,
   getRenAssetName,
   supportedAssets,
 } from "../../../utils/tokensConfig";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
-import { useWallet } from "../../wallet/walletHooks";
-import { setPickerOpened } from "../../wallet/walletSlice";
+import { useCurrentChainWallet } from "../../wallet/walletHooks";
+import { setChain, setPickerOpened } from "../../wallet/walletSlice";
 import {
   getAssetOptionData,
   getChainOptionData,
@@ -118,6 +117,23 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, [dispatch, asset, isMint, isRelease]);
 
+  useEffect(() => {
+    const assetConfig = getAssetConfig(asset);
+    console.log(assetConfig, from, to);
+    if (isMint) {
+      if (assetConfig.lockChainConnectionRequired) {
+        console.log("setting wallet chain", assetConfig.lockChain);
+        dispatch(setChain(assetConfig.lockChain));
+      } else {
+        console.log("setting wallet chain", to);
+        dispatch(setChain(to));
+      }
+    } else if (isRelease) {
+      console.log("setting wallet chain", from);
+      dispatch(setChain(from));
+    }
+  }, [dispatch, isMint, isRelease, asset, from, to]);
+
   const hideFrom = isMint && fromChains.length === 1;
   const hideTo = isRelease && toChains.length === 1;
 
@@ -133,7 +149,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, [onNext]);
 
-  const { connected } = useWallet(isMint ? to : from);
+  const { connected } = useCurrentChainWallet();
   const handleConnect = useCallback(() => {
     dispatch(setPickerOpened(true));
   }, [dispatch]);

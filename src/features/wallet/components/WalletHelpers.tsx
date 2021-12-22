@@ -36,22 +36,13 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { createPulseAnimation } from "../../../theme/animationUtils";
 import { defaultShadow } from "../../../theme/other";
-import {
-  BridgeWallet,
-  getChainConfigByRentxName,
-  getNetworkConfigByRentxName,
-  getWalletConfigOld,
-  getWalletConfigByRentxName,
-} from "../../../utils/assetConfigs";
-import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
+import { getChainConfig } from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
 import {
   getDefaultWalletForChain,
   getWalletConfig,
   Wallet,
-  walletsConfig,
 } from "../../../utils/walletsConfig";
-import { useSubNetworkName } from "../../ui/uiHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import { setPickerOpened } from "../walletSlice";
 import { WalletStatus } from "../walletUtils";
@@ -179,7 +170,7 @@ export const WalletConnectingInfo: WalletPickerProps<
         <Typography variant="h6" align="center">
           {passed
             ? t("wallet.action-connect-message", {
-                wallet: "TODO: wacm", //walletConfig.fullName,
+                wallet: walletConfig.fullName,
               })
             : t("wallet.action-connecting-to", {
                 chain: chainConfig.fullName,
@@ -218,22 +209,27 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   any,
   any
 >["WrongNetworkInfo"] = ({ chain, targetNetwork, onClose }) => {
+  console.log(chain, targetNetwork);
   const { t } = useTranslation();
   const theme = useTheme();
-  const subNetworkName = useSubNetworkName();
-  const chainConfig = getChainConfigByRentxName(chain);
-  const networkName = getNetworkConfigByRentxName(targetNetwork).full;
+  const networkName = targetNetwork === "mainnet" ? "Mainnet" : "Testnet";
+  //TODO: consolidate with network mappings info like id: 1, 42 etc...
+  const subNetworkName = chain === Chain.Ethereum ? "Kovan" : "";
+  const chainConfig = getChainConfig(chain as Chain);
 
   // const { provider } = useWallet(chain as Chain);
 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<any>(false);
+  // TODO: crit finish
   // const { addOrSwitchChain } = () => {} // useSwitchChainHelpers(
   //   chainConfig.symbol,
   //   targetNetwork,
   //   provider
   // );
-  const addOrSwitchChain = useCallback(async () => {}, []); //TODO: crit
+  const addOrSwitchChain = useCallback(async () => {
+    console.error("addOrSwitchChain not implemented");
+  }, []);
   const [success, setSuccess] = useState(false);
   const handleSwitch = useCallback(() => {
     if (addOrSwitchChain !== null) {
@@ -270,11 +266,12 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h5" align="center" gutterBottom>
-          {t("wallet.network-switch-label")} {chainConfig.full} {networkName}
+          {t("wallet.network-switch-label")} {chainConfig.fullName}{" "}
+          {networkName}
           {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
-          {t("wallet.network-switch-description")} {chainConfig.full}{" "}
+          {t("wallet.network-switch-description")} {chainConfig.fullName}{" "}
           {networkName} {subNetworkName}
         </Typography>
         <Box mt={2}>

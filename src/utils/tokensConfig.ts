@@ -132,6 +132,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
 export type AssetChainsConfig = {
   lockChain: Chain;
   mintChains: Array<Chain>;
+  lockChainConnectionRequired?: boolean; // better name?
 };
 
 export const assetsConfig = Object.fromEntries(

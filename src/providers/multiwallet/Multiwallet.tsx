@@ -162,7 +162,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           connector: new BinanceSmartChainInjectedConnector({ debug: true }),
         },
         // TODO: move this config into its own connector?
-        ...(featureFlags.enableBSCMetamask
+        ...(featureFlags.enableBSCMetamask || true
           ? [
               {
                 name: Wallet.MetaMask,
