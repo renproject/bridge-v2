@@ -37,6 +37,7 @@ import {
   WalletConnectionStatusType,
   WalletStatus,
 } from "../../../components/utils/types";
+import { useENS } from "../../../components/utils/useENS";
 import { createPulseAnimation } from "../../../theme/animationUtils";
 import { defaultShadow } from "../../../theme/other";
 import {
@@ -50,6 +51,7 @@ import { trimAddress } from "../../../utils/strings";
 import { useSubNetworkName } from "../../ui/uiHooks";
 import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import { setWalletPickerOpened } from "../walletSlice";
+import Davatar from "@davatar/react";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
@@ -427,7 +429,8 @@ const useWalletConnectionStatusButtonStyles = makeStyles<Theme>((theme) => ({
     marginLeft: 16,
     marginRight: 30,
   },
-  account: { marginLeft: 20 },
+  account: { marginLeft: 8 },
+  avatar: { marginLeft: 8 },
 }));
 
 type WalletConnectionStatusButtonProps = ButtonProps & {
@@ -451,6 +454,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
   const {
     indicator: indicatorClassName,
     indicatorMobile: indicatorMobileClassName,
+    avatar: avatarClassName,
     account: accountClassName,
     hoisted: hoistedClassName,
     ...classes
@@ -461,6 +465,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
       ? getWalletConfig(wallet).short
       : getWalletConnectionLabel(status, t);
   const trimmedAddress = trimAddress(account);
+  const { ensName } = useENS(account);
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: hoisted,
   });
@@ -478,8 +483,14 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
         className={mobile ? indicatorMobileClassName : indicatorClassName}
       />
       <span>{label}</span>
+      <Davatar
+        style={{ marginLeft: 8 }}
+        size={20}
+        address={account as string}
+        generatedAvatarType="jazzicon"
+      />
       {trimmedAddress && (
-        <span className={accountClassName}>{trimmedAddress}</span>
+        <span className={accountClassName}>{ensName || trimmedAddress}</span>
       )}
     </Button>
   );
