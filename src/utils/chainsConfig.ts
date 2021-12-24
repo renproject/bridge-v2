@@ -1,4 +1,5 @@
 import { Asset, Chain, chains } from "@renproject/chains";
+import { RenNetwork } from "@renproject/utils";
 import {
   ArbitrumCircleIcon,
   AvalancheChainCircleIcon,
@@ -12,6 +13,11 @@ import {
   PolygonFullIcon,
   ZecIcon,
 } from "../components/icons/RenIcons";
+import {
+  createNetworkConfig,
+  NetworkConfig,
+  NetworksConfig,
+} from "./networksConfig";
 import { AssetChainsConfig } from "./tokensConfig";
 
 export type ChainIconsConfig = {
@@ -23,7 +29,13 @@ export type ChainLabelsConfig = {
   shortName?: string;
 };
 
-type ChainBaseConfig = ChainIconsConfig & ChainLabelsConfig & {};
+export type ChainNetworksConfig = {
+  networks?: NetworksConfig;
+};
+
+type ChainBaseConfig = ChainIconsConfig &
+  ChainLabelsConfig &
+  ChainNetworksConfig & {};
 
 const unsetChainConfig: ChainBaseConfig = {
   Icon: EmptyCircleIcon,
@@ -55,6 +67,10 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Ethereum: {
     Icon: EthereumChainFullIcon,
     fullName: "Ethereum",
+    networks: {
+      ...createNetworkConfig(RenNetwork.Mainnet, 1),
+      ...createNetworkConfig(RenNetwork.Testnet, 42, "Kovan Test Network"),
+    },
   },
   Fantom: {
     Icon: FantomCircleIcon,
@@ -79,6 +95,22 @@ export const getChainConfig = (chain: Chain) => {
     throw new Error(`Chain config not found for ${chain}`);
   }
   return config;
+};
+
+export const getChainNetworks = (chain: Chain) => {
+  const chainConfig = getChainConfig(chain);
+  if (!chainConfig.networks) {
+    throw new Error(`Chain networks config not found for ${chain}`);
+  }
+  return chainConfig.networks;
+};
+
+export const getChainNetworkConfig = (chain: Chain, network: RenNetwork) => {
+  const networks = getChainNetworks(chain);
+  if (!networks[network]) {
+    throw new Error(`Network config incomplete for ${chain} ${network}`);
+  }
+  return networks[network] as NetworkConfig;
 };
 
 type AssetChainsData = AssetChainsConfig & {

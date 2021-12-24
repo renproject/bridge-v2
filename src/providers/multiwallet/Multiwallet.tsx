@@ -15,6 +15,7 @@ import {
   FantomMetamaskConnectorInfo,
   PolygonMetamaskConnectorInfo,
 } from "../../features/wallet/components/WalletHelpers";
+import { createNetworkIdMapper } from "../../utils/networksConfig";
 import { Wallet } from "../../utils/walletsConfig";
 
 const networkMapping: Record<number, RenNetwork[]> = {
@@ -74,7 +75,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4s",
           connector: new EthereumInjectedConnector({
             debug: env.DEV,
-            networkIdMapper: ethNetworkToRenNetwork,
+            networkIdMapper: createNetworkIdMapper(Chain.Ethereum),
           }),
         },
         ...(featureFlags.enableMEWConnect

@@ -12,6 +12,7 @@ import { makeStyles, styled } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import { Chain } from "@renproject/chains";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
+import { RenNetwork } from "@renproject/utils";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { TFunction, Trans, useTranslation } from "react-i18next";
@@ -36,7 +37,10 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { createPulseAnimation } from "../../../theme/animationUtils";
 import { defaultShadow } from "../../../theme/other";
-import { getChainConfig } from "../../../utils/chainsConfig";
+import {
+  getChainConfig,
+  getChainNetworkConfig,
+} from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
 import {
   getDefaultWalletForChain,
@@ -212,9 +216,16 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   console.log(chain, targetNetwork);
   const { t } = useTranslation();
   const theme = useTheme();
-  const networkName = targetNetwork === "mainnet" ? "Mainnet" : "Testnet";
-  //TODO: consolidate with network mappings info like id: 1, 42 etc...
-  const subNetworkName = chain === Chain.Ethereum ? "Kovan" : "";
+
+  const networkKindName =
+    (targetNetwork as RenNetwork) === RenNetwork.Mainnet
+      ? "Mainnet"
+      : "Testnet";
+  const networkConfig = getChainNetworkConfig(
+    chain as Chain,
+    targetNetwork as RenNetwork
+  );
+  const subNetworkName = networkConfig.fullName;
   const chainConfig = getChainConfig(chain as Chain);
 
   // const { provider } = useWallet(chain as Chain);
@@ -267,12 +278,12 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
         </ProgressWrapper>
         <Typography variant="h5" align="center" gutterBottom>
           {t("wallet.network-switch-label")} {chainConfig.fullName}{" "}
-          {networkName}
+          {networkKindName}
           {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
           {t("wallet.network-switch-description")} {chainConfig.fullName}{" "}
-          {networkName} {subNetworkName}
+          {networkKindName} {subNetworkName}
         </Typography>
         <Box mt={2}>
           {addOrSwitchChain !== null && (
@@ -304,11 +315,11 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
               >
                 {pending || success
                   ? t("wallet.network-switching-label", {
-                      network: subNetworkName || networkName,
+                      network: subNetworkName || networkKindName,
                       wallet: "MetaMask",
                     })
                   : t("wallet.network-switch-label", {
-                      network: subNetworkName || networkName,
+                      network: subNetworkName || networkKindName,
                     })}
               </ActionButton>
             </div>
