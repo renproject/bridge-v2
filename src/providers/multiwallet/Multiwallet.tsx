@@ -1,5 +1,5 @@
 import { Chain } from "@renproject/chains";
-import { RenNetwork } from "@renproject/interfaces";
+import { RenNetwork } from "@renproject/utils";
 import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 import { EthereumMEWConnectConnector } from "@renproject/multiwallet-ethereum-mewconnect-connector";
@@ -18,55 +18,7 @@ import {
 import { createNetworkIdMapper } from "../../utils/networksConfig";
 import { Wallet } from "../../utils/walletsConfig";
 
-const networkMapping: Record<number, RenNetwork[]> = {
-  1: [RenNetwork.Mainnet],
-  42: [RenNetwork.Testnet, RenNetwork.TestnetVDot3],
-};
-
-export const renNetworkToEthNetwork = (id: RenNetwork): number | undefined => {
-  const entry = Object.entries(networkMapping).find(([_, x]) => x.includes(id));
-  if (!entry) return entry;
-  return parseInt(entry[0]);
-};
-
-export const ethNetworkToRenNetwork = (id: string | number): RenNetwork => {
-  return {
-    "1": RenNetwork.Mainnet,
-    "42": RenNetwork.Testnet,
-  }[parseInt(id as string).toString() as "1" | "42"];
-};
-
-export const fantomNetworkToRenNetwork = (id: string | number): RenNetwork => {
-  return {
-    "250": RenNetwork.Mainnet,
-    "4002": RenNetwork.Testnet,
-  }[parseInt(id as string).toString() as "250" | "4002"];
-};
-export const polygonNetworkToRenNetwork = (id: string | number): RenNetwork => {
-  return {
-    "137": RenNetwork.Mainnet,
-    "80001": RenNetwork.Testnet,
-  }[parseInt(id as string).toString() as "137" | "80001"];
-};
-export const avalancheNetworkToRenNetwork = (
-  id: string | number
-): RenNetwork => {
-  return {
-    "43114": RenNetwork.Mainnet,
-    "43113": RenNetwork.Testnet,
-  }[parseInt(id as string).toString() as "43114" | "43113"];
-};
-export const arbitrumNetworkToRenNetwork = (
-  id: string | number
-): RenNetwork => {
-  return {
-    "42161": RenNetwork.Mainnet,
-    "421611": RenNetwork.Testnet,
-  }[parseInt(id as string).toString() as "42161" | "421611"];
-};
-
 export const walletPickerModalConfig = (network: RenNetwork) => {
-  const targetEthChainId = renNetworkToEthNetwork(network) || 1;
   return {
     chains: {
       [Chain.Ethereum]: [
@@ -89,7 +41,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
                     42: `wss://kovan.infura.io/ws/v3/${env.INFURA_ID}`,
                     1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
                   },
-                  chainId: targetEthChainId,
+                  chainId: network === RenNetwork.Mainnet ? 1 : 42,
                 }),
               },
             ]
@@ -118,7 +70,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           info: FantomMetamaskConnectorInfo,
           connector: (() => {
             const connector = new EthereumInjectedConnector({
-              networkIdMapper: fantomNetworkToRenNetwork,
+              networkIdMapper: createNetworkIdMapper(Chain.Fantom),
               debug: true,
             });
             connector.getProvider = () => (window as any).ethereum;
@@ -133,7 +85,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           info: PolygonMetamaskConnectorInfo,
           connector: (() => {
             const connector = new EthereumInjectedConnector({
-              networkIdMapper: polygonNetworkToRenNetwork,
+              networkIdMapper: createNetworkIdMapper(Chain.Polygon),
               debug: true,
             });
             connector.getProvider = () => (window as any).ethereum;
@@ -148,7 +100,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           info: AvalancheMetamaskConnectorInfo,
           connector: (() => {
             const connector = new EthereumInjectedConnector({
-              networkIdMapper: avalancheNetworkToRenNetwork,
+              networkIdMapper: createNetworkIdMapper(Chain.Avalanche),
               debug: true,
             });
             connector.getProvider = () => (window as any).ethereum;
@@ -214,7 +166,7 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
           info: ArbitrumMetamaskConnectorInfo,
           connector: (() => {
             const connector = new EthereumInjectedConnector({
-              networkIdMapper: arbitrumNetworkToRenNetwork,
+              networkIdMapper: createNetworkIdMapper(Chain.Arbitrum),
               debug: true,
             });
             connector.getProvider = () => (window as any).ethereum;

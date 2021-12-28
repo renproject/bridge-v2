@@ -238,9 +238,6 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
     targetNetwork as RenNetwork,
     provider
   );
-  // const addOrSwitchChain = useCallback(async () => {
-  //   console.error("addOrSwitchChain not implemented");
-  // }, []);
   const [success, setSuccess] = useState(false);
   const handleSwitch = useCallback(() => {
     if (addOrSwitchChain !== null) {

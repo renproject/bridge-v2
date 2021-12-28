@@ -14,8 +14,27 @@ export const createNetworkConfig = (
   network: RenNetwork,
   id: string | number,
   name = network as string
-) =>
-  ({ [network]: { id, fullName: name } } as Record<RenNetwork, NetworkConfig>);
+) => {
+  const fullName = network === RenNetwork.Mainnet ? "Mainnet" : "Testnet";
+  return {
+    [network]: {
+      id,
+      fullName,
+    },
+  } as Record<RenNetwork, NetworkConfig>;
+};
+
+export const createNetworksConfig = (
+  mainnetId: string | number,
+  testnetId: string | number,
+  mainnetName = RenNetwork.Mainnet,
+  testnetName = RenNetwork.Testnet
+) => {
+  return {
+    ...createNetworkConfig(RenNetwork.Mainnet, mainnetId, mainnetName),
+    ...createNetworkConfig(RenNetwork.Testnet, testnetId, testnetName),
+  } as Record<RenNetwork, NetworkConfig>;
+};
 
 type NetworkIdMapper = (id: string | number) => RenNetwork;
 

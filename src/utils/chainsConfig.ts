@@ -15,6 +15,7 @@ import {
 } from "../components/icons/RenIcons";
 import {
   createNetworkConfig,
+  createNetworksConfig,
   NetworkConfig,
   NetworksConfig,
 } from "./networksConfig";
@@ -46,10 +47,12 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Arbitrum: {
     Icon: ArbitrumCircleIcon,
     fullName: "Arbitrum",
+    networks: createNetworksConfig(42161, 421611),
   },
   Avalanche: {
     Icon: AvalancheChainCircleIcon,
     fullName: "Avalanche",
+    networks: createNetworksConfig(43114, 43113),
   },
   BinanceSmartChain: {
     Icon: BinanceChainFullIcon,
@@ -75,10 +78,12 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Fantom: {
     Icon: FantomCircleIcon,
     fullName: "Fantom",
+    networks: createNetworksConfig(250, 4002),
   },
   Polygon: {
     Icon: PolygonFullIcon,
     fullName: "Polygon",
+    networks: createNetworksConfig(137, 80001),
   },
   Zcash: { Icon: ZecIcon, fullName: "Zcash" },
   DigiByte: unsetChainConfig,
