@@ -47,6 +47,7 @@ import {
   getWalletConfig,
   Wallet,
 } from "../../../utils/walletsConfig";
+import { useSwitchChainHelpers, useWallet } from "../walletHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import { setPickerOpened } from "../walletSlice";
 import { WalletStatus } from "../walletUtils";
@@ -228,19 +229,18 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const subNetworkName = networkConfig.fullName;
   const chainConfig = getChainConfig(chain as Chain);
 
-  // const { provider } = useWallet(chain as Chain);
+  const { provider } = useWallet(chain as Chain);
 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<any>(false);
-  // TODO: crit finish
-  // const { addOrSwitchChain } = () => {} // useSwitchChainHelpers(
-  //   chainConfig.symbol,
-  //   targetNetwork,
-  //   provider
-  // );
-  const addOrSwitchChain = useCallback(async () => {
-    console.error("addOrSwitchChain not implemented");
-  }, []);
+  const { addOrSwitchChain } = useSwitchChainHelpers(
+    chain as Chain,
+    targetNetwork as RenNetwork,
+    provider
+  );
+  // const addOrSwitchChain = useCallback(async () => {
+  //   console.error("addOrSwitchChain not implemented");
+  // }, []);
   const [success, setSuccess] = useState(false);
   const handleSwitch = useCallback(() => {
     if (addOrSwitchChain !== null) {

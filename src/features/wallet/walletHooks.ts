@@ -1,10 +1,11 @@
 import { Chain } from "@renproject/chains";
-import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { useEffect } from "react";
+import { RenNetwork } from "@renproject/utils";
+import { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 
 import { Wallet } from "../../utils/walletsConfig";
+import { useChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
 import { $wallet } from "./walletSlice";
 import { WalletStatus } from "./walletUtils";
@@ -89,4 +90,53 @@ export const useSyncWalletNetwork = () => {
       );
     }
   }, [network, setTargetNetwork, targetNetwork]);
+};
+
+export const useSwitchChainHelpers = (
+  chain: Chain,
+  network: RenNetwork,
+  provider: any
+) => {
+  const chains = useChains(network);
+
+  const addOrSwitchChain = useMemo(() => {
+    const chainInstance = chains[chain];
+    const networkData = (chainInstance.chain as any).network.network;
+    if (networkData) {
+      const { chainId, chainName, rpcUrls, blockExplorerUrls, nativeCurrency } =
+        networkData;
+      const params: any = [
+        {
+          chainId,
+          chainName,
+          rpcUrls,
+          blockExplorerUrls,
+          nativeCurrency,
+        },
+      ];
+
+      return async () => {
+        try {
+          await provider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId }],
+          });
+        } catch (error) {
+          // This error code indicates that the chain has not been added to MetaMask.
+          if (error.code === 4902) {
+            await provider.request({
+              method: "wallet_addEthereumChain",
+              params,
+            });
+          } else {
+            throw error;
+          }
+        }
+      };
+    } else {
+      return null;
+    }
+  }, [chains, chain, provider]);
+
+  return { addOrSwitchChain };
 };
