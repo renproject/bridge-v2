@@ -12,14 +12,14 @@ type GatewayFeesProps = ReturnType<typeof useGatewayFeesWithRates> & {
   asset: Asset;
   from: Chain;
   to: Chain;
+  approval?: boolean;
+  approved?: boolean;
 };
 
 export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   asset,
   from,
   to,
-  outputAmount,
-  outputAmountUsd,
   renVMFeeAmount,
   renVMFeeAmountUsd,
   renVMFeePercent,
@@ -31,6 +31,8 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   toChainFeeAmountUsd,
   mintFeePercent,
   burnFeePercent,
+  approval = false,
+  approved = false,
 }) => {
   const { t } = useTranslation();
   const assetConfig = assetsConfig[asset];
@@ -149,6 +151,17 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           )
         }
       />
+      {approval && (
+        <LabelWithValue
+          label={t("fees.assets-contracts-label")}
+          labelTooltip={t("fees.assets-contracts-approval-label-tooltip")}
+          value={
+            approved
+              ? t("fees.assets-contracts-approved")
+              : t("fees.assets-contracts-need-approval")
+          }
+        />
+      )}
     </>
   );
 };

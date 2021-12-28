@@ -58,7 +58,9 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const fees = useGatewayFeesWithRates(gateway, amount);
   const { balance, balancePending, outputAmount, outputAmountUsd } = fees;
-
+  const approvalRequired = Boolean(gateway?.setup.approval);
+  const approved = false;
+  console.log("gateway setup", gateway?.setup);
   const Header = (
     <PaperHeader>
       <PaperNav>
@@ -143,9 +145,16 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       <Divider />
       <PaperContent topPadding bottomPadding>
         <Typography variant="body2" paragraph>
-          Fees
+          {t("fees.fees-label")}
         </Typography>
-        <GatewayFees {...fees} asset={asset} from={from} to={to} />
+        <GatewayFees
+          {...fees}
+          asset={asset}
+          from={from}
+          to={to}
+          approval={approvalRequired}
+          approved={approved}
+        />
       </PaperContent>
       <Debug it={{ fees }} />
     </>
