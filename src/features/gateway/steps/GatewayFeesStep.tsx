@@ -61,6 +61,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const approvalRequired = Boolean(gateway?.setup.approval);
   const approved = false;
   console.log("gateway setup", gateway?.setup);
+
   const Header = (
     <PaperHeader>
       <PaperNav>

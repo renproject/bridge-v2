@@ -26,7 +26,6 @@ export const useGateway = ({
   asset,
   from,
   to,
-  amount,
   network,
   nonce,
 }: UseGatewayParams) => {
@@ -68,34 +67,35 @@ export const useGateway = ({
   // initialize gateway
   useEffect(() => {
     console.log("useGateway useEffect gateway init");
+    let newGateway: Gateway | null = null;
     if (renJs) {
       const initializeGateway = async () => {
-        const gateway = await createGateway(
+        newGateway = await createGateway(
           renJs,
-          { asset, from, to, amount, nonce },
+          { asset, from, to, nonce },
           chains
         );
-        console.log("gateway created", gateway);
-        gateway.on("transaction", addTransaction);
+        console.log("gateway created", newGateway);
+        newGateway.on("transaction", addTransaction);
         console.log("gateway transaction listener added");
-        (window as any).gateway = gateway;
-        return gateway;
+        (window as any).gateway = newGateway;
+        return newGateway;
       };
       console.log("gateway initializing");
       initializeGateway()
-        .then((gateway) => setGateway(gateway))
+        .then((newGateway) => setGateway(newGateway))
         .catch((error) => {
           setError(error);
         });
     }
 
     return () => {
-      if (gateway) {
+      if (newGateway) {
         console.log("gateway removing listeners");
-        gateway.eventEmitter.removeAllListeners();
+        newGateway.eventEmitter.removeAllListeners();
       }
     };
-  }, [renJs]);
+  }, [renJs, addTransaction, asset, chains, from, to, nonce]);
 
   return { renJs, gateway, transactions, error };
 };
