@@ -24,15 +24,11 @@ type UseGatewayParams = {
   nonce?: number;
 };
 
-export const useGateway = ({
-  asset,
-  from,
-  to,
-  network,
-  nonce,
-}: UseGatewayParams) => {
+export const useGateway = (
+  { asset, from, to, network, nonce, amount }: UseGatewayParams,
+  provider: any
+) => {
   const chains = useChains(network);
-  const { provider } = useWallet(to);
   const [renJs, setRenJs] = useState<RenJS | null>(null);
   const [error, setError] = useState(null);
   const [gateway, setGateway] = useState<Gateway | null>(null);
@@ -76,7 +72,7 @@ export const useGateway = ({
       const initializeGateway = async () => {
         newGateway = await createGateway(
           renJs,
-          { asset, from, to, nonce },
+          { asset, from, to, nonce, amount },
           chains
         );
         console.log("gateway created", newGateway);
@@ -100,7 +96,7 @@ export const useGateway = ({
         newGateway.eventEmitter.removeAllListeners();
       }
     };
-  }, [renJs, addTransaction, asset, chains, from, to, nonce]);
+  }, [renJs, addTransaction, asset, chains, from, to, nonce, amount]);
 
   return { renJs, gateway, transactions, error };
 };
@@ -363,5 +359,12 @@ export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
       });
   }, [reset, chains, asset, from, to]);
 
-  return { isMint, isRelease, isLock, isBurn };
+  return {
+    isMint,
+    isRelease,
+    isLock,
+    isBurn,
+    fromConnectionRequired: chains[from].connectionRequired,
+    toConnectionRequired: chains[to].connectionRequired,
+  };
 };

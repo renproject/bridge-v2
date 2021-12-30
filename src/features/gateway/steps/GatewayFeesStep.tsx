@@ -43,9 +43,12 @@ import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
 import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
 import { GatewayFees } from "../components/GatewayFees";
-import { useGateway, useGatewayFeesWithRates } from "../gatewayHooks";
+import {
+  useGateway,
+  useGatewayFeesWithRates,
+  useGatewayMeta,
+} from "../gatewayHooks";
 import { $gateway } from "../gatewaySlice";
-import { isMintGateway } from "../gatewayUtils";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
@@ -66,22 +69,24 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, []);
 
-  const { gateway } = useGateway({
-    asset,
-    from,
-    to,
-    amount,
-    network,
-    nonce: 1,
-  });
-
   // TODO: crit finish
   const isH2H = false;
-  const isMint = isMintGateway(gateway);
 
-  // const actionChain = isMint ? to : from;
-  const { connected } = useWallet(to);
+  const { isMint, fromConnectionRequired } = useGatewayMeta(asset, from, to);
+  const activeChain = fromConnectionRequired ? from : to;
+  const { connected, provider } = useWallet(activeChain);
 
+  const { gateway } = useGateway(
+    {
+      asset,
+      from,
+      to,
+      amount,
+      network,
+      nonce: 1,
+    },
+    provider
+  );
   const fees = useGatewayFeesWithRates(gateway, amount);
   const {
     balance,

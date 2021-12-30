@@ -28,7 +28,7 @@ export const createGateway = async (
   }
 
   const asset = gatewayParams.asset;
-
+  console.log("gatewayParams", gatewayParams);
   let fromChain;
   if (supportedEthereumChains.includes(gatewayParams.from)) {
     fromChain = (chains[gatewayParams.from].chain as EthereumBaseChain).Account(
@@ -65,15 +65,3 @@ export const createGateway = async (
     to: toChain,
   });
 };
-
-export const isLockGateway = (gateway: Gateway | null) =>
-  gateway?.inputType === InputType.Lock;
-
-export const isBurnGateway = (gateway: Gateway | null) =>
-  gateway?.inputType === InputType.Burn;
-
-export const isMintGateway = (gateway: Gateway | null) =>
-  gateway?.outputType === OutputType.Mint;
-
-export const isReleaseGateway = (gateway: Gateway | null) =>
-  gateway?.outputType === OutputType.Release;
