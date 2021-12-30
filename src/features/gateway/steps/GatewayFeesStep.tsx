@@ -1,11 +1,22 @@
-import { Divider, Fade, IconButton, Typography } from "@material-ui/core";
+import {
+  Box,
+  Checkbox,
+  Divider,
+  Fade,
+  FormControlLabel,
+  IconButton,
+  Typography,
+} from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import { OutlinedTextField } from "../../../components/inputs/OutlinedTextField";
-import { MediumTopWrapper } from "../../../components/layout/LayoutHelpers";
+import {
+  HorizontalPadder,
+  MediumTopWrapper,
+} from "../../../components/layout/LayoutHelpers";
 import {
   PaperActions,
   PaperContent,
@@ -14,6 +25,7 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
+import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
   LabelWithValue,
@@ -57,10 +69,37 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   });
 
   const fees = useGatewayFeesWithRates(gateway, amount);
-  const { balance, balancePending, outputAmount, outputAmountUsd } = fees;
+  const {
+    balance,
+    balancePending,
+    outputAmount,
+    outputAmountUsd,
+    fromChainFeeAsset,
+    toChainFeeAsset,
+  } = fees;
+  console.log("gateway setup", gateway?.setup);
+
   const approvalRequired = Boolean(gateway?.setup.approval);
   const approved = false;
-  console.log("gateway setup", gateway?.setup);
+
+  const [approvalChecked, setApprovalChecked] = useState(false);
+  const handleApprovalChange = useCallback(() => {
+    setApprovalChecked(!approvalChecked);
+  }, [approvalChecked]);
+
+  const [ackChecked, setAckChecked] = useState(false);
+  const handleAckChange = useCallback(() => {
+    setAckChecked(!ackChecked);
+  }, [ackChecked]);
+
+  // TODO: crit finish
+  const isH2H = false;
+  const isMint = true;
+  const feeTokens = isH2H
+    ? [fromChainFeeAsset, toChainFeeAsset]
+    : isMint
+    ? [toChainFeeAsset]
+    : [fromChainFeeAsset];
 
   const Header = (
     <PaperHeader>
@@ -91,26 +130,28 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       {Header}
       <PaperContent bottomPadding>
         {showBalance && (
-          <LabelWithValue
-            label={t("common.balance-label")}
-            value={
-              <span>
-                {balancePending ? (
-                  <InlineSkeleton
-                    variant="rect"
-                    animation="pulse"
-                    width={40}
-                    height={12}
-                  />
-                ) : (
-                  <Fade in={true}>
-                    <span>{balance}</span>
-                  </Fade>
-                )}
-                <span> {renAsset}</span>
-              </span>
-            }
-          />
+          <HorizontalPadder>
+            <LabelWithValue
+              label={t("common.balance-label")}
+              value={
+                <span>
+                  {balancePending ? (
+                    <InlineSkeleton
+                      variant="rect"
+                      animation="pulse"
+                      width={40}
+                      height={12}
+                    />
+                  ) : (
+                    <Fade in={true}>
+                      <span>{balance}</span>
+                    </Fade>
+                  )}
+                  <span> {renAsset}</span>
+                </span>
+              }
+            />
+          </HorizontalPadder>
         )}
         <OutlinedTextField
           value={amount}
@@ -156,6 +197,34 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           approval={approvalRequired}
           approved={approved}
         />
+        <HorizontalPadder>
+          <FormControlLabel
+            checked={ackChecked}
+            onChange={handleAckChange}
+            control={<Checkbox name="ack" color="primary" />}
+            label={
+              <>
+                <span>
+                  {t("fees.tokens-ack-label", {
+                    tokens: feeTokens.join(" & "),
+                  })}{" "}
+                </span>
+                <TooltipWithIcon title={t("fees.tokens-ack-tooltip")} />
+              </>
+            }
+          />
+          <FormControlLabel
+            checked={approvalChecked}
+            onChange={handleApprovalChange}
+            control={<Checkbox name="approval" color="primary" />}
+            label={
+              <>
+                <span>{t("fees.approval-label")} </span>
+                <TooltipWithIcon title={t("fees.approval-tooltip")} />
+              </>
+            }
+          />
+        </HorizontalPadder>
       </PaperContent>
       <Debug it={{ fees }} />
     </>

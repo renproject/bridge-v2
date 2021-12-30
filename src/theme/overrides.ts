@@ -112,7 +112,17 @@ export const overrides = (palette: Palette): Overrides => {
     },
     MuiFormControlLabel: {
       root: {
+        display: "flex",
+        justifyContent: "stretch",
         marginRight: 0,
+      },
+      label: {
+        flexGrow: 1,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        fontSize: 12,
+        color: palette.text.primary,
       },
     },
     MuiFilledInput: {
