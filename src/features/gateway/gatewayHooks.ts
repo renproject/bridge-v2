@@ -1,6 +1,7 @@
 import { Asset, Chain } from "@renproject/chains";
 import { Ethereum } from "@renproject/chains-ethereum";
 import RenJS, { Gateway, GatewayTransaction } from "@renproject/ren";
+import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
 import { InputType, OutputType, RenNetwork } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
@@ -10,6 +11,7 @@ import { alterEthereumBaseChainSigner } from "../chain/chainUtils";
 import { $exchangeRates } from "../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../marketData/marketDataUtils";
 import { useChains } from "../network/networkHooks";
+import { $network } from "../network/networkSlice";
 import { useWallet } from "../wallet/walletHooks";
 import { createGateway } from "./gatewayUtils";
 
@@ -46,6 +48,7 @@ export const useGateway = ({
   useEffect(() => {
     console.log("useGateway useEffect renJs and provider");
     const initProvider = async () => {
+      console.log("provider", provider);
       const ethersProvider = new ethers.providers.Web3Provider(provider);
       const signer = ethersProvider.getSigner();
       console.log("useGateway altering signer");
@@ -60,6 +63,7 @@ export const useGateway = ({
     initProvider()
       .then((renJs) => setRenJs(renJs))
       .catch((error) => {
+        console.error(error);
         setError(error);
       });
   }, [network, chains, provider]);
@@ -85,6 +89,7 @@ export const useGateway = ({
       initializeGateway()
         .then((newGateway) => setGateway(newGateway))
         .catch((error) => {
+          console.error(error);
           setError(error);
         });
     }
@@ -309,4 +314,52 @@ export const useGatewayFeesWithRates = (
     fromChainFeeAmountUsd,
     toChainFeeAmountUsd,
   };
+};
+
+export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
+  const { network } = useSelector($network);
+  const chains = useChains(network);
+
+  const [isMint, setIsMint] = useState<boolean | null>(null);
+  const [isRelease, setIsRelease] = useState<boolean | null>(null);
+  const [isLock, setIsLock] = useState<boolean | null>(null);
+  const [isBurn, setIsBurn] = useState<boolean | null>(null);
+
+  const reset = useCallback(() => {
+    setIsMint(null);
+    setIsRelease(null);
+    setIsLock(null);
+    setIsBurn(null);
+  }, []);
+
+  useEffect(() => {
+    reset();
+    getInputAndOutputTypes({
+      asset,
+      fromChain: chains[from].chain,
+      toChain: chains[to].chain,
+    })
+      .then(({ inputType, outputType, selector }) => {
+        if (inputType === InputType.Burn) {
+          setIsBurn(true);
+          setIsLock(false);
+        } else if (inputType === InputType.Lock) {
+          setIsLock(true);
+          setIsBurn(false);
+        }
+        if (outputType === OutputType.Mint) {
+          setIsMint(true);
+          setIsRelease(false);
+        } else if (outputType === OutputType.Release) {
+          setIsRelease(true);
+          setIsMint(false);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        reset();
+      });
+  }, [reset, chains, asset, from, to]);
+
+  return { isMint, isRelease, isLock, isBurn };
 };

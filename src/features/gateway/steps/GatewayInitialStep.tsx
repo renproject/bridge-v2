@@ -25,6 +25,7 @@ import {
 } from "../../../components/inputs/OutlinedTextField";
 import { PaperContent } from "../../../components/layout/Paper";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import {
@@ -41,6 +42,7 @@ import {
   getChainOptionData,
 } from "../components/DropdownHelpers";
 import { MintIntro } from "../components/MintHelpers";
+import { useGatewayMeta } from "../gatewayHooks";
 import {
   $gateway,
   setAmount,
@@ -161,6 +163,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       ? new BigNumber(amount).multipliedBy(assetUsdRate).toFixed()
       : "";
 
+  const meta = useGatewayMeta(asset, from, to);
+
   return (
     <>
       <PaperContent bottomPadding>
@@ -256,6 +260,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           </ActionButton>
         )}
       </PaperContent>
+      <Debug it={{ meta }} />
     </>
   );
 };

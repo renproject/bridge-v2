@@ -1,5 +1,4 @@
 import {
-  Box,
   Checkbox,
   Divider,
   Fade,
@@ -7,9 +6,18 @@ import {
   IconButton,
   Typography,
 } from "@material-ui/core";
+import {
+  ChainTransactionStatus,
+  TxSubmitter,
+  TxWaiter,
+} from "@renproject/utils";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import { OutlinedTextField } from "../../../components/inputs/OutlinedTextField";
@@ -37,15 +45,16 @@ import { useWallet } from "../../wallet/walletHooks";
 import { GatewayFees } from "../components/GatewayFees";
 import { useGateway, useGatewayFeesWithRates } from "../gatewayHooks";
 import { $gateway } from "../gatewaySlice";
+import { isMintGateway } from "../gatewayUtils";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
-  onNext,
   onPrev,
 }) => {
   const { t } = useTranslation();
   const { network } = useSelector($network);
   const { asset, from, to } = useSelector($gateway);
+
   const { Icon, shortName } = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
 
@@ -57,8 +66,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, []);
 
-  const { connected } = useWallet(to);
-
   const { gateway } = useGateway({
     asset,
     from,
@@ -67,6 +74,13 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     network,
     nonce: 1,
   });
+
+  // TODO: crit finish
+  const isH2H = false;
+  const isMint = isMintGateway(gateway);
+
+  // const actionChain = isMint ? to : from;
+  const { connected } = useWallet(to);
 
   const fees = useGatewayFeesWithRates(gateway, amount);
   const {
@@ -77,10 +91,10 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     fromChainFeeAsset,
     toChainFeeAsset,
   } = fees;
-  console.log("gateway setup", gateway?.setup);
+  console.log("gateway", gateway);
 
   const approvalRequired = Boolean(gateway?.setup.approval);
-  const approved = false;
+  const [approved, setApproved] = useState(false);
 
   const [approvalChecked, setApprovalChecked] = useState(false);
   const handleApprovalChange = useCallback(() => {
@@ -92,14 +106,30 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     setAckChecked(!ackChecked);
   }, [ackChecked]);
 
-  // TODO: crit finish
-  const isH2H = false;
-  const isMint = true;
   const feeTokens = isH2H
     ? [fromChainFeeAsset, toChainFeeAsset]
     : isMint
     ? [toChainFeeAsset]
     : [fromChainFeeAsset];
+
+  const nextEnabled = approvalRequired
+    ? approvalChecked && ackChecked
+    : ackChecked;
+
+  const handleProceed = useCallback(() => {
+    if (approved) {
+      // serialize tx data and proceed to 3rd step
+    } else {
+      //approve
+    }
+    console.log(approved);
+  }, [approved]);
+
+  const handleApproved = useCallback(() => {
+    setApproved(true);
+  }, []);
+
+  const showBalance = true;
 
   const Header = (
     <PaperHeader>
@@ -122,8 +152,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       </>
     );
   }
-
-  const showBalance = true;
 
   return (
     <>
@@ -213,20 +241,106 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               </>
             }
           />
-          <FormControlLabel
-            checked={approvalChecked}
-            onChange={handleApprovalChange}
-            control={<Checkbox name="approval" color="primary" />}
-            label={
-              <>
-                <span>{t("fees.approval-label")} </span>
-                <TooltipWithIcon title={t("fees.approval-tooltip")} />
-              </>
-            }
-          />
+          {approvalRequired && (
+            <FormControlLabel
+              checked={approvalChecked}
+              onChange={handleApprovalChange}
+              control={<Checkbox name="approval" color="primary" />}
+              label={
+                <>
+                  <span>{t("fees.approval-label")} </span>
+                  <TooltipWithIcon title={t("fees.approval-tooltip")} />
+                </>
+              }
+            />
+          )}
         </HorizontalPadder>
+        <ActionButtonWrapper>
+          {gateway !== null && approvalRequired && !approved && (
+            <TxApprovalButton
+              tx={gateway.setup.approval}
+              onDone={handleApproved}
+            />
+          )}
+          {approved || !approvalRequired ? (
+            <ActionButton disabled={!nextEnabled} onClick={handleProceed}>
+              {t("gateway.submit-tx-label")}
+            </ActionButton>
+          ) : null}
+        </ActionButtonWrapper>
       </PaperContent>
       <Debug it={{ fees }} />
+    </>
+  );
+};
+
+type TxApprovalButtonProps = {
+  tx: TxSubmitter | TxWaiter;
+  onDone: () => void;
+  target?: number;
+  autoSubmit?: boolean;
+};
+
+export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
+  tx,
+  onDone,
+  target,
+  autoSubmit,
+}) => {
+  const { t } = useTranslation();
+  const [submitting, setSubmitting] = useState(autoSubmit ? true : false);
+  const [waiting, setWaiting] = useState(false);
+  const [confirmations, setConfirmations] = useState<number>();
+
+  const [errorSubmitting, setErrorSubmitting] = useState<Error>();
+  const [errorWaiting, setErrorWaiting] = useState<Error>();
+
+  const wait = useCallback(async () => {
+    setErrorSubmitting(undefined);
+    setErrorWaiting(undefined);
+
+    try {
+      setWaiting(true);
+      await tx.wait(target).on("status", (status) => {
+        setConfirmations(status.confirmations);
+      });
+      onDone();
+    } catch (error: any) {
+      console.error(error);
+      setErrorWaiting(error);
+    }
+    setWaiting(false);
+  }, [tx, onDone, target]);
+
+  const submit = useCallback(async () => {
+    setErrorSubmitting(undefined);
+    setErrorWaiting(undefined);
+
+    if (tx.submit && tx.status.status === ChainTransactionStatus.Ready) {
+      try {
+        setSubmitting(true);
+        await tx.submit({
+          txConfig: {
+            // gasLimit: 500000,
+          },
+        });
+        wait().catch(console.error);
+      } catch (error: any) {
+        console.error(error);
+        setErrorSubmitting(error);
+      }
+      setSubmitting(false);
+    }
+  }, [tx, wait]);
+
+  const disabled = waiting || submitting;
+
+  return (
+    <>
+      <ActionButton disabled={disabled} onClick={submit}>
+        {t("gateway.approve-assets-contracts-label")}
+      </ActionButton>
+      <Debug it={{ tx, errorSubmitting, errorWaiting, confirmations }} />
     </>
   );
 };

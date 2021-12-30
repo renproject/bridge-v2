@@ -2,6 +2,7 @@ import { Asset, Chain } from "@renproject/chains";
 import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Ethereum, EthereumBaseChain } from "@renproject/chains-ethereum";
 import RenJS, { Gateway } from "@renproject/ren";
+import { InputType, OutputType } from "@renproject/utils";
 import {
   supportedBitcoinChains,
   supportedEthereumChains,
@@ -64,3 +65,15 @@ export const createGateway = async (
     to: toChain,
   });
 };
+
+export const isLockGateway = (gateway: Gateway | null) =>
+  gateway?.inputType === InputType.Lock;
+
+export const isBurnGateway = (gateway: Gateway | null) =>
+  gateway?.inputType === InputType.Burn;
+
+export const isMintGateway = (gateway: Gateway | null) =>
+  gateway?.outputType === OutputType.Mint;
+
+export const isReleaseGateway = (gateway: Gateway | null) =>
+  gateway?.outputType === OutputType.Release;
