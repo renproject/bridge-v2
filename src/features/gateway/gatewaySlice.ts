@@ -31,6 +31,10 @@ const slice = createSlice({
     setTo(state, action: PayloadAction<Chain>) {
       state.to = action.payload;
     },
+    setFromTo(state, action: PayloadAction<{ from: Chain; to: Chain }>) {
+      state.from = action.payload.from;
+      state.to = action.payload.to;
+    },
     setAmount(state, action: PayloadAction<string>) {
       state.amount = action.payload;
     },
@@ -59,6 +63,7 @@ export const {
   setAsset,
   setFrom,
   setTo,
+  setFromTo,
   setAmount,
   setToAddress,
   resetGateway,

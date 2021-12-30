@@ -334,6 +334,7 @@ export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
 
   useEffect(() => {
     reset();
+    console.log(asset, from, to);
     getInputAndOutputTypes({
       asset,
       fromChain: chains[from].chain,
@@ -356,6 +357,7 @@ export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
         }
       })
       .catch((error) => {
+        console.log(asset, from, to);
         console.error(error);
         reset();
       });

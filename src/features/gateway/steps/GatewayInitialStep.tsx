@@ -48,6 +48,7 @@ import {
   setAmount,
   setAsset,
   setFrom,
+  setFromTo,
   setTo,
   setToAddress,
 } from "../gatewaySlice";
@@ -63,13 +64,41 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 }) => {
   const dispatch = useDispatch();
   const { path } = useRouteMatch();
+  const isMint = path === paths.MINT;
+  const isRelease = path === paths.RELEASE;
   const { t } = useTranslation();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
+
+  const [fromChains, setFromChains] = useState(chains);
+  const [toChains, setToChains] = useState(chains);
+
+  const filterChains = useCallback(
+    (asset: Asset) => {
+      const { lockChain, mintChains } = getAssetConfig(asset);
+      if (isMint) {
+        setFromChains([lockChain]);
+        setToChains(mintChains);
+        dispatch(setFromTo({ from: lockChain, to: mintChains[0] }));
+      } else if (isRelease) {
+        setFromChains(mintChains);
+        setToChains([lockChain]);
+        dispatch(setFromTo({ from: mintChains[0], to: lockChain }));
+      }
+    },
+    [dispatch, isMint, isRelease]
+  );
+
+  useEffect(() => {
+    filterChains(asset);
+  }, [asset, filterChains]);
+
   const handleAssetChange = useCallback(
     (event) => {
-      dispatch(setAsset(event.target.value as Asset));
+      const newAsset = event.target.value as Asset;
+      dispatch(setAsset(newAsset));
+      filterChains(newAsset);
     },
-    [dispatch]
+    [dispatch, filterChains]
   );
   const handleFromChange = useCallback(
     (event) => {
@@ -95,29 +124,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     },
     [dispatch]
   );
-
-  const isMint = path === paths.MINT;
-  const isRelease = path === paths.RELEASE;
-
-  const [fromChains, setFromChains] = useState(chains);
-  const [toChains, setToChains] = useState(chains);
-
-  useEffect(() => {
-    const config = getAssetConfig(asset);
-    const { lockChain, mintChains } = config;
-    // consider using // or BitcoinBaseChain.isDepositAsset or similar methods
-    if (isMint) {
-      setFromChains([lockChain]);
-      dispatch(setFrom(lockChain));
-      setToChains(mintChains);
-      dispatch(setTo(mintChains[0]));
-    } else if (isRelease) {
-      setFromChains(mintChains);
-      dispatch(setFrom(mintChains[0]));
-      setToChains([lockChain]);
-      dispatch(setTo(lockChain));
-    }
-  }, [dispatch, asset, isMint, isRelease]);
 
   useEffect(() => {
     const assetConfig = getAssetConfig(asset);
