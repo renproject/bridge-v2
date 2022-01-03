@@ -2,7 +2,7 @@ import { Asset, Chain } from "@renproject/chains";
 import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Ethereum, EthereumBaseChain } from "@renproject/chains-ethereum";
 import RenJS, { Gateway } from "@renproject/ren";
-import { InputType, OutputType } from "@renproject/utils";
+import queryString from "query-string";
 import {
   supportedBitcoinChains,
   supportedEthereumChains,
@@ -64,4 +64,24 @@ export const createGateway = async (
     from: fromChain,
     to: toChain,
   });
+};
+
+export const createGatewayQueryString = (
+  gatewayParams: CreateGatewayParams
+) => {
+  return queryString.stringify(gatewayParams);
+};
+
+export const parseGatewayQueryString = (query: string) => {
+  return queryString.parse(query) as unknown as CreateGatewayParams;
+};
+
+export const GATEWAY_EXPIRY_OFFSET_MS = 24 * 3600 * 1000;
+
+export const getSessionDay = (dayOffset = 0) =>
+  Math.floor(Date.now() / GATEWAY_EXPIRY_OFFSET_MS) - dayOffset;
+
+export const generateNonce = (dayOffset = 0, dayIndex = 0) => {
+  const nonce = dayIndex + getSessionDay(dayOffset) * 1000;
+  return nonce;
 };

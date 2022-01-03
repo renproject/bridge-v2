@@ -12,7 +12,6 @@ import { $exchangeRates } from "../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../marketData/marketDataUtils";
 import { useChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
-import { useWallet } from "../wallet/walletHooks";
 import { createGateway } from "./gatewayUtils";
 
 type UseGatewayParams = {

@@ -15,6 +15,7 @@ import {
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -40,6 +41,7 @@ import {
   LabelWithValue,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
+import { paths } from "../../../pages/routes";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
 import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
@@ -50,6 +52,7 @@ import {
   useGatewayMeta,
 } from "../gatewayHooks";
 import { $gateway } from "../gatewaySlice";
+import { createGatewayQueryString, generateNonce } from "../gatewayUtils";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
@@ -57,6 +60,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 }) => {
   const { t } = useTranslation();
   const { network } = useSelector($network);
+  const history = useHistory();
+
   const { asset, from, to } = useSelector($gateway);
 
   const { Icon, shortName } = getAssetConfig(asset);
@@ -76,7 +81,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     to
   );
   const activeChain = fromConnectionRequired ? from : to;
-  const { connected, provider } = useWallet(activeChain);
+  const { connected, provider, account } = useWallet(activeChain);
 
   const { gateway } = useGateway(
     {
@@ -124,17 +129,44 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     : ackChecked;
 
   const handleProceed = useCallback(() => {
-    if (approvalRequired) {
-      if (approved) {
+    if (isH2H) {
+      if (approvalRequired) {
+        if (approved) {
+        } else {
+        }
+        console.log("approval required");
       } else {
+        // serialize tx data and proceed to 3rd step
+        console.log("approval not required");
       }
-      console.log("approval required");
     } else {
-      // serialize tx data and proceed to 3rd step
-      console.log("approval not required");
+      console.log("standard mint");
+      history.push({
+        pathname: paths.MINT_GATEWAY,
+        search:
+          "?" +
+          createGatewayQueryString({
+            asset,
+            from,
+            to,
+            nonce: generateNonce(),
+            toAddress: account,
+          }),
+      });
     }
+
     console.log(approved);
-  }, [approvalRequired, approved, gateway]);
+  }, [
+    history,
+    isH2H,
+    asset,
+    from,
+    to,
+    account,
+    approvalRequired,
+    approved,
+    // gateway,
+  ]);
 
   const handleApproved = useCallback(() => {
     setApproved(true);
@@ -278,7 +310,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           )}
           {approved || !approvalRequired ? (
             <ActionButton disabled={!nextEnabled} onClick={handleProceed}>
-              {t("gateway.submit-tx-label")}
+              {isH2H ? t("gateway.submit-tx-label") : t("common.next-label")}
             </ActionButton>
           ) : null}
         </ActionButtonWrapper>

@@ -6,6 +6,7 @@ import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 import { GatewayFeesStep } from "./steps/GatewayFeesStep";
+import { MintStandardProcessStep } from "./steps/substeps/MintStandard";
 
 export enum GatewayConfigurationStep {
   INITIAL = "initial",
@@ -53,8 +54,14 @@ export const GatewayFlow: FunctionComponent<RouteComponentProps> = ({
   return (
     <>
       <Route
+        exact
         path={[paths.MINT, paths.RELEASE]}
         component={GatewayConfigurationSteps}
+      />
+      <Route
+        exact
+        path={[paths.MINT_GATEWAY]}
+        component={MintStandardProcessStep}
       />
     </>
   );
