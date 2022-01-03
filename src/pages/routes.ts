@@ -5,10 +5,10 @@ const HOME = "/";
 const MINT = "/mint";
 const RELEASE = "/release";
 
-const _TRANSACTION = "/transaction";
+const _GATEWAY = "/gateway";
 
-const MINT_TRANSACTION = MINT + _TRANSACTION;
-const RELEASE_TRANSACTION = RELEASE + _TRANSACTION;
+const MINT_GATEWAY = MINT + _GATEWAY;
+const RELEASE_GATEWAY = RELEASE + _GATEWAY;
 
 export const paths = {
   WELCOME,
@@ -16,7 +16,7 @@ export const paths = {
   ABOUT,
   HOME,
   MINT,
-  MINT_TRANSACTION,
+  MINT_GATEWAY,
   RELEASE,
-  RELEASE_TRANSACTION,
+  RELEASE_GATEWAY,
 };

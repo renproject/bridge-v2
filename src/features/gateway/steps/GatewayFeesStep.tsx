@@ -1,4 +1,5 @@
 import {
+  ButtonProps,
   Checkbox,
   Divider,
   Fade,
@@ -69,10 +70,11 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, []);
 
-  // TODO: crit finish
-  const isH2H = false;
-
-  const { isMint, fromConnectionRequired } = useGatewayMeta(asset, from, to);
+  const { isMint, isRelease, fromConnectionRequired, isH2H } = useGatewayMeta(
+    asset,
+    from,
+    to
+  );
   const activeChain = fromConnectionRequired ? from : to;
   const { connected, provider } = useWallet(activeChain);
 
@@ -110,7 +112,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const handleAckChange = useCallback(() => {
     setAckChecked(!ackChecked);
   }, [ackChecked]);
-
+  const showAck = Boolean(fromChainFeeAsset && toChainFeeAsset);
   const feeTokens = isH2H
     ? [fromChainFeeAsset, toChainFeeAsset]
     : isMint
@@ -118,17 +120,21 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     : [fromChainFeeAsset];
 
   const nextEnabled = approvalRequired
-    ? approvalChecked && ackChecked
+    ? approvalChecked && approved && ackChecked
     : ackChecked;
 
   const handleProceed = useCallback(() => {
-    if (approved) {
-      // serialize tx data and proceed to 3rd step
+    if (approvalRequired) {
+      if (approved) {
+      } else {
+      }
+      console.log("approval required");
     } else {
-      //approve
+      // serialize tx data and proceed to 3rd step
+      console.log("approval not required");
     }
     console.log(approved);
-  }, [approved]);
+  }, [approvalRequired, approved, gateway]);
 
   const handleApproved = useCallback(() => {
     setApproved(true);
@@ -231,21 +237,23 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           approved={approved}
         />
         <HorizontalPadder>
-          <FormControlLabel
-            checked={ackChecked}
-            onChange={handleAckChange}
-            control={<Checkbox name="ack" color="primary" />}
-            label={
-              <>
-                <span>
-                  {t("fees.tokens-ack-label", {
-                    tokens: feeTokens.join(" & "),
-                  })}{" "}
-                </span>
-                <TooltipWithIcon title={t("fees.tokens-ack-tooltip")} />
-              </>
-            }
-          />
+          {showAck && (
+            <FormControlLabel
+              checked={ackChecked}
+              onChange={handleAckChange}
+              control={<Checkbox name="ack" color="primary" />}
+              label={
+                <>
+                  <span>
+                    {t("fees.tokens-ack-label", {
+                      tokens: feeTokens.join(" & "),
+                    })}{" "}
+                  </span>
+                  <TooltipWithIcon title={t("fees.tokens-ack-tooltip")} />
+                </>
+              }
+            />
+          )}
           {approvalRequired && (
             <FormControlLabel
               checked={approvalChecked}
@@ -265,6 +273,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             <TxApprovalButton
               tx={gateway.setup.approval}
               onDone={handleApproved}
+              disabled={!approvalChecked}
             />
           )}
           {approved || !approvalRequired ? (
@@ -274,12 +283,12 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           ) : null}
         </ActionButtonWrapper>
       </PaperContent>
-      <Debug it={{ fees }} />
+      <Debug it={{ fees, isH2H, isMint, isRelease }} />
     </>
   );
 };
 
-type TxApprovalButtonProps = {
+type TxApprovalButtonProps = ButtonProps & {
   tx: TxSubmitter | TxWaiter;
   onDone: () => void;
   target?: number;
@@ -291,6 +300,7 @@ export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
   onDone,
   target,
   autoSubmit,
+  ...rest
 }) => {
   const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(autoSubmit ? true : false);
@@ -342,7 +352,7 @@ export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
 
   return (
     <>
-      <ActionButton disabled={disabled} onClick={submit}>
+      <ActionButton disabled={disabled} onClick={submit} {...rest}>
         {t("gateway.approve-assets-contracts-label")}
       </ActionButton>
       <Debug it={{ tx, errorSubmitting, errorWaiting, confirmations }} />

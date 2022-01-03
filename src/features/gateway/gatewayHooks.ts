@@ -337,6 +337,7 @@ export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
       toChain: chains[to].chain,
     })
       .then(({ inputType, outputType, selector }) => {
+        console.log(inputType, outputType);
         if (inputType === InputType.Burn) {
           setIsBurn(true);
           setIsLock(false);
@@ -358,13 +359,20 @@ export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
         reset();
       });
   }, [reset, chains, asset, from, to]);
+  console.log("useGatewayMeta", asset, from, to, chains);
+
+  // this is faster than input/output types
+  const fromConnectionRequired = Boolean(chains[from].connectionRequired);
+  const toConnectionRequired = Boolean(chains[to].connectionRequired);
+  const isH2H = fromConnectionRequired && toConnectionRequired;
 
   return {
     isMint,
     isRelease,
     isLock,
     isBurn,
-    fromConnectionRequired: chains[from].connectionRequired,
-    toConnectionRequired: chains[to].connectionRequired,
+    fromConnectionRequired,
+    toConnectionRequired,
+    isH2H,
   };
 };
