@@ -2,12 +2,12 @@ import { Chain } from "@renproject/chains";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { RenNetwork } from "@renproject/utils";
 import { useEffect, useMemo } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Wallet } from "../../utils/walletsConfig";
 import { useChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
-import { $wallet } from "./walletSlice";
+import { $wallet, setChain } from "./walletSlice";
 import { WalletStatus } from "./walletUtils";
 
 type WalletData = ReturnType<typeof useMultiwallet> & {
@@ -73,6 +73,13 @@ export const useWallet: UseWallet = (chain) => {
 export const useCurrentChainWallet = () => {
   const { chain } = useSelector($wallet);
   return useWallet(chain);
+};
+
+export const useSyncWalletChain = (chain: Chain) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setChain(chain));
+  }, [dispatch, chain]);
 };
 
 export const useSyncWalletNetwork = () => {

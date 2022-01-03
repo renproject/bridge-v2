@@ -25,6 +25,10 @@ import {
 } from "../../../components/buttons/Buttons";
 import { WalletIcon } from "../../../components/icons/RenIcons";
 import {
+  CenteringSpacedBox,
+  PaperSpacerWrapper,
+} from "../../../components/layout/LayoutHelpers";
+import {
   PaperContent,
   SpacedPaperContent,
 } from "../../../components/layout/Paper";
@@ -706,5 +710,25 @@ export const AddTokenButton: FunctionComponent<AddTokenButtonProps> = ({
           : t("wallet.add-token-button-label", params)}
       </SecondaryActionButton>
     </Fade>
+  );
+};
+
+export const ConnectWalletPaperSection: FunctionComponent = () => {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const handleWalletPickerOpen = useCallback(() => {
+    dispatch(setPickerOpened(true));
+  }, [dispatch]);
+  return (
+    <>
+      <PaperSpacerWrapper>
+        <CenteringSpacedBox>
+          <WalletConnectionProgress />
+        </CenteringSpacedBox>
+      </PaperSpacerWrapper>
+      <ActionButton onClick={handleWalletPickerOpen}>
+        {t("wallet.connect")}
+      </ActionButton>
+    </>
   );
 };

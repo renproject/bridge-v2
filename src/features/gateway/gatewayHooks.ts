@@ -55,6 +55,9 @@ export const useGateway = (
       (window as any).renJs = renJs;
       return renJs;
     };
+    if (!provider) {
+      return;
+    }
     initProvider()
       .then((renJs) => setRenJs(renJs))
       .catch((error) => {
@@ -102,7 +105,7 @@ export const useGateway = (
 
 export const useGatewayFees = (
   gateway: Gateway | null,
-  amount: string | number | BigNumber | null
+  amount: string | number | BigNumber | null = 0
 ) => {
   const [decimals, setDecimals] = useState(0);
   const [balancePending, setBalancePending] = useState(false);
