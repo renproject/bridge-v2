@@ -42,12 +42,17 @@ export enum AssetRateService {
   Coingecko = "Coingecko",
 }
 
+export type AssetColorsConfig = {
+  color?: string;
+};
+
 export type AssetRateConfig = {
   rateService?: AssetRateService;
   rateSymbol?: string;
 };
 
 type AssetBaseConfig = AssetIconsConfig &
+  AssetColorsConfig &
   AssetLabelsConfig &
   AssetRateConfig & {};
 
@@ -147,8 +152,8 @@ export const assetsConfig = Object.fromEntries(
 
 console.log("assetsConfig", assetsConfig);
 
-export const getAssetConfig = (asset: Asset) => {
-  const config = assetsConfig[asset];
+export const getAssetConfig = (asset: Asset | string) => {
+  const config = assetsConfig[asset as Asset];
   if (!config) {
     throw new Error(`Asset config not found for ${asset}`);
   }

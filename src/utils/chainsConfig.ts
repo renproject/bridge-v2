@@ -38,12 +38,14 @@ type ChainBaseConfig = ChainIconsConfig &
   ChainLabelsConfig &
   ChainNetworksConfig & {};
 
-const unsetChainConfig: ChainBaseConfig = {
+export type ChainConfig = ChainBaseConfig & {};
+
+const unsetChainConfig: ChainConfig = {
   Icon: EmptyCircleIcon,
   fullName: "Unset full name",
 };
 
-const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
+const chainsBaseConfig: Record<Chain, ChainConfig> = {
   Arbitrum: {
     Icon: ArbitrumCircleIcon,
     fullName: "Arbitrum",
@@ -94,8 +96,8 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
 
 export const chainsConfig = chainsBaseConfig;
 
-export const getChainConfig = (chain: Chain) => {
-  const config = chainsConfig[chain];
+export const getChainConfig = (chain: Chain | string) => {
+  const config = chainsConfig[chain as Chain];
   if (!config) {
     throw new Error(`Chain config not found for ${chain}`);
   }

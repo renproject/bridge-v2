@@ -59,9 +59,14 @@ import {
   useWallet,
 } from "../../../wallet/walletHooks";
 import { getPaymentLink } from "../../../wallet/walletUtils";
-import { GatewayAddressValidityMessage } from "../../components/MintHelpers";
+import {
+  DepositWrapper,
+  GatewayAddressValidityMessage,
+} from "../../components/MintHelpers";
+import { ResponsiveDepositNavigation } from "../../components/MultipleDepositsHelpers";
 import { useGateway, useGatewayFees } from "../../gatewayHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
+import { useTransactionsPagination } from "../../mintHooks";
 import { useGatewayMenuControl } from "../gatewayUiHooks";
 import { Asset, Chain } from "@renproject/chains";
 
@@ -84,9 +89,30 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
 
   useSyncWalletChain(to);
   const { connected, provider } = useWallet(to);
-  const { gateway } = useGateway({ asset, from, to, nonce, network }, provider);
+  const { gateway, transactions } = useGateway(
+    { asset, from, to, nonce, network },
+    provider
+  );
+
   const fees = useGatewayFees(gateway);
   const { minimumAmount } = fees;
+
+  console.log("gateway", gateway);
+  (window as any).ga = gateway;
+  (window as any).txs = transactions;
+
+  const { orderedHashes, total } = useTransactionsPagination(transactions);
+
+  const [currentDeposit, setCurrentDeposit] = useState(
+    "gateway" // TODO: add url based depositHash
+  );
+
+  const handleCurrentDepositChange = useCallback((_, newDeposit) => {
+    if (newDeposit !== null) {
+      setCurrentDeposit(newDeposit);
+    }
+  }, []);
+
   return (
     <>
       <PaperHeader>
@@ -113,13 +139,25 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
           <ProgressStatus reason={"Preparing gateway..."} />
         )}
         {connected && gateway !== null && (
-          <MintDepositToStatus
-            gateway={gateway}
-            minimumAmount={minimumAmount}
-          />
+          <>
+            <DepositWrapper>
+              <ResponsiveDepositNavigation
+                value={currentDeposit}
+                onChange={handleCurrentDepositChange}
+                gateway={gateway}
+                transactions={transactions}
+                expiryTime={Date.now() + 24 * 3600 * 1000} // TODO: crit finish
+              />
+              <MintDepositToStatus
+                gateway={gateway}
+                minimumAmount={minimumAmount}
+              />
+            </DepositWrapper>
+            <Debug it={{ transactions: transactions.length }} />
+          </>
         )}
       </PaperContent>
-      <Debug it={{ connected, gatewayParams, fees }} />
+      <Debug it={{ connected, gatewayParams, fees, orderedHashes, total }} />
       <Debug it={{ gateway, provider }} />
     </>
   );
@@ -165,7 +203,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
     };
   }, [showNotification, toChainConfig, closeNotification, timeRemained]);
 
-  const lockCurrencyConfig = getAssetConfig(Asset.BTC);
+  const lockCurrencyConfig = getAssetConfig(gateway.params.asset as Asset);
   const lockChainConfig = getChainConfig(gateway.fromChain.chain as Chain);
   // const { color } = lockCurrencyConfig;
   const color = orangeLight;

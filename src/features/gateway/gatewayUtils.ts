@@ -85,3 +85,10 @@ export const generateNonce = (dayOffset = 0, dayIndex = 0) => {
   const nonce = dayIndex + getSessionDay(dayOffset) * 1000;
   return nonce;
 };
+
+// Amount of time remaining until gateway expires
+export const getRemainingGatewayTime = (expiryTime: number) =>
+  Math.ceil(expiryTime - GATEWAY_EXPIRY_OFFSET_MS - Number(new Date()));
+
+export const getRemainingTime = (expiryTime: number) =>
+  Math.ceil(expiryTime - Number(new Date()));

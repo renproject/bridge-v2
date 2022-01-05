@@ -2,7 +2,12 @@ import { Asset, Chain } from "@renproject/chains";
 import { Ethereum } from "@renproject/chains-ethereum";
 import RenJS, { Gateway, GatewayTransaction } from "@renproject/ren";
 import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
-import { InputType, OutputType, RenNetwork } from "@renproject/utils";
+import {
+  ChainCommon,
+  InputType,
+  OutputType,
+  RenNetwork,
+} from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useState } from "react";
@@ -34,9 +39,15 @@ export const useGateway = (
   const [transactions, setTransactions] = useState<Array<GatewayTransaction>>(
     []
   );
-  const addTransaction = useCallback((tx: GatewayTransaction) => {
-    console.log("gateway detected transaction", tx);
-    setTransactions((txs) => [...txs, tx]);
+  const addTransaction = useCallback((newTx: GatewayTransaction) => {
+    console.log("gateway detected transaction", newTx.hash, newTx);
+    setTransactions((txs) => {
+      const index = txs.findIndex((tx) => tx.hash === newTx.hash);
+      if (index >= 0) {
+        return txs.splice(index, 1, newTx);
+      }
+      return [...txs, newTx];
+    });
   }, []);
 
   // set up renjs with signers
@@ -101,6 +112,33 @@ export const useGateway = (
   }, [renJs, addTransaction, asset, chains, from, to, nonce, amount]);
 
   return { renJs, gateway, transactions, error };
+};
+
+export const useChainAssetDecimals = (
+  chainInstance: ChainCommon | null,
+  asset: string | Asset
+) => {
+  const [decimals, setDecimals] = useState<number | null>(null);
+  const [error, setError] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!chainInstance) {
+      setDecimals(null);
+      return;
+    }
+    const getDecimals = async () => {
+      return chainInstance.assetDecimals(asset);
+    };
+    getDecimals()
+      .then((dec) => {
+        setDecimals(dec);
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  }, [chainInstance, asset]);
+
+  return { decimals, error };
 };
 
 export const useGatewayFees = (
