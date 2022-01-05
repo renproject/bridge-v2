@@ -164,11 +164,11 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
   const theme = useTheme();
   const { t } = useTranslation();
   const hash = transaction.hash;
-  const { decimals } = useChainAssetDecimals(
+  const { decimals: lockAssetDecimals } = useChainAssetDecimals(
     gateway.fromChain,
     gateway.params.asset
   );
-  const lockCurrencyConfig = getAssetConfig(transaction.params.asset as Asset);
+  const lockAssetConfig = getAssetConfig(transaction.params.asset);
   const lockChainConfig = getChainConfig(transaction.fromChain.chain);
   const mintChainConfig = getChainConfig(transaction.toChain.chain);
 
@@ -181,9 +181,9 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
   const { confirmations: lockConfirmations } =
     useChainTransactionStatusUpdater(lockTransaction);
   const lockTxAmount =
-    decimals !== null
+    lockAssetDecimals !== null
       ? new BigNumber(lockChainTransaction.amount)
-          .shiftedBy(-decimals)
+          .shiftedBy(-lockAssetDecimals)
           .toString()
       : null;
   const { depositStatus, depositPhase } = getTransactionMeta(transaction);
@@ -213,7 +213,7 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
     InfoContent = (
       <div>
         <Typography variant="body1" color="textPrimary">
-          {lockTxAmount} {lockCurrencyConfig.shortName}
+          {lockTxAmount} {lockAssetConfig.shortName}
         </Typography>
         <Typography variant="body2" color="primary">
           {t("mint.deposit-navigation-completed-label")}
@@ -224,7 +224,7 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
     InfoContent = (
       <div>
         <Typography variant="body1" color="textPrimary">
-          {lockTxAmount} {lockCurrencyConfig.shortName}
+          {lockTxAmount} {lockAssetConfig.shortName}
         </Typography>
         <Typography variant="body2" color="textSecondary">
           {t("mint.deposit-navigation-completing-label")}
@@ -235,7 +235,7 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
     InfoContent = (
       <div>
         <Typography variant="body1" color="textPrimary">
-          {lockTxAmount} {lockCurrencyConfig.shortName}
+          {lockTxAmount} {lockAssetConfig.shortName}
         </Typography>
         {lockTargetConfirmations !== 0 ? (
           <Typography variant="body2" color="textSecondary">
@@ -258,7 +258,7 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
           ) : (
             <Skeleton variant="text" width={70} height={14} />
           )}{" "}
-          {lockCurrencyConfig.shortName}
+          {lockAssetConfig.shortName}
         </Typography>
         {/* TODO: Differentiate between submitting and ready to mint */}
         {/* <Typography variant="body2" color="primary">
@@ -273,9 +273,7 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
     <DepositToggleButton key={hash} value={hash}>
       <CircledProgressWithContent
         color={
-          completed
-            ? theme.customColors.blue
-            : lockCurrencyConfig.color || orange
+          completed ? theme.customColors.blue : lockAssetConfig.color || orange
         }
         {...confirmationProps}
         processing={isProcessing}

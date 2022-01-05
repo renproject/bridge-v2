@@ -114,6 +114,7 @@ export const useGateway = (
   return { renJs, gateway, transactions, error };
 };
 
+// TODO: reuse in useGatewayFees
 export const useChainAssetDecimals = (
   chainInstance: ChainCommon | null,
   asset: string | Asset
