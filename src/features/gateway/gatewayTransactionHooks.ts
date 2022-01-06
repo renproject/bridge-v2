@@ -14,7 +14,7 @@ export const useChainTransactionStatusUpdater = (
   waitTarget?: number
 ) => {
   const chains = useCurrentNetworkChains();
-  const [error, setError] = useState<Error>();
+  const [error, setError] = useState<Error | null>(null);
   const [confirmations, setConfirmations] = useState<number | null>(null);
   const [target, setTarget] = useState<number | null>(null);
   const [status, setStatus] = useState<ChainTransactionStatus>();
@@ -26,7 +26,8 @@ export const useChainTransactionStatusUpdater = (
 
   useEffect(() => {
     tx.wait(waitTarget)
-      .on("status", (progress) => {
+      .once("status", (progress) => {
+        setError(null);
         console.log("newStatus", progress);
         setStatus(progress.status);
         setTarget(progress.target);
@@ -53,7 +54,7 @@ export const useChainTransactionStatusUpdater = (
       .catch((reason) => {
         setError(reason);
       });
-  }, []); // TODO: fix deps
+  }, [tx, waitTarget]); // TODO: fix deps
   return {
     error,
     status,

@@ -77,7 +77,10 @@ import {
   useTransactionsPagination,
 } from "../../mintHooks";
 import { useGatewayMenuControl } from "../gatewayUiHooks";
-import { MintDepositConfirmationStatus } from "./MintStatuses";
+import {
+  MintDepositAcceptedStatus,
+  MintDepositConfirmationStatus,
+} from "./MintStatuses";
 
 export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   location,
@@ -188,7 +191,8 @@ export type GatewayDepositProcessorProps = {
 export const GatewayDepositProcessor: FunctionComponent<
   GatewayDepositProcessorProps
 > = ({ gateway, transaction }) => {
-  const lockStatus = ChainTransactionStatus.Confirming;
+  const lockStatus = ChainTransactionStatus.Done;
+  const txMeta = useDepositTransactionMeta(transaction);
   const {
     lockStatus: x,
     mintStatus,
@@ -199,47 +203,67 @@ export const GatewayDepositProcessor: FunctionComponent<
     lockTxIdFormatted,
     lockTxUrl,
     lockAmount,
-  } = useDepositTransactionMeta(transaction);
+  } = txMeta;
+
   const { decimals: lockAssetDecimals } = useChainAssetDecimals(
     gateway.fromChain,
     gateway.params.asset
   );
 
   let Content = null;
-
-  switch (lockStatus) {
-    case ChainTransactionStatus.Ready:
-      Content = <span>ready</span>;
-      break;
-    case ChainTransactionStatus.Confirming:
+  if (lockStatus !== ChainTransactionStatus.Done) {
+    switch (lockStatus) {
+      case ChainTransactionStatus.Ready:
+        Content = <span>ready</span>;
+        break;
+      case ChainTransactionStatus.Confirming:
+        Content = (
+          <MintDepositConfirmationStatus
+            gateway={gateway}
+            transaction={transaction}
+            lockConfirmations={lockConfirmations}
+            lockTargetConfirmations={lockTargetConfirmations}
+            lockStatus={lockStatus}
+            lockAssetDecimals={lockAssetDecimals}
+            lockAmount={lockAmount}
+            lockTxId={lockTxIdFormatted}
+            lockTxUrl={lockTxUrl}
+          />
+        );
+        break;
+      case ChainTransactionStatus.Done:
+        Content = <span>done</span>;
+        break;
+      case ChainTransactionStatus.Reverted:
+        Content = <span>reverted</span>;
+        break;
+      default:
+        Content = <span>unknown</span>;
+    }
+  } else {
+    if (lockStatus === ChainTransactionStatus.Done) {
       Content = (
-        <MintDepositConfirmationStatus
+        <MintDepositAcceptedStatus
+          expiryTime={42000000}
           gateway={gateway}
           transaction={transaction}
           lockConfirmations={lockConfirmations}
           lockTargetConfirmations={lockTargetConfirmations}
-          lockStatus={lockStatus}
           lockAssetDecimals={lockAssetDecimals}
           lockAmount={lockAmount}
           lockTxId={lockTxIdFormatted}
           lockTxUrl={lockTxUrl}
         />
       );
-      break;
-    case ChainTransactionStatus.Done:
-      Content = <span>done</span>;
-      break;
-    case ChainTransactionStatus.Reverted:
-      Content = <span>reverted</span>;
-      break;
-    default:
-      Content = <span>unknown</span>;
+    }
+    switch (mintStatus) {
+    }
   }
 
   return (
     <>
       {Content}
-      <Debug it={{ lockStatus, mintStatus, lockError, mintError }} />
+      <Debug it={{ hash: transaction.hash, txMeta }} />
     </>
   );
 };
