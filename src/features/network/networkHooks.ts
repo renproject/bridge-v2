@@ -1,10 +1,10 @@
 import { RenNetwork } from "@renproject/utils";
 import queryString from "query-string";
 import { useEffect, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { getDefaultChains } from "../chain/chainUtils";
-import { setNetwork } from "./networkSlice";
+import { $network, setNetwork } from "./networkSlice";
 
 const supportedParamNetworks = [RenNetwork.Mainnet, RenNetwork.Testnet];
 
@@ -23,6 +23,13 @@ export const useSetNetworkFromParam = () => {
 };
 
 export const useChains = (network: RenNetwork) => {
+  return useMemo(() => {
+    return getDefaultChains(network);
+  }, [network]);
+};
+
+export const useCurrentNetworkChains = () => {
+  const { network } = useSelector($network);
   return useMemo(() => {
     return getDefaultChains(network);
   }, [network]);

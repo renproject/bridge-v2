@@ -8,23 +8,17 @@ import {
 } from "@material-ui/core";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import {
-  ChainTransactionStatus,
-  InputChainTransaction,
-  TxSubmitter,
-  TxWaiter,
-} from "@renproject/utils";
-import BigNumber from "bignumber.js";
-import classNames from "classnames";
-import {
   Skeleton,
   ToggleButton,
   ToggleButtonGroup,
   ToggleButtonGroupProps,
   ToggleButtonProps,
 } from "@material-ui/lab";
-import { Asset, Chain } from "@renproject/chains";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import { InputChainTransaction } from "@renproject/utils";
+import BigNumber from "bignumber.js";
+import classNames from "classnames";
+import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CompletedIcon,
@@ -44,7 +38,7 @@ import { HMSCountdown } from "../../transactions/components/TransactionsHelpers"
 import { useChainAssetDecimals } from "../gatewayHooks";
 import { useChainTransactionStatusUpdater } from "../gatewayTransactionHooks";
 import { getRemainingGatewayTime } from "../gatewayUtils";
-import { depositSorter, getTransactionMeta } from "../mintHooks";
+import { depositSorter, getDepositTransactionMeta } from "../mintHooks";
 
 const transition = "all 1s ease-out, border 0.5s ease-out";
 
@@ -141,29 +135,16 @@ export const DepositNavigationResolver: FunctionComponent<
   );
 };
 
-type TransactionUpdaterProps = {
+type DepositNavigationToggleButton = ToggleButtonProps & {
   gateway: Gateway;
   transaction: GatewayTransaction;
 };
 
-const useTransactionStatusUpdater = (transaction: GatewayTransaction) => {
-  const [confirmations, setConfirmations] = useState<number>();
-  useEffect(() => {
-    transaction.in.wait(1).on("status", (status) => {
-      console.log("newStatus", status);
-      setConfirmations(status.confirmations);
-    });
-  }, []);
-  return { confirmations };
-};
-
-const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
-  transaction,
-  gateway,
-}) => {
+const DepositNavigationButton: FunctionComponent<
+  DepositNavigationToggleButton
+> = ({ transaction, gateway, ...rest }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const hash = transaction.hash;
   const { decimals: lockAssetDecimals } = useChainAssetDecimals(
     gateway.fromChain,
     gateway.params.asset
@@ -186,7 +167,8 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
           .shiftedBy(-lockAssetDecimals)
           .toString()
       : null;
-  const { depositStatus, depositPhase } = getTransactionMeta(transaction);
+  const { depositStatus, depositPhase } =
+    getDepositTransactionMeta(transaction);
 
   const StatusIcon = getDepositStatusIcon({
     depositStatus,
@@ -241,7 +223,7 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
           <Typography variant="body2" color="textSecondary">
             {t("mint.deposit-navigation-confirmations-label", {
               confirmations: lockConfirmations,
-              targetConfirmations: lockTargetConfirmations,
+              TargetConfirmations: lockTargetConfirmations,
             })}
           </Typography>
         ) : (
@@ -270,7 +252,7 @@ const DepositNavigationEntry: FunctionComponent<TransactionUpdaterProps> = ({
 
   const Info = () => InfoContent;
   return (
-    <DepositToggleButton key={hash} value={hash}>
+    <DepositToggleButton {...rest}>
       <CircledProgressWithContent
         color={
           completed ? theme.customColors.blue : lockAssetConfig.color || orange
@@ -297,12 +279,7 @@ export const ResponsiveDepositNavigation: FunctionComponent<
   const mobile = !useMediaQuery(
     theme.breakpoints.up(depositNavigationBreakpoint)
   );
-
   const sortedTransactions = transactions.sort(depositSorter);
-
-  const lockChainConfig = getChainConfig(gateway.fromChain.chain as Chain);
-  const mintChainConfig = getChainConfig(gateway.toChain.chain as Chain);
-
   return (
     <div className={styles.root}>
       <StyledToggleButtonGroup
@@ -333,7 +310,12 @@ export const ResponsiveDepositNavigation: FunctionComponent<
           </MoreInfo>
         </DepositToggleButton>
         {sortedTransactions.map((transaction) => (
-          <DepositNavigationEntry transaction={transaction} gateway={gateway} />
+          <DepositNavigationButton
+            key={transaction.hash}
+            value={transaction.hash}
+            transaction={transaction}
+            gateway={gateway}
+          />
         ))}
       </StyledToggleButtonGroup>
     </div>

@@ -1,11 +1,13 @@
 import { Box, Grow, Typography } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import { Gateway } from "@renproject/ren";
+import { Asset, Chain } from "@renproject/chains";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { ChainTransactionStatus } from "@renproject/utils";
+import QRCode from "qrcode.react";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
-import QRCode from "qrcode.react";
 import {
   BigQrCode,
   CopyContentButton,
@@ -64,11 +66,18 @@ import {
   GatewayAddressValidityMessage,
 } from "../../components/MintHelpers";
 import { ResponsiveDepositNavigation } from "../../components/MultipleDepositsHelpers";
-import { useGateway, useGatewayFees } from "../../gatewayHooks";
+import {
+  useChainAssetDecimals,
+  useGateway,
+  useGatewayFees,
+} from "../../gatewayHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
-import { useTransactionsPagination } from "../../mintHooks";
+import {
+  useDepositTransactionMeta,
+  useTransactionsPagination,
+} from "../../mintHooks";
 import { useGatewayMenuControl } from "../gatewayUiHooks";
-import { Asset, Chain } from "@renproject/chains";
+import { MintDepositConfirmationStatus } from "./MintStatuses";
 
 export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   location,
@@ -108,11 +117,13 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   );
 
   const handleCurrentDepositChange = useCallback((_, newDeposit) => {
+    console.log("newDepositHash", newDeposit);
     if (newDeposit !== null) {
       setCurrentDeposit(newDeposit);
     }
   }, []);
 
+  const transaction = transactions.find((tx) => tx.hash === currentDeposit);
   return (
     <>
       <PaperHeader>
@@ -142,16 +153,23 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
           <>
             <DepositWrapper>
               <ResponsiveDepositNavigation
+                gateway={gateway}
                 value={currentDeposit}
                 onChange={handleCurrentDepositChange}
-                gateway={gateway}
                 transactions={transactions}
                 expiryTime={Date.now() + 24 * 3600 * 1000} // TODO: crit finish
               />
-              <MintDepositToStatus
-                gateway={gateway}
-                minimumAmount={minimumAmount}
-              />
+              {transaction ? (
+                <GatewayDepositProcessor
+                  gateway={gateway}
+                  transaction={transaction}
+                />
+              ) : (
+                <MintGatewayAddress
+                  gateway={gateway}
+                  minimumAmount={minimumAmount}
+                />
+              )}
             </DepositWrapper>
             <Debug it={{ transactions: transactions.length }} />
           </>
@@ -163,12 +181,75 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   );
 };
 
-export type MintDepositToProps = {
+export type GatewayDepositProcessorProps = {
+  gateway: Gateway;
+  transaction: GatewayTransaction;
+};
+export const GatewayDepositProcessor: FunctionComponent<
+  GatewayDepositProcessorProps
+> = ({ gateway, transaction }) => {
+  const lockStatus = ChainTransactionStatus.Confirming;
+  const {
+    lockStatus: x,
+    mintStatus,
+    lockError,
+    mintError,
+    lockConfirmations,
+    lockTargetConfirmations,
+    lockTxIdFormatted,
+    lockTxUrl,
+    lockAmount,
+  } = useDepositTransactionMeta(transaction);
+  const { decimals: lockAssetDecimals } = useChainAssetDecimals(
+    gateway.fromChain,
+    gateway.params.asset
+  );
+
+  let Content = null;
+
+  switch (lockStatus) {
+    case ChainTransactionStatus.Ready:
+      Content = <span>ready</span>;
+      break;
+    case ChainTransactionStatus.Confirming:
+      Content = (
+        <MintDepositConfirmationStatus
+          gateway={gateway}
+          transaction={transaction}
+          lockConfirmations={lockConfirmations}
+          lockTargetConfirmations={lockTargetConfirmations}
+          lockStatus={lockStatus}
+          lockAssetDecimals={lockAssetDecimals}
+          lockAmount={lockAmount}
+          lockTxId={lockTxIdFormatted}
+          lockTxUrl={lockTxUrl}
+        />
+      );
+      break;
+    case ChainTransactionStatus.Done:
+      Content = <span>done</span>;
+      break;
+    case ChainTransactionStatus.Reverted:
+      Content = <span>reverted</span>;
+      break;
+    default:
+      Content = <span>unknown</span>;
+  }
+
+  return (
+    <>
+      {Content}
+      <Debug it={{ lockStatus, mintStatus, lockError, mintError }} />
+    </>
+  );
+};
+
+export type MintGatewayAddressProps = {
   gateway: Gateway;
   minimumAmount: number | string;
 };
 
-export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
+export const MintGatewayAddress: FunctionComponent<MintGatewayAddressProps> = ({
   gateway,
   minimumAmount,
 }) => {

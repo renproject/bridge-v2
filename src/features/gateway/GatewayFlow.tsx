@@ -6,7 +6,7 @@ import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 import { GatewayFeesStep } from "./steps/GatewayFeesStep";
-import { MintStandardProcess } from "./steps/substeps/MintStandard";
+import { MintStandardProcess } from "./steps/mint/MintStandard";
 
 export enum GatewayConfigurationStep {
   INITIAL = "initial",

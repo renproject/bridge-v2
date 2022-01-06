@@ -4,6 +4,7 @@ import {
   DepositEntryStatus,
   DepositPhase,
 } from "./components/MultipleDepositsHelpers";
+import { useChainTransactionStatusUpdater } from "./gatewayTransactionHooks";
 
 export const depositSorter = (a: any, b: any) => {
   const aConf = a.detectedAt || 0;
@@ -48,9 +49,55 @@ export const useTransactionsPagination = (
   };
 };
 
-export const getTransactionMeta = (transaction: GatewayTransaction) => {
+export const getDepositTransactionMeta = (transaction: GatewayTransaction) => {
   const depositStatus = DepositEntryStatus.PENDING;
   const depositPhase = DepositPhase.LOCK;
 
   return { depositStatus, depositPhase };
+};
+
+export const useDepositTransactionMeta = (transaction: GatewayTransaction) => {
+  const {
+    error: lockError,
+    status: lockStatus,
+    confirmations: lockConfirmations,
+    target: lockTargetConfirmations,
+    txId: lockTxId,
+    txIdFormatted: lockTxIdFormatted,
+    txIndex: lockTxIndex,
+    txUrl: lockTxUrl,
+    amount: lockAmount,
+  } = useChainTransactionStatusUpdater(transaction.in);
+  const {
+    error: mintError,
+    status: mintStatus,
+    confirmations: mintConfirmations,
+    target: mintTargetConfirmations,
+    txId: mintTxId,
+    txIdFormatted: mintTxIdFormatted,
+    txIndex: mintTxIndex,
+    txUrl: mintTxUrl,
+    amount: mintAmount,
+  } = useChainTransactionStatusUpdater(transaction.out);
+
+  return {
+    lockError,
+    lockStatus,
+    lockConfirmations,
+    lockTargetConfirmations,
+    lockTxId,
+    lockTxIdFormatted,
+    lockTxIndex,
+    lockTxUrl,
+    lockAmount,
+    mintError,
+    mintStatus,
+    mintConfirmations,
+    mintTargetConfirmations,
+    mintTxId,
+    mintTxIdFormatted,
+    mintTxIndex,
+    mintTxUrl,
+    mintAmount,
+  };
 };
