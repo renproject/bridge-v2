@@ -6,7 +6,7 @@ import {
   TxSubmitter,
   TxWaiter,
 } from "@renproject/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCurrentNetworkChains } from "../network/networkHooks";
 
 export const useChainTransactionStatusUpdater = (
@@ -17,14 +17,20 @@ export const useChainTransactionStatusUpdater = (
   const [error, setError] = useState<Error | null>(null);
   const [confirmations, setConfirmations] = useState<number | null>(null);
   const [target, setTarget] = useState<number | null>(null);
-  const [status, setStatus] = useState<ChainTransactionStatus>();
+  const [status, setStatus] = useState<ChainTransactionStatus | null>();
   const [txId, setTxId] = useState<string | null>(null);
   const [txIdFormatted, setTxIdFormatted] = useState<string | null>(null);
   const [txIndex, setTxIndex] = useState<string | null>(null);
   const [amount, setAmount] = useState<string | null>(null);
   const [txUrl, setTxUrl] = useState<string | null>(null);
 
+  const reset = useCallback(() => {
+    setStatus(null);
+    //TODO: add rest
+  }, []);
+
   useEffect(() => {
+    reset();
     tx.wait(waitTarget)
       .once("status", (progress) => {
         setError(null);
@@ -54,7 +60,7 @@ export const useChainTransactionStatusUpdater = (
       .catch((reason) => {
         setError(reason);
       });
-  }, [tx, waitTarget]); // TODO: fix deps
+  }, [tx, waitTarget]);
   return {
     error,
     status,

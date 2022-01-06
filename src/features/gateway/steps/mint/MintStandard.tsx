@@ -191,10 +191,10 @@ export type GatewayDepositProcessorProps = {
 export const GatewayDepositProcessor: FunctionComponent<
   GatewayDepositProcessorProps
 > = ({ gateway, transaction }) => {
-  const lockStatus = ChainTransactionStatus.Done;
+  // const lockStatus = ChainTransactionStatus.Done;
   const txMeta = useDepositTransactionMeta(transaction);
   const {
-    lockStatus: x,
+    lockStatus,
     mintStatus,
     lockError,
     mintError,
@@ -231,31 +231,30 @@ export const GatewayDepositProcessor: FunctionComponent<
           />
         );
         break;
-      case ChainTransactionStatus.Done:
-        Content = <span>done</span>;
-        break;
       case ChainTransactionStatus.Reverted:
         Content = <span>reverted</span>;
         break;
       default:
         Content = <span>unknown</span>;
     }
+  } else if (
+    mintStatus === null &&
+    lockStatus === ChainTransactionStatus.Done
+  ) {
+    Content = (
+      <MintDepositAcceptedStatus
+        expiryTime={42000000}
+        gateway={gateway}
+        transaction={transaction}
+        lockConfirmations={lockConfirmations}
+        lockTargetConfirmations={lockTargetConfirmations}
+        lockAssetDecimals={lockAssetDecimals}
+        lockAmount={lockAmount}
+        lockTxId={lockTxIdFormatted}
+        lockTxUrl={lockTxUrl}
+      />
+    );
   } else {
-    if (lockStatus === ChainTransactionStatus.Done) {
-      Content = (
-        <MintDepositAcceptedStatus
-          expiryTime={42000000}
-          gateway={gateway}
-          transaction={transaction}
-          lockConfirmations={lockConfirmations}
-          lockTargetConfirmations={lockTargetConfirmations}
-          lockAssetDecimals={lockAssetDecimals}
-          lockAmount={lockAmount}
-          lockTxId={lockTxIdFormatted}
-          lockTxUrl={lockTxUrl}
-        />
-      );
-    }
     switch (mintStatus) {
     }
   }
