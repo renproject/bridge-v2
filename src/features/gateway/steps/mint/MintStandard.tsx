@@ -71,6 +71,10 @@ import {
   useGateway,
   useGatewayFees,
 } from "../../gatewayHooks";
+import {
+  useChainTransactionStatusUpdater,
+  useRenVMChainTransactionStatusUpdater,
+} from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
 import {
   useDepositTransactionMeta,
@@ -78,6 +82,7 @@ import {
 } from "../../mintHooks";
 import { useGatewayMenuControl } from "../gatewayUiHooks";
 import {
+  MintCompletedStatus,
   MintDepositAcceptedStatus,
   MintDepositConfirmationStatus,
 } from "./MintStatuses";
@@ -125,6 +130,9 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
       setCurrentDeposit(newDeposit);
     }
   }, []);
+  const handleGoToGateway = useCallback(() => {
+    setCurrentDeposit("gateway");
+  }, []);
 
   const transaction = transactions.find((tx) => tx.hash === currentDeposit);
   return (
@@ -166,6 +174,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
                 <GatewayDepositProcessor
                   gateway={gateway}
                   transaction={transaction}
+                  onGoToGateway={handleGoToGateway}
                 />
               ) : (
                 <MintGatewayAddress
@@ -187,26 +196,35 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
 export type GatewayDepositProcessorProps = {
   gateway: Gateway;
   transaction: GatewayTransaction;
+  onGoToGateway: () => void;
 };
+
 export const GatewayDepositProcessor: FunctionComponent<
   GatewayDepositProcessorProps
-> = ({ gateway, transaction }) => {
+> = ({ gateway, transaction, onGoToGateway }) => {
   // const lockStatus = ChainTransactionStatus.Done;
   const txMeta = useDepositTransactionMeta(transaction);
   const {
-    lockStatus,
-    mintStatus,
     lockError,
-    mintError,
+    lockStatus,
     lockConfirmations,
     lockTargetConfirmations,
     lockTxIdFormatted,
     lockTxUrl,
     lockAmount,
+    mintError,
+    mintStatus,
+    mintTxUrl,
   } = txMeta;
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(transaction.renVM);
+  const { amount: mintAmount } = renVmTxMeta;
 
   const { decimals: lockAssetDecimals } = useChainAssetDecimals(
     gateway.fromChain,
+    gateway.params.asset
+  );
+  const { decimals: mintAssetDecimals } = useChainAssetDecimals(
+    gateway.toChain,
     gateway.params.asset
   );
 
@@ -256,13 +274,27 @@ export const GatewayDepositProcessor: FunctionComponent<
     );
   } else {
     switch (mintStatus) {
+      case ChainTransactionStatus.Done:
+        Content = (
+          <MintCompletedStatus
+            gateway={gateway}
+            transaction={transaction}
+            mintAmount={mintAmount} //TODO: fix
+            lockTxUrl={lockTxUrl}
+            mintTxUrl={mintTxUrl}
+            onGoToGateway={onGoToGateway}
+            mintAssetDecimals={mintAssetDecimals}
+          />
+        );
     }
   }
 
   return (
     <>
       {Content}
-      <Debug it={{ hash: transaction.hash, txMeta }} />
+      <Debug
+        it={{ renVmTxMeta, mintAssetDecimals, hash: transaction.hash, txMeta }}
+      />
     </>
   );
 };
