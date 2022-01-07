@@ -51,7 +51,10 @@ import {
   SubmitErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
 import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
-import { useCurrentChainWallet } from "../../../wallet/walletHooks";
+import {
+  useCurrentChainWallet,
+  useWalletAssetHelpers,
+} from "../../../wallet/walletHooks";
 import { GatewayTransactionValidityMessage } from "../../components/MintHelpers";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
 
@@ -88,7 +91,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<
 
   const { Icon } = lockAssetConfig;
 
-  const confirmed = lockStatus == ChainTransactionStatus.Done;
+  const confirmed = lockStatus === ChainTransactionStatus.Done;
   const lockAmountFormatted =
     lockAmount !== null && lockAssetDecimals !== null
       ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
@@ -232,7 +235,16 @@ export const MintDepositAcceptedStatus: FunctionComponent<
     return () => {
       closeNotification(notification);
     };
-  }, [lockAssetConfig, mintChainConfig, notification]);
+  }, [
+    t,
+    lockAssetConfig,
+    showNotification,
+    closeNotification,
+    mintChainConfig,
+    lockConfirmations,
+    lockTargetConfirmations,
+    notification,
+  ]);
 
   const [mintTimeRemained] = useState(getRemainingTime(expiryTime));
 
@@ -261,7 +273,6 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   const onReload = () => {};
   const onRetry = () => {};
   const submittingError = "";
-  const open = false;
   const error = {};
 
   return (
@@ -396,14 +407,11 @@ export const MintCompletedStatus: FunctionComponent<
 
   useEffectOnce(showNotifications);
 
-  // const { addToken } = useRenAssetHelpers(
-  //   chain,
-  //   network,
-  //   provider,
-  //   lockCurrencyConfig.symbol
-  // );
-
-  const addToken = async () => {};
+  const walletTokenMeta = useWalletAssetHelpers(
+    gateway.params.to.chain,
+    gateway.params.asset
+  );
+  const { addToken } = walletTokenMeta;
 
   return (
     <>
@@ -421,13 +429,15 @@ export const MintCompletedStatus: FunctionComponent<
         !
       </Typography>
       <MultipleActionButtonWrapper>
-        <Box mb={1}>
-          <AddTokenButton
-            onAddToken={addToken}
-            wallet={walletConfig.shortName || walletConfig.fullName}
-            currency={lockAssetConfig.shortName}
-          />
-        </Box>
+        {addToken !== null && (
+          <Box mb={1}>
+            <AddTokenButton
+              onAddToken={addToken}
+              wallet={walletConfig.shortName || walletConfig.fullName}
+              currency={lockAssetConfig.shortName}
+            />
+          </Box>
+        )}
         <ActionButton onClick={handleGoToHome}>
           {t("mint.back-to-home")}
         </ActionButton>
@@ -456,6 +466,7 @@ export const MintCompletedStatus: FunctionComponent<
           </Link>
         )}
       </Box>
+      <Debug it={{ walletTokenMeta }} />
     </>
   );
 };

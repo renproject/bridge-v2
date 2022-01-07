@@ -40,6 +40,27 @@ import { useChainTransactionStatusUpdater } from "../gatewayTransactionHooks";
 import { getRemainingGatewayTime } from "../gatewayUtils";
 import { depositSorter, getDepositTransactionMeta } from "../mintHooks";
 
+export enum DepositPhase {
+  LOCK = "lock",
+  MINT = "mint",
+  NONE = "",
+}
+
+export enum DepositEntryStatus {
+  PENDING = "pending",
+  ACTION_REQUIRED = "action_required",
+  COMPLETING = "completing",
+  COMPLETED = "completed",
+  EXPIRED = "expired",
+}
+
+type GetDepositStatusIconFnParams = {
+  depositStatus: DepositEntryStatus;
+  depositPhase: DepositPhase;
+  lockChainConfig: ChainConfig;
+  mintChainConfig: ChainConfig;
+};
+
 const transition = "all 1s ease-out, border 0.5s ease-out";
 
 const StyledToggleButtonGroup = withStyles((theme) => ({
@@ -186,8 +207,8 @@ const DepositNavigationButton: FunctionComponent<
     completed || completing
       ? {}
       : {
-          confirmations: lockConfirmations,
-          targetConfirmations: lockTargetConfirmations,
+          confirmations: lockConfirmations || undefined,
+          targetConfirmations: lockTargetConfirmations || undefined,
         };
 
   let InfoContent: any = null;
@@ -474,27 +495,6 @@ export const CircledProgressWithContent: FunctionComponent<
       {indicator && <PulseIndicator className={styles.indicator} pulsing />}
     </CircledIconContainer>
   );
-};
-
-export enum DepositPhase {
-  LOCK = "lock",
-  MINT = "mint",
-  NONE = "",
-}
-
-export enum DepositEntryStatus {
-  PENDING = "pending",
-  ACTION_REQUIRED = "action_required",
-  COMPLETING = "completing",
-  COMPLETED = "completed",
-  EXPIRED = "expired",
-}
-
-type GetDepositStatusIconFnParams = {
-  depositStatus: DepositEntryStatus;
-  depositPhase: DepositPhase;
-  lockChainConfig: ChainConfig;
-  mintChainConfig: ChainConfig;
 };
 
 export const getDepositStatusIcon = ({

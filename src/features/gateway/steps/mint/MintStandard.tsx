@@ -71,10 +71,7 @@ import {
   useGateway,
   useGatewayFees,
 } from "../../gatewayHooks";
-import {
-  useChainTransactionStatusUpdater,
-  useRenVMChainTransactionStatusUpdater,
-} from "../../gatewayTransactionHooks";
+import { useRenVMChainTransactionStatusUpdater } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
 import {
   useDepositTransactionMeta,
@@ -205,14 +202,12 @@ export const GatewayDepositProcessor: FunctionComponent<
   // const lockStatus = ChainTransactionStatus.Done;
   const txMeta = useDepositTransactionMeta(transaction);
   const {
-    lockError,
     lockStatus,
     lockConfirmations,
     lockTargetConfirmations,
     lockTxIdFormatted,
     lockTxUrl,
     lockAmount,
-    mintError,
     mintStatus,
     mintTxUrl,
   } = txMeta;

@@ -4,9 +4,10 @@ import RenJS, { Gateway, GatewayTransaction } from "@renproject/ren";
 import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
 import {
   ChainCommon,
-  InputType,
+  ContractChain,
+  InputType, isDefined,
   OutputType,
-  RenNetwork,
+  RenNetwork
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
@@ -140,6 +141,36 @@ export const useChainAssetDecimals = (
   }, [chainInstance, asset]);
 
   return { decimals, error };
+};
+
+export const useChainAssetAddress = (
+  chainInstance: ContractChain | null,
+  asset: string | Asset
+) => {
+  const [address, setAddress] = useState<string | null>(null);
+  const [error, setError] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!chainInstance) {
+      setAddress(null);
+      return;
+    }
+    const getAddress = async () => {
+      if(!isDefined(chainInstance.getMintGateway)){
+        throw new Error(`Unable to resolve contract address for ${asset}`);
+      }
+      return (chainInstance as ContractChain).getMintGateway(asset);
+    };
+    getAddress()
+      .then((addr) => {
+        setAddress(addr);
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  }, [chainInstance, asset]);
+
+  return { address, error };
 };
 
 export const useGatewayFees = (

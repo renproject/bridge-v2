@@ -1,11 +1,16 @@
-import { Chain } from "@renproject/chains";
+import { Asset, Chain } from "@renproject/chains";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { RenNetwork } from "@renproject/utils";
+import { ContractChain, RenNetwork } from "@renproject/utils";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { getRenAssetName } from "../../utils/tokensConfig";
 
 import { Wallet } from "../../utils/walletsConfig";
-import { useChains } from "../network/networkHooks";
+import {
+  useChainAssetAddress,
+  useChainAssetDecimals,
+} from "../gateway/gatewayHooks";
+import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
 import { $wallet, setChain } from "./walletSlice";
 import { WalletStatus } from "./walletUtils";
@@ -146,4 +151,44 @@ export const useSwitchChainHelpers = (
   }, [chains, chain, provider]);
 
   return { addOrSwitchChain };
+};
+
+export const useWalletAssetHelpers = (chain: Chain, asset: Asset | string) => {
+  const chains = useCurrentNetworkChains();
+  const { provider } = useWallet(chain);
+
+  const renAssetName = getRenAssetName(asset);
+  const chainInstance = chains[chain].chain;
+  const { decimals } = useChainAssetDecimals(chainInstance, asset);
+  const { address } = useChainAssetAddress(
+    chainInstance as ContractChain,
+    asset
+  );
+
+  const addToken = useMemo(() => {
+    if (
+      !provider ||
+      !provider.isMetaMask ||
+      address === null ||
+      decimals === null
+    ) {
+      return null;
+    }
+    const params = {
+      type: "ERC20",
+      options: {
+        address,
+        decimals,
+        symbol: renAssetName,
+        image: `https://bridge.renproject.io/tokens/${renAssetName}.svg`, //TODO: change to ren-ui
+      },
+    };
+    return () =>
+      provider.request({
+        method: "wallet_watchAsset",
+        params,
+      });
+  }, [address, decimals, provider, renAssetName]);
+
+  return { address, decimals, addToken };
 };

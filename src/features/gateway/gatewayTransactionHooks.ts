@@ -14,7 +14,6 @@ export const useRenVMChainTransactionStatusUpdater = (
   tx: TxSubmitter,
   waitTarget?: number
 ) => {
-  const chains = useCurrentNetworkChains();
   const [error, setError] = useState<Error | null>(null);
   const [status, setStatus] = useState<ChainTransactionStatus | null>();
   const [target, setTarget] = useState<number | null>(null);
@@ -56,7 +55,8 @@ export const useRenVMChainTransactionStatusUpdater = (
       .catch((reason) => {
         setError(reason);
       });
-  }, [tx, waitTarget]);
+  }, [tx, waitTarget, reset]);
+
   return {
     error,
     status,
@@ -119,7 +119,7 @@ export const useChainTransactionStatusUpdater = (
       .catch((reason) => {
         setError(reason);
       });
-  }, [tx, waitTarget]);
+  }, [tx, waitTarget, chains, reset]);
   return {
     error,
     status,
@@ -131,14 +131,4 @@ export const useChainTransactionStatusUpdater = (
     txUrl,
     amount,
   };
-};
-
-export const useChainAddressExplorerUrl = (
-  chain: Chain | string,
-  address: string
-) => {
-  const chains = useCurrentNetworkChains();
-  const addressExplorerLink =
-    chains[chain as Chain].chain.addressExplorerLink(address);
-  return { addressExplorerLink };
 };
