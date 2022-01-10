@@ -11,13 +11,13 @@ import {
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { isDefined } from "../../utils/objects";
 import { alterEthereumBaseChainSigner } from "../chain/chainUtils";
 import { $exchangeRates } from "../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../marketData/marketDataUtils";
-import { useChains } from "../network/networkHooks";
+import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
 import { createGateway } from "./gatewayUtils";
 
@@ -27,11 +27,12 @@ type UseGatewayParams = {
   from: Chain;
   to: Chain;
   amount?: string;
+  toAddress?: string;
   nonce?: number;
 };
 
 export const useGateway = (
-  { asset, from, to, network, nonce, amount }: UseGatewayParams,
+  { asset, from, to, network, nonce, toAddress, amount }: UseGatewayParams,
   provider: any
 ) => {
   const chains = useChains(network);
@@ -86,7 +87,7 @@ export const useGateway = (
       const initializeGateway = async () => {
         newGateway = await createGateway(
           renJs,
-          { asset, from, to, nonce, amount },
+          { asset, from, to, nonce, toAddress, amount },
           chains
         );
         console.log("gateway created", newGateway);
@@ -110,7 +111,17 @@ export const useGateway = (
         newGateway.eventEmitter.removeAllListeners();
       }
     };
-  }, [renJs, addTransaction, asset, chains, from, to, nonce, amount]);
+  }, [
+    renJs,
+    addTransaction,
+    asset,
+    chains,
+    from,
+    to,
+    nonce,
+    toAddress,
+    amount,
+  ]);
 
   return { renJs, gateway, transactions, error };
 };
@@ -447,4 +458,14 @@ export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
     toConnectionRequired,
     isH2H,
   };
+};
+
+export const useAddressValidator = (chain: Chain) => {
+  const chains = useCurrentNetworkChains();
+  const instance = chains[chain].chain;
+  const validateAddress = useMemo(() => {
+    return (address: string) => instance.validateAddress(address);
+  }, [instance]);
+  (window as any).validator = validateAddress;
+  return { validateAddress };
 };

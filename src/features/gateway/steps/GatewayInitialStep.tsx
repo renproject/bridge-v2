@@ -42,7 +42,7 @@ import {
   getChainOptionData,
 } from "../components/DropdownHelpers";
 import { MintIntro } from "../components/MintHelpers";
-import { useGatewayMeta } from "../gatewayHooks";
+import { useAddressValidator, useGatewayMeta } from "../gatewayHooks";
 import {
   $gateway,
   setAmount,
@@ -118,15 +118,23 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     },
     [dispatch]
   );
+
+  const requiresValidAddress = isRelease;
+  const [isAddressTouched, setIsAddressTouched] = useState(false);
   const handleAddressChange = useCallback(
     (event) => {
+      setIsAddressTouched(true);
       dispatch(setToAddress(event.target.value));
     },
     [dispatch]
   );
+  const { validateAddress } = useAddressValidator(to);
+  const isAddressValid = validateAddress(toAddress);
+  const hasAddressError = isRelease && isAddressTouched && !isAddressValid;
 
   useEffect(() => {
     const assetConfig = getAssetConfig(asset);
+    setIsAddressTouched(false);
     console.log(assetConfig, from, to);
     if (isMint) {
       if (assetConfig.lockChainConnectionRequired) {
@@ -149,13 +157,16 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   // TODO: fix
   const showMinimalAmountError = false;
   const renAsset = getRenAssetName(asset);
-  const showAddressError = false;
 
   const handleNext = useCallback(() => {
     if (onNext) {
-      onNext();
+      if (requiresValidAddress && !isAddressValid) {
+        setIsAddressTouched(true);
+      } else {
+        onNext();
+      }
     }
-  }, [onNext]);
+  }, [onNext, requiresValidAddress, isAddressValid]);
 
   const { connected } = useCurrentChainWallet();
   const handleConnect = useCallback(() => {
@@ -238,9 +249,9 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         <Collapse in={isRelease}>
           <BigOutlinedTextFieldWrapper>
             <OutlinedTextField
-              error={showAddressError}
+              error={hasAddressError}
               helperText={
-                showAddressError
+                hasAddressError
                   ? t("release.releasing-to-error-text")
                   : undefined
               }
@@ -257,7 +268,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       <Divider />
       <PaperContent darker bottomPadding topPadding>
         {connected ? (
-          <ActionButton onClick={handleNext}>
+          <ActionButton onClick={handleNext} disabled={hasAddressError}>
             {t("common.next-label")}
           </ActionButton>
         ) : (
@@ -266,7 +277,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           </ActionButton>
         )}
       </PaperContent>
-      <Debug it={{ meta }} />
+      <Debug it={{ meta, addressError: hasAddressError }} />
     </>
   );
 };

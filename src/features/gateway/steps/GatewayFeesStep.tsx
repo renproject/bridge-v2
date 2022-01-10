@@ -62,7 +62,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const { network } = useSelector($network);
   const history = useHistory();
 
-  const { asset, from, to } = useSelector($gateway);
+  const { asset, from, to, toAddress } = useSelector($gateway);
 
   const { Icon, shortName } = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
@@ -90,6 +90,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       to,
       amount,
       network,
+      toAddress,
       nonce: 1,
     },
     provider
@@ -172,7 +173,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     setApproved(true);
   }, []);
 
-  const showBalance = true;
+  const showBalance = isMint || isH2H;
 
   const Header = (
     <PaperHeader>
