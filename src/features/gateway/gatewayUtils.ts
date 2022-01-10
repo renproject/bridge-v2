@@ -1,12 +1,13 @@
 import { Asset, Chain } from "@renproject/chains";
 import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
-import { Ethereum, EthereumBaseChain } from "@renproject/chains-ethereum";
+import { Ethereum } from "@renproject/chains-ethereum";
 import RenJS, { Gateway } from "@renproject/ren";
 import queryString from "query-string";
 import {
   supportedBitcoinChains,
   supportedEthereumChains,
 } from "../../utils/chainsConfig";
+import { EthereumBaseChain } from "../../utils/missingTypes";
 import { ChainInstanceMap } from "../chain/chainUtils";
 
 export interface CreateGatewayParams {

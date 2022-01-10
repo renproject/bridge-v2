@@ -1,3 +1,4 @@
+import { Chain } from "@renproject/chains";
 import {
   Bitcoin,
   BitcoinBaseChain,
@@ -11,16 +12,15 @@ import {
   Avalanche,
   BinanceSmartChain,
   Ethereum,
-  EthereumBaseChain,
   EthProvider,
   EvmNetworkConfig,
   Fantom,
   Polygon,
 } from "@renproject/chains-ethereum";
-import { RenNetwork, Chain as GatewayChain } from "@renproject/utils";
-import { Chain } from "@renproject/chains";
+import { Chain as GatewayChain, RenNetwork } from "@renproject/utils";
 import { providers } from "ethers";
 import { supportedEthereumChains } from "../../utils/chainsConfig";
+import { EthereumBaseChain } from "../../utils/missingTypes";
 
 export interface ChainInstance {
   chain: GatewayChain;
@@ -35,7 +35,13 @@ interface EVMConstructor<EVM> {
     [network in RenNetwork]?: EvmNetworkConfig;
   };
 
-  new (renNetwork: RenNetwork, web3Provider: EthProvider): EVM;
+  new ({
+    network,
+    provider,
+  }: {
+    network: RenNetwork;
+    provider: EthProvider;
+  }): EVM;
 }
 
 export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
@@ -65,7 +71,8 @@ export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
   const provider = new providers.JsonRpcProvider(rpcUrl);
 
   return {
-    chain: new ChainClass(network, {
+    chain: new ChainClass({
+      network,
       provider,
     }),
     connectionRequired: true,
@@ -90,10 +97,10 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
   };
 
   const bitcoinBaseChains = {
-    [Chain.BitcoinCash]: getBitcoinBaseChain(new BitcoinCash(network)),
-    [Chain.Dogecoin]: getBitcoinBaseChain(new Dogecoin(network)),
-    [Chain.Bitcoin]: getBitcoinBaseChain(new Bitcoin(network)),
-    [Chain.Zcash]: getBitcoinBaseChain(new Zcash(network)),
+    [Chain.BitcoinCash]: getBitcoinBaseChain(new BitcoinCash({ network })),
+    [Chain.Dogecoin]: getBitcoinBaseChain(new Dogecoin({ network })),
+    [Chain.Bitcoin]: getBitcoinBaseChain(new Bitcoin({ network })),
+    [Chain.Zcash]: getBitcoinBaseChain(new Zcash({ network })),
   };
 
   return {
@@ -107,10 +114,11 @@ export const alterEthereumBaseChainSigner = (
   signer: any
 ) => {
   supportedEthereumChains.forEach((chainName) => {
-    if (chains[chainName]?.chain?.withProvider) {
-      chains[chainName].chain.withProvider!({
-        signer,
-      });
+    if (
+      chains[chainName]?.chain &&
+      (chains[chainName].chain as EthereumBaseChain).withSigner
+    ) {
+      (chains[chainName].chain as EthereumBaseChain).withSigner!(signer);
     } else {
       throw new Error(
         `Unable to find chain ${chainName} in chains ${Object.keys(chains).join(

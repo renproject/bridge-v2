@@ -5,14 +5,15 @@ import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAn
 import {
   ChainCommon,
   ContractChain,
-  InputType, isDefined,
+  InputType,
   OutputType,
-  RenNetwork
+  RenNetwork,
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { isDefined } from "../../utils/objects";
 import { alterEthereumBaseChainSigner } from "../chain/chainUtils";
 import { $exchangeRates } from "../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../marketData/marketDataUtils";
@@ -58,10 +59,9 @@ export const useGateway = (
       console.log("provider", provider);
       const ethersProvider = new ethers.providers.Web3Provider(provider);
       const signer = ethersProvider.getSigner();
-      console.log("useGateway altering signer");
+      console.log("useGateway altering signer", signer);
       alterEthereumBaseChainSigner(chains, signer);
       const renJs = new RenJS(network).withChains(
-        // @ts-ignore
         ...Object.values(chains).map((chain) => chain.chain)
       );
       (window as any).renJs = renJs;
@@ -156,7 +156,7 @@ export const useChainAssetAddress = (
       return;
     }
     const getAddress = async () => {
-      if(!isDefined(chainInstance.getMintGateway)){
+      if (!isDefined(chainInstance.getMintGateway)) {
         throw new Error(`Unable to resolve contract address for ${asset}`);
       }
       return (chainInstance as ContractChain).getMintGateway(asset);
@@ -225,8 +225,8 @@ export const useGatewayFees = (
     if (!gateway || !decimals) {
       return;
     }
-    const isLock = gateway.inputType === InputType.Lock;
-    const isMint = gateway.outputType === OutputType.Mint;
+    // const isLock = gateway.inputType === InputType.Lock;
+    // const isMint = gateway.outputType === OutputType.Mint;
     console.log("amount", amount, isNaN(Number(amount)));
     if (amount === "" || amount === null || isNaN(Number(amount))) {
       setOutputAmount(null);
@@ -236,19 +236,18 @@ export const useGatewayFees = (
     const amountBn = new BigNumber(amount);
 
     const estimatedOutputBn = gateway.fees
-      // @ts-ignore
       .estimateOutput(amountBn.shiftedBy(decimals))
       .shiftedBy(-decimals);
     setOutputAmount(estimatedOutputBn.toFixed());
     console.log(`gateway amount estimated output: ${estimatedOutputBn}`);
 
+    const renVMFee = gateway.fees.variableFee;
     setMintFeePercent(
-      new BigNumber(gateway.fees.mint).div(10000).multipliedBy(100).toNumber()
+      new BigNumber(renVMFee).div(10000).multipliedBy(100).toNumber()
     );
     setBurnFeePercent(
-      new BigNumber(gateway.fees.burn).div(10000).multipliedBy(100).toNumber()
+      new BigNumber(renVMFee).div(10000).multipliedBy(100).toNumber()
     );
-    const renVMFee = isMint ? gateway.fees.mint : gateway.fees.burn;
     const renVMFeePercentBn = new BigNumber(renVMFee)
       .div(10000)
       .multipliedBy(100);
@@ -260,10 +259,11 @@ export const useGatewayFees = (
     setMinimumAmount(minimumAmountBn.toFixed());
     console.log(`gateway amount minimum: ${minimumAmountBn}`);
 
-    const fromChainFeeBn = isLock ? gateway.fees.lock : gateway.fees.release;
+    // TODO: crit fix
+    const fromChainFeeBn = gateway.fees.fixedFee;
     setFromChainFeeAmount(fromChainFeeBn.shiftedBy(-decimals).toFixed());
 
-    const toChainFeeBn = isLock ? gateway.fees.release : gateway.fees.lock;
+    const toChainFeeBn = gateway.fees.fixedFee;
     setToChainFeeAmount(toChainFeeBn.shiftedBy(-decimals).toFixed());
 
     const feeAssets = getNativeFeeAssets(gateway);

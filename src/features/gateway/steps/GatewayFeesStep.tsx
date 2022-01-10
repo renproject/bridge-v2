@@ -105,7 +105,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   } = fees;
   console.log("gateway", gateway);
 
-  const approvalRequired = Boolean(gateway?.setup.approval);
+  const approvalRequired = Boolean(gateway?.inSetup.approval);
   const [approved, setApproved] = useState(false);
 
   const [approvalChecked, setApprovalChecked] = useState(false);
@@ -303,7 +303,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
         <ActionButtonWrapper>
           {gateway !== null && approvalRequired && !approved && (
             <TxApprovalButton
-              tx={gateway.setup.approval}
+              tx={gateway.inSetup.approval}
               onDone={handleApproved}
               disabled={!approvalChecked}
             />
@@ -348,7 +348,7 @@ export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
 
     try {
       setWaiting(true);
-      await tx.wait(target).on("status", (status) => {
+      await tx.wait(target).on("progress", (status) => {
         setConfirmations(status.confirmations);
       });
       onDone();
@@ -363,7 +363,7 @@ export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
     setErrorSubmitting(undefined);
     setErrorWaiting(undefined);
 
-    if (tx.submit && tx.status.status === ChainTransactionStatus.Ready) {
+    if (tx.submit && tx.progress.status === ChainTransactionStatus.Ready) {
       try {
         setSubmitting(true);
         await tx.submit({

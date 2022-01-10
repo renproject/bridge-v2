@@ -175,8 +175,8 @@ const DepositNavigationButton: FunctionComponent<
   const mintChainConfig = getChainConfig(transaction.toChain.chain);
 
   const lockTransaction = transaction.in;
-  const lockTargetConfirmations = lockTransaction.status.target;
-  const lockChainTransaction = lockTransaction.status
+  const lockTargetConfirmations = lockTransaction.progress.target;
+  const lockChainTransaction = lockTransaction.progress
     .transaction as InputChainTransaction;
 
   // TODO: crit finish

@@ -2,12 +2,12 @@ import { Chain } from "@renproject/chains";
 import {
   ChainTransactionStatus,
   InputChainTransaction,
-  isDefined,
   TxSubmitter,
   TxWaiter,
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useState } from "react";
+import { isDefined } from "../../utils/objects";
 import { useCurrentNetworkChains } from "../network/networkHooks";
 
 export const useRenVMChainTransactionStatusUpdater = (
@@ -30,11 +30,12 @@ export const useRenVMChainTransactionStatusUpdater = (
   useEffect(() => {
     reset();
     tx.wait(waitTarget)
-      .once("status", (progress) => {
+      .once("progress", (progress) => {
         setError(null);
         console.log("newStatus", progress);
         setStatus(progress.status);
         setTarget(progress.target);
+
         if (isDefined(progress.transaction)) {
           setTxId(progress.transaction.txid);
           setTxIdFormatted(progress.transaction.txidFormatted);
@@ -91,7 +92,7 @@ export const useChainTransactionStatusUpdater = (
   useEffect(() => {
     reset();
     tx.wait(waitTarget)
-      .once("status", (progress) => {
+      .once("progress", (progress) => {
         setError(null);
         console.log("newStatus", progress);
         setStatus(progress.status);
