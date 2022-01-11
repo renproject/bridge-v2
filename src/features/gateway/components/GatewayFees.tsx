@@ -1,12 +1,13 @@
+import { Skeleton } from "@material-ui/lab";
 import { Asset, Chain } from "@renproject/chains";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
-import { chainsConfig } from "../../../utils/chainsConfig";
-import { assetsConfig } from "../../../utils/tokensConfig";
-import { useGatewayFeesWithRates } from "../gatewayHooks";
+import { getChainConfig } from "../../../utils/chainsConfig";
+import { assetsConfig, getAssetConfig } from "../../../utils/tokensConfig";
+import { useGatewayFeesWithRates, useGatewayMeta } from "../gatewayHooks";
 
 type GatewayFeesProps = ReturnType<typeof useGatewayFeesWithRates> & {
   asset: Asset;
@@ -25,44 +26,84 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   renVMFeePercent,
   fromChainFeeAmount,
   fromChainFeeAsset,
+  variableFeePercent,
   fromChainFeeAmountUsd,
   toChainFeeAmount,
   toChainFeeAsset,
   toChainFeeAmountUsd,
-  mintFeePercent,
-  burnFeePercent,
   approval = false,
   approved = false,
 }) => {
+  const { isMint, isH2H, isRelease } = useGatewayMeta(asset, from, to);
   const { t } = useTranslation();
-  const assetConfig = assetsConfig[asset];
-  const fromChainConfig = chainsConfig[from];
-  const toChainConfig = chainsConfig[to];
+  const assetConfig = getAssetConfig(asset);
+  const fromChainConfig = getChainConfig(from);
+  const toChainConfig = getChainConfig(to);
 
-  const renVMFeeTooltip =
-    mintFeePercent !== null && burnFeePercent !== null
-      ? t("fees.ren-fee-tooltip", {
-          mintFee: mintFeePercent,
-          releaseFee: burnFeePercent,
-        })
-      : "";
+  const renVMFeeTooltip = isMint
+    ? t("fees.ren-fee-tooltip", {
+        feePercent: variableFeePercent,
+        feeKind: isMint ? t("common.mint") : t("common.release"),
+      })
+    : "";
 
-  // TODO: better translation keys
-  const fromChainFeeTooltip =
-    fromChainFeeAsset !== null
-      ? t("fees.chain-miner-fee-tooltip", {
-          chain: chainsConfig[from].fullName,
-          currency: fromChainFeeAsset,
-        })
-      : "";
-  const toChainFeeTooltip =
-    toChainFeeAsset !== null
-      ? t("fees.ren-currency-chain-fee-tooltip", {
-          chainFull: chainsConfig[to].fullName,
-          chainShort: chainsConfig[to].fullName,
-          chainNative: assetsConfig[toChainFeeAsset].shortName,
-        })
-      : "";
+  let fromChainFeeTooltip = "",
+    toChainFeeTooltip = "",
+    fromChainFeeLabel = "",
+    toChainFeeLabel = "";
+
+  if (fromChainFeeAsset && toChainFeeAsset) {
+    if (isH2H) {
+      fromChainFeeLabel = t("fees.contract-chain-fee-label", {
+        chain: fromChainConfig.fullName,
+      });
+      toChainFeeLabel = t("fees.contract-chain-fee-label", {
+        chain: toChainConfig.fullName,
+      });
+      fromChainFeeTooltip = t("fees.contract-chain-fee-tooltip", {
+        chainFull: fromChainConfig.fullName,
+        chainShort: fromChainConfig.fullName,
+        chainNative: getAssetConfig(fromChainFeeAsset).shortName,
+      });
+      toChainFeeTooltip = t("fees.contract-chain-fee-tooltip", {
+        chainFull: toChainConfig.fullName,
+        chainShort: toChainConfig.fullName,
+        chainNative: getAssetConfig(toChainFeeAsset).shortName,
+      });
+    } else if (isMint) {
+      fromChainFeeLabel = t("fees.deposit-chain-miner-fee-label", {
+        chain: fromChainConfig.fullName,
+      });
+      toChainFeeLabel = t("fees.contract-chain-fee-label", {
+        chain: toChainConfig.fullName,
+      });
+      fromChainFeeTooltip = t("fees.deposit-chain-miner-fee-tooltip", {
+        chain: fromChainConfig.fullName,
+        currency: fromChainFeeAsset,
+      });
+      toChainFeeTooltip = t("fees.contract-chain-fee-tooltip", {
+        chainFull: toChainConfig.fullName,
+        chainShort: toChainConfig.fullName,
+        chainNative: getAssetConfig(toChainFeeAsset).shortName,
+      });
+    } else if (isRelease) {
+      fromChainFeeLabel = t("fees.contract-chain-fee-label", {
+        chain: fromChainConfig.fullName,
+      });
+      toChainFeeLabel = t("fees.deposit-chain-miner-fee-label", {
+        chain: toChainConfig.fullName,
+      });
+      fromChainFeeTooltip = t("fees.contract-chain-fee-tooltip", {
+        chainFull: fromChainConfig.fullName,
+        chainShort: fromChainConfig.fullName,
+        chainNative: getAssetConfig(fromChainFeeAsset).shortName,
+      });
+      toChainFeeTooltip = t("fees.deposit-chain-miner-fee-tooltip", {
+        chain: toChainConfig.fullName,
+        currency: toChainFeeAsset,
+      });
+    }
+  }
 
   return (
     <>
@@ -95,62 +136,66 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           )
         }
       />
-      <LabelWithValue
-        label={t("fees.chain-miner-fee-label", {
-          chain: fromChainConfig.fullName,
-        })}
-        labelTooltip={fromChainFeeTooltip}
-        value={
-          fromChainFeeAmount !== null && fromChainFeeAsset !== null ? (
-            <NumberFormatText
-              value={fromChainFeeAmount}
-              spacedSuffix={assetsConfig[fromChainFeeAsset].shortName}
-            />
-          ) : (
-            <InlineSkeleton width={120} height={17} />
-          )
-        }
-        valueEquivalent={
-          fromChainFeeAmountUsd !== null ? (
-            <NumberFormatText
-              value={fromChainFeeAmountUsd}
-              prefix="$"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          ) : (
-            ""
-          )
-        }
-      />
-      <LabelWithValue
-        label={t("fees.ren-currency-chain-fee-label", {
-          chain: toChainConfig.fullName,
-        })}
-        labelTooltip={toChainFeeTooltip}
-        value={
-          toChainFeeAmount !== null && toChainFeeAsset !== null ? (
-            <NumberFormatText
-              value={toChainFeeAmount}
-              spacedSuffix={assetsConfig[toChainFeeAsset].shortName}
-            />
-          ) : (
-            <InlineSkeleton width={110} height={17} />
-          )
-        }
-        valueEquivalent={
-          toChainFeeAmountUsd !== null ? (
-            <NumberFormatText
-              value={toChainFeeAmountUsd}
-              prefix="$"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          ) : (
-            ""
-          )
-        }
-      />
+      {Boolean(fromChainFeeLabel) ? (
+        <LabelWithValue
+          label={fromChainFeeLabel}
+          labelTooltip={fromChainFeeTooltip}
+          value={
+            fromChainFeeAmount !== null && fromChainFeeAsset !== null ? (
+              <NumberFormatText
+                value={fromChainFeeAmount}
+                spacedSuffix={assetsConfig[fromChainFeeAsset].shortName}
+              />
+            ) : (
+              <InlineSkeleton width={120} height={17} />
+            )
+          }
+          valueEquivalent={
+            fromChainFeeAmountUsd !== null ? (
+              <NumberFormatText
+                value={fromChainFeeAmountUsd}
+                prefix="$"
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            ) : (
+              ""
+            )
+          }
+        />
+      ) : (
+        <Skeleton width="100%" height={17} />
+      )}
+      {Boolean(toChainFeeLabel) ? (
+        <LabelWithValue
+          label={toChainFeeLabel}
+          labelTooltip={toChainFeeTooltip}
+          value={
+            toChainFeeAmount !== null && toChainFeeAsset !== null ? (
+              <NumberFormatText
+                value={toChainFeeAmount}
+                spacedSuffix={assetsConfig[toChainFeeAsset].shortName}
+              />
+            ) : (
+              <InlineSkeleton width={110} height={17} />
+            )
+          }
+          valueEquivalent={
+            toChainFeeAmountUsd !== null ? (
+              <NumberFormatText
+                value={toChainFeeAmountUsd}
+                prefix="$"
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            ) : (
+              ""
+            )
+          }
+        />
+      ) : (
+        <Skeleton width="100%" height={17} />
+      )}
       {approval && (
         <LabelWithValue
           label={t("fees.assets-contracts-label")}

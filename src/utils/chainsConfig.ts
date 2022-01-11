@@ -92,6 +92,7 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
   Filecoin: unsetChainConfig,
   Goerli: unsetChainConfig,
   Terra: unsetChainConfig,
+  Solana: unsetChainConfig,
 };
 
 export const chainsConfig = chainsBaseConfig;

@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import {
   ChainTransactionStatus,
+  ContractChain,
   TxSubmitter,
   TxWaiter,
 } from "@renproject/utils";
@@ -47,6 +48,7 @@ import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
 import { GatewayFees } from "../components/GatewayFees";
 import {
+  useEthereumChainAssetBalance,
   useGateway,
   useGatewayFeesWithRates,
   useGatewayMeta,
@@ -83,6 +85,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const activeChain = fromConnectionRequired ? from : to;
   const { connected, provider, account } = useWallet(activeChain);
 
+  //why gateway is initialized without amount?
+  console.log("amount", amount);
   const { gateway } = useGateway(
     {
       asset,
@@ -96,14 +100,14 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     provider
   );
   const fees = useGatewayFeesWithRates(gateway, amount);
-  const {
-    balance,
-    balancePending,
-    outputAmount,
-    outputAmountUsd,
-    fromChainFeeAsset,
-    toChainFeeAsset,
-  } = fees;
+  const { balance } = useEthereumChainAssetBalance(
+    isMint
+      ? (gateway?.toChain as ContractChain)
+      : (gateway?.fromChain as ContractChain),
+    asset
+  );
+  const { outputAmount, outputAmountUsd, fromChainFeeAsset, toChainFeeAsset } =
+    fees;
   console.log("gateway", gateway);
 
   const approvalRequired = Boolean(gateway?.inSetup.approval);
@@ -207,7 +211,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               label={t("common.balance-label")}
               value={
                 <span>
-                  {balancePending ? (
+                  {balance === null ? (
                     <InlineSkeleton
                       variant="rect"
                       animation="pulse"

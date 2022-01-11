@@ -122,6 +122,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   REN: unsetAssetConfig,
   ROOK: unsetAssetConfig,
   SUSHI: unsetAssetConfig,
+  SOL: unsetAssetConfig,
   UNI: unsetAssetConfig,
   USDC: unsetAssetConfig,
   USDT: unsetAssetConfig,

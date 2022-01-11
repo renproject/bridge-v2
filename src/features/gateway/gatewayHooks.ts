@@ -1,5 +1,4 @@
 import { Asset, Chain } from "@renproject/chains";
-import { Ethereum } from "@renproject/chains-ethereum";
 import RenJS, { Gateway, GatewayTransaction } from "@renproject/ren";
 import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
 import {
@@ -13,6 +12,8 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { supportedEthereumChains } from "../../utils/chainsConfig";
+import { EthereumBaseChain } from "../../utils/missingTypes";
 import { isDefined } from "../../utils/objects";
 import { alterEthereumBaseChainSigner } from "../chain/chainUtils";
 import { $exchangeRates } from "../marketData/marketDataSlice";
@@ -128,14 +129,14 @@ export const useGateway = (
 
 // TODO: reuse in useGatewayFees
 export const useChainAssetDecimals = (
-  chainInstance: ChainCommon | null,
-  asset: string | Asset
+  chainInstance: ChainCommon | null | undefined,
+  asset: string | Asset | null | undefined
 ) => {
   const [decimals, setDecimals] = useState<number | null>(null);
   const [error, setError] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!chainInstance) {
+    if (!chainInstance || !asset) {
       setDecimals(null);
       return;
     }
@@ -184,17 +185,58 @@ export const useChainAssetAddress = (
   return { address, error };
 };
 
+export const useEthereumChainAssetBalance = (
+  chainInstance: ContractChain | null | undefined,
+  asset: string
+) => {
+  const { decimals } = useChainAssetDecimals(chainInstance, asset);
+  const [balance, setBalance] = useState<string | null>(null);
+  useEffect(() => {
+    if (
+      !chainInstance ||
+      decimals === null ||
+      !supportedEthereumChains.includes(chainInstance.chain as Chain)
+    ) {
+      return;
+    }
+    const getBalance = async () => {
+      console.log(
+        `asset balance ${chainInstance?.chain}/${asset}: ${decimals}`
+      );
+      setBalance(null);
+      const balanceBn = (
+        await (chainInstance as EthereumBaseChain).getBalance(asset)
+      ).shiftedBy(-decimals);
+      setBalance(balanceBn.toFixed());
+      console.log(`gateway balance: ${balanceBn}`);
+    };
+    getBalance().catch(console.error);
+  }, [chainInstance, decimals, asset]);
+
+  return { balance };
+};
+
 export const useGatewayFees = (
   gateway: Gateway | null,
-  amount: string | number | BigNumber | null = 0
+  activeAmount: string | number | BigNumber | null = 0
 ) => {
-  const [decimals, setDecimals] = useState(0);
-  const [balancePending, setBalancePending] = useState(false);
-  const [balance, setBalance] = useState("");
+  const asset = gateway?.params?.asset as Asset;
+  const { decimals: fromChainDecimals } = useChainAssetDecimals(
+    gateway?.fromChain,
+    asset
+  );
+  const { decimals: toChainDecimals } = useChainAssetDecimals(
+    gateway?.toChain,
+    asset
+  );
+
   const [minimumAmount, setMinimumAmount] = useState("");
   const [outputAmount, setOutputAmount] = useState<string | null>(null);
-  const [mintFeePercent, setMintFeePercent] = useState<number | null>(null);
-  const [burnFeePercent, setBurnFeePercent] = useState<number | null>(null);
+  const [variableFeePercent, setVariableFeePercent] = useState<number | null>(
+    null
+  );
+  const [fixedFee, setFixedFee] = useState<number | null>(null);
+
   const [renVMFeePercent, setRenVMFeePercent] = useState<number | null>(null);
   const [renVMFeeAmount, setRenVMFeeAmount] = useState<string | null>(null);
   const [fromChainFeeAmount, setFromChainFeeAmount] = useState<string | null>(
@@ -207,58 +249,37 @@ export const useGatewayFees = (
   const [toChainFeeAsset, setToChainFeeAsset] = useState<Asset | null>(null);
 
   useEffect(() => {
-    setBalancePending(true);
-    //investigate this is flickering 3 times
-    if (!gateway) {
-      return;
-    }
-    const getBalance = async () => {
-      const decimals = await gateway.fromChain.assetDecimals(
-        gateway.params.asset
-      );
-      setDecimals(decimals);
-      console.log(
-        `gateway decimals ${gateway.fromChain.chain}/${gateway.params.asset}: ${decimals}`
-      );
-
-      const balanceBn = (
-        await (gateway.toChain as Ethereum).getBalance(gateway.params.asset)
-      ).shiftedBy(-decimals);
-      setBalance(balanceBn.toFixed());
-      console.log(`gateway balance: ${balanceBn}`);
-      setBalancePending(false);
-    };
-    getBalance().catch(console.error);
-  }, [gateway]);
-
-  useEffect(() => {
-    console.log(`gateway amounts effect`, gateway, amount);
-    if (!gateway || !decimals) {
+    console.log(`gateway amounts effect`, gateway, activeAmount);
+    if (!gateway || !fromChainDecimals || !toChainDecimals) {
       return;
     }
     // const isLock = gateway.inputType === InputType.Lock;
     // const isMint = gateway.outputType === OutputType.Mint;
-    console.log("amount", amount, isNaN(Number(amount)));
-    if (amount === "" || amount === null || isNaN(Number(amount))) {
+    console.log("amount", activeAmount, isNaN(Number(activeAmount)));
+    if (
+      activeAmount === "" ||
+      activeAmount === null ||
+      isNaN(Number(activeAmount))
+    ) {
       setOutputAmount(null);
       setRenVMFeeAmount(null);
       return;
     }
-    const amountBn = new BigNumber(amount);
 
+    const amountBn = new BigNumber(activeAmount);
     const estimatedOutputBn = gateway.fees
-      .estimateOutput(amountBn.shiftedBy(decimals))
-      .shiftedBy(-decimals);
+      .estimateOutput(amountBn.shiftedBy(fromChainDecimals))
+      .shiftedBy(-fromChainDecimals);
     setOutputAmount(estimatedOutputBn.toFixed());
     console.log(`gateway amount estimated output: ${estimatedOutputBn}`);
 
     const renVMFee = gateway.fees.variableFee;
-    setMintFeePercent(
+    setVariableFeePercent(
       new BigNumber(renVMFee).div(10000).multipliedBy(100).toNumber()
     );
-    setBurnFeePercent(
-      new BigNumber(renVMFee).div(10000).multipliedBy(100).toNumber()
-    );
+
+    setFixedFee(gateway.fees.fixedFee.toNumber());
+
     const renVMFeePercentBn = new BigNumber(renVMFee)
       .div(10000)
       .multipliedBy(100);
@@ -266,30 +287,32 @@ export const useGatewayFees = (
     const renVMFeeAmountBn = renVMFeePercentBn.div(100).multipliedBy(amountBn);
     setRenVMFeeAmount(renVMFeeAmountBn.toFixed());
 
-    const minimumAmountBn = gateway.fees.minimumAmount.shiftedBy(-decimals);
+    const minimumAmountBn = gateway.fees.minimumAmount.shiftedBy(
+      -fromChainDecimals
+    );
     setMinimumAmount(minimumAmountBn.toFixed());
     console.log(`gateway amount minimum: ${minimumAmountBn}`);
 
     // TODO: crit fix
     const fromChainFeeBn = gateway.fees.fixedFee;
-    setFromChainFeeAmount(fromChainFeeBn.shiftedBy(-decimals).toFixed());
+    setFromChainFeeAmount(
+      fromChainFeeBn.shiftedBy(-fromChainDecimals).toFixed()
+    );
 
     const toChainFeeBn = gateway.fees.fixedFee;
-    setToChainFeeAmount(toChainFeeBn.shiftedBy(-decimals).toFixed());
+    setToChainFeeAmount(toChainFeeBn.shiftedBy(-fromChainDecimals).toFixed());
 
     const feeAssets = getNativeFeeAssets(gateway);
     setFromChainFeeAsset(feeAssets.fromChainFeeAsset);
     setToChainFeeAsset(feeAssets.toChainFeeAsset);
-  }, [gateway, decimals, amount]);
+  }, [gateway, fromChainDecimals, toChainDecimals, activeAmount]);
 
   return {
-    balancePending,
-    decimals,
-    balance,
+    decimals: fromChainDecimals,
     minimumAmount,
     outputAmount,
-    mintFeePercent,
-    burnFeePercent,
+    variableFeePercent,
+    fixedFee,
     renVMFeePercent,
     renVMFeeAmount,
     fromChainFeeAmount,
@@ -310,11 +333,10 @@ const getNativeFeeAssets = (gateway: Gateway) => {
 
 export const useGatewayFeesWithRates = (
   gateway: Gateway | null,
-  amount: string | number | BigNumber
+  activeAmount: string | number | BigNumber
 ) => {
   const rates = useSelector($exchangeRates);
-  const fees = useGatewayFees(gateway, amount);
-  const [balanceUsd, setBalanceUsd] = useState<string | null>(null);
+  const fees = useGatewayFees(gateway, activeAmount);
   const [outputAmountUsd, setOutputAmountUsd] = useState<string | null>(null);
   const [minimumAmountUsd, setMinimumAmountUsd] = useState<string | null>(null);
   const [renVMFeeAmountUsd, setRenVMFeeAmountUsd] = useState<string | null>(
@@ -337,9 +359,9 @@ export const useGatewayFeesWithRates = (
     if (assetUsdRate === null) {
       return;
     }
-    setBalanceUsd(
-      new BigNumber(fees.balance).multipliedBy(assetUsdRate).toFixed()
-    );
+    // setBalanceUsd(
+    //   new BigNumber(fees.balance).multipliedBy(assetUsdRate).toFixed()
+    // );
     setOutputAmountUsd(
       fees.outputAmount !== null
         ? new BigNumber(fees.outputAmount).multipliedBy(assetUsdRate).toFixed()
@@ -382,11 +404,10 @@ export const useGatewayFeesWithRates = (
           : null
       );
     }
-  }, [gateway, amount, fees, rates]);
+  }, [gateway, activeAmount, fees, rates]);
 
   return {
     ...fees,
-    balanceUsd,
     outputAmountUsd,
     minimumAmountUsd,
     renVMFeeAmountUsd,
@@ -395,6 +416,7 @@ export const useGatewayFeesWithRates = (
   };
 };
 
+// memoize?
 export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
   const { network } = useSelector($network);
   const chains = useChains(network);
@@ -464,7 +486,7 @@ export const useAddressValidator = (chain: Chain) => {
   const chains = useCurrentNetworkChains();
   const instance = chains[chain].chain;
   const validateAddress = useMemo(() => {
-    return (address: string) => instance.validateAddress(address);
+    return (address: string) => instance.validateAddress(address || "");
   }, [instance]);
   (window as any).validator = validateAddress;
   return { validateAddress };
