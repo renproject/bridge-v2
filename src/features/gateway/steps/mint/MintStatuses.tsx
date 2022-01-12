@@ -57,6 +57,7 @@ import {
 } from "../../../wallet/walletHooks";
 import { GatewayTransactionValidityMessage } from "../../components/MintHelpers";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
+import { useDepositTransactionMeta } from "../../mintHooks";
 
 type MintDepositConfirmationStatusProps = {
   gateway: Gateway;
@@ -181,6 +182,11 @@ type MintDepositAcceptedStatusProps = {
   lockAssetDecimals: number | null;
   lockTxId: string | null;
   lockTxUrl: string | null;
+  onSubmit: () => void;
+  onReload: () => void;
+  onRetry: () => void;
+  submitting: boolean;
+  submittingError?: Error | string;
 };
 
 export const MintDepositAcceptedStatus: FunctionComponent<
@@ -195,6 +201,11 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   lockAssetDecimals,
   lockTxId,
   lockTxUrl,
+  onSubmit,
+  submittingError,
+  submitting,
+  onReload,
+  onRetry,
 }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.deposit-accepted-submit-title"));
@@ -268,13 +279,6 @@ export const MintDepositAcceptedStatus: FunctionComponent<
 
   const { Icon } = lockChainConfig;
 
-  const submitting = false;
-  const onSubmit = () => {};
-  const onReload = () => {};
-  const onRetry = () => {};
-  const submittingError = "";
-  const error = {};
-
   return (
     <>
       <ProgressWrapper>
@@ -321,12 +325,12 @@ export const MintDepositAcceptedStatus: FunctionComponent<
           />
         )}
       </ActionButtonWrapper>
-      <Debug it={{ error }} />
+      <Debug it={{ submittingError }} />
       <SubmitErrorDialog
         open={Boolean(submittingError)}
         onAction={onReload}
         onAlternativeAction={onRetry}
-        error={error}
+        error={submittingError}
       />
     </>
   );

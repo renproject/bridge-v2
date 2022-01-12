@@ -25,6 +25,7 @@ import {
 } from "../components/icons/RenIcons";
 
 import { env } from "../constants/environmentVariables";
+import { bitcoinOrange } from "../theme/colors";
 import { getAssetChainsConfig } from "./chainsConfig";
 
 export type AssetIconsConfig = {
@@ -84,6 +85,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   BTC: {
     Icon: nativeTokenIcon(Btc),
     RenIcon: wrappedTokenIcon(RenBtc),
+    color: bitcoinOrange,
     shortName: "BTC",
     fullName: "Bitcoin",
     rateService: AssetRateService.Bandchain,

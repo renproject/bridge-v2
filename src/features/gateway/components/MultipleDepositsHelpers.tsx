@@ -15,7 +15,7 @@ import {
   ToggleButtonProps,
 } from "@material-ui/lab";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
-import { InputChainTransaction } from "@renproject/utils";
+import { ChainTransactionStatus } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
@@ -31,14 +31,12 @@ import {
   ProgressWithContentProps,
   PulseIndicator,
 } from "../../../components/progress/ProgressHelpers";
-import { orange } from "../../../theme/colors";
 import { ChainConfig, getChainConfig } from "../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../utils/tokensConfig";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 import { useChainAssetDecimals } from "../gatewayHooks";
-import { useChainTransactionStatusUpdater } from "../gatewayTransactionHooks";
 import { getRemainingGatewayTime } from "../gatewayUtils";
-import { depositSorter, getDepositTransactionMeta } from "../mintHooks";
+import { depositSorter, useDepositTransactionMeta } from "../mintHooks";
 
 export enum DepositPhase {
   LOCK = "lock",
@@ -164,96 +162,80 @@ type DepositNavigationToggleButton = ToggleButtonProps & {
 const DepositNavigationButton: FunctionComponent<
   DepositNavigationToggleButton
 > = ({ transaction, gateway, ...rest }) => {
-  const theme = useTheme();
   const { t } = useTranslation();
   const { decimals: lockAssetDecimals } = useChainAssetDecimals(
     gateway.fromChain,
     gateway.params.asset
   );
-  const lockAssetConfig = getAssetConfig(transaction.params.asset);
-  const lockChainConfig = getChainConfig(transaction.fromChain.chain);
-  const mintChainConfig = getChainConfig(transaction.toChain.chain);
 
-  const lockTransaction = transaction.in;
-  const lockTargetConfirmations = lockTransaction.progress.target;
-  const lockChainTransaction = lockTransaction.progress
-    .transaction as InputChainTransaction;
+  const lockAssetConfig = getAssetConfig(transaction.params.asset);
+  // const lockChainConfig = getChainConfig(transaction.fromChain.chain);
+  // const mintChainConfig = getChainConfig(transaction.toChain.chain);
 
   // TODO: crit finish
-  const { confirmations: lockConfirmations } =
-    useChainTransactionStatusUpdater(lockTransaction);
+  const txMeta = useDepositTransactionMeta(transaction);
+  const { lockConfirmations, lockAmount, lockTargetConfirmations } = txMeta;
+
   const lockTxAmount =
-    lockAssetDecimals !== null
-      ? new BigNumber(lockChainTransaction.amount)
-          .shiftedBy(-lockAssetDecimals)
-          .toString()
+    lockAssetDecimals !== null && lockAmount !== null
+      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
       : null;
-  const { depositStatus, depositPhase } =
-    getDepositTransactionMeta(transaction);
+  //TODO: remove
 
-  const StatusIcon = getDepositStatusIcon({
-    depositStatus,
-    depositPhase,
-    mintChainConfig,
-    lockChainConfig,
-  });
-  const isProcessing =
-    depositPhase === DepositPhase.NONE ||
-    depositStatus === DepositEntryStatus.COMPLETING;
-  const requiresAction = depositStatus === DepositEntryStatus.ACTION_REQUIRED;
-  const completed = depositStatus === DepositEntryStatus.COMPLETED;
-  const completing = depositStatus === DepositEntryStatus.COMPLETING;
-  const confirmationProps =
-    completed || completing
-      ? {}
-      : {
-          confirmations: lockConfirmations || undefined,
-          targetConfirmations: lockTargetConfirmations || undefined,
-        };
+  let Content: any = null;
+  let Progress: any = null;
 
-  let InfoContent: any = null;
-  if (depositStatus === DepositEntryStatus.COMPLETED) {
-    InfoContent = (
-      <div>
-        <Typography variant="body1" color="textPrimary">
-          {lockTxAmount} {lockAssetConfig.shortName}
-        </Typography>
-        <Typography variant="body2" color="primary">
-          {t("mint.deposit-navigation-completed-label")}
-        </Typography>
-      </div>
+  const { lockStatus, mintStatus } = txMeta;
+  // const lockStatus = ChainTransactionStatus.Confirming;
+  // const mintStatus = null;
+
+  if (lockStatus !== ChainTransactionStatus.Done) {
+    switch (lockStatus) {
+      case ChainTransactionStatus.Confirming:
+        const Icon = lockAssetConfig.Icon;
+        Progress = (
+          <CircledProgressWithContent
+            color={lockAssetConfig.color}
+            confirmations={lockConfirmations || undefined}
+            targetConfirmations={lockTargetConfirmations || undefined}
+          >
+            <Icon fontSize="large" />
+          </CircledProgressWithContent>
+        );
+        Content = (
+          <div>
+            <Typography variant="body1" color="textPrimary">
+              {lockTxAmount} {lockAssetConfig.shortName}
+            </Typography>
+            {lockTargetConfirmations !== 0 ? (
+              <Typography variant="body2" color="textSecondary">
+                {t("mint.deposit-navigation-confirmations-label", {
+                  confirmations: lockConfirmations,
+                  targetConfirmations: lockTargetConfirmations,
+                })}
+              </Typography>
+            ) : (
+              <Skeleton variant="text" width={100} height={14} />
+            )}
+          </div>
+        );
+    }
+  } else if (
+    mintStatus === null &&
+    lockStatus === ChainTransactionStatus.Done
+  ) {
+    const Icon = lockAssetConfig.Icon;
+    Progress = (
+      <CircledProgressWithContent
+        color={lockAssetConfig.color}
+        confirmations={lockConfirmations || undefined}
+        targetConfirmations={lockTargetConfirmations || undefined}
+        indicator={true}
+      >
+        <Icon fontSize="large" />
+      </CircledProgressWithContent>
     );
-  } else if (depositStatus === DepositEntryStatus.COMPLETING) {
-    InfoContent = (
-      <div>
-        <Typography variant="body1" color="textPrimary">
-          {lockTxAmount} {lockAssetConfig.shortName}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {t("mint.deposit-navigation-completing-label")}
-        </Typography>
-      </div>
-    );
-  } else if (depositStatus === DepositEntryStatus.PENDING) {
-    InfoContent = (
-      <div>
-        <Typography variant="body1" color="textPrimary">
-          {lockTxAmount} {lockAssetConfig.shortName}
-        </Typography>
-        {lockTargetConfirmations !== 0 ? (
-          <Typography variant="body2" color="textSecondary">
-            {t("mint.deposit-navigation-confirmations-label", {
-              confirmations: lockConfirmations,
-              TargetConfirmations: lockTargetConfirmations,
-            })}
-          </Typography>
-        ) : (
-          <Skeleton variant="text" width={100} height={14} />
-        )}
-      </div>
-    );
-  } else if (depositStatus === DepositEntryStatus.ACTION_REQUIRED) {
-    InfoContent = (
+    Content = (
       <div>
         <Typography variant="body1" color="textPrimary">
           {lockTxAmount !== null ? (
@@ -263,30 +245,36 @@ const DepositNavigationButton: FunctionComponent<
           )}{" "}
           {lockAssetConfig.shortName}
         </Typography>
-        {/* TODO: Differentiate between submitting and ready to mint */}
-        {/* <Typography variant="body2" color="primary">
-                  {t("mint.deposit-navigation-ready-to-mint-label")}
-                </Typography> */}
+        <Typography variant="body2" color="primary">
+          {t("mint.deposit-navigation-ready-to-mint-label")}
+        </Typography>
       </div>
     );
+  } else {
+    switch (mintStatus) {
+      case ChainTransactionStatus.Done:
+        Progress = (
+          <CircledProgressWithContent>
+            <CompletedIcon fontSize="large" />
+          </CircledProgressWithContent>
+        );
+        Content = (
+          <div>
+            <Typography variant="body1" color="textPrimary">
+              {lockTxAmount} {lockAssetConfig.shortName}
+            </Typography>
+            <Typography variant="body2" color="primary">
+              {t("mint.deposit-navigation-completed-label")}
+            </Typography>
+          </div>
+        );
+    }
   }
 
-  const Info = () => InfoContent;
   return (
     <DepositToggleButton {...rest}>
-      <CircledProgressWithContent
-        color={
-          completed ? theme.customColors.blue : lockAssetConfig.color || orange
-        }
-        {...confirmationProps}
-        processing={isProcessing}
-        indicator={requiresAction}
-      >
-        <StatusIcon fontSize="large" />
-      </CircledProgressWithContent>
-      <MoreInfo>
-        <Info />
-      </MoreInfo>
+      {Progress}
+      <MoreInfo>{Content}</MoreInfo>
     </DepositToggleButton>
   );
 };

@@ -223,12 +223,28 @@ export const GatewayDepositProcessor: FunctionComponent<
     gateway.params.asset
   );
 
+  const [submitting, setSubmitting] = useState(false);
+  const [submittingError, setSubmittingError] = useState();
+  const handleSubmit = useCallback(async () => {
+    if (transaction.out.submit) {
+      console.log("txOut", transaction);
+      setSubmittingError(undefined);
+      setSubmitting(true);
+      try {
+        await transaction.out.submit();
+      } catch (error: any) {
+        setSubmittingError(error.message);
+      }
+      setSubmitting(false);
+    }
+  }, [transaction.out]);
+  const handleReload = useCallback(() => {
+    setSubmittingError(undefined);
+  }, []);
+
   let Content = null;
   if (lockStatus !== ChainTransactionStatus.Done) {
     switch (lockStatus) {
-      case ChainTransactionStatus.Ready:
-        Content = <span>ready</span>;
-        break;
       case ChainTransactionStatus.Confirming:
         Content = (
           <MintDepositConfirmationStatus
@@ -265,6 +281,11 @@ export const GatewayDepositProcessor: FunctionComponent<
         lockAmount={lockAmount}
         lockTxId={lockTxIdFormatted}
         lockTxUrl={lockTxUrl}
+        onSubmit={handleSubmit}
+        onRetry={handleSubmit}
+        onReload={handleReload}
+        submitting={submitting}
+        submittingError={submittingError}
       />
     );
   } else {

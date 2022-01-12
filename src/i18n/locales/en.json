@@ -256,7 +256,7 @@
   "tx.menu-update-tx-vout-label": "vOut",
   "tx.menu-update-tx-vout-placeholder": "Enter transaction vOut",
   "tx.resume-transaction": "Resume Transaction",
-  "mint.deposit-navigation-ready-to-mint-label": "Ready to mint",
+  "mint.deposit-navigation-ready-to-mint-label": "Ready to mint!",
   "welcome.welcome-to": "Welcome to",
   "common.hour": "hour",
   "common.hour_plural": "hours",
