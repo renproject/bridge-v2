@@ -92,7 +92,7 @@ export const useChainTransactionStatusUpdater = (
   useEffect(() => {
     reset();
     tx.wait(waitTarget)
-      .once("progress", (progress) => {
+      .on("progress", (progress) => {
         setError(null);
         console.log("newStatus", progress);
         setStatus(progress.status);

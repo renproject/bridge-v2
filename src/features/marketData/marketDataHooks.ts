@@ -33,16 +33,16 @@ export const useExchangeRates = () => {
   const dispatch = useDispatch();
   const report = useReportSystemStatus();
   const fetchData = useCallback(() => {
-    fetchBandchainExchangeRates()
-      .then((data: Array<BandchainReferenceData>) => {
-        report(SystemType.Bandchain, SystemStatus.Operational);
-        const rates = mapBandchainToExchangeRate(data);
-        dispatch(updateExchangeRates(rates));
-      })
-      .catch((error: any) => {
-        report(SystemType.Bandchain, SystemStatus.Failure);
-        console.error(error);
-      });
+    // fetchBandchainExchangeRates()
+    //   .then((data: Array<BandchainReferenceData>) => {
+    //     report(SystemType.Bandchain, SystemStatus.Operational);
+    //     const rates = mapBandchainToExchangeRate(data);
+    //     dispatch(updateExchangeRates(rates));
+    //   })
+    //   .catch((error: any) => {
+    //     report(SystemType.Bandchain, SystemStatus.Failure);
+    //     console.error(error);
+    //   });
 
     fetchCoingeckoExchangeRates()
       .then((data: Array<CoingeckoReferenceData>) => {

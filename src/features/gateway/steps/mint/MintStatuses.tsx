@@ -29,6 +29,7 @@ import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
+  TransactionStatusInfo,
 } from "../../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
@@ -187,6 +188,7 @@ type MintDepositAcceptedStatusProps = {
   onRetry: () => void;
   submitting: boolean;
   submittingError?: Error | string;
+  renVMSubmitting: boolean;
 };
 
 export const MintDepositAcceptedStatus: FunctionComponent<
@@ -206,6 +208,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   submitting,
   onReload,
   onRetry,
+  renVMSubmitting,
 }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.deposit-accepted-submit-title"));
@@ -282,9 +285,13 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   return (
     <>
       <ProgressWrapper>
-        {submitting ? (
+        {submitting || renVMSubmitting ? (
           <ProgressWithContent color={theme.customColors.skyBlue} processing>
-            <Icon fontSize="inherit" color="inherit" />
+            {renVMSubmitting ? (
+              <TransactionStatusInfo status="Submitting to RenVM..." />
+            ) : (
+              <Icon fontSize="inherit" color="inherit" />
+            )}
           </ProgressWithContent>
         ) : (
           <ProgressWithContent
@@ -332,6 +339,92 @@ export const MintDepositAcceptedStatus: FunctionComponent<
         onAlternativeAction={onRetry}
         error={submittingError}
       />
+    </>
+  );
+};
+
+type MintCompletingStatusProps = {
+  gateway: Gateway;
+  transaction: GatewayTransaction;
+  mintConfirmations: number | null;
+  mintTargetConfirmations: number | null;
+  lockTxId: string | null;
+  lockTxUrl: string | null;
+  mintAssetDecimals: number | null;
+  mintAmount: string | null;
+  mintTxUrl: string | null;
+  mintTxHash: string | null;
+};
+
+export const MintCompletingStatus: FunctionComponent<
+  MintCompletingStatusProps
+> = ({
+  gateway,
+  mintTxUrl,
+  mintTargetConfirmations,
+  mintConfirmations,
+  mintTxHash,
+  mintAmount,
+  lockTxId,
+  lockTxUrl,
+  mintAssetDecimals,
+}) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const lockAssetConfig = getAssetConfig(gateway.params.asset);
+  const lockChainConfig = getChainConfig(gateway.params.from.chain);
+  const mintChainConfig = getChainConfig(gateway.params.to.chain);
+  const mintAmountFormatted =
+    mintAmount !== null && mintAssetDecimals !== null
+      ? new BigNumber(mintAmount).shiftedBy(-mintAssetDecimals).toString()
+      : null;
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent
+          color={theme.customColors.skyBlue}
+          confirmations={
+            mintConfirmations !== null ? mintConfirmations : undefined
+          }
+          targetConfirmations={
+            mintTargetConfirmations !== null
+              ? mintTargetConfirmations
+              : undefined
+          }
+        >
+          {mintTxUrl !== null && (
+            <TransactionStatusInfo
+              status={t("mint.status-pending-label")}
+              chain={mintChainConfig.fullName}
+              address={
+                <Link
+                  color="primary"
+                  underline="hover"
+                  href={mintTxUrl}
+                  target="_blank"
+                >
+                  {mintTxHash}
+                </Link>
+              }
+            />
+          )}
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <Typography variant="body1" align="center" gutterBottom>
+        <NumberFormatText
+          value={mintAmountFormatted}
+          spacedSuffix={lockAssetConfig.fullName}
+        />
+      </Typography>
+      <ActionButtonWrapper>
+        {lockTxId !== null && lockTxUrl !== null && (
+          <TransactionDetailsButton
+            label={lockChainConfig.shortName || lockChainConfig.fullName}
+            address={lockTxId}
+            link={lockTxUrl}
+          />
+        )}
+      </ActionButtonWrapper>
     </>
   );
 };

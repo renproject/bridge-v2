@@ -31,6 +31,7 @@ import {
   ProgressWithContentProps,
   PulseIndicator,
 } from "../../../components/progress/ProgressHelpers";
+import { Debug } from "../../../components/utils/Debug";
 import { ChainConfig, getChainConfig } from "../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../utils/tokensConfig";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
@@ -196,8 +197,14 @@ const DepositNavigationButton: FunctionComponent<
         Progress = (
           <CircledProgressWithContent
             color={lockAssetConfig.color}
-            confirmations={lockConfirmations || undefined}
-            targetConfirmations={lockTargetConfirmations || undefined}
+            confirmations={
+              lockConfirmations !== null ? lockConfirmations : undefined
+            }
+            targetConfirmations={
+              lockTargetConfirmations !== null
+                ? lockTargetConfirmations
+                : undefined
+            }
           >
             <Icon fontSize="large" />
           </CircledProgressWithContent>
@@ -275,6 +282,7 @@ const DepositNavigationButton: FunctionComponent<
     <DepositToggleButton {...rest}>
       {Progress}
       <MoreInfo>{Content}</MoreInfo>
+      <Debug it={txMeta} />
     </DepositToggleButton>
   );
 };

@@ -248,7 +248,7 @@ export const FinishTransactionWarning: FunctionComponent<
   );
 };
 
-type ProgressStatusProps = {
+export type ProgressStatusProps = {
   reason?: string;
   processing?: boolean;
 };

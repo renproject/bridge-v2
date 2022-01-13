@@ -61,6 +61,7 @@ import {
   useWallet,
 } from "../../../wallet/walletHooks";
 import { getPaymentLink } from "../../../wallet/walletUtils";
+import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
   DepositWrapper,
   GatewayAddressValidityMessage,
@@ -80,6 +81,7 @@ import {
 import { useGatewayMenuControl } from "../gatewayUiHooks";
 import {
   MintCompletedStatus,
+  MintCompletingStatus,
   MintDepositAcceptedStatus,
   MintDepositConfirmationStatus,
 } from "./MintStatuses";
@@ -154,9 +156,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
       </PaperHeader>
       <PaperContent>
         {!connected && <ConnectWalletPaperSection />}
-        {connected && !gateway && (
-          <ProgressStatus reason={"Preparing gateway..."} />
-        )}
+        {connected && !gateway && <GatewayLoaderStatus />}
         {connected && gateway !== null && (
           <>
             <DepositWrapper>
@@ -209,7 +209,10 @@ export const GatewayDepositProcessor: FunctionComponent<
     lockTxUrl,
     lockAmount,
     mintStatus,
+    mintConfirmations,
+    mintTargetConfirmations,
     mintTxUrl,
+    mintTxIdFormatted,
   } = txMeta;
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater(transaction.renVM);
   const { amount: mintAmount } = renVmTxMeta;
@@ -224,6 +227,7 @@ export const GatewayDepositProcessor: FunctionComponent<
   );
 
   const [submitting, setSubmitting] = useState(false);
+  const [renVMSubmitting, setRenVMSubmitting] = useState(false);
   const [submittingError, setSubmittingError] = useState();
   const handleSubmit = useCallback(async () => {
     if (transaction.out.submit) {
@@ -231,13 +235,17 @@ export const GatewayDepositProcessor: FunctionComponent<
       setSubmittingError(undefined);
       setSubmitting(true);
       try {
+        setRenVMSubmitting(true);
+        await transaction.renVM.submit();
+        await transaction.renVM.wait();
+        setRenVMSubmitting(false);
         await transaction.out.submit();
       } catch (error: any) {
-        setSubmittingError(error.message);
+        setSubmittingError(error);
       }
       setSubmitting(false);
     }
-  }, [transaction.out]);
+  }, [transaction]);
   const handleReload = useCallback(() => {
     setSubmittingError(undefined);
   }, []);
@@ -264,7 +272,7 @@ export const GatewayDepositProcessor: FunctionComponent<
         Content = <span>reverted</span>;
         break;
       default:
-        Content = <span>unknown</span>;
+        Content = <GatewayLoaderStatus />;
     }
   } else if (
     mintStatus === null &&
@@ -286,16 +294,33 @@ export const GatewayDepositProcessor: FunctionComponent<
         onReload={handleReload}
         submitting={submitting}
         submittingError={submittingError}
+        renVMSubmitting={renVMSubmitting}
       />
     );
   } else {
     switch (mintStatus) {
+      case ChainTransactionStatus.Confirming:
+        Content = (
+          <MintCompletingStatus
+            gateway={gateway}
+            transaction={transaction}
+            lockTxId={lockTxIdFormatted}
+            lockTxUrl={lockTxUrl}
+            mintAmount={mintAmount}
+            mintAssetDecimals={mintAssetDecimals}
+            mintTxUrl={mintTxUrl}
+            mintTxHash={mintTxIdFormatted}
+            mintConfirmations={mintConfirmations}
+            mintTargetConfirmations={mintTargetConfirmations}
+          />
+        );
+        break;
       case ChainTransactionStatus.Done:
         Content = (
           <MintCompletedStatus
             gateway={gateway}
             transaction={transaction}
-            mintAmount={mintAmount} //TODO: fix
+            mintAmount={mintAmount}
             lockTxUrl={lockTxUrl}
             mintTxUrl={mintTxUrl}
             onGoToGateway={onGoToGateway}

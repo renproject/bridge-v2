@@ -8,6 +8,7 @@ import {
 import {
   AssetRateService,
   assetsConfig,
+  getAssetSymbolByRateSymbol,
   supportedAssets,
 } from "../../utils/tokensConfig";
 
@@ -22,7 +23,7 @@ const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
 export const bandchainReferencePairs = uniqueArray(
   Object.entries(assetsConfig)
-    .filter(([asset]) => supportedAssets.includes(asset as Asset))
+    // .filter(([asset]) => supportedAssets.includes(asset as Asset))
     .filter(
       ([asset, config]) => config.rateService === AssetRateService.Bandchain
     )
@@ -31,13 +32,18 @@ export const bandchainReferencePairs = uniqueArray(
 
 console.log("bandchainReferencePairs", bandchainReferencePairs);
 
-export const coingeckoSymbols = Object.values(currenciesConfig)
-  .filter((entry) => Boolean(entry.coingeckoSymbol))
-  .map((entry) => entry.coingeckoSymbol);
+export const coingeckoSymbols = Object.entries(assetsConfig)
+  .filter(
+    ([asset, config]) => config.rateService === AssetRateService.Coingecko
+  )
+  .map(([asset, entry]) => entry.rateSymbol || asset);
+
+console.log("coingeckoSymbols", coingeckoSymbols);
 
 export type BandchainReferenceData = ReferenceData;
 
 export type CoingeckoReferenceData = {
+  id: string;
   symbol: string;
   current_price: number;
 };
@@ -58,10 +64,14 @@ export const mapBandchainToExchangeRate = (
 export const mapCoingeckoToExchangeRate = (
   entries: Array<CoingeckoReferenceData>
 ) => {
-  return entries.map((entry: any) => ({
-    pair: getPair(entry.symbol, "USD"),
-    rate: entry.current_price,
-  }));
+  return entries.map((entry) => {
+    const asset = getAssetSymbolByRateSymbol(entry.id);
+    console.log("coing", asset);
+    return {
+      pair: getPair(asset, "USD"),
+      rate: entry.current_price,
+    };
+  });
 };
 
 export type ExchangeRate = {
@@ -79,9 +89,8 @@ export const findAssetExchangeRate = (
   base: Asset,
   quote = USD_SYMBOL
 ) => {
-  const rateSymbol = assetsConfig[base].rateSymbol || base;
   const rateEntry = exchangeRates.find(
-    (entry) => entry.pair === getPair(rateSymbol, quote)
+    (entry) => entry.pair === getPair(base, quote)
   );
   return rateEntry?.rate || null;
 };

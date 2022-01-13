@@ -2399,10 +2399,10 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@bandprotocol/bandchain.js@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@bandprotocol/bandchain.js/-/bandchain.js-2.0.1.tgz#8cdbb9c546bbb400a1e36528ad8e3fe84e35be08"
-  integrity sha512-U/0Fn6txalKVMTbaA53mU8dUGMSPJuiGZqWANxSJkkZBilfE5kxiAYyZTxJTItvi34CKV79BMI8131b7QHs4Ag==
+"@bandprotocol/bandchain.js@2.0.3":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/@bandprotocol/bandchain.js/-/bandchain.js-2.0.3.tgz#572732de1f96bae6efd968deddeef923664a4a6b"
+  integrity sha512-3IP5B7rFZdmYqHbMaRRxsT5uE/NsXjVaWqu1s/1LI2cY8ModHHfqJ107H6mIcIXOs6IHhYroGRbci5s8nbymIg==
   dependencies:
     "@improbable-eng/grpc-web" "^0.14.0"
     "@improbable-eng/grpc-web-node-http-transport" "^0.14.0"

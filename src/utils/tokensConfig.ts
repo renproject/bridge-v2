@@ -65,7 +65,11 @@ const unsetAssetConfig: AssetBaseConfig = {
 };
 
 const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
-  AVAX: unsetAssetConfig,
+  AVAX: {
+    ...unsetAssetConfig,
+    rateService: AssetRateService.Coingecko,
+    rateSymbol: "avalanche-2",
+  },
   ArbETH: unsetAssetConfig,
   BADGER: unsetAssetConfig,
   BCH: {
@@ -88,7 +92,8 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     color: bitcoinOrange,
     shortName: "BTC",
     fullName: "Bitcoin",
-    rateService: AssetRateService.Bandchain,
+    rateService: AssetRateService.Coingecko,
+    rateSymbol: "bitcoin",
   },
   BUSD: unsetAssetConfig,
   CRV: unsetAssetConfig,
@@ -161,6 +166,16 @@ export const getAssetConfig = (asset: Asset | string) => {
     throw new Error(`Asset config not found for ${asset}`);
   }
   return config;
+};
+
+export const getAssetSymbolByRateSymbol = (symbol: string) => {
+  const entry = Object.entries(assetsConfig).find(
+    ([_, config]) => config.rateSymbol === symbol
+  );
+  if (!entry) {
+    throw new Error(`Asset config not found by rateSymbol: ${symbol}`);
+  }
+  return entry[0];
 };
 
 export const getRenShortName = (shortName: string) => `ren${shortName}`;
