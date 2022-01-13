@@ -29,7 +29,7 @@ type UseGatewayParams = {
   to: Chain;
   amount?: string;
   toAddress?: string;
-  nonce?: number;
+  nonce?: string | number;
 };
 
 export const useGateway = (

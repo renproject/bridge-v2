@@ -54,7 +54,7 @@ import {
   useGatewayMeta,
 } from "../gatewayHooks";
 import { $gateway } from "../gatewaySlice";
-import { createGatewayQueryString, generateNonce } from "../gatewayUtils";
+import { createGatewayQueryString, getRenJSNonce } from "../gatewayUtils";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
@@ -94,8 +94,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       to,
       amount,
       network,
-      toAddress,
-      nonce: 1,
     },
     provider
   );
@@ -154,8 +152,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             asset,
             from,
             to,
-            nonce: generateNonce(),
-            toAddress: account,
+            nonce: getRenJSNonce(),
           }),
       });
     }
@@ -167,7 +164,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     asset,
     from,
     to,
-    account,
     approvalRequired,
     approved,
     // gateway,

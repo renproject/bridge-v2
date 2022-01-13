@@ -2,6 +2,7 @@ import { Asset, Chain } from "@renproject/chains";
 import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Ethereum } from "@renproject/chains-ethereum";
 import RenJS, { Gateway } from "@renproject/ren";
+import { toURLBase64 } from "@renproject/utils/build/main/internal/common";
 import queryString from "query-string";
 import {
   supportedBitcoinChains,
@@ -14,7 +15,7 @@ export interface CreateGatewayParams {
   asset: Asset;
   from: Chain;
   to: Chain;
-  nonce?: number;
+  nonce?: string | number;
   amount?: string;
   toAddress?: string;
 }
@@ -28,7 +29,7 @@ export const createGateway = async (
     throw new Error(`Missing gateway field.`);
   }
 
-  const asset = gatewayParams.asset;
+  const { asset, nonce } = gatewayParams;
   console.log("gatewayParams", gatewayParams);
   let fromChain;
   if (supportedEthereumChains.includes(gatewayParams.from)) {
@@ -64,6 +65,7 @@ export const createGateway = async (
     asset,
     from: fromChain,
     to: toChain,
+    nonce,
   });
 };
 
@@ -77,15 +79,22 @@ export const parseGatewayQueryString = (query: string) => {
   return queryString.parse(query) as unknown as CreateGatewayParams;
 };
 
-export const GATEWAY_EXPIRY_OFFSET_MS = 24 * 3600 * 1000;
+const DAY_S = 24 * 3600;
+export const GATEWAY_EXPIRY_OFFSET_S = DAY_S;
+export const GATEWAY_EXPIRY_OFFSET_MS = GATEWAY_EXPIRY_OFFSET_S * 1000;
 
-export const getSessionDay = (dayOffset = 0) =>
-  Math.floor(Date.now() / GATEWAY_EXPIRY_OFFSET_MS) - dayOffset;
+export const getSessionDay = (pastDayOffset = 0) =>
+  Math.floor(Date.now() / 1000 / DAY_S) - pastDayOffset;
 
-export const generateNonce = (dayOffset = 0, dayIndex = 0) => {
-  const nonce = dayIndex + getSessionDay(dayOffset) * 1000;
-  return nonce;
+export const getRenJSNonce = (pastDayOffset = 0) => {
+  return getSessionDay(pastDayOffset);
 };
+
+export const getRenJSBase64Nonce = (pastDayOffset = 0) => {
+  return toURLBase64(Buffer.from([getSessionDay(pastDayOffset)]));
+};
+
+console.log("gst", getRenJSNonce(), getRenJSBase64Nonce());
 
 // Amount of time remaining until gateway expires
 export const getRemainingGatewayTime = (expiryTime: number) =>

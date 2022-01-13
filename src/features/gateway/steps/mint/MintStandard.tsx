@@ -50,10 +50,7 @@ import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
 } from "../../../notifications/notificationsUtils";
-import {
-  HMSCountdown,
-  ProgressStatus,
-} from "../../../transactions/components/TransactionsHelpers";
+import { HMSCountdown } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
@@ -215,7 +212,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     mintTxIdFormatted,
   } = txMeta;
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater(transaction.renVM);
-  const { amount: mintAmount } = renVmTxMeta;
+  const { amount: mintAmount, status: renVMStatus } = renVmTxMeta;
 
   const { decimals: lockAssetDecimals } = useChainAssetDecimals(
     gateway.fromChain,
@@ -235,17 +232,19 @@ export const GatewayDepositProcessor: FunctionComponent<
       setSubmittingError(undefined);
       setSubmitting(true);
       try {
-        setRenVMSubmitting(true);
-        await transaction.renVM.submit();
-        await transaction.renVM.wait();
-        setRenVMSubmitting(false);
+        if (renVMStatus !== ChainTransactionStatus.Done) {
+          setRenVMSubmitting(true);
+          await transaction.renVM.submit();
+          await transaction.renVM.wait();
+          setRenVMSubmitting(false);
+        }
         await transaction.out.submit();
       } catch (error: any) {
         setSubmittingError(error);
       }
       setSubmitting(false);
     }
-  }, [transaction]);
+  }, [transaction, renVMStatus]);
   const handleReload = useCallback(() => {
     setSubmittingError(undefined);
   }, []);
