@@ -32,11 +32,11 @@ import {
   PulseIndicator,
 } from "../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { ChainConfig, getChainConfig } from "../../../utils/chainsConfig";
+import { ChainConfig } from "../../../utils/chainsConfig";
+import { getRemainingTime } from "../../../utils/time";
 import { getAssetConfig } from "../../../utils/tokensConfig";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 import { useChainAssetDecimals } from "../gatewayHooks";
-import { getRemainingGatewayTime } from "../gatewayUtils";
 import { depositSorter, useDepositTransactionMeta } from "../mintHooks";
 
 export enum DepositPhase {
@@ -143,6 +143,7 @@ type DepositNavigationProps = ToggleButtonGroupProps & {
   transactions: Array<GatewayTransaction>;
   expiryTime: number;
 };
+
 export const DepositNavigationResolver: FunctionComponent<
   DepositNavigationProps
 > = (props) => {
@@ -318,9 +319,7 @@ export const ResponsiveDepositNavigation: FunctionComponent<
               <Typography variant="body2">
                 {t("mint.deposit-navigation-active-for-label")}:{" "}
                 <Typography variant="body2" component="span" color="primary">
-                  <HMSCountdown
-                    milliseconds={getRemainingGatewayTime(expiryTime)}
-                  />
+                  <HMSCountdown milliseconds={getRemainingTime(expiryTime)} />
                 </Typography>
               </Typography>
             </div>

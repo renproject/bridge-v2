@@ -69,36 +69,42 @@ export const createGateway = async (
   });
 };
 
+export type AdditionalGatewayParams = {
+  expiryTime?: number;
+};
+
 export const createGatewayQueryString = (
-  gatewayParams: CreateGatewayParams
+  gatewayParams: CreateGatewayParams,
+  additionalParams: AdditionalGatewayParams
 ) => {
-  return queryString.stringify(gatewayParams);
+  return queryString.stringify({ ...gatewayParams, ...additionalParams });
 };
 
 export const parseGatewayQueryString = (query: string) => {
-  return queryString.parse(query) as unknown as CreateGatewayParams;
+  const parsed = queryString.parse(query) as unknown as CreateGatewayParams &
+    AdditionalGatewayParams;
+  const { expiryTime, ...gatewayParams } = parsed;
+  const additionalParams = { expiryTime };
+  return { gatewayParams, additionalParams };
 };
 
 const DAY_S = 24 * 3600;
+const DAY_MS = DAY_S * 1000;
 export const GATEWAY_EXPIRY_OFFSET_S = DAY_S;
 export const GATEWAY_EXPIRY_OFFSET_MS = GATEWAY_EXPIRY_OFFSET_S * 1000;
 
 export const getSessionDay = (pastDayOffset = 0) =>
   Math.floor(Date.now() / 1000 / DAY_S) - pastDayOffset;
 
-export const getRenJSNonce = (pastDayOffset = 0) => {
+export const getGatewayNonce = (pastDayOffset = 0) => {
   return getSessionDay(pastDayOffset);
 };
 
-export const getRenJSBase64Nonce = (pastDayOffset = 0) => {
-  return toURLBase64(Buffer.from([getSessionDay(pastDayOffset)]));
+export const getGatewayExpiryTime = (pastDayOffset = 0) => {
+  return getSessionDay(pastDayOffset) * DAY_MS + GATEWAY_EXPIRY_OFFSET_MS;
 };
 
-console.log("gst", getRenJSNonce(), getRenJSBase64Nonce());
-
-// Amount of time remaining until gateway expires
-export const getRemainingGatewayTime = (expiryTime: number) =>
-  Math.ceil(expiryTime - GATEWAY_EXPIRY_OFFSET_MS - Number(new Date()));
-
-export const getRemainingTime = (expiryTime: number) =>
-  Math.ceil(expiryTime - Number(new Date()));
+// export const getRenJSBase64Nonce = (pastDayOffset = 0) => {
+//   return toURLBase64(Buffer.from([getSessionDay(pastDayOffset)]));
+// };
+// console.log("gst", getRenJSNonce(), getRenJSBase64Nonce());

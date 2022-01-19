@@ -70,7 +70,10 @@ import {
   useGatewayFees,
 } from "../../gatewayHooks";
 import { useRenVMChainTransactionStatusUpdater } from "../../gatewayTransactionHooks";
-import { parseGatewayQueryString } from "../../gatewayUtils";
+import {
+  getGatewayExpiryTime,
+  parseGatewayQueryString,
+} from "../../gatewayUtils";
 import {
   useDepositTransactionMeta,
   useTransactionsPagination,
@@ -97,8 +100,11 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const { network } = useSelector($network);
   const { enabled } = useBrowserNotifications(handleModalClose);
   const { menuOpened, handleMenuOpen } = useGatewayMenuControl();
-  const gatewayParams = parseGatewayQueryString(location.search);
+  const { gatewayParams, additionalParams } = parseGatewayQueryString(
+    location.search
+  );
   const { asset, from, to, nonce } = gatewayParams;
+  const expiryTime = additionalParams.expiryTime || getGatewayExpiryTime();
 
   useSyncWalletChain(to);
   const { connected, provider } = useWallet(to);
@@ -162,13 +168,14 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
                 value={currentDeposit}
                 onChange={handleCurrentDepositChange}
                 transactions={transactions}
-                expiryTime={Date.now() + 24 * 3600 * 1000} // TODO: crit finish
+                expiryTime={expiryTime}
               />
               {transaction ? (
                 <GatewayDepositProcessor
                   gateway={gateway}
                   transaction={transaction}
                   onGoToGateway={handleGoToGateway}
+                  expiryTime={expiryTime}
                 />
               ) : (
                 <MintGatewayAddress
@@ -191,11 +198,12 @@ export type GatewayDepositProcessorProps = {
   gateway: Gateway;
   transaction: GatewayTransaction;
   onGoToGateway: () => void;
+  expiryTime: number;
 };
 
 export const GatewayDepositProcessor: FunctionComponent<
   GatewayDepositProcessorProps
-> = ({ gateway, transaction, onGoToGateway }) => {
+> = ({ gateway, transaction, onGoToGateway, expiryTime }) => {
   // const lockStatus = ChainTransactionStatus.Done;
   const txMeta = useDepositTransactionMeta(transaction);
   const {
@@ -279,7 +287,7 @@ export const GatewayDepositProcessor: FunctionComponent<
   ) {
     Content = (
       <MintDepositAcceptedStatus
-        expiryTime={42000000}
+        expiryTime={expiryTime}
         gateway={gateway}
         transaction={transaction}
         lockConfirmations={lockConfirmations}

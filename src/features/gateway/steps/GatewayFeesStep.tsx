@@ -54,7 +54,12 @@ import {
   useGatewayMeta,
 } from "../gatewayHooks";
 import { $gateway } from "../gatewaySlice";
-import { createGatewayQueryString, getRenJSNonce } from "../gatewayUtils";
+import {
+  createGatewayQueryString,
+  getGatewayExpiryTime,
+  getRemainingGatewayTime,
+  getGatewayNonce,
+} from "../gatewayUtils";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
@@ -148,12 +153,15 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
         pathname: paths.MINT_GATEWAY,
         search:
           "?" +
-          createGatewayQueryString({
-            asset,
-            from,
-            to,
-            nonce: getRenJSNonce(),
-          }),
+          createGatewayQueryString(
+            {
+              asset,
+              from,
+              to,
+              nonce: getGatewayNonce(),
+            },
+            { expiryTime: getGatewayExpiryTime() }
+          ),
       });
     }
 
