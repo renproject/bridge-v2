@@ -81,12 +81,12 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, []);
 
-  const { isMint, isRelease, fromConnectionRequired, isH2H } = useGatewayMeta(
+  const { isMint, isRelease, isFromContractChain, isH2H } = useGatewayMeta(
     asset,
     from,
     to
   );
-  const activeChain = fromConnectionRequired ? from : to;
+  const activeChain = isFromContractChain ? from : to;
   const { connected, provider } = useWallet(activeChain);
 
   //why gateway is initialized without amount?

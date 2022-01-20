@@ -12,12 +12,17 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { MINT_GAS_UNIT_COST } from "../../constants/constants";
 import { supportedEthereumChains } from "../../utils/chainsConfig";
+import { fromGwei } from "../../utils/converters";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { isDefined } from "../../utils/objects";
 import { alterEthereumBaseChainSigner } from "../chain/chainUtils";
-import { $exchangeRates } from "../marketData/marketDataSlice";
-import { findAssetExchangeRate } from "../marketData/marketDataUtils";
+import { $exchangeRates, $gasPrices } from "../marketData/marketDataSlice";
+import {
+  findAssetExchangeRate,
+  findGasPrice,
+} from "../marketData/marketDataUtils";
 import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
 import { createGateway } from "./gatewayUtils";
@@ -220,8 +225,10 @@ export const useGatewayFees = (
   gateway: Gateway | null,
   activeAmount: string | number | BigNumber | null = 0
 ) => {
+  const gasPrices = useSelector($gasPrices);
   const asset = gateway?.params?.asset as Asset;
-  // const { isFromContractChain, isToContractChain } = useDecomposedGatewayMeta(gateway);
+  const { isFromContractChain, isToContractChain, isMint } =
+    useDecomposedGatewayMeta(gateway);
   const { decimals: fromChainDecimals } = useChainAssetDecimals(
     gateway?.fromChain,
     asset
@@ -294,19 +301,47 @@ export const useGatewayFees = (
     setMinimumAmount(minimumAmountBn.toFixed());
     console.log(`gateway amount minimum: ${minimumAmountBn}`);
 
-    // TODO: crit fix
     const fromChainFeeBn = gateway.fees.fixedFee;
-    setFromChainFeeAmount(
-      fromChainFeeBn.shiftedBy(-fromChainDecimals).toFixed()
-    );
+    if (isFromContractChain) {
+      //gas fee
+      const gasPrice = findGasPrice(gasPrices, gateway.params.from.chain);
+      let feeInGwei = 0.000042;
+      if (isMint) {
+        feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18);
+      } // TODO: crit add other cases
+      setFromChainFeeAmount(fromGwei(feeInGwei).toString());
+    } else {
+      setFromChainFeeAmount(
+        fromChainFeeBn.shiftedBy(-fromChainDecimals).toFixed()
+      );
+    }
 
     const toChainFeeBn = gateway.fees.fixedFee;
-    setToChainFeeAmount(toChainFeeBn.shiftedBy(-fromChainDecimals).toFixed());
+    if (isToContractChain) {
+      //gas fee
+      const gasPrice = findGasPrice(gasPrices, gateway.params.to.chain);
+      let feeInGwei = 0.000042;
+      if (isMint) {
+        feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18);
+      } // TODO: crit add other cases
+      setToChainFeeAmount(fromGwei(feeInGwei).toString());
+    } else {
+      setToChainFeeAmount(toChainFeeBn.shiftedBy(-fromChainDecimals).toFixed());
+    }
 
     const feeAssets = getNativeFeeAssets(gateway);
     setFromChainFeeAsset(feeAssets.fromChainFeeAsset);
     setToChainFeeAsset(feeAssets.toChainFeeAsset);
-  }, [gateway, fromChainDecimals, toChainDecimals, activeAmount]);
+  }, [
+    gateway,
+    fromChainDecimals,
+    toChainDecimals,
+    activeAmount,
+    gasPrices,
+    isFromContractChain,
+    isMint,
+    isToContractChain,
+  ]);
 
   return {
     decimals: fromChainDecimals,
@@ -336,7 +371,6 @@ export const useGatewayFeesWithRates = (
   gateway: Gateway | null,
   activeAmount: string | number | BigNumber
 ) => {
-  const { isH2H, isMint, isRelease } = useDecomposedGatewayMeta(gateway);
   const rates = useSelector($exchangeRates);
   const fees = useGatewayFees(gateway, activeAmount);
   const [outputAmountUsd, setOutputAmountUsd] = useState<string | null>(null);
@@ -501,8 +535,9 @@ export const useGatewayMeta = (
     isRelease,
     isLock,
     isBurn,
-    fromConnectionRequired: isFromContractChain,
-    toConnectionRequired: isToContractChain,
+    // handle nulls
+    isFromContractChain,
+    isToContractChain,
     isH2H: isFromContractChain && isToContractChain,
   };
 };

@@ -101,7 +101,10 @@ export type AnyBlockGasPrices = {
   instant: number;
 };
 
-export const findGasPrice = (gasPrices: Array<GasPrice>, chain: string) => {
+export const findGasPrice = (
+  gasPrices: Array<GasPrice>,
+  chain: Chain | string
+) => {
   const gasEntry = gasPrices.find((entry) => entry.chain === chain);
   return gasEntry?.standard || 0;
 };

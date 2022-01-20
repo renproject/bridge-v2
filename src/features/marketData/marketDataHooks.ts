@@ -5,7 +5,7 @@ import { useInterval } from "react-use";
 import { getBandchain } from "../../services/bandchain";
 import { useReportSystemStatus } from "../ui/uiHooks";
 import { SystemStatus, SystemType } from "../ui/uiSlice";
-import { setGasPrices, updateExchangeRates } from "./marketDataSlice";
+import { setExchangeRates, setGasPrices } from "./marketDataSlice";
 import {
   bandchainReferencePairs,
   CoingeckoReferenceData,
@@ -46,7 +46,7 @@ export const useExchangeRates = () => {
       .then((data: Array<CoingeckoReferenceData>) => {
         report(SystemType.Coingecko, SystemStatus.Operational);
         const rates = mapCoingeckoToExchangeRate(data);
-        dispatch(updateExchangeRates(rates));
+        dispatch(setExchangeRates(rates));
       })
       .catch((error: any) => {
         report(SystemType.Coingecko, SystemStatus.Failure);
