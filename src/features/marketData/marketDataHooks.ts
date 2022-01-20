@@ -1,18 +1,18 @@
-import { useCallback, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { useInterval } from 'react-use'
+import { useCallback, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useInterval } from "react-use";
 import {
   setSystemMonitorStatus,
   SystemStatus,
   SystemType,
-} from '../ui/uiSlice'
-import { setExchangeRates, setGasPrices } from './marketDataSlice'
+} from "../ui/uiSlice";
+import { setExchangeRates, setGasPrices } from "./marketDataSlice";
 import {
   CoingeckoReferenceData,
   coingeckoSymbols,
   fetchMarketDataGasPrices,
   mapCoingeckoToExchangeData,
-} from './marketDataUtils'
+} from "./marketDataUtils";
 
 const dataRefreshInterval = 30; // seconds
 
