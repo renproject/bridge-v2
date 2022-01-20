@@ -1,12 +1,11 @@
 import { ReferenceData } from "@bandprotocol/bandchain.js/lib/data";
 import { env } from "../../constants/environmentVariables";
-import { uniqueArray } from "../../utils/arrays";
 import {
   BridgeChain,
   BridgeCurrency,
   currenciesConfig,
-  getCurrencyConfigByBandchainSymbol,
-} from "../../utils/assetConfigs";
+  getCurrencyConfigByBandchainSymbol, getCurrencyConfigByCoingeckoSymbol,
+} from '../../utils/assetConfigs'
 
 // move to assetConfig
 const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
@@ -23,14 +22,7 @@ export const USD_SYMBOL = "USD";
 
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
-export const bandchainReferencePairs = uniqueArray(
-  Object.values(BridgeCurrency)
-    .filter(
-      (symbol) =>
-        symbol !== BridgeCurrency.UNKNOWN && symbol !== BridgeCurrency.AVAX
-    )
-    .map(mapToBandchainCurrencySymbol)
-).map((symbol: string) => getPair(symbol, USD_SYMBOL));
+export const bandchainReferencePairs = [];
 
 export const coingeckoSymbols = Object.values(currenciesConfig)
   .filter((entry) => Boolean(entry.coingeckoSymbol))
@@ -39,6 +31,7 @@ export const coingeckoSymbols = Object.values(currenciesConfig)
 export type BandchainReferenceData = ReferenceData;
 
 export type CoingeckoReferenceData = {
+  id: string,
   symbol: string;
   current_price: number;
 };
@@ -59,10 +52,13 @@ export const mapBandchainToExchangeData = (
 export const mapCoingeckoToExchangeData = (
   entries: Array<CoingeckoReferenceData>
 ) => {
-  return entries.map((entry: any) => ({
-    pair: getPair(entry.symbol, "USD"),
-    rate: entry.current_price,
-  }));
+  return entries.map((entry: any) => {
+    const assetConfig = getCurrencyConfigByCoingeckoSymbol(entry.id)
+    return ({
+      pair: getPair(assetConfig.symbol, 'USD'),
+      rate: entry.current_price,
+    })
+  });
 };
 
 export type ExchangeRate = {

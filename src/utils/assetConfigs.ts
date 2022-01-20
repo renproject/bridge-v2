@@ -239,6 +239,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "btc",
     sourceChain: BridgeChain.BTCC,
     networkMappings: oldNetworkMappings,
+    coingeckoSymbol: "bitcoin",
   },
   [BridgeCurrency.RENBTC]: {
     symbol: BridgeCurrency.RENBTC,
@@ -250,8 +251,8 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     MainIcon: BtcDashedIcon,
     rentxName: "renBTC",
     sourceChain: BridgeChain.ETHC,
-    bandchainSymbol: BridgeCurrency.BTC,
     networkMappings: oldNetworkMappings,
+    coingeckoSymbol: "bitcoin",
   },
   [BridgeCurrency.BCH]: {
     symbol: BridgeCurrency.BCH,
@@ -265,6 +266,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "BCH",
     sourceChain: BridgeChain.BCHC,
     networkMappings: oldNetworkMappings,
+    coingeckoSymbol: "bitcoin-cash",
   },
   [BridgeCurrency.RENBCH]: {
     symbol: BridgeCurrency.RENBCH,
@@ -278,6 +280,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BCH,
     networkMappings: oldNetworkMappings,
+    coingeckoSymbol: "bitcoin-cash",
   },
   [BridgeCurrency.DOTS]: {
     symbol: BridgeCurrency.DOTS,
@@ -303,6 +306,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.DOGC,
     rentxName: "doge",
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "doge",
   },
   [BridgeCurrency.RENDOGE]: {
     symbol: BridgeCurrency.RENDOGE,
@@ -317,6 +321,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     bandchainSymbol: BridgeCurrency.DOGE,
     ethTestnet: EthTestnet.KOVAN,
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "doge",
   },
   [BridgeCurrency.ZEC]: {
     symbol: BridgeCurrency.ZEC,
@@ -329,6 +334,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "zec",
     sourceChain: BridgeChain.ZECC,
     networkMappings: oldNetworkMappings,
+    coingeckoSymbol: "zcash",
   },
   [BridgeCurrency.RENZEC]: {
     symbol: BridgeCurrency.RENZEC,
@@ -342,6 +348,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.ZEC,
     networkMappings: oldNetworkMappings,
+    coingeckoSymbol: "zcash",
   },
   [BridgeCurrency.DGB]: {
     symbol: BridgeCurrency.DGB,
@@ -354,6 +361,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.DGBC,
     rentxName: "DGB",
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "digibyte",
   },
   [BridgeCurrency.RENDGB]: {
     symbol: BridgeCurrency.RENDGB,
@@ -367,6 +375,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.DGB,
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "digibyte",
   },
   [BridgeCurrency.FIL]: {
     symbol: BridgeCurrency.FIL,
@@ -379,6 +388,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.FILC,
     rentxName: "FIL",
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "filecoin",
   },
   [BridgeCurrency.RENFIL]: {
     symbol: BridgeCurrency.RENFIL,
@@ -392,6 +402,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.FIL,
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "filecoin",
   },
   [BridgeCurrency.LUNA]: {
     symbol: BridgeCurrency.LUNA,
@@ -404,6 +415,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.LUNAC,
     rentxName: "LUNA",
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "terra-luna",
   },
   [BridgeCurrency.RENLUNA]: {
     symbol: BridgeCurrency.RENLUNA,
@@ -417,6 +429,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.LUNA,
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "terra-luna",
   },
   [BridgeCurrency.ETH]: {
     symbol: BridgeCurrency.ETH,
@@ -429,6 +442,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     rentxName: "eth",
     sourceChain: BridgeChain.ETHC,
     networkMappings: newNetworkMappings,
+    coingeckoSymbol: "ethereum",
   },
   [BridgeCurrency.AVAX]: {
     symbol: BridgeCurrency.AVAX,
@@ -439,10 +453,10 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     Icon: AvaIcon,
     MainIcon: AvaFullIcon,
     rentxName: "ava",
-    coingeckoSymbol: "avalanche-2",
     sourceChain: BridgeChain.AVAXC,
     networkMappings: newNetworkMappings,
     decimals: 18,
+    coingeckoSymbol: "avalanche-2",
   },
   [BridgeCurrency.MATIC]: {
     symbol: BridgeCurrency.MATIC,
@@ -456,6 +470,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.MATICC,
     networkMappings: newNetworkMappings,
     decimals: 18,
+    coingeckoSymbol: "polygon",
   },
   [BridgeCurrency.FTM]: {
     symbol: BridgeCurrency.FTM,
@@ -469,6 +484,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.FTMC,
     networkMappings: newNetworkMappings,
     decimals: 18,
+    coingeckoSymbol: "fantom",
   },
   [BridgeCurrency.BNB]: {
     symbol: BridgeCurrency.BNB,
@@ -482,6 +498,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.BSCC,
     networkMappings: newNetworkMappings,
     decimals: 18,
+    coingeckoSymbol: "binance-coin",
   },
   [BridgeCurrency.SOL]: {
     symbol: BridgeCurrency.SOL,
@@ -495,6 +512,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.SOLC,
     networkMappings: newNetworkMappings,
     decimals: 9,
+    coingeckoSymbol: "solana",
   },
   [BridgeCurrency.ARBETH]: {
     symbol: BridgeCurrency.ARBETH,
@@ -509,6 +527,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     bandchainSymbol: "ETH",
     networkMappings: newNetworkMappings,
     decimals: 18,
+    coingeckoSymbol: "weth", // tha same as eth
   },
   [BridgeCurrency.UNKNOWN]: {
     symbol: BridgeCurrency.UNKNOWN,
@@ -541,6 +560,12 @@ export const getCurrencyConfigByBandchainSymbol = (symbol: string) =>
   Object.values(currenciesConfig).find(
     (config) => config.bandchainSymbol === symbol || config.symbol === symbol
   ) || unknownCurrencyConfig;
+
+export const getCurrencyConfigByCoingeckoSymbol = (symbol: string) =>
+  Object.values(currenciesConfig).find(
+    (config) => config.coingeckoSymbol === symbol || config.symbol === symbol
+  ) || unknownCurrencyConfig;
+
 
 export const getCurrencyRentxName = (symbol: BridgeCurrency) =>
   currenciesConfig[symbol].rentxName || unknownLabel;
