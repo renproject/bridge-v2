@@ -498,7 +498,7 @@ export const currenciesConfig: Record<BridgeCurrency, BridgeCurrencyConfig> = {
     sourceChain: BridgeChain.BSCC,
     networkMappings: newNetworkMappings,
     decimals: 18,
-    coingeckoSymbol: "binance-coin",
+    coingeckoSymbol: "binancecoin",
   },
   [BridgeCurrency.SOL]: {
     symbol: BridgeCurrency.SOL,
@@ -565,7 +565,6 @@ export const getCurrencyConfigByCoingeckoSymbol = (symbol: string) =>
   Object.values(currenciesConfig).find(
     (config) => config.coingeckoSymbol === symbol || config.symbol === symbol
   ) || unknownCurrencyConfig;
-
 
 export const getCurrencyRentxName = (symbol: BridgeCurrency) =>
   currenciesConfig[symbol].rentxName || unknownLabel;
