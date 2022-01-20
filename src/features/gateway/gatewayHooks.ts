@@ -305,11 +305,13 @@ export const useGatewayFees = (
     if (isFromContractChain) {
       //gas fee
       const gasPrice = findGasPrice(gasPrices, gateway.params.from.chain);
-      let feeInGwei = 0.000042;
+      let feeInGwei = null;
       if (isMint) {
         feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18);
       } // TODO: crit add other cases
-      setFromChainFeeAmount(fromGwei(feeInGwei).toString());
+      if (feeInGwei !== null) {
+        setFromChainFeeAmount(fromGwei(feeInGwei).toString());
+      }
     } else {
       setFromChainFeeAmount(
         fromChainFeeBn.shiftedBy(-fromChainDecimals).toFixed()
@@ -320,11 +322,13 @@ export const useGatewayFees = (
     if (isToContractChain) {
       //gas fee
       const gasPrice = findGasPrice(gasPrices, gateway.params.to.chain);
-      let feeInGwei = 0.000042;
+      let feeInGwei = null;
       if (isMint) {
         feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18);
       } // TODO: crit add other cases
-      setToChainFeeAmount(fromGwei(feeInGwei).toString());
+      if (feeInGwei !== null) {
+        setToChainFeeAmount(fromGwei(feeInGwei).toString());
+      }
     } else {
       setToChainFeeAmount(toChainFeeBn.shiftedBy(-fromChainDecimals).toFixed());
     }

@@ -69,8 +69,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const history = useHistory();
 
   const { asset, from, to } = useSelector($gateway);
-
-  const { Icon, shortName } = getAssetConfig(asset);
+  const { Icon, RenIcon, shortName } = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
 
   const [amount, setAmount] = useState("42");
@@ -182,6 +181,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const showBalance = isMint || isH2H;
 
+  const AssetIcon = isMint ? RenIcon : Icon; // TODO: this needs more logic
   const Header = (
     <PaperHeader>
       <PaperNav>
@@ -259,7 +259,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                 />
               ) : null
             }
-            Icon={<Icon fontSize="inherit" />}
+            Icon={<AssetIcon fontSize="inherit" />}
           />
         </MediumTopWrapper>
       </PaperContent>
