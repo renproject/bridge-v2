@@ -4,14 +4,11 @@ import {
   BridgeChain,
   BridgeCurrency,
   currenciesConfig,
-  getCurrencyConfigByBandchainSymbol, getCurrencyConfigByCoingeckoSymbol,
-} from "../../utils/assetConfigs"
+  getCurrencyConfigByBandchainSymbol,
+  getCurrencyConfigByCoingeckoSymbol,
+} from "../../utils/assetConfigs";
 
 // move to assetConfig
-const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
-  const config = currenciesConfig[symbol];
-  return config.bandchainSymbol || symbol;
-};
 
 const mapBandchainToCurrencySymbol = (symbol: string) => {
   const config = getCurrencyConfigByBandchainSymbol(symbol);
@@ -31,7 +28,7 @@ export const coingeckoSymbols = Object.values(currenciesConfig)
 export type BandchainReferenceData = ReferenceData;
 
 export type CoingeckoReferenceData = {
-  id: string,
+  id: string;
   symbol: string;
   current_price: number;
 };
@@ -53,11 +50,11 @@ export const mapCoingeckoToExchangeData = (
   entries: Array<CoingeckoReferenceData>
 ) => {
   return entries.map((entry: any) => {
-    const assetConfig = getCurrencyConfigByCoingeckoSymbol(entry.id)
-    return ({
-      pair: getPair(assetConfig.symbol, 'USD'),
+    const assetConfig = getCurrencyConfigByCoingeckoSymbol(entry.id);
+    return {
+      pair: getPair(assetConfig.symbol, "USD"),
       rate: entry.current_price,
-    })
+    };
   });
 };
 
@@ -76,9 +73,12 @@ export const findExchangeRate = (
   base: BridgeCurrency,
   quote = USD_SYMBOL
 ) => {
-  const baseBandchainSymbol = mapToBandchainCurrencySymbol(base);
+  let symbol = base;
+  if (base.indexOf("REN") === 0 && base.length > 3) {
+    symbol = base.substr(3) as BridgeCurrency;
+  }
   const rateEntry = exchangeRates.find(
-    (entry) => entry.pair === getPair(baseBandchainSymbol, quote)
+    (entry) => entry.pair === getPair(symbol, quote)
   );
   return rateEntry?.rate || 0;
 };
