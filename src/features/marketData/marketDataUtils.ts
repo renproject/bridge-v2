@@ -5,7 +5,7 @@ import {
   BridgeCurrency,
   currenciesConfig,
   getCurrencyConfigByBandchainSymbol, getCurrencyConfigByCoingeckoSymbol,
-} from '../../utils/assetConfigs'
+} from "../../utils/assetConfigs"
 
 // move to assetConfig
 const mapToBandchainCurrencySymbol = (symbol: BridgeCurrency) => {
