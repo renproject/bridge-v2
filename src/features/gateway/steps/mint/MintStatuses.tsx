@@ -58,7 +58,6 @@ import {
 } from "../../../wallet/walletHooks";
 import { GatewayTransactionValidityMessage } from "../../components/MintHelpers";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
-import { useDepositTransactionMeta } from "../../mintHooks";
 
 type MintDepositConfirmationStatusProps = {
   gateway: Gateway;

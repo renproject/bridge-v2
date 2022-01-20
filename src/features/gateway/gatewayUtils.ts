@@ -2,7 +2,6 @@ import { Asset, Chain } from "@renproject/chains";
 import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Ethereum } from "@renproject/chains-ethereum";
 import RenJS, { Gateway } from "@renproject/ren";
-import { toURLBase64 } from "@renproject/utils/build/main/internal/common";
 import queryString from "query-string";
 import {
   supportedBitcoinChains,

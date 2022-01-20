@@ -284,7 +284,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
           {t("wallet.network-switch-description")} {chainConfig.fullName}{" "}
-          {networkKindName} {subNetworkName}
+          {networkKindName} ({subNetworkName})
         </Typography>
         <Box mt={2}>
           {addOrSwitchChain !== null && (

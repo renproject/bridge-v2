@@ -1,15 +1,11 @@
 import { ReferenceData } from "@bandprotocol/bandchain.js/lib/data";
 import { Asset, Chain } from "@renproject/chains";
 import { uniqueArray } from "../../utils/arrays";
-import {
-  currenciesConfig,
-  getCurrencyConfigByBandchainSymbol,
-} from "../../utils/assetConfigs";
+import { getCurrencyConfigByBandchainSymbol } from "../../utils/assetConfigs";
 import {
   AssetRateService,
   assetsConfig,
   getAssetSymbolByRateSymbol,
-  supportedAssets,
 } from "../../utils/tokensConfig";
 
 const mapBandchainToCurrencySymbol = (symbol: string) => {

@@ -57,7 +57,6 @@ import { $gateway } from "../gatewaySlice";
 import {
   createGatewayQueryString,
   getGatewayExpiryTime,
-  getRemainingGatewayTime,
   getGatewayNonce,
 } from "../gatewayUtils";
 import { GatewayStepProps } from "./stepUtils";
@@ -69,7 +68,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const { network } = useSelector($network);
   const history = useHistory();
 
-  const { asset, from, to, toAddress } = useSelector($gateway);
+  const { asset, from, to } = useSelector($gateway);
 
   const { Icon, shortName } = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
@@ -88,7 +87,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     to
   );
   const activeChain = fromConnectionRequired ? from : to;
-  const { connected, provider, account } = useWallet(activeChain);
+  const { connected, provider } = useWallet(activeChain);
 
   //why gateway is initialized without amount?
   console.log("amount", amount);

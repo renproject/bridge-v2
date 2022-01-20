@@ -7,18 +7,16 @@ import { useReportSystemStatus } from "../ui/uiHooks";
 import { SystemStatus, SystemType } from "../ui/uiSlice";
 import { setGasPrices, updateExchangeRates } from "./marketDataSlice";
 import {
-  BandchainReferenceData,
   bandchainReferencePairs,
   CoingeckoReferenceData,
   coingeckoSymbols,
   GasPrice,
-  mapBandchainToExchangeRate,
   mapCoingeckoToExchangeRate,
 } from "./marketDataUtils";
 
 const dataRefreshInterval = 30; // seconds
 
-const fetchBandchainExchangeRates = () => {
+export const fetchBandchainExchangeRates = () => {
   return getBandchain().getReferenceData(bandchainReferencePairs, 10, 16);
 };
 

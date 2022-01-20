@@ -221,6 +221,7 @@ export const useGatewayFees = (
   activeAmount: string | number | BigNumber | null = 0
 ) => {
   const asset = gateway?.params?.asset as Asset;
+  // const { isFromContractChain, isToContractChain } = useDecomposedGatewayMeta(gateway);
   const { decimals: fromChainDecimals } = useChainAssetDecimals(
     gateway?.fromChain,
     asset
@@ -335,6 +336,7 @@ export const useGatewayFeesWithRates = (
   gateway: Gateway | null,
   activeAmount: string | number | BigNumber
 ) => {
+  const { isH2H, isMint, isRelease } = useDecomposedGatewayMeta(gateway);
   const rates = useSelector($exchangeRates);
   const fees = useGatewayFees(gateway, activeAmount);
   const [outputAmountUsd, setOutputAmountUsd] = useState<string | null>(null);
@@ -416,8 +418,21 @@ export const useGatewayFeesWithRates = (
   };
 };
 
-// memoize?
-export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
+//will become  useGatewayMeta
+export const useDecomposedGatewayMeta = (gateway: Gateway | null) => {
+  const asset = gateway?.params.asset || null;
+  const from = gateway?.params.from.chain || null;
+  const to = gateway?.params.to.chain || null;
+  return useGatewayMeta(asset, from, to);
+};
+
+// TODO: memoize?
+//will become useGatewayParamsMeta
+export const useGatewayMeta = (
+  asset: Asset | string | null,
+  from: Chain | null,
+  to: Chain | null
+) => {
   const { network } = useSelector($network);
   const chains = useChains(network);
 
@@ -425,17 +440,28 @@ export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
   const [isRelease, setIsRelease] = useState<boolean | null>(null);
   const [isLock, setIsLock] = useState<boolean | null>(null);
   const [isBurn, setIsBurn] = useState<boolean | null>(null);
+  const [isFromContractChain, setIsFromContractChain] =
+    useState<boolean>(false);
+  const [isToContractChain, setIsToContractChain] = useState<boolean>(false);
 
   const reset = useCallback(() => {
     setIsMint(null);
     setIsRelease(null);
     setIsLock(null);
     setIsBurn(null);
+    setIsFromContractChain(false);
+    setIsToContractChain(false);
   }, []);
 
   useEffect(() => {
     reset();
     console.log(asset, from, to);
+    if (asset === null || from === null || to === null) {
+      return;
+    }
+    setIsToContractChain(Boolean(chains[to].connectionRequired));
+    setIsFromContractChain(Boolean(chains[from].connectionRequired));
+
     getInputAndOutputTypes({
       asset,
       fromChain: chains[from].chain,
@@ -467,18 +493,17 @@ export const useGatewayMeta = (asset: Asset, from: Chain, to: Chain) => {
   console.log("useGatewayMeta", asset, from, to, chains);
 
   // this is faster than input/output types
-  const fromConnectionRequired = Boolean(chains[from].connectionRequired);
-  const toConnectionRequired = Boolean(chains[to].connectionRequired);
-  const isH2H = fromConnectionRequired && toConnectionRequired;
+  // const fromConnectionRequired = Boolean(chains[from].connectionRequired);
+  // const toConnectionRequired = Boolean(chains[to].connectionRequired);
 
   return {
     isMint,
     isRelease,
     isLock,
     isBurn,
-    fromConnectionRequired,
-    toConnectionRequired,
-    isH2H,
+    fromConnectionRequired: isFromContractChain,
+    toConnectionRequired: isToContractChain,
+    isH2H: isFromContractChain && isToContractChain,
   };
 };
 
