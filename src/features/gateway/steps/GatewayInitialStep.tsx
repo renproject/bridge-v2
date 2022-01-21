@@ -23,8 +23,11 @@ import {
   BigOutlinedTextFieldWrapper,
   OutlinedTextField,
 } from "../../../components/inputs/OutlinedTextField";
+import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../components/layout/Paper";
+import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
@@ -35,14 +38,19 @@ import {
 } from "../../../utils/tokensConfig";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
-import { useCurrentChainWallet } from "../../wallet/walletHooks";
+import { useCurrentNetworkChains } from "../../network/networkHooks";
+import { useCurrentChainWallet, useWallet } from "../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../wallet/walletSlice";
 import {
   getAssetOptionData,
   getChainOptionData,
 } from "../components/DropdownHelpers";
 import { MintIntro } from "../components/MintHelpers";
-import { useAddressValidator, useGatewayMeta } from "../gatewayHooks";
+import {
+  useAddressValidator,
+  useEthereumChainAssetBalance,
+  useGatewayMeta,
+} from "../gatewayHooks";
 import {
   $gateway,
   setAmount,
@@ -55,7 +63,7 @@ import {
 import { GatewayStepProps } from "./stepUtils";
 
 const assets = supportedAssets;
-const chains = Object.keys(chainsConfig);
+const allChains = Object.keys(chainsConfig);
 
 const forceShowDropdowns = false;
 
@@ -69,8 +77,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const { t } = useTranslation();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
 
-  const [fromChains, setFromChains] = useState(chains);
-  const [toChains, setToChains] = useState(chains);
+  const [fromChains, setFromChains] = useState(allChains);
+  const [toChains, setToChains] = useState(allChains);
 
   const filterChains = useCallback(
     (asset: Asset) => {
@@ -155,7 +163,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   const toChainConfig = getChainConfig(to);
   // TODO: fix
-  const showMinimalAmountError = false;
   const renAsset = getRenAssetName(asset);
 
   const handleNext = useCallback(() => {
@@ -181,6 +188,20 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       : "";
 
   const meta = useGatewayMeta(asset, from, to);
+  const { isFromContractChain } = meta;
+  const chains = useCurrentNetworkChains();
+  const { account } = useWallet(from);
+  const { balance } = useEthereumChainAssetBalance(
+    chains[from].chain as any,
+    asset,
+    account
+  );
+
+  const hasMinimalAmountBalanceError =
+    isFromContractChain &&
+    balance !== null &&
+    amount !== "" &&
+    Number(amount) > Number(balance);
 
   return (
     <>
@@ -194,7 +215,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               usdValue={amountUsd}
               value={amount}
               errorText={
-                showMinimalAmountError ? (
+                hasMinimalAmountBalanceError ? (
                   <span>
                     {t("release.amount-too-low-error")}{" "}
                     <TooltipWithIcon
@@ -210,6 +231,20 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             />
           </BigCurrencyInputWrapper>
         )}
+        {connected && isFromContractChain ? (
+          <HorizontalPadder>
+            <LabelWithValue
+              label={`${renAsset} ${t("common.balance")}:`}
+              value={
+                balance !== null ? (
+                  balance
+                ) : (
+                  <InlineSkeleton height={17} width={45} />
+                )
+              }
+            />
+          </HorizontalPadder>
+        ) : null}
         <RichDropdownWrapper>
           <RichDropdown
             label={isMint ? t("mint.mint-label") : t("release.release-label")}
@@ -269,7 +304,10 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       <Divider />
       <PaperContent darker bottomPadding topPadding>
         {connected ? (
-          <ActionButton onClick={handleNext} disabled={hasAddressError}>
+          <ActionButton
+            onClick={handleNext}
+            disabled={hasAddressError || hasMinimalAmountBalanceError}
+          >
             {t("common.next-label")}
           </ActionButton>
         ) : (

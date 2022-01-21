@@ -86,7 +86,7 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   );
 };
 
-const useReceivingAssetInfoStyle = makeStyles((theme) => ({
+const useAssetInfoStyles = makeStyles((theme) => ({
   root: {
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: 20,
@@ -135,7 +135,7 @@ export const AssetInfo: FunctionComponent<AssetInfoProps> = ({
   valueEquivalent,
   Icon,
 }) => {
-  const styles = useReceivingAssetInfoStyle();
+  const styles = useAssetInfoStyles();
   return (
     <div className={styles.root}>
       <div className={styles.wrapper}>
@@ -148,6 +148,61 @@ export const AssetInfo: FunctionComponent<AssetInfoProps> = ({
           <span className={styles.valueEquivalent}>{valueEquivalent}</span>
         </span>
       </div>
+    </div>
+  );
+};
+
+const useSimpleAssetInfoStyles = makeStyles((theme) => ({
+  root: {
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: 20,
+    padding: "0 20px",
+    minHeight: 57,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  label: {
+    width: "35%",
+    fontSize: 12,
+  },
+  value: {
+    flexGrow: 2,
+    fontSize: 16,
+  },
+  asset: {
+    fontSize: 16,
+    // flexGrow: 2,
+    // display: "flex",
+    // flexDirection: "column",
+    // justifyContent: "center",
+    // alignItems: "flex-end",
+    // textAlign: "right",
+  },
+
+  // valueEquivalent: {
+  //   fontSize: 13,
+  //   color: theme.palette.grey[600],
+  // },
+}));
+
+type SimpleAssetInfoProps = LabelWithValueProps & {
+  asset: string;
+};
+
+export const SimpleAssetInfo: FunctionComponent<SimpleAssetInfoProps> = ({
+  label,
+  value,
+  asset,
+}) => {
+  const styles = useSimpleAssetInfoStyles();
+  return (
+    <div className={styles.root}>
+      <Typography variant="body2" className={styles.label} component="span">
+        {label}
+      </Typography>
+      <span className={styles.value}>{value}</span>
+      <span className={styles.asset}>{asset}</span>
     </div>
   );
 };

@@ -40,6 +40,7 @@ import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
   LabelWithValue,
+  SimpleAssetInfo,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
@@ -68,15 +69,15 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const { network } = useSelector($network);
   const history = useHistory();
 
-  const { asset, from, to, toAddress } = useSelector($gateway);
+  const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const { Icon, RenIcon, shortName } = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
 
-  const [amount, setAmount] = useState("42");
+  const [activeAmount, setActiveAmount] = useState(amount);
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value.replace(",", ".");
     if (!isNaN(newValue)) {
-      setAmount(newValue);
+      setActiveAmount(newValue);
     }
   }, []);
 
@@ -89,19 +90,19 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const { connected, provider } = useWallet(activeChain);
 
   //why gateway is initialized without amount?
-  console.log("amount", amount, activeChain);
+  console.log("amount", activeAmount, activeChain);
   const { gateway } = useGateway(
     {
       asset,
       from,
       to,
-      amount,
+      amount: activeAmount,
       network,
       toAddress,
     },
     provider
   );
-  const fees = useGatewayFeesWithRates(gateway, amount);
+  const fees = useGatewayFeesWithRates(gateway, activeAmount);
   const { balance } = useEthereumChainAssetBalance(
     isFromContractChain
       ? (gateway?.fromChain as ContractChain)
@@ -180,7 +181,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     setApproved(true);
   }, []);
 
-  const showBalance = isMint || isH2H;
+  const showBalance = isFromContractChain;
 
   const AssetIcon = isMint ? RenIcon : Icon;
   const assetLabel = isMint ? renAsset : asset;
@@ -234,12 +235,21 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             />
           </HorizontalPadder>
         )}
-        <OutlinedTextField
-          value={amount}
-          onChange={handleAmountChange}
-          label="How much will you send?"
-          InputProps={{ endAdornment: shortName }}
-        />
+        {isMint && (
+          <OutlinedTextField
+            value={activeAmount}
+            onChange={handleAmountChange}
+            label="How much will you send?"
+            InputProps={{ endAdornment: shortName }}
+          />
+        )}
+        {isRelease && (
+          <SimpleAssetInfo
+            label={t("release.releasing-label")}
+            value={amount}
+            asset={renAsset}
+          />
+        )}
         <MediumTopWrapper>
           <AssetInfo
             label={t("common.receiving-label")}

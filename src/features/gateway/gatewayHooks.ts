@@ -195,10 +195,12 @@ export const useChainAssetAddress = (
 
 export const useEthereumChainAssetBalance = (
   chainInstance: ContractChain | null | undefined,
-  asset: string
+  asset: string,
+  address?: string
 ) => {
   const { decimals } = useChainAssetDecimals(chainInstance, asset);
   const [balance, setBalance] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (
       !chainInstance ||
@@ -213,15 +215,17 @@ export const useEthereumChainAssetBalance = (
       );
       setBalance(null);
       const balanceBn = (
-        await (chainInstance as EthereumBaseChain).getBalance(asset)
+        await (chainInstance as EthereumBaseChain).getBalance(asset, address)
       ).shiftedBy(-decimals);
       setBalance(balanceBn.toFixed());
       console.log(`gateway balance: ${balanceBn}`);
     };
-    getBalance().catch(console.error);
-  }, [chainInstance, decimals, asset]);
+    getBalance().catch((error) => {
+      setError(error);
+    });
+  }, [chainInstance, decimals, asset, address]);
 
-  return { balance };
+  return { balance, error };
 };
 
 export const useGatewayFees = (
@@ -386,6 +390,7 @@ export const useGatewayFeesWithRates = (
   const rates = useSelector($exchangeRates);
   const fees = useGatewayFees(gateway, activeAmount);
   const [outputAmountUsd, setOutputAmountUsd] = useState<string | null>(null);
+  const [activeAmountUsd, setActiveAmountUsd] = useState<string | null>(null);
   const [minimumAmountUsd, setMinimumAmountUsd] = useState<string | null>(null);
   const [renVMFeeAmountUsd, setRenVMFeeAmountUsd] = useState<string | null>(
     null
@@ -407,9 +412,11 @@ export const useGatewayFeesWithRates = (
     if (assetUsdRate === null) {
       return;
     }
-    // setBalanceUsd(
-    //   new BigNumber(fees.balance).multipliedBy(assetUsdRate).toFixed()
-    // );
+    setActiveAmountUsd(
+      fees.outputAmount !== null
+        ? new BigNumber(activeAmount).multipliedBy(assetUsdRate).toFixed()
+        : null
+    );
     setOutputAmountUsd(
       fees.outputAmount !== null
         ? new BigNumber(fees.outputAmount).multipliedBy(assetUsdRate).toFixed()
@@ -461,6 +468,7 @@ export const useGatewayFeesWithRates = (
     renVMFeeAmountUsd,
     fromChainFeeAmountUsd,
     toChainFeeAmountUsd,
+    activeAmountUsd,
   };
 };
 
