@@ -89,7 +89,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const { connected, provider } = useWallet(activeChain);
 
   //why gateway is initialized without amount?
-  console.log("amount", amount);
+  console.log("amount", amount, activeChain);
   const { gateway } = useGateway(
     {
       asset,
@@ -102,9 +102,9 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   );
   const fees = useGatewayFeesWithRates(gateway, amount);
   const { balance } = useEthereumChainAssetBalance(
-    isMint
-      ? (gateway?.toChain as ContractChain)
-      : (gateway?.fromChain as ContractChain),
+    isFromContractChain
+      ? (gateway?.fromChain as ContractChain)
+      : (gateway?.toChain as ContractChain),
     asset
   );
   const { outputAmount, outputAmountUsd, fromChainFeeAsset, toChainFeeAsset } =
