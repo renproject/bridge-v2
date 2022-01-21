@@ -68,7 +68,10 @@ export type OptionData = {
   Icon: CustomSvgIconComponent;
 };
 
-export type GetOptionDataFn = (option: string) => OptionData;
+export type GetOptionDataFn = (
+  option: string,
+  optionFlag?: boolean
+) => OptionData;
 
 export type DropdownAssetBalance = {
   asset: string;
@@ -83,6 +86,7 @@ export type GetAssetBalanceFn = (
 type RichDropdownProps = SelectProps & {
   options?: Array<string>;
   getOptionData?: GetOptionDataFn;
+  optionMode?: boolean;
   multipleNames?: boolean;
   balances?: Array<DropdownAssetBalance>;
   getAssetBalance?: GetAssetBalanceFn;
@@ -91,7 +95,10 @@ type RichDropdownProps = SelectProps & {
   supplementalLabel?: string;
 };
 
-const getOptionDataDefault: GetOptionDataFn = (option) => {
+const getOptionDataDefault: GetOptionDataFn = (
+  option,
+  optionFlag?: boolean
+) => {
   let full = "Select";
   let short = "Select";
   let Icon = EmptyCircleIcon;
@@ -113,6 +120,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
   balances = [],
   getAssetBalance = getAssetBalanceDefault,
   supplementalLabel = "Options",
+  optionMode = false,
   ...rest
 }) => {
   const styles = useRichDropdownStyles();
@@ -120,7 +128,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
 
   const valueRenderer = useMemo(
     () => (option: any) => {
-      const { Icon, fullName, shortName } = getOptionData(option);
+      const { Icon, fullName, shortName } = getOptionData(option, optionMode);
       // const selected = false;
       return (
         <Box display="flex" alignItems="center" width="100%">
@@ -142,7 +150,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
         </Box>
       );
     },
-    [multipleNames, styles, label, condensed, getOptionData]
+    [multipleNames, styles, label, condensed, getOptionData, optionMode]
   );
   return (
     <div>
@@ -185,7 +193,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
           </Box>
         </ListSubheader>
         {options
-          .map((option) => getOptionData(option))
+          .map((option) => getOptionData(option, optionMode))
           .map(({ value, Icon, fullName, shortName }) => {
             return (
               <MenuItem key={value} value={value}>

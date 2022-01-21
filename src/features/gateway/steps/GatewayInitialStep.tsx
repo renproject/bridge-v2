@@ -216,6 +216,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             supplementalLabel={t("common.asset-label")}
             options={assets}
             getOptionData={getAssetOptionData}
+            optionMode={isRelease}
             value={asset}
             onChange={handleAssetChange}
           />

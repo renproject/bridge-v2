@@ -23,3 +23,4 @@ export const links = {
 };
 
 export const MINT_GAS_UNIT_COST = 153400;
+export const RELEASE_GAS_UNIT_COST = MINT_GAS_UNIT_COST;

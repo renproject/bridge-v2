@@ -40,12 +40,12 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   const fromChainConfig = getChainConfig(from);
   const toChainConfig = getChainConfig(to);
 
-  const renVMFeeTooltip = isMint
-    ? t("fees.ren-fee-tooltip", {
+  const renVMFeeTooltip = isH2H
+    ? ""
+    : t("fees.ren-fee-tooltip", {
         feePercent: variableFeePercent,
         feeKind: isMint ? t("common.mint") : t("common.release"),
-      })
-    : "";
+      });
 
   let fromChainFeeTooltip = "",
     toChainFeeTooltip = "",

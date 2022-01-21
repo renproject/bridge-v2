@@ -215,9 +215,7 @@ export const getAssetSymbolByRateSymbol = (symbol: string) => {
   return entry[0];
 };
 
-export const getRenShortName = (shortName: string) => `ren${shortName}`;
-export const getRenFullName = (fullName: string) => `Ren ${fullName}`;
-
+export const getRenAssetFullName = (fullName: string) => `Ren ${fullName}`;
 // TODO: invent naming similar to renJS, Noah
 export const getRenAssetName = (asset: Asset | string) => `ren${asset}`; //or mint?
 export const getOriginAssetName = (renAsset: string) => {

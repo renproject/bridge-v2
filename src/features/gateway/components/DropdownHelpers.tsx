@@ -5,7 +5,11 @@ import {
 } from "../../../components/dropdowns/RichDropdown";
 import { EmptyCircleIcon } from "../../../components/icons/RenIcons";
 import { getChainConfig } from "../../../utils/chainsConfig";
-import { getAssetConfig } from "../../../utils/tokensConfig";
+import {
+  getAssetConfig,
+  getRenAssetFullName,
+  getRenAssetName,
+} from "../../../utils/tokensConfig";
 
 export const getAssetOptionData: GetOptionDataFn = (
   name: string,
@@ -24,8 +28,8 @@ export const getAssetOptionData: GetOptionDataFn = (
 
   return {
     Icon: wrappedAsset ? config.RenIcon : config.Icon,
-    fullName,
-    shortName: wrappedAsset ? "kuwa" : shortName,
+    fullName: wrappedAsset ? getRenAssetFullName(fullName) : fullName,
+    shortName: wrappedAsset ? getRenAssetName(shortName) : shortName,
     value: name,
   } as OptionData;
 };

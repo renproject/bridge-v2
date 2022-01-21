@@ -44,7 +44,10 @@ import { orangeLight } from "../../../../theme/colors";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
 import { getRemainingTime } from "../../../../utils/time";
-import { getAssetConfig, getRenFullName } from "../../../../utils/tokensConfig";
+import {
+  getAssetConfig,
+  getRenAssetFullName,
+} from "../../../../utils/tokensConfig";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import {
@@ -318,7 +321,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
           {submitting ? t("mint.minting-label") : t("mint.mint-label")}{" "}
-          {getRenFullName(lockAssetConfig.fullName)}
+          {getRenAssetFullName(lockAssetConfig.fullName)}
           {submitting && "..."}
         </ActionButton>
       </ActionButtonWrapper>

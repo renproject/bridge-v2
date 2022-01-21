@@ -68,7 +68,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const { network } = useSelector($network);
   const history = useHistory();
 
-  const { asset, from, to } = useSelector($gateway);
+  const { asset, from, to, toAddress } = useSelector($gateway);
   const { Icon, RenIcon, shortName } = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
 
@@ -97,6 +97,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       to,
       amount,
       network,
+      toAddress,
     },
     provider
   );
@@ -181,7 +182,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const showBalance = isMint || isH2H;
 
-  const AssetIcon = isMint ? RenIcon : Icon; // TODO: this needs more logic
+  const AssetIcon = isMint ? RenIcon : Icon;
+  const assetLabel = isMint ? renAsset : asset;
   const Header = (
     <PaperHeader>
       <PaperNav>
@@ -244,7 +246,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             value={
               <NumberFormatText
                 value={outputAmount}
-                spacedSuffix={renAsset}
+                spacedSuffix={assetLabel}
                 decimalScale={3} // TODO: make dynamic decimal scale based on input decimals
               />
             }

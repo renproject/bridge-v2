@@ -12,7 +12,10 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { MINT_GAS_UNIT_COST } from "../../constants/constants";
+import {
+  MINT_GAS_UNIT_COST,
+  RELEASE_GAS_UNIT_COST,
+} from "../../constants/constants";
 import { supportedEthereumChains } from "../../utils/chainsConfig";
 import { fromGwei } from "../../utils/converters";
 import { EthereumBaseChain } from "../../utils/missingTypes";
@@ -227,7 +230,7 @@ export const useGatewayFees = (
 ) => {
   const gasPrices = useSelector($gasPrices);
   const asset = gateway?.params?.asset as Asset;
-  const { isFromContractChain, isToContractChain, isMint } =
+  const { isFromContractChain, isToContractChain, isMint, isRelease } =
     useDecomposedGatewayMeta(gateway);
   const { decimals: fromChainDecimals } = useChainAssetDecimals(
     gateway?.fromChain,
@@ -308,7 +311,9 @@ export const useGatewayFees = (
       let feeInGwei = null;
       if (isMint) {
         feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18);
-      } // TODO: crit add other cases
+      } else if (isRelease) {
+        feeInGwei = Math.ceil(RELEASE_GAS_UNIT_COST * gasPrice);
+      }
       if (feeInGwei !== null) {
         setFromChainFeeAmount(fromGwei(feeInGwei).toString());
       }
@@ -325,7 +330,9 @@ export const useGatewayFees = (
       let feeInGwei = null;
       if (isMint) {
         feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18);
-      } // TODO: crit add other cases
+      } else if (isRelease) {
+        feeInGwei = Math.ceil(RELEASE_GAS_UNIT_COST * gasPrice);
+      }
       if (feeInGwei !== null) {
         setToChainFeeAmount(fromGwei(feeInGwei).toString());
       }
@@ -344,6 +351,7 @@ export const useGatewayFees = (
     gasPrices,
     isFromContractChain,
     isMint,
+    isRelease,
     isToContractChain,
   ]);
 
@@ -550,7 +558,13 @@ export const useAddressValidator = (chain: Chain) => {
   const chains = useCurrentNetworkChains();
   const instance = chains[chain].chain;
   const validateAddress = useMemo(() => {
-    return (address: string) => instance.validateAddress(address || "");
+    return (address: string) => {
+      try {
+        return instance.validateAddress(address || "");
+      } catch (e: any) {
+        return false;
+      }
+    };
   }, [instance]);
   (window as any).validator = validateAddress;
   return { validateAddress };
