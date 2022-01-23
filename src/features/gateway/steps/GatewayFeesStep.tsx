@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   ActionButton,
-  ActionButtonWrapper,
+  MultipleActionButtonWrapper,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
@@ -293,6 +293,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             <FormControlLabel
               checked={ackChecked}
               onChange={handleAckChange}
+              disabled={approved}
               control={<Checkbox name="ack" color="primary" />}
               label={
                 <>
@@ -301,7 +302,12 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                       tokens: feeTokens.join(" & "),
                     })}{" "}
                   </span>
-                  <TooltipWithIcon title={t("fees.tokens-ack-tooltip")} />
+                  <TooltipWithIcon
+                    title={t("fees.tokens-ack-tooltip", {
+                      asset: asset,
+                      tokens: feeTokens.join(" & "),
+                    })}
+                  />
                 </>
               }
             />
@@ -310,6 +316,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             <FormControlLabel
               checked={approvalChecked}
               onChange={handleApprovalChange}
+              disabled={approved}
               control={<Checkbox name="approval" color="primary" />}
               label={
                 <>
@@ -320,7 +327,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             />
           )}
         </HorizontalPadder>
-        <ActionButtonWrapper>
+        <MultipleActionButtonWrapper>
           {gateway !== null && approvalRequired && !approved && (
             <TxApprovalButton
               tx={gateway.inSetup.approval}
@@ -333,7 +340,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               {isH2H ? t("gateway.submit-tx-label") : t("common.next-label")}
             </ActionButton>
           ) : null}
-        </ActionButtonWrapper>
+        </MultipleActionButtonWrapper>
       </PaperContent>
       <Debug it={{ fees, isH2H, isMint, isRelease }} />
     </>
@@ -352,6 +359,7 @@ export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
   onDone,
   target,
   autoSubmit,
+  disabled,
   ...rest
 }) => {
   const { t } = useTranslation();
@@ -400,14 +408,24 @@ export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
     }
   }, [tx, wait]);
 
-  const disabled = waiting || submitting;
+  const isDisabled = disabled || waiting || submitting;
 
   return (
     <>
-      <ActionButton disabled={disabled} onClick={submit} {...rest}>
-        {t("gateway.approve-assets-contracts-label")}
+      <ActionButton disabled={isDisabled} onClick={submit} {...rest}>
+        {waiting || submitting
+          ? t("gateway.approving-assets-contracts-label")
+          : t("gateway.approve-assets-contracts-label")}
       </ActionButton>
-      <Debug it={{ tx, errorSubmitting, errorWaiting, confirmations }} />
+      <Debug
+        it={{
+          waiting,
+          submitting,
+          errorSubmitting,
+          errorWaiting,
+          confirmations,
+        }}
+      />
     </>
   );
 };

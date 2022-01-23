@@ -271,42 +271,25 @@ export const useGatewayFees = (
     // const isLock = gateway.inputType === InputType.Lock;
     // const isMint = gateway.outputType === OutputType.Mint;
     console.log("amount", activeAmount, isNaN(Number(activeAmount)));
-    if (
-      activeAmount === "" ||
-      activeAmount === null ||
-      isNaN(Number(activeAmount))
-    ) {
-      setOutputAmount(null);
-      setRenVMFeeAmount(null);
-      return;
-    }
-
-    const amountBn = new BigNumber(activeAmount);
-    const estimatedOutputBn = gateway.fees
-      .estimateOutput(amountBn.shiftedBy(fromChainDecimals))
-      .shiftedBy(-fromChainDecimals);
-    setOutputAmount(estimatedOutputBn.toFixed());
-    console.log(`gateway amount estimated output: ${estimatedOutputBn}`);
 
     const renVMFee = gateway.fees.variableFee;
     setVariableFeePercent(
       new BigNumber(renVMFee).div(10000).multipliedBy(100).toNumber()
     );
-
-    setFixedFee(gateway.fees.fixedFee.toNumber());
-
     const renVMFeePercentBn = new BigNumber(renVMFee)
       .div(10000)
       .multipliedBy(100);
     setRenVMFeePercent(renVMFeePercentBn.toNumber());
-    const renVMFeeAmountBn = renVMFeePercentBn.div(100).multipliedBy(amountBn);
-    setRenVMFeeAmount(renVMFeeAmountBn.toFixed());
 
     const minimumAmountBn = gateway.fees.minimumAmount.shiftedBy(
       -fromChainDecimals
     );
     setMinimumAmount(minimumAmountBn.toFixed());
-    console.log(`gateway amount minimum: ${minimumAmountBn}`);
+    setFixedFee(gateway.fees.fixedFee.toNumber());
+
+    const feeAssets = getNativeFeeAssets(gateway);
+    setFromChainFeeAsset(feeAssets.fromChainFeeAsset);
+    setToChainFeeAsset(feeAssets.toChainFeeAsset);
 
     const fromChainFeeBn = gateway.fees.fixedFee;
     if (isFromContractChain) {
@@ -344,9 +327,25 @@ export const useGatewayFees = (
       setToChainFeeAmount(toChainFeeBn.shiftedBy(-fromChainDecimals).toFixed());
     }
 
-    const feeAssets = getNativeFeeAssets(gateway);
-    setFromChainFeeAsset(feeAssets.fromChainFeeAsset);
-    setToChainFeeAsset(feeAssets.toChainFeeAsset);
+    if (
+      activeAmount === "" ||
+      activeAmount === null ||
+      isNaN(Number(activeAmount))
+    ) {
+      setOutputAmount(null);
+      setRenVMFeeAmount(null);
+      return;
+    }
+    const amountBn = new BigNumber(activeAmount);
+
+    const estimatedOutputBn = gateway.fees
+      .estimateOutput(amountBn.shiftedBy(fromChainDecimals))
+      .shiftedBy(-fromChainDecimals);
+    setOutputAmount(estimatedOutputBn.toFixed());
+    console.log(`gateway amount estimated output: ${estimatedOutputBn}`);
+
+    const renVMFeeAmountBn = renVMFeePercentBn.div(100).multipliedBy(amountBn);
+    setRenVMFeeAmount(renVMFeeAmountBn.toFixed());
   }, [
     gateway,
     fromChainDecimals,

@@ -1,3 +1,4 @@
+import { Box } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { Asset, Chain } from "@renproject/chains";
 import { FunctionComponent } from "react";
@@ -40,12 +41,10 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   const fromChainConfig = getChainConfig(from);
   const toChainConfig = getChainConfig(to);
 
-  const renVMFeeTooltip = isH2H
-    ? ""
-    : t("fees.ren-fee-tooltip", {
-        feePercent: variableFeePercent,
-        feeKind: isMint ? t("common.mint") : t("common.release"),
-      });
+  const renVMFeeTooltip = t("fees.ren-fee-tooltip", {
+    feePercent: variableFeePercent,
+    feeKind: isMint ? t("common.mint") : t("common.release"),
+  });
 
   let fromChainFeeTooltip = "",
     toChainFeeTooltip = "",
@@ -107,35 +106,39 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
 
   return (
     <>
-      <LabelWithValue
-        label={t("fees.ren-fee-label")}
-        labelTooltip={renVMFeeTooltip}
-        value={
-          renVMFeeAmount ? (
-            <NumberFormatText
-              value={renVMFeeAmount}
-              spacedSuffix={assetConfig.shortName}
-              decimalScale={8}
-            />
-          ) : renVMFeePercent !== null ? (
-            <span>{renVMFeePercent}%</span>
-          ) : (
-            <InlineSkeleton width={100} height={17} />
-          )
-        }
-        valueEquivalent={
-          renVMFeeAmountUsd !== null ? (
-            <NumberFormatText
-              value={renVMFeeAmountUsd}
-              prefix="$"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          ) : (
-            ""
-          )
-        }
-      />
+      {renVMFeePercent !== null || renVMFeeAmount ? (
+        <LabelWithValue
+          label={t("fees.ren-fee-label")}
+          labelTooltip={renVMFeeTooltip}
+          value={
+            renVMFeeAmount ? (
+              <NumberFormatText
+                value={renVMFeeAmount}
+                spacedSuffix={assetConfig.shortName}
+                decimalScale={8}
+              />
+            ) : renVMFeePercent !== null ? (
+              <span>{renVMFeePercent}%</span>
+            ) : (
+              <InlineSkeleton width={100} height={17} />
+            )
+          }
+          valueEquivalent={
+            renVMFeeAmountUsd !== null ? (
+              <NumberFormatText
+                value={renVMFeeAmountUsd}
+                prefix="$"
+                decimalScale={2}
+                fixedDecimalScale
+              />
+            ) : (
+              ""
+            )
+          }
+        />
+      ) : (
+        <FeeSkeleton />
+      )}
       {Boolean(fromChainFeeLabel) ? (
         <LabelWithValue
           label={fromChainFeeLabel}
@@ -164,7 +167,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           }
         />
       ) : (
-        <Skeleton width="100%" height={17} />
+        <FeeSkeleton />
       )}
       {Boolean(toChainFeeLabel) ? (
         <LabelWithValue
@@ -194,7 +197,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           }
         />
       ) : (
-        <Skeleton width="100%" height={17} />
+        <FeeSkeleton />
       )}
       {approval && (
         <LabelWithValue
@@ -210,3 +213,9 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
     </>
   );
 };
+
+const FeeSkeleton: FunctionComponent = () => (
+  <Box mb={1}>
+    <Skeleton width="100%" height={17} />
+  </Box>
+);

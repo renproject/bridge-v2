@@ -96,6 +96,13 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     [dispatch, isMint, isRelease]
   );
 
+  const [amountTouched, setAmountTouched] = useState(false);
+  const [addressTouched, setAddressTouched] = useState(false);
+  const reset = useCallback(() => {
+    setAmountTouched(false);
+    setAddressTouched(false);
+  }, []);
+
   useEffect(() => {
     filterChains(asset);
   }, [asset, filterChains]);
@@ -120,29 +127,31 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     },
     [dispatch]
   );
+
   const handleAmountChange = useCallback(
     (value) => {
+      setAmountTouched(true);
       dispatch(setAmount(value));
     },
     [dispatch]
   );
 
   const requiresValidAddress = isRelease;
-  const [isAddressTouched, setIsAddressTouched] = useState(false);
   const handleAddressChange = useCallback(
     (event) => {
-      setIsAddressTouched(true);
+      setAddressTouched(true);
       dispatch(setToAddress(event.target.value));
     },
     [dispatch]
   );
   const { validateAddress } = useAddressValidator(to);
   const isAddressValid = validateAddress(toAddress);
-  const hasAddressError = isRelease && isAddressTouched && !isAddressValid;
+  const hasAddressError =
+    requiresValidAddress && addressTouched && !isAddressValid;
 
   useEffect(() => {
     const assetConfig = getAssetConfig(asset);
-    setIsAddressTouched(false);
+    reset();
     console.log(assetConfig, from, to);
     if (isMint) {
       if (assetConfig.lockChainConnectionRequired) {
@@ -156,7 +165,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       console.log("setting wallet chain", from);
       dispatch(setChain(from));
     }
-  }, [dispatch, isMint, isRelease, asset, from, to]);
+  }, [dispatch, reset, isMint, isRelease, asset, from, to]);
 
   const hideFrom = isMint && fromChains.length === 1;
   const hideTo = isRelease && toChains.length === 1;
@@ -164,16 +173,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const toChainConfig = getChainConfig(to);
   // TODO: fix
   const renAsset = getRenAssetName(asset);
-
-  const handleNext = useCallback(() => {
-    if (onNext) {
-      if (requiresValidAddress && !isAddressValid) {
-        setIsAddressTouched(true);
-      } else {
-        onNext();
-      }
-    }
-  }, [onNext, requiresValidAddress, isAddressValid]);
 
   const { connected } = useCurrentChainWallet();
   const handleConnect = useCallback(() => {
@@ -197,17 +196,50 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     account
   );
 
+  const requiresInitialAmount = isFromContractChain;
+  const hasInitialAmount = amount !== "";
   const hasMinimalAmountBalanceError =
-    isFromContractChain &&
+    requiresInitialAmount &&
     balance !== null &&
-    amount !== "" &&
-    Number(amount) > Number(balance);
+    (Number(amount) > Number(balance) || !hasInitialAmount);
+
+  const showAmountError = amountTouched && hasMinimalAmountBalanceError;
+
+  console.log(
+    balance,
+    amount,
+    Number(amount) > Number(balance),
+    hasMinimalAmountBalanceError
+  );
+
+  const handleNext = useCallback(() => {
+    if (onNext) {
+      let ok = true;
+      if (requiresValidAddress && !isAddressValid) {
+        setAddressTouched(true);
+        ok = false;
+      }
+      if (requiresInitialAmount && hasMinimalAmountBalanceError) {
+        setAmountTouched(true);
+        ok = false;
+      }
+      if (ok) {
+        onNext();
+      }
+    }
+  }, [
+    onNext,
+    requiresValidAddress,
+    isAddressValid,
+    requiresInitialAmount,
+    hasMinimalAmountBalanceError,
+  ]);
 
   return (
     <>
       <PaperContent bottomPadding>
-        {isMint && <MintIntro />}
-        {isRelease && (
+        {isMint && !isFromContractChain && <MintIntro />}
+        {requiresInitialAmount && (
           <BigCurrencyInputWrapper>
             <BigCurrencyInput
               onChange={handleAmountChange}
@@ -215,7 +247,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               usdValue={amountUsd}
               value={amount}
               errorText={
-                hasMinimalAmountBalanceError ? (
+                showAmountError && hasMinimalAmountBalanceError ? (
                   <span>
                     {t("release.amount-too-low-error")}{" "}
                     <TooltipWithIcon
@@ -316,7 +348,14 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           </ActionButton>
         )}
       </PaperContent>
-      <Debug it={{ meta, addressError: hasAddressError }} />
+      <Debug
+        it={{
+          meta,
+          amountTouched,
+          addressTouched,
+          addressError: hasAddressError,
+        }}
+      />
     </>
   );
 };
