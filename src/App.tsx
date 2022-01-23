@@ -13,9 +13,10 @@ const AboutPage = lazy(() => import("./pages/AboutPage"));
 const mainPagePaths = [
   paths.HOME,
   paths.MINT,
-  paths.MINT_GATEWAY,
+  paths.MINT__GATEWAY_STANDARD,
+  paths.MINT__GATEWAY_H2H,
   paths.RELEASE,
-  paths.RELEASE_GATEWAY,
+  paths.RELEASE__GATEWAY_STANDARD,
 ];
 function App() {
   return (

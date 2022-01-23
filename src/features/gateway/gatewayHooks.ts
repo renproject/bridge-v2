@@ -42,7 +42,8 @@ type UseGatewayParams = {
 
 export const useGateway = (
   { asset, from, to, network, nonce, toAddress, amount }: UseGatewayParams,
-  provider: any
+  provider: any,
+  autoTeardown?: boolean
 ) => {
   const chains = useChains(network);
   const [renJs, setRenJs] = useState<RenJS | null>(null);
@@ -115,7 +116,7 @@ export const useGateway = (
     }
 
     return () => {
-      if (newGateway) {
+      if (newGateway && autoTeardown) {
         console.log("gateway removing listeners");
         newGateway.eventEmitter.removeAllListeners();
       }
@@ -130,6 +131,7 @@ export const useGateway = (
     nonce,
     toAddress,
     amount,
+    autoTeardown,
   ]);
 
   return { renJs, gateway, transactions, error };

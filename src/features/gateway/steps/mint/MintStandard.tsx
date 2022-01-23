@@ -34,6 +34,7 @@ import {
 } from "../../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
+import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import {
   usePaperTitle,
@@ -91,7 +92,9 @@ import {
 
 export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   location,
+  history,
 }) => {
+  const { t } = useTranslation();
   const [paperTitle] = usePaperTitle();
   const {
     // modalOpened,
@@ -164,7 +167,12 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
       </PaperHeader>
       <PaperContent>
         {Boolean(parseError) && (
-          <GeneralErrorDialog open={true} reason={parseError} />
+          <GeneralErrorDialog
+            open={true}
+            reason={parseError}
+            alternativeActionText={t("mint.back-to-home")}
+            onAlternativeAction={() => history.push({ pathname: paths.HOME })}
+          />
         )}
         {!connected && <ConnectWalletPaperSection />}
         {connected && !gateway && <GatewayLoaderStatus />}

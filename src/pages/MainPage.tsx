@@ -1,13 +1,12 @@
 import React, { FunctionComponent } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
-import { Route } from "react-router-dom";
 import {
   BridgePaperWrapper,
   BridgePurePaper,
 } from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
-import { GatewayFlow } from "../features/gateway/GatewayFlow";
+import { GatewayFlowRoutes } from "../features/gateway/GatewayFlowRoutes";
 import {
   useExchangeRates,
   useGasPrices,
@@ -36,10 +35,7 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
         <PaperTitleProvider>
           <BridgePaperWrapper>
             <BridgePurePaper shaking={paperShaking}>
-              <Route
-                path={[paths.MINT, paths.RELEASE]}
-                component={GatewayFlow}
-              />
+              <GatewayFlowRoutes />
             </BridgePurePaper>
           </BridgePaperWrapper>
         </PaperTitleProvider>

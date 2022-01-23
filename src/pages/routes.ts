@@ -5,10 +5,13 @@ const HOME = "/";
 const MINT = "/mint";
 const RELEASE = "/release";
 
-const _GATEWAY = "/gateway";
+const __GATEWAY = "/gateway";
+const __GATEWAY_H2H = "/gateway-h2h";
 
-const MINT_GATEWAY = MINT + _GATEWAY;
-const RELEASE_GATEWAY = RELEASE + _GATEWAY;
+const MINT__GATEWAY_STANDARD = MINT + __GATEWAY;
+const MINT__GATEWAY_H2H = MINT + __GATEWAY_H2H;
+const RELEASE__GATEWAY_STANDARD = RELEASE + __GATEWAY;
+const RELEASE__GATEWAY_H2H = RELEASE + __GATEWAY_H2H;
 
 export const paths = {
   WELCOME,
@@ -16,7 +19,9 @@ export const paths = {
   ABOUT,
   HOME,
   MINT,
-  MINT_GATEWAY,
+  MINT__GATEWAY_STANDARD,
+  MINT__GATEWAY_H2H,
   RELEASE,
-  RELEASE_GATEWAY,
+  RELEASE__GATEWAY_STANDARD,
+  RELEASE__GATEWAY_H2H,
 };

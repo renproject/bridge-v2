@@ -150,7 +150,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     } else {
       console.log("standard mint");
       history.push({
-        pathname: paths.MINT_GATEWAY,
+        pathname: paths.MINT__GATEWAY_STANDARD,
         search:
           "?" +
           createGatewayQueryString(
@@ -179,7 +179,11 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const handleApproved = useCallback(() => {
     setApproved(true);
-  }, []);
+    //redirect to further flow;
+    history.push({
+      pathname: paths.MINT__GATEWAY_H2H,
+    });
+  }, [history]);
 
   const showBalance = isFromContractChain;
 
@@ -332,7 +336,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             <TxApprovalButton
               tx={gateway.inSetup.approval}
               onDone={handleApproved}
-              disabled={!approvalChecked}
+              disabled={!(approvalChecked && ackChecked)}
             />
           )}
           {approved || !approvalRequired ? (

@@ -7,7 +7,7 @@ import {
   supportedBitcoinChains,
   supportedEthereumChains,
 } from "../../utils/chainsConfig";
-import { EthereumBaseChain, toURLBase64 } from "../../utils/missingTypes";
+import { EthereumBaseChain } from "../../utils/missingTypes";
 import { ChainInstanceMap } from "../chain/chainUtils";
 
 export interface CreateGatewayParams {

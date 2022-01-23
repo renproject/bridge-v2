@@ -1,11 +1,11 @@
 import React, { FunctionComponent, useCallback, useState } from "react";
-import { RouteComponentProps } from "react-router";
 import { Route } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
-import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 import { GatewayFeesStep } from "./steps/GatewayFeesStep";
+import { GatewayInitialStep } from "./steps/GatewayInitialStep";
+import { MintH2HProcess } from "./steps/mint/MintH2H";
 import { MintStandardProcess } from "./steps/mint/MintStandard";
 
 export enum GatewayConfigurationStep {
@@ -47,10 +47,9 @@ const GatewayConfigurationSteps: FunctionComponent<
   );
 };
 
-export const GatewayFlow: FunctionComponent<RouteComponentProps> = ({
-  match,
-}) => {
+export const GatewayFlowRoutes: FunctionComponent = () => {
   usePageTitle("Gateway");
+
   return (
     <>
       <Route
@@ -58,9 +57,10 @@ export const GatewayFlow: FunctionComponent<RouteComponentProps> = ({
         path={[paths.MINT, paths.RELEASE]}
         component={GatewayConfigurationSteps}
       />
+      <Route exact path={paths.MINT__GATEWAY_H2H} component={MintH2HProcess} />
       <Route
         exact
-        path={[paths.MINT_GATEWAY]}
+        path={paths.MINT__GATEWAY_STANDARD}
         component={MintStandardProcess}
       />
     </>
