@@ -13,13 +13,13 @@ export const GatewayLoaderStatus: FunctionComponent<ProgressStatusProps> = ({
   return (
     <>
       <ProgressStatus reason={reason} processing={processing} />
-      <Box mb={20} display="flex" justifyContent="center">
+      <Box mb={3} display="flex" justifyContent="center">
         <Skeleton width={200} />
       </Box>
-      <Box mb={20}>
+      <Box mb={3}>
         <Skeleton width={320} height={54} />
       </Box>
-      <Box mb={20} display="flex" justifyContent="spaceBetween">
+      <Box mb={3} display="flex" justifyContent="spaceBetween">
         <Skeleton width={70} height={17} />
         <Skeleton width={70} height={17} />
       </Box>

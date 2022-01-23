@@ -7,7 +7,7 @@ import {
   supportedBitcoinChains,
   supportedEthereumChains,
 } from "../../utils/chainsConfig";
-import { EthereumBaseChain } from "../../utils/missingTypes";
+import { EthereumBaseChain, toURLBase64 } from "../../utils/missingTypes";
 import { ChainInstanceMap } from "../chain/chainUtils";
 
 export interface CreateGatewayParams {
@@ -84,7 +84,19 @@ export const parseGatewayQueryString = (query: string) => {
     AdditionalGatewayParams;
   const { expiryTime, ...gatewayParams } = parsed;
   const additionalParams = { expiryTime };
-  return { gatewayParams, additionalParams };
+  let error;
+  let nonce = Number(gatewayParams.nonce);
+  if (isNaN(nonce)) {
+    error = `Unable to parse nonce as number: ${gatewayParams.nonce}`;
+  }
+
+  const sanitized = {
+    asset: gatewayParams.asset,
+    from: gatewayParams.from,
+    to: gatewayParams.to,
+    nonce,
+  };
+  return { gatewayParams: sanitized, additionalParams, error };
 };
 
 const DAY_S = 24 * 3600;
@@ -96,7 +108,9 @@ export const getSessionDay = (pastDayOffset = 0) =>
   Math.floor(Date.now() / 1000 / DAY_S) - pastDayOffset;
 
 export const getGatewayNonce = (pastDayOffset = 0) => {
-  return getSessionDay(pastDayOffset);
+  const sessionDay = getSessionDay(pastDayOffset);
+  return sessionDay;
+  // return toURLBase64(Buffer.from([sessionDay]));
 };
 
 export const getGatewayExpiryTime = (pastDayOffset = 0) => {

@@ -50,7 +50,10 @@ import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
 } from "../../../notifications/notificationsUtils";
-import { HMSCountdown } from "../../../transactions/components/TransactionsHelpers";
+import {
+  GeneralErrorDialog,
+  HMSCountdown,
+} from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
@@ -100,9 +103,11 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const { network } = useSelector($network);
   const { enabled } = useBrowserNotifications(handleModalClose);
   const { menuOpened, handleMenuOpen } = useGatewayMenuControl();
-  const { gatewayParams, additionalParams } = parseGatewayQueryString(
-    location.search
-  );
+  const {
+    gatewayParams,
+    additionalParams,
+    error: parseError,
+  } = parseGatewayQueryString(location.search);
   const { asset, from, to, nonce } = gatewayParams;
   const expiryTime = additionalParams.expiryTime || getGatewayExpiryTime();
 
@@ -158,6 +163,9 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
         </PaperActions>
       </PaperHeader>
       <PaperContent>
+        {Boolean(parseError) && (
+          <GeneralErrorDialog open={true} reason={parseError} />
+        )}
         {!connected && <ConnectWalletPaperSection />}
         {connected && !gateway && <GatewayLoaderStatus />}
         {connected && gateway !== null && (
