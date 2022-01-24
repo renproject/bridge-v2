@@ -90,7 +90,7 @@ const useAssetInfoStyles = makeStyles((theme) => ({
   root: {
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: 20,
-    padding: "10px 20px",
+    padding: "10px 16px",
   },
   wrapper: {
     display: "flex",
@@ -156,7 +156,7 @@ const useSimpleAssetInfoStyles = makeStyles((theme) => ({
   root: {
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: 20,
-    padding: "0 20px",
+    padding: "0 16px",
     minHeight: 57,
     display: "flex",
     justifyContent: "space-between",

@@ -12,7 +12,6 @@ import {
   BigQrCode,
   CopyContentButton,
   QrCodeIconButton,
-  ToggleIconButton,
   TransactionDetailsButton,
 } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
@@ -21,13 +20,7 @@ import {
   CenteringSpacedBox,
   MediumWrapper,
 } from "../../../../components/layout/LayoutHelpers";
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from "../../../../components/layout/Paper";
+import { PaperContent } from "../../../../components/layout/Paper";
 import {
   ProgressWithContent,
   ProgressWrapper,
@@ -46,11 +39,6 @@ import { getHours } from "../../../../utils/dates";
 import { trimAddress } from "../../../../utils/strings";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
 import { $network } from "../../../network/networkSlice";
-import { BrowserNotificationButton } from "../../../notifications/components/NotificationsHelpers";
-import {
-  useBrowserNotifications,
-  useBrowserNotificationsConfirmation,
-} from "../../../notifications/notificationsUtils";
 import {
   GeneralErrorDialog,
   HMSCountdown,
@@ -82,7 +70,7 @@ import {
   useDepositTransactionMeta,
   useTransactionsPagination,
 } from "../../mintHooks";
-import { useGatewayMenuControl } from "../gatewayUiHooks";
+import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   MintCompletedStatus,
   MintCompletingStatus,
@@ -95,17 +83,10 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
   const { t } = useTranslation();
-  const [paperTitle] = usePaperTitle();
-  const {
-    // modalOpened,
-    handleModalOpen,
-    handleModalClose,
-    tooltipOpened,
-    handleTooltipClose,
-  } = useBrowserNotificationsConfirmation();
   const { network } = useSelector($network);
-  const { enabled } = useBrowserNotifications(handleModalClose);
-  const { menuOpened, handleMenuOpen } = useGatewayMenuControl();
+
+  const [paperTitle] = usePaperTitle();
+
   const {
     gatewayParams,
     additionalParams,
@@ -118,7 +99,8 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const { connected, provider } = useWallet(to);
   const { gateway, transactions } = useGateway(
     { asset, from, to, nonce, network },
-    provider
+    provider,
+    true
   );
 
   const fees = useGatewayFees(gateway);
@@ -147,24 +129,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const transaction = transactions.find((tx) => tx.hash === currentDeposit);
   return (
     <>
-      <PaperHeader>
-        <PaperNav />
-        <PaperTitle>{paperTitle}</PaperTitle>
-        <PaperActions>
-          <BrowserNotificationButton
-            pressed={enabled}
-            onClick={handleModalOpen}
-            tooltipOpened={tooltipOpened}
-            onTooltipClose={handleTooltipClose}
-          />
-          <ToggleIconButton
-            disabled={true}
-            variant="settings"
-            onClick={handleMenuOpen}
-            pressed={menuOpened}
-          />
-        </PaperActions>
-      </PaperHeader>
+      <GatewayPaperHeader title={paperTitle} />
       <PaperContent>
         {Boolean(parseError) && (
           <GeneralErrorDialog

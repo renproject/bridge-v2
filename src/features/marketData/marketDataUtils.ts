@@ -62,7 +62,6 @@ export const mapCoingeckoToExchangeRate = (
 ) => {
   return entries.map((entry) => {
     const asset = getAssetSymbolByRateSymbol(entry.id);
-    console.log("coing", asset);
     return {
       pair: getPair(asset, "USD"),
       rate: entry.current_price,

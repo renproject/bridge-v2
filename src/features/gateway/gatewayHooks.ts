@@ -473,6 +473,14 @@ export const useGatewayFeesWithRates = (
   };
 };
 
+export const getGatewayParams = (gateway: Gateway) => {
+  const asset = gateway.params.asset as Asset;
+  const from = gateway.params.from.chain as Chain;
+  const to = gateway.params.to.chain as Chain;
+  const amount = gateway.params.from.params.amount as string;
+  return { asset, from, to, amount };
+};
+
 //will become  useGatewayMeta
 export const useDecomposedGatewayMeta = (gateway: Gateway | null) => {
   const asset = gateway?.params.asset || null;
@@ -545,7 +553,7 @@ export const useGatewayMeta = (
         reset();
       });
   }, [reset, chains, asset, from, to]);
-  console.log("useGatewayMeta", asset, from, to, chains);
+  // console.log("useGatewayMeta", asset, from, to, chains);
 
   // this is faster than input/output types
   // const fromConnectionRequired = Boolean(chains[from].connectionRequired);

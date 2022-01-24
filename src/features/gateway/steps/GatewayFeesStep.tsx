@@ -15,7 +15,7 @@ import {
 } from "@renproject/utils";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   ActionButton,
@@ -65,7 +65,6 @@ import { GatewayStepProps } from "./stepUtils";
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   onPrev,
 }) => {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const { network } = useSelector($network);
   const history = useHistory();
@@ -178,15 +177,16 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     // gateway,
   ]);
 
-  const [_, setSharedGateway] = useSharedGateway();
+  const [, setSharedGateway] = useSharedGateway();
   const handleApproved = useCallback(() => {
     setApproved(true);
     //store initialized gateway
     setSharedGateway(gateway);
+    (window as any).gateway = gateway; // TODO: crit remove // productivity hack
     history.push({
       pathname: paths.MINT__GATEWAY_H2H,
     });
-  }, [history, setSharedGateway]);
+  }, [history, setSharedGateway, gateway]);
 
   const showBalance = isFromContractChain;
 
@@ -236,7 +236,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                       <span>{balance}</span>
                     </Fade>
                   )}
-                  <span> {renAsset}</span>
+                  <span> {asset}</span> {/*/ TODO: differentiate*/}
                 </span>
               }
             />
@@ -292,7 +292,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           asset={asset}
           from={from}
           to={to}
-          approval={approvalRequired}
+          needsApproval={approvalRequired}
           approved={approved}
         />
         <HorizontalPadder>
