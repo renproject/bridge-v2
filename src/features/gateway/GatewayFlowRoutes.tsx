@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
+import { SharedGatewayProvider } from "./gatewaySlice";
 import { GatewayFeesStep } from "./steps/GatewayFeesStep";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 import { MintH2HProcess } from "./steps/mint/MintH2H";
@@ -51,7 +52,7 @@ export const GatewayFlowRoutes: FunctionComponent = () => {
   usePageTitle("Gateway");
 
   return (
-    <>
+    <SharedGatewayProvider>
       <Route
         exact
         path={[paths.MINT, paths.RELEASE]}
@@ -63,6 +64,6 @@ export const GatewayFlowRoutes: FunctionComponent = () => {
         path={paths.MINT__GATEWAY_STANDARD}
         component={MintStandardProcess}
       />
-    </>
+    </SharedGatewayProvider>
   );
 };

@@ -15,7 +15,7 @@ import {
 } from "@renproject/utils";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   ActionButton,
@@ -54,7 +54,7 @@ import {
   useGatewayFeesWithRates,
   useGatewayMeta,
 } from "../gatewayHooks";
-import { $gateway } from "../gatewaySlice";
+import { $gateway, useSharedGateway } from "../gatewaySlice";
 import {
   createGatewayQueryString,
   getGatewayExpiryTime,
@@ -65,6 +65,7 @@ import { GatewayStepProps } from "./stepUtils";
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   onPrev,
 }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const { network } = useSelector($network);
   const history = useHistory();
@@ -177,13 +178,15 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     // gateway,
   ]);
 
+  const [_, setSharedGateway] = useSharedGateway();
   const handleApproved = useCallback(() => {
     setApproved(true);
-    //redirect to further flow;
+    //store initialized gateway
+    setSharedGateway(gateway);
     history.push({
       pathname: paths.MINT__GATEWAY_H2H,
     });
-  }, [history]);
+  }, [history, setSharedGateway]);
 
   const showBalance = isFromContractChain;
 

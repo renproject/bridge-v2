@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Asset, Chain } from "@renproject/chains";
+import { Gateway } from "@renproject/ren";
+import { createStateContext } from "react-use";
 import { RootState } from "../../store/rootReducer";
 
 type GatewayState = {
@@ -72,3 +74,8 @@ export const {
 export const gatewayReducer = slice.reducer;
 
 export const $gateway = (state: RootState) => state.gateway;
+
+const [useSharedGateway, SharedGatewayProvider] =
+  createStateContext<Gateway | null>(null);
+
+export { useSharedGateway, SharedGatewayProvider };
