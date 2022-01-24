@@ -1,13 +1,13 @@
 import { Box, Divider, Fade, Typography } from "@material-ui/core";
 import { Gateway } from "@renproject/ren";
-import { ContractChain } from "@renproject/utils";
+import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import {
   ActionButton,
-  ActionButtonWrapper,
+  MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
 import {
@@ -28,7 +28,11 @@ import {
   getAssetConfig,
   getRenAssetName,
 } from "../../../../utils/tokensConfig";
-import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import {
+  GeneralErrorDialog,
+  SubmitErrorDialog,
+} from "../../../transactions/components/TransactionsHelpers";
+import { useSyncWalletChain } from "../../../wallet/walletHooks";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
@@ -37,6 +41,10 @@ import {
   useGatewayFeesWithRates,
 } from "../../gatewayHooks";
 import { useSharedGateway } from "../../gatewaySlice";
+import {
+  useChainTransactionStatusUpdater,
+  useChainTransactionSubmitter,
+} from "../../gatewayTransactionHooks";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 
 export const MintH2HProcess: FunctionComponent<RouteComponentProps> = () => {
@@ -100,11 +108,41 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     }
   }, [gateway, gateway.inSetup.approval.progress.transaction]);
 
-  console.log(
-    "gtx",
-    gateway.inSetup.approval.progress.transaction,
-    approvalTxUrl
+  // console.log(
+  //   "gtx",
+  //   gateway.inSetup.approval.progress.transaction,
+  //   approvalTxUrl
+  // );
+
+  // const handleSubmitFrom = useCallback(()=> {
+  //   gateway.in.submit();
+  // }, [gateway])
+  // const status = useChainTransactionStatusUpdater(gateway.in);
+
+  const {
+    handleSubmit,
+    submitting,
+    done,
+    waiting,
+    errorSubmitting,
+    handleReset,
+  } = useChainTransactionSubmitter(gateway.in);
+  const inStatus = useChainTransactionStatusUpdater(gateway.in);
+
+  // @ts-ignore
+  const outTx = gateway.transactions.first()?.out || undefined;
+  // @ts-ignore
+  const outHandlers = useChainTransactionSubmitter(
+    // @ts-ignore
+    outTx
   );
+
+  const outStatus = useChainTransactionStatusUpdater(outTx);
+  console.log("gtc", gateway.transactions.count());
+  console.log("gtc 1", gateway.transactions.first());
+  (window as any).tx1 = gateway.transactions.first();
+
+  useSyncWalletChain(to);
 
   return (
     <>
@@ -187,13 +225,36 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
             <TooltipWithIcon title={t("h2h.network-switching-tooltip")} />
           </Box>
         </HorizontalPadder>
-        <ActionButtonWrapper>
-          <ActionButton onClick={() => {}}>
-            {t("gateway.submit-tx-label")}
+        <MultipleActionButtonWrapper>
+          <ActionButton
+            onClick={handleSubmit}
+            disabled={
+              submitting ||
+              waiting ||
+              done ||
+              inStatus.status === ChainTransactionStatus.Confirming
+            }
+          >
+            {submitting || waiting
+              ? t("gateway.submitting-tx-label")
+              : t("gateway.submit-tx-label")}
           </ActionButton>
-        </ActionButtonWrapper>
+          {errorSubmitting && (
+            <SubmitErrorDialog
+              open={true}
+              error={errorSubmitting}
+              onAction={handleReset}
+            />
+          )}
+          <ActionButton
+            onClick={outHandlers.handleSubmit}
+            disabled={outHandlers.submitting || outHandlers.waiting}
+          >
+            Submit out
+          </ActionButton>
+        </MultipleActionButtonWrapper>
       </PaperContent>
-      <Debug it={{ approvalTxUrl }} />
+      <Debug it={{ approvalTxUrl, inStatus, outStatus }} />
     </>
   );
 };

@@ -354,14 +354,14 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   );
 };
 
-type TxApprovalButtonProps = ButtonProps & {
+type TransactionActionButton = ButtonProps & {
   tx: TxSubmitter | TxWaiter;
   onDone: () => void;
   target?: number;
   autoSubmit?: boolean;
 };
 
-export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
+export const TxApprovalButton: FunctionComponent<TransactionActionButton> = ({
   tx,
   onDone,
   target,
@@ -372,10 +372,10 @@ export const TxApprovalButton: FunctionComponent<TxApprovalButtonProps> = ({
   const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(autoSubmit ? true : false);
   const [waiting, setWaiting] = useState(false);
-  const [confirmations, setConfirmations] = useState<number>();
-
   const [errorSubmitting, setErrorSubmitting] = useState<Error>();
   const [errorWaiting, setErrorWaiting] = useState<Error>();
+
+  const [confirmations, setConfirmations] = useState<number>();
 
   const wait = useCallback(async () => {
     setErrorSubmitting(undefined);

@@ -70,7 +70,7 @@ export const useRenVMChainTransactionStatusUpdater = (
 };
 
 export const useChainTransactionStatusUpdater = (
-  tx: TxSubmitter | TxWaiter,
+  tx?: TxSubmitter | TxWaiter,
   waitTarget?: number
 ) => {
   const chains = useCurrentNetworkChains();
@@ -91,6 +91,9 @@ export const useChainTransactionStatusUpdater = (
 
   useEffect(() => {
     reset();
+    if (!tx) {
+      return;
+    }
     tx.wait(waitTarget)
       .on("progress", (progress) => {
         setError(null);
@@ -131,5 +134,78 @@ export const useChainTransactionStatusUpdater = (
     txIndex,
     txUrl,
     amount,
+  };
+};
+
+export const useChainTransactionSubmitter = (
+  tx?: TxSubmitter | TxWaiter,
+  waitTarget?: number,
+  autoSubmit?: boolean
+) => {
+  const [submitting, setSubmitting] = useState(!!autoSubmit);
+  const [waiting, setWaiting] = useState(false);
+  const [errorSubmitting, setErrorSubmitting] = useState<Error>();
+  const [errorWaiting, setErrorWaiting] = useState<Error>();
+  const [done, setDone] = useState(false);
+
+  const handleReset = useCallback(() => {
+    setSubmitting(!!autoSubmit);
+    setWaiting(false);
+    setErrorSubmitting(undefined);
+    setErrorWaiting(undefined);
+    setDone(false);
+  }, [autoSubmit]);
+
+  const wait = useCallback(async () => {
+    setErrorSubmitting(undefined);
+    setErrorWaiting(undefined);
+
+    try {
+      setWaiting(true);
+      if (tx) {
+        await tx.wait(waitTarget);
+      }
+      setDone(true);
+    } catch (error: any) {
+      console.error(error);
+      setErrorWaiting(error);
+    }
+    setWaiting(false);
+  }, [tx, waitTarget]);
+
+  const handleSubmit = useCallback(async () => {
+    setErrorSubmitting(undefined);
+    setErrorWaiting(undefined);
+
+    console.log("submitting");
+    if (
+      tx &&
+      tx.submit &&
+      tx.progress.status === ChainTransactionStatus.Ready
+    ) {
+      try {
+        setSubmitting(true);
+        await tx.submit({
+          txConfig: {
+            // gasLimit: 500000,
+          },
+        });
+        wait().catch(console.error);
+      } catch (error: any) {
+        console.error(error);
+        setErrorSubmitting(error);
+      }
+      setSubmitting(false);
+    }
+  }, [tx, wait]);
+
+  return {
+    handleSubmit,
+    errorSubmitting,
+    errorWaiting,
+    waiting,
+    submitting,
+    done,
+    handleReset,
   };
 };

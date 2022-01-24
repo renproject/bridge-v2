@@ -46,6 +46,7 @@
   "gateway.approve-assets-contracts-label": "Approve Assets & Contracts",
   "gateway.approving-assets-contracts-label": "Approving...",
   "gateway.submit-tx-label": "Submit Transaction",
+  "gateway.submitting-tx-label": "Submitting Transaction...",
   "h2h.network-switching-message": "to complete this process, you will need to change networks after the first transaction",
   "h2h.network-switching-tooltip": "todo: tooltip",
   "languages.choose-language": "Choose Language",
