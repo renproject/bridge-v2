@@ -1,7 +1,7 @@
 import { Box, Divider, Fade, Typography } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { FunctionComponent, ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActionButton,
@@ -177,35 +177,39 @@ type MintH2HLockTransactionProgressStatusProps = {
   transaction: GatewayTransaction;
   outputAmount: string | null;
   outputAmountUsd: string | null;
+  lockConfirmations: number | null;
+  lockTargetConfirmations: number | null;
+  lockStatus: ChainTransactionStatus | null;
+  mintStatus: ChainTransactionStatus | null;
   Fees: ReactNode | null;
 };
 
 export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   MintH2HLockTransactionProgressStatusProps
-> = ({ gateway, transaction, Fees, outputAmount, outputAmountUsd }) => {
+> = ({
+  gateway,
+  transaction,
+  lockConfirmations,
+  lockTargetConfirmations,
+  outputAmount,
+  outputAmountUsd,
+  lockStatus,
+  Fees,
+}) => {
   const { t } = useTranslation();
   const { asset, from, amount } = getGatewayParams(gateway);
   const fromChainConfig = getChainConfig(from);
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
-  const { balance } = useEthereumChainAssetBalance(
-    gateway.fromChain as ContractChain,
-    asset
-  );
   const { RenIcon } = assetConfig;
 
-  const lockStatus = useChainTransactionStatusUpdater(transaction.in);
-  const { confirmations: lockConfirmations, target: lockTargetConfirmations } =
-    lockStatus;
+  const renVM = useChainTransactionSubmitter(transaction.renVM);
+  const out = useChainTransactionSubmitter(transaction.out);
 
-  const {
-    handleSubmit,
-    submitting,
-    done,
-    waiting,
-    errorSubmitting,
-    handleReset,
-  } = useChainTransactionSubmitter(transaction.out);
+  const handleSubmitBoth = useCallback(async () => {
+    await renVM.handleSubmit();
+    await out.handleSubmit();
+  }, [renVM.handleSubmit, out.handleSubmit]);
 
   const Icon = fromChainConfig.Icon;
   return (
@@ -276,27 +280,36 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
         </HorizontalPadder>
         <MultipleActionButtonWrapper>
           <ActionButton
-            onClick={handleSubmit}
+            onClick={handleSubmitBoth}
             disabled={
-              submitting ||
-              waiting ||
-              done ||
-              lockStatus.status === ChainTransactionStatus.Confirming
+              out.submitting ||
+              out.waiting ||
+              out.done ||
+              renVM.submitting ||
+              renVM.waiting ||
+              renVM.done ||
+              lockStatus === ChainTransactionStatus.Confirming
             }
           >
-            {submitting || waiting
+            {out.submitting || out.waiting || renVM.submitting || renVM.waiting
               ? t("gateway.submitting-tx-label")
               : t("gateway.submit-tx-label")}
           </ActionButton>
-          {errorSubmitting && (
+          {renVM.errorSubmitting && (
             <SubmitErrorDialog
               open={true}
-              error={errorSubmitting}
-              onAction={handleReset}
+              error={renVM.errorSubmitting}
+              onAction={renVM.handleReset}
+            />
+          )}
+          {out.errorSubmitting && (
+            <SubmitErrorDialog
+              open={true}
+              error={out.errorSubmitting}
+              onAction={out.handleReset}
             />
           )}
         </MultipleActionButtonWrapper>
-        <Debug it={{ lockStatus }} />
       </PaperContent>
     </>
   );

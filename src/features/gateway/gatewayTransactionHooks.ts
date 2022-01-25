@@ -11,7 +11,7 @@ import { isDefined } from "../../utils/objects";
 import { useCurrentNetworkChains } from "../network/networkHooks";
 
 export const useRenVMChainTransactionStatusUpdater = (
-  tx: TxSubmitter,
+  tx?: TxSubmitter,
   waitTarget?: number
 ) => {
   const [error, setError] = useState<Error | null>(null);
@@ -29,10 +29,13 @@ export const useRenVMChainTransactionStatusUpdater = (
 
   useEffect(() => {
     reset();
+    if (!tx) {
+      return;
+    }
     tx.wait(waitTarget)
       .once("progress", (progress) => {
         setError(null);
-        console.log("newStatus", progress);
+        console.log("newStatus renvm", progress);
         setStatus(progress.status);
         setTarget(progress.target);
 
@@ -77,7 +80,7 @@ export const useChainTransactionStatusUpdater = (
   const [error, setError] = useState<Error | null>(null);
   const [confirmations, setConfirmations] = useState<number | null>(null);
   const [target, setTarget] = useState<number | null>(null);
-  const [status, setStatus] = useState<ChainTransactionStatus | null>();
+  const [status, setStatus] = useState<ChainTransactionStatus | null>(null);
   const [txId, setTxId] = useState<string | null>(null);
   const [txIdFormatted, setTxIdFormatted] = useState<string | null>(null);
   const [txIndex, setTxIndex] = useState<string | null>(null);
@@ -192,7 +195,7 @@ export const useChainTransactionSubmitter = (
             // gasLimit: 500000,
           },
         });
-        wait().catch(console.error);
+        wait().catch(console.error); // todo: await
       } catch (error: any) {
         console.error(error);
         setErrorSubmitting(error);

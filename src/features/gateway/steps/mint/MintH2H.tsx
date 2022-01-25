@@ -1,4 +1,5 @@
 import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
@@ -11,7 +12,10 @@ import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { getGatewayParams, useGatewayFeesWithRates } from "../../gatewayHooks";
 import { useSharedGateway } from "../../gatewaySlice";
-import { useChainTransactionStatusUpdater } from "../../gatewayTransactionHooks";
+import {
+  useChainTransactionStatusUpdater,
+  useRenVMChainTransactionStatusUpdater,
+} from "../../gatewayTransactionHooks";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   MintH2HLockTransactionProgressStatus,
@@ -88,6 +92,21 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     getFirstTx().finally();
   }, [gateway.transactions]);
 
+  const inSetupMeta = useChainTransactionStatusUpdater(
+    Object.values(gateway.inSetup)[0]
+  );
+  const gatewayInTxMeta = useChainTransactionStatusUpdater(gateway.in);
+  const lockTxMeta = useChainTransactionStatusUpdater(transaction?.in);
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(transaction?.renVM);
+  const mintTxMeta = useChainTransactionStatusUpdater(transaction?.out);
+
+  const {
+    confirmations: lockConfirmations,
+    target: lockTargetConfirmations,
+    status: lockStatus,
+  } = lockTxMeta;
+  const { status: mintStatus } = mintTxMeta;
+
   const Fees = (
     <GatewayFees
       asset={asset}
@@ -110,7 +129,10 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         outputAmountUsd={outputAmountUsd}
       />
     );
-  } else {
+  } else if (
+    mintStatus === null ||
+    mintStatus === ChainTransactionStatus.Ready
+  ) {
     Content = (
       <MintH2HLockTransactionProgressStatus
         gateway={gateway}
@@ -118,13 +140,28 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         Fees={Fees}
         outputAmount={outputAmount}
         outputAmountUsd={outputAmountUsd}
+        lockConfirmations={lockConfirmations}
+        lockTargetConfirmations={lockTargetConfirmations}
+        lockStatus={lockStatus}
+        mintStatus={mintStatus}
       />
     );
+  } else {
+    Content = <span>ready for minting?</span>;
   }
   return (
     <>
       {Content}
-      <Debug it={{ fees, approvalUrl, count: gateway.transactions.count() }} />
+      <Debug
+        it={{
+          count: gateway.transactions.count(),
+          approvalUrl,
+          lockTxMeta,
+          gatewayInTxMeta,
+          renVmTxMeta,
+          mintTxMeta,
+        }}
+      />
     </>
   );
 };
