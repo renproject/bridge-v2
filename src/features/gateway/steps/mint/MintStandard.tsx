@@ -76,7 +76,7 @@ import {
   MintCompletingStatus,
   MintDepositAcceptedStatus,
   MintDepositConfirmationStatus,
-} from "./MintStatuses";
+} from "./MintStandardStatuses";
 
 export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   location,

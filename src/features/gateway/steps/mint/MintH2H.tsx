@@ -1,51 +1,22 @@
-import { Box, Divider, Fade, Typography } from "@material-ui/core";
-import { Gateway } from "@renproject/ren";
-import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
-import {
-  ActionButton,
-  MultipleActionButtonWrapper,
-} from "../../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import {
-  HorizontalPadder,
-  MediumTopWrapper,
-} from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
-import { InlineSkeleton } from "../../../../components/progress/ProgressHelpers";
-import { TooltipWithIcon } from "../../../../components/tooltips/TooltipWithIcon";
-import {
-  AssetInfo,
-  LabelWithValue,
-  SimpleAssetInfo,
-} from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
-import {
-  getAssetConfig,
-  getRenAssetName,
-} from "../../../../utils/tokensConfig";
-import {
-  GeneralErrorDialog,
-  SubmitErrorDialog,
-} from "../../../transactions/components/TransactionsHelpers";
-import { useSyncWalletChain } from "../../../wallet/walletHooks";
+import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
-import {
-  getGatewayParams,
-  useEthereumChainAssetBalance,
-  useGatewayFeesWithRates,
-} from "../../gatewayHooks";
+import { getGatewayParams, useGatewayFeesWithRates } from "../../gatewayHooks";
 import { useSharedGateway } from "../../gatewaySlice";
-import {
-  useChainTransactionStatusUpdater,
-  useChainTransactionSubmitter,
-} from "../../gatewayTransactionHooks";
+import { useChainTransactionStatusUpdater } from "../../gatewayTransactionHooks";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
+import {
+  MintH2HLockTransactionProgressStatus,
+  MintH2HLockTransactionStatus,
+} from "./MintH2HStatuses";
 
 export const MintH2HProcess: FunctionComponent<RouteComponentProps> = () => {
   const history = useHistory();
@@ -84,177 +55,76 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 }) => {
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
-  const assetConfig = getAssetConfig(asset);
-  const renAsset = getRenAssetName(asset);
+  // const assetConfig = getAssetConfig(asset);
+  // const renAsset = getRenAssetName(asset);
   const fees = useGatewayFeesWithRates(gateway, amount);
-  const { outputAmount, outputAmountUsd } = fees;
-  const { balance } = useEthereumChainAssetBalance(
-    gateway.fromChain as ContractChain,
-    asset
-  );
-  const { RenIcon } = assetConfig;
 
-  const [approvalTxUrl, setApprovalTxUrl] = useState("");
+  const { outputAmount, outputAmountUsd } = fees;
+
+  const [approvalUrl, setApprovalUrl] = useState("");
   useEffect(() => {
     try {
       const url = gateway.fromChain.transactionExplorerLink(
         gateway.inSetup.approval.progress.transaction!
       );
       if (url) {
-        setApprovalTxUrl(url);
+        setApprovalUrl(url);
       }
     } finally {
-      setApprovalTxUrl("");
+      setApprovalUrl("");
     }
   }, [gateway, gateway.inSetup.approval.progress.transaction]);
 
-  // console.log(
-  //   "gtx",
-  //   gateway.inSetup.approval.progress.transaction,
-  //   approvalTxUrl
-  // );
+  const [transaction, setTransaction] = useState<GatewayTransaction | null>(
+    null
+  );
+  useEffect(() => {
+    const getFirstTx = async () => {
+      const tx = await gateway.transactions.first();
+      if (tx) {
+        setTransaction(tx);
+      }
+    };
+    getFirstTx().finally();
+  }, [gateway.transactions]);
 
-  // const handleSubmitFrom = useCallback(()=> {
-  //   gateway.in.submit();
-  // }, [gateway])
-  // const status = useChainTransactionStatusUpdater(gateway.in);
-
-  const {
-    handleSubmit,
-    submitting,
-    done,
-    waiting,
-    errorSubmitting,
-    handleReset,
-  } = useChainTransactionSubmitter(gateway.in);
-  const inStatus = useChainTransactionStatusUpdater(gateway.in);
-
-  // @ts-ignore
-  const outTx = gateway.transactions.first()?.out || undefined;
-  // @ts-ignore
-  const outHandlers = useChainTransactionSubmitter(
-    // @ts-ignore
-    outTx
+  const Fees = (
+    <GatewayFees
+      asset={asset}
+      from={from}
+      to={to}
+      {...fees}
+      needsApproval={true}
+      approved={true}
+      approvalTxUrl={approvalUrl}
+    />
   );
 
-  const outStatus = useChainTransactionStatusUpdater(outTx);
-  console.log("gtc", gateway.transactions.count());
-  console.log("gtc 1", gateway.transactions.first());
-  (window as any).tx1 = gateway.transactions.first();
-
-  useSyncWalletChain(to);
-
+  let Content = null;
+  if (!transaction) {
+    Content = (
+      <MintH2HLockTransactionStatus
+        gateway={gateway}
+        Fees={Fees}
+        outputAmount={outputAmount}
+        outputAmountUsd={outputAmountUsd}
+      />
+    );
+  } else {
+    Content = (
+      <MintH2HLockTransactionProgressStatus
+        gateway={gateway}
+        transaction={transaction}
+        Fees={Fees}
+        outputAmount={outputAmount}
+        outputAmountUsd={outputAmountUsd}
+      />
+    );
+  }
   return (
     <>
-      <PaperContent bottomPadding>
-        <HorizontalPadder>
-          <LabelWithValue
-            label={t("common.balance") + ":"}
-            value={
-              <span>
-                {balance === null ? (
-                  <InlineSkeleton
-                    variant="rect"
-                    animation="pulse"
-                    width={40}
-                    height={12}
-                  />
-                ) : (
-                  <Fade in={true}>
-                    <span>{balance}</span>
-                  </Fade>
-                )}
-                <span> {asset}</span>
-              </span>
-            }
-          />
-        </HorizontalPadder>
-        <SimpleAssetInfo
-          label={t("mint.minting-label")}
-          value={amount}
-          asset={asset}
-        />
-        <MediumTopWrapper>
-          <AssetInfo
-            label={t("common.receiving-label")}
-            value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={renAsset}
-                decimalScale={3} // TODO: make dynamic decimal scale based on input decimals
-              />
-            }
-            valueEquivalent={
-              outputAmountUsd !== null ? (
-                <NumberFormatText
-                  prefix=" = $"
-                  value={outputAmountUsd}
-                  spacedSuffix="USD"
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              ) : null
-            }
-            Icon={<RenIcon fontSize="inherit" />}
-          />
-        </MediumTopWrapper>
-      </PaperContent>
-      <Divider />
-      <PaperContent topPadding darker>
-        <GatewayFees
-          asset={asset}
-          from={from}
-          to={to}
-          {...fees}
-          needsApproval={true}
-          approved={true}
-          approvalTxUrl={approvalTxUrl}
-        />
-        <HorizontalPadder>
-          <Box
-            mt={3}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box maxWidth={240}>
-              <Typography variant="caption" color="textSecondary">
-                {t("h2h.network-switching-message")}
-              </Typography>
-            </Box>
-            <TooltipWithIcon title={t("h2h.network-switching-tooltip")} />
-          </Box>
-        </HorizontalPadder>
-        <MultipleActionButtonWrapper>
-          <ActionButton
-            onClick={handleSubmit}
-            disabled={
-              submitting ||
-              waiting ||
-              done ||
-              inStatus.status === ChainTransactionStatus.Confirming
-            }
-          >
-            {submitting || waiting
-              ? t("gateway.submitting-tx-label")
-              : t("gateway.submit-tx-label")}
-          </ActionButton>
-          {errorSubmitting && (
-            <SubmitErrorDialog
-              open={true}
-              error={errorSubmitting}
-              onAction={handleReset}
-            />
-          )}
-          <ActionButton
-            onClick={outHandlers.handleSubmit}
-            disabled={outHandlers.submitting || outHandlers.waiting}
-          >
-            Submit out
-          </ActionButton>
-        </MultipleActionButtonWrapper>
-      </PaperContent>
-      <Debug it={{ approvalTxUrl, inStatus, outStatus }} />
+      {Content}
+      <Debug it={{ fees, approvalUrl, count: gateway.transactions.count() }} />
     </>
   );
 };

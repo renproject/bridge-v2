@@ -20,7 +20,10 @@ import { supportedEthereumChains } from "../../utils/chainsConfig";
 import { fromGwei } from "../../utils/converters";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { isDefined } from "../../utils/objects";
-import { alterEthereumBaseChainSigner } from "../chain/chainUtils";
+import {
+  alterEthereumBaseChainProviderSigner,
+  alterEthereumBaseChainSigner,
+} from "../chain/chainUtils";
 import { $exchangeRates, $gasPrices } from "../marketData/marketDataSlice";
 import {
   findAssetExchangeRate,
@@ -43,12 +46,13 @@ type UseGatewayParams = {
 export const useGateway = (
   { asset, from, to, network, nonce, toAddress, amount }: UseGatewayParams,
   provider: any,
-  autoTeardown?: boolean
+  autoTeardown?: boolean,
+  initialGateway: Gateway | null = null
 ) => {
   const chains = useChains(network);
   const [renJs, setRenJs] = useState<RenJS | null>(null);
   const [error, setError] = useState(null);
-  const [gateway, setGateway] = useState<Gateway | null>(null);
+  const [gateway, setGateway] = useState<Gateway | null>(initialGateway);
   const [transactions, setTransactions] = useState<Array<GatewayTransaction>>(
     []
   );
@@ -67,11 +71,7 @@ export const useGateway = (
   useEffect(() => {
     console.log("useGateway useEffect renJs and provider");
     const initProvider = async () => {
-      console.log("provider", provider);
-      const ethersProvider = new ethers.providers.Web3Provider(provider);
-      const signer = ethersProvider.getSigner();
-      console.log("useGateway altering signer", signer);
-      alterEthereumBaseChainSigner(chains, signer);
+      alterEthereumBaseChainProviderSigner(chains, provider);
       const renJs = new RenJS(network).withChains(
         ...Object.values(chains).map((chain) => chain.chain)
       );

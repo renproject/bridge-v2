@@ -89,40 +89,42 @@ export const useChainTransactionStatusUpdater = (
     //TODO: add rest
   }, []);
 
+  const trackProgress = useCallback((progress) => {
+    setError(null);
+    console.log("newStatus", progress);
+    setStatus(progress.status);
+    setTarget(progress.target);
+    if (isDefined(progress.confirmations)) {
+      setConfirmations(progress.confirmations);
+    }
+    if (isDefined(progress.transaction)) {
+      setTxId(progress.transaction.txid);
+      setTxIdFormatted(progress.transaction.txidFormatted);
+      setTxIndex(progress.transaction.txindex);
+      if (isDefined((progress.transaction as InputChainTransaction).amount)) {
+        setAmount((progress.transaction as InputChainTransaction).amount);
+      }
+      const url = chains[progress.chain as Chain].chain.transactionExplorerLink(
+        progress.transaction
+      );
+      if (url) {
+        setTxUrl(url);
+      }
+    }
+  }, []);
   useEffect(() => {
     reset();
     if (!tx) {
       return;
     }
     tx.wait(waitTarget)
-      .on("progress", (progress) => {
-        setError(null);
-        console.log("newStatus", progress);
-        setStatus(progress.status);
-        setTarget(progress.target);
-        if (isDefined(progress.confirmations)) {
-          setConfirmations(progress.confirmations);
-        }
-        if (isDefined(progress.transaction)) {
-          setTxId(progress.transaction.txid);
-          setTxIdFormatted(progress.transaction.txidFormatted);
-          setTxIndex(progress.transaction.txindex);
-          if (
-            isDefined((progress.transaction as InputChainTransaction).amount)
-          ) {
-            setAmount((progress.transaction as InputChainTransaction).amount);
-          }
-          const url = chains[tx.chain as Chain].chain.transactionExplorerLink(
-            progress.transaction
-          );
-          if (url) {
-            setTxUrl(url);
-          }
-        }
-      })
+      .on("progress", trackProgress)
       .catch((reason) => {
         setError(reason);
       });
+    return () => {
+      tx.eventEmitter.removeListener("progress", trackProgress);
+    };
   }, [tx, waitTarget, chains, reset]);
   return {
     error,

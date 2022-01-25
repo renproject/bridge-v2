@@ -18,7 +18,7 @@ import {
   Polygon,
 } from "@renproject/chains-ethereum";
 import { Chain as GatewayChain, RenNetwork } from "@renproject/utils";
-import { providers } from "ethers";
+import { ethers, providers } from "ethers";
 import { supportedEthereumChains } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 
@@ -107,6 +107,17 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     ...ethereumBaseChains,
     ...bitcoinBaseChains,
   } as unknown as ChainInstanceMap;
+};
+
+export const alterEthereumBaseChainProviderSigner = (
+  chains: ChainInstanceMap,
+  provider: any
+) => {
+  console.log("provider", provider);
+  const ethersProvider = new ethers.providers.Web3Provider(provider);
+  const signer = ethersProvider.getSigner();
+  console.log("altering signer", signer);
+  alterEthereumBaseChainSigner(chains, signer);
 };
 
 export const alterEthereumBaseChainSigner = (
