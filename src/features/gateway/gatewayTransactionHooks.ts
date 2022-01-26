@@ -15,7 +15,7 @@ export const useRenVMChainTransactionStatusUpdater = (
   waitTarget?: number
 ) => {
   const [error, setError] = useState<Error | null>(null);
-  const [status, setStatus] = useState<ChainTransactionStatus | null>();
+  const [status, setStatus] = useState<ChainTransactionStatus | null>(null);
   const [target, setTarget] = useState<number | null>(null);
   const [txId, setTxId] = useState<string | null>(null);
   const [txIdFormatted, setTxIdFormatted] = useState<string | null>(null);

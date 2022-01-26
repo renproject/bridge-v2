@@ -20,6 +20,7 @@ import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   MintH2HLockTransactionProgressStatus,
   MintH2HLockTransactionStatus,
+  MintH2HMintTransactionProgressStatus,
 } from "./MintH2HStatuses";
 
 export const MintH2HProcess: FunctionComponent<RouteComponentProps> = () => {
@@ -104,8 +105,13 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     confirmations: lockConfirmations,
     target: lockTargetConfirmations,
     status: lockStatus,
-  } = lockTxMeta;
-  const { status: mintStatus } = mintTxMeta;
+  } = gatewayInTxMeta;
+  const { status: renVMStatus } = renVmTxMeta;
+  const {
+    status: mintStatus,
+    confirmations: mintConfirmations,
+    target: mintTargetConfirmations,
+  } = mintTxMeta;
 
   const Fees = (
     <GatewayFees
@@ -120,7 +126,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   );
 
   let Content = null;
-  if (!transaction) {
+  if (!transaction || lockStatus === null) {
     Content = (
       <MintH2HLockTransactionStatus
         gateway={gateway}
@@ -129,10 +135,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         outputAmountUsd={outputAmountUsd}
       />
     );
-  } else if (
-    mintStatus === null ||
-    mintStatus === ChainTransactionStatus.Ready
-  ) {
+  } else if (mintStatus === null && renVMStatus === null) {
     Content = (
       <MintH2HLockTransactionProgressStatus
         gateway={gateway}
@@ -143,11 +146,24 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         lockConfirmations={lockConfirmations}
         lockTargetConfirmations={lockTargetConfirmations}
         lockStatus={lockStatus}
+      />
+    );
+  } else if (mintStatus !== ChainTransactionStatus.Done) {
+    Content = (
+      <MintH2HMintTransactionProgressStatus
+        gateway={gateway}
+        transaction={transaction}
+        Fees={Fees}
+        outputAmount={outputAmount}
+        outputAmountUsd={outputAmountUsd}
+        renVMStatus={renVMStatus}
+        mintConfirmations={mintConfirmations}
+        mintTargetConfirmations={mintTargetConfirmations}
         mintStatus={mintStatus}
       />
     );
   } else {
-    Content = <span>ready for minting?</span>;
+    <span>all done</span>;
   }
   return (
     <>
@@ -156,8 +172,9 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         it={{
           count: gateway.transactions.count(),
           approvalUrl,
-          lockTxMeta,
+          inSetupMeta,
           gatewayInTxMeta,
+          lockTxMeta,
           renVmTxMeta,
           mintTxMeta,
         }}

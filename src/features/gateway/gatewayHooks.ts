@@ -409,7 +409,6 @@ export const useGatewayFeesWithRates = (
     }
     const asset = gateway.params.asset as Asset;
     const assetUsdRate = findAssetExchangeRate(rates, asset);
-    console.log("assetUsdRate", assetUsdRate);
     if (assetUsdRate === null) {
       return;
     }
