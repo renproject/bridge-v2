@@ -58,10 +58,7 @@ type MintH2HProcessorProps = {
 const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   gateway,
 }) => {
-  const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
-  // const assetConfig = getAssetConfig(asset);
-  // const renAsset = getRenAssetName(asset);
   const fees = useGatewayFeesWithRates(gateway, amount);
 
   const { outputAmount, outputAmountUsd } = fees;
@@ -126,7 +123,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   );
 
   let Content = null;
-  if (!transaction || lockStatus === null) {
+  if (lockStatus === null) {
     Content = (
       <MintH2HLockTransactionStatus
         gateway={gateway}

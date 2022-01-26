@@ -9,7 +9,6 @@ import {
   RenNetwork,
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -20,10 +19,7 @@ import { supportedEthereumChains } from "../../utils/chainsConfig";
 import { fromGwei } from "../../utils/converters";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { isDefined } from "../../utils/objects";
-import {
-  alterEthereumBaseChainProviderSigner,
-  alterEthereumBaseChainSigner,
-} from "../chain/chainUtils";
+import { alterEthereumBaseChainProviderSigner } from "../chain/chainUtils";
 import { $exchangeRates, $gasPrices } from "../marketData/marketDataSlice";
 import {
   findAssetExchangeRate,

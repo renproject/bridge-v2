@@ -88,33 +88,36 @@ export const useChainTransactionStatusUpdater = (
   const [txUrl, setTxUrl] = useState<string | null>(null);
 
   const reset = useCallback(() => {
-    setStatus(null);
+    // setStatus(null);
     //TODO: add rest
   }, []);
 
-  const trackProgress = useCallback((progress) => {
-    setError(null);
-    console.log("newStatus", progress);
-    setStatus(progress.status);
-    setTarget(progress.target);
-    if (isDefined(progress.confirmations)) {
-      setConfirmations(progress.confirmations);
-    }
-    if (isDefined(progress.transaction)) {
-      setTxId(progress.transaction.txid);
-      setTxIdFormatted(progress.transaction.txidFormatted);
-      setTxIndex(progress.transaction.txindex);
-      if (isDefined((progress.transaction as InputChainTransaction).amount)) {
-        setAmount((progress.transaction as InputChainTransaction).amount);
+  const trackProgress = useCallback(
+    (progress) => {
+      setError(null);
+      console.log("newStatus", progress);
+      setStatus(progress.status);
+      setTarget(progress.target);
+      if (isDefined(progress.confirmations)) {
+        setConfirmations(progress.confirmations);
       }
-      const url = chains[progress.chain as Chain].chain.transactionExplorerLink(
-        progress.transaction
-      );
-      if (url) {
-        setTxUrl(url);
+      if (isDefined(progress.transaction)) {
+        setTxId(progress.transaction.txid);
+        setTxIdFormatted(progress.transaction.txidFormatted);
+        setTxIndex(progress.transaction.txindex);
+        if (isDefined((progress.transaction as InputChainTransaction).amount)) {
+          setAmount((progress.transaction as InputChainTransaction).amount);
+        }
+        const url = chains[
+          progress.chain as Chain
+        ].chain.transactionExplorerLink(progress.transaction);
+        if (url) {
+          setTxUrl(url);
+        }
       }
-    }
-  }, []);
+    },
+    [chains]
+  );
   useEffect(() => {
     reset();
     if (!tx) {
@@ -123,12 +126,13 @@ export const useChainTransactionStatusUpdater = (
     tx.wait(waitTarget)
       .on("progress", trackProgress)
       .catch((reason) => {
+        console.error(reason);
         setError(reason);
       });
     return () => {
       tx.eventEmitter.removeListener("progress", trackProgress);
     };
-  }, [tx, waitTarget, chains, reset]);
+  }, [trackProgress, tx, waitTarget, chains, reset]);
   return {
     error,
     status,

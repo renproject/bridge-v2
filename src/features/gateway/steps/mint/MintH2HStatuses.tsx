@@ -1,7 +1,12 @@
-import { Box, Divider, Fade, Typography } from "@material-ui/core";
+import { Divider, Fade } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
-import React, { FunctionComponent, ReactNode, useCallback } from "react";
+import React, {
+  FunctionComponent,
+  ReactNode,
+  useCallback,
+  useEffect,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import {
@@ -20,7 +25,6 @@ import {
   ProgressWrapper,
   TransactionStatusInfo,
 } from "../../../../components/progress/ProgressHelpers";
-import { TooltipWithIcon } from "../../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
   LabelWithValue,
@@ -32,12 +36,10 @@ import {
   getAssetConfig,
   getRenAssetName,
 } from "../../../../utils/tokensConfig";
+import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
-import {
-  useCurrentChainWallet,
-  useSyncWalletChain,
-  useWallet,
-} from "../../../wallet/walletHooks";
+import { useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
 import {
   getGatewayParams,
@@ -45,7 +47,10 @@ import {
 } from "../../gatewayHooks";
 import { useChainTransactionSubmitter } from "../../gatewayTransactionHooks";
 import { FeesToggler } from "../shared/FeeHelpers";
-import { SwitchWalletDialog } from "../shared/WalletSwitchHelpers";
+import {
+  SwitchWalletDialog,
+  WalletNetworkSwitchMessage,
+} from "../shared/WalletSwitchHelpers";
 
 type MintH2HLockTransactionStatusProps = {
   gateway: Gateway;
@@ -134,21 +139,7 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
       <Divider />
       <PaperContent topPadding darker>
         {Fees}
-        <HorizontalPadder>
-          <Box
-            mt={3}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box maxWidth={240}>
-              <Typography variant="caption" color="textSecondary">
-                {t("h2h.network-switching-message")}
-              </Typography>
-            </Box>
-            <TooltipWithIcon title={t("h2h.network-switching-tooltip")} />
-          </Box>
-        </HorizontalPadder>
+        <WalletNetworkSwitchMessage />
         <MultipleActionButtonWrapper>
           <ActionButton
             onClick={handleSubmit}
@@ -173,7 +164,7 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
 
 type MintH2HLockTransactionProgressStatusProps = {
   gateway: Gateway;
-  transaction: GatewayTransaction;
+  transaction: GatewayTransaction | null;
   Fees: ReactNode | null;
   outputAmount: string | null;
   outputAmountUsd: string | null;
@@ -201,21 +192,28 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   const renAsset = getRenAssetName(asset);
   const { RenIcon } = assetConfig;
 
-  const renVM = useChainTransactionSubmitter(transaction.renVM);
-  const out = useChainTransactionSubmitter(transaction.out);
+  const renVM = useChainTransactionSubmitter(transaction?.renVM);
+  const out = useChainTransactionSubmitter(transaction?.out);
 
   const handleSubmitBoth = useCallback(async () => {
     await renVM.handleSubmit();
     await out.handleSubmit();
-  }, [renVM.handleSubmit, out.handleSubmit]);
+  }, [out, renVM]);
 
   const Icon = fromChainConfig.Icon;
 
   const { chain } = useSelector($wallet);
-  const { connected } = useWallet(to);
+  const { connected, provider } = useWallet(to);
   const showSwitchWalletDialog =
-    lockStatus === ChainTransactionStatus.Done && !connected;
+    lockStatus === ChainTransactionStatus.Done && !connected && chain !== to;
   console.log("ccl", chain, connected, lockStatus);
+  const chains = useCurrentNetworkChains();
+  useEffect(() => {
+    if (provider) {
+      alterEthereumBaseChainProviderSigner(chains, provider, true);
+    }
+  }, [chains, provider]);
+
   return (
     <>
       <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
@@ -228,7 +226,6 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
             <Icon fontSize="inherit" />
           </ProgressWithContent>
         </ProgressWrapper>
-
         <SimpleAssetInfo
           label={t("mint.minting-label")}
           value={amount}
@@ -262,21 +259,6 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
       <Divider />
       <PaperContent topPadding darker>
         <FeesToggler>{Fees}</FeesToggler>
-        <HorizontalPadder>
-          <Box
-            mt={3}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box maxWidth={240}>
-              <Typography variant="caption" color="textSecondary">
-                {t("h2h.network-switching-message")}
-              </Typography>
-            </Box>
-            <TooltipWithIcon title={t("h2h.network-switching-tooltip")} />
-          </Box>
-        </HorizontalPadder>
         <MultipleActionButtonWrapper>
           <ActionButton
             onClick={handleSubmitBoth}
@@ -316,7 +298,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
 
 type MintH2HMintTransactionProgressStatusProps = {
   gateway: Gateway;
-  transaction: GatewayTransaction;
+  transaction: GatewayTransaction | null;
   renVMStatus: ChainTransactionStatus | null;
   mintStatus: ChainTransactionStatus | null;
   mintConfirmations: number | null;
@@ -345,13 +327,13 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
 
-  const renVM = useChainTransactionSubmitter(transaction.renVM);
-  const out = useChainTransactionSubmitter(transaction.out);
+  const renVM = useChainTransactionSubmitter(transaction?.renVM);
+  const out = useChainTransactionSubmitter(transaction?.out);
 
   const handleSubmitBoth = useCallback(async () => {
     await renVM.handleSubmit();
     await out.handleSubmit();
-  }, [renVM.handleSubmit, out.handleSubmit]);
+  }, [renVM, out]);
 
   const { RenIcon } = assetConfig;
   const Icon = mintChainConfig.Icon;
@@ -405,22 +387,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
       </PaperContent>
       <Divider />
       <PaperContent topPadding darker>
-        {Fees}
-        <HorizontalPadder>
-          <Box
-            mt={3}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Box maxWidth={240}>
-              <Typography variant="caption" color="textSecondary">
-                {t("h2h.network-switching-message")}
-              </Typography>
-            </Box>
-            <TooltipWithIcon title={t("h2h.network-switching-tooltip")} />
-          </Box>
-        </HorizontalPadder>
+        <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
           <ActionButton
             onClick={handleSubmitBoth}

@@ -59,6 +59,8 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
   BinanceSmartChain: {
     Icon: BinanceChainFullIcon,
     fullName: "Binance Smarct Chain",
+    shortName: "BSC",
+    networks: createNetworksConfig(56, 97),
   },
   Bitcoin: {
     Icon: BitcoinIcon,

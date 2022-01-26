@@ -109,13 +109,18 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
   } as unknown as ChainInstanceMap;
 };
 
+// TODO: narrow alteration to only selected chain
 export const alterEthereumBaseChainProviderSigner = (
   chains: ChainInstanceMap,
-  provider: any
+  provider: any,
+  alterProvider?: boolean
 ) => {
   console.log("provider", provider);
   const ethersProvider = new ethers.providers.Web3Provider(provider);
   const signer = ethersProvider.getSigner();
+  if (alterProvider) {
+    alterEthereumBaseChainProvider(chains, provider);
+  }
   console.log("altering signer", signer);
   alterEthereumBaseChainSigner(chains, signer);
 };
@@ -130,6 +135,26 @@ export const alterEthereumBaseChainSigner = (
       (chains[chainName].chain as EthereumBaseChain).withSigner
     ) {
       (chains[chainName].chain as EthereumBaseChain).withSigner!(signer);
+    } else {
+      throw new Error(
+        `Unable to find chain ${chainName} in chains ${Object.keys(chains).join(
+          ", "
+        )}`
+      );
+    }
+  });
+};
+
+export const alterEthereumBaseChainProvider = (
+  chains: ChainInstanceMap,
+  provider: any
+) => {
+  supportedEthereumChains.forEach((chainName) => {
+    if (
+      chains[chainName]?.chain &&
+      (chains[chainName].chain as EthereumBaseChain).withProvider
+    ) {
+      (chains[chainName].chain as EthereumBaseChain).withProvider!(provider);
     } else {
       throw new Error(
         `Unable to find chain ${chainName} in chains ${Object.keys(chains).join(

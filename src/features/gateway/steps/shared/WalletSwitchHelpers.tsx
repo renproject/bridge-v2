@@ -1,32 +1,45 @@
-import { Typography } from "@material-ui/core";
+import { Box, Button, Typography } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles } from "@material-ui/core/styles";
 import { Chain } from "@renproject/chains";
 import React, { FunctionComponent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
-import {
-  ActionButtonWrapper,
-  SmallActionButton,
-} from "../../../../components/buttons/Buttons";
+import { useDispatch, useSelector } from "react-redux";
+import { ActionButtonWrapper } from "../../../../components/buttons/Buttons";
 import { WalletIcon } from "../../../../components/icons/RenIcons";
+import { HorizontalPadder } from "../../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
 } from "../../../../components/layout/Paper";
 import { BridgeModal } from "../../../../components/modals/BridgeModal";
-import { getChainConfig } from "../../../../utils/chainsConfig";
+import { TooltipWithIcon } from "../../../../components/tooltips/TooltipWithIcon";
+import {
+  getChainConfig,
+  getChainNetworkConfig,
+} from "../../../../utils/chainsConfig";
+import { $network } from "../../../network/networkSlice";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
 
 const useSwitchWalletDialogStyles = makeStyles((theme) => ({
+  top: {
+    marginBottom: 20,
+    marginTop: 40,
+  },
   iconWrapper: {
-    borderRadius: "50%",
-    padding: 13,
-    backgroundColor: theme.palette.divider,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    fontSize: 44,
+  },
+  icon: {
+    fontSize: 80,
+    width: 124,
+    height: 124,
+    backgroundColor: theme.palette.divider,
+    borderRadius: "50%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 }));
 
@@ -42,7 +55,8 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
   const { t } = useTranslation();
   const styles = useSwitchWalletDialogStyles();
   const chainConfig = getChainConfig(targetChain);
-
+  const { network } = useSelector($network);
+  const networkConfig = getChainNetworkConfig(targetChain, network);
   const handleSwitch = useCallback(() => {
     dispatch(setChain(targetChain));
     dispatch(setPickerOpened(true));
@@ -51,30 +65,64 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
   return (
     <BridgeModal
       open={open}
-      title={t("wallet.switch-wallet-title")}
+      title={t("wallet.wallet-switch-title")}
       maxWidth="xs"
     >
-      <PaperContent>
-        <div className={styles.iconWrapper}>
-          <WalletIcon fontSize="inherit" />
+      <SpacedPaperContent bottomPadding>
+        <div className={styles.top}>
+          <div className={styles.iconWrapper}>
+            <div className={styles.icon}>
+              <WalletIcon fontSize="inherit" />
+            </div>
+          </div>
         </div>
         <Typography variant="h5" align="center" gutterBottom>
-          {t("wallet.switch-wallet-title")}
+          {t("wallet.wallet-switch-to", {
+            chain: chainConfig.shortName,
+            network: networkConfig.fullName,
+          })}
         </Typography>
         <Typography
+          variant="h6"
           color="textSecondary"
           align="center"
           gutterBottom
           component="div"
         >
-          {t("wallet.switch-wallet-message", { chain: chainConfig.fullName })}
+          {t("wallet.wallet-switch-message", {
+            chain: chainConfig.fullName,
+            network: networkConfig.fullName,
+          })}
         </Typography>
+      </SpacedPaperContent>
+      <PaperContent bottomPadding>
         <ActionButtonWrapper>
-          <SmallActionButton onClick={handleSwitch}>
-            {t("wallet.switch-wallet-label")}
-          </SmallActionButton>
+          <Button color="primary" variant="text" onClick={handleSwitch}>
+            {t("wallet.wallet-switch-label")}
+          </Button>
         </ActionButtonWrapper>
       </PaperContent>
     </BridgeModal>
+  );
+};
+
+export const WalletNetworkSwitchMessage: FunctionComponent = () => {
+  const { t } = useTranslation();
+  return (
+    <HorizontalPadder>
+      <Box
+        mt={3}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Box maxWidth={240}>
+          <Typography variant="caption" color="textSecondary">
+            {t("h2h.network-switching-message")}
+          </Typography>
+        </Box>
+        <TooltipWithIcon title={t("h2h.network-switching-tooltip")} />
+      </Box>
+    </HorizontalPadder>
   );
 };
