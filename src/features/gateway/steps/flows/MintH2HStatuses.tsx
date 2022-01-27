@@ -37,17 +37,18 @@ import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
+import { WalletNetworkSwitchMessage } from "../../components/NetworkSwitchHelpers";
 import {
   getGatewayParams,
   useEthereumChainAssetBalance,
 } from "../../gatewayHooks";
 import { useChainTransactionSubmitter } from "../../gatewayTransactionHooks";
-import { BalanceInfo, UsdNumberFormatText } from "../shared/BalanceHelpers";
-import { FeesToggler } from "../shared/FeeHelpers";
 import {
-  SwitchWalletDialog,
-  WalletNetworkSwitchMessage,
-} from "../shared/WalletSwitchHelpers";
+  BalanceInfo,
+  UsdNumberFormatText,
+} from "../../components/BalanceHelpers";
+import { FeesToggler } from "../../components/FeeHelpers";
+import { SwitchWalletDialog } from "../shared/WalletSwitchHelpers";
 
 type MintH2HLockTransactionStatusProps = {
   gateway: Gateway;

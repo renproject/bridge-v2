@@ -46,6 +46,7 @@ import { paths } from "../../../pages/routes";
 import { feesDecimalImpact } from "../../../utils/numbers";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
 import { useWallet } from "../../wallet/walletHooks";
+import { BalanceInfo } from "../components/BalanceHelpers";
 import { GatewayFees } from "../components/GatewayFees";
 import {
   useEthereumChainAssetBalance,
@@ -59,7 +60,6 @@ import {
   getGatewayExpiryTime,
   getGatewayNonce,
 } from "../gatewayUtils";
-import { BalanceInfo } from "./shared/BalanceHelpers";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({

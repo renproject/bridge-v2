@@ -33,12 +33,15 @@ import {
 } from "../../../../utils/tokensConfig";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import {
+  BalanceInfo,
+  UsdNumberFormatText,
+} from "../../components/BalanceHelpers";
+import { FeesToggler } from "../../components/FeeHelpers";
+import {
   getGatewayParams,
   useEthereumChainAssetBalance,
 } from "../../gatewayHooks";
 import { useChainTransactionSubmitter } from "../../gatewayTransactionHooks";
-import { BalanceInfo, UsdNumberFormatText } from "../shared/BalanceHelpers";
-import { FeesToggler } from "../shared/FeeHelpers";
 
 type ReleaseStandardBurnStatusProps = {
   gateway: Gateway;

@@ -2,10 +2,10 @@ import { Fade } from "@material-ui/core";
 import { Asset, Chain } from "@renproject/chains";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
-import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import { HorizontalPadder } from "../../../../components/layout/LayoutHelpers";
-import { InlineSkeleton } from "../../../../components/progress/ProgressHelpers";
-import { LabelWithValue } from "../../../../components/typography/TypographyHelpers";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
+import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
+import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 
 type BalanceInfoProps = {
   balance: string | number | null;

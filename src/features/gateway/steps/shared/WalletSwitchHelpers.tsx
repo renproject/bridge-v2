@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles } from "@material-ui/core/styles";
 import { Chain } from "@renproject/chains";
@@ -7,13 +7,11 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionButtonWrapper } from "../../../../components/buttons/Buttons";
 import { WalletIcon } from "../../../../components/icons/RenIcons";
-import { HorizontalPadder } from "../../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
 } from "../../../../components/layout/Paper";
 import { BridgeModal } from "../../../../components/modals/BridgeModal";
-import { TooltipWithIcon } from "../../../../components/tooltips/TooltipWithIcon";
 import {
   getChainConfig,
   getChainNetworkConfig,
@@ -103,26 +101,5 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
         </ActionButtonWrapper>
       </PaperContent>
     </BridgeModal>
-  );
-};
-
-export const WalletNetworkSwitchMessage: FunctionComponent = () => {
-  const { t } = useTranslation();
-  return (
-    <HorizontalPadder>
-      <Box
-        mt={3}
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Box maxWidth={240}>
-          <Typography variant="caption" color="textSecondary">
-            {t("h2h.network-switching-message")}
-          </Typography>
-        </Box>
-        <TooltipWithIcon title={t("h2h.network-switching-tooltip")} />
-      </Box>
-    </HorizontalPadder>
   );
 };
