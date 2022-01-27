@@ -113,6 +113,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   );
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater(transaction?.renVM);
   const releaseTxMeta = useChainTransactionStatusUpdater(transaction?.out);
+  console.log(releaseTxMeta);
   const {
     status: burnStatus,
     confirmations: burnConfirmations,
@@ -143,7 +144,8 @@ const ReleaseStandardProcessor: FunctionComponent<
         outputAmountUsd={outputAmountUsd}
       />
     );
-  } else if (releaseStatus === null && renVMStatus === null) {
+  } else {
+    // if (releaseStatus === null && renVMStatus === null) {
     Content = (
       <ReleaseStandardBurnProgressStatus
         gateway={gateway}
@@ -161,7 +163,14 @@ const ReleaseStandardProcessor: FunctionComponent<
   return (
     <>
       {Content}
-      <Debug it={{ gatewayInTxMeta, renVmTxMeta, mintTxMeta: releaseTxMeta }} />
+      <Debug
+        it={{
+          gatewayInTxMeta,
+          renVmTxMeta,
+          releaseTxMeta,
+          error: releaseTxMeta.error,
+        }}
+      />
     </>
   );
 };

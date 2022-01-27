@@ -473,7 +473,20 @@ export const getGatewayParams = (gateway: Gateway) => {
   const to = gateway.params.to.chain as Chain;
   const fromAmount = gateway.params.from.params.amount as string;
   const toAddress = gateway.params.to.address as string;
-  return { asset, from, to, amount: fromAmount, fromAmount, toAddress };
+  const fromAverageConfirmationTime =
+    gateway.fromChain.network.averageConfirmationTime;
+  const toAverageConfirmationTime =
+    gateway.toChain.network.averageConfirmationTime;
+  return {
+    asset,
+    from,
+    to,
+    amount: fromAmount,
+    fromAmount,
+    toAddress,
+    fromAverageConfirmationTime,
+    toAverageConfirmationTime,
+  };
 };
 
 //will become  useGatewayMeta

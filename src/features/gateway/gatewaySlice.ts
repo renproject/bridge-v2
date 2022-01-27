@@ -13,11 +13,11 @@ type GatewayState = {
 };
 
 let initialState: GatewayState = {
-  asset: Asset.BTC,
+  asset: Asset.ZEC,
   from: Chain.Bitcoin,
   to: Chain.Ethereum,
   amount: "0.002", //TODO: crit
-  toAddress: "mrJkKkLV3zpEqd27TagynFMUphPfiJkwXg",
+  toAddress: "tmJ8ngiRiaUVGtExgNgd5nzRF1fSRd47qvP",
 };
 
 const slice = createSlice({

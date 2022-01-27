@@ -37,6 +37,7 @@ import {
   UsdNumberFormatText,
 } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
+import { TransactionProgressInfo } from "../../components/TransactionProgressHelpers";
 import {
   getGatewayParams,
   useEthereumChainAssetBalance,
@@ -153,17 +154,16 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
   outputAmountUsd,
   burnConfirmations,
   burnTargetConfirmations,
-  burnStatus,
 }) => {
   const { t } = useTranslation();
-  const { asset, from, amount } = getGatewayParams(gateway);
+  const { asset, from, amount, fromAverageConfirmationTime } =
+    getGatewayParams(gateway);
   const lockChainConfig = getChainConfig(from);
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
   const { RenIcon } = assetConfig;
 
   const renVM = useChainTransactionSubmitter(transaction?.renVM);
-  const out = useChainTransactionSubmitter(transaction?.out);
 
   // const handleSubmitBoth = useCallback(async () => {
   //   await renVM.handleSubmit();
@@ -182,8 +182,13 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
             <LockChainIcon fontSize="inherit" />
           </ProgressWithContent>
         </ProgressWrapper>
+        <TransactionProgressInfo
+          confirmations={undefinedForNull(burnConfirmations)}
+          target={undefinedForNull(burnTargetConfirmations)}
+          averageConfirmationTime={fromAverageConfirmationTime}
+        />
         <SimpleAssetInfo
-          label={t("mint.minting-label")}
+          label={t("release.releasing-label")}
           value={amount}
           asset={asset}
         />
@@ -208,18 +213,14 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
       <PaperContent topPadding darker>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
+          <ActionButton disabled>
+            {t("release.releasing-assets-label")}
+          </ActionButton>
           {renVM.errorSubmitting && (
             <SubmitErrorDialog
               open={true}
               error={renVM.errorSubmitting}
               onAction={renVM.handleReset}
-            />
-          )}
-          {out.errorSubmitting && (
-            <SubmitErrorDialog
-              open={true}
-              error={out.errorSubmitting}
-              onAction={out.handleReset}
             />
           )}
         </MultipleActionButtonWrapper>
