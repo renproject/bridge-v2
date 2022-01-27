@@ -37,7 +37,7 @@ import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
-import { WalletNetworkSwitchMessage } from "../../components/NetworkSwitchHelpers";
+import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
 import {
   getGatewayParams,
   useEthereumChainAssetBalance,
