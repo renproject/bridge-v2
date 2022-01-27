@@ -16,8 +16,8 @@ let initialState: GatewayState = {
   asset: Asset.BTC,
   from: Chain.Bitcoin,
   to: Chain.Ethereum,
-  amount: "",
-  toAddress: "",
+  amount: "0.002", //TODO: crit
+  toAddress: "mrJkKkLV3zpEqd27TagynFMUphPfiJkwXg",
 };
 
 const slice = createSlice({

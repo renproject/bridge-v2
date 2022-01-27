@@ -40,10 +40,12 @@ import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
   LabelWithValue,
+  MiddleEllipsisText,
   SimpleAssetInfo,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
+import { decimalImpact } from "../../../utils/numbers";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
 import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
@@ -126,7 +128,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     setAckChecked(!ackChecked);
   }, [ackChecked]);
   const showAck = Boolean(fromChainFeeAsset && toChainFeeAsset);
-  const feeTokens = isH2H
+  const feeAssets = isH2H
     ? [fromChainFeeAsset, toChainFeeAsset]
     : isMint
     ? [toChainFeeAsset]
@@ -137,17 +139,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     : ackChecked;
 
   const handleProceed = useCallback(() => {
-    if (isH2H) {
-      if (approvalRequired) {
-        if (approved) {
-        } else {
-        }
-        console.log("approval required");
-      } else {
-        // serialize tx data and proceed to 3rd step
-        console.log("approval not required");
-      }
-    } else {
+    if (isMint) {
       console.log("standard mint");
       history.push({
         pathname: paths.MINT__GATEWAY_STANDARD,
@@ -163,17 +155,32 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             { expiryTime: getGatewayExpiryTime() }
           ),
       });
+    } else if (isRelease) {
+      console.log("standard release");
+      if (isH2H) {
+      } else {
+        history.push({
+          pathname: paths.RELEASE__GATEWAY_STANDARD,
+          search:
+            "?" +
+            createGatewayQueryString({
+              asset,
+              from,
+              to,
+              toAddress,
+            }),
+        });
+      }
     }
-
-    console.log(approved);
   }, [
     history,
     isH2H,
+    isMint,
+    isRelease,
     asset,
     from,
     to,
-    approvalRequired,
-    approved,
+    toAddress,
     // gateway,
   ]);
 
@@ -264,7 +271,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               <NumberFormatText
                 value={outputAmount}
                 spacedSuffix={assetLabel}
-                decimalScale={3} // TODO: make dynamic decimal scale based on input decimals
+                decimalScale={decimalImpact(amount)}
               />
             }
             valueEquivalent={
@@ -281,6 +288,18 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             Icon={<AssetIcon fontSize="inherit" />}
           />
         </MediumTopWrapper>
+        {isRelease && !isH2H && (
+          <MediumTopWrapper>
+            <HorizontalPadder>
+              <LabelWithValue
+                label={t("common.to-label")}
+                value={
+                  <MiddleEllipsisText hoverable>{toAddress}</MiddleEllipsisText>
+                }
+              />
+            </HorizontalPadder>
+          </MediumTopWrapper>
+        )}
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
@@ -306,14 +325,25 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                 <>
                   <span>
                     {t("fees.tokens-ack-label", {
-                      tokens: feeTokens.join(" & "),
+                      tokens: feeAssets.join(" & "),
                     })}{" "}
                   </span>
                   <TooltipWithIcon
-                    title={t("fees.tokens-ack-tooltip", {
-                      asset: asset,
-                      tokens: feeTokens.join(" & "),
-                    })}
+                    title={
+                      <span>
+                        {feeAssets.length > 1
+                          ? t("fees.native-assets-ack-plural-tooltip", {
+                              assets: feeAssets.join(" & "),
+                            })
+                          : t("fees.native-assets-ack-singular-tooltip", {
+                              asset: feeAssets[0],
+                            })}
+                        <span>
+                          {" "}
+                          {t("fees.native-assets-ack-supplement-tooltip")}
+                        </span>
+                      </span>
+                    }
                   />
                 </>
               }

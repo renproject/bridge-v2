@@ -4,10 +4,12 @@ import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
 import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
 import { SharedGatewayProvider } from "./gatewaySlice";
+import { ReleaseH2HProcess } from "./steps/flows/ReleaseH2H";
+import { ReleaseStandardProcess } from "./steps/flows/ReleaseStandard";
 import { GatewayFeesStep } from "./steps/GatewayFeesStep";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
-import { MintH2HProcess } from "./steps/mint/MintH2H";
-import { MintStandardProcess } from "./steps/mint/MintStandard";
+import { MintH2HProcess } from "./steps/flows/MintH2H";
+import { MintStandardProcess } from "./steps/flows/MintStandard";
 
 export enum GatewayConfigurationStep {
   INITIAL = "initial",
@@ -48,7 +50,7 @@ const GatewayConfigurationSteps: FunctionComponent<
   );
 };
 
-export const GatewayFlowRoutes: FunctionComponent = () => {
+export const GatewayRoutes: FunctionComponent = () => {
   usePageTitle("Gateway");
 
   return (
@@ -63,6 +65,16 @@ export const GatewayFlowRoutes: FunctionComponent = () => {
         exact
         path={paths.MINT__GATEWAY_STANDARD}
         component={MintStandardProcess}
+      />
+      <Route
+        exact
+        path={paths.RELEASE__GATEWAY_STANDARD}
+        component={ReleaseStandardProcess}
+      />
+      <Route
+        exact
+        path={paths.RELEASE__GATEWAY_H2H}
+        component={ReleaseH2HProcess}
       />
     </SharedGatewayProvider>
   );

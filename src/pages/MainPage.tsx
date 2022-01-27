@@ -6,7 +6,7 @@ import {
   BridgePurePaper,
 } from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
-import { GatewayFlowRoutes } from "../features/gateway/GatewayFlowRoutes";
+import { GatewayRoutes } from "../features/gateway/GatewayRoutes";
 import {
   useExchangeRates,
   useGasPrices,
@@ -35,7 +35,7 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
         <PaperTitleProvider>
           <BridgePaperWrapper>
             <BridgePurePaper shaking={paperShaking}>
-              <GatewayFlowRoutes />
+              <GatewayRoutes />
             </BridgePurePaper>
           </BridgePaperWrapper>
         </PaperTitleProvider>

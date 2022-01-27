@@ -74,7 +74,7 @@ export type AdditionalGatewayParams = {
 
 export const createGatewayQueryString = (
   gatewayParams: CreateGatewayParams,
-  additionalParams: AdditionalGatewayParams
+  additionalParams: AdditionalGatewayParams = {}
 ) => {
   return queryString.stringify({ ...gatewayParams, ...additionalParams });
 };
