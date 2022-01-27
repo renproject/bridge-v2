@@ -726,9 +726,11 @@ export const ConnectWalletPaperSection: FunctionComponent = () => {
           <WalletConnectionProgress />
         </CenteringSpacedBox>
       </PaperSpacerWrapper>
-      <ActionButton onClick={handleWalletPickerOpen}>
-        {t("wallet.connect")}
-      </ActionButton>
+      <Box mb={2}>
+        <ActionButton onClick={handleWalletPickerOpen}>
+          {t("wallet.connect")}
+        </ActionButton>
+      </Box>
     </>
   );
 };

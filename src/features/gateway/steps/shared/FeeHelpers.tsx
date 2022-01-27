@@ -11,7 +11,7 @@ const useFeesTogglerStyles = makeStyles((theme) => ({
     overflow: "hidden",
   },
   wrapperShown: {
-    maxHeight: 200,
+    maxHeight: 140,
   },
   buttonWrapper: {
     display: "flex",

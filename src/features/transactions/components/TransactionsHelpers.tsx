@@ -15,12 +15,7 @@ import {
   ErroringBurnSession,
   GatewaySession,
 } from "@renproject/ren-tx";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useInterval } from "react-use";
@@ -59,7 +54,7 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { links } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
-import { usePaperTitle } from "../../../providers/TitleProviders";
+import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 import { getRemainingTime } from "../../../utils/time";
@@ -258,10 +253,7 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
   processing = true,
 }) => {
   const theme = useTheme();
-  const [, setTitle] = usePaperTitle();
-  useEffect(() => {
-    setTitle(reason);
-  }, [setTitle, reason]);
+  useSetPaperTitle(reason);
   return (
     <>
       <ProgressWrapper>

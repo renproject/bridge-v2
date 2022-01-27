@@ -1,4 +1,7 @@
-export const decimalImpact = (value: string | number, decimalImpact = 2) => {
+export const feesDecimalImpact = (
+  value: string | number,
+  decimalImpact = 2
+) => {
   const num = value.toString();
   const decimalPosition = num.indexOf(".");
   if (decimalPosition > -1) {

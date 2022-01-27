@@ -6,7 +6,6 @@ import { ChainTransactionStatus } from "@renproject/utils";
 import QRCode from "qrcode.react";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import {
   BigQrCode,
@@ -38,7 +37,6 @@ import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
 import { trimAddress } from "../../../../utils/strings";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
-import { $network } from "../../../network/networkSlice";
 import {
   GeneralErrorDialog,
   HMSCountdown,
@@ -83,7 +81,6 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   history,
 }) => {
   const { t } = useTranslation();
-  const { network } = useSelector($network);
 
   const [paperTitle] = usePaperTitle();
 
@@ -91,14 +88,14 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
     gatewayParams,
     additionalParams,
     error: parseError,
-  } = parseGatewayQueryString(location.search);
+  } = parseGatewayQueryString(location.search, true);
   const { asset, from, to, nonce } = gatewayParams;
   const expiryTime = additionalParams.expiryTime || getGatewayExpiryTime();
 
   useSyncWalletChain(to);
   const { connected, provider } = useWallet(to);
   const { gateway, transactions } = useGateway(
-    { asset, from, to, nonce, network },
+    { asset, from, to, nonce },
     provider,
     true
   );
@@ -135,7 +132,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
           <GeneralErrorDialog
             open={true}
             reason={parseError}
-            alternativeActionText={t("mint.back-to-home")}
+            alternativeActionText={t("navigation.back-to-home-label")}
             onAlternativeAction={() => history.push({ pathname: paths.HOME })}
           />
         )}

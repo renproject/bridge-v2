@@ -43,6 +43,7 @@ import {
 import { orangeLight } from "../../../../theme/colors";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
+import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getRemainingTime } from "../../../../utils/time";
 import {
   getAssetConfig,
@@ -115,14 +116,8 @@ export const MintDepositConfirmationStatus: FunctionComponent<
       <ProgressWrapper>
         <ProgressWithContent
           color={lockAssetConfig.color || orangeLight}
-          confirmations={
-            lockConfirmations !== null ? lockConfirmations : undefined
-          }
-          targetConfirmations={
-            lockTargetConfirmations !== null
-              ? lockTargetConfirmations
-              : undefined
-          }
+          confirmations={undefinedForNull(lockConfirmations)}
+          targetConfirmations={undefinedForNull(lockTargetConfirmations)}
         >
           <Icon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
@@ -132,6 +127,10 @@ export const MintDepositConfirmationStatus: FunctionComponent<
           {lockConfirmations !== null && lockTargetConfirmations !== null ? (
             <>
               {lockConfirmations} of {lockTargetConfirmations} confirmations
+              {t("tx.confirmations-of-target-counter-message", {
+                confirmations: lockConfirmations,
+                target: lockTargetConfirmations,
+              })}
             </>
           ) : (
             <Skeleton variant="text" width={120} height={14} />
@@ -538,7 +537,7 @@ export const MintCompletedStatus: FunctionComponent<
           </Box>
         )}
         <ActionButton onClick={handleGoToHome}>
-          {t("mint.back-to-home")}
+          {t("navigation.back-to-home-label")}
         </ActionButton>
       </MultipleActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>

@@ -1,4 +1,4 @@
-import { Divider, Fade } from "@material-ui/core";
+import { Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
 import React, {
@@ -14,23 +14,19 @@ import {
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import {
-  HorizontalPadder,
-  MediumTopWrapper,
-} from "../../../../components/layout/LayoutHelpers";
+import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import {
-  InlineSkeleton,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
 } from "../../../../components/progress/ProgressHelpers";
 import {
   AssetInfo,
-  LabelWithValue,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import {
   getAssetConfig,
@@ -46,6 +42,7 @@ import {
   useEthereumChainAssetBalance,
 } from "../../gatewayHooks";
 import { useChainTransactionSubmitter } from "../../gatewayTransactionHooks";
+import { BalanceInfo, UsdNumberFormatText } from "../shared/BalanceHelpers";
 import { FeesToggler } from "../shared/FeeHelpers";
 import {
   SwitchWalletDialog,
@@ -84,28 +81,7 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
   return (
     <>
       <PaperContent bottomPadding>
-        <HorizontalPadder>
-          <LabelWithValue
-            label={t("common.balance") + ":"}
-            value={
-              <span>
-                {balance === null ? (
-                  <InlineSkeleton
-                    variant="rect"
-                    animation="pulse"
-                    width={40}
-                    height={12}
-                  />
-                ) : (
-                  <Fade in={true}>
-                    <span>{balance}</span>
-                  </Fade>
-                )}
-                <span> {asset}</span>
-              </span>
-            }
-          />
-        </HorizontalPadder>
+        <BalanceInfo balance={balance} asset={asset} />
         <SimpleAssetInfo
           label={t("mint.minting-label")}
           value={amount}
@@ -118,19 +94,11 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
               <NumberFormatText
                 value={outputAmount}
                 spacedSuffix={renAsset}
-                decimalScale={3} // TODO: make dynamic decimal scale based on input decimals
+                decimalScale={feesDecimalImpact(amount)}
               />
             }
             valueEquivalent={
-              outputAmountUsd !== null ? (
-                <NumberFormatText
-                  prefix=" = $"
-                  value={outputAmountUsd}
-                  spacedSuffix="USD"
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              ) : null
+              <UsdNumberFormatText amountUsd={outputAmountUsd} />
             }
             Icon={<RenIcon fontSize="inherit" />}
           />
@@ -238,19 +206,11 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
               <NumberFormatText
                 value={outputAmount}
                 spacedSuffix={renAsset}
-                decimalScale={3} // TODO: make dynamic decimal scale based on input decimals
+                decimalScale={feesDecimalImpact(amount)}
               />
             }
             valueEquivalent={
-              outputAmountUsd !== null ? (
-                <NumberFormatText
-                  prefix=" = $"
-                  value={outputAmountUsd}
-                  spacedSuffix="USD"
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              ) : null
+              <UsdNumberFormatText amountUsd={outputAmountUsd} />
             }
             Icon={<RenIcon fontSize="inherit" />}
           />

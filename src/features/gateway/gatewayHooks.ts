@@ -4,9 +4,9 @@ import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAn
 import {
   ChainCommon,
   ContractChain,
+  DepositChain,
   InputType,
   OutputType,
-  RenNetwork,
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -30,7 +30,6 @@ import { $network } from "../network/networkSlice";
 import { createGateway } from "./gatewayUtils";
 
 type UseGatewayParams = {
-  network: RenNetwork;
   asset: Asset;
   from: Chain;
   to: Chain;
@@ -40,11 +39,12 @@ type UseGatewayParams = {
 };
 
 export const useGateway = (
-  { asset, from, to, network, nonce, toAddress, amount }: UseGatewayParams,
+  { asset, from, to, nonce, toAddress, amount }: UseGatewayParams,
   provider: any,
   autoTeardown?: boolean,
   initialGateway: Gateway | null = null
 ) => {
+  const { network } = useSelector($network);
   const chains = useChains(network);
   const [renJs, setRenJs] = useState<RenJS | null>(null);
   const [error, setError] = useState(null);
@@ -192,28 +192,27 @@ export const useChainAssetAddress = (
 };
 
 export const useEthereumChainAssetBalance = (
-  chainInstance: ContractChain | null | undefined,
+  chainInstance: Chain | DepositChain | ContractChain | null | undefined,
   asset: string,
   address?: string
 ) => {
-  const { decimals } = useChainAssetDecimals(chainInstance, asset);
+  const instance = chainInstance as ContractChain;
+  const { decimals } = useChainAssetDecimals(instance, asset);
   const [balance, setBalance] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (
-      !chainInstance ||
+      !instance ||
       decimals === null ||
-      !supportedEthereumChains.includes(chainInstance.chain as Chain)
+      !supportedEthereumChains.includes(instance.chain as Chain)
     ) {
       return;
     }
     const getBalance = async () => {
-      console.log(
-        `asset balance ${chainInstance?.chain}/${asset}: ${decimals}`
-      );
+      console.log(`asset balance ${instance?.chain}/${asset}: ${decimals}`);
       setBalance(null);
       const balanceBn = (
-        await (chainInstance as EthereumBaseChain).getBalance(asset, address)
+        await (instance as EthereumBaseChain).getBalance(asset, address)
       ).shiftedBy(-decimals);
       setBalance(balanceBn.toFixed());
       console.log(`gateway balance: ${balanceBn}`);
@@ -221,7 +220,7 @@ export const useEthereumChainAssetBalance = (
     getBalance().catch((error) => {
       setError(error);
     });
-  }, [chainInstance, decimals, asset, address]);
+  }, [instance, decimals, asset, address]);
 
   return { balance, error };
 };
@@ -472,8 +471,9 @@ export const getGatewayParams = (gateway: Gateway) => {
   const asset = gateway.params.asset as Asset;
   const from = gateway.params.from.chain as Chain;
   const to = gateway.params.to.chain as Chain;
-  const amount = gateway.params.from.params.amount as string;
-  return { asset, from, to, amount };
+  const fromAmount = gateway.params.from.params.amount as string;
+  const toAddress = gateway.params.to.address as string;
+  return { asset, from, to, amount: fromAmount, fromAmount, toAddress };
 };
 
 //will become  useGatewayMeta

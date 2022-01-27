@@ -2,7 +2,6 @@ import {
   ButtonProps,
   Checkbox,
   Divider,
-  Fade,
   FormControlLabel,
   IconButton,
   Typography,
@@ -35,7 +34,6 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
-import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
@@ -45,9 +43,8 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
-import { decimalImpact } from "../../../utils/numbers";
+import { feesDecimalImpact } from "../../../utils/numbers";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
-import { $network } from "../../network/networkSlice";
 import { useWallet } from "../../wallet/walletHooks";
 import { GatewayFees } from "../components/GatewayFees";
 import {
@@ -62,13 +59,13 @@ import {
   getGatewayExpiryTime,
   getGatewayNonce,
 } from "../gatewayUtils";
+import { BalanceInfo } from "./shared/BalanceHelpers";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   onPrev,
 }) => {
   const { t } = useTranslation();
-  const { network } = useSelector($network);
   const history = useHistory();
 
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
@@ -99,7 +96,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       from,
       to,
       amount: activeAmount,
-      network,
       toAddress,
     },
     provider
@@ -167,6 +163,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               asset,
               from,
               to,
+              amount,
               toAddress,
             }),
         });
@@ -181,6 +178,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     from,
     to,
     toAddress,
+    amount,
     // gateway,
   ]);
 
@@ -225,30 +223,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     <>
       {Header}
       <PaperContent bottomPadding>
-        {showBalance && (
-          <HorizontalPadder>
-            <LabelWithValue
-              label={t("common.balance-label")}
-              value={
-                <span>
-                  {balance === null ? (
-                    <InlineSkeleton
-                      variant="rect"
-                      animation="pulse"
-                      width={40}
-                      height={12}
-                    />
-                  ) : (
-                    <Fade in={true}>
-                      <span>{balance}</span>
-                    </Fade>
-                  )}
-                  <span> {asset}</span> {/*/ TODO: differentiate*/}
-                </span>
-              }
-            />
-          </HorizontalPadder>
-        )}
+        {showBalance && <BalanceInfo balance={balance} asset={asset} />}
         {isMint && (
           <OutlinedTextField
             value={activeAmount}
@@ -271,7 +246,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               <NumberFormatText
                 value={outputAmount}
                 spacedSuffix={assetLabel}
-                decimalScale={decimalImpact(amount)}
+                decimalScale={feesDecimalImpact(amount)}
               />
             }
             valueEquivalent={

@@ -79,21 +79,26 @@ export const createGatewayQueryString = (
   return queryString.stringify({ ...gatewayParams, ...additionalParams });
 };
 
-export const parseGatewayQueryString = (query: string) => {
+export const parseGatewayQueryString = (query: string, checkNonce = false) => {
   const parsed = queryString.parse(query) as unknown as CreateGatewayParams &
     AdditionalGatewayParams;
   const { expiryTime, ...gatewayParams } = parsed;
   const additionalParams = { expiryTime };
   let error;
-  let nonce = Number(gatewayParams.nonce);
-  if (isNaN(nonce)) {
-    error = `Unable to parse nonce as number: ${gatewayParams.nonce}`;
+  let nonce = undefined;
+  if (checkNonce) {
+    nonce = Number(gatewayParams.nonce);
+    if (isNaN(nonce)) {
+      error = `Unable to parse nonce as number: ${gatewayParams.nonce}`;
+    }
   }
 
   const sanitized = {
     asset: gatewayParams.asset,
     from: gatewayParams.from,
     to: gatewayParams.to,
+    toAddress: gatewayParams.toAddress,
+    amount: gatewayParams.amount,
     nonce,
   };
   return { gatewayParams: sanitized, additionalParams, error };

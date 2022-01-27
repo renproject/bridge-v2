@@ -40,7 +40,7 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = () => {
             open={true}
             reason={"Failed to load gateway"}
             error={`gateway: ${null}`}
-            actionText={t("mint.back-to-home")}
+            actionText={t("navigation.back-to-home-label")}
             onAction={() => history.push({ pathname: paths.HOME })}
           />
         </PaperContent>

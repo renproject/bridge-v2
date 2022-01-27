@@ -50,7 +50,7 @@
   "mint.address-validity-message-1": "Завершите эту транзакцию в течение",
   "mint.address-validity-message-2": "Не отправлять туда по истечение срока",
   "mint.address-validity-message-3": "После пополнения средств у вас есть еще 24 часа, чтобы отправить mint транзакцию на {{network}}",
-  "mint.back-to-home": "Вернуться на главную",
+  "navigation.back-to-home-label": "Вернуться на главную",
   "mint.complete-title": "Завершить",
   "mint.deposit-accepted-notification-message": "{{confirmations}}/{{targetConfirmations}} подтверждений, готовы отправить {{currency}} на {{chain}}?",
   "mint.deposit-accepted-submit-title": "Отправить",

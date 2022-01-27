@@ -27,7 +27,7 @@ export type ChainIconsConfig = {
 
 export type ChainLabelsConfig = {
   fullName: string;
-  shortName?: string;
+  shortName?: string; // TODO: make obligatory
 };
 
 export type ChainNetworksConfig = {
