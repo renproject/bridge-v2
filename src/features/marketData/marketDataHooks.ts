@@ -1,7 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
-import { getBandchain } from "../../services/bandchain";
 import {
   setSystemMonitorStatus,
   SystemStatus,
@@ -9,12 +8,9 @@ import {
 } from "../ui/uiSlice";
 import { setExchangeRates, setGasPrices } from "./marketDataSlice";
 import {
-  BandchainReferenceData,
-  bandchainReferencePairs,
   CoingeckoReferenceData,
   coingeckoSymbols,
   fetchMarketDataGasPrices,
-  mapBandchainToExchangeData,
   mapCoingeckoToExchangeData,
 } from "./marketDataUtils";
 
@@ -24,28 +20,28 @@ export const useExchangeRates = () => {
   const dispatch = useDispatch();
 
   const fetchMarketDataRates = useCallback(async () => {
-    const bandchain = await getBandchain()
-      .getReferenceData(bandchainReferencePairs, 10, 16)
-      .then((data: Array<BandchainReferenceData>) => {
-        dispatch(
-          setSystemMonitorStatus({
-            type: SystemType.Bandchain,
-            status: SystemStatus.Operational,
-          })
-        );
-
-        return mapBandchainToExchangeData(data);
-      })
-      .catch((error: any) => {
-        console.error(error);
-        dispatch(
-          setSystemMonitorStatus({
-            type: SystemType.Bandchain,
-            status: SystemStatus.Failure,
-          })
-        );
-        return [];
-      });
+    // const bandchain = await getBandchain()
+    //   .getReferenceData(bandchainReferencePairs, 10, 16)
+    //   .then((data: Array<BandchainReferenceData>) => {
+    //     dispatch(
+    //       setSystemMonitorStatus({
+    //         type: SystemType.Bandchain,
+    //         status: SystemStatus.Operational,
+    //       })
+    //     );
+    //
+    //     return mapBandchainToExchangeData(data);
+    //   })
+    //   .catch((error: any) => {
+    //     console.error(error);
+    //     dispatch(
+    //       setSystemMonitorStatus({
+    //         type: SystemType.Bandchain,
+    //         status: SystemStatus.Failure,
+    //       })
+    //     );
+    //     return [];
+    //   });
 
     const coingecko = await fetch(
       "https://api.coingecko.com/api/v3" +
@@ -71,7 +67,7 @@ export const useExchangeRates = () => {
         return [];
       });
 
-    return [...bandchain, ...coingecko];
+    return [...coingecko];
   }, [dispatch]);
 
   const fetchData = useCallback(() => {

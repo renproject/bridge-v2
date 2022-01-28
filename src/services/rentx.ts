@@ -30,6 +30,7 @@ import {
   RenChain,
   toReleasedCurrency,
 } from "../utils/assetConfigs";
+import { DigiByteInstance } from "./DigiByteOverride";
 import { getRenJs } from "./renJs";
 import { env } from "../constants/environmentVariables";
 
@@ -38,7 +39,7 @@ export const lockChainMap = {
   [RenChain.zcash]: () => Zcash(),
   [RenChain.bitcoinCash]: () => BitcoinCash(),
   [RenChain.dogecoin]: () => Dogecoin(),
-  [RenChain.digibyte]: () => DigiByte(),
+  [RenChain.digibyte]: () => DigiByteInstance,
   [RenChain.filecoin]: () => Filecoin(),
   [RenChain.terra]: () => Terra(),
 };
