@@ -852,7 +852,7 @@ export const supportedLockCurrencies =
     ? [
         BridgeCurrency.BTC,
         BridgeCurrency.BCH,
-        BridgeCurrency.DGB,
+        // BridgeCurrency.DGB,
         BridgeCurrency.DOGE,
         BridgeCurrency.FIL,
         BridgeCurrency.LUNA,
