@@ -205,7 +205,7 @@ export const useChainTransactionSubmitter = (
         });
         await wait();
       } catch (error: any) {
-        console.error(error);
+        console.error("yy", error);
         setErrorSubmitting(error);
       }
       setSubmitting(false);
@@ -280,7 +280,7 @@ export const useChainTxHandlers = (
       }
       setWaitingDone(true);
     } catch (error: any) {
-      console.error(error);
+      console.error("xx", error);
       setWaitingError(error);
     }
     setWaiting(false);

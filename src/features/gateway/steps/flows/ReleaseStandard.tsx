@@ -126,10 +126,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     errorSubmitting,
     handleReset,
   } = gatewayInSubmitter;
-  const gatewayInTxMeta = useChainTransactionStatusUpdater(
-    gateway.in,
-    submitting
-  ); //TODO: done
+  const gatewayInTxMeta = useChainTransactionStatusUpdater(gateway.in, false); //TODO: done
   const tx = useGatewayFirstTransaction(gateway);
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater(tx?.renVM, false);
   const releaseTxMeta = useChainTransactionStatusUpdater(tx?.out, false);
