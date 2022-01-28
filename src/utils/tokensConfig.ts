@@ -205,6 +205,16 @@ export const getAssetConfig = (asset: Asset | string) => {
   return config;
 };
 
+export const getRenAssetConfig = (asset: Asset | string) => {
+  const assetConfig = getAssetConfig(asset);
+  const { shortName, fullName, ...rest } = assetConfig;
+  return {
+    shortName: getRenAssetName(shortName),
+    fullName: getRenAssetFullName(fullName),
+    ...rest,
+  };
+};
+
 export const getAssetSymbolByRateSymbol = (symbol: string) => {
   const entry = Object.entries(assetsConfig).find(
     ([_, config]) => config.rateSymbol === symbol

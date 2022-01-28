@@ -1,7 +1,7 @@
 import { Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { FunctionComponent, ReactNode, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActionButton,
@@ -24,11 +24,13 @@ import {
   MiddleEllipsisText,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../../components/utils/Debug";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import {
   getAssetConfig,
+  getRenAssetConfig,
   getRenAssetName,
 } from "../../../../utils/tokensConfig";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
@@ -43,8 +45,9 @@ import {
   useEthereumChainAssetBalance,
 } from "../../gatewayHooks";
 import { useChainTransactionSubmitter } from "../../gatewayTransactionHooks";
+import { SubmittingProps } from "../shared/SubmissionHelpers";
 
-type ReleaseStandardBurnStatusProps = {
+type ReleaseStandardBurnStatusProps = SubmittingProps & {
   gateway: Gateway;
   Fees: ReactNode | null;
   outputAmount: string | null;
@@ -54,30 +57,33 @@ type ReleaseStandardBurnStatusProps = {
 
 export const ReleaseStandardBurnStatus: FunctionComponent<
   ReleaseStandardBurnStatusProps
-> = ({ gateway, Fees, outputAmountUsd, outputAmount }) => {
+> = ({
+  gateway,
+  Fees,
+  outputAmountUsd,
+  outputAmount,
+  onSubmit,
+  onReset,
+  submitting,
+  waiting,
+  done,
+  errorSubmitting,
+}) => {
   const { t } = useTranslation();
   const { asset, amount, toAddress } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
-  const { RenIcon } = assetConfig;
+  const renAssetConfig = getRenAssetConfig(asset);
+  const { Icon } = assetConfig;
   const { balance } = useEthereumChainAssetBalance(gateway.fromChain, asset);
-
-  const {
-    handleSubmit,
-    submitting,
-    done,
-    waiting,
-    errorSubmitting,
-    handleReset,
-  } = useChainTransactionSubmitter(gateway.in);
 
   return (
     <>
       <PaperContent bottomPadding>
-        <BalanceInfo balance={balance} asset={asset} />
+        <BalanceInfo balance={balance} asset={renAssetConfig.shortName} />
         <SimpleAssetInfo
-          label={t("mint.minting-label")}
+          label={t("release.releasing-label")}
           value={amount}
-          asset={asset}
+          asset={renAssetConfig.shortName}
         />
         <MediumTopWrapper>
           <AssetInfo
@@ -92,7 +98,7 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
             valueEquivalent={
               <UsdNumberFormatText amountUsd={outputAmountUsd} />
             }
-            Icon={<RenIcon fontSize="inherit" />}
+            Icon={<Icon fontSize="inherit" />}
           />
         </MediumTopWrapper>
         <MediumTopWrapper>
@@ -113,7 +119,7 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
         </MediumTopWrapper>
         <ActionButtonWrapper>
           <ActionButton
-            onClick={handleSubmit}
+            onClick={onSubmit}
             disabled={submitting || waiting || done}
           >
             {submitting || waiting
@@ -126,7 +132,7 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
         <SubmitErrorDialog
           open={true}
           error={errorSubmitting}
-          onAction={handleReset}
+          onAction={onReset}
         />
       )}
     </>
@@ -142,6 +148,7 @@ type ReleaseStandardBurnProgressStatusProps = {
   burnStatus: ChainTransactionStatus | null;
   burnConfirmations: number | null;
   burnTargetConfirmations: number | null;
+  renVMStatus: ChainTransactionStatus | null;
 };
 
 export const ReleaseStandardBurnProgressStatus: FunctionComponent<
@@ -154,20 +161,15 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
   outputAmountUsd,
   burnConfirmations,
   burnTargetConfirmations,
+  renVMStatus,
 }) => {
   const { t } = useTranslation();
   const { asset, from, amount, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const lockChainConfig = getChainConfig(from);
   const assetConfig = getAssetConfig(asset);
-  const renAsset = getRenAssetName(asset);
+  const renAssetConfig = getRenAssetConfig(asset);
   const { RenIcon } = assetConfig;
-
-  const renVM = useChainTransactionSubmitter(transaction?.renVM);
-
-  // const handleSubmitBoth = useCallback(async () => {
-  //   await renVM.handleSubmit();
-  // }, [renVM]);
 
   const LockChainIcon = lockChainConfig.Icon;
 
@@ -198,7 +200,7 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
             value={
               <NumberFormatText
                 value={outputAmount}
-                spacedSuffix={renAsset}
+                spacedSuffix={renAssetConfig.shortName}
                 decimalScale={feesDecimalImpact(amount)}
               />
             }
@@ -216,13 +218,6 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
           <ActionButton disabled>
             {t("release.releasing-assets-label")}
           </ActionButton>
-          {renVM.errorSubmitting && (
-            <SubmitErrorDialog
-              open={true}
-              error={renVM.errorSubmitting}
-              onAction={renVM.handleReset}
-            />
-          )}
         </MultipleActionButtonWrapper>
       </PaperContent>
     </>

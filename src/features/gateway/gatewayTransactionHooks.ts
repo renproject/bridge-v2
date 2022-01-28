@@ -1,4 +1,5 @@
 import { Chain } from "@renproject/chains";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
 import {
   ChainTransactionStatus,
   InputChainTransaction,
@@ -12,6 +13,7 @@ import { useCurrentNetworkChains } from "../network/networkHooks";
 
 export const useRenVMChainTransactionStatusUpdater = (
   tx?: TxSubmitter,
+  start = true,
   waitTarget?: number
 ) => {
   const [error, setError] = useState<Error | null>(null);
@@ -29,7 +31,7 @@ export const useRenVMChainTransactionStatusUpdater = (
 
   useEffect(() => {
     reset();
-    if (!tx) {
+    if (!tx || !start) {
       return;
     }
     tx.wait(waitTarget)
@@ -59,7 +61,8 @@ export const useRenVMChainTransactionStatusUpdater = (
       .catch((reason) => {
         setError(reason);
       });
-  }, [tx, waitTarget, reset]);
+    // TODO add teardown
+  }, [tx, waitTarget, reset, start]);
 
   return {
     error,
@@ -74,6 +77,7 @@ export const useRenVMChainTransactionStatusUpdater = (
 
 export const useChainTransactionStatusUpdater = (
   tx?: TxSubmitter | TxWaiter,
+  start = true,
   waitTarget?: number
 ) => {
   const chains = useCurrentNetworkChains();
@@ -120,7 +124,7 @@ export const useChainTransactionStatusUpdater = (
   );
   useEffect(() => {
     reset();
-    if (!tx) {
+    if (!tx || !start) {
       return;
     }
     tx.wait(waitTarget)
@@ -132,7 +136,7 @@ export const useChainTransactionStatusUpdater = (
     return () => {
       tx.eventEmitter.removeListener("progress", trackProgress);
     };
-  }, [trackProgress, tx, waitTarget, chains, reset]);
+  }, [trackProgress, tx, waitTarget, chains, reset, start]);
   return {
     error,
     status,
@@ -199,7 +203,7 @@ export const useChainTransactionSubmitter = (
             // gasLimit: 500000,
           },
         });
-        wait().catch(console.error); // todo: await
+        await wait();
       } catch (error: any) {
         console.error(error);
         setErrorSubmitting(error);
@@ -216,5 +220,112 @@ export const useChainTransactionSubmitter = (
     submitting,
     done,
     handleReset,
+  };
+};
+
+export const useGatewayFirstTransaction = (gateway: Gateway) => {
+  const [transaction, setTransaction] = useState<GatewayTransaction | null>(
+    null
+  );
+  useEffect(() => {
+    const getFirstTx = async () => {
+      const tx = await gateway.transactions.first();
+      if (tx) {
+        setTransaction(tx);
+      }
+    };
+    getFirstTx().finally();
+  }, [gateway.transactions]);
+
+  return transaction;
+};
+
+export const useChainTxState = () => {};
+
+export const useChainTxHandlers = (
+  tx?: TxSubmitter | TxWaiter,
+  waitTarget?: number
+) => {
+  const [submitting, setSubmitting] = useState(false);
+  const [submittingDone, setSubmittingDone] = useState(false);
+  const [waiting, setWaiting] = useState(false);
+  const [submittingError, setSubmittingError] = useState<Error>();
+  const [waitingError, setWaitingError] = useState<Error>();
+  const [waitingDone, setWaitingDone] = useState(false);
+
+  const reset = useCallback(() => {
+    setSubmitting(false);
+    setWaiting(false);
+    setSubmittingError(undefined);
+    setWaitingError(undefined);
+    setSubmittingDone(false);
+    setWaitingDone(false);
+  }, []);
+
+  const wait = useCallback(async () => {
+    setSubmittingError(undefined);
+    setWaitingError(undefined);
+
+    try {
+      setWaiting(true);
+      if (tx && submittingDone) {
+        await tx.wait(waitTarget);
+      } else {
+        console.log(
+          "Can't perform wait for tx: ",
+          tx,
+          tx?.wait,
+          tx?.progress.status
+        );
+      }
+      setWaitingDone(true);
+    } catch (error: any) {
+      console.error(error);
+      setWaitingError(error);
+    }
+    setWaiting(false);
+  }, [tx, waitTarget, submittingDone]);
+
+  const submit = useCallback(async () => {
+    setSubmittingError(undefined);
+
+    console.log("submitting");
+    try {
+      if (
+        tx &&
+        tx.submit &&
+        tx.progress.status === ChainTransactionStatus.Ready
+      ) {
+        setSubmitting(true);
+        await tx.submit({
+          txConfig: {
+            // gasLimit: 500000,
+          },
+        });
+      } else {
+        console.log(
+          "Can't perform submit for tx: ",
+          tx,
+          tx?.submit,
+          tx?.progress.status
+        );
+      }
+    } catch (error: any) {
+      console.error(error);
+      setSubmittingError(error);
+    }
+    setSubmitting(false);
+  }, [tx, wait]);
+
+  return {
+    submit,
+    submitting,
+    submittingDone,
+    submittingError,
+    wait,
+    waiting,
+    waitingDone,
+    waitingError,
+    reset,
   };
 };

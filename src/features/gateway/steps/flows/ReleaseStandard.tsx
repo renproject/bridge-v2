@@ -1,6 +1,11 @@
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { PaperContent } from "../../../../components/layout/Paper";
@@ -12,7 +17,10 @@ import {
 } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
-import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import {
+  ErrorDialog,
+  GeneralErrorDialog,
+} from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
@@ -27,6 +35,8 @@ import {
 } from "../../gatewayHooks";
 import {
   useChainTransactionStatusUpdater,
+  useChainTransactionSubmitter,
+  useGatewayFirstTransaction,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
@@ -107,12 +117,22 @@ const ReleaseStandardProcessor: FunctionComponent<
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
 
   const { outputAmount, outputAmountUsd } = fees;
-  const gatewayInTxMeta = useChainTransactionStatusUpdater(gateway.in);
-  const [transaction, setTransaction] = useState<GatewayTransaction | null>(
-    null
-  );
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(transaction?.renVM);
-  const releaseTxMeta = useChainTransactionStatusUpdater(transaction?.out);
+  const gatewayInSubmitter = useChainTransactionSubmitter(gateway.in);
+  const {
+    handleSubmit,
+    submitting,
+    done,
+    waiting,
+    errorSubmitting,
+    handleReset,
+  } = gatewayInSubmitter;
+  const gatewayInTxMeta = useChainTransactionStatusUpdater(
+    gateway.in,
+    submitting
+  ); //TODO: done
+  const tx = useGatewayFirstTransaction(gateway);
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(tx?.renVM, false);
+  const releaseTxMeta = useChainTransactionStatusUpdater(tx?.out, false);
   console.log(releaseTxMeta);
   const {
     status: burnStatus,
@@ -120,20 +140,35 @@ const ReleaseStandardProcessor: FunctionComponent<
     target: burnTargetConfirmations,
   } = gatewayInTxMeta;
   const { status: renVMStatus } = renVmTxMeta;
-  const { status: releaseStatus } = releaseTxMeta;
+  const { error: releaseError } = releaseTxMeta; // TODO: must call submit first
 
   useEffect(() => {
-    const getFirstTx = async () => {
-      const tx = await gateway.transactions.first();
-      if (tx) {
-        setTransaction(tx);
+    const handleProcess = async () => {
+      if (!tx) {
+        console.log("tx: no tx, aborting");
+        return;
+      }
+      try {
+        console.log("tx: in waiting");
+        await tx.in.wait();
+        console.log("tx: renVM submitting");
+        await tx.renVM.submit();
+        console.log("tx: renVM waiting");
+        await tx.renVM.wait();
+        if (tx.out.submit) {
+          console.log("tx: out submitting");
+          await tx.out.submit();
+        }
+        console.log("tx: out waiting");
+        await tx.out.wait();
+      } catch (e) {
+        console.log("tx: err", e);
       }
     };
-    getFirstTx().finally();
-  }, [gateway.transactions]);
+    handleProcess().finally();
+  }, [tx]);
 
   let Content = null;
-
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {
     Content = (
       <ReleaseStandardBurnStatus
@@ -142,6 +177,12 @@ const ReleaseStandardProcessor: FunctionComponent<
         burnStatus={burnStatus}
         outputAmount={outputAmount}
         outputAmountUsd={outputAmountUsd}
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+        done={done}
+        waiting={waiting}
+        submitting={submitting}
+        errorSubmitting={errorSubmitting}
       />
     );
   } else {
@@ -149,13 +190,14 @@ const ReleaseStandardProcessor: FunctionComponent<
     Content = (
       <ReleaseStandardBurnProgressStatus
         gateway={gateway}
-        transaction={transaction}
+        transaction={tx}
         Fees={Fees}
         burnStatus={burnStatus}
         outputAmount={outputAmount}
         outputAmountUsd={outputAmountUsd}
         burnConfirmations={burnConfirmations}
         burnTargetConfirmations={burnTargetConfirmations}
+        renVMStatus={renVMStatus}
       />
     );
   }
@@ -165,6 +207,7 @@ const ReleaseStandardProcessor: FunctionComponent<
       {Content}
       <Debug
         it={{
+          gatewayInSubmitter,
           gatewayInTxMeta,
           renVmTxMeta,
           releaseTxMeta,
