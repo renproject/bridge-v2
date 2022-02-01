@@ -68,9 +68,9 @@ export const useGateway = (
     console.log("useGateway useEffect renJs and provider");
     const initProvider = async () => {
       alterEthereumBaseChainProviderSigner(chains, provider);
-      const renJs = new RenJS(network).withChains(
-        ...Object.values(chains).map((chain) => chain.chain)
-      );
+      const renJs = new RenJS(network, {
+        networkDelay: 10000,
+      }).withChains(...Object.values(chains).map((chain) => chain.chain));
       (window as any).renJs = renJs;
       return renJs;
     };

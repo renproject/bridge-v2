@@ -122,6 +122,7 @@ export const useChainTransactionStatusUpdater = (
     },
     [chains]
   );
+
   useEffect(() => {
     reset();
     if (!tx || !start) {
@@ -129,14 +130,19 @@ export const useChainTransactionStatusUpdater = (
     }
     tx.wait(waitTarget)
       .on("progress", trackProgress)
-      .catch((reason) => {
-        console.error(reason);
-        setError(reason);
+      .catch((error) => {
+        console.log(error.message);
+        // TODO: typical error message
+        if (!error.message.includes(".submit")) {
+          console.error(error);
+          setError(error);
+        }
       });
     return () => {
       tx.eventEmitter.removeListener("progress", trackProgress);
     };
   }, [trackProgress, tx, waitTarget, chains, reset, start]);
+
   return {
     error,
     status,
@@ -155,19 +161,23 @@ export const useChainTransactionSubmitter = (
   waitTarget?: number,
   autoSubmit?: boolean
 ) => {
-  const [submitting, setSubmitting] = useState(!!autoSubmit);
+  const [submitting, setSubmitting] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [errorSubmitting, setErrorSubmitting] = useState<Error>();
   const [errorWaiting, setErrorWaiting] = useState<Error>();
+  const [submittingDone, setSubmittingDone] = useState(false);
+  const [waitingDone, setWaitingDone] = useState(false);
   const [done, setDone] = useState(false);
 
   const handleReset = useCallback(() => {
-    setSubmitting(!!autoSubmit);
+    setSubmitting(false);
     setWaiting(false);
     setErrorSubmitting(undefined);
     setErrorWaiting(undefined);
+    setSubmittingDone(false);
+    setWaitingDone(false);
     setDone(false);
-  }, [autoSubmit]);
+  }, []);
 
   const wait = useCallback(async () => {
     setErrorSubmitting(undefined);
@@ -178,7 +188,6 @@ export const useChainTransactionSubmitter = (
       if (tx) {
         await tx.wait(waitTarget);
       }
-      setDone(true);
     } catch (error: any) {
       console.error(error);
       setErrorWaiting(error);
@@ -203,7 +212,9 @@ export const useChainTransactionSubmitter = (
             // gasLimit: 500000,
           },
         });
+        setSubmittingDone(true);
         await wait();
+        setDone(true);
       } catch (error: any) {
         console.error("yy", error);
         setErrorSubmitting(error);
@@ -212,12 +223,24 @@ export const useChainTransactionSubmitter = (
     }
   }, [tx, wait]);
 
+  useEffect(() => {
+    if (!!autoSubmit) {
+      console.log("automatic submit");
+      handleSubmit().catch((error) => {
+        console.log("automatic submit failed");
+        console.error(error);
+      });
+    }
+  }, [handleSubmit, autoSubmit]);
+
   return {
     handleSubmit,
     errorSubmitting,
     errorWaiting,
     waiting,
     submitting,
+    waitingDone,
+    submittingDone,
     done,
     handleReset,
   };
@@ -315,7 +338,7 @@ export const useChainTxHandlers = (
       setSubmittingError(error);
     }
     setSubmitting(false);
-  }, [tx, wait]);
+  }, [tx]);
 
   return {
     submit,

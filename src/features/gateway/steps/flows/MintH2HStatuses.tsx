@@ -38,6 +38,7 @@ import { SubmitErrorDialog } from "../../../transactions/components/Transactions
 import { useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
 import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
+import { TransactionProgressInfo } from "../../components/TransactionProgressHelpers";
 import {
   getGatewayParams,
   useEthereumChainAssetBalance,
@@ -155,7 +156,8 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   lockStatus,
 }) => {
   const { t } = useTranslation();
-  const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { asset, from, to, amount, fromAverageConfirmationTime } =
+    getGatewayParams(gateway);
   const fromChainConfig = getChainConfig(from);
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
@@ -195,6 +197,11 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
             <Icon fontSize="inherit" />
           </ProgressWithContent>
         </ProgressWrapper>
+        <TransactionProgressInfo
+          confirmations={undefinedForNull(lockConfirmations)}
+          target={undefinedForNull(lockTargetConfirmations)}
+          averageConfirmationTime={fromAverageConfirmationTime}
+        />
         <SimpleAssetInfo
           label={t("mint.minting-label")}
           value={amount}

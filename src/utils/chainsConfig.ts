@@ -74,6 +74,7 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
   Ethereum: {
     Icon: EthereumChainFullIcon,
     fullName: "Ethereum",
+    shortName: "Eth",
     networks: {
       ...createNetworkConfig(RenNetwork.Mainnet, 1),
       ...createNetworkConfig(RenNetwork.Testnet, 42, "Kovan Test Network"),

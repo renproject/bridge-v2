@@ -61,6 +61,8 @@ import {
   useWalletAssetHelpers,
 } from "../../../wallet/walletHooks";
 import { GatewayTransactionValidityMessage } from "../../components/MintHelpers";
+import { RenVMSubmittingInfo } from "../../components/TransactionProgressHelpers";
+import { maxConfirmations } from "../../gatewayTransactionUtils";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
 
 type MintDepositConfirmationStatusProps = {
@@ -165,13 +167,6 @@ export const MintDepositConfirmationStatus: FunctionComponent<
       </ProcessingTimeWrapper>
     </>
   );
-};
-
-const maxConfirmations = (actual: number, target: number) => {
-  if (actual > target) {
-    return target;
-  }
-  return actual;
 };
 
 type MintDepositAcceptedStatusProps = {
@@ -289,7 +284,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<
         {submitting || renVMSubmitting ? (
           <ProgressWithContent color={theme.customColors.skyBlue} processing>
             {renVMSubmitting ? (
-              <TransactionStatusInfo status="Submitting to RenVM..." />
+              <RenVMSubmittingInfo />
             ) : (
               <Icon fontSize="inherit" color="inherit" />
             )}
@@ -297,14 +292,8 @@ export const MintDepositAcceptedStatus: FunctionComponent<
         ) : (
           <ProgressWithContent
             color={lockAssetConfig.color || theme.customColors.skyBlue}
-            confirmations={
-              lockConfirmations !== null ? lockConfirmations : undefined
-            }
-            targetConfirmations={
-              lockTargetConfirmations !== null
-                ? lockTargetConfirmations
-                : undefined
-            }
+            confirmations={undefinedForNull(lockConfirmations)}
+            targetConfirmations={undefinedForNull(lockTargetConfirmations)}
           >
             <Icon fontSize="inherit" color="inherit" />
           </ProgressWithContent>
@@ -485,7 +474,7 @@ export const MintCompletedStatus: FunctionComponent<
         <span>
           {notificationMessage}{" "}
           <Link external href={mintTxUrl}>
-            {t("mint.success-notification-tx-link-text", {
+            {t("tx.view-chain-transaction-link-text", {
               chain: mintChainConfig.fullName,
             })}
           </Link>
@@ -519,7 +508,7 @@ export const MintCompletedStatus: FunctionComponent<
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>
-        {t("mint.success-received")}{" "}
+        {t("tx.you-received-message")}{" "}
         <NumberFormatText
           value={mintAmountFormatted}
           spacedSuffix={lockAssetConfig.shortName}

@@ -1,11 +1,6 @@
-import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { PaperContent } from "../../../../components/layout/Paper";
@@ -17,10 +12,7 @@ import {
 } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
-import {
-  ErrorDialog,
-  GeneralErrorDialog,
-} from "../../../transactions/components/TransactionsHelpers";
+import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
@@ -30,6 +22,7 @@ import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
   getGatewayParams,
+  useChainAssetDecimals,
   useGateway,
   useGatewayFeesWithRates,
 } from "../../gatewayHooks";
@@ -44,6 +37,7 @@ import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   ReleaseStandardBurnProgressStatus,
   ReleaseStandardBurnStatus,
+  ReleaseStandardCompletedStatus,
 } from "./ReleaseStandardStatuses";
 
 export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
@@ -118,52 +112,76 @@ const ReleaseStandardProcessor: FunctionComponent<
 
   const { outputAmount, outputAmountUsd } = fees;
   const gatewayInSubmitter = useChainTransactionSubmitter(gateway.in);
+
   const {
     handleSubmit,
     submitting,
     done,
+    submittingDone,
     waiting,
     errorSubmitting,
     handleReset,
   } = gatewayInSubmitter;
-  const gatewayInTxMeta = useChainTransactionStatusUpdater(gateway.in, false); //TODO: done
   const tx = useGatewayFirstTransaction(gateway);
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(tx?.renVM, false);
-  const releaseTxMeta = useChainTransactionStatusUpdater(tx?.out, false);
-  console.log(releaseTxMeta);
+  (window as any).tx = tx;
+  const gatewayInTxMeta = useChainTransactionStatusUpdater(
+    gateway.in,
+    submittingDone
+  );
   const {
     status: burnStatus,
     confirmations: burnConfirmations,
     target: burnTargetConfirmations,
   } = gatewayInTxMeta;
-  const { status: renVMStatus } = renVmTxMeta;
-  const { error: releaseError } = releaseTxMeta; // TODO: must call submit first
 
-  useEffect(() => {
-    const handleProcess = async () => {
-      if (!tx) {
-        console.log("tx: no tx, aborting");
-        return;
-      }
-      try {
-        console.log("tx: in waiting");
-        await tx.in.wait();
-        console.log("tx: renVM submitting");
-        await tx.renVM.submit();
-        console.log("tx: renVM waiting");
-        await tx.renVM.wait();
-        if (tx.out.submit) {
-          console.log("tx: out submitting");
-          await tx.out.submit();
-        }
-        console.log("tx: out waiting");
-        await tx.out.wait();
-      } catch (e) {
-        console.log("tx: err", e);
-      }
-    };
-    handleProcess().finally();
-  }, [tx]);
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(
+    tx?.renVM,
+    burnStatus === ChainTransactionStatus.Done
+  );
+  const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
+  const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
+    gateway.toChain,
+    gateway.params.asset
+  );
+
+  const outSubmitter = useChainTransactionSubmitter(
+    tx?.out,
+    undefined,
+    renVMStatus === ChainTransactionStatus.Done
+  );
+  const outTxMeta = useChainTransactionStatusUpdater(tx?.out);
+
+  const {
+    error: releaseError,
+    status: releaseStatus,
+    txUrl: releaseTxUrl,
+  } = outTxMeta; // TODO: must call submit first
+
+  // useEffect(() => {
+  //   const handleProcess = async () => {
+  //     if (!tx) {
+  //       console.log("tx: no tx, aborting");
+  //       return;
+  //     }
+  //     try {
+  //       console.log("tx: in waiting");
+  //       await tx.in.wait();
+  //       console.log("tx: renVM submitting");
+  //       await tx.renVM.submit();
+  //       console.log("tx: renVM waiting");
+  //       await tx.renVM.wait();
+  //       if (tx.out.submit) {
+  //         console.log("tx: out submitting");
+  //         await tx.out.submit();
+  //       }
+  //       console.log("tx: out waiting");
+  //       await tx.out.wait();
+  //     } catch (e) {
+  //       console.log("tx: err", e);
+  //     }
+  //   };
+  //   handleProcess().finally();
+  // }, [tx]);
 
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {
@@ -182,8 +200,10 @@ const ReleaseStandardProcessor: FunctionComponent<
         errorSubmitting={errorSubmitting}
       />
     );
-  } else {
-    // if (releaseStatus === null && renVMStatus === null) {
+  } else if (
+    burnStatus === ChainTransactionStatus.Confirming ||
+    releaseTxUrl === null
+  ) {
     Content = (
       <ReleaseStandardBurnProgressStatus
         gateway={gateway}
@@ -197,6 +217,16 @@ const ReleaseStandardProcessor: FunctionComponent<
         renVMStatus={renVMStatus}
       />
     );
+  } else if (releaseStatus !== ChainTransactionStatus.Reverted) {
+    Content = (
+      <ReleaseStandardCompletedStatus
+        gateway={gateway}
+        burnTxUrl={releaseTxUrl}
+        releaseTxUrl={releaseTxUrl}
+        releaseAmount={releaseAmount}
+        releaseAssetDecimals={releaseAssetDecimals}
+      />
+    );
   }
 
   return (
@@ -204,11 +234,14 @@ const ReleaseStandardProcessor: FunctionComponent<
       {Content}
       <Debug
         it={{
+          releaseAmount,
+          releaseAssetDecimals,
           gatewayInSubmitter,
           gatewayInTxMeta,
           renVmTxMeta,
-          releaseTxMeta,
-          error: releaseTxMeta.error,
+          outSubmitter,
+          outTxMeta,
+          error: outTxMeta.error,
         }}
       />
     </>

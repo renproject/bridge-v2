@@ -1,6 +1,8 @@
 import { Box, Fade, Typography } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
+import { TransactionStatusInfo } from "../../../components/progress/ProgressHelpers";
+import { maxConfirmations } from "../gatewayTransactionUtils";
 
 type TransactionProgressInfoProps = {
   confirmations: number;
@@ -22,7 +24,7 @@ export const TransactionProgressInfo: FunctionComponent<
     <Box mb={2} textAlign="center">
       <Typography variant="body1">
         {t("tx.confirmations-target-counter-message", {
-          confirmations,
+          confirmations: maxConfirmations(confirmations, target),
           target,
         })}
       </Typography>
@@ -36,4 +38,8 @@ export const TransactionProgressInfo: FunctionComponent<
       </Fade>
     </Box>
   );
+};
+
+export const RenVMSubmittingInfo: FunctionComponent = () => {
+  return <TransactionStatusInfo status="Submitting to RenVM..." />;
 };

@@ -1,8 +1,16 @@
-import { Divider } from "@material-ui/core";
+import { Box, Divider, Typography } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent, ReactNode, useEffect } from "react";
+import BigNumber from "bignumber.js";
+import React, {
+  FunctionComponent,
+  ReactNode,
+  useCallback,
+  useEffect,
+} from "react";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
+import { useEffectOnce } from "react-use";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -14,7 +22,9 @@ import {
   MediumTopWrapper,
 } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
+import { Link } from "../../../../components/links/Links";
 import {
+  BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
@@ -25,6 +35,9 @@ import {
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
+import { paths } from "../../../../pages/routes";
+import { useNotifications } from "../../../../providers/Notifications";
+import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
@@ -33,13 +46,23 @@ import {
   getRenAssetConfig,
   getRenAssetName,
 } from "../../../../utils/tokensConfig";
+import { getWalletConfig } from "../../../../utils/walletsConfig";
+import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
+import {
+  useCurrentChainWallet,
+  useWalletAssetHelpers,
+} from "../../../wallet/walletHooks";
 import {
   BalanceInfo,
   UsdNumberFormatText,
 } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
-import { TransactionProgressInfo } from "../../components/TransactionProgressHelpers";
+import {
+  RenVMSubmittingInfo,
+  TransactionProgressInfo,
+} from "../../components/TransactionProgressHelpers";
 import {
   getGatewayParams,
   useEthereumChainAssetBalance,
@@ -176,19 +199,29 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
   return (
     <>
       <PaperContent bottomPadding>
-        <ProgressWrapper>
-          <ProgressWithContent
-            confirmations={undefinedForNull(burnConfirmations)}
-            targetConfirmations={undefinedForNull(burnTargetConfirmations)}
-          >
-            <LockChainIcon fontSize="inherit" />
-          </ProgressWithContent>
-        </ProgressWrapper>
-        <TransactionProgressInfo
-          confirmations={undefinedForNull(burnConfirmations)}
-          target={undefinedForNull(burnTargetConfirmations)}
-          averageConfirmationTime={fromAverageConfirmationTime}
-        />
+        {renVMStatus !== null ? (
+          <ProgressWrapper>
+            <ProgressWithContent processing>
+              <RenVMSubmittingInfo />
+            </ProgressWithContent>
+          </ProgressWrapper>
+        ) : (
+          <>
+            <ProgressWrapper>
+              <ProgressWithContent
+                confirmations={undefinedForNull(burnConfirmations)}
+                targetConfirmations={undefinedForNull(burnTargetConfirmations)}
+              >
+                <LockChainIcon fontSize="inherit" />
+              </ProgressWithContent>
+            </ProgressWrapper>
+            <TransactionProgressInfo
+              confirmations={undefinedForNull(burnConfirmations)}
+              target={undefinedForNull(burnTargetConfirmations)}
+              averageConfirmationTime={fromAverageConfirmationTime}
+            />
+          </>
+        )}
         <SimpleAssetInfo
           label={t("release.releasing-label")}
           value={amount}
@@ -216,10 +249,126 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
           <ActionButton disabled>
-            {t("release.releasing-assets-label")}
+            {t("release.releasing-assets-label")}...
           </ActionButton>
         </MultipleActionButtonWrapper>
       </PaperContent>
     </>
+  );
+};
+
+type ReleaseStandardCompletedStatusProps = {
+  gateway: Gateway;
+  burnTxUrl: string | null;
+  releaseAssetDecimals: number | null;
+  releaseAmount: string | null;
+  releaseTxUrl: string | null;
+};
+
+export const ReleaseStandardCompletedStatus: FunctionComponent<
+  ReleaseStandardCompletedStatusProps
+> = ({
+  gateway,
+  burnTxUrl,
+  releaseTxUrl,
+  releaseAmount,
+  releaseAssetDecimals,
+}) => {
+  const { t } = useTranslation();
+  useSetPaperTitle(t("release.completed-title"));
+  const history = useHistory();
+  const lockAssetConfig = getAssetConfig(gateway.params.asset);
+  const lockChainConfig = getChainConfig(gateway.params.from.chain);
+  const releaseChainConfig = getChainConfig(gateway.params.to.chain);
+
+  const handleGoToHome = useCallback(() => {
+    history.push({
+      pathname: paths.HOME,
+    });
+  }, [history]);
+
+  const { showNotification } = useNotifications();
+  const { showBrowserNotification } = useBrowserNotifications();
+
+  const releaseAmountFormatted =
+    releaseAmount !== null && releaseAssetDecimals !== null
+      ? new BigNumber(releaseAmount).shiftedBy(-releaseAssetDecimals).toString()
+      : null;
+
+  const showNotifications = useCallback(() => {
+    if (releaseTxUrl !== null) {
+      const notificationMessage = t("release.success-notification-message", {
+        amount: releaseAmountFormatted,
+        currency: lockAssetConfig.shortName,
+      });
+      showNotification(
+        <span>
+          {notificationMessage}{" "}
+          <Link external href={releaseTxUrl}>
+            {t("tx.view-chain-transaction-link-text", {
+              chain: releaseChainConfig.fullName,
+            })}
+          </Link>
+        </span>
+      );
+      showBrowserNotification(notificationMessage);
+    }
+  }, [
+    showNotification,
+    showBrowserNotification,
+    releaseAmountFormatted,
+    releaseChainConfig,
+    lockAssetConfig,
+    releaseTxUrl,
+    t,
+  ]);
+
+  useEffectOnce(showNotifications);
+
+  return (
+    <PaperContent bottomPadding>
+      <ProgressWrapper>
+        <ProgressWithContent>
+          <BigDoneIcon />
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <Typography variant="body1" align="center" gutterBottom>
+        {t("tx.you-received-message")}{" "}
+        <NumberFormatText
+          value={releaseAmountFormatted}
+          spacedSuffix={lockAssetConfig.shortName}
+        />
+        !
+      </Typography>
+      <MultipleActionButtonWrapper>
+        <ActionButton onClick={handleGoToHome}>
+          {t("navigation.back-to-home-label")}
+        </ActionButton>
+      </MultipleActionButtonWrapper>
+      <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
+        {burnTxUrl !== null && (
+          <Link
+            external
+            color="primary"
+            variant="button"
+            underline="hover"
+            href={burnTxUrl}
+          >
+            {lockChainConfig.fullName} {t("common.transaction")}
+          </Link>
+        )}
+        {releaseTxUrl !== null && (
+          <Link
+            external
+            color="primary"
+            variant="button"
+            underline="hover"
+            href={releaseTxUrl}
+          >
+            {releaseChainConfig.fullName} {t("common.transaction")}
+          </Link>
+        )}
+      </Box>
+    </PaperContent>
   );
 };
