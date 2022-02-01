@@ -4,6 +4,7 @@ import {
   UTXO,
 } from "@renproject/chains-bitcoin/build/main/APIs/API";
 import { Insight } from "@renproject/chains-bitcoin/build/main/APIs/insight";
+import { BigNumber } from "bignumber.js";
 
 const nowNodesApiKey = "5GKhcZUJDaus0qb1Wn4I9S7wEYXgmRxz";
 const nowNodesMainnet = "https://dgb.nownodes.io/api/v2";
@@ -63,6 +64,21 @@ type NowNodeAddressResponse = {
   transactions: NowNodeTX[];
 };
 
+export const sortUTXOs = (a: UTXO, b: UTXO): number => {
+  const aAmount = new BigNumber(a.amount);
+  const bAmount = new BigNumber(b.amount);
+  // Sort greater values first.
+  return !aAmount.isEqualTo(bAmount)
+    ? bAmount.minus(aAmount).toNumber()
+    : // If the UTXOs have the same value, sort by number of confirmations.
+    a.confirmations !== b.confirmations
+    ? a.confirmations - b.confirmations
+    : // Fallback so sorting by txHash alphabetically.
+    a.txHash <= b.txHash
+    ? -1
+    : 1;
+};
+
 class NowNodesDigibyteApi implements BitcoinAPI {
   public url: string;
 
@@ -84,7 +100,7 @@ class NowNodesDigibyteApi implements BitcoinAPI {
     return uxto;
   }
 
-  async fetchTXs(address: string) {
+  async fetchTXs(address: string, confirmations = 0) {
     console.log("fetchTXs", address, nowNodesMainnet);
     const data: NowNodeAddressResponse = await fetch(
       `${nowNodesMainnet}/address/${address}?details=txs`,
@@ -109,7 +125,11 @@ class NowNodesDigibyteApi implements BitcoinAPI {
     }
 
     console.log("fetchTXs final", uxtos);
-    return uxtos;
+    return uxtos
+      .filter(
+        (utxo) => confirmations === 0 || utxo.confirmations >= confirmations
+      )
+      .sort(sortUTXOs);
   }
 
   async fetchUTXOs(address: string, confirmations?: number) {
@@ -130,7 +150,7 @@ class NowNodesDigibyteApi implements BitcoinAPI {
       return uxto;
     });
     console.log("fetchUTXOs final", uxtos);
-    return uxtos;
+    return uxtos.sort(sortUTXOs);
   }
 
   async broadcastTransaction(hex: string) {
@@ -149,12 +169,15 @@ export const DigiByteInstance = DigiByte();
 DigiByteInstance.withDefaultAPIs = (network) => {
   switch (network) {
     case "mainnet":
-      return DigiByteInstance.withAPI(
-        Insight("https://multichain-web-proxy.herokuapp.com/digibyte-mainnet")
-      )
-        .withAPI(Insight("https://digiexplorer.info/api"))
-        .withAPI(nowNodeApiMainnet)
-        .withAPI(Insight("https://insight.digibyte.host/api"));
+      return (
+        DigiByteInstance
+          //   .withAPI(
+          //   Insight("https://multichain-web-proxy.herokuapp.com/digibyte-mainnet")
+          // )
+          //   .withAPI(Insight("https://digiexplorer.info/api"))
+          .withAPI(nowNodeApiMainnet)
+      );
+    // .withAPI(Insight("https://insight.digibyte.host/api"));
     case "testnet":
       return DigiByteInstance.withAPI(
         Insight("https://testnetexplorer.digibyteservers.io/api")
