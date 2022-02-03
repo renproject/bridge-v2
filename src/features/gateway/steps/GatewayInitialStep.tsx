@@ -33,6 +33,7 @@ import { paths } from "../../../pages/routes";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import {
   getAssetConfig,
+  getRenAssetConfig,
   getRenAssetName,
   supportedAssets,
 } from "../../../utils/tokensConfig";
@@ -40,7 +41,7 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { useCurrentChainWallet, useWallet } from "../../wallet/walletHooks";
-import { setChain, setPickerOpened } from "../../wallet/walletSlice";
+import { $wallet, setChain, setPickerOpened } from "../../wallet/walletSlice";
 import {
   getAssetOptionData,
   getChainOptionData,
@@ -173,8 +174,9 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   const toChainConfig = getChainConfig(to);
   // TODO: fix
-  const renAsset = getRenAssetName(asset);
+  const renAssetConfig = getRenAssetConfig(asset);
   const { connected } = useCurrentChainWallet();
+
   const handleConnect = useCallback(() => {
     dispatch(setPickerOpened(true));
   }, [dispatch]);
@@ -247,7 +249,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           <BigCurrencyInputWrapper>
             <BigCurrencyInput
               onChange={handleAmountChange}
-              symbol={renAsset}
+              symbol={renAssetConfig.shortName}
               usdValue={amountUsd}
               value={amount}
               errorText={
@@ -270,7 +272,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {connected && isFromContractChain ? (
           <HorizontalPadder>
             <LabelWithValue
-              label={`${renAsset} ${t("common.balance")}:`}
+              label={`${renAssetConfig.shortName} ${t("common.balance")}:`}
               value={
                 balance !== null ? (
                   balance

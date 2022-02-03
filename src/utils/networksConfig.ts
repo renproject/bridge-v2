@@ -49,7 +49,8 @@ export const createNetworkIdMapper = (chain: Chain) => {
     } else if (testnet.id === id || parsedId === testnet.id.toString()) {
       return RenNetwork.Testnet;
     } else {
-      throw new Error(`Network mapping failed for ${chain}:${id}`);
+      console.warn(`Network mapping failed for ${chain}:${id}`);
+      return RenNetwork.Testnet;
     }
   };
   return mapper;

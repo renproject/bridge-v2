@@ -421,8 +421,6 @@ export const MintCompletingStatus: FunctionComponent<
 
 type MintCompletedStatusProps = {
   gateway: Gateway;
-  transaction: GatewayTransaction;
-  onGoToGateway: () => void;
   lockTxUrl: string | null;
   mintAssetDecimals: number | null;
   mintAmount: string | null;
@@ -431,15 +429,7 @@ type MintCompletedStatusProps = {
 
 export const MintCompletedStatus: FunctionComponent<
   MintCompletedStatusProps
-> = ({
-  gateway,
-  transaction,
-  onGoToGateway,
-  lockTxUrl,
-  mintTxUrl,
-  mintAmount,
-  mintAssetDecimals,
-}) => {
+> = ({ gateway, lockTxUrl, mintTxUrl, mintAmount, mintAssetDecimals }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.complete-title"));
   const history = useHistory();

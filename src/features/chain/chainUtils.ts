@@ -5,7 +5,9 @@ import {
   BitcoinCash,
   Dogecoin,
   Zcash,
+  DigiByte,
 } from "@renproject/chains-bitcoin";
+import { Terra } from "@renproject/chains-terra";
 
 import {
   Arbitrum,
@@ -17,7 +19,11 @@ import {
   Fantom,
   Polygon,
 } from "@renproject/chains-ethereum";
-import { Chain as GatewayChain, RenNetwork } from "@renproject/utils";
+import {
+  Chain as GatewayChain,
+  DepositChain,
+  RenNetwork,
+} from "@renproject/utils";
 import { ethers, providers } from "ethers";
 import { supportedEthereumChains } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
@@ -86,6 +92,12 @@ const getBitcoinBaseChain = <BTC extends BitcoinBaseChain>(ChainClass: BTC) => {
   };
 };
 
+const getDepositBaseChain = <TRR extends DepositChain>(ChainClass: TRR) => {
+  return {
+    chain: ChainClass,
+  };
+};
+
 export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
   const ethereumBaseChains = {
     [Chain.Ethereum]: getEthereumBaseChain(Ethereum, network),
@@ -101,11 +113,17 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     [Chain.Dogecoin]: getBitcoinBaseChain(new Dogecoin({ network })),
     [Chain.Bitcoin]: getBitcoinBaseChain(new Bitcoin({ network })),
     [Chain.Zcash]: getBitcoinBaseChain(new Zcash({ network })),
+    [Chain.DigiByte]: getBitcoinBaseChain(new DigiByte({ network })),
   };
 
+  const depositBaseChains = {
+    // @ts-ignore
+    [Chain.Terra]: getDepositBaseChain(new Terra({ network })),
+  };
   return {
     ...ethereumBaseChains,
     ...bitcoinBaseChains,
+    ...depositBaseChains,
   } as unknown as ChainInstanceMap;
 };
 

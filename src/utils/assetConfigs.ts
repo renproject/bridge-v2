@@ -842,16 +842,6 @@ export const supportedLockCurrencies =
         return included;
       }).map((x) => x as BridgeCurrency);
 
-export const supportedMintDestinationChains = [
-  BridgeChain.ETHC,
-  BridgeChain.BSCC,
-  BridgeChain.MATICC,
-  BridgeChain.FTMC,
-  BridgeChain.AVAXC,
-  BridgeChain.SOLC,
-  BridgeChain.ARBITRUMC,
-];
-
 export const supportedBurnChains = [
   BridgeChain.ETHC,
   BridgeChain.MATICC,

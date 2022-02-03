@@ -283,35 +283,31 @@ export const GatewayDepositProcessor: FunctionComponent<
       />
     );
   } else {
-    switch (mintStatus) {
-      case ChainTransactionStatus.Confirming:
-        Content = (
-          <MintCompletingStatus
-            gateway={gateway}
-            transaction={transaction}
-            lockTxId={lockTxIdFormatted}
-            lockTxUrl={lockTxUrl}
-            mintAmount={mintAmount}
-            mintAssetDecimals={mintAssetDecimals}
-            mintTxUrl={mintTxUrl}
-            mintTxHash={mintTxIdFormatted}
-            mintConfirmations={mintConfirmations}
-            mintTargetConfirmations={mintTargetConfirmations}
-          />
-        );
-        break;
-      case ChainTransactionStatus.Done:
-        Content = (
-          <MintCompletedStatus
-            gateway={gateway}
-            transaction={transaction}
-            mintAmount={mintAmount}
-            lockTxUrl={lockTxUrl}
-            mintTxUrl={mintTxUrl}
-            onGoToGateway={onGoToGateway}
-            mintAssetDecimals={mintAssetDecimals}
-          />
-        );
+    if (mintTxUrl) {
+      Content = (
+        <MintCompletedStatus
+          gateway={gateway}
+          mintAmount={mintAmount}
+          lockTxUrl={lockTxUrl}
+          mintTxUrl={mintTxUrl}
+          mintAssetDecimals={mintAssetDecimals}
+        />
+      );
+    } else {
+      Content = (
+        <MintCompletingStatus
+          gateway={gateway}
+          transaction={transaction}
+          lockTxId={lockTxIdFormatted}
+          lockTxUrl={lockTxUrl}
+          mintAmount={mintAmount}
+          mintAssetDecimals={mintAssetDecimals}
+          mintTxUrl={mintTxUrl}
+          mintTxHash={mintTxIdFormatted}
+          mintConfirmations={mintConfirmations}
+          mintTargetConfirmations={mintTargetConfirmations}
+        />
+      );
     }
   }
 

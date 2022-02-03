@@ -7,9 +7,11 @@ import {
   BinanceChainFullIcon,
   BitcoinIcon,
   CustomSvgIconComponent,
+  DgbFullIcon,
   EmptyCircleIcon,
   EthereumChainFullIcon,
   FantomCircleIcon,
+  LunaFullIcon,
   PolygonFullIcon,
   ZecIcon,
 } from "../components/icons/RenIcons";
@@ -58,7 +60,7 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
   },
   BinanceSmartChain: {
     Icon: BinanceChainFullIcon,
-    fullName: "Binance Smarct Chain",
+    fullName: "Binance Smart Chain",
     shortName: "BSC",
     networks: createNetworksConfig(56, 97),
   },
@@ -91,10 +93,16 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
     networks: createNetworksConfig(137, 80001),
   },
   Zcash: { Icon: ZecIcon, fullName: "Zcash" },
-  DigiByte: unsetChainConfig,
+  DigiByte: {
+    Icon: DgbFullIcon,
+    fullName: "DigiByte",
+  },
   Filecoin: unsetChainConfig,
   Goerli: unsetChainConfig,
-  Terra: unsetChainConfig,
+  Terra: {
+    Icon: LunaFullIcon,
+    fullName: "Terra",
+  },
   Solana: unsetChainConfig,
 };
 
@@ -132,6 +140,8 @@ export const supportedBitcoinChains: Array<Chain> = [
   Chain.BitcoinCash,
   Chain.Dogecoin,
   Chain.Zcash,
+  Chain.DigiByte,
+  Chain.Terra,
 ];
 
 export const supportedEthereumChains: Array<Chain> = [
