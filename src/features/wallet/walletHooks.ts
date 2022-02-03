@@ -133,7 +133,7 @@ export const useSwitchChainHelpers = (
             method: "wallet_switchEthereumChain",
             params: [{ chainId }],
           });
-        } catch (error) {
+        } catch (error: any) {
           // This error code indicates that the chain has not been added to MetaMask.
           if (error.code === 4902) {
             await provider.request({

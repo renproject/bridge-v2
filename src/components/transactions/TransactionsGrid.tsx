@@ -69,7 +69,7 @@ const useTransactionsStatusHeaderStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
   title: {
-    fontWeight: theme.typography.fontWeightBold,
+    fontWeight: 700,
     lineHeight: 1.2,
   },
 }));

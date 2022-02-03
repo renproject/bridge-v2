@@ -18,7 +18,7 @@ const baseTheme = (palette: Palette) => ({
   shadows: Array(25).fill("none") as Shadows,
 });
 
-declare module "@material-ui/core/styles/createMuiTheme" {
+declare module "@material-ui/core/styles" {
   interface Theme {
     customColors: typeof customColors;
   }

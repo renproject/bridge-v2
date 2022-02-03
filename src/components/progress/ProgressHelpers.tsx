@@ -228,7 +228,7 @@ const useTransactionStatusInfoStyles = makeStyles((theme) => ({
     padding: 10,
   },
   status: {
-    fontWeight: theme.typography.fontWeightBold,
+    fontWeight: 700,
     textTransform: "uppercase",
   },
   txLink: {
