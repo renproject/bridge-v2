@@ -1,4 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RenNetwork } from "@renproject/utils";
 import { env } from "../../constants/environmentVariables";
 import { RootState } from "../../store/rootReducer";
