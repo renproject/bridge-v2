@@ -10,7 +10,11 @@ import { paths } from "../../../../pages/routes";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
-import { getGatewayParams, useGatewayFeesWithRates } from "../../gatewayHooks";
+import {
+  getGatewayParams,
+  useChainAssetDecimals,
+  useGatewayFeesWithRates,
+} from "../../gatewayHooks";
 import { useSharedGateway } from "../../gatewaySlice";
 import {
   useChainTransactionStatusUpdater,
@@ -18,10 +22,12 @@ import {
 } from "../../gatewayTransactionHooks";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
+  MintH2HCompletedStatus,
   MintH2HLockTransactionProgressStatus,
   MintH2HLockTransactionStatus,
   MintH2HMintTransactionProgressStatus,
 } from "./MintH2HStatuses";
+import { MintCompletedStatus } from "./MintStandardStatuses";
 
 export const MintH2HProcess: FunctionComponent<RouteComponentProps> = () => {
   const history = useHistory();
@@ -102,13 +108,20 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     confirmations: lockConfirmations,
     target: lockTargetConfirmations,
     status: lockStatus,
+    txUrl: lockTxUrl,
   } = gatewayInTxMeta;
-  const { status: renVMStatus } = renVmTxMeta;
+  const { status: renVMStatus, amount: mintAmount } = renVmTxMeta;
   const {
     status: mintStatus,
     confirmations: mintConfirmations,
     target: mintTargetConfirmations,
+    txUrl: mintTxUrl,
   } = mintTxMeta;
+
+  const { decimals: mintAssetDecimals } = useChainAssetDecimals(
+    gateway.toChain,
+    asset
+  );
 
   const Fees = (
     <GatewayFees
@@ -160,7 +173,15 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       />
     );
   } else {
-    <span>all done</span>;
+    Content = (
+      <MintH2HCompletedStatus
+        gateway={gateway}
+        lockTxUrl={lockTxUrl}
+        mintAmount={mintAmount}
+        mintAssetDecimals={mintAssetDecimals}
+        mintTxUrl={mintTxUrl}
+      />
+    );
   }
   return (
     <>

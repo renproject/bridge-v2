@@ -1,6 +1,7 @@
-import { Divider } from "@material-ui/core";
+import { Box, Divider, Typography } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
+import BigNumber from "bignumber.js";
 import React, {
   FunctionComponent,
   ReactNode,
@@ -9,6 +10,8 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useEffectOnce } from "react-use";
 import {
   ActionButton,
   MultipleActionButtonWrapper,
@@ -16,7 +19,9 @@ import {
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
 import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
+import { Link } from "../../../../components/links/Links";
 import {
+  BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
   TransactionStatusInfo,
@@ -25,6 +30,10 @@ import {
   AssetInfo,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../../components/utils/Debug";
+import { paths } from "../../../../pages/routes";
+import { useNotifications } from "../../../../providers/Notifications";
+import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
@@ -32,10 +41,17 @@ import {
   getAssetConfig,
   getRenAssetName,
 } from "../../../../utils/tokensConfig";
+import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
+import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
-import { useWallet } from "../../../wallet/walletHooks";
+import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
+import {
+  useCurrentChainWallet,
+  useWallet,
+  useWalletAssetHelpers,
+} from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
 import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
 import { TransactionProgressInfo } from "../../components/TransactionProgressHelpers";
@@ -389,6 +405,135 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
           )}
         </MultipleActionButtonWrapper>
       </PaperContent>
+    </>
+  );
+};
+
+type MintH2HCompletedStatusProps = {
+  gateway: Gateway;
+  lockTxUrl: string | null;
+  mintAssetDecimals: number | null;
+  mintAmount: string | null;
+  mintTxUrl: string | null;
+};
+
+export const MintH2HCompletedStatus: FunctionComponent<
+  MintH2HCompletedStatusProps
+> = ({ gateway, lockTxUrl, mintTxUrl, mintAmount, mintAssetDecimals }) => {
+  const { t } = useTranslation();
+  useSetPaperTitle(t("mint.complete-title"));
+  const history = useHistory();
+  const { wallet } = useCurrentChainWallet();
+  const walletConfig = getWalletConfig(wallet);
+  const lockAssetConfig = getAssetConfig(gateway.params.asset);
+  const lockChainConfig = getChainConfig(gateway.params.from.chain);
+  const mintChainConfig = getChainConfig(gateway.params.to.chain);
+
+  const handleGoToHome = useCallback(() => {
+    history.push({
+      pathname: paths.HOME,
+    });
+  }, [history]);
+
+  const { showNotification } = useNotifications();
+  const { showBrowserNotification } = useBrowserNotifications();
+
+  const mintAmountFormatted =
+    mintAmount !== null && mintAssetDecimals !== null
+      ? new BigNumber(mintAmount).shiftedBy(-mintAssetDecimals).toString()
+      : null;
+
+  const showNotifications = useCallback(() => {
+    if (mintTxUrl !== null) {
+      const notificationMessage = t("mint.success-notification-message", {
+        total: mintAmountFormatted,
+        currency: lockAssetConfig.shortName,
+        chain: mintChainConfig.fullName,
+      });
+      showNotification(
+        <span>
+          {notificationMessage}{" "}
+          <Link external href={mintTxUrl}>
+            {t("tx.view-chain-transaction-link-text", {
+              chain: mintChainConfig.fullName,
+            })}
+          </Link>
+        </span>
+      );
+      showBrowserNotification(notificationMessage);
+    }
+  }, [
+    showNotification,
+    showBrowserNotification,
+    mintAmountFormatted,
+    mintChainConfig,
+    lockAssetConfig,
+    mintTxUrl,
+    t,
+  ]);
+
+  useEffectOnce(showNotifications);
+
+  const walletTokenMeta = useWalletAssetHelpers(
+    gateway.params.to.chain,
+    gateway.params.asset
+  );
+  const { addToken } = walletTokenMeta;
+
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent>
+          <BigDoneIcon />
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <Typography variant="body1" align="center" gutterBottom>
+        {t("tx.you-received-message")}{" "}
+        <NumberFormatText
+          value={mintAmountFormatted}
+          spacedSuffix={lockAssetConfig.shortName}
+        />
+        !
+      </Typography>
+      <MultipleActionButtonWrapper>
+        {addToken !== null && (
+          <Box mb={1}>
+            <AddTokenButton
+              onAddToken={addToken}
+              wallet={walletConfig.shortName || walletConfig.fullName}
+              currency={lockAssetConfig.shortName}
+            />
+          </Box>
+        )}
+        <ActionButton onClick={handleGoToHome}>
+          {t("navigation.back-to-home-label")}
+        </ActionButton>
+      </MultipleActionButtonWrapper>
+      <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
+        {lockTxUrl !== null && (
+          <Link
+            external
+            color="primary"
+            variant="button"
+            underline="hover"
+            href={lockTxUrl}
+          >
+            {lockChainConfig.fullName} {t("common.transaction")}
+          </Link>
+        )}
+        {mintTxUrl !== null && (
+          <Link
+            external
+            color="primary"
+            variant="button"
+            underline="hover"
+            href={mintTxUrl}
+          >
+            {mintChainConfig.fullName} {t("common.transaction")}
+          </Link>
+        )}
+      </Box>
+      <Debug it={{ walletTokenMeta }} />
     </>
   );
 };

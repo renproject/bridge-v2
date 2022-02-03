@@ -152,9 +152,21 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           ),
       });
     } else if (isRelease) {
-      console.log("standard release");
       if (isH2H) {
+        console.log("h2h release");
+        history.push({
+          pathname: paths.RELEASE__GATEWAY_H2H,
+          search:
+            "?" +
+            createGatewayQueryString({
+              asset,
+              from,
+              to,
+              amount,
+            }),
+        });
       } else {
+        console.log("standard release");
         history.push({
           pathname: paths.RELEASE__GATEWAY_STANDARD,
           search:

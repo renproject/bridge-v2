@@ -17,6 +17,7 @@ const mainPagePaths = [
   paths.MINT__GATEWAY_H2H,
   paths.RELEASE,
   paths.RELEASE__GATEWAY_STANDARD,
+  paths.RELEASE__GATEWAY_H2H,
 ];
 function App() {
   return (

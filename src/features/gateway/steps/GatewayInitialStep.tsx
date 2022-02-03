@@ -76,7 +76,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const isRelease = path === paths.RELEASE;
   const { t } = useTranslation();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
-
+  const meta = useGatewayMeta(asset, from, to);
+  const { isFromContractChain, isH2H } = meta;
   const [fromChains, setFromChains] = useState(allChains);
   const [toChains, setToChains] = useState(allChains);
 
@@ -136,7 +137,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     [dispatch]
   );
 
-  const requiresValidAddress = isRelease;
+  const requiresValidAddress = isRelease && !isH2H;
   const handleAddressChange = useCallback(
     (event) => {
       setAddressTouched(true);
@@ -173,7 +174,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const toChainConfig = getChainConfig(to);
   // TODO: fix
   const renAsset = getRenAssetName(asset);
-
   const { connected } = useCurrentChainWallet();
   const handleConnect = useCallback(() => {
     dispatch(setPickerOpened(true));
@@ -186,8 +186,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       ? new BigNumber(amount).multipliedBy(assetUsdRate).toFixed()
       : "";
 
-  const meta = useGatewayMeta(asset, from, to);
-  const { isFromContractChain } = meta;
+  // useEffect(() => {
+  //   if (isFromContractChain) {
+  //     dispatch(setChain(from));
+  //   }
+  // }, [isFromContractChain]);
+
   const chains = useCurrentNetworkChains();
   const { account } = useWallet(from);
   const { balance } = useEthereumChainAssetBalance(
@@ -314,7 +318,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             />
           </RichDropdownWrapper>
         </Collapse>
-        <Collapse in={isRelease}>
+        <Collapse in={isRelease && !isH2H}>
           <BigOutlinedTextFieldWrapper>
             <OutlinedTextField
               error={hasAddressError}
