@@ -152,7 +152,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   const outTxMeta = useChainTransactionStatusUpdater(tx?.out);
 
   const {
-    error: releaseError,
+    // error: releaseError,
     status: releaseStatus,
     txUrl: releaseTxUrl,
   } = outTxMeta; // TODO: must call submit first

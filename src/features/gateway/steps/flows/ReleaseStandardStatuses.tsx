@@ -2,12 +2,7 @@ import { Box, Divider, Typography } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import BigNumber from "bignumber.js";
-import React, {
-  FunctionComponent,
-  ReactNode,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { FunctionComponent, ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
@@ -34,7 +29,6 @@ import {
   MiddleEllipsisText,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
@@ -44,16 +38,9 @@ import { undefinedForNull } from "../../../../utils/propsUtils";
 import {
   getAssetConfig,
   getRenAssetConfig,
-  getRenAssetName,
 } from "../../../../utils/tokensConfig";
-import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
-import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
-import {
-  useCurrentChainWallet,
-  useWalletAssetHelpers,
-} from "../../../wallet/walletHooks";
 import {
   BalanceInfo,
   UsdNumberFormatText,
@@ -67,7 +54,6 @@ import {
   getGatewayParams,
   useEthereumChainAssetBalance,
 } from "../../gatewayHooks";
-import { useChainTransactionSubmitter } from "../../gatewayTransactionHooks";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
 
 type ReleaseStandardBurnStatusProps = SubmittingProps & {

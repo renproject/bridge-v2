@@ -27,7 +27,6 @@ import {
   MintH2HLockTransactionStatus,
   MintH2HMintTransactionProgressStatus,
 } from "./MintH2HStatuses";
-import { MintCompletedStatus } from "./MintStandardStatuses";
 
 export const MintH2HProcess: FunctionComponent<RouteComponentProps> = () => {
   const history = useHistory();

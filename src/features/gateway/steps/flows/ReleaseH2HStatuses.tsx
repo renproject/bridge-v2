@@ -1,5 +1,5 @@
 import { Divider } from "@material-ui/core";
-import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,10 +9,7 @@ import {
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import {
-  HorizontalPadder,
-  MediumTopWrapper,
-} from "../../../../components/layout/LayoutHelpers";
+import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import {
   ProgressWithContent,
@@ -20,8 +17,6 @@ import {
 } from "../../../../components/progress/ProgressHelpers";
 import {
   AssetInfo,
-  LabelWithValue,
-  MiddleEllipsisText,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
 import { getChainConfig } from "../../../../utils/chainsConfig";
@@ -71,7 +66,7 @@ export const ReleaseH2HBurnStatus: FunctionComponent<
   errorSubmitting,
 }) => {
   const { t } = useTranslation();
-  const { asset, amount, toAddress } = getGatewayParams(gateway);
+  const { asset, amount } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
   const renAssetConfig = getRenAssetConfig(asset);
   const { Icon } = assetConfig;

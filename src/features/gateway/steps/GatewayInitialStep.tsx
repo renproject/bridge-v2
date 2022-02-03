@@ -34,14 +34,13 @@ import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import {
   getAssetConfig,
   getRenAssetConfig,
-  getRenAssetName,
   supportedAssets,
 } from "../../../utils/tokensConfig";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { useCurrentChainWallet, useWallet } from "../../wallet/walletHooks";
-import { $wallet, setChain, setPickerOpened } from "../../wallet/walletSlice";
+import { setChain, setPickerOpened } from "../../wallet/walletSlice";
 import {
   getAssetOptionData,
   getChainOptionData,

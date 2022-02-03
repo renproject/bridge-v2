@@ -38,10 +38,6 @@ import {
   ReleaseH2HBurnProgressStatus,
   ReleaseH2HBurnStatus,
 } from "./ReleaseH2HStatuses";
-import {
-  ReleaseStandardBurnProgressStatus,
-  ReleaseStandardBurnStatus,
-} from "./ReleaseStandardStatuses";
 
 export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   location,
@@ -119,7 +115,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   const {
     handleSubmit: handleSubmitBurn,
     submitting: submittingBurn,
-    done: done,
+    done: doneBurn,
     submittingDone: submittingBurnDone,
     waiting: waitingBurn,
     errorSubmitting: errorSubmittingBurn,
@@ -166,7 +162,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
         outputAmountUsd={outputAmountUsd}
         onSubmit={handleSubmitBurn}
         onReset={handleResetBurn}
-        done={done}
+        done={doneBurn}
         waiting={waitingBurn}
         submitting={submittingBurn}
         errorSubmitting={errorSubmittingBurn}
