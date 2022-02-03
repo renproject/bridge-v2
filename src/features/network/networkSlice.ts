@@ -10,6 +10,7 @@ type NetworkState = {
 const cachedTargetNetwork = localStorage.getItem("renTargetNetwork");
 
 const initialNetwork =
+  RenNetwork.Testnet || // TODO: crit remove when done
   ((cachedTargetNetwork || env.NETWORK) as unknown as RenNetwork) ||
   RenNetwork.Testnet;
 

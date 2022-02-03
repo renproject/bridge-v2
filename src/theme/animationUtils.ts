@@ -1,4 +1,4 @@
-import { fade } from "@material-ui/core";
+import { alpha } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { black } from "./colors";
 
@@ -9,7 +9,7 @@ export const getShadow = (
   y = 1,
   blur = 2,
   spread = 0
-) => `${x}px ${y}px ${blur}px ${spread}px ${fade(color, fadeLevel)}`;
+) => `${x}px ${y}px ${blur}px ${spread}px ${alpha(color, fadeLevel)}`;
 
 export const getKeyframesName = (animationName: string) =>
   `@keyframes ${animationName}`;
