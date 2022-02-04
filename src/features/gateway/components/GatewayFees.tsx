@@ -44,14 +44,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   const fromChainConfig = getChainConfig(from);
   const toChainConfig = getChainConfig(to);
 
-  const renVMFeeTooltip = t("fees.ren-fee-tooltip", {
-    feePercent: variableFeePercent,
-    feeKind: isMint ? t("common.mint") : t("common.release"),
-  });
-
-  let fromChainFeeTooltip = "",
-    toChainFeeTooltip = "",
-    fromChainFeeLabel = "",
+  let fromChainFeeLabel = "",
     toChainFeeLabel = "";
 
   if (fromChainFeeAsset && toChainFeeAsset) {
@@ -62,16 +55,6 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       toChainFeeLabel = t("fees.contract-chain-fee-label", {
         chain: toChainConfig.fullName,
       });
-      fromChainFeeTooltip = t("fees.contract-chain-fee-tooltip", {
-        chainFull: fromChainConfig.fullName,
-        chainShort: fromChainConfig.fullName,
-        chainNative: getAssetConfig(fromChainFeeAsset).shortName,
-      });
-      toChainFeeTooltip = t("fees.contract-chain-fee-tooltip", {
-        chainFull: toChainConfig.fullName,
-        chainShort: toChainConfig.fullName,
-        chainNative: getAssetConfig(toChainFeeAsset).shortName,
-      });
     } else if (isMint) {
       fromChainFeeLabel = t("fees.deposit-chain-miner-fee-label", {
         chain: fromChainConfig.fullName,
@@ -79,30 +62,12 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       toChainFeeLabel = t("fees.contract-chain-fee-label", {
         chain: toChainConfig.fullName,
       });
-      fromChainFeeTooltip = t("fees.deposit-chain-miner-fee-tooltip", {
-        chain: fromChainConfig.fullName,
-        currency: fromChainFeeAsset,
-      });
-      toChainFeeTooltip = t("fees.contract-chain-fee-tooltip", {
-        chainFull: toChainConfig.fullName,
-        chainShort: toChainConfig.fullName,
-        chainNative: getAssetConfig(toChainFeeAsset).shortName,
-      });
     } else if (isRelease) {
       fromChainFeeLabel = t("fees.contract-chain-fee-label", {
         chain: fromChainConfig.fullName,
       });
       toChainFeeLabel = t("fees.deposit-chain-miner-fee-label", {
         chain: toChainConfig.fullName,
-      });
-      fromChainFeeTooltip = t("fees.contract-chain-fee-tooltip", {
-        chainFull: fromChainConfig.fullName,
-        chainShort: fromChainConfig.fullName,
-        chainNative: getAssetConfig(fromChainFeeAsset).shortName,
-      });
-      toChainFeeTooltip = t("fees.deposit-chain-miner-fee-tooltip", {
-        chain: toChainConfig.fullName,
-        currency: toChainFeeAsset,
       });
     }
   }
@@ -112,7 +77,6 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       {renVMFeePercent !== null || renVMFeeAmount ? (
         <LabelWithValue
           label={t("fees.ren-fee-label")}
-          labelTooltip={renVMFeeTooltip}
           value={
             renVMFeeAmount ? (
               <NumberFormatText
@@ -145,7 +109,6 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       {Boolean(fromChainFeeLabel) ? (
         <LabelWithValue
           label={fromChainFeeLabel}
-          labelTooltip={fromChainFeeTooltip}
           value={
             fromChainFeeAmount !== null && fromChainFeeAsset !== null ? (
               <NumberFormatText
@@ -175,7 +138,6 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       {Boolean(toChainFeeLabel) ? (
         <LabelWithValue
           label={toChainFeeLabel}
-          labelTooltip={toChainFeeTooltip}
           value={
             toChainFeeAmount !== null && toChainFeeAsset !== null ? (
               <NumberFormatText
@@ -205,7 +167,6 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       {needsApproval && (
         <LabelWithValue
           label={t("fees.assets-contracts-label")}
-          labelTooltip={t("fees.assets-contracts-approval-label-tooltip")}
           value={
             approved ? (
               <Link href={approvalTxUrl} color="primary" external>
