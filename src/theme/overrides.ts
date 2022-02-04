@@ -11,6 +11,7 @@ import {
   alertSuccessBackground,
   alertWarning,
   alertWarningBackground,
+  popoverBackground,
   textDark,
   textDisabled,
   textLighter,
@@ -165,6 +166,12 @@ export const overrides = (palette: Palette): Overrides => {
       },
       elevation8: {
         boxShadow: "0px 1px 20px rgba(0, 27, 58, 0.05)",
+      },
+    },
+    MuiPopover: {
+      paper: {
+        borderRadius: 4,
+        background: popoverBackground,
       },
     },
     MuiSelect: {

@@ -66,22 +66,23 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   return (
     <>
       <GatewayPaperHeader title={paperTitle} />
-      <PaperContent>
-        {Boolean(parseError) && (
-          <GeneralErrorDialog
-            open={true}
-            reason={parseError}
-            alternativeActionText={t("navigation.back-to-start-label")}
-            onAlternativeAction={() =>
-              history.push({ pathname: paths.RELEASE })
-            }
-          />
-        )}
-        {!connected && <ConnectWalletPaperSection />}
-        {connected && !gateway && <GatewayLoaderStatus />}
-      </PaperContent>
+      {!connected ||
+        (connected && !gateway && (
+          <PaperContent bottomPadding>
+            {!connected && <ConnectWalletPaperSection />}
+            {connected && !gateway && <GatewayLoaderStatus />}
+          </PaperContent>
+        ))}
       {connected && gateway !== null && (
         <ReleaseStandardProcessor gateway={gateway} />
+      )}
+      {Boolean(parseError) && (
+        <GeneralErrorDialog
+          open={true}
+          reason={parseError}
+          alternativeActionText={t("navigation.back-to-start-label")}
+          onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
+        />
       )}
       <Debug it={{ gatewayParams }} />
     </>

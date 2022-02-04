@@ -1,4 +1,4 @@
-import { Button, Fade } from "@material-ui/core";
+import { Button, Fade, Popover } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import { FunctionComponent, useCallback, useState } from "react";
@@ -6,12 +6,7 @@ import { useTranslation } from "react-i18next";
 
 const useFeesTogglerStyles = makeStyles((theme) => ({
   wrapper: {
-    maxHeight: 0,
-    transition: "max-height 1s ease-out",
-    overflow: "hidden",
-  },
-  wrapperShown: {
-    maxHeight: 140,
+    padding: 9,
   },
   buttonWrapper: {
     display: "flex",
@@ -20,16 +15,35 @@ const useFeesTogglerStyles = makeStyles((theme) => ({
   },
 }));
 
+const popoverId = "transaction-fees-popover";
+
 export const FeesToggler: FunctionComponent = ({ children }) => {
   const { t } = useTranslation();
   const styles = useFeesTogglerStyles();
-  const [show, setShow] = useState(false);
-  const toggleShow = useCallback(() => {
-    setShow((shown) => !shown);
-  }, []);
-  const wrapperClassName = classNames(styles.wrapper, {
-    [styles.wrapperShown]: show,
-  });
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const opened = Boolean(anchorEl);
+
+  const handleOpen = (event: any) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClick = useCallback(
+    (event: any) => {
+      if (opened) {
+        handleClose();
+      } else {
+        handleOpen(event);
+      }
+    },
+    [opened]
+  );
+
+  const id = opened ? popoverId : undefined;
   return (
     <div>
       <div className={styles.buttonWrapper}>
@@ -37,17 +51,30 @@ export const FeesToggler: FunctionComponent = ({ children }) => {
           color="primary"
           variant="text"
           size="small"
-          onClick={toggleShow}
+          aria-owns={id}
+          onClick={handleOpen}
         >
-          {show
+          {opened
             ? t("fees.toggler-hide-fees-label")
             : t("fees.toggler-show-fees-label")}
         </Button>
-      </div>
-      <div className={wrapperClassName}>
-        <Fade in={show}>
-          <div>{children}</div>
-        </Fade>
+        <Popover
+          id={popoverId}
+          onClose={handleClose}
+          open={opened}
+          anchorEl={anchorEl}
+          keepMounted={true}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+        >
+          <div className={styles.wrapper}>{children}</div>
+        </Popover>
       </div>
     </div>
   );
