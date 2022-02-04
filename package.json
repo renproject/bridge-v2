@@ -59,7 +59,7 @@
     "react-number-format": "^4.5.5",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^5.0.0",
+    "react-scripts": "4.0.3",
     "react-use": "^15.3.4",
     "redux": "^4.1.0",
     "text-encoding": "^0.7.0",

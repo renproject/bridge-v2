@@ -12,6 +12,7 @@ import {
   alertWarning,
   alertWarningBackground,
   popoverBackground,
+  popoverTextColor,
   textDark,
   textDisabled,
   textLighter,
@@ -172,6 +173,7 @@ export const overrides = (palette: Palette): Overrides => {
       paper: {
         borderRadius: 4,
         background: popoverBackground,
+        color: popoverTextColor,
       },
     },
     MuiSelect: {
@@ -254,14 +256,16 @@ export const overrides = (palette: Palette): Overrides => {
       },
     },
     MuiTooltip: {
-      arrow: {
-        color: palette.common.black,
+      popper: {
+        maxWidth: 200,
       },
       tooltip: {
         borderRadius: 4,
+        fontSize: 12,
+        padding: 9,
         textAlign: "center",
-        backgroundColor: palette.common.black,
-        fontSize: 11,
+        color: popoverTextColor,
+        backgroundColor: popoverBackground,
       },
     },
   } as Overrides;

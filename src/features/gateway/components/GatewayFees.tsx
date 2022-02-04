@@ -77,6 +77,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       {renVMFeePercent !== null || renVMFeeAmount ? (
         <LabelWithValue
           label={t("fees.ren-fee-label")}
+          labelTooltip="foooobar"
           value={
             renVMFeeAmount ? (
               <NumberFormatText

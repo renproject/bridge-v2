@@ -26,7 +26,6 @@ export const props: ComponentsProps = {
     fullWidth: true,
   },
   MuiTooltip: {
-    arrow: true,
     placement: "top-start",
   },
   MuiLink: {

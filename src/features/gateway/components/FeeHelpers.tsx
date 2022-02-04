@@ -1,7 +1,6 @@
-import { Button, Fade, Popover } from "@material-ui/core";
+import { Button, Popover } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import classNames from "classnames";
-import { FunctionComponent, useCallback, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const useFeesTogglerStyles = makeStyles((theme) => ({
@@ -31,17 +30,6 @@ export const FeesToggler: FunctionComponent = ({ children }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const handleClick = useCallback(
-    (event: any) => {
-      if (opened) {
-        handleClose();
-      } else {
-        handleOpen(event);
-      }
-    },
-    [opened]
-  );
 
   const id = opened ? popoverId : undefined;
   return (

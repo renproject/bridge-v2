@@ -62,3 +62,4 @@ export const alertSuccess = "#1E4620";
 export const alertSuccessBackground = "#EDF7EA";
 
 export const popoverBackground = "#CCE2FA";
+export const popoverTextColor = graphiteLight;
