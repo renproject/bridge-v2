@@ -6,7 +6,7 @@ import MiddleEllipsis from "react-middle-ellipsis";
 import { InlineSkeleton } from "../progress/ProgressHelpers";
 import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
-type LabelWithValueProps = {
+export type LabelWithValueProps = {
   label: string;
   labelTooltip?: string;
   value: string | number | ReactNode;

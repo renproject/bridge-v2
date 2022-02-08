@@ -41,6 +41,7 @@ import {
 } from "../../../../utils/tokensConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import { AddressLabel } from "../../components/AddressHelpers";
 import {
   BalanceInfo,
   UsdNumberFormatText,
@@ -112,11 +113,9 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
         </MediumTopWrapper>
         <MediumTopWrapper>
           <HorizontalPadder>
-            <LabelWithValue
-              label={t("common.to-label")}
-              value={
-                <MiddleEllipsisText hoverable>{toAddress}</MiddleEllipsisText>
-              }
+            <AddressLabel
+              address={toAddress}
+              url={gateway.toChain.addressExplorerLink(toAddress)}
             />
           </HorizontalPadder>
         </MediumTopWrapper>

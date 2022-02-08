@@ -20,6 +20,7 @@ import {
 } from "../../../wallet/walletHooks";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
+import { PCW } from "../../components/PaperHelpers";
 import {
   getGatewayParams,
   useChainAssetDecimals,
@@ -66,13 +67,16 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   return (
     <>
       <GatewayPaperHeader title={paperTitle} />
-      {!connected ||
-        (connected && !gateway && (
-          <PaperContent bottomPadding>
-            {!connected && <ConnectWalletPaperSection />}
-            {connected && !gateway && <GatewayLoaderStatus />}
-          </PaperContent>
-        ))}
+      {!connected && (
+        <PCW>
+          <ConnectWalletPaperSection />
+        </PCW>
+      )}
+      {connected && !gateway && (
+        <PCW>
+          <GatewayLoaderStatus />
+        </PCW>
+      )}
       {connected && gateway !== null && (
         <ReleaseStandardProcessor gateway={gateway} />
       )}
@@ -135,9 +139,14 @@ const ReleaseStandardProcessor: FunctionComponent<
     target: burnTargetConfirmations,
   } = gatewayInTxMeta;
 
+  const renVmSubmitter = useChainTransactionSubmitter(
+    tx?.renVM,
+    undefined,
+    burnStatus === ChainTransactionStatus.Done
+  );
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater(
     tx?.renVM,
-    burnStatus === ChainTransactionStatus.Done
+    renVmSubmitter.submittingDone
   );
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
   const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
@@ -157,32 +166,6 @@ const ReleaseStandardProcessor: FunctionComponent<
     status: releaseStatus,
     txUrl: releaseTxUrl,
   } = outTxMeta; // TODO: must call submit first
-
-  // useEffect(() => {
-  //   const handleProcess = async () => {
-  //     if (!tx) {
-  //       console.log("tx: no tx, aborting");
-  //       return;
-  //     }
-  //     try {
-  //       console.log("tx: in waiting");
-  //       await tx.in.wait();
-  //       console.log("tx: renVM submitting");
-  //       await tx.renVM.submit();
-  //       console.log("tx: renVM waiting");
-  //       await tx.renVM.wait();
-  //       if (tx.out.submit) {
-  //         console.log("tx: out submitting");
-  //         await tx.out.submit();
-  //       }
-  //       console.log("tx: out waiting");
-  //       await tx.out.wait();
-  //     } catch (e) {
-  //       console.log("tx: err", e);
-  //     }
-  //   };
-  //   handleProcess().finally();
-  // }, [tx]);
 
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {
@@ -239,6 +222,7 @@ const ReleaseStandardProcessor: FunctionComponent<
           releaseAssetDecimals,
           gatewayInSubmitter,
           gatewayInTxMeta,
+          renVmSubmitter,
           renVmTxMeta,
           outSubmitter,
           outTxMeta,

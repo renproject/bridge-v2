@@ -35,7 +35,7 @@ export const useRenVMChainTransactionStatusUpdater = (
       return;
     }
     tx.wait(waitTarget)
-      .once("progress", (progress) => {
+      .on("progress", (progress) => {
         setError(null);
         console.log("newStatus renvm", progress);
         setStatus(progress.status);
@@ -61,7 +61,6 @@ export const useRenVMChainTransactionStatusUpdater = (
       .catch((reason) => {
         setError(reason);
       });
-    // TODO add teardown
   }, [tx, waitTarget, reset, start]);
 
   return {
@@ -156,6 +155,20 @@ export const useChainTransactionStatusUpdater = (
   };
 };
 
+const txSubmissionReady = (tx: TxSubmitter | TxWaiter | undefined) => {
+  return tx && tx.submit && tx.progress.status === ChainTransactionStatus.Ready;
+};
+
+function isTxSubmitReady(
+  tx: TxSubmitter | TxWaiter | undefined
+): tx is TxWaiter | TxSubmitter {
+  return (
+    tx !== undefined &&
+    (tx as TxSubmitter | TxWaiter).submit !== undefined &&
+    tx.progress.status === ChainTransactionStatus.Ready
+  );
+}
+
 export const useChainTransactionSubmitter = (
   tx?: TxSubmitter | TxWaiter,
   waitTarget?: number,
@@ -180,9 +193,7 @@ export const useChainTransactionSubmitter = (
   }, []);
 
   const wait = useCallback(async () => {
-    setErrorSubmitting(undefined);
     setErrorWaiting(undefined);
-
     try {
       setWaiting(true);
       if (tx) {
@@ -197,7 +208,6 @@ export const useChainTransactionSubmitter = (
 
   const handleSubmit = useCallback(async () => {
     setErrorSubmitting(undefined);
-    setErrorWaiting(undefined);
 
     console.log("submitting");
     if (
@@ -216,22 +226,30 @@ export const useChainTransactionSubmitter = (
         await wait();
         setDone(true);
       } catch (error: any) {
-        console.error("yy", error);
+        console.error("submitting error", error);
         setErrorSubmitting(error);
       }
       setSubmitting(false);
+    } else {
+      console.error("submitting error, tx not ready");
+      setErrorSubmitting(new Error("Submitting not ready"));
     }
   }, [tx, wait]);
 
   useEffect(() => {
-    if (!!autoSubmit) {
+    if (
+      !!autoSubmit &&
+      tx &&
+      tx.submit &&
+      tx.progress.status === ChainTransactionStatus.Ready
+    ) {
       console.log("automatic submit");
       handleSubmit().catch((error) => {
         console.log("automatic submit failed");
         console.error(error);
       });
     }
-  }, [handleSubmit, autoSubmit]);
+  }, [handleSubmit, autoSubmit, tx, tx?.submit, tx?.progress.status]);
 
   return {
     handleSubmit,

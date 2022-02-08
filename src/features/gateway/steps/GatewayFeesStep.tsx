@@ -46,6 +46,7 @@ import { paths } from "../../../pages/routes";
 import { feesDecimalImpact } from "../../../utils/numbers";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
 import { useWallet } from "../../wallet/walletHooks";
+import { AddressLabel } from "../components/AddressHelpers";
 import { BalanceInfo } from "../components/BalanceHelpers";
 import { GatewayFees } from "../components/GatewayFees";
 import {
@@ -275,18 +276,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             Icon={<AssetIcon fontSize="inherit" />}
           />
         </MediumTopWrapper>
-        {isRelease && !isH2H && (
-          <MediumTopWrapper>
-            <HorizontalPadder>
-              <LabelWithValue
-                label={t("common.to-label")}
-                value={
-                  <MiddleEllipsisText hoverable>{toAddress}</MiddleEllipsisText>
-                }
-              />
-            </HorizontalPadder>
-          </MediumTopWrapper>
-        )}
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>
@@ -301,6 +290,12 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           needsApproval={approvalRequired}
           approved={approved}
         />
+        {isRelease && !isH2H && (
+          <AddressLabel
+            address={toAddress}
+            url={gateway?.toChain.addressExplorerLink(toAddress)}
+          />
+        )}
         <HorizontalPadder>
           {showAck && (
             <FormControlLabel

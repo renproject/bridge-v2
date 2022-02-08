@@ -451,7 +451,7 @@ export const MintGatewayAddress: FunctionComponent<MintGatewayAddressProps> = ({
         </Box>
         <BigTopWrapper>
           <TransactionDetailsButton
-            label={t("mint.recipient-address-label")}
+            label={t("common.recipient-address-label")}
             isTx={false}
             address={trimAddress(account, 5)}
             link={gateway.toChain.addressExplorerLink(account)}

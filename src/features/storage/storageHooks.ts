@@ -1,6 +1,6 @@
 // Source: https://usehooks.com/useLocalStorage/
 import { TransactionParams } from "@renproject/ren/build/main/gatewayTransaction";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { $network } from "../network/networkSlice";
 
@@ -57,6 +57,8 @@ export const useTransactionsStorage = () => {
 
   const [localTxsLoaded, setLocalTxsLoaded] = useState(false);
   const [loadingLocalTxs, setLoadingLocalTxs] = useState(false);
+
+  const addLocalTx = useCallback(() => {}, [localTxs]);
 
   return {
     localTxs,

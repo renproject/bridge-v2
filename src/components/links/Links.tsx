@@ -12,11 +12,13 @@ export const externalLinkAttributes = {
 
 export type CustomLinkProps = LinkProps & {
   external?: boolean;
+  externalPointer?: boolean;
   to?: any;
 };
 
 export const Link: FunctionComponent<CustomLinkProps> = ({
   external,
+  externalPointer = external,
   children,
   target = external ? "_blank" : undefined,
   to,
@@ -38,17 +40,19 @@ export const Link: FunctionComponent<CustomLinkProps> = ({
         {...additionalParams}
       >
         {children}
-        {external && " ↗"}
+        {externalPointer && " ↗"}
       </MuiLink>
     );
   }
   return (
     <MuiLink target={target} {...rest} {...additionalParams}>
       {children}
-      {external && " ↗"}
+      {externalPointer && " ↗"}
     </MuiLink>
   );
 };
+
+export const CustomLink = Link;
 
 export { RouterLink, MuiLink };
 export type { RouterLinkProps };
