@@ -6,6 +6,7 @@ import {
   ContractChain,
   DepositChain,
   InputType,
+  LogLevel,
   OutputType,
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
@@ -70,6 +71,7 @@ export const useGateway = (
       alterEthereumBaseChainProviderSigner(chains, provider);
       const renJs = new RenJS(network, {
         networkDelay: 10000,
+        logLevel: LogLevel.Debug,
       }).withChains(...Object.values(chains).map((chain) => chain.chain));
       (window as any).renJs = renJs;
       return renJs;

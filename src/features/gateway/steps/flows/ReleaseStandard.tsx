@@ -3,7 +3,7 @@ import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
-import { PaperContent } from "../../../../components/layout/Paper";
+import { useIntersection, useInterval } from "react-use";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import {
@@ -28,6 +28,7 @@ import {
   useGatewayFeesWithRates,
 } from "../../gatewayHooks";
 import {
+  isTxSubmittable,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
   useGatewayFirstTransaction,
@@ -57,8 +58,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const { connected, provider } = useCurrentChainWallet();
   const { gateway, transactions } = useGateway(
     { asset, from, to, amount, toAddress },
-    provider,
-    true
+    provider
   );
   console.log("gateway", gateway);
   (window as any).gateway = gateway;
@@ -142,7 +142,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   const renVmSubmitter = useChainTransactionSubmitter(
     tx?.renVM,
     undefined,
-    burnStatus === ChainTransactionStatus.Done
+    burnStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.renVM)
   );
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater(
     tx?.renVM,

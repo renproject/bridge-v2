@@ -6,6 +6,7 @@ import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
 import { SharedGatewayProvider } from "./gatewaySlice";
 import { ReleaseH2HProcess } from "./steps/flows/ReleaseH2H";
 import { ReleaseStandardProcess } from "./steps/flows/ReleaseStandard";
+import { TestProcess } from "./steps/flows/Test";
 import { GatewayFeesStep } from "./steps/GatewayFeesStep";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 import { MintH2HProcess } from "./steps/flows/MintH2H";
@@ -76,6 +77,7 @@ export const GatewayRoutes: FunctionComponent = () => {
         path={paths.RELEASE__GATEWAY_H2H}
         component={ReleaseH2HProcess}
       />
+      <Route exact path={paths.TEST} component={TestProcess} />
     </SharedGatewayProvider>
   );
 };

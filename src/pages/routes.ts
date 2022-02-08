@@ -8,6 +8,8 @@ const RELEASE = "/release";
 const __GATEWAY = "/gateway";
 const __GATEWAY_H2H = "/gateway-h2h";
 
+const TEST = "test";
+
 const MINT__GATEWAY_STANDARD = MINT + __GATEWAY;
 const MINT__GATEWAY_H2H = MINT + __GATEWAY_H2H;
 const RELEASE__GATEWAY_STANDARD = RELEASE + __GATEWAY;
@@ -24,4 +26,5 @@ export const paths = {
   RELEASE,
   RELEASE__GATEWAY_STANDARD,
   RELEASE__GATEWAY_H2H,
+  TEST,
 };
