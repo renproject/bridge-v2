@@ -7,20 +7,29 @@ import {
   TxWaiter,
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { isDefined } from "../../utils/objects";
 import { useCurrentNetworkChains } from "../network/networkHooks";
 
+export const useLabeler = (label: string) => {
+  return useMemo(() => {
+    return (strings: TemplateStringsArray) => `${label} ${strings}`;
+  }, [label]);
+};
+
 type RenVMChainTransactionStatusUpdater = {
   tx?: TxSubmitter | TxWaiter;
-  start?: boolean;
+  startTrigger?: boolean;
   waitTarget?: number;
+  debugLabel?: string;
 };
 export const useRenVMChainTransactionStatusUpdater = ({
   tx,
-  start = true,
-  waitTarget,
+  startTrigger = true,
+  waitTarget, // TODO: 1 ?
+  debugLabel = "renVM",
 }: RenVMChainTransactionStatusUpdater) => {
+  const l = useLabeler(debugLabel);
   const [error, setError] = useState<Error | null>(null);
   const [status, setStatus] = useState<ChainTransactionStatus | null>(null);
   const [target, setTarget] = useState<number | null>(null);
@@ -36,13 +45,13 @@ export const useRenVMChainTransactionStatusUpdater = ({
 
   useEffect(() => {
     reset();
-    if (!tx || !start) {
+    if (!tx || !startTrigger) {
       return;
     }
     tx.wait(waitTarget)
       .on("progress", (progress) => {
         setError(null);
-        console.log("newStatus renvm", progress);
+        console.log(l`tx: newStatus`, progress);
         setStatus(progress.status);
         setTarget(progress.target);
 
@@ -66,7 +75,7 @@ export const useRenVMChainTransactionStatusUpdater = ({
       .catch((reason) => {
         setError(reason);
       });
-  }, [tx, waitTarget, reset, start]);
+  }, [l, waitTarget, tx, startTrigger, reset]);
 
   return {
     error,
@@ -83,13 +92,16 @@ type ChainTransactionStatusUpdater = {
   tx?: TxSubmitter | TxWaiter;
   startTrigger?: boolean;
   waitTarget?: number;
+  debugLabel?: string;
 };
 
 export const useChainTransactionStatusUpdater = ({
   tx,
   startTrigger = true,
   waitTarget,
+  debugLabel = "",
 }: ChainTransactionStatusUpdater) => {
+  const l = useLabeler(debugLabel);
   const chains = useCurrentNetworkChains();
   const [error, setError] = useState<Error | null>(null);
   const [confirmations, setConfirmations] = useState<number | null>(null);
@@ -109,7 +121,7 @@ export const useChainTransactionStatusUpdater = ({
   const trackProgress = useCallback(
     (progress) => {
       setError(null);
-      console.log("newStatus", progress);
+      console.log(l`tx: newStatus`, progress);
       setStatus(progress.status);
       setTarget(progress.target);
       if (isDefined(progress.confirmations)) {
@@ -130,7 +142,7 @@ export const useChainTransactionStatusUpdater = ({
         }
       }
     },
-    [chains]
+    [l, chains]
   );
 
   useEffect(() => {
@@ -149,7 +161,7 @@ export const useChainTransactionStatusUpdater = ({
         }
       });
     return () => {
-      tx.eventEmitter.removeListener("progress", trackProgress);
+      tx.eventEmitter.removeListener("progress", trackProgress); // TODO: same in useGateway?
     };
   }, [trackProgress, tx, waitTarget, chains, reset, startTrigger]);
 
@@ -174,13 +186,16 @@ type ChainTransactionSubmitterParams = {
   tx?: TxSubmitter | TxWaiter;
   waitTarget?: number;
   autoSubmit?: boolean;
+  debugLabel?: string;
 };
 
 export const useChainTransactionSubmitter = ({
   tx,
   waitTarget = 1,
   autoSubmit = false,
+  debugLabel = "",
 }: ChainTransactionSubmitterParams) => {
+  const l = useLabeler(debugLabel);
   const [submitting, setSubmitting] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [errorSubmitting, setErrorSubmitting] = useState<Error>();
@@ -201,26 +216,26 @@ export const useChainTransactionSubmitter = ({
 
   const wait = useCallback(async () => {
     setErrorWaiting(undefined);
-    console.log("tx: waiting");
+    console.log(l`tx: waiting`);
     try {
       setWaiting(true);
       if (tx) {
-        console.log("tx: waiting");
+        console.log(l`tx: waiting`);
         await tx.wait(waitTarget);
       } else {
-        console.error("tx: waiting error, tx not ready");
-        setErrorWaiting(new Error("Waiting not ready"));
+        console.error(l`tx: waiting error, tx not ready`);
+        setErrorWaiting(new Error(l`Waiting not ready`));
       }
     } catch (error: any) {
-      console.error("tx: waiting error,", error);
+      console.error(l`tx: waiting error,`, error);
       setErrorWaiting(error);
     }
     setWaiting(false);
-  }, [tx, waitTarget]);
+  }, [l, waitTarget, tx]);
 
   const handleSubmit = useCallback(async () => {
     setErrorSubmitting(undefined);
-    console.log("tx: submitting");
+    console.log(l`tx: submitting`);
     if (
       tx &&
       tx.submit &&
@@ -237,25 +252,25 @@ export const useChainTransactionSubmitter = ({
         await wait();
         setDone(true);
       } catch (error: any) {
-        console.error("tx: submitting error", error);
+        console.error(l`tx: submitting error`, error);
         setErrorSubmitting(error);
       }
       setSubmitting(false);
     } else {
-      console.error("tx: submitting error, tx not ready");
+      console.error(l`tx: submitting error, tx not ready`);
       setErrorSubmitting(new Error("Submitting not ready"));
     }
-  }, [tx, wait]);
+  }, [l, wait, tx]);
 
   useEffect(() => {
     if (Boolean(autoSubmit)) {
-      console.log("tx: automatic submit");
+      console.log(l`tx: automatic submit`);
       handleSubmit().catch((error) => {
-        console.log("tx: automatic submit failed");
+        console.log(l`tx: automatic submit failed`);
         console.error(error);
       });
     }
-  }, [handleSubmit, autoSubmit, tx, tx?.submit, tx?.progress.status]);
+  }, [l, handleSubmit, autoSubmit, tx, tx?.submit, tx?.progress.status]);
 
   return {
     handleSubmit,
@@ -289,6 +304,7 @@ export const useGatewayFirstTransaction = (gateway: Gateway) => {
 
 export const useChainTxState = () => {};
 
+// deprecated
 export const useChainTxHandlers = (
   tx?: TxSubmitter | TxWaiter,
   waitTarget?: number

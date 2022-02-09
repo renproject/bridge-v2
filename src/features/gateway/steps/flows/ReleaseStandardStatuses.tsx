@@ -1,5 +1,5 @@
 import { Box, Divider, Typography } from "@material-ui/core";
-import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import React, { FunctionComponent, ReactNode, useCallback } from "react";
@@ -46,6 +46,7 @@ import {
 } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
 import {
+  RenVMReleasingInfo,
   RenVMSubmittingInfo,
   TransactionProgressInfo,
 } from "../../components/TransactionProgressHelpers";
@@ -147,7 +148,6 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
 
 type ReleaseStandardBurnProgressStatusProps = {
   gateway: Gateway;
-  transaction: GatewayTransaction | null;
   Fees: ReactNode | null;
   outputAmount: string | null;
   outputAmountUsd: string | null;
@@ -155,19 +155,20 @@ type ReleaseStandardBurnProgressStatusProps = {
   burnConfirmations: number | null;
   burnTargetConfirmations: number | null;
   renVMStatus: ChainTransactionStatus | null;
+  // releaseStatus: ChainTransactionStatus | null;
 };
 
 export const ReleaseStandardBurnProgressStatus: FunctionComponent<
   ReleaseStandardBurnProgressStatusProps
 > = ({
   gateway,
-  transaction,
   Fees,
   outputAmount,
   outputAmountUsd,
   burnConfirmations,
   burnTargetConfirmations,
   renVMStatus,
+  // releaseStatus
 }) => {
   const { t } = useTranslation();
   const { asset, from, amount, fromAverageConfirmationTime } =
@@ -246,6 +247,7 @@ type ReleaseStandardCompletedStatusProps = {
   releaseAssetDecimals: number | null;
   releaseAmount: string | null;
   releaseTxUrl: string | null;
+  // releaseStatus: ChainTransactionStatus | null;
 };
 
 export const ReleaseStandardCompletedStatus: FunctionComponent<
@@ -256,6 +258,7 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
   releaseTxUrl,
   releaseAmount,
   releaseAssetDecimals,
+  // releaseStatus,
 }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("release.completed-title"));
@@ -312,7 +315,15 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
     <PaperContent bottomPadding>
       <ProgressWrapper>
         <ProgressWithContent>
-          <BigDoneIcon />
+          {releaseTxUrl === null ? (
+            <ProgressWithContent processing>
+              <RenVMReleasingInfo />
+            </ProgressWithContent>
+          ) : (
+            <ProgressWithContent>
+              <BigDoneIcon />
+            </ProgressWithContent>
+          )}
         </ProgressWithContent>
       </ProgressWrapper>
       <Typography variant="body1" align="center" gutterBottom>

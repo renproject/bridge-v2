@@ -113,9 +113,16 @@ const ReleaseStandardProcessor: FunctionComponent<
   );
   const fees = useGatewayFeesWithRates(gateway, amount);
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
+  const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
+    gateway.toChain,
+    gateway.params.asset
+  );
 
   const { outputAmount, outputAmountUsd } = fees;
-  const gatewayInSubmitter = useChainTransactionSubmitter({ tx: gateway.in });
+  const gatewayInSubmitter = useChainTransactionSubmitter({
+    tx: gateway.in,
+    debugLabel: "gatewayIn",
+  });
 
   const {
     handleSubmit,
@@ -131,6 +138,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: gateway.in,
     startTrigger: submittingDone,
+    debugLabel: "gatewayIn",
   });
   const {
     status: burnStatus,
@@ -138,33 +146,33 @@ const ReleaseStandardProcessor: FunctionComponent<
     target: burnTargetConfirmations,
     txUrl: burnTxUrl,
   } = gatewayInTxMeta;
-
   const renVmSubmitter = useChainTransactionSubmitter({
     tx: tx?.renVM,
     autoSubmit:
       burnStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.renVM),
+    debugLabel: "renVM",
   });
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: tx?.renVM,
-    start: renVmSubmitter.submittingDone,
+    startTrigger: renVmSubmitter.submittingDone,
+    debugLabel: "renVM",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
-  const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
-    gateway.toChain,
-    gateway.params.asset
-  );
-
   const outSubmitter = useChainTransactionSubmitter({
     tx: tx?.out,
-    autoSubmit: renVMStatus === ChainTransactionStatus.Done,
+    autoSubmit:
+      renVMStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.out),
+    debugLabel: "out",
   });
-  const outTxMeta = useChainTransactionStatusUpdater({ tx: tx?.out });
-
+  const outTxMeta = useChainTransactionStatusUpdater({
+    tx: tx?.out,
+    debugLabel: "out",
+  });
   const {
     // error: releaseError,
     status: releaseStatus,
     txUrl: releaseTxUrl,
-  } = outTxMeta; // TODO: must call submit first
+  } = outTxMeta;
 
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {
@@ -185,12 +193,11 @@ const ReleaseStandardProcessor: FunctionComponent<
     );
   } else if (
     burnStatus === ChainTransactionStatus.Confirming ||
-    releaseTxUrl === null
+    releaseStatus === null
   ) {
     Content = (
       <ReleaseStandardBurnProgressStatus
         gateway={gateway}
-        transaction={tx}
         Fees={Fees}
         burnStatus={burnStatus}
         outputAmount={outputAmount}
@@ -198,6 +205,7 @@ const ReleaseStandardProcessor: FunctionComponent<
         burnConfirmations={burnConfirmations}
         burnTargetConfirmations={burnTargetConfirmations}
         renVMStatus={renVMStatus}
+        // releaseStatus={releaseStatus}
       />
     );
   } else if (releaseStatus !== ChainTransactionStatus.Reverted) {
@@ -205,6 +213,7 @@ const ReleaseStandardProcessor: FunctionComponent<
       <ReleaseStandardCompletedStatus
         gateway={gateway}
         burnTxUrl={burnTxUrl}
+        // releaseStatus={releaseStatus}
         releaseTxUrl={releaseTxUrl}
         releaseAmount={releaseAmount}
         releaseAssetDecimals={releaseAssetDecimals}

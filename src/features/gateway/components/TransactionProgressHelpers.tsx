@@ -43,3 +43,7 @@ export const TransactionProgressInfo: FunctionComponent<
 export const RenVMSubmittingInfo: FunctionComponent = () => {
   return <TransactionStatusInfo status="Submitting to RenVM..." />;
 };
+
+export const RenVMReleasingInfo: FunctionComponent = () => {
+  return <TransactionStatusInfo status="Releasing from RenVM..." />;
+};

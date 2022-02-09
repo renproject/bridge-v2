@@ -135,7 +135,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: tx?.renVM,
-    start: burnStatus === ChainTransactionStatus.Done,
+    startTrigger: burnStatus === ChainTransactionStatus.Done,
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
   const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
