@@ -67,7 +67,7 @@ export const useDepositTransactionMeta = (transaction: GatewayTransaction) => {
     txIndex: lockTxIndex,
     txUrl: lockTxUrl,
     amount: lockAmount,
-  } = useChainTransactionStatusUpdater(transaction.in);
+  } = useChainTransactionStatusUpdater({ tx: transaction.in });
   const {
     error: mintError,
     status: mintStatus,
@@ -78,7 +78,7 @@ export const useDepositTransactionMeta = (transaction: GatewayTransaction) => {
     txIndex: mintTxIndex,
     txUrl: mintTxUrl,
     amount: mintAmount,
-  } = useChainTransactionStatusUpdater(transaction.out);
+  } = useChainTransactionStatusUpdater({ tx: transaction.out });
 
   return {
     lockError,

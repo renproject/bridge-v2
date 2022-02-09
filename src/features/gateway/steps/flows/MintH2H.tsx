@@ -95,13 +95,16 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     getFirstTx().finally();
   }, [gateway.transactions]);
 
-  const inSetupMeta = useChainTransactionStatusUpdater(
-    Object.values(gateway.inSetup)[0]
-  );
-  const gatewayInTxMeta = useChainTransactionStatusUpdater(gateway.in);
-  const lockTxMeta = useChainTransactionStatusUpdater(transaction?.in);
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(transaction?.renVM);
-  const mintTxMeta = useChainTransactionStatusUpdater(transaction?.out);
+  const inSetupMeta = useChainTransactionStatusUpdater({
+    tx: Object.values(gateway.inSetup)[0],
+  });
+  // TODO: solana
+  const gatewayInTxMeta = useChainTransactionStatusUpdater({ tx: gateway.in });
+  const lockTxMeta = useChainTransactionStatusUpdater({ tx: transaction?.in });
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
+    tx: transaction?.renVM,
+  });
+  const mintTxMeta = useChainTransactionStatusUpdater({ tx: transaction?.out });
 
   const {
     confirmations: lockConfirmations,

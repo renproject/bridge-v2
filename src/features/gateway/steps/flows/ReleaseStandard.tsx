@@ -128,10 +128,10 @@ const ReleaseStandardProcessor: FunctionComponent<
   } = gatewayInSubmitter;
   const tx = useGatewayFirstTransaction(gateway);
   (window as any).tx = tx;
-  const gatewayInTxMeta = useChainTransactionStatusUpdater(
-    gateway.in,
-    submittingDone
-  );
+  const gatewayInTxMeta = useChainTransactionStatusUpdater({
+    tx: gateway.in,
+    start: submittingDone,
+  });
   const {
     status: burnStatus,
     confirmations: burnConfirmations,
@@ -144,10 +144,10 @@ const ReleaseStandardProcessor: FunctionComponent<
     autoSubmit:
       burnStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.renVM),
   });
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(
-    tx?.renVM,
-    renVmSubmitter.submittingDone
-  );
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
+    tx: tx?.renVM,
+    start: renVmSubmitter.submittingDone,
+  });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
   const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
     gateway.toChain,
@@ -158,7 +158,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     tx: tx?.out,
     autoSubmit: renVMStatus === ChainTransactionStatus.Done,
   });
-  const outTxMeta = useChainTransactionStatusUpdater(tx?.out);
+  const outTxMeta = useChainTransactionStatusUpdater({ tx: tx?.out });
 
   const {
     // error: releaseError,

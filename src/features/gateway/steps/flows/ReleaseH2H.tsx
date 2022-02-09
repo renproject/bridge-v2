@@ -123,20 +123,20 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   } = gatewayInSubmitter;
   const tx = useGatewayFirstTransaction(gateway);
   (window as any).tx = tx;
-  const gatewayInTxMeta = useChainTransactionStatusUpdater(
-    gateway.in,
-    submittingBurnDone
-  );
+  const gatewayInTxMeta = useChainTransactionStatusUpdater({
+    tx: gateway.in,
+    start: submittingBurnDone,
+  });
   const {
     status: burnStatus,
     confirmations: burnConfirmations,
     target: burnTargetConfirmations,
   } = gatewayInTxMeta;
 
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(
-    tx?.renVM,
-    burnStatus === ChainTransactionStatus.Done
-  );
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
+    tx: tx?.renVM,
+    start: burnStatus === ChainTransactionStatus.Done,
+  });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
   const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
     gateway.toChain,
@@ -147,7 +147,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     tx: tx?.out,
     autoSubmit: renVMStatus === ChainTransactionStatus.Done,
   });
-  const outTxMeta = useChainTransactionStatusUpdater(tx?.out);
+  const outTxMeta = useChainTransactionStatusUpdater({ tx: tx?.out });
   const { txUrl: releaseTxUrl } = outTxMeta;
 
   let Content = null;

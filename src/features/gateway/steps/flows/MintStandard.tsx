@@ -197,7 +197,9 @@ export const GatewayDepositProcessor: FunctionComponent<
     mintTxUrl,
     mintTxIdFormatted,
   } = txMeta;
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater(transaction.renVM);
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
+    tx: transaction.renVM,
+  });
   const { amount: mintAmount, status: renVMStatus } = renVmTxMeta;
 
   const { decimals: lockAssetDecimals } = useChainAssetDecimals(

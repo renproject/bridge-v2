@@ -11,11 +11,16 @@ import { useCallback, useEffect, useState } from "react";
 import { isDefined } from "../../utils/objects";
 import { useCurrentNetworkChains } from "../network/networkHooks";
 
-export const useRenVMChainTransactionStatusUpdater = (
-  tx?: TxSubmitter,
+type RenVMChainTransactionStatusUpdater = {
+  tx?: TxSubmitter | TxWaiter;
+  start?: boolean;
+  waitTarget?: number;
+};
+export const useRenVMChainTransactionStatusUpdater = ({
+  tx,
   start = true,
-  waitTarget?: number
-) => {
+  waitTarget,
+}: RenVMChainTransactionStatusUpdater) => {
   const [error, setError] = useState<Error | null>(null);
   const [status, setStatus] = useState<ChainTransactionStatus | null>(null);
   const [target, setTarget] = useState<number | null>(null);
@@ -74,11 +79,17 @@ export const useRenVMChainTransactionStatusUpdater = (
   };
 };
 
-export const useChainTransactionStatusUpdater = (
-  tx?: TxSubmitter | TxWaiter,
+type ChainTransactionStatusUpdater = {
+  tx?: TxSubmitter | TxWaiter;
+  start?: boolean;
+  waitTarget?: number;
+};
+
+export const useChainTransactionStatusUpdater = ({
+  tx,
   start = true,
-  waitTarget?: number
-) => {
+  waitTarget,
+}: ChainTransactionStatusUpdater) => {
   const chains = useCurrentNetworkChains();
   const [error, setError] = useState<Error | null>(null);
   const [confirmations, setConfirmations] = useState<number | null>(null);
