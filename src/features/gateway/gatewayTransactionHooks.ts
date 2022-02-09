@@ -48,6 +48,7 @@ export const useRenVMChainTransactionStatusUpdater = ({
     if (!tx || !startTrigger) {
       return;
     }
+    console.log(l`tx: attaching listener`);
     tx.wait(waitTarget)
       .on("progress", (progress) => {
         setError(null);
@@ -75,6 +76,10 @@ export const useRenVMChainTransactionStatusUpdater = ({
       .catch((reason) => {
         setError(reason);
       });
+
+    return () => {
+      console.log(l`tx: detaching listener`);
+    };
   }, [l, waitTarget, tx, startTrigger, reset]);
 
   return {
@@ -150,6 +155,7 @@ export const useChainTransactionStatusUpdater = ({
     if (!tx || !startTrigger) {
       return;
     }
+    console.log(l`tx: attaching listener`);
     tx.wait(waitTarget)
       .on("progress", trackProgress)
       .catch((error) => {
@@ -161,9 +167,10 @@ export const useChainTransactionStatusUpdater = ({
         }
       });
     return () => {
+      console.log(l`tx: detaching listener`);
       tx.eventEmitter.removeListener("progress", trackProgress); // TODO: same in useGateway?
     };
-  }, [trackProgress, tx, waitTarget, chains, reset, startTrigger]);
+  }, [l, trackProgress, tx, waitTarget, chains, reset, startTrigger]);
 
   return {
     error,
