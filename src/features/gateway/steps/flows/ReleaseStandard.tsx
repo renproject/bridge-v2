@@ -137,6 +137,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     status: burnStatus,
     confirmations: burnConfirmations,
     target: burnTargetConfirmations,
+    txUrl: burnTxUrl,
   } = gatewayInTxMeta;
 
   const renVmSubmitter = useChainTransactionSubmitter(
@@ -205,7 +206,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     Content = (
       <ReleaseStandardCompletedStatus
         gateway={gateway}
-        burnTxUrl={releaseTxUrl}
+        burnTxUrl={burnTxUrl}
         releaseTxUrl={releaseTxUrl}
         releaseAmount={releaseAmount}
         releaseAssetDecimals={releaseAssetDecimals}
