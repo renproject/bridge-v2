@@ -9,7 +9,7 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { TooltipIcon } from "../icons/RenIcons";
 
-const useStyles = makeStyles((theme) => ({
+const useTooltipWithIconStyles = makeStyles((theme) => ({
   root: {
     display: "inline-flex",
     fontSize: 13,
@@ -29,7 +29,7 @@ export const TooltipWithIcon: FunctionComponent<TooltipWithIconProps> = ({
   className,
   ...rest
 }) => {
-  const styles = useStyles();
+  const styles = useTooltipWithIconStyles();
   const resolvedClassName = classNames(styles.root, className);
   const [open, setOpen] = React.useState(false);
 

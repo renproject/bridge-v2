@@ -96,8 +96,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const { connected, provider } = useWallet(to);
   const { gateway, transactions } = useGateway(
     { asset, from, to, nonce },
-    provider,
-    true
+    { provider, autoTeardown: true }
   );
 
   const fees = useGatewayFees(gateway);

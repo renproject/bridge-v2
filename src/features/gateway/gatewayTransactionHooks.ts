@@ -79,6 +79,7 @@ export const useRenVMChainTransactionStatusUpdater = ({
 
     return () => {
       console.log(l`tx: detaching listener`);
+      //TODO: do
     };
   }, [l, waitTarget, tx, startTrigger, reset]);
 

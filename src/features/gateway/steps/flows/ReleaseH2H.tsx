@@ -55,8 +55,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   const { connected, provider } = useCurrentChainWallet();
   const { gateway, transactions } = useGateway(
     { asset, from, to, amount },
-    provider,
-    true
+    { provider, autoTeardown: true }
   );
   console.log("gateway", gateway);
   (window as any).gateway = gateway;

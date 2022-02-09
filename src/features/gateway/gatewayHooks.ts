@@ -30,7 +30,7 @@ import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
 import { createGateway } from "./gatewayUtils";
 
-type UseGatewayParams = {
+type UseGatewayCreateParams = {
   asset: Asset;
   from: Chain;
   to: Chain;
@@ -39,11 +39,19 @@ type UseGatewayParams = {
   nonce?: string | number;
 };
 
+type UseGatewayAdditionalParams = {
+  provider: any;
+  autoTeardown?: boolean;
+  initialGateway?: Gateway | null;
+};
+
 export const useGateway = (
-  { asset, from, to, nonce, toAddress, amount }: UseGatewayParams,
-  provider: any,
-  autoTeardown?: boolean,
-  initialGateway: Gateway | null = null
+  { asset, from, to, nonce, toAddress, amount }: UseGatewayCreateParams,
+  {
+    provider,
+    autoTeardown = false,
+    initialGateway = null,
+  }: UseGatewayAdditionalParams
 ) => {
   const { network } = useSelector($network);
   const chains = useChains(network);
@@ -66,11 +74,11 @@ export const useGateway = (
 
   // set up renjs with signers
   useEffect(() => {
-    console.log("useGateway useEffect renJs and provider");
+    console.log("gateway useEffect renJs and provider");
     const initProvider = async () => {
       alterEthereumBaseChainProviderSigner(chains, provider);
       const renJs = new RenJS(network, {
-        networkDelay: 10000,
+        networkDelay: 3000,
         logLevel: LogLevel.Debug,
       }).withChains(...Object.values(chains).map((chain) => chain.chain));
       (window as any).renJs = renJs;
@@ -89,7 +97,7 @@ export const useGateway = (
 
   // initialize gateway
   useEffect(() => {
-    console.log("useGateway useEffect gateway init");
+    console.log("gateway useEffect gateway init");
     let newGateway: Gateway | null = null;
     if (renJs) {
       const initializeGateway = async () => {
@@ -116,7 +124,7 @@ export const useGateway = (
     return () => {
       if (newGateway && autoTeardown) {
         console.log("gateway removing listeners");
-        newGateway.eventEmitter.removeAllListeners();
+        newGateway.eventEmitter.removeListener("transaction", addTransaction);
       }
     };
   }, [

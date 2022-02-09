@@ -57,7 +57,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const { connected, provider } = useCurrentChainWallet();
   const { gateway, transactions } = useGateway(
     { asset, from, to, amount, toAddress },
-    provider
+    { provider, autoTeardown: true }
   );
   console.log("gateway", gateway);
   (window as any).gateway = gateway;

@@ -1,4 +1,4 @@
-import { Divider, Typography } from "@material-ui/core";
+import { Divider, Theme, Typography } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
@@ -12,42 +12,54 @@ export type LabelWithValueProps = {
   value: string | number | ReactNode;
   valueEquivalent?: string | number | ReactNode;
   loading?: boolean;
+  colorVariant?: "inherit";
 };
 
-const useLabelWithValueStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: 13,
-    marginBottom: 8,
-  },
-  labelWrapper: {
-    flexShrink: 0,
-    maxWidth: "50%",
-    color: theme.palette.grey[600],
-  },
-  labelTooltip: {
-    marginLeft: 4,
-    color: theme.palette.grey[600],
-  },
-  labelTooltipIcon: {
-    fontSize: 12,
-    verticalAlign: "middle",
-  },
-  valueWrapper: {
-    flexGrow: 1,
-    overflow: "hidden",
-    textAlign: "right",
-    color: theme.palette.common.black,
-  },
-  value: {
-    whiteSpace: "nowrap",
-  },
-  valueEquivalent: {
-    color: theme.palette.grey[600],
-    marginLeft: 4,
-  },
-}));
+const useLabelWithValueStyles = makeStyles<
+  Theme,
+  Pick<LabelWithValueProps, "colorVariant">
+>((theme) => {
+  return {
+    root: {
+      display: "flex",
+      justifyContent: "space-between",
+      fontSize: 13,
+      marginBottom: 8,
+    },
+    labelWrapper: {
+      flexShrink: 0,
+      maxWidth: "50%",
+      color: (props) =>
+        props.colorVariant === "inherit" ? "inherit" : theme.palette.grey[600],
+    },
+    labelTooltip: {
+      marginLeft: 4,
+      color: (props) =>
+        props.colorVariant === "inherit" ? "inherit" : theme.palette.grey[600],
+    },
+    labelTooltipIcon: {
+      fontSize: 12,
+      verticalAlign: "middle",
+    },
+    valueWrapper: {
+      flexGrow: 1,
+      overflow: "hidden",
+      textAlign: "right",
+      color: (props) =>
+        props.colorVariant === "inherit"
+          ? "inherit"
+          : theme.palette.common.black,
+    },
+    value: {
+      whiteSpace: "nowrap",
+    },
+    valueEquivalent: {
+      marginLeft: 4,
+      color: (props) =>
+        props.colorVariant === "inherit" ? "inherit" : theme.palette.grey[600],
+    },
+  };
+});
 
 export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   label,
@@ -55,9 +67,10 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   value,
   valueEquivalent,
   loading,
+  colorVariant,
   ...rest
 }) => {
-  const styles = useLabelWithValueStyles();
+  const styles = useLabelWithValueStyles({ colorVariant });
   return (
     <div className={styles.root} {...rest}>
       <div className={styles.labelWrapper}>

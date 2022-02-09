@@ -97,7 +97,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       amount: activeAmount,
       toAddress,
     },
-    provider
+    { provider, autoTeardown: true }
   );
   const fees = useGatewayFeesWithRates(gateway, activeAmount);
   const { balance } = useEthereumChainAssetBalance(

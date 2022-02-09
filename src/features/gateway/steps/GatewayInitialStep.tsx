@@ -210,12 +210,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   const showAmountError = amountTouched && hasMinimalAmountBalanceError;
 
-  console.log(
-    balance,
-    amount,
-    Number(amount) > Number(balance),
-    hasMinimalAmountBalanceError
-  );
+  // console.log(
+  //   balance,
+  //   amount,
+  //   Number(amount) > Number(balance),
+  //   hasMinimalAmountBalanceError
+  // );
 
   const handleNext = useCallback(() => {
     if (onNext) {

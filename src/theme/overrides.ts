@@ -169,13 +169,6 @@ export const overrides = (palette: Palette): Overrides => {
         boxShadow: "0px 1px 20px rgba(0, 27, 58, 0.05)",
       },
     },
-    MuiPopover: {
-      paper: {
-        borderRadius: 4,
-        background: popoverBackground,
-        color: popoverTextColor,
-      },
-    },
     MuiSelect: {
       root: {
         padding: `13px 20px`,
