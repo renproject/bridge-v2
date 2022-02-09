@@ -130,7 +130,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   (window as any).tx = tx;
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: gateway.in,
-    start: submittingDone,
+    startTrigger: submittingDone,
   });
   const {
     status: burnStatus,

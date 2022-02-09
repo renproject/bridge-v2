@@ -81,13 +81,13 @@ export const useRenVMChainTransactionStatusUpdater = ({
 
 type ChainTransactionStatusUpdater = {
   tx?: TxSubmitter | TxWaiter;
-  start?: boolean;
+  startTrigger?: boolean;
   waitTarget?: number;
 };
 
 export const useChainTransactionStatusUpdater = ({
   tx,
-  start = true,
+  startTrigger = true,
   waitTarget,
 }: ChainTransactionStatusUpdater) => {
   const chains = useCurrentNetworkChains();
@@ -135,7 +135,7 @@ export const useChainTransactionStatusUpdater = ({
 
   useEffect(() => {
     reset();
-    if (!tx || !start) {
+    if (!tx || !startTrigger) {
       return;
     }
     tx.wait(waitTarget)
@@ -151,7 +151,7 @@ export const useChainTransactionStatusUpdater = ({
     return () => {
       tx.eventEmitter.removeListener("progress", trackProgress);
     };
-  }, [trackProgress, tx, waitTarget, chains, reset, start]);
+  }, [trackProgress, tx, waitTarget, chains, reset, startTrigger]);
 
   return {
     error,

@@ -125,7 +125,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   (window as any).tx = tx;
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: gateway.in,
-    start: submittingBurnDone,
+    startTrigger: submittingBurnDone,
   });
   const {
     status: burnStatus,
