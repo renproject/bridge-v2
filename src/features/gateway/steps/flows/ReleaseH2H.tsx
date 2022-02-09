@@ -110,7 +110,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
   const { outputAmount, outputAmountUsd } = fees;
 
-  const gatewayInSubmitter = useChainTransactionSubmitter(gateway.in);
+  const gatewayInSubmitter = useChainTransactionSubmitter({ tx: gateway.in });
 
   const {
     handleSubmit: handleSubmitBurn,
@@ -143,11 +143,10 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     gateway.params.asset
   );
 
-  const outSubmitter = useChainTransactionSubmitter(
-    tx?.out,
-    undefined,
-    renVMStatus === ChainTransactionStatus.Done
-  );
+  const outSubmitter = useChainTransactionSubmitter({
+    tx: tx?.out,
+    autoSubmit: renVMStatus === ChainTransactionStatus.Done,
+  });
   const outTxMeta = useChainTransactionStatusUpdater(tx?.out);
   const { txUrl: releaseTxUrl } = outTxMeta;
 

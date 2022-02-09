@@ -3,7 +3,6 @@ import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
-import { useIntersection, useInterval } from "react-use";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import {
@@ -116,7 +115,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
 
   const { outputAmount, outputAmountUsd } = fees;
-  const gatewayInSubmitter = useChainTransactionSubmitter(gateway.in);
+  const gatewayInSubmitter = useChainTransactionSubmitter({ tx: gateway.in });
 
   const {
     handleSubmit,
@@ -140,11 +139,11 @@ const ReleaseStandardProcessor: FunctionComponent<
     txUrl: burnTxUrl,
   } = gatewayInTxMeta;
 
-  const renVmSubmitter = useChainTransactionSubmitter(
-    tx?.renVM,
-    undefined,
-    burnStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.renVM)
-  );
+  const renVmSubmitter = useChainTransactionSubmitter({
+    tx: tx?.renVM,
+    autoSubmit:
+      burnStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.renVM),
+  });
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater(
     tx?.renVM,
     renVmSubmitter.submittingDone
@@ -155,11 +154,10 @@ const ReleaseStandardProcessor: FunctionComponent<
     gateway.params.asset
   );
 
-  const outSubmitter = useChainTransactionSubmitter(
-    tx?.out,
-    undefined,
-    renVMStatus === ChainTransactionStatus.Done
-  );
+  const outSubmitter = useChainTransactionSubmitter({
+    tx: tx?.out,
+    autoSubmit: renVMStatus === ChainTransactionStatus.Done,
+  });
   const outTxMeta = useChainTransactionStatusUpdater(tx?.out);
 
   const {

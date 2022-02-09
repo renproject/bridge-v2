@@ -1,7 +1,9 @@
 import { FunctionComponent } from "react";
+import { Debug } from "../../../../components/utils/Debug";
 
 const useTestProcess = () => {};
 
 export const TestProcess: FunctionComponent = () => {
-  return null;
+  const state = useTestProcess();
+  return <Debug it={{ state }} />;
 };

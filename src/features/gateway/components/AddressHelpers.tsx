@@ -1,10 +1,7 @@
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "../../../components/links/Links";
-import {
-  LabelWithValue,
-  LabelWithValueProps,
-} from "../../../components/typography/TypographyHelpers";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { trimAddress } from "../../../utils/strings";
 
 type AddressLabelProps = {

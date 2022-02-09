@@ -94,7 +94,7 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
     waiting,
     errorSubmitting,
     handleReset,
-  } = useChainTransactionSubmitter(gateway.in);
+  } = useChainTransactionSubmitter({ tx: gateway.in });
 
   return (
     <>
@@ -179,8 +179,8 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   const renAsset = getRenAssetName(asset);
   const { RenIcon } = assetConfig;
 
-  const renVM = useChainTransactionSubmitter(transaction?.renVM);
-  const out = useChainTransactionSubmitter(transaction?.out);
+  const renVM = useChainTransactionSubmitter({ tx: transaction?.renVM });
+  const out = useChainTransactionSubmitter({ tx: transaction?.out });
 
   const handleSubmitBoth = useCallback(async () => {
     await renVM.handleSubmit();
@@ -311,8 +311,8 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
 
-  const renVM = useChainTransactionSubmitter(transaction?.renVM);
-  const out = useChainTransactionSubmitter(transaction?.out);
+  const renVM = useChainTransactionSubmitter({ tx: transaction?.renVM });
+  const out = useChainTransactionSubmitter({ tx: transaction?.out });
 
   const handleSubmitBoth = useCallback(async () => {
     await renVM.handleSubmit();

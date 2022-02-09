@@ -159,11 +159,17 @@ export const isTxSubmittable = (tx: TxSubmitter | TxWaiter | undefined) => {
   return tx && tx.submit && tx.progress.status === ChainTransactionStatus.Ready;
 };
 
-export const useChainTransactionSubmitter = (
-  tx?: TxSubmitter | TxWaiter,
-  waitTarget?: number,
-  autoSubmit?: boolean
-) => {
+type ChainTransactionSubmitterParams = {
+  tx?: TxSubmitter | TxWaiter;
+  waitTarget?: number;
+  autoSubmit?: boolean;
+};
+
+export const useChainTransactionSubmitter = ({
+  tx,
+  waitTarget = 1,
+  autoSubmit = false,
+}: ChainTransactionSubmitterParams) => {
   const [submitting, setSubmitting] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [errorSubmitting, setErrorSubmitting] = useState<Error>();
@@ -189,7 +195,7 @@ export const useChainTransactionSubmitter = (
       setWaiting(true);
       if (tx) {
         console.log("tx: waiting");
-        await tx.wait(waitTarget || 1);
+        await tx.wait(waitTarget);
       } else {
         console.error("tx: waiting error, tx not ready");
         setErrorWaiting(new Error("Waiting not ready"));

@@ -25,8 +25,6 @@ import {
 } from "../../../../components/progress/ProgressHelpers";
 import {
   AssetInfo,
-  LabelWithValue,
-  MiddleEllipsisText,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
 import { paths } from "../../../../pages/routes";

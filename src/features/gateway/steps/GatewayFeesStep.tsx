@@ -37,8 +37,6 @@ import {
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import {
   AssetInfo,
-  LabelWithValue,
-  MiddleEllipsisText,
   SimpleAssetInfo,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
