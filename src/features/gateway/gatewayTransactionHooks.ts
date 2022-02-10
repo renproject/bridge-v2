@@ -43,6 +43,31 @@ export const useRenVMChainTransactionStatusUpdater = ({
     //TODO: add rest
   }, []);
 
+  const trackProgress = useCallback(
+    (progress) => {
+      setError(null);
+      console.log(l`tx: newStatus`, progress);
+      setStatus(progress.status);
+      setTarget(progress.target);
+
+      if (isDefined(progress.transaction)) {
+        setTxId(progress.transaction.txid);
+        setTxIdFormatted(progress.transaction.txidFormatted);
+        setTxIndex(progress.transaction.txindex);
+        if (isDefined((progress.transaction as InputChainTransaction).amount)) {
+          setAmount((progress.transaction as InputChainTransaction).amount);
+        }
+      }
+      const response = (progress as any).response as any; // RenVMTransactionWithStatus
+      if (isDefined(response)) {
+        if (isDefined(response.tx.out.amount)) {
+          setAmount((response.tx.out.amount as BigNumber).toString());
+        }
+      }
+    },
+    [l]
+  );
+
   useEffect(() => {
     reset();
     if (!tx || !startTrigger) {
@@ -50,38 +75,16 @@ export const useRenVMChainTransactionStatusUpdater = ({
     }
     console.log(l`tx: attaching listener`);
     tx.wait(waitTarget)
-      .on("progress", (progress) => {
-        setError(null);
-        console.log(l`tx: newStatus`, progress);
-        setStatus(progress.status);
-        setTarget(progress.target);
-
-        if (isDefined(progress.transaction)) {
-          setTxId(progress.transaction.txid);
-          setTxIdFormatted(progress.transaction.txidFormatted);
-          setTxIndex(progress.transaction.txindex);
-          if (
-            isDefined((progress.transaction as InputChainTransaction).amount)
-          ) {
-            setAmount((progress.transaction as InputChainTransaction).amount);
-          }
-        }
-        const response = (progress as any).response as any; // RenVMTransactionWithStatus
-        if (isDefined(response)) {
-          if (isDefined(response.tx.out.amount)) {
-            setAmount((response.tx.out.amount as BigNumber).toString());
-          }
-        }
-      })
+      .on("progress", trackProgress)
       .catch((reason) => {
         setError(reason);
       });
 
     return () => {
       console.log(l`tx: detaching listener`);
-      //TODO: do
+      tx.eventEmitter.removeListener("progress", trackProgress);
     };
-  }, [l, waitTarget, tx, startTrigger, reset]);
+  }, [l, trackProgress, waitTarget, tx, startTrigger, reset]);
 
   return {
     error,
@@ -169,7 +172,7 @@ export const useChainTransactionStatusUpdater = ({
       });
     return () => {
       console.log(l`tx: detaching listener`);
-      tx.eventEmitter.removeListener("progress", trackProgress); // TODO: same in useGateway?
+      tx.eventEmitter.removeListener("progress", trackProgress);
     };
   }, [l, trackProgress, tx, waitTarget, chains, reset, startTrigger]);
 

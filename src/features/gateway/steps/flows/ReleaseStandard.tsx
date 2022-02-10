@@ -1,6 +1,6 @@
 import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { Debug } from "../../../../components/utils/Debug";
@@ -11,6 +11,7 @@ import {
 } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
+import { useTransactionsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import {
@@ -54,7 +55,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   );
   const { asset, from, to, amount, toAddress } = gatewayParams;
   useSyncWalletChain(from);
-  const { connected, provider } = useCurrentChainWallet();
+  const { connected, provider, account } = useCurrentChainWallet();
   const { gateway, transactions } = useGateway(
     { asset, from, to, amount, toAddress },
     { provider, autoTeardown: true }
@@ -77,7 +78,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
         </PCW>
       )}
       {connected && gateway !== null && (
-        <ReleaseStandardProcessor gateway={gateway} />
+        <ReleaseStandardProcessor gateway={gateway} account={account} />
       )}
       {Boolean(parseError) && (
         <GeneralErrorDialog
@@ -94,11 +95,12 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
 
 type ReleaseStandardProcessorProps = {
   gateway: Gateway;
+  account: string;
 };
 
 const ReleaseStandardProcessor: FunctionComponent<
   ReleaseStandardProcessorProps
-> = ({ gateway }) => {
+> = ({ gateway, account }) => {
   console.log("ReleaseStandardProcessor");
   console.log(gateway);
   const { t } = useTranslation();
@@ -133,7 +135,15 @@ const ReleaseStandardProcessor: FunctionComponent<
     errorSubmitting,
     handleReset,
   } = gatewayInSubmitter;
+
   const tx = useGatewayFirstTransaction(gateway);
+  const { persistTransaction, localTxs } = useTransactionsStorage();
+  useEffect(() => {
+    if (submittingDone && tx !== null) {
+      persistTransaction(account, tx);
+    }
+  }, [persistTransaction, account, submittingDone, tx]);
+
   (window as any).tx = tx;
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: gateway.in,
@@ -226,6 +236,7 @@ const ReleaseStandardProcessor: FunctionComponent<
       {Content}
       <Debug
         it={{
+          localTxs,
           releaseAmount,
           releaseAssetDecimals,
           gatewayInSubmitter,

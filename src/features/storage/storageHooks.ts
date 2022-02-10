@@ -1,4 +1,5 @@
 // Source: https://usehooks.com/useLocalStorage/
+import { GatewayTransaction } from "@renproject/ren";
 import { TransactionParams } from "@renproject/ren/build/main/gatewayTransaction";
 import { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
@@ -43,29 +44,54 @@ const useLocalStorage = <T>(
   return [storedValue, setValue];
 };
 
+type TransactionEntry = {
+  params: TransactionParams;
+  done: boolean;
+  timestamp: number;
+};
+
+type HashTransactionsMap = {
+  [txHash: string]: TransactionEntry;
+};
+
+type AddressTransactionsMap = {
+  [web3Address: string]: HashTransactionsMap;
+};
+
 export const useTransactionsStorage = () => {
   const { network } = useSelector($network);
-  const [localTxs, setLocalTxs] = useLocalStorage<{
-    [web3Address: string]: {
-      [key: string]: {
-        params: TransactionParams;
-        done: boolean;
-        timestamp: number;
-      };
-    };
-  }>(`ren-bridge-v3:${network}:txs`, {});
+  const [localTxs, setLocalTxs] = useLocalStorage<AddressTransactionsMap>(
+    `ren-bridge-v3:${network}:txs`,
+    {}
+  );
+  // const [localTxsLoaded, setLocalTxsLoaded] = useState(false);
+  // const [loadingLocalTxs, setLoadingLocalTxs] = useState(false);
 
-  const [localTxsLoaded, setLocalTxsLoaded] = useState(false);
-  const [loadingLocalTxs, setLoadingLocalTxs] = useState(false);
-
-  const addLocalTx = useCallback(() => {}, [localTxs]);
+  const persistTransaction = useCallback(
+    (web3Address: string, tx: GatewayTransaction, done = false) => {
+      setLocalTxs((txs) => ({
+        ...txs,
+        [web3Address]: {
+          ...txs[web3Address],
+          [tx.hash]: {
+            params: tx.params,
+            done,
+            timestamp:
+              ((txs[web3Address] || {})[tx.hash] || {}).timestamp || Date.now(),
+          },
+        },
+      }));
+    },
+    [setLocalTxs]
+  );
 
   return {
     localTxs,
-    setLocalTxs,
-    localTxsLoaded,
-    setLocalTxsLoaded,
-    loadingLocalTxs,
-    setLoadingLocalTxs,
+    // setLocalTxs,
+    persistTransaction,
+    // localTxsLoaded,
+    // setLocalTxsLoaded,
+    // loadingLocalTxs,
+    // setLoadingLocalTxs,
   };
 };
