@@ -199,6 +199,7 @@ const ReleaseStandardProcessor: FunctionComponent<
         waiting={waiting}
         submitting={submitting}
         errorSubmitting={errorSubmitting}
+        account={account}
       />
     );
   } else if (

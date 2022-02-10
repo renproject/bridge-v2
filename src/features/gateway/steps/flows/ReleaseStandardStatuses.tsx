@@ -33,6 +33,7 @@ import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
+import { trimAddress } from "../../../../utils/strings";
 import {
   getAssetConfig,
   getRenAssetConfig,
@@ -62,6 +63,7 @@ type ReleaseStandardBurnStatusProps = SubmittingProps & {
   outputAmount: string | null;
   outputAmountUsd: string | null;
   burnStatus: ChainTransactionStatus | null;
+  account: string;
 };
 
 export const ReleaseStandardBurnStatus: FunctionComponent<
@@ -77,14 +79,22 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
   waiting,
   done,
   errorSubmitting,
+  account,
 }) => {
   const { t } = useTranslation();
   const { asset, amount, toAddress } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
   const renAssetConfig = getRenAssetConfig(asset);
   const { Icon } = assetConfig;
-  const { balance } = useEthereumChainAssetBalance(gateway.fromChain, asset);
+  const { balance } = useEthereumChainAssetBalance(
+    gateway.fromChain,
+    asset,
+    account
+  );
 
+  const hasBalance = balance !== null;
+  const showBalanceError =
+    hasBalance && new BigNumber(amount).isGreaterThan(balance);
   return (
     <>
       <PaperContent bottomPadding>
@@ -127,13 +137,23 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
         <ActionButtonWrapper>
           <ActionButton
             onClick={onSubmit}
-            disabled={submitting || waiting || done}
+            disabled={
+              submitting || waiting || done || !hasBalance || showBalanceError
+            }
           >
             {submitting || waiting
               ? t("gateway.submitting-tx-label")
               : t("gateway.submit-tx-label")}
           </ActionButton>
         </ActionButtonWrapper>
+        {showBalanceError && (
+          <Typography variant="body2" color="error" align="center">
+            {t("tx.submitting-error-insufficient-address-balance-text", {
+              asset: renAssetConfig.shortName,
+              address: trimAddress(account),
+            })}
+          </Typography>
+        )}
       </PaperContent>
       {errorSubmitting && (
         <SubmitErrorDialog

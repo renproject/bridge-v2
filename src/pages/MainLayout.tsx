@@ -1,4 +1,5 @@
 import {
+  Button,
   Divider,
   Drawer,
   ListItem,
@@ -26,7 +27,8 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useWindowSize } from "react-use";
-import { RenBridgeLogoIcon } from "../components/icons/RenIcons";
+import { ClosableMenuIconButton } from "../components/buttons/Buttons";
+import { RenBridgeLogoIcon, TxHistoryIcon } from "../components/icons/RenIcons";
 import { Footer } from "../components/layout/Footer";
 import {
   MainLayoutVariantProps,
@@ -38,7 +40,11 @@ import { env } from "../constants/environmentVariables";
 import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
 import { useSetNetworkFromParam } from "../features/network/networkHooks";
 import { $network } from "../features/network/networkSlice";
-import { $transactionsData } from "../features/transactions/transactionsSlice";
+import { TransactionsHistory } from "../features/transactions/TransactionsHistory";
+import {
+  $txHistory,
+  setTxHistoryOpened,
+} from "../features/transactions/transactionsSlice";
 import {
   useWalletPickerStyles,
   WalletChainLabel,
@@ -83,10 +89,10 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     }
   }, [width, theme.breakpoints]);
 
-  const { txHistoryOpened } = useSelector($transactionsData);
-  // const handleTxHistoryToggle = useCallback(() => {
-  //   dispatch(setTxHistoryOpened(!txHistoryOpened));
-  // }, [dispatch, txHistoryOpened]);
+  const { dialogOpened: txHistoryOpened } = useSelector($txHistory);
+  const handleTxHistoryToggle = useCallback(() => {
+    dispatch(setTxHistoryOpened(!txHistoryOpened));
+  }, [dispatch, txHistoryOpened]);
 
   const [walletMenuAnchor, setWalletMenuAnchor] = useState<null | HTMLElement>(
     null
@@ -144,12 +150,12 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           mode="dialog"
           buttonClassName={styles.desktopLanguage}
         />
-        {/*<ClosableMenuIconButton*/}
-        {/*  Icon={TxHistoryIcon}*/}
-        {/*  opened={txHistoryOpened}*/}
-        {/*  className={styles.desktopTxHistory}*/}
-        {/*  onClick={handleTxHistoryToggle}*/}
-        {/*/>*/}
+        <ClosableMenuIconButton
+          Icon={TxHistoryIcon}
+          opened={txHistoryOpened}
+          className={styles.desktopTxHistory}
+          onClick={handleTxHistoryToggle}
+        />
         <WalletConnectionStatusButton
           onClick={handleWalletButtonClick}
           hoisted={txHistoryOpened}
@@ -206,20 +212,20 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           wallet={wallet}
         />
       </ListItem>
-      {/*<ListItem*/}
-      {/*  divider*/}
-      {/*  className={styles.drawerListItem}*/}
-      {/*  button*/}
-      {/*  onClick={handleTxHistoryToggle}*/}
-      {/*>*/}
-      {/*  <Button className={styles.mobileMenuButton} component="div">*/}
-      {/*    <ClosableMenuIconButton*/}
-      {/*      Icon={TxHistoryIcon}*/}
-      {/*      className={styles.mobileTxHistory}*/}
-      {/*    />*/}
-      {/*    <span>{t("menu.viewTransactions")}</span>*/}
-      {/*  </Button>*/}
-      {/*</ListItem>*/}
+      <ListItem
+        divider
+        className={styles.drawerListItem}
+        button
+        onClick={handleTxHistoryToggle}
+      >
+        <Button className={styles.mobileMenuButton} component="div">
+          <ClosableMenuIconButton
+            Icon={TxHistoryIcon}
+            className={styles.mobileTxHistory}
+          />
+          <span>{t("menu.view-transactions-label")}</span>
+        </Button>
+      </ListItem>
       <ListItem
         className={classNames(
           styles.drawerListItem,
@@ -254,7 +260,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WalletMenu={WalletMenu}
     >
       {children}
-      {/*<MintTransactionHistory />*/}
+      <TransactionsHistory />
       {/*<IssuesResolver />*/}
       {/*<IssuesResolverButton mode="fab" />*/}
       <Debug

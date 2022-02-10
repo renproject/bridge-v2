@@ -50,12 +50,12 @@ type TransactionEntry = {
   timestamp: number;
 };
 
-type HashTransactionsMap = {
-  [txHash: string]: TransactionEntry;
+type RenVMTxHashMap = {
+  [renVMTxHash: string]: TransactionEntry;
 };
 
 type AddressTransactionsMap = {
-  [web3Address: string]: HashTransactionsMap;
+  [web3Address: string]: RenVMTxHashMap;
 };
 
 export const useTransactionsStorage = () => {

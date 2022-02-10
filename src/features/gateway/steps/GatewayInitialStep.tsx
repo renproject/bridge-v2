@@ -187,12 +187,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       ? new BigNumber(amount).multipliedBy(assetUsdRate).toFixed()
       : "";
 
-  // useEffect(() => {
-  //   if (isFromContractChain) {
-  //     dispatch(setChain(from));
-  //   }
-  // }, [isFromContractChain]);
-
   const chains = useCurrentNetworkChains();
   const { account } = useWallet(from);
   const { balance } = useEthereumChainAssetBalance(

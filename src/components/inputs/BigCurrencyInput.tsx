@@ -1,10 +1,10 @@
-import { Typography } from '@material-ui/core'
-import { makeStyles, styled } from '@material-ui/core/styles'
-import classNames from 'classnames'
-import React, { FunctionComponent, ReactNode, useRef } from 'react'
-import NumberFormat, { NumberFormatValues } from 'react-number-format'
-import { generatePlaceholderStyles } from '../../theme/themeUtils'
-import { numberFormatOptions, toUsdFormat } from '../../utils/formatters'
+import { Typography } from "@material-ui/core";
+import { makeStyles, styled } from "@material-ui/core/styles";
+import classNames from "classnames";
+import React, { FunctionComponent, ReactNode, useRef } from "react";
+import NumberFormat, { NumberFormatValues } from "react-number-format";
+import { generatePlaceholderStyles } from "../../theme/themeUtils";
+import { numberFormatOptions, toUsdFormat } from "../../utils/formatters";
 
 const useStyles = makeStyles((theme) => ({
   container: {

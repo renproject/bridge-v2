@@ -1,6 +1,6 @@
-import { Chip, styled, Typography } from "@material-ui/core";
+import { styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { TransactionStatusType } from "../utils/types";
 
 type TransactionType = "mint" | "release";
