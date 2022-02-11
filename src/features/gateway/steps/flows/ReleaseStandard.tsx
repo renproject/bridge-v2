@@ -27,7 +27,6 @@ import { useRenVMExplorerLink } from "../../../network/networkHooks";
 import {
   LocalTxData,
   LocalTxPersistor,
-  LocalTxRemover,
   RenVMHashTxsMap,
   useTxsStorage,
 } from "../../../storage/storageHooks";
@@ -91,7 +90,7 @@ export const LocalTxEntry: FunctionComponent<LocalTxEntryProps> = ({
     setRemoving(true);
     onRemove(renVmHash);
     setRemoving(false);
-  }, [renVmHash, localTx, onRecover]);
+  }, [renVmHash, onRemove]);
 
   return (
     <Box mb={3}>
@@ -195,11 +194,12 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     (renVmHash) => {
       removeLocalTx(account, renVmHash);
     },
-    [account]
+    [account, removeLocalTx]
   );
 
   const unfinishedLocalTxs = getLocalTxsForAddress(account, {
     unfinished: true,
+    // TODO: crit from
     asset,
     to,
   });

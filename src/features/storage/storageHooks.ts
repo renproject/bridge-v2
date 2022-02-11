@@ -111,7 +111,7 @@ export const useTxsStorage = () => {
         return { ...otherAddressEntries, [web3Address]: otherRenVMHashEntries };
       });
     },
-    []
+    [setLocalTxs]
   );
 
   const getLocalTxsForAddress = useCallback(
