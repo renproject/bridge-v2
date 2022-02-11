@@ -28,6 +28,7 @@ import {
 } from "../marketData/marketDataUtils";
 import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
+import { LocalTxData } from "../storage/storageHooks";
 import { createGateway } from "./gatewayUtils";
 
 type UseGatewayCreateParams = {
@@ -44,6 +45,11 @@ type UseGatewayAdditionalParams = {
   autoTeardown?: boolean;
   initialGateway?: Gateway | null;
 };
+
+export type TxRecoverer = (
+  txHash: string,
+  localTxEntry: LocalTxData
+) => Promise<void>;
 
 export const useGateway = (
   { asset, from, to, nonce, toAddress, amount }: UseGatewayCreateParams,
@@ -62,7 +68,7 @@ export const useGateway = (
     []
   );
   const addTransaction = useCallback((newTx: GatewayTransaction) => {
-    console.log("gateway detected transaction", newTx.hash, newTx);
+    console.log("gateway detected tx:", newTx.hash, newTx);
     setTransactions((txs) => {
       const index = txs.findIndex((tx) => tx.hash === newTx.hash);
       if (index >= 0) {
@@ -140,7 +146,27 @@ export const useGateway = (
     autoTeardown,
   ]);
 
-  return { renJs, gateway, transactions, error };
+  const recoverLocalTx = useCallback<TxRecoverer>(
+    async (txHash, localTxEntry) => {
+      // tx.done?
+      if (renJs !== null && gateway !== null) {
+        console.log("tx: gateway transactions brefore", gateway.transactions);
+        console.log("tx: recovering", localTxEntry);
+
+        const tx = await renJs.gatewayTransaction(localTxEntry.params);
+        console.log("tx: created", tx);
+        // TODO: TBD: discuss with Noah
+        gateway.transactions = gateway.transactions.set(txHash, tx);
+        console.log("tx: gateway transactions after", gateway.transactions);
+        // addTransaction(tx); will be handled automatically, emitter is required
+        gateway.eventEmitter.emit("transaction", tx);
+      } else {
+        throw new Error("gateway not initialized");
+      }
+    },
+    [gateway, renJs]
+  );
+  return { renJs, gateway, transactions, error, recoverLocalTx };
 };
 
 // TODO: reuse in useGatewayFees

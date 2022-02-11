@@ -17,7 +17,7 @@ type TransactionsState = {
 };
 
 let initialState: TransactionsState = {
-  txHistory: { dialogOpened: true },
+  txHistory: { dialogOpened: false },
   currentTxId: "",
   currentSession: {
     txId: "",

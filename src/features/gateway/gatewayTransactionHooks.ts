@@ -163,7 +163,7 @@ export const useChainTransactionStatusUpdater = ({
     tx.wait(waitTarget)
       .on("progress", trackProgress)
       .catch((error) => {
-        console.log(error.message);
+        console.log(l`tx: error`, error.message);
         // TODO: typical error message
         if (!error.message.includes(".submit")) {
           console.error(error);
@@ -311,95 +311,4 @@ export const useGatewayFirstTransaction = (gateway: Gateway) => {
   }, [gateway.transactions]);
 
   return transaction;
-};
-
-export const useChainTxState = () => {};
-
-// deprecated
-export const useChainTxHandlers = (
-  tx?: TxSubmitter | TxWaiter,
-  waitTarget?: number
-) => {
-  const [submitting, setSubmitting] = useState(false);
-  const [submittingDone, setSubmittingDone] = useState(false);
-  const [waiting, setWaiting] = useState(false);
-  const [submittingError, setSubmittingError] = useState<Error>();
-  const [waitingError, setWaitingError] = useState<Error>();
-  const [waitingDone, setWaitingDone] = useState(false);
-
-  const reset = useCallback(() => {
-    setSubmitting(false);
-    setWaiting(false);
-    setSubmittingError(undefined);
-    setWaitingError(undefined);
-    setSubmittingDone(false);
-    setWaitingDone(false);
-  }, []);
-
-  const wait = useCallback(async () => {
-    setSubmittingError(undefined);
-    setWaitingError(undefined);
-
-    try {
-      setWaiting(true);
-      if (tx && submittingDone) {
-        await tx.wait(waitTarget);
-      } else {
-        console.log(
-          "Can't perform wait for tx: ",
-          tx,
-          tx?.wait,
-          tx?.progress.status
-        );
-      }
-      setWaitingDone(true);
-    } catch (error: any) {
-      console.error("xx", error);
-      setWaitingError(error);
-    }
-    setWaiting(false);
-  }, [tx, waitTarget, submittingDone]);
-
-  const submit = useCallback(async () => {
-    setSubmittingError(undefined);
-
-    console.log("submitting");
-    try {
-      if (
-        tx &&
-        tx.submit &&
-        tx.progress.status === ChainTransactionStatus.Ready
-      ) {
-        setSubmitting(true);
-        await tx.submit({
-          txConfig: {
-            // gasLimit: 500000,
-          },
-        });
-      } else {
-        console.log(
-          "Can't perform submit for tx: ",
-          tx,
-          tx?.submit,
-          tx?.progress.status
-        );
-      }
-    } catch (error: any) {
-      console.error(error);
-      setSubmittingError(error);
-    }
-    setSubmitting(false);
-  }, [tx]);
-
-  return {
-    submit,
-    submitting,
-    submittingDone,
-    submittingError,
-    wait,
-    waiting,
-    waitingDone,
-    waitingError,
-    reset,
-  };
 };

@@ -1,6 +1,6 @@
 import { RenNetwork } from "@renproject/utils";
 import queryString from "query-string";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { getDefaultChains } from "../chain/chainUtils";
@@ -33,4 +33,17 @@ export const useCurrentNetworkChains = () => {
   return useMemo(() => {
     return getDefaultChains(network);
   }, [network]);
+};
+
+export const useRenVMExplorerLink = () => {
+  const { network } = useSelector($network);
+  const getRenVmExplorerLink = useCallback(
+    (renVmHash: string) => {
+      return `https://explorer${
+        network !== "mainnet" ? `-${network}` : ""
+      }.renproject.io/#/tx/${renVmHash}`;
+    },
+    [network]
+  );
+  return { getRenVmExplorerLink };
 };

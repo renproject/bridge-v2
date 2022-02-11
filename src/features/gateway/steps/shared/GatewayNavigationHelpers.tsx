@@ -19,6 +19,7 @@ type GatewayPaperHeaderProps = {
 
 export const GatewayPaperHeader: FunctionComponent<GatewayPaperHeaderProps> = ({
   title,
+  children,
 }) => {
   const {
     // modalOpened,
@@ -32,7 +33,7 @@ export const GatewayPaperHeader: FunctionComponent<GatewayPaperHeaderProps> = ({
 
   return (
     <PaperHeader>
-      <PaperNav />
+      <PaperNav>{children}</PaperNav>
       <PaperTitle>{title}</PaperTitle>
       <PaperActions>
         <BrowserNotificationButton
@@ -42,8 +43,8 @@ export const GatewayPaperHeader: FunctionComponent<GatewayPaperHeaderProps> = ({
           onTooltipClose={handleTooltipClose}
         />
         <ToggleIconButton
-          disabled={true}
           variant="settings"
+          disabled={true}
           onClick={handleMenuOpen}
           pressed={menuOpened}
         />

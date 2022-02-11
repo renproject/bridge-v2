@@ -41,7 +41,7 @@ import { PulseIndicator } from "../progress/ProgressHelpers";
 import { MiddleEllipsisText } from "../typography/TypographyHelpers";
 
 export type ToggleIconButtonProps = IconButtonProps & {
-  variant?: "settings" | "notifications";
+  variant?: "settings" | "notifications" | "history";
   pressed?: boolean;
 };
 
@@ -90,6 +90,8 @@ export const ToggleIconButton: FunctionComponent<ToggleIconButtonProps> = ({
         return BrowserNotificationsIcon;
       case "settings":
         return MoreVertIcon;
+      case "history":
+        return TxHistoryIcon;
       default:
         return () => null;
     }

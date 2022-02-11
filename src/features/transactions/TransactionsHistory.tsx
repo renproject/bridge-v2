@@ -16,7 +16,7 @@ import { TransactionsHeader } from "../../components/transactions/TransactionsGr
 import { Debug } from "../../components/utils/Debug";
 import { getChainConfig } from "../../utils/chainsConfig";
 import { trimAddress } from "../../utils/strings";
-import { useTransactionsStorage } from "../storage/storageHooks";
+import { useTxsStorage } from "../storage/storageHooks";
 import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { useCurrentChainWallet } from "../wallet/walletHooks";
 import { $wallet, setPickerOpened } from "../wallet/walletSlice";
@@ -91,7 +91,7 @@ type AddressTransactionsProps = {
 const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   address,
 }) => {
-  const { localTxs } = useTransactionsStorage();
+  const { localTxs } = useTxsStorage();
 
   const renVMTxMap = Object.entries(localTxs)
     .filter(([localAddress]) => localAddress === address)
