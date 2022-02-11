@@ -293,8 +293,10 @@ const ReleaseStandardProcessor: FunctionComponent<
   );
 
   const { outputAmount, outputAmountUsd } = fees;
+  // TODO: this can be faulty
+  const tx = useGatewayFirstTransaction(gateway);
   const gatewayInSubmitter = useChainTransactionSubmitter({
-    tx: gateway.in,
+    tx: tx?.in || gateway.in,
     debugLabel: "gatewayIn",
   });
 
@@ -308,8 +310,6 @@ const ReleaseStandardProcessor: FunctionComponent<
     handleReset,
   } = gatewayInSubmitter;
 
-  // TODO: this can be faulty
-  const tx = useGatewayFirstTransaction(gateway);
   useEffect(() => {
     if (submittingDone && tx !== null) {
       persistLocalTx(account, tx);
@@ -319,7 +319,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   (window as any).tx = tx;
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
-    tx: gateway.in,
+    tx: tx?.in || gateway.in,
     startTrigger: submittingDone,
     debugLabel: "gatewayIn",
   });
