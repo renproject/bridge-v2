@@ -10,6 +10,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { ToggleIconButton } from "../../../../components/buttons/Buttons";
+import { SeparationWrapper } from "../../../../components/catalog/PresentationHelpers";
 import { BigTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
@@ -26,6 +27,7 @@ import { useRenVMExplorerLink } from "../../../network/networkHooks";
 import {
   LocalTxData,
   LocalTxPersistor,
+  LocalTxRemover,
   RenVMHashTxsMap,
   useTxsStorage,
 } from "../../../storage/storageHooks";
@@ -60,22 +62,35 @@ import {
   ReleaseStandardCompletedStatus,
 } from "./ReleaseStandardStatuses";
 
+type LocalTxEntryRemover = (renVmHash: string) => void;
+
 type LocalTxEntryProps = {
   renVmHash: string;
   localTx: LocalTxData;
   onRecover: TxRecoverer;
+  onRemove: LocalTxEntryRemover;
 };
+
 export const LocalTxEntry: FunctionComponent<LocalTxEntryProps> = ({
   onRecover,
+  onRemove,
   renVmHash,
   localTx,
 }) => {
-  const [pending, setPending] = useState(false);
+  const [recovering, setRecovering] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const { getRenVmExplorerLink } = useRenVMExplorerLink();
+
   const handleRecoverTx = useCallback(async () => {
-    setPending(true);
+    setRecovering(true);
     await onRecover(renVmHash, localTx);
-    setPending(false);
+    setRecovering(false);
+  }, [renVmHash, localTx, onRecover]);
+
+  const handleRemoveTx = useCallback(() => {
+    setRemoving(true);
+    onRemove(renVmHash);
+    setRemoving(false);
   }, [renVmHash, localTx, onRecover]);
 
   return (
@@ -85,15 +100,26 @@ export const LocalTxEntry: FunctionComponent<LocalTxEntryProps> = ({
           {renVmHash}
         </Link>
       </div>
-      <Button
-        size="small"
-        color="primary"
-        variant="contained"
-        disabled={pending}
-        onClick={handleRecoverTx}
-      >
-        Finish tx
-      </Button>
+      <SeparationWrapper>
+        <Button
+          size="small"
+          color="primary"
+          variant="contained"
+          disabled={recovering}
+          onClick={handleRecoverTx}
+        >
+          Finish tx
+        </Button>
+        <Button
+          size="small"
+          color="secondary"
+          variant="contained"
+          disabled={removing}
+          onClick={handleRemoveTx}
+        >
+          Remove tx from history
+        </Button>
+      </SeparationWrapper>
     </Box>
   );
 };
@@ -101,23 +127,17 @@ export const LocalTxEntry: FunctionComponent<LocalTxEntryProps> = ({
 type UnfinishedLocalTxsDialogProps = {
   localTxs: RenVMHashTxsMap;
   onRecover: TxRecoverer;
+  onRemove: LocalTxEntryRemover;
   onClose: () => void;
   open: boolean;
 };
 
 const UnfinishedLocalTxsDialog: FunctionComponent<
   UnfinishedLocalTxsDialogProps
-> = ({ localTxs, onRecover, open, onClose }) => {
+> = ({ localTxs, onRecover, onRemove, open, onClose }) => {
   // const { t } = useTranslation();
   const { connected } = useCurrentChainWallet();
   const handleRecoverTx = useCallback<TxRecoverer>(
-    async (txHash, localTxEntry) => {
-      await onRecover(txHash, localTxEntry);
-      onClose();
-    },
-    [onClose, onRecover]
-  );
-  const handleRemoveTx = useCallback<TxRecoverer>(
     async (txHash, localTxEntry) => {
       await onRecover(txHash, localTxEntry);
       onClose();
@@ -140,6 +160,7 @@ const UnfinishedLocalTxsDialog: FunctionComponent<
               renVmHash={renVmHash}
               localTx={localTx}
               onRecover={handleRecoverTx}
+              onRemove={onRemove}
             />
           );
         })}
@@ -168,7 +189,15 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     { provider, autoTeardown: true }
   );
 
-  const { persistLocalTx, getLocalTxsForAddress } = useTxsStorage();
+  const { persistLocalTx, getLocalTxsForAddress, removeLocalTx } =
+    useTxsStorage();
+  const handleRemoveLocalTx = useCallback<LocalTxEntryRemover>(
+    (renVmHash) => {
+      removeLocalTx(account, renVmHash);
+    },
+    [account]
+  );
+
   const unfinishedLocalTxs = getLocalTxsForAddress(account, {
     unfinished: true,
     asset,
@@ -201,6 +230,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
       <UnfinishedLocalTxsDialog
         localTxs={unfinishedLocalTxs}
         onRecover={recoverLocalTx}
+        onRemove={handleRemoveLocalTx}
         onClose={handleClose}
         open={open}
       />

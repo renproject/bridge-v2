@@ -73,6 +73,8 @@ export type LocalTxPersistor = (
   done?: boolean
 ) => void;
 
+export type LocalTxRemover = (address: string, renVMTxHash: string) => void;
+
 export const useTxsStorage = () => {
   const { network } = useSelector($network);
   const [localTxs, setLocalTxs] = useLocalStorage<AddressTxsMap>(
@@ -99,6 +101,17 @@ export const useTxsStorage = () => {
       }));
     },
     [setLocalTxs]
+  );
+
+  const removeLocalTx: LocalTxRemover = useCallback(
+    (web3Address: string, renVMHash: string) => {
+      setLocalTxs((txs) => {
+        const { [web3Address]: addressTxs, ...otherAddressEntries } = txs;
+        const { [renVMHash]: toDelete, ...otherRenVMHashEntries } = addressTxs;
+        return { ...otherAddressEntries, [web3Address]: otherRenVMHashEntries };
+      });
+    },
+    []
   );
 
   const getLocalTxsForAddress = useCallback(
@@ -134,6 +147,7 @@ export const useTxsStorage = () => {
     localTxs,
     // setLocalTxs,
     persistLocalTx,
+    removeLocalTx,
     getLocalTxsForAddress,
     // localTxsLoaded,
     // setLocalTxsLoaded,
@@ -141,5 +155,3 @@ export const useTxsStorage = () => {
     // setLoadingLocalTxs,
   };
 };
-
-export type TxRemover = (txHash: string) => Promise<void>;
