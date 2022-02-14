@@ -161,7 +161,13 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
                 />
               )}
             </DepositWrapper>
-            <Debug it={{ transactions: transactions.length }} />
+            <Debug
+              it={{
+                currentDeposit,
+                currentTx: transaction?.params,
+                transactions: transactions.length,
+              }}
+            />
           </>
         )}
       </PaperContent>
@@ -182,7 +188,11 @@ export const GatewayDepositProcessor: FunctionComponent<
   GatewayDepositProcessorProps
 > = ({ gateway, transaction, onGoToGateway, expiryTime }) => {
   // const lockStatus = ChainTransactionStatus.Done;
+  // TODO: crit use dedicated updaters
   const txMeta = useDepositTransactionMeta(transaction);
+  useEffect(() => {
+    console.log("tx: changed", transaction);
+  }, [transaction]);
   const {
     lockStatus,
     lockConfirmations,
@@ -316,7 +326,12 @@ export const GatewayDepositProcessor: FunctionComponent<
     <>
       {Content}
       <Debug
-        it={{ renVmTxMeta, mintAssetDecimals, hash: transaction.hash, txMeta }}
+        it={{
+          renVmTxMeta,
+          mintAssetDecimals,
+          hash: transaction.hash,
+          txMeta,
+        }}
       />
     </>
   );

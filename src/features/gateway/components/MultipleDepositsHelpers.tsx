@@ -33,11 +33,13 @@ import {
 } from "../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { ChainConfig } from "../../../utils/chainsConfig";
+import { undefinedForNull } from "../../../utils/propsUtils";
 import { getRemainingTime } from "../../../utils/time";
 import { getAssetConfig } from "../../../utils/tokensConfig";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
 import { useChainAssetDecimals } from "../gatewayHooks";
-import { depositSorter, useDepositTransactionMeta } from "../mintHooks";
+import { useChainTransactionStatusUpdater } from "../gatewayTransactionHooks";
+import { depositSorter } from "../mintHooks";
 
 export enum DepositPhase {
   LOCK = "lock",
@@ -174,59 +176,79 @@ const DepositNavigationButton: FunctionComponent<
   // const lockChainConfig = getChainConfig(transaction.fromChain.chain);
   // const mintChainConfig = getChainConfig(transaction.toChain.chain);
 
-  // TODO: crit finish
-  const txMeta = useDepositTransactionMeta(transaction);
-  const { lockConfirmations, lockAmount, lockTargetConfirmations } = txMeta;
+  //TODO: remove
+  const lockTxMeta = useChainTransactionStatusUpdater({ tx: transaction.in });
+  const {
+    amount: lockAmount,
+    status: lockStatus,
+    confirmations: lockConfirmations,
+    target: lockTargetConfirmations,
+    error: lockError,
+  } = lockTxMeta;
+  const mintTxMeta = useChainTransactionStatusUpdater({ tx: transaction.out });
 
   const lockTxAmount =
     lockAssetDecimals !== null && lockAmount !== null
       ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
       : null;
-  //TODO: remove
 
-  let Content: any = null;
-  let Progress: any = null;
-
-  const { lockStatus, mintStatus } = txMeta;
+  const { status: mintStatus, txUrl: mintTxUrl } = mintTxMeta;
+  const Icon = lockAssetConfig.Icon;
+  //some universal loader
+  let PendingProgress = (
+    <CircledProgressWithContent processing>
+      <Icon fontSize="large" />
+    </CircledProgressWithContent>
+  );
+  let PendingContent = (
+    <div>
+      <Skeleton variant="text" width={100} height={22} />
+      <Skeleton variant="text" width={70} height={16} />
+    </div>
+  );
+  let Content: any = PendingContent;
+  let Progress: any = PendingProgress;
   // const lockStatus = ChainTransactionStatus.Confirming;
   // const mintStatus = null;
 
   if (lockStatus !== ChainTransactionStatus.Done) {
-    switch (lockStatus) {
-      case ChainTransactionStatus.Confirming:
-        const Icon = lockAssetConfig.Icon;
-        Progress = (
-          <CircledProgressWithContent
-            color={lockAssetConfig.color}
-            confirmations={
-              lockConfirmations !== null ? lockConfirmations : undefined
-            }
-            targetConfirmations={
-              lockTargetConfirmations !== null
-                ? lockTargetConfirmations
-                : undefined
-            }
-          >
-            <Icon fontSize="large" />
-          </CircledProgressWithContent>
-        );
-        Content = (
-          <div>
-            <Typography variant="body1" color="textPrimary">
-              {lockTxAmount} {lockAssetConfig.shortName}
+    if (lockStatus === ChainTransactionStatus.Confirming) {
+      const Icon = lockAssetConfig.Icon;
+      Progress = (
+        <CircledProgressWithContent
+          color={lockAssetConfig.color}
+          confirmations={
+            lockConfirmations !== null ? lockConfirmations : undefined
+          }
+          targetConfirmations={
+            lockTargetConfirmations !== null
+              ? lockTargetConfirmations
+              : undefined
+          }
+        >
+          <Icon fontSize="large" />
+        </CircledProgressWithContent>
+      );
+      Content = (
+        <div>
+          <Typography variant="body1" color="textPrimary">
+            {lockTxAmount} {lockAssetConfig.shortName}
+          </Typography>
+          {lockTargetConfirmations !== 0 ? (
+            <Typography variant="body2" color="textSecondary">
+              {t("mint.deposit-navigation-confirmations-label", {
+                confirmations: lockConfirmations,
+                targetConfirmations: lockTargetConfirmations,
+              })}
             </Typography>
-            {lockTargetConfirmations !== 0 ? (
-              <Typography variant="body2" color="textSecondary">
-                {t("mint.deposit-navigation-confirmations-label", {
-                  confirmations: lockConfirmations,
-                  targetConfirmations: lockTargetConfirmations,
-                })}
-              </Typography>
-            ) : (
-              <Skeleton variant="text" width={100} height={14} />
-            )}
-          </div>
-        );
+          ) : (
+            <Skeleton variant="text" width={100} height={14} />
+          )}
+        </div>
+      );
+    } else {
+      Progress = PendingProgress;
+      Content = PendingContent;
     }
   } else if (
     mintStatus === null &&
@@ -236,8 +258,8 @@ const DepositNavigationButton: FunctionComponent<
     Progress = (
       <CircledProgressWithContent
         color={lockAssetConfig.color}
-        confirmations={lockConfirmations || undefined}
-        targetConfirmations={lockTargetConfirmations || undefined}
+        confirmations={undefinedForNull(lockConfirmations)}
+        targetConfirmations={undefinedForNull(lockTargetConfirmations)}
         indicator={true}
       >
         <Icon fontSize="large" />
@@ -258,32 +280,32 @@ const DepositNavigationButton: FunctionComponent<
         </Typography>
       </div>
     );
-  } else {
-    switch (mintStatus) {
-      case ChainTransactionStatus.Done:
-        Progress = (
-          <CircledProgressWithContent>
-            <CompletedIcon fontSize="large" />
-          </CircledProgressWithContent>
-        );
-        Content = (
-          <div>
-            <Typography variant="body1" color="textPrimary">
-              {lockTxAmount} {lockAssetConfig.shortName}
-            </Typography>
-            <Typography variant="body2" color="primary">
-              {t("mint.deposit-navigation-completed-label")}
-            </Typography>
-          </div>
-        );
-    }
+  } else if (mintTxUrl !== null || mintStatus === ChainTransactionStatus.Done) {
+    // } else if (mintStatus === ChainTransactionStatus.Reverted) {
+    // if (mintTxUrl !== null || mintStatus === ChainTransactionStatus.Done) {
+    Progress = (
+      <CircledProgressWithContent>
+        <CompletedIcon fontSize="large" />
+      </CircledProgressWithContent>
+    );
+    Content = (
+      <div>
+        <Typography variant="body1" color="textPrimary">
+          {lockTxAmount} {lockAssetConfig.shortName}
+        </Typography>
+        <Typography variant="body2" color="primary">
+          {t("mint.deposit-navigation-completed-label")}
+        </Typography>
+      </div>
+    );
+    // }
   }
 
   return (
     <DepositToggleButton {...rest}>
       {Progress}
       <MoreInfo>{Content}</MoreInfo>
-      <Debug it={txMeta} />
+      <Debug disable it={{ lockError, lockTxMeta, mintTxMeta }} />
     </DepositToggleButton>
   );
 };
