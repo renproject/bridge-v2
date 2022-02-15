@@ -1,4 +1,4 @@
-import { Typography } from "@material-ui/core";
+import { Grid, Typography } from "@material-ui/core";
 import { FunctionComponent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,15 +12,22 @@ import {
   CenteringSpacedBox,
   MediumWrapper,
 } from "../../components/layout/LayoutHelpers";
+import { PaperContent } from "../../components/layout/Paper";
 import { TransactionsHeader } from "../../components/transactions/TransactionsGrid";
+import { LabelWithValue } from "../../components/typography/TypographyHelpers";
 import { Debug } from "../../components/utils/Debug";
 import { getChainConfig } from "../../utils/chainsConfig";
+import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
-import { useTxsStorage } from "../storage/storageHooks";
+import { LocalTxData, useTxsStorage } from "../storage/storageHooks";
 import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { useCurrentChainWallet } from "../wallet/walletHooks";
 import { $wallet, setPickerOpened } from "../wallet/walletSlice";
-import { WideDialog } from "./components/TransactionsHistoryHelpers";
+import {
+  InfoChip,
+  InfoChips,
+  WideDialog,
+} from "./components/TransactionsHistoryHelpers";
 import { $txHistory, setTxHistoryOpened } from "./transactionsSlice";
 
 export const TransactionsHistory: FunctionComponent = () => {
@@ -77,7 +84,9 @@ export const TransactionsHistory: FunctionComponent = () => {
               chain: chainConfig.fullName,
             })}
           />
-          <AddressTransactions address={account} />
+          <PaperContent>
+            <AddressTransactions address={account} />
+          </PaperContent>
         </>
       )}
     </WideDialog>
@@ -91,6 +100,13 @@ type AddressTransactionsProps = {
 const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   address,
 }) => {
+  const { getLocalTxsForAddress } = useTxsStorage();
+
+  const pendingLocalTxs = getLocalTxsForAddress(address, {
+    done: false,
+  });
+  const pendingCount = Object.entries(pendingLocalTxs).length;
+
   const { localTxs } = useTxsStorage();
 
   const renVMTxMap = Object.entries(localTxs)
@@ -99,6 +115,12 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
 
   return (
     <>
+      {pendingCount > 0 && (
+        <Typography variant="body2">
+          <strong>Pending ({pendingCount})</strong>
+        </Typography>
+      )}
+      <Debug it={{ pendingLocalTxs }} />
       {renVMTxMap.map((renVMTxHashMap) => {
         return Object.entries(renVMTxHashMap).map(([renVMTxHash, txEntry]) => (
           <RenVMTransactionEntry hash={renVMTxHash} data={txEntry} />
@@ -111,15 +133,27 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
 
 type RenVMTransactionEntryProps = {
   hash: string;
-  data: any;
+  data: LocalTxData;
 };
 const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   hash,
   data,
 }) => {
   // TODO: add link to renVM tx explorer and issue resolver
+  const { date, time } = getFormattedDateTime(data.timestamp);
+  const typeLabel = "H2H Mint";
   return (
     <div>
+      <InfoChips>
+        <InfoChip label={date} />
+        <InfoChip label={time} />
+        <InfoChip label={typeLabel} />
+      </InfoChips>
+      <Grid container>
+        <Grid item>
+          <LabelWithValue label="Sender Address" value="Recipient Address" />
+        </Grid>
+      </Grid>
       hash: {hash}
       <Debug it={data} />
     </div>

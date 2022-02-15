@@ -1,6 +1,6 @@
-import { Dialog } from "@material-ui/core";
+import { Chip, ChipProps, Dialog } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, styled } from "@material-ui/core/styles";
 import { FunctionComponent } from "react";
 
 const useWideDialogStyles = makeStyles((theme) => ({
@@ -16,4 +16,19 @@ const useWideDialogStyles = makeStyles((theme) => ({
 export const WideDialog: FunctionComponent<DialogProps> = (props) => {
   const classes = useWideDialogStyles();
   return <Dialog maxWidth="sm" fullWidth classes={classes} {...props} />;
+};
+
+export const InfoChips = styled("div")({
+  "& > *": {
+    marginRight: 6,
+  },
+});
+
+type InfoChipProps = ChipProps & {};
+
+export const InfoChip: FunctionComponent<InfoChipProps> = ({
+  size = "small",
+  ...rest
+}) => {
+  return <Chip size={size} {...rest} />;
 };

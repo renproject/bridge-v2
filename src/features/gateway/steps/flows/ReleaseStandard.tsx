@@ -197,8 +197,8 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     [account, removeLocalTx]
   );
 
-  const unfinishedLocalTxs = getLocalTxsForAddress(account, {
-    unfinished: true,
+  const notDoneLocalTxs = getLocalTxsForAddress(account, {
+    done: false,
     // TODO: crit from
     asset,
     to,
@@ -228,7 +228,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
         />
       </GatewayPaperHeader>
       <UnfinishedLocalTxsDialog
-        localTxs={unfinishedLocalTxs}
+        localTxs={notDoneLocalTxs}
         onRecover={recoverLocalTx}
         onRemove={handleRemoveLocalTx}
         onClose={handleClose}
@@ -259,7 +259,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
           onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
         />
       )}
-      <Debug it={{ unfinishedLocalTxs, gatewayParams }} />
+      <Debug it={{ notDoneLocalTxs, gatewayParams }} />
     </>
   );
 };
@@ -370,9 +370,9 @@ const ReleaseStandardProcessor: FunctionComponent<
     console.log("tx: persist changed", persistLocalTx);
   }, [persistLocalTx]);
 
-  useEffect(() => {
-    console.log("tx: tx changed", tx);
-  }, [tx]);
+  // useEffect(() => {
+  //   console.log("tx: tx changed", tx);
+  // }, [tx]);
 
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {

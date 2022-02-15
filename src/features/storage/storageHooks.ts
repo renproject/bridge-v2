@@ -61,7 +61,8 @@ export type AddressTxsMap = {
 };
 
 type GetLocalTxsForAddressFilterParams = {
-  unfinished?: boolean;
+  unfinished?: boolean; // depreceted
+  done?: boolean;
   asset?: Asset | string;
   from?: Chain | string;
   to?: Chain | string;
@@ -117,7 +118,7 @@ export const useTxsStorage = () => {
   const getLocalTxsForAddress = useCallback(
     (
       address: string,
-      { unfinished = false, asset, to }: GetLocalTxsForAddressFilterParams
+      { unfinished = false, done, asset, to }: GetLocalTxsForAddressFilterParams
     ) => {
       const renVMHashTxsMap = localTxs[address];
       if (!renVMHashTxsMap) {
@@ -126,6 +127,9 @@ export const useTxsStorage = () => {
       let resultEntries = Object.entries(renVMHashTxsMap);
       if (unfinished) {
         resultEntries = resultEntries.filter(([hash, tx]) => !tx.done);
+      }
+      if (done !== undefined) {
+        resultEntries = resultEntries.filter(([hash, tx]) => tx.done === done);
       }
       if (asset) {
         resultEntries = resultEntries.filter(
