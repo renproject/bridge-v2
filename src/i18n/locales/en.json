@@ -30,6 +30,7 @@
   "common.transaction": "transaction",
   "common.warning-label": "Warning",
   "common.to-label": "To",
+  "common.on": "on",
   "fees.approval-label": "I consent giving \"infinite approval\"",
   "fees.approval-tooltip": "",
   "fees.assets-contracts-approval-label-tooltip": "This transaction requires approval",

@@ -169,7 +169,13 @@ export const useGateway = (
   return { renJs, gateway, transactions, error, recoverLocalTx };
 };
 
-// TODO: reuse in useGatewayFees
+export const useAssetDecimals = (chain: Chain, asset: string | Asset) => {
+  const chains = useCurrentNetworkChains();
+  const instance = chains[chain].chain;
+  return useChainAssetDecimals(instance, asset);
+};
+
+// TODO: rename to useChainInstanceAssetDecimals, reuse in useGatewayFees
 export const useChainAssetDecimals = (
   chainInstance: ChainCommon | null | undefined,
   asset: string | Asset | null | undefined

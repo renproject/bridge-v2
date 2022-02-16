@@ -1,3 +1,4 @@
+import { Chain } from "@renproject/chains";
 import { RenNetwork } from "@renproject/utils";
 import queryString from "query-string";
 import { useCallback, useEffect, useMemo } from "react";
@@ -47,3 +48,25 @@ export const useRenVMExplorerLink = () => {
   );
   return { getRenVmExplorerLink };
 };
+
+export const useAddressExplorerLink = (chain: Chain | string) => {
+  const chains = useCurrentNetworkChains();
+  const getAddressExplorerLink = useCallback(
+    (address: string) => {
+      return chains[chain as Chain].chain.addressExplorerLink(address);
+    },
+    [chains, chain]
+  );
+  return { getAddressExplorerLink };
+};
+
+// export const useAssetDecimals = (chain: Chain | string) => {
+//   const chains = useCurrentNetworkChains();
+//   const getAddressExplorerLink = useCallback(
+//     (address: string) => {
+//       return chains[chain as Chain].chain.assetDecimals(address);
+//     },
+//     [chains, chain]
+//   );
+//   return { getAddressExplorerLink };
+// };

@@ -12,30 +12,43 @@ export type LabelWithValueProps = {
   value: string | number | ReactNode;
   valueEquivalent?: string | number | ReactNode;
   loading?: boolean;
-  colorVariant?: "inherit";
+  colorVariant?: "inherit" | "reversed";
+  marginVariant?: "none";
+};
+
+const getElementColor = (
+  props: Pick<LabelWithValueProps, "colorVariant">,
+  defaultColor: string,
+  reversedColor = defaultColor
+) => {
+  if (props.colorVariant === "inherit") {
+    return "inherit";
+  }
+  return props.colorVariant === "reversed" ? reversedColor : defaultColor;
 };
 
 const useLabelWithValueStyles = makeStyles<
   Theme,
-  Pick<LabelWithValueProps, "colorVariant">
+  Pick<LabelWithValueProps, "colorVariant" | "marginVariant">
 >((theme) => {
+  const grey = theme.palette.grey[600];
+  const black = theme.palette.common.black;
   return {
     root: {
       display: "flex",
       justifyContent: "space-between",
+      alignItems: "center",
       fontSize: 13,
-      marginBottom: 8,
+      marginBottom: (props) => (props.marginVariant === "none" ? 0 : 8),
     },
     labelWrapper: {
       flexShrink: 0,
       maxWidth: "50%",
-      color: (props) =>
-        props.colorVariant === "inherit" ? "inherit" : theme.palette.grey[600],
+      color: (props) => getElementColor(props, grey, black),
     },
     labelTooltip: {
       marginLeft: 4,
-      color: (props) =>
-        props.colorVariant === "inherit" ? "inherit" : theme.palette.grey[600],
+      color: (props) => getElementColor(props, grey),
     },
     labelTooltipIcon: {
       fontSize: 12,
@@ -45,18 +58,14 @@ const useLabelWithValueStyles = makeStyles<
       flexGrow: 1,
       overflow: "hidden",
       textAlign: "right",
-      color: (props) =>
-        props.colorVariant === "inherit"
-          ? "inherit"
-          : theme.palette.common.black,
+      color: (props) => getElementColor(props, black, grey),
     },
     value: {
       whiteSpace: "nowrap",
     },
     valueEquivalent: {
       marginLeft: 4,
-      color: (props) =>
-        props.colorVariant === "inherit" ? "inherit" : theme.palette.grey[600],
+      color: (props) => getElementColor(props, grey),
     },
   };
 });
@@ -68,9 +77,10 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   valueEquivalent,
   loading,
   colorVariant,
+  marginVariant,
   ...rest
 }) => {
-  const styles = useLabelWithValueStyles({ colorVariant });
+  const styles = useLabelWithValueStyles({ colorVariant, marginVariant });
   return (
     <div className={styles.root} {...rest}>
       <div className={styles.labelWrapper}>
