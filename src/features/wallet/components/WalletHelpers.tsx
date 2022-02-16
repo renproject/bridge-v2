@@ -484,7 +484,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
       />
       <span>{label}</span>
       <Davatar
-        style={{ marginLeft: 8 }}
+        className={avatarClassName}
         size={20}
         address={account as string}
         generatedAvatarType="jazzicon"
