@@ -483,12 +483,13 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
         className={mobile ? indicatorMobileClassName : indicatorClassName}
       />
       <span>{label}</span>
-      <Davatar
-        className={avatarClassName}
-        size={20}
-        address={account as string}
-        generatedAvatarType="jazzicon"
-      />
+      <div className={avatarClassName}>
+        <Davatar
+          size={20}
+          address={account as string}
+          generatedAvatarType="jazzicon"
+        />
+      </div>
       {trimmedAddress && (
         <span className={accountClassName}>{ensName || trimmedAddress}</span>
       )}

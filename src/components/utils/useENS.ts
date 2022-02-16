@@ -16,7 +16,9 @@ export function useENS(address: string | null | undefined) {
         if (ensName) setEnsName(ensName);
       }
     }
-    resolveENS();
+    resolveENS().catch((error) => {
+      console.error(error);
+    });
   }, [address]);
 
   return { ensName };
