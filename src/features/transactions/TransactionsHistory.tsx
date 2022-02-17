@@ -2,9 +2,10 @@ import { Box, Button, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Asset, Chain } from "@renproject/chains";
 import BigNumber from "bignumber.js";
-import { FunctionComponent, useCallback } from "react";
+import { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -17,13 +18,16 @@ import {
   SmallHorizontalPadder,
 } from "../../components/layout/LayoutHelpers";
 import { CustomLink } from "../../components/links/Links";
+import { InlineSkeleton } from "../../components/progress/ProgressHelpers";
 import { TransactionsHeader } from "../../components/transactions/TransactionsGrid";
 import { Debug } from "../../components/utils/Debug";
+import { paths } from "../../pages/routes";
 import { getChainConfig } from "../../utils/chainsConfig";
 import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
 import { getAssetConfig, getRenAssetConfig } from "../../utils/tokensConfig";
 import { useAssetDecimals, useGatewayMeta } from "../gateway/gatewayHooks";
+import { createGatewayQueryString } from "../gateway/gatewayUtils";
 import {
   useAddressExplorerLink,
   useRenVMExplorerLink,
@@ -60,11 +64,7 @@ export const TransactionsHistory: FunctionComponent = () => {
   }, [dispatch]);
 
   return (
-    <WideDialog
-      open={dialogOpened}
-      onEscapeKeyDown={handleTxHistoryClose}
-      onBackdropClick={handleTxHistoryClose}
-    >
+    <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
       {!connected && (
         <BigTopWrapper>
           <MediumWrapper>
@@ -103,6 +103,14 @@ export const TransactionsHistory: FunctionComponent = () => {
   );
 };
 
+export const decomposeLocalTxParams = (localTx: LocalTxData) => {
+  const asset = localTx.params.asset as Asset;
+  const from = localTx.params.fromTx.chain as Chain;
+  const to = localTx.params.to.chain as Chain;
+
+  return { asset, from, to };
+};
+
 type AddressTransactionsProps = {
   address: string;
 };
@@ -110,14 +118,12 @@ type AddressTransactionsProps = {
 const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   address,
 }) => {
-  const { getLocalTxsForAddress } = useTxsStorage();
+  const { localTxs, removeLocalTx, getLocalTxsForAddress } = useTxsStorage();
 
   const pendingLocalTxs = getLocalTxsForAddress(address, {
     done: false,
   });
   const pendingCount = Object.entries(pendingLocalTxs).length;
-
-  const { localTxs, removeLocalTx } = useTxsStorage();
 
   const handleRemoveTx = useCallback(
     (renVmHash: string) => {
@@ -126,12 +132,21 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
     [address, removeLocalTx]
   );
 
-  const handleResumeTx = useCallback(
-    (renVmHash: string) => {
-      console.error("finish handleResumeTx", address, renVmHash);
-    },
-    [address]
-  );
+  // const handleResumeTx = useCallback(
+  //   (renVmHash: string) => {
+  //     console.error("finish handleResumeTx", address, renVmHash);
+  //     const found = Object.entries(pendingLocalTxs).find(
+  //       ([hash]) => hash === renVmHash
+  //     );
+  //     if (!found) {
+  //       return;
+  //     }
+  //     const localTx: LocalTxData = found[1];
+  //
+  //     console.log("resuming", localTx);
+  //   },
+  //   [address]
+  // );
 
   const renVMTxMap = Object.entries(localTxs)
     .filter(([localAddress]) => localAddress === address)
@@ -149,10 +164,9 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
         return Object.entries(renVMTxHashMap).map(([renVMTxHash, txEntry]) => (
           <RenVMTransactionEntry
             address={address}
-            hash={renVMTxHash}
-            data={txEntry}
+            renVMHash={renVMTxHash}
+            localTxData={txEntry}
             onRemoveTx={handleRemoveTx}
-            onResumeTx={handleResumeTx}
           />
         ));
       })}
@@ -173,24 +187,22 @@ const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
 
 type RenVMTransactionEntryProps = {
   address: string;
-  hash: string;
-  data: LocalTxData;
+  renVMHash: string;
+  localTxData: LocalTxData;
   onRemoveTx: (renVMHash: string) => void;
-  onResumeTx: (renVMHash: string) => void;
 };
 const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   address,
-  hash,
-  data,
+  renVMHash,
+  localTxData,
   onRemoveTx,
-  onResumeTx,
 }) => {
+  const history = useHistory();
+  const dispatch = useDispatch();
   const styles = useRenVMTransactionEntryStyles();
-  const { params, timestamp, done } = data;
-  const asset = params.asset as Asset;
-  const to = params.to.chain as Chain;
-  const from = params.fromTx.chain as Chain;
-  const { isMint, isH2H } = useGatewayMeta(asset, from, to);
+  const { params, timestamp, done } = localTxData;
+  const { asset, from, to } = decomposeLocalTxParams(localTxData);
+  const { isMint, isRelease, isH2H } = useGatewayMeta(asset, from, to);
   const { date, time } = getFormattedDateTime(timestamp);
   const { getRenVmExplorerLink } = useRenVMExplorerLink();
   const typeLabel = isMint ? "Mint" : "Release";
@@ -208,10 +220,10 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const assetConfig = getAssetConfig(asset);
   const renAssetConfig = getRenAssetConfig(asset);
 
-  const renVMUrl = getRenVmExplorerLink(hash);
+  const renVMUrl = getRenVmExplorerLink(renVMHash);
   const fromAddressUrl = getFromAddressLink(address);
   const toAddressUrl = getToAddressLink(address);
-  const toAddress = (params.to as any).address || "";
+  const toAddress = (params.to as any).address || ""; //TODO consider adding to decomposeLocalTxparams
   const amount =
     fromAssetDecimals !== null
       ? new BigNumber(params.fromTx.amount)
@@ -223,13 +235,60 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const ToChainIcon = toChainConfig.Icon;
   const FromChainIcon = fromChainConfig.Icon;
 
+  const [removing, setRemoving] = useState(false);
   const handleRemove = useCallback(() => {
-    onRemoveTx(hash);
-  }, [hash, onRemoveTx]);
+    setRemoving(true);
+    onRemoveTx(renVMHash);
+    setRemoving(false);
+  }, [renVMHash, onRemoveTx]);
 
+  const resumeDisabled = amount === null;
+  const [resuming, setResuming] = useState(false);
   const handleResume = useCallback(() => {
-    onResumeTx(hash);
-  }, [hash, onResumeTx]);
+    setResuming(true);
+    if (amount === null) {
+      setResuming(false);
+      return;
+    }
+    if (isRelease && isH2H) {
+      console.log("TODO: implement");
+    } else if (isRelease) {
+      console.log("standard release");
+      history.push({
+        pathname: paths.RELEASE__GATEWAY_STANDARD,
+        search:
+          "?" +
+          createGatewayQueryString(
+            {
+              asset,
+              from,
+              to,
+              amount,
+              toAddress,
+            },
+            {
+              renVMHash,
+            }
+          ),
+      });
+    } else if (isMint && isH2H) {
+      console.log("TODO: implement");
+    }
+    dispatch(setTxHistoryOpened(false));
+    setResuming(false);
+  }, [
+    dispatch,
+    history,
+    renVMHash,
+    isMint,
+    isRelease,
+    isH2H,
+    amount,
+    asset,
+    from,
+    to,
+    toAddress,
+  ]);
 
   return (
     <div className={styles.root}>
@@ -279,7 +338,8 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
                   {typeLabel}:{" "}
                 </Typography>
                 <Typography variant="body2" component="span">
-                  {amount} {assetName}
+                  {amount !== null ? amount : <InlineSkeleton width={30} />}{" "}
+                  {assetName}
                 </Typography>
               </div>
               <AssetIcon />
@@ -297,8 +357,13 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
                 renVMTxHash:
               </Typography>
               <Typography variant="body2" component="span">
-                <CustomLink underline="hover" href={renVMUrl}>
-                  {trimAddress(hash, 8)}
+                <CustomLink
+                  underline="hover"
+                  href={renVMUrl}
+                  external
+                  externalPointer={false}
+                >
+                  {trimAddress(renVMHash, 8)}
                 </CustomLink>
               </Typography>
             </FullWidthWrapper>
@@ -310,6 +375,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
                 size="small"
                 color="primary"
                 fullWidth
+                disabled={removing}
                 onClick={handleRemove}
               >
                 Delete from Local Storage
@@ -320,6 +386,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
                 size="small"
                 color="primary"
                 fullWidth
+                disabled={resuming || resumeDisabled}
                 onClick={handleResume}
               >
                 Resume Transaction
@@ -328,7 +395,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           </Box>
         </Grid>
       </Grid>
-      <Debug disable it={data} />
+      <Debug disable it={localTxData} />
     </div>
   );
 };

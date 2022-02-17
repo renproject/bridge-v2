@@ -17,6 +17,7 @@ import { Link } from "../../../../components/links/Links";
 import { BridgeModal } from "../../../../components/modals/BridgeModal";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
+import { useNotifications } from "../../../../providers/Notifications";
 import {
   usePaperTitle,
   useSetPaperTitle,
@@ -176,9 +177,11 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
 
   const [paperTitle] = usePaperTitle();
 
-  const { gatewayParams, error: parseError } = parseGatewayQueryString(
-    location.search
-  );
+  const {
+    gatewayParams,
+    additionalParams,
+    error: parseError,
+  } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount, toAddress } = gatewayParams;
   useSyncWalletChain(from);
   const { connected, provider, account } = useCurrentChainWallet();
@@ -188,8 +191,47 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     { provider, autoTeardown: true }
   );
 
-  const { persistLocalTx, getLocalTxsForAddress, removeLocalTx } =
+  const { renVMHash } = additionalParams;
+  const [recovering, setRecovering] = useState(false);
+  const [recoveringError, setRecoveringError] = useState<Error | null>(null);
+  const { persistLocalTx, getLocalTxsForAddress, removeLocalTx, findLocalTx } =
     useTxsStorage();
+
+  const { showNotification } = useNotifications();
+  useEffect(() => {
+    if (renVMHash && account && gateway !== null && !recovering) {
+      setRecovering(true);
+      console.log("recovering tx");
+      const localTx = findLocalTx(account, renVMHash);
+      if (localTx === null) {
+        console.error(`Unable to find tx for ${account}, ${renVMHash}`);
+        return;
+      } else {
+        recoverLocalTx(renVMHash, localTx)
+          .then(() => {
+            showNotification(`Transaction recovered. You can finish it.`, {
+              variant: "success",
+            });
+          })
+          .catch((error) => {
+            console.error(`Recovering error`, error.message);
+            showNotification(`Failed to recover transaction`, {
+              variant: "error",
+            });
+            setRecoveringError(error);
+          });
+      }
+    }
+  }, [
+    showNotification,
+    account,
+    renVMHash,
+    recovering,
+    findLocalTx,
+    gateway,
+    recoverLocalTx,
+  ]);
+
   const handleRemoveLocalTx = useCallback<LocalTxEntryRemover>(
     (renVmHash) => {
       removeLocalTx(account, renVmHash);
@@ -249,12 +291,21 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
           gateway={gateway}
           account={account}
           persistLocalTx={persistLocalTx}
+          recoveringTx={recovering}
         />
       )}
       {Boolean(parseError) && (
         <GeneralErrorDialog
           open={true}
           reason={parseError}
+          alternativeActionText={t("navigation.back-to-start-label")}
+          onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
+        />
+      )}
+      {Boolean(recoveringError) && (
+        <GeneralErrorDialog
+          open={true}
+          error={recoveringError}
           alternativeActionText={t("navigation.back-to-start-label")}
           onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
         />
@@ -268,11 +319,12 @@ type ReleaseStandardProcessorProps = {
   gateway: Gateway;
   account: string;
   persistLocalTx: LocalTxPersistor;
+  recoveringTx?: boolean;
 };
 
 const ReleaseStandardProcessor: FunctionComponent<
   ReleaseStandardProcessorProps
-> = ({ gateway, account, persistLocalTx }) => {
+> = ({ gateway, account, persistLocalTx, recoveringTx }) => {
   console.log("ReleaseStandardProcessor");
   console.log(gateway);
   const { t } = useTranslation();
@@ -320,7 +372,7 @@ const ReleaseStandardProcessor: FunctionComponent<
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: tx?.in || gateway.in,
-    startTrigger: submittingDone,
+    startTrigger: submittingDone || recoveringTx,
     debugLabel: "gatewayIn",
   });
   const {

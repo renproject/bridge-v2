@@ -150,7 +150,7 @@ export const useGateway = (
     async (txHash, localTxEntry) => {
       // tx.done?
       if (renJs !== null && gateway !== null) {
-        console.log("tx: gateway transactions brefore", gateway.transactions);
+        console.log("tx: gateway transactions before", gateway.transactions);
         console.log("tx: recovering", localTxEntry);
 
         const tx = await renJs.gatewayTransaction(localTxEntry.params);

@@ -12,13 +12,6 @@ import { lightTheme } from "./theme/theme";
 import "./i18n/i18n";
 import * as Sentry from "@sentry/react";
 
-// process.env.NODE_ENV !== "production" &&
-//   inspect({
-//     // options
-//     // url: 'https://statecharts.io/inspect', // (default)
-//     iframe: false, // open in new window
-//   });
-
 if (process.env.REACT_APP_SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.REACT_APP_SENTRY_DSN,

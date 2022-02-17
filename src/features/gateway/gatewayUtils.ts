@@ -70,6 +70,7 @@ export const createGateway = async (
 
 export type AdditionalGatewayParams = {
   expiryTime?: number;
+  renVMHash?: string;
 };
 
 export const createGatewayQueryString = (
@@ -82,8 +83,8 @@ export const createGatewayQueryString = (
 export const parseGatewayQueryString = (query: string, checkNonce = false) => {
   const parsed = queryString.parse(query) as unknown as CreateGatewayParams &
     AdditionalGatewayParams;
-  const { expiryTime, ...gatewayParams } = parsed;
-  const additionalParams = { expiryTime };
+  const { expiryTime, renVMHash, ...gatewayParams } = parsed;
+  const additionalParams = { expiryTime, renVMHash };
   let error;
   let nonce = undefined;
   if (checkNonce) {

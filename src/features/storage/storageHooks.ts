@@ -147,12 +147,27 @@ export const useTxsStorage = () => {
     [localTxs]
   );
 
+  const findLocalTx = useCallback(
+    (address: string, renVMHash: string) => {
+      const renVMHashTxsMap = localTxs[address];
+      if (!renVMHashTxsMap) {
+        return null;
+      }
+      const resultEntry = Object.entries(renVMHashTxsMap).find(
+        ([hash]) => hash === renVMHash
+      );
+      return resultEntry ? resultEntry[1] : null;
+    },
+    [localTxs]
+  );
+
   return {
     localTxs,
     // setLocalTxs,
     persistLocalTx,
     removeLocalTx,
     getLocalTxsForAddress,
+    findLocalTx,
     // localTxsLoaded,
     // setLocalTxsLoaded,
     // loadingLocalTxs,

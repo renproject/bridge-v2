@@ -349,7 +349,7 @@ export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
         {visible ? t("common.show-less") : t("common.show-more")}
       </Button>
       <Hide when={!visible}>
-        <Debug force it={{ error }} />
+        <Debug force it={{ error, message: error?.message }} />
       </Hide>
     </div>
   );

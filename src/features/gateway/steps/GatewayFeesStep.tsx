@@ -234,7 +234,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     <>
       {Header}
       <PaperContent bottomPadding>
-        {showBalance && <BalanceInfo balance={balance} asset={asset} />}
+        {showBalance && <BalanceInfo balance={balance} asset={renAsset} />}
         {isMint && (
           <OutlinedTextField
             value={activeAmount}
