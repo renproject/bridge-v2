@@ -1,4 +1,4 @@
-import { Chip, ChipProps, Dialog } from "@material-ui/core";
+import { Chip, ChipProps, Dialog, Typography } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import { FunctionComponent } from "react";
@@ -28,6 +28,22 @@ export const InfoChips = styled("div")({
     marginRight: 6,
   },
 });
+
+const TxEnumerationWrapper = styled("div")({
+  paddingTop: 10,
+  paddingLeft: 38,
+  paddingRight: 38,
+});
+
+export const TxEnumerationHeader: FunctionComponent = ({ children }) => {
+  return (
+    <TxEnumerationWrapper>
+      <Typography variant="body2">
+        <strong>{children}</strong>
+      </Typography>
+    </TxEnumerationWrapper>
+  );
+};
 
 type InfoChipProps = ChipProps & {};
 

@@ -1,17 +1,8 @@
-import { Box, Button } from "@material-ui/core";
 import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
-import { ToggleIconButton } from "../../../../components/buttons/Buttons";
-import { SeparationWrapper } from "../../../../components/catalog/PresentationHelpers";
-import { Link } from "../../../../components/links/Links";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
@@ -21,12 +12,7 @@ import {
 } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
-import { useRenVMExplorerLink } from "../../../network/networkHooks";
-import {
-  LocalTxData,
-  LocalTxPersistor,
-  useTxsStorage,
-} from "../../../storage/storageHooks";
+import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import {
@@ -38,7 +24,6 @@ import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
 import {
   getGatewayParams,
-  TxRecoverer,
   useChainAssetDecimals,
   useGateway,
   useGatewayFeesWithRates,
@@ -57,68 +42,6 @@ import {
   ReleaseStandardBurnStatus,
   ReleaseStandardCompletedStatus,
 } from "./ReleaseStandardStatuses";
-
-type LocalTxEntryRemover = (renVmHash: string) => void;
-
-type LocalTxEntryProps = {
-  renVmHash: string;
-  localTx: LocalTxData;
-  onRecover: TxRecoverer;
-  onRemove: LocalTxEntryRemover;
-};
-
-export const LocalTxEntry: FunctionComponent<LocalTxEntryProps> = ({
-  onRecover,
-  onRemove,
-  renVmHash,
-  localTx,
-}) => {
-  const [recovering, setRecovering] = useState(false);
-  const [removing, setRemoving] = useState(false);
-  const { getRenVmExplorerLink } = useRenVMExplorerLink();
-
-  const handleRecoverTx = useCallback(async () => {
-    setRecovering(true);
-    await onRecover(renVmHash, localTx);
-    setRecovering(false);
-  }, [renVmHash, localTx, onRecover]);
-
-  const handleRemoveTx = useCallback(() => {
-    setRemoving(true);
-    onRemove(renVmHash);
-    setRemoving(false);
-  }, [renVmHash, onRemove]);
-
-  return (
-    <Box mb={3}>
-      <div>
-        <Link href={getRenVmExplorerLink(renVmHash)} external color="primary">
-          {renVmHash}
-        </Link>
-      </div>
-      <SeparationWrapper>
-        <Button
-          size="small"
-          color="primary"
-          variant="contained"
-          disabled={recovering}
-          onClick={handleRecoverTx}
-        >
-          Finish tx
-        </Button>
-        <Button
-          size="small"
-          color="secondary"
-          variant="contained"
-          disabled={removing}
-          onClick={handleRemoveTx}
-        >
-          Remove tx from history
-        </Button>
-      </SeparationWrapper>
-    </Box>
-  );
-};
 
 export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   location,
@@ -186,21 +109,9 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
 
-  const [open, setOpen] = useState(false);
-
-  const handleToggle = useCallback(() => {
-    setOpen((currentOpen) => !currentOpen);
-  }, []);
-
   return (
     <>
-      <GatewayPaperHeader title={paperTitle}>
-        <ToggleIconButton
-          variant="history"
-          onClick={handleToggle}
-          pressed={open}
-        />
-      </GatewayPaperHeader>
+      <GatewayPaperHeader title={paperTitle} />
       {!connected && (
         <PCW>
           <ConnectWalletPaperSection />

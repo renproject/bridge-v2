@@ -42,6 +42,7 @@ import {
   FullWidthWrapper,
   InfoChip,
   InfoChips,
+  TxEnumerationHeader,
   WideDialog,
 } from "./components/TransactionsHistoryHelpers";
 import { $txHistory, setTxHistoryOpened } from "./transactionsSlice";
@@ -125,28 +126,17 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   });
   const pendingCount = Object.entries(pendingLocalTxs).length;
 
+  const completedLocalTxs = getLocalTxsForAddress(address, {
+    done: true,
+  });
+  const completedCount = Object.entries(completedLocalTxs).length;
+
   const handleRemoveTx = useCallback(
     (renVmHash: string) => {
       removeLocalTx(address, renVmHash);
     },
     [address, removeLocalTx]
   );
-
-  // const handleResumeTx = useCallback(
-  //   (renVmHash: string) => {
-  //     console.error("finish handleResumeTx", address, renVmHash);
-  //     const found = Object.entries(pendingLocalTxs).find(
-  //       ([hash]) => hash === renVmHash
-  //     );
-  //     if (!found) {
-  //       return;
-  //     }
-  //     const localTx: LocalTxData = found[1];
-  //
-  //     console.log("resuming", localTx);
-  //   },
-  //   [address]
-  // );
 
   const renVMTxMap = Object.entries(localTxs)
     .filter(([localAddress]) => localAddress === address)
@@ -155,21 +145,27 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   return (
     <>
       {pendingCount > 0 && (
-        <Typography variant="body2">
-          <strong>Pending ({pendingCount})</strong>
-        </Typography>
+        <TxEnumerationHeader>Pending ({pendingCount})</TxEnumerationHeader>
       )}
-      <Debug it={{ pendingLocalTxs }} />
-      {renVMTxMap.map((renVMTxHashMap) => {
-        return Object.entries(renVMTxHashMap).map(([renVMTxHash, txEntry]) => (
-          <RenVMTransactionEntry
-            address={address}
-            renVMHash={renVMTxHash}
-            localTxData={txEntry}
-            onRemoveTx={handleRemoveTx}
-          />
-        ));
-      })}
+      {Object.entries(pendingLocalTxs).map(([renVMHash, localTxData]) => (
+        <RenVMTransactionEntry
+          address={address}
+          renVMHash={renVMHash}
+          localTxData={localTxData}
+          onRemoveTx={handleRemoveTx}
+        />
+      ))}
+      {completedCount > 0 && (
+        <TxEnumerationHeader>Completed ({completedCount})</TxEnumerationHeader>
+      )}
+      {Object.entries(completedLocalTxs).map(([renVMHash, localTxData]) => (
+        <RenVMTransactionEntry
+          address={address}
+          renVMHash={renVMHash}
+          localTxData={localTxData}
+          onRemoveTx={handleRemoveTx}
+        />
+      ))}
       <Debug it={{ renVMTxMap, localTxs }} />
     </>
   );
