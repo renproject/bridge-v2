@@ -149,6 +149,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
       )}
       {Object.entries(pendingLocalTxs).map(([renVMHash, localTxData]) => (
         <RenVMTransactionEntry
+          key={renVMHash}
           address={address}
           renVMHash={renVMHash}
           localTxData={localTxData}
@@ -160,6 +161,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
       )}
       {Object.entries(completedLocalTxs).map(([renVMHash, localTxData]) => (
         <RenVMTransactionEntry
+          key={renVMHash}
           address={address}
           renVMHash={renVMHash}
           localTxData={localTxData}
@@ -248,6 +250,23 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     }
     if (isRelease && isH2H) {
       console.log("TODO: implement");
+      history.push({
+        pathname: paths.RELEASE__GATEWAY_H2H,
+        search:
+          "?" +
+          createGatewayQueryString(
+            {
+              asset,
+              from,
+              to,
+              amount,
+              toAddress,
+            },
+            {
+              renVMHash,
+            }
+          ),
+      });
     } else if (isRelease) {
       console.log("standard release");
       history.push({

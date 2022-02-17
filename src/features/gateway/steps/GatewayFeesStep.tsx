@@ -162,6 +162,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               from,
               to,
               amount,
+              toAddress: "0x2467185Bf951b7a39f0F7D79f952110F945Ce971",
             }),
         });
       } else {

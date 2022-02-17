@@ -147,12 +147,6 @@ export const ReleaseH2HBurnProgressStatus: FunctionComponent<
   burnConfirmations,
   burnTargetConfirmations,
   renVMStatus,
-  onSubmit,
-  onReset,
-  submitting,
-  waiting,
-  done,
-  errorSubmitting,
 }) => {
   const { t } = useTranslation();
   const { asset, from, amount, fromAverageConfirmationTime } =

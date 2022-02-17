@@ -69,7 +69,6 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const [recovering, setRecovering] = useState(false);
   const [recoveringError, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
-
   const { showNotification } = useNotifications();
   useEffect(() => {
     if (renVMHash && account && gateway !== null && !recovering) {
@@ -234,7 +233,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   const outSubmitter = useChainTransactionSubmitter({
     tx: tx?.out,
     autoSubmit:
-      renVMStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.out), // never ready
+      renVMStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.out),
     debugLabel: "out",
   });
   const outTxMeta = useChainTransactionStatusUpdater({
@@ -254,9 +253,9 @@ const ReleaseStandardProcessor: FunctionComponent<
     }
   }, [persistLocalTx, account, releaseTxUrl, tx]);
 
-  useEffect(() => {
-    console.log("tx: persist changed", persistLocalTx);
-  }, [persistLocalTx]);
+  // useEffect(() => {
+  //   console.log("tx: persist changed", persistLocalTx);
+  // }, [persistLocalTx]);
 
   // useEffect(() => {
   //   console.log("tx: tx changed", tx);
