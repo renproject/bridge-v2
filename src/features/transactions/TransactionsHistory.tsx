@@ -151,8 +151,8 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
             address={address}
             hash={renVMTxHash}
             data={txEntry}
-            onRemove={handleRemoveTx}
-            onResume={handleResumeTx}
+            onRemoveTx={handleRemoveTx}
+            onResumeTx={handleResumeTx}
           />
         ));
       })}
@@ -163,6 +163,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
 
 const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
   root: {
+    paddingTop: 15,
     paddingBottom: 20,
     paddingRight: 30,
     paddingLeft: 30,
@@ -174,15 +175,15 @@ type RenVMTransactionEntryProps = {
   address: string;
   hash: string;
   data: LocalTxData;
-  onRemove: (renVMHash: string) => void;
-  onResume: (renVMHash: string) => void;
+  onRemoveTx: (renVMHash: string) => void;
+  onResumeTx: (renVMHash: string) => void;
 };
 const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   address,
   hash,
   data,
-  onRemove,
-  onResume,
+  onRemoveTx,
+  onResumeTx,
 }) => {
   const styles = useRenVMTransactionEntryStyles();
   const { params, timestamp, done } = data;
@@ -223,12 +224,12 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const FromChainIcon = fromChainConfig.Icon;
 
   const handleRemove = useCallback(() => {
-    onRemove(hash);
-  }, [hash, onRemove]);
+    onRemoveTx(hash);
+  }, [hash, onRemoveTx]);
 
   const handleResume = useCallback(() => {
-    onResume(hash);
-  }, [hash, onResume]);
+    onResumeTx(hash);
+  }, [hash, onResumeTx]);
 
   return (
     <div className={styles.root}>

@@ -12,7 +12,7 @@
     "@renproject/chains-bitcoin": "^3.0.0-alpha.9",
     "@renproject/chains-ethereum": "^3.0.0-alpha.9",
     "@renproject/chains-solana": "^3.0.0-alpha.9",
-    "@renproject/fonts": "^1.0.3-rc1",
+    "@renproject/fonts": "^2.0.0-alpha.2",
     "@renproject/icons": "^0.0.1-alpha.3",
     "@renproject/interfaces": "2.5.9",
     "@renproject/multiwallet-binancesmartchain-injected-connector": "2.5.9",

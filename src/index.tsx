@@ -1,9 +1,8 @@
 import { MuiThemeProvider } from "@material-ui/core";
-import "@renproject/fonts/index.css";
+import "@renproject/fonts/fonts.esm.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-// import { inspect } from "@xstate/inspect";
 import "./index.css";
 import { NotificationsProvider } from "./providers/Notifications";
 import { TitleProviders } from "./providers/TitleProviders";
