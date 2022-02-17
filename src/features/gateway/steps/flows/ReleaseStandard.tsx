@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@material-ui/core";
+import { Box, Button } from "@material-ui/core";
 import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -11,10 +11,7 @@ import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { ToggleIconButton } from "../../../../components/buttons/Buttons";
 import { SeparationWrapper } from "../../../../components/catalog/PresentationHelpers";
-import { BigTopWrapper } from "../../../../components/layout/LayoutHelpers";
-import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
-import { BridgeModal } from "../../../../components/modals/BridgeModal";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
@@ -28,7 +25,6 @@ import { useRenVMExplorerLink } from "../../../network/networkHooks";
 import {
   LocalTxData,
   LocalTxPersistor,
-  RenVMHashTxsMap,
   useTxsStorage,
 } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
@@ -124,51 +120,6 @@ export const LocalTxEntry: FunctionComponent<LocalTxEntryProps> = ({
   );
 };
 
-type UnfinishedLocalTxsDialogProps = {
-  localTxs: RenVMHashTxsMap;
-  onRecover: TxRecoverer;
-  onRemove: LocalTxEntryRemover;
-  onClose: () => void;
-  open: boolean;
-};
-
-const UnfinishedLocalTxsDialog: FunctionComponent<
-  UnfinishedLocalTxsDialogProps
-> = ({ localTxs, onRecover, onRemove, open, onClose }) => {
-  // const { t } = useTranslation();
-  const { connected } = useCurrentChainWallet();
-  const handleRecoverTx = useCallback<TxRecoverer>(
-    async (txHash, localTxEntry) => {
-      await onRecover(txHash, localTxEntry);
-      onClose();
-    },
-    [onClose, onRecover]
-  );
-
-  return (
-    <BridgeModal open={open} title="Unfinished transactions" onClose={onClose}>
-      {!connected && (
-        <BigTopWrapper>
-          <Typography align="center">Please connect wallet first</Typography>
-        </BigTopWrapper>
-      )}
-      <PaperContent topPadding bottomPadding paddingVariant="medium">
-        {Object.entries(localTxs).map(([renVmHash, localTx]) => {
-          return (
-            <LocalTxEntry
-              key={renVmHash}
-              renVmHash={renVmHash}
-              localTx={localTx}
-              onRecover={handleRecoverTx}
-              onRemove={onRemove}
-            />
-          );
-        })}
-      </PaperContent>
-    </BridgeModal>
-  );
-};
-
 export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   location,
   history,
@@ -194,8 +145,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const { renVMHash } = additionalParams;
   const [recovering, setRecovering] = useState(false);
   const [recoveringError, setRecoveringError] = useState<Error | null>(null);
-  const { persistLocalTx, getLocalTxsForAddress, removeLocalTx, findLocalTx } =
-    useTxsStorage();
+  const { persistLocalTx, findLocalTx } = useTxsStorage();
 
   const { showNotification } = useNotifications();
   useEffect(() => {
@@ -209,7 +159,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
       } else {
         recoverLocalTx(renVMHash, localTx)
           .then(() => {
-            showNotification(`Transaction recovered. You can finish it.`, {
+            showNotification(`Transaction recovered.`, {
               variant: "success",
             });
           })
@@ -232,30 +182,12 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     recoverLocalTx,
   ]);
 
-  const handleRemoveLocalTx = useCallback<LocalTxEntryRemover>(
-    (renVmHash) => {
-      removeLocalTx(account, renVmHash);
-    },
-    [account, removeLocalTx]
-  );
-
-  const notDoneLocalTxs = getLocalTxsForAddress(account, {
-    done: false,
-    // TODO: crit from
-    asset,
-    to,
-  });
-  // const showUnfinishedTxs = Object.values(unfinishedLocalTxs).length > 0;
-
   console.log("gateway", gateway);
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
 
   const [open, setOpen] = useState(false);
 
-  const handleClose = useCallback(() => {
-    setOpen(false);
-  }, []);
   const handleToggle = useCallback(() => {
     setOpen((currentOpen) => !currentOpen);
   }, []);
@@ -269,13 +201,6 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
           pressed={open}
         />
       </GatewayPaperHeader>
-      <UnfinishedLocalTxsDialog
-        localTxs={notDoneLocalTxs}
-        onRecover={recoverLocalTx}
-        onRemove={handleRemoveLocalTx}
-        onClose={handleClose}
-        open={open}
-      />
       {!connected && (
         <PCW>
           <ConnectWalletPaperSection />
@@ -310,7 +235,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
           onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
         />
       )}
-      <Debug it={{ notDoneLocalTxs, gatewayParams }} />
+      <Debug it={{ gatewayParams }} />
     </>
   );
 };
