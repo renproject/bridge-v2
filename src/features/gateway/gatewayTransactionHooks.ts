@@ -296,6 +296,7 @@ export const useChainTransactionSubmitter = ({
   };
 };
 
+//TODO: take useGateway transactions into consideration
 export const useGatewayFirstTransaction = (gateway: Gateway) => {
   const [transaction, setTransaction] = useState<GatewayTransaction | null>(
     null

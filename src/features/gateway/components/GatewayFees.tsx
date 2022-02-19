@@ -4,7 +4,6 @@ import { Asset, Chain } from "@renproject/chains";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
-import { Link } from "../../../components/links/Links";
 import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { getChainConfig } from "../../../utils/chainsConfig";
@@ -15,9 +14,6 @@ type GatewayFeesProps = ReturnType<typeof useGatewayFeesWithRates> & {
   asset: Asset;
   from: Chain;
   to: Chain;
-  needsApproval?: boolean;
-  approvalTxUrl?: string;
-  approved?: boolean;
 };
 
 export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
@@ -34,9 +30,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
   toChainFeeAmount,
   toChainFeeAsset,
   toChainFeeAmountUsd,
-  needsApproval = false,
-  approvalTxUrl,
-  approved = false,
+  children,
 }) => {
   const { isMint, isH2H, isRelease } = useGatewayMeta(asset, from, to);
   const { t } = useTranslation();
@@ -164,20 +158,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       ) : (
         <FeeSkeleton />
       )}
-      {needsApproval && (
-        <LabelWithValue
-          label={t("fees.assets-contracts-label")}
-          value={
-            approved ? (
-              <Link href={approvalTxUrl} color="primary" external>
-                {t("fees.assets-contracts-approved")}
-              </Link>
-            ) : (
-              t("fees.assets-contracts-need-approval")
-            )
-          }
-        />
-      )}
+      {children}
     </>
   );
 };

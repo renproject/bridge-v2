@@ -53,7 +53,7 @@ import {
   useGatewayFeesWithRates,
   useGatewayMeta,
 } from "../gatewayHooks";
-import { $gateway, useSharedGateway } from "../gatewaySlice";
+import { $gateway } from "../gatewaySlice";
 import {
   createGatewayQueryString,
   getGatewayExpiryTime,
@@ -110,14 +110,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     fees;
   console.log("gateway", gateway);
 
-  const approvalRequired = Boolean(gateway?.inSetup.approval);
-  const [approved, setApproved] = useState(false);
-
-  const [approvalChecked, setApprovalChecked] = useState(false);
-  const handleApprovalChange = useCallback(() => {
-    setApprovalChecked(!approvalChecked);
-  }, [approvalChecked]);
-
   const [ackChecked, setAckChecked] = useState(false);
   const handleAckChange = useCallback(() => {
     setAckChecked(!ackChecked);
@@ -129,12 +121,23 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     ? [toChainFeeAsset]
     : [fromChainFeeAsset];
 
-  const nextEnabled = approvalRequired
-    ? approvalChecked && approved && ackChecked
-    : ackChecked;
+  const nextEnabled = ackChecked;
 
   const handleProceed = useCallback(() => {
-    if (isMint) {
+    if (isMint && isH2H) {
+      console.log("h2h mint");
+      history.push({
+        pathname: paths.MINT__GATEWAY_H2H,
+        search:
+          "?" +
+          createGatewayQueryString({
+            asset,
+            from,
+            to,
+            amount,
+          }),
+      });
+    } else if (isMint) {
       console.log("standard mint");
       history.push({
         pathname: paths.MINT__GATEWAY_STANDARD,
@@ -150,36 +153,33 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             { expiryTime: getGatewayExpiryTime() }
           ),
       });
-    } else if (isRelease) {
-      if (isH2H) {
-        console.log("h2h release");
-        history.push({
-          pathname: paths.RELEASE__GATEWAY_H2H,
-          search:
-            "?" +
-            createGatewayQueryString({
-              asset,
-              from,
-              to,
-              amount,
-              toAddress: "0x2467185Bf951b7a39f0F7D79f952110F945Ce971",
-            }),
-        });
-      } else {
-        console.log("standard release");
-        history.push({
-          pathname: paths.RELEASE__GATEWAY_STANDARD,
-          search:
-            "?" +
-            createGatewayQueryString({
-              asset,
-              from,
-              to,
-              amount,
-              toAddress,
-            }),
-        });
-      }
+    } else if (isRelease && isH2H) {
+      console.log("h2h release");
+      history.push({
+        pathname: paths.RELEASE__GATEWAY_H2H,
+        search:
+          "?" +
+          createGatewayQueryString({
+            asset,
+            from,
+            to,
+            amount,
+          }),
+      });
+    } else {
+      console.log("standard release");
+      history.push({
+        pathname: paths.RELEASE__GATEWAY_STANDARD,
+        search:
+          "?" +
+          createGatewayQueryString({
+            asset,
+            from,
+            to,
+            amount,
+            toAddress,
+          }),
+      });
     }
   }, [
     history,
@@ -193,17 +193,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     amount,
     // gateway,
   ]);
-
-  const [, setSharedGateway] = useSharedGateway();
-  const handleApproved = useCallback(() => {
-    setApproved(true);
-    //store initialized gateway
-    setSharedGateway(gateway);
-    (window as any).gateway = gateway; // TODO: crit remove // productivity hack
-    history.push({
-      pathname: paths.MINT__GATEWAY_H2H,
-    });
-  }, [history, setSharedGateway, gateway]);
 
   const showBalance = isFromContractChain;
 
@@ -281,14 +270,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
         <Typography variant="body2" paragraph>
           {t("fees.fees-label")}
         </Typography>
-        <GatewayFees
-          {...fees}
-          asset={asset}
-          from={from}
-          to={to}
-          needsApproval={approvalRequired}
-          approved={approved}
-        />
+        <GatewayFees {...fees} asset={asset} from={from} to={to} />
         {isRelease && !isH2H && (
           <AddressLabel
             address={toAddress}
@@ -300,7 +282,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             <FormControlLabel
               checked={ackChecked}
               onChange={handleAckChange}
-              disabled={approved}
               control={<Checkbox name="ack" color="primary" />}
               label={
                 <>
@@ -330,34 +311,11 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
               }
             />
           )}
-          {approvalRequired && (
-            <FormControlLabel
-              checked={approvalChecked}
-              onChange={handleApprovalChange}
-              disabled={approved}
-              control={<Checkbox name="approval" color="primary" />}
-              label={
-                <>
-                  <span>{t("fees.approval-label")} </span>
-                  <TooltipWithIcon title={t("fees.approval-tooltip")} />
-                </>
-              }
-            />
-          )}
         </HorizontalPadder>
         <MultipleActionButtonWrapper>
-          {gateway !== null && approvalRequired && !approved && (
-            <TxApprovalButton
-              tx={gateway.inSetup.approval}
-              onDone={handleApproved}
-              disabled={!(approvalChecked && ackChecked)}
-            />
-          )}
-          {approved || !approvalRequired ? (
-            <ActionButton disabled={!nextEnabled} onClick={handleProceed}>
-              {isH2H ? t("gateway.submit-tx-label") : t("common.next-label")}
-            </ActionButton>
-          ) : null}
+          <ActionButton disabled={!nextEnabled} onClick={handleProceed}>
+            {t("common.next-label")}
+          </ActionButton>
         </MultipleActionButtonWrapper>
       </PaperContent>
       <Debug it={{ fees, isH2H, isMint, isRelease }} />

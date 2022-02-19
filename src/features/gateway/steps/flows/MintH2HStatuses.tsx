@@ -72,11 +72,25 @@ type MintH2HLockTransactionStatusProps = {
   Fees: ReactNode | null;
   outputAmount: string | null;
   outputAmountUsd: string | null;
+  onSubmit: () => void;
+  onReload?: () => void;
+  onRetry?: () => void;
+  submitting: boolean;
+  submittingError?: Error | string;
 };
 
 export const MintH2HLockTransactionStatus: FunctionComponent<
   MintH2HLockTransactionStatusProps
-> = ({ gateway, Fees, outputAmount, outputAmountUsd }) => {
+> = ({
+  gateway,
+  Fees,
+  outputAmount,
+  outputAmountUsd,
+  onSubmit,
+  submitting,
+  onRetry,
+  submittingError,
+}) => {
   const { t } = useTranslation();
   const { asset, amount } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
@@ -86,15 +100,6 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
     asset
   );
   const { RenIcon } = assetConfig;
-
-  const {
-    handleSubmit,
-    submitting,
-    done,
-    waiting,
-    errorSubmitting,
-    handleReset,
-  } = useChainTransactionSubmitter({ tx: gateway.in });
 
   return (
     <>
@@ -127,19 +132,16 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
         {Fees}
         <WalletNetworkSwitchMessage />
         <MultipleActionButtonWrapper>
-          <ActionButton
-            onClick={handleSubmit}
-            disabled={submitting || waiting || done}
-          >
-            {submitting || waiting
+          <ActionButton onClick={onSubmit} disabled={submitting}>
+            {submitting
               ? t("gateway.submitting-tx-label")
               : t("gateway.submit-tx-label")}
           </ActionButton>
-          {errorSubmitting && (
+          {submittingError && (
             <SubmitErrorDialog
               open={true}
-              error={errorSubmitting}
-              onAction={handleReset}
+              error={submittingError}
+              onAction={onRetry}
             />
           )}
         </MultipleActionButtonWrapper>

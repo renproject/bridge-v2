@@ -69,6 +69,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount } = gatewayParams;
 
+  // provider fun start
   const [activeChain, setActiveChain] = useState(from);
   const toggleActiveChain = useCallback(() => {
     setActiveChain(activeChain === from ? to : from);
@@ -96,6 +97,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
       alterEthereumBaseChainProviderSigner(chains, provider, true, chain);
     }
   }, [chains, chain, provider, connected]);
+  // provider fun end
 
   const { gateway, transactions, recoverLocalTx } = useGateway(
     {
@@ -169,7 +171,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
 
-  const tx = transactions[0] || null;
+  const transaction = transactions[0] || null;
 
   return (
     <>
@@ -194,7 +196,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
       {fromConnected && gateway !== null && (
         <ReleaseH2HProcessor
           gateway={gateway}
-          tx={tx}
+          transaction={transaction}
           fromAccount={fromAccount}
           persistLocalTx={persistLocalTx}
           recoveringTx={recovering}
@@ -218,7 +220,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
 
 type ReleaseStandardProcessorProps = {
   gateway: Gateway;
-  tx: GatewayTransaction | null;
+  transaction: GatewayTransaction | null;
   persistLocalTx: LocalTxPersistor;
   fromAccount: string;
   recoveringTx?: boolean;
@@ -229,7 +231,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   fromAccount,
   persistLocalTx,
   recoveringTx,
-  tx,
+  transaction,
 }) => {
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
@@ -245,7 +247,10 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
   const { outputAmount, outputAmountUsd } = fees;
 
-  const gatewayInSubmitter = useChainTransactionSubmitter({ tx: gateway.in });
+  const gatewayInSubmitter = useChainTransactionSubmitter({
+    tx: gateway.in,
+    debugLabel: "in",
+  });
 
   const {
     handleSubmit: handleSubmitBurn,
@@ -257,20 +262,20 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     handleReset: handleResetBurn,
   } = gatewayInSubmitter;
 
-  (window as any).tx = tx;
+  (window as any).tx = transaction;
   (window as any).gateway = gateway;
 
   useEffect(() => {
-    if (submittingBurnDone && tx !== null && fromAccount) {
-      persistLocalTx(fromAccount, tx);
+    if (submittingBurnDone && transaction !== null && fromAccount) {
+      persistLocalTx(fromAccount, transaction);
     }
-  }, [persistLocalTx, fromAccount, submittingBurnDone, tx]);
+  }, [persistLocalTx, fromAccount, submittingBurnDone, transaction]);
 
-  (window as any).tx = tx;
+  (window as any).tx = transaction;
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
-    tx: tx?.in || gateway.in,
+    tx: transaction?.in || gateway.in,
     startTrigger: submittingBurnDone || recoveringTx,
-    debugLabel: "gatewayIn",
+    debugLabel: "in",
   });
   const {
     status: burnStatus,
@@ -279,14 +284,15 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   } = gatewayInTxMeta;
 
   const renVmSubmitter = useChainTransactionSubmitter({
-    tx: tx?.renVM,
+    tx: transaction?.renVM,
     autoSubmit:
-      burnStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.renVM),
+      burnStatus === ChainTransactionStatus.Done &&
+      isTxSubmittable(transaction?.renVM),
     debugLabel: "renVM",
   });
 
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
-    tx: tx?.renVM,
+    tx: transaction?.renVM,
     startTrigger: renVmSubmitter.submittingDone, // submitting?
     debugLabel: "renVMUpdater",
   });
@@ -297,13 +303,14 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   );
 
   const outSubmitter = useChainTransactionSubmitter({
-    tx: tx?.out,
+    tx: transaction?.out,
     autoSubmit:
-      renVMStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.out),
+      renVMStatus === ChainTransactionStatus.Done &&
+      isTxSubmittable(transaction?.out),
     debugLabel: "out",
   });
   const outTxMeta = useChainTransactionStatusUpdater({
-    tx: tx?.out,
+    tx: transaction?.out,
     startTrigger: outSubmitter.submittingDone,
     debugLabel: "out",
   });

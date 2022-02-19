@@ -193,7 +193,7 @@ export const useChainInstanceAssetDecimals = (
   const [decimals, setDecimals] = useState<number | null>(
     cachedDecimals || null
   );
-  const [error, setError] = useState<number | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!chainInstance || !asset) {
