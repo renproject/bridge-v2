@@ -37,7 +37,7 @@ import { undefinedForNull } from "../../../utils/propsUtils";
 import { getRemainingTime } from "../../../utils/time";
 import { getAssetConfig } from "../../../utils/tokensConfig";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
-import { useChainAssetDecimals } from "../gatewayHooks";
+import { useChainInstanceAssetDecimals } from "../gatewayHooks";
 import { useChainTransactionStatusUpdater } from "../gatewayTransactionHooks";
 import { depositSorter } from "../mintHooks";
 
@@ -167,7 +167,7 @@ const DepositNavigationButton: FunctionComponent<
   DepositNavigationToggleButton
 > = ({ transaction, gateway, ...rest }) => {
   const { t } = useTranslation();
-  const { decimals: lockAssetDecimals } = useChainAssetDecimals(
+  const { decimals: lockAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.fromChain,
     gateway.params.asset
   );

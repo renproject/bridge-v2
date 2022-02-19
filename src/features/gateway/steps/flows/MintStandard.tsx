@@ -55,7 +55,7 @@ import {
 } from "../../components/MintHelpers";
 import { ResponsiveDepositNavigation } from "../../components/MultipleDepositsHelpers";
 import {
-  useChainAssetDecimals,
+  useChainInstanceAssetDecimals,
   useGateway,
   useGatewayFees,
 } from "../../gatewayHooks";
@@ -211,11 +211,11 @@ export const GatewayDepositProcessor: FunctionComponent<
   });
   const { amount: mintAmount, status: renVMStatus } = renVmTxMeta;
 
-  const { decimals: lockAssetDecimals } = useChainAssetDecimals(
+  const { decimals: lockAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.fromChain,
     gateway.params.asset
   );
-  const { decimals: mintAssetDecimals } = useChainAssetDecimals(
+  const { decimals: mintAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.toChain,
     gateway.params.asset
   );

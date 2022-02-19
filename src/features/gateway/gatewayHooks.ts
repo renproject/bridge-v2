@@ -178,13 +178,13 @@ export const useGateway = (
 export const useAssetDecimals = (chain: Chain, asset: string | Asset) => {
   const chains = useCurrentNetworkChains();
   const instance = chains[chain].chain;
-  return useChainAssetDecimals(instance, asset);
+  return useChainInstanceAssetDecimals(instance, asset);
 };
 
 const decimalsCache = new Map();
 
 // TODO: rename to useChainInstanceAssetDecimals, reuse in useGatewayFees
-export const useChainAssetDecimals = (
+export const useChainInstanceAssetDecimals = (
   chainInstance: ChainCommon | null | undefined,
   asset: string | Asset | null | undefined
 ) => {
@@ -252,7 +252,7 @@ export const useEthereumChainAssetBalance = (
   address?: string
 ) => {
   const instance = chainInstance as ContractChain;
-  const { decimals } = useChainAssetDecimals(instance, asset);
+  const { decimals } = useChainInstanceAssetDecimals(instance, asset);
   const [balance, setBalance] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -288,11 +288,11 @@ export const useGatewayFees = (
   const asset = gateway?.params?.asset as Asset;
   const { isFromContractChain, isToContractChain, isMint, isRelease } =
     useDecomposedGatewayMeta(gateway);
-  const { decimals: fromChainDecimals } = useChainAssetDecimals(
+  const { decimals: fromChainDecimals } = useChainInstanceAssetDecimals(
     gateway?.fromChain,
     asset
   );
-  const { decimals: toChainDecimals } = useChainAssetDecimals(
+  const { decimals: toChainDecimals } = useChainInstanceAssetDecimals(
     gateway?.toChain,
     asset
   );

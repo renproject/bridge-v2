@@ -37,7 +37,7 @@ import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
   getGatewayParams,
-  useChainAssetDecimals,
+  useChainInstanceAssetDecimals,
   useGateway,
   useGatewayFeesWithRates,
 } from "../../gatewayHooks";
@@ -291,7 +291,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     debugLabel: "renVMUpdater",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
-  const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
+  const { decimals: releaseAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.toChain,
     gateway.params.asset
   );

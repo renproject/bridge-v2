@@ -24,7 +24,7 @@ import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
 import {
   getGatewayParams,
-  useChainAssetDecimals,
+  useChainInstanceAssetDecimals,
   useGateway,
   useGatewayFeesWithRates,
 } from "../../gatewayHooks";
@@ -174,7 +174,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   );
   const fees = useGatewayFeesWithRates(gateway, amount);
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
-  const { decimals: releaseAssetDecimals } = useChainAssetDecimals(
+  const { decimals: releaseAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.toChain,
     gateway.params.asset
   );

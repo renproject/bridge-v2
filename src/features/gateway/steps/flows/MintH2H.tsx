@@ -12,7 +12,7 @@ import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
   getGatewayParams,
-  useChainAssetDecimals,
+  useChainInstanceAssetDecimals,
   useGatewayFeesWithRates,
 } from "../../gatewayHooks";
 import { useSharedGateway } from "../../gatewaySlice";
@@ -97,14 +97,25 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   const inSetupMeta = useChainTransactionStatusUpdater({
     tx: Object.values(gateway.inSetup)[0],
+    debugLabel: "inSetup",
   });
   // TODO: solana
-  const gatewayInTxMeta = useChainTransactionStatusUpdater({ tx: gateway.in });
-  const lockTxMeta = useChainTransactionStatusUpdater({ tx: transaction?.in });
+  const gatewayInTxMeta = useChainTransactionStatusUpdater({
+    tx: gateway.in,
+    debugLabel: "gatewayIn",
+  });
+  const lockTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction?.in,
+    debugLabel: "in",
+  });
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
+    debugLabel: "renVM",
   });
-  const mintTxMeta = useChainTransactionStatusUpdater({ tx: transaction?.out });
+  const mintTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction?.out,
+    debugLabel: "out",
+  });
 
   const {
     confirmations: lockConfirmations,
@@ -120,7 +131,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     txUrl: mintTxUrl,
   } = mintTxMeta;
 
-  const { decimals: mintAssetDecimals } = useChainAssetDecimals(
+  const { decimals: mintAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.toChain,
     asset
   );

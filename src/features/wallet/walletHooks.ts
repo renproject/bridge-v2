@@ -8,7 +8,7 @@ import { getRenAssetName } from "../../utils/tokensConfig";
 import { Wallet } from "../../utils/walletsConfig";
 import {
   useChainAssetAddress,
-  useChainAssetDecimals,
+  useChainInstanceAssetDecimals,
 } from "../gateway/gatewayHooks";
 import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
@@ -163,7 +163,7 @@ export const useWalletAssetHelpers = (chain: Chain, asset: Asset | string) => {
 
   const renAssetName = getRenAssetName(asset);
   const chainInstance = chains[chain].chain;
-  const { decimals } = useChainAssetDecimals(chainInstance, asset);
+  const { decimals } = useChainInstanceAssetDecimals(chainInstance, asset);
   const { address } = useChainAssetAddress(
     chainInstance as ContractChain,
     asset
