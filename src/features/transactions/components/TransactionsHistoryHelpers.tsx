@@ -1,6 +1,7 @@
 import { Chip, ChipProps, Dialog, Typography } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles, styled } from "@material-ui/core/styles";
+import classNames from "classnames";
 import { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomSvgIconComponent } from "../../../components/icons/RenIcons";
@@ -45,13 +46,51 @@ export const TxEnumerationHeader: FunctionComponent = ({ children }) => {
   );
 };
 
-type InfoChipProps = ChipProps & {};
+const useInfoChipStyles = makeStyles((theme) => ({
+  success: {
+    backgroundColor: theme.palette.success.light,
+  },
+  error: {
+    backgroundColor: theme.palette.error.light,
+  },
+  warning: {
+    backgroundColor: theme.palette.warning.light,
+  },
+  info: {
+    backgroundColor: theme.palette.success.light,
+  },
+}));
 
-export const InfoChip: FunctionComponent<InfoChipProps> = ({
+type CustomChipProps = Omit<ChipProps, "color"> & {
+  color?:
+    | "primary"
+    | "secondary"
+    | "error"
+    | "warning"
+    | "success"
+    | "info"
+    | "default";
+};
+
+export const CustomChip: FunctionComponent<CustomChipProps> = ({
   size = "small",
+  color = "default",
   ...rest
 }) => {
-  return <Chip size={size} {...rest} />;
+  const styles = useInfoChipStyles();
+  const className = classNames({
+    [styles.success]: color === "success",
+    [styles.error]: color === "error",
+    [styles.warning]: color === "warning",
+    [styles.info]: color === "info",
+  });
+  let resolvedColor = undefined;
+  if (["primary", "secondary", "default"].includes(color)) {
+    resolvedColor = color as ChipProps["color"];
+  }
+  return (
+    <Chip color={resolvedColor} className={className} size={size} {...rest} />
+  );
 };
 
 export const BluePadder = styled(SmallHorizontalPadder)(({ theme }) => ({

@@ -27,7 +27,7 @@ type TablePaginationActionsProps = {
   count: number;
   page: number;
   rowsPerPage: number;
-  onChangePage: (
+  onPageChange: (
     event: React.MouseEvent<HTMLButtonElement>,
     newPage: number
   ) => void;
@@ -36,30 +36,30 @@ type TablePaginationActionsProps = {
 function SimplePaginationActions(props: TablePaginationActionsProps) {
   const styles = useSimplePaginationActionsStyles();
   const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
+  const { count, page, rowsPerPage, onPageChange } = props;
 
   const handleFirstPageButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    onChangePage(event, 0);
+    onPageChange(event, 0);
   };
 
   const handleBackButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    onChangePage(event, page - 1);
+    onPageChange(event, page - 1);
   };
 
   const handleNextButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    onChangePage(event, page + 1);
+    onPageChange(event, page + 1);
   };
 
   const handleLastPageButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
   return (
@@ -123,18 +123,18 @@ const useSimplestPaginationActionsStyles = makeStyles((theme) => ({
 function SimplestPaginationActions(props: TablePaginationActionsProps) {
   const styles = useSimplestPaginationActionsStyles();
   const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
+  const { count, page, rowsPerPage, onPageChange } = props;
 
   const handleBackButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    onChangePage(event, page - 1);
+    onPageChange(event, page - 1);
   };
 
   const handleNextButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    onChangePage(event, page + 1);
+    onPageChange(event, page + 1);
   };
 
   return (

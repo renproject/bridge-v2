@@ -51,7 +51,7 @@ import {
   AddressOnChainLink,
   BluePadder,
   FullWidthWrapper,
-  InfoChip,
+  CustomChip,
   InfoChips,
   TxEnumerationHeader,
   WideDialog,
@@ -71,8 +71,8 @@ const useTransactionHistoryStyles = makeStyles({
   },
   pagination: {
     paddingTop: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: 30,
+    paddingRight: 30,
   },
 });
 
@@ -174,16 +174,21 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   const styles = useTransactionHistoryStyles();
   const { localTxs, removeLocalTx, getLocalTxsForAddress } = useTxsStorage();
 
-  const pendingLocalTxs = getLocalTxsForAddress(address, {
+  const pendingTxsMap = getLocalTxsForAddress(address, {
     done: false,
+    from,
   });
-  const pendingCount = Object.entries(pendingLocalTxs).length;
+  const pendingTxs = Object.entries(pendingTxsMap);
+  const pendingCount = Object.entries(pendingTxs).length;
 
-  const completedLocalTxs = getLocalTxsForAddress(address, {
+  const completedTxsMap = getLocalTxsForAddress(address, {
     done: true,
     from,
   });
-  const completedCount = Object.entries(completedLocalTxs).length;
+  const completedTxs = Object.entries(completedTxsMap);
+  const completedCount = completedTxs.length;
+
+  const allTxs = [...pendingTxs, ...completedTxs];
 
   const handleRemoveTx = useCallback(
     (renVmHash: string) => {
@@ -206,8 +211,8 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
 
   const rowsPerPage = 4;
   const totalCount = pendingCount + completedCount;
-  const startIndex = page;
-  const endIndex = page + rowsPerPage;
+  const startIndex = page * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
   return (
     <>
       <div>
@@ -219,49 +224,28 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
           )}
           {completedCount > 0 && <span>Completed ({completedCount}) </span>}
         </TxEnumerationHeader>
-
-        {Object.entries(pendingLocalTxs).map(
-          ([renVMHash, localTxData], index) => {
-            const isInRange = index >= startIndex && index < endIndex;
-            if (isInRange) {
-              return (
-                <RenVMTransactionEntry
-                  key={renVMHash}
-                  address={address}
-                  renVMHash={renVMHash}
-                  localTxData={localTxData}
-                  onRemoveTx={handleRemoveTx}
-                />
-              );
-            }
-            return null;
+        {allTxs.map(([renVMHash, localTxData], index) => {
+          const isInRange = index >= startIndex && index < endIndex;
+          if (isInRange) {
+            return (
+              <RenVMTransactionEntry
+                key={renVMHash}
+                address={address}
+                renVMHash={renVMHash}
+                localTxData={localTxData}
+                onRemoveTx={handleRemoveTx}
+              />
+            );
           }
-        )}
-        {Object.entries(completedLocalTxs).map(
-          ([renVMHash, localTxData], index) => {
-            const totalIndex = index + Math.min(pendingCount, rowsPerPage);
-            const isInRange = totalIndex >= startIndex && totalIndex < endIndex;
-            if (isInRange) {
-              return (
-                <RenVMTransactionEntry
-                  key={renVMHash}
-                  address={address}
-                  renVMHash={renVMHash}
-                  localTxData={localTxData}
-                  onRemoveTx={handleRemoveTx}
-                />
-              );
-            }
-            return null;
-          }
-        )}
+          return null;
+        })}
       </div>
       <div className={styles.pagination}>
         <SimplePagination
           count={totalCount}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={handleChangePage}
+          onPageChange={handleChangePage}
         />
       </div>
       <Debug it={{ page, renVMTxMap, localTxs }} />
@@ -404,9 +388,14 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     <div className={styles.root}>
       <Box mb={1}>
         <InfoChips>
-          <InfoChip label={date} />
-          <InfoChip label={time} />
-          <InfoChip label={fullTypeLabel} />
+          <CustomChip label={date} />
+          <CustomChip label={time} />
+          <CustomChip label={fullTypeLabel} />
+          {done ? (
+            <CustomChip size="small" color="success" label="Finished" />
+          ) : (
+            <CustomChip size="small" color="primary" label="Pending" />
+          )}
         </InfoChips>
       </Box>
       <Grid container spacing={2}>

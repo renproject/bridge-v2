@@ -69,9 +69,8 @@ export const overrides = (palette: Palette): Overrides => {
     },
     MuiChip: {
       root: {
-        paddingTop: 3, // TODO: fix after investigation font hoisting issue
         backgroundColor: "#F1F1F6",
-        borderRadius: 4,
+        borderRadius: 8,
         height: 22,
       },
       sizeSmall: {
