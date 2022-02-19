@@ -69,7 +69,13 @@ const useTransactionHistoryStyles = makeStyles({
   dropdown: {
     marginRight: 10,
   },
+  pagination: {
+    paddingTop: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
 });
+
 export const TransactionsHistory: FunctionComponent = () => {
   const styles = useTransactionHistoryStyles();
   const { t } = useTranslation();
@@ -165,6 +171,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   address,
   from,
 }) => {
+  const styles = useTransactionHistoryStyles();
   const { localTxs, removeLocalTx, getLocalTxsForAddress } = useTxsStorage();
 
   const pendingLocalTxs = getLocalTxsForAddress(address, {
@@ -198,43 +205,66 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   }, [address, from]);
 
   const rowsPerPage = 4;
+  const totalCount = pendingCount + completedCount;
+  const startIndex = page;
+  const endIndex = page + rowsPerPage;
   return (
     <>
       <div>
-        {pendingCount > 0 && (
-          <TxEnumerationHeader>Pending ({pendingCount})</TxEnumerationHeader>
+        <TxEnumerationHeader>
+          {pendingCount > 0 && (
+            <span>
+              Pending ({pendingCount}){completedCount > 0 && <span> | </span>}
+            </span>
+          )}
+          {completedCount > 0 && <span>Completed ({completedCount}) </span>}
+        </TxEnumerationHeader>
+
+        {Object.entries(pendingLocalTxs).map(
+          ([renVMHash, localTxData], index) => {
+            const isInRange = index >= startIndex && index < endIndex;
+            if (isInRange) {
+              return (
+                <RenVMTransactionEntry
+                  key={renVMHash}
+                  address={address}
+                  renVMHash={renVMHash}
+                  localTxData={localTxData}
+                  onRemoveTx={handleRemoveTx}
+                />
+              );
+            }
+            return null;
+          }
         )}
-        {Object.entries(pendingLocalTxs).map(([renVMHash, localTxData]) => (
-          <RenVMTransactionEntry
-            key={renVMHash}
-            address={address}
-            renVMHash={renVMHash}
-            localTxData={localTxData}
-            onRemoveTx={handleRemoveTx}
-          />
-        ))}
-        {completedCount > 0 && (
-          <TxEnumerationHeader>
-            Completed ({completedCount})
-          </TxEnumerationHeader>
+        {Object.entries(completedLocalTxs).map(
+          ([renVMHash, localTxData], index) => {
+            const totalIndex = index + Math.min(pendingCount, rowsPerPage);
+            const isInRange = totalIndex >= startIndex && totalIndex < endIndex;
+            if (isInRange) {
+              return (
+                <RenVMTransactionEntry
+                  key={renVMHash}
+                  address={address}
+                  renVMHash={renVMHash}
+                  localTxData={localTxData}
+                  onRemoveTx={handleRemoveTx}
+                />
+              );
+            }
+            return null;
+          }
         )}
-        {Object.entries(completedLocalTxs).map(([renVMHash, localTxData]) => (
-          <RenVMTransactionEntry
-            key={renVMHash}
-            address={address}
-            renVMHash={renVMHash}
-            localTxData={localTxData}
-            onRemoveTx={handleRemoveTx}
-          />
-        ))}
       </div>
-      <SimplePagination
-        count={rowsPerPage * 2}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-      />
-      <Debug it={{ renVMTxMap, localTxs }} />
+      <div className={styles.pagination}>
+        <SimplePagination
+          count={totalCount}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onChangePage={handleChangePage}
+        />
+      </div>
+      <Debug it={{ page, renVMTxMap, localTxs }} />
     </>
   );
 };
@@ -248,7 +278,6 @@ const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
 }));
-
 type RenVMTransactionEntryProps = {
   address: string;
   renVMHash: string;
@@ -426,6 +455,18 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
               <AssetIcon />
             </FullWidthWrapper>
           </SmallHorizontalPadder>
+          <Box mt={2}>
+            <Button
+              variant="outlined"
+              size="small"
+              color={done ? "primary" : "secondary"}
+              fullWidth
+              disabled={removing}
+              onClick={handleRemove}
+            >
+              Delete from Local Storage
+            </Button>
+          </Box>
         </Grid>
         <Grid item sm={12} md={6}>
           <SmallHorizontalPadder>
@@ -450,29 +491,16 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
             </FullWidthWrapper>
           </SmallHorizontalPadder>
           <Box mt={2}>
-            {done ? (
-              <Button
-                variant="outlined"
-                size="small"
-                color="primary"
-                fullWidth
-                disabled={removing}
-                onClick={handleRemove}
-              >
-                Delete from Local Storage
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                size="small"
-                color="primary"
-                fullWidth
-                disabled={resuming || resumeDisabled}
-                onClick={handleResume}
-              >
-                Resume Transaction
-              </Button>
-            )}
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              fullWidth
+              disabled={resuming || resumeDisabled}
+              onClick={handleResume}
+            >
+              {done ? "View details" : "Resume Transaction"}
+            </Button>
           </Box>
         </Grid>
       </Grid>

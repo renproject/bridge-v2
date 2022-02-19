@@ -194,6 +194,7 @@ export const useChainAssetDecimals = (
       setDecimals(null);
       return;
     }
+    //TODO: use memoizer
     const getDecimals = async () => {
       return chainInstance.assetDecimals(asset);
     };
