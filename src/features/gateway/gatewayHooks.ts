@@ -43,6 +43,7 @@ type UseGatewayCreateParams = {
 type UseGatewayAdditionalParams = {
   provider: any;
   autoTeardown?: boolean;
+  autoProviderAlteration?: boolean;
   initialGateway?: Gateway | null;
 };
 
@@ -57,6 +58,7 @@ export const useGateway = (
     provider,
     autoTeardown = false,
     initialGateway = null,
+    autoProviderAlteration = true,
   }: UseGatewayAdditionalParams
 ) => {
   const { network } = useSelector($network);
@@ -77,12 +79,16 @@ export const useGateway = (
       return [...txs, newTx];
     });
   }, []);
+  const [providerAltered, setProviderAltered] = useState(false);
 
   // set up renjs with signers
   useEffect(() => {
     console.log("gateway useEffect renJs and provider");
     const initProvider = async () => {
-      alterEthereumBaseChainProviderSigner(chains, provider);
+      if (autoProviderAlteration || !providerAltered) {
+        alterEthereumBaseChainProviderSigner(chains, provider);
+        setProviderAltered(true);
+      }
       const renJs = new RenJS(network, {
         networkDelay: 3000,
         logLevel: LogLevel.Debug,
@@ -99,7 +105,7 @@ export const useGateway = (
         console.error(error);
         setError(error);
       });
-  }, [network, chains, provider]);
+  }, [network, chains, provider, autoProviderAlteration, providerAltered]);
 
   // initialize gateway
   useEffect(() => {

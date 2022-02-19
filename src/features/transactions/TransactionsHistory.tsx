@@ -2,7 +2,12 @@ import { Box, Button, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Asset, Chain } from "@renproject/chains";
 import BigNumber from "bignumber.js";
-import { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -10,6 +15,7 @@ import {
   ActionButton,
   ActionButtonWrapper,
 } from "../../components/buttons/Buttons";
+import { RichDropdown } from "../../components/dropdowns/RichDropdown";
 import {
   BigTopWrapper,
   BigWrapper,
@@ -18,14 +24,19 @@ import {
   SmallHorizontalPadder,
 } from "../../components/layout/LayoutHelpers";
 import { CustomLink } from "../../components/links/Links";
+import { SimplePagination } from "../../components/pagination/SimplePagination";
 import { InlineSkeleton } from "../../components/progress/ProgressHelpers";
 import { TransactionsHeader } from "../../components/transactions/TransactionsGrid";
 import { Debug } from "../../components/utils/Debug";
 import { paths } from "../../pages/routes";
-import { getChainConfig } from "../../utils/chainsConfig";
+import {
+  getChainConfig,
+  supportedEthereumChains,
+} from "../../utils/chainsConfig";
 import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
 import { getAssetConfig, getRenAssetConfig } from "../../utils/tokensConfig";
+import { getChainOptionData } from "../gateway/components/DropdownHelpers";
 import { useAssetDecimals, useGatewayMeta } from "../gateway/gatewayHooks";
 import { createGatewayQueryString } from "../gateway/gatewayUtils";
 import {
@@ -35,7 +46,7 @@ import {
 import { LocalTxData, useTxsStorage } from "../storage/storageHooks";
 import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { useCurrentChainWallet } from "../wallet/walletHooks";
-import { $wallet, setPickerOpened } from "../wallet/walletSlice";
+import { $wallet, setChain, setPickerOpened } from "../wallet/walletSlice";
 import {
   AddressOnChainLink,
   BluePadder,
@@ -47,7 +58,20 @@ import {
 } from "./components/TransactionsHistoryHelpers";
 import { $txHistory, setTxHistoryOpened } from "./transactionsSlice";
 
+const useTransactionHistoryStyles = makeStyles({
+  title: {
+    display: "flex",
+    alignItems: "center",
+  },
+  intro: {
+    marginRight: 10,
+  },
+  dropdown: {
+    marginRight: 10,
+  },
+});
 export const TransactionsHistory: FunctionComponent = () => {
+  const styles = useTransactionHistoryStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { dialogOpened } = useSelector($txHistory);
@@ -64,8 +88,38 @@ export const TransactionsHistory: FunctionComponent = () => {
     dispatch(setPickerOpened(true));
   }, [dispatch]);
 
+  const handleChainChange = useCallback(
+    (event) => {
+      dispatch(setChain(event.target.value));
+    },
+    [dispatch]
+  );
+
   return (
     <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
+      {
+        <>
+          <TransactionsHeader
+            title={
+              <div className={styles.title}>
+                <span className={styles.intro}>Tx history for</span>
+                <RichDropdown
+                  className={styles.dropdown}
+                  condensed
+                  label={t("common.chain-label")}
+                  supplementalLabel={t("common.blockchain-label")}
+                  getOptionData={getChainOptionData}
+                  options={supportedEthereumChains}
+                  value={chain}
+                  onChange={handleChainChange}
+                  multipleNames={false}
+                />
+                {Boolean(account) && <span>{trimAddress(account, 8)}</span>}
+              </div>
+            }
+          />
+        </>
+      }
       {!connected && (
         <BigTopWrapper>
           <MediumWrapper>
@@ -89,17 +143,7 @@ export const TransactionsHistory: FunctionComponent = () => {
           </BigWrapper>
         </BigTopWrapper>
       )}
-      {connected && (
-        <>
-          <TransactionsHeader
-            title={t("history.header", {
-              address: trimAddress(account, 16),
-              chain: chainConfig.fullName,
-            })}
-          />
-          <AddressTransactions address={account} />
-        </>
-      )}
+      {connected && <AddressTransactions address={account} from={chain} />}
     </WideDialog>
   );
 };
@@ -114,10 +158,12 @@ export const decomposeLocalTxParams = (localTx: LocalTxData) => {
 
 type AddressTransactionsProps = {
   address: string;
+  from?: Chain | string;
 };
 
 const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   address,
+  from,
 }) => {
   const { localTxs, removeLocalTx, getLocalTxsForAddress } = useTxsStorage();
 
@@ -128,6 +174,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
 
   const completedLocalTxs = getLocalTxsForAddress(address, {
     done: true,
+    from,
   });
   const completedCount = Object.entries(completedLocalTxs).length;
 
@@ -142,32 +189,51 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
     .filter(([localAddress]) => localAddress === address)
     .map(([localAddress, txHashMap]) => txHashMap);
 
+  const [page, setPage] = useState(1);
+  const handleChangePage = useCallback((event: unknown, newPage: number) => {
+    setPage(newPage);
+  }, []);
+  useEffect(() => {
+    setPage(0);
+  }, [address, from]);
+
+  const rowsPerPage = 4;
   return (
     <>
-      {pendingCount > 0 && (
-        <TxEnumerationHeader>Pending ({pendingCount})</TxEnumerationHeader>
-      )}
-      {Object.entries(pendingLocalTxs).map(([renVMHash, localTxData]) => (
-        <RenVMTransactionEntry
-          key={renVMHash}
-          address={address}
-          renVMHash={renVMHash}
-          localTxData={localTxData}
-          onRemoveTx={handleRemoveTx}
-        />
-      ))}
-      {completedCount > 0 && (
-        <TxEnumerationHeader>Completed ({completedCount})</TxEnumerationHeader>
-      )}
-      {Object.entries(completedLocalTxs).map(([renVMHash, localTxData]) => (
-        <RenVMTransactionEntry
-          key={renVMHash}
-          address={address}
-          renVMHash={renVMHash}
-          localTxData={localTxData}
-          onRemoveTx={handleRemoveTx}
-        />
-      ))}
+      <div>
+        {pendingCount > 0 && (
+          <TxEnumerationHeader>Pending ({pendingCount})</TxEnumerationHeader>
+        )}
+        {Object.entries(pendingLocalTxs).map(([renVMHash, localTxData]) => (
+          <RenVMTransactionEntry
+            key={renVMHash}
+            address={address}
+            renVMHash={renVMHash}
+            localTxData={localTxData}
+            onRemoveTx={handleRemoveTx}
+          />
+        ))}
+        {completedCount > 0 && (
+          <TxEnumerationHeader>
+            Completed ({completedCount})
+          </TxEnumerationHeader>
+        )}
+        {Object.entries(completedLocalTxs).map(([renVMHash, localTxData]) => (
+          <RenVMTransactionEntry
+            key={renVMHash}
+            address={address}
+            renVMHash={renVMHash}
+            localTxData={localTxData}
+            onRemoveTx={handleRemoveTx}
+          />
+        ))}
+      </div>
+      <SimplePagination
+        count={rowsPerPage * 2}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+      />
       <Debug it={{ renVMTxMap, localTxs }} />
     </>
   );

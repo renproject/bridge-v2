@@ -1,6 +1,6 @@
 import { styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 import { TransactionStatusType } from "../utils/types";
 
 type TransactionType = "mint" | "release";
@@ -44,7 +44,7 @@ export const TransactionsContent = styled("div")(({ theme }) => ({
 }));
 
 type TransactionsHeaderProps = {
-  title?: string;
+  title?: string | ReactNode;
 };
 
 export const TransactionsHeader: FunctionComponent<TransactionsHeaderProps> = ({

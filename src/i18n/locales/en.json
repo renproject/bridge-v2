@@ -201,7 +201,7 @@
   "fees.label": "Fees",
   "history.action-required-label": "Action required!",
   "history.gateway-expired-label": "Gateway expired",
-  "history.header": "Viewing history for {{address}} on {{chain}}",
+  "history.header": "Transaction history from",
   "history.header-separator": "to",
   "history.mint-entry-confirmations": "{{confirmations}}/{{targetConfirmations}} Confirmations",
   "history.mint-entry-label": "Mint {{amount}} {{currency}} on {{chain}}",

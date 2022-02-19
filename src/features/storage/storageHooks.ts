@@ -118,7 +118,13 @@ export const useTxsStorage = () => {
   const getLocalTxsForAddress = useCallback(
     (
       address: string,
-      { unfinished = false, done, asset, to }: GetLocalTxsForAddressFilterParams
+      {
+        unfinished = false,
+        done,
+        asset,
+        to,
+        from,
+      }: GetLocalTxsForAddressFilterParams
     ) => {
       const renVMHashTxsMap = localTxs[address];
       if (!renVMHashTxsMap) {
@@ -136,12 +142,16 @@ export const useTxsStorage = () => {
           ([hash, tx]) => tx.params.asset === asset
         );
       }
+      if (from) {
+        resultEntries = resultEntries.filter(
+          ([hash, tx]) => tx.params.fromTx.chain === from
+        );
+      }
       if (to) {
         resultEntries = resultEntries.filter(
           ([hash, tx]) => tx.params.to.chain === to
         );
       }
-      // TODO crit: add asset, chain filters
       return Object.fromEntries(resultEntries);
     },
     [localTxs]

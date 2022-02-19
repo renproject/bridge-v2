@@ -1,6 +1,13 @@
-import { Gateway } from "@renproject/ren";
+import { Button } from "@material-ui/core";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useDebugValue,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { RouteComponentProps } from "react-router";
@@ -13,11 +20,18 @@ import {
   useSetPaperTitle,
 } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { trimAddress } from "../../../../utils/strings";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
+import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
-import { useCurrentChainWallet, useWallet } from "../../../wallet/walletHooks";
+import {
+  useCurrentChain,
+  useCurrentChainWallet,
+  useWallet,
+} from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
@@ -31,7 +45,6 @@ import {
   isTxSubmittable,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
-  useGatewayFirstTransaction,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
@@ -54,34 +67,74 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
     additionalParams,
     error: parseError,
   } = parseGatewayQueryString(location.search);
-  const { asset, from, to, amount, toAddress } = gatewayParams;
-  useEffect(() => {
-    // initial chain
-    dispatch(setChain(from));
-  }, [dispatch, from]);
-  const { account: fromAccount, connected } = useWallet(from);
+  const { asset, from, to, amount } = gatewayParams;
 
-  const { provider } = useCurrentChainWallet();
+  const [activeChain, setActiveChain] = useState(from);
+  const toggleActiveChain = useCallback(() => {
+    setActiveChain(activeChain === from ? to : from);
+  }, [activeChain, from, to]);
+  useEffect(() => {
+    dispatch(setChain(activeChain));
+  }, [dispatch, activeChain]);
+
+  const { account: fromAccount, connected: fromConnected } = useWallet(from);
+  const { account: toAccount, connected: toConnected } = useWallet(to);
+
+  const { provider, connected } = useCurrentChainWallet();
+
+  const chains = useCurrentNetworkChains();
+  const chain = useCurrentChain();
+  useEffect(() => {
+    if (activeChain !== chain) {
+      dispatch(setChain(activeChain));
+      dispatch(setPickerOpened(true));
+    }
+  }, [dispatch, activeChain, chain]);
+
+  useEffect(() => {
+    if (connected) {
+      alterEthereumBaseChainProviderSigner(chains, provider, true, chain);
+    }
+  }, [chains, chain, provider, connected]);
+
   const { gateway, transactions, recoverLocalTx } = useGateway(
     {
       asset,
       from,
       to,
       amount,
-      toAddress,
     },
-    { provider, autoTeardown: true }
+    { provider, autoTeardown: true, autoProviderAlteration: false }
   );
+
+  useDebugValue(gateway);
+  useDebugValue(transactions);
+
+  useEffect(() => {
+    console.log("changed: provider", provider);
+  }, [provider]);
+
+  useEffect(() => {
+    console.log("changed: gateway", gateway);
+  }, [gateway]);
+
+  useEffect(() => {
+    console.log("changed: transactions", transactions);
+  }, [transactions]);
+
+  useEffect(() => {
+    console.log("changed: gateway.transactions", gateway?.transactions);
+  }, [gateway?.transactions]);
 
   const { renVMHash } = additionalParams;
   const [recovering, setRecovering] = useState(false);
-  const [recoveringError, setRecoveringError] = useState<Error | null>(null);
+  const [, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
   const { showNotification } = useNotifications();
   useEffect(() => {
     if (renVMHash && fromAccount && gateway !== null && !recovering) {
       setRecovering(true);
-      console.log("recovering tx");
+      console.log("recovering tx: " + trimAddress(renVMHash));
       const localTx = findLocalTx(fromAccount, renVMHash);
       if (localTx === null) {
         console.error(`Unable to find tx for ${fromAccount}, ${renVMHash}`);
@@ -89,7 +142,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
       } else {
         recoverLocalTx(renVMHash, localTx)
           .then(() => {
-            showNotification(`Transaction recovered.`, {
+            showNotification(`Transaction ${renVMHash} recovered.`, {
               variant: "success",
             });
           })
@@ -116,6 +169,8 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
 
+  const tx = transactions[0] || null;
+
   return (
     <>
       <GatewayPaperHeader title={paperTitle} />
@@ -130,24 +185,40 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
             }
           />
         )}
-        {!connected && <ConnectWalletPaperSection />}
-        {connected && !gateway && <GatewayLoaderStatus />}
+        {!fromConnected && <ConnectWalletPaperSection />}
+        {fromConnected && !gateway && <GatewayLoaderStatus />}
       </PaperContent>
-      {connected && gateway !== null && (
+      <Button color="primary" onClick={toggleActiveChain}>
+        Switch to {activeChain === from ? to : from}
+      </Button>
+      {fromConnected && gateway !== null && (
         <ReleaseH2HProcessor
           gateway={gateway}
+          tx={tx}
           fromAccount={fromAccount}
           persistLocalTx={persistLocalTx}
           recoveringTx={recovering}
         />
       )}
-      <Debug it={{ renVMHash, fromAccount, gatewayParams }} />
+      <Debug
+        it={{
+          chain,
+          activeChain,
+          fromConnected,
+          fromAccount,
+          toConnected,
+          toAccount,
+          renVMHash,
+          gatewayParams,
+        }}
+      />
     </>
   );
 };
 
 type ReleaseStandardProcessorProps = {
   gateway: Gateway;
+  tx: GatewayTransaction | null;
   persistLocalTx: LocalTxPersistor;
   fromAccount: string;
   recoveringTx?: boolean;
@@ -158,9 +229,9 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   fromAccount,
   persistLocalTx,
   recoveringTx,
+  tx,
 }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const { asset, from, to, amount } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
   const burnChainConfig = getChainConfig(from);
@@ -186,7 +257,8 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     handleReset: handleResetBurn,
   } = gatewayInSubmitter;
 
-  const tx = useGatewayFirstTransaction(gateway);
+  (window as any).tx = tx;
+  (window as any).gateway = gateway;
 
   useEffect(() => {
     if (submittingBurnDone && tx !== null && fromAccount) {
@@ -206,29 +278,16 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     target: burnTargetConfirmations,
   } = gatewayInTxMeta;
 
-  const activeChain = burnStatus === ChainTransactionStatus.Done ? to : from;
-  const { connected: fromConnected } = useWallet(from);
-  const { connected: toConnected, account: toAccount } = useWallet(to);
-
-  useEffect(() => {
-    if (activeChain !== from) {
-      dispatch(setChain(activeChain));
-      dispatch(setPickerOpened(true));
-    }
-  }, [dispatch, activeChain, from]);
-
   const renVmSubmitter = useChainTransactionSubmitter({
     tx: tx?.renVM,
     autoSubmit:
-      burnStatus === ChainTransactionStatus.Done &&
-      isTxSubmittable(tx?.renVM) &&
-      toConnected,
+      burnStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.renVM),
     debugLabel: "renVM",
   });
 
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: tx?.renVM,
-    startTrigger: renVmSubmitter.submittingDone,
+    startTrigger: renVmSubmitter.submittingDone, // submitting?
     debugLabel: "renVMUpdater",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
@@ -239,9 +298,15 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const outSubmitter = useChainTransactionSubmitter({
     tx: tx?.out,
-    autoSubmit: renVMStatus === ChainTransactionStatus.Done,
+    autoSubmit:
+      renVMStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.out),
+    debugLabel: "out",
   });
-  const outTxMeta = useChainTransactionStatusUpdater({ tx: tx?.out });
+  const outTxMeta = useChainTransactionStatusUpdater({
+    tx: tx?.out,
+    startTrigger: outSubmitter.submittingDone,
+    debugLabel: "out",
+  });
   const { txUrl: releaseTxUrl } = outTxMeta;
 
   let Content = null;
@@ -289,11 +354,6 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
       {Content}
       <Debug
         it={{
-          activeChain,
-          fromConnected,
-          toConnected,
-          fromAccount,
-          toAccount,
           releaseAmount,
           releaseAssetDecimals,
           gatewayInSubmitter,

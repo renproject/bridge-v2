@@ -74,6 +74,10 @@ export const useWallet: UseWallet = (chain) => {
     deactivateConnector,
   } as WalletData;
 };
+export const useCurrentChain = () => {
+  const { chain } = useSelector($wallet);
+  return chain;
+};
 
 export const useCurrentChainWallet = () => {
   const { chain } = useSelector($wallet);

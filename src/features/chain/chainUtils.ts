@@ -127,37 +127,43 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
   } as unknown as ChainInstanceMap;
 };
 
-// TODO: narrow alteration to only selected chain
 export const alterEthereumBaseChainProviderSigner = (
   chains: ChainInstanceMap,
   provider: any,
-  alterProvider?: boolean
+  alterProvider?: boolean,
+  alteredChain?: Chain
 ) => {
-  console.log("provider", provider);
+  console.log("altering provider signer", provider);
   const ethersProvider = new ethers.providers.Web3Provider(provider);
   const signer = ethersProvider.getSigner();
   if (alterProvider) {
-    alterEthereumBaseChainProvider(chains, provider);
+    console.log("altering provider");
+    alterEthereumBaseChainProvider(chains, provider, alteredChain);
   }
   console.log("altering signer", signer);
-  alterEthereumBaseChainSigner(chains, signer);
+  alterEthereumBaseChainSigner(chains, signer, alteredChain);
 };
 
 export const alterEthereumBaseChainSigner = (
   chains: ChainInstanceMap,
-  signer: any
+  signer: any,
+  alteredChain?: Chain
 ) => {
-  supportedEthereumChains.forEach((chainName) => {
+  const alteredChains = alteredChain
+    ? supportedEthereumChains.filter((chainName) => chainName === alteredChain)
+    : supportedEthereumChains;
+  alteredChains.forEach((chainName) => {
     if (
       chains[chainName]?.chain &&
       (chains[chainName].chain as EthereumBaseChain).withSigner
     ) {
       (chains[chainName].chain as EthereumBaseChain).withSigner!(signer);
+      console.log("altered signer for", alteredChains.join(", "));
     } else {
       throw new Error(
-        `Unable to find chain ${chainName} in chains ${Object.keys(chains).join(
-          ", "
-        )}`
+        `Altering signer failed: Unable to find chain ${chainName} in chains ${Object.keys(
+          chains
+        ).join(", ")}`
       );
     }
   });
@@ -165,19 +171,24 @@ export const alterEthereumBaseChainSigner = (
 
 export const alterEthereumBaseChainProvider = (
   chains: ChainInstanceMap,
-  provider: any
+  provider: any,
+  alteredChain?: Chain
 ) => {
-  supportedEthereumChains.forEach((chainName) => {
+  const alteredChains = alteredChain
+    ? supportedEthereumChains.filter((chainName) => chainName === alteredChain)
+    : supportedEthereumChains;
+  alteredChains.forEach((chainName) => {
     if (
       chains[chainName]?.chain &&
       (chains[chainName].chain as EthereumBaseChain).withProvider
     ) {
       (chains[chainName].chain as EthereumBaseChain).withProvider!(provider);
+      console.log("altered provider for", alteredChains.join(", "));
     } else {
       throw new Error(
-        `Unable to find chain ${chainName} in chains ${Object.keys(chains).join(
-          ", "
-        )}`
+        `Altering provider failed. Unable to find chain ${chainName} in chains ${Object.keys(
+          chains
+        ).join(", ")}`
       );
     }
   });
