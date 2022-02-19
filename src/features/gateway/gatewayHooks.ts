@@ -181,12 +181,18 @@ export const useAssetDecimals = (chain: Chain, asset: string | Asset) => {
   return useChainAssetDecimals(instance, asset);
 };
 
+const decimalsCache = new Map();
+
 // TODO: rename to useChainInstanceAssetDecimals, reuse in useGatewayFees
 export const useChainAssetDecimals = (
   chainInstance: ChainCommon | null | undefined,
   asset: string | Asset | null | undefined
 ) => {
-  const [decimals, setDecimals] = useState<number | null>(null);
+  const cacheKey = chainInstance?.chain + "|" + asset;
+  const cachedDecimals = decimalsCache.get(cacheKey);
+  const [decimals, setDecimals] = useState<number | null>(
+    cachedDecimals || null
+  );
   const [error, setError] = useState<number | null>(null);
 
   useEffect(() => {
@@ -194,18 +200,18 @@ export const useChainAssetDecimals = (
       setDecimals(null);
       return;
     }
-    //TODO: use memoizer
     const getDecimals = async () => {
       return chainInstance.assetDecimals(asset);
     };
     getDecimals()
       .then((dec) => {
+        decimalsCache.set(cacheKey, dec);
         setDecimals(dec);
       })
       .catch((err) => {
         setError(err);
       });
-  }, [chainInstance, asset]);
+  }, [chainInstance, asset, cacheKey]);
 
   return { decimals, error };
 };
