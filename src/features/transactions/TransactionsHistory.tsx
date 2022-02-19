@@ -209,7 +209,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
     setPage(0);
   }, [address, from]);
 
-  const rowsPerPage = 4;
+  const rowsPerPage = 3;
   const totalCount = pendingCount + completedCount;
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
