@@ -65,6 +65,7 @@ import {
   UsdNumberFormatText,
 } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
+import { SubmittingProps } from "../shared/SubmissionHelpers";
 import { SwitchWalletDialog } from "../shared/WalletSwitchHelpers";
 
 type MintH2HLockTransactionStatusProps = {
@@ -282,8 +283,9 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   );
 };
 
-type MintH2HMintTransactionProgressStatusProps = {
+type MintH2HMintTransactionProgressStatusProps = SubmittingProps & {
   gateway: Gateway;
+  Fees: ReactNode | null;
   transaction: GatewayTransaction | null;
   renVMStatus: ChainTransactionStatus | null;
   mintStatus: ChainTransactionStatus | null;
@@ -291,13 +293,13 @@ type MintH2HMintTransactionProgressStatusProps = {
   mintTargetConfirmations: number | null;
   outputAmount: string | null;
   outputAmountUsd: string | null;
-  Fees: ReactNode | null;
 };
 
 export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   MintH2HMintTransactionProgressStatusProps
 > = ({
   gateway,
+  Fees,
   transaction,
   renVMStatus,
   mintConfirmations,
@@ -305,21 +307,18 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   mintStatus,
   outputAmount,
   outputAmountUsd,
-  Fees,
+  onSubmit,
+  onReset,
+  submitting,
+  waiting,
+  done,
+  errorSubmitting,
 }) => {
   const { t } = useTranslation();
   const { asset, to, amount } = getGatewayParams(gateway);
   const mintChainConfig = getChainConfig(to);
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
-
-  const renVM = useChainTransactionSubmitter({ tx: transaction?.renVM });
-  const out = useChainTransactionSubmitter({ tx: transaction?.out });
-
-  const handleSubmitBoth = useCallback(async () => {
-    await renVM.handleSubmit();
-    await out.handleSubmit();
-  }, [renVM, out]);
 
   const { RenIcon } = assetConfig;
   const Icon = mintChainConfig.Icon;
@@ -375,34 +374,16 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
       <PaperContent topPadding darker>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
-          <ActionButton
-            onClick={handleSubmitBoth}
-            disabled={
-              out.submitting ||
-              out.waiting ||
-              out.done ||
-              renVM.submitting ||
-              renVM.waiting ||
-              renVM.done ||
-              mintStatus === ChainTransactionStatus.Confirming
-            }
-          >
-            {out.submitting || out.waiting || renVM.submitting || renVM.waiting
+          <ActionButton onClick={onSubmit} disabled={submitting || waiting}>
+            {submitting || waiting
               ? t("gateway.submitting-tx-label")
               : t("gateway.submit-tx-label")}
           </ActionButton>
-          {renVM.errorSubmitting && (
+          {errorSubmitting && (
             <SubmitErrorDialog
               open={true}
-              error={renVM.errorSubmitting}
-              onAction={renVM.handleReset}
-            />
-          )}
-          {out.errorSubmitting && (
-            <SubmitErrorDialog
-              open={true}
-              error={out.errorSubmitting}
-              onAction={out.handleReset}
+              error={errorSubmitting}
+              onAction={onReset}
             />
           )}
         </MultipleActionButtonWrapper>

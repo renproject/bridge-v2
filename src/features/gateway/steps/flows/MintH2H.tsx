@@ -1,14 +1,19 @@
+import { Button } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
+import { MultipleActionButtonWrapper } from "../../../../components/buttons/Buttons";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import { LabelWithValue } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
-import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import {
+  GeneralErrorDialog,
+  SubmitErrorDialog,
+} from "../../../transactions/components/TransactionsHelpers";
 import { useWallet } from "../../../wallet/walletHooks";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
@@ -19,12 +24,12 @@ import {
   useGatewayFeesWithRates,
 } from "../../gatewayHooks";
 import {
+  isTxSubmittable,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
-import { TxApprovalButton } from "../GatewayFeesStep";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   MintH2HCompletedStatus,
@@ -101,11 +106,13 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
 type MintH2HProcessorProps = {
   gateway: Gateway;
   transaction: GatewayTransaction | null;
+  recoveringTx?: boolean;
 };
 
 const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   gateway,
   transaction,
+  recoveringTx,
 }) => {
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
@@ -113,18 +120,29 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   const { outputAmount, outputAmountUsd } = fees;
 
-  const inSetupMeta = useChainTransactionStatusUpdater({
-    tx: Object.values(gateway.inSetup)[0],
-    debugLabel: "inSetup",
+  const inSetupApprovalSubmitter = useChainTransactionSubmitter({
+    tx: gateway.inSetup.approval,
+    debugLabel: "inSetup.approval",
+  });
+  const {
+    handleSubmit: handleSubmitApproval,
+    submitting: submittingApproval,
+    submittingDone: submittingApprovalDone,
+  } = inSetupApprovalSubmitter;
+
+  const inSetupApprovalTxMeta = useChainTransactionStatusUpdater({
+    tx: gateway.inSetup.approval,
+    debugLabel: "inSetup.approval",
+    startTrigger: submittingApprovalDone,
   });
 
+  const { status: approvalStatus, txUrl: approvalUrl } = inSetupApprovalTxMeta;
   // TODO: solana
 
   const gatewayInSubmitter = useChainTransactionSubmitter({
-    tx: transaction?.in || gateway.in,
+    tx: gateway.in,
     debugLabel: "in",
   });
-
   const {
     handleSubmit: handleSubmitLock,
     submitting: submittingLock,
@@ -135,10 +153,10 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   } = gatewayInSubmitter;
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
-    tx: gateway.in,
+    tx: transaction?.in || gateway.in,
     debugLabel: "in",
+    startTrigger: submittingLockDone || recoveringTx,
   });
-
   const {
     confirmations: lockConfirmations,
     target: lockTargetConfirmations,
@@ -146,42 +164,61 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     txUrl: lockTxUrl,
   } = gatewayInTxMeta;
 
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
+  const renVMSubmitter = useChainTransactionSubmitter({
     tx: transaction?.renVM,
+    autoSubmit:
+      lockStatus === ChainTransactionStatus.Done &&
+      isTxSubmittable(transaction?.renVM),
     debugLabel: "renVM",
   });
-  const { status: renVMStatus, amount: mintAmount } = renVmTxMeta;
-
-  const mintTxMeta = useChainTransactionStatusUpdater({
-    tx: transaction?.out,
-    debugLabel: "out",
+  const renVMTxMeta = useRenVMChainTransactionStatusUpdater({
+    tx: transaction?.renVM,
+    startTrigger: renVMSubmitter.submittingDone,
+    debugLabel: "renVM",
   });
 
+  // const handleSubmitBoth = useCallback(async () => {
+  //   await renVMSubmitter.handleSubmit();
+  //   await outSubmitter.handleSubmit();
+  // }, [renVMSubmitter, outSubmitter]);
+
+  const { status: renVMStatus, amount: mintAmount } = renVMTxMeta;
+
+  const outSubmitter = useChainTransactionSubmitter({ tx: transaction?.out });
+  const {
+    handleSubmit: handleSubmitMint,
+    handleReset: handleResetMint,
+    submitting: submittingMint,
+    submittingDone: submittingMintDone,
+    done: doneMint,
+    waiting: waitingMint,
+    errorSubmitting: errorSubmittingMint,
+  } = outSubmitter;
+
+  const outTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction?.out,
+    debugLabel: "out",
+    startTrigger: outSubmitter.submittingDone,
+  });
   const {
     status: mintStatus,
     confirmations: mintConfirmations,
     target: mintTargetConfirmations,
     txUrl: mintTxUrl,
-  } = mintTxMeta;
+  } = outTxMeta;
 
   const { decimals: mintAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.toChain,
     asset
   );
 
-  const handleApproved = useCallback(() => {
-    setApproved(true);
-  }, [gateway]);
-
-  const [approved, setApproved] = useState(false);
-
   const Fees = (
     <GatewayFees asset={asset} from={from} to={to} {...fees}>
       <LabelWithValue
         label={t("fees.assets-contracts-label")}
         value={
-          approved ? (
-            <Link href={"https://todo.url"} color="primary" external>
+          approvalUrl !== null ? (
+            <Link href={approvalUrl} color="primary" external>
               {t("fees.assets-contracts-approved")}
             </Link>
           ) : (
@@ -193,9 +230,11 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   );
 
   let Content = null;
-  if (!approved) {
+  if (approvalStatus !== ChainTransactionStatus.Done) {
     Content = (
-      <TxApprovalButton tx={gateway.inSetup.approval} onDone={handleApproved} />
+      <Button onClick={handleSubmitApproval} disabled={submittingApproval}>
+        Approve
+      </Button>
     );
   } else if (lockStatus === null) {
     Content = (
@@ -233,6 +272,11 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         mintConfirmations={mintConfirmations}
         mintTargetConfirmations={mintTargetConfirmations}
         mintStatus={mintStatus}
+        done={doneMint}
+        onReset={handleResetMint}
+        onSubmit={handleSubmitMint}
+        submitting={submittingMint}
+        waiting={waitingMint}
       />
     );
   } else {
@@ -249,13 +293,24 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   return (
     <>
       {Content}
+      {renVMSubmitter.errorSubmitting && (
+        <SubmitErrorDialog
+          open={true}
+          error={renVMSubmitter.errorSubmitting}
+          onAction={renVMSubmitter.handleReset}
+        />
+      )}
       <Debug
         it={{
           count: gateway.transactions.count(),
-          inSetupMeta,
+          inSetupApprovalSubmitter,
+          inSetupApprovalTxMeta,
+          gatewayInSubmitter,
           gatewayInTxMeta,
-          renVmTxMeta,
-          mintTxMeta,
+          renVMSubmitter,
+          renVMTxMeta,
+          outSubmitter,
+          outTxMeta,
         }}
       />
     </>

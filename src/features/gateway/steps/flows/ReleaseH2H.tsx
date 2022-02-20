@@ -293,8 +293,8 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
-    startTrigger: renVmSubmitter.submittingDone, // submitting?
-    debugLabel: "renVMUpdater",
+    startTrigger: renVmSubmitter.submittingDone,
+    debugLabel: "renVM",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
   const { decimals: releaseAssetDecimals } = useChainInstanceAssetDecimals(
@@ -305,7 +305,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
     autoSubmit:
-      renVMStatus === ChainTransactionStatus.Done &&
+      renVMStatus === ChainTransactionStatus.Done && // TODO: crit check this, shouldn't be automatic
       isTxSubmittable(transaction?.out),
     debugLabel: "out",
   });
