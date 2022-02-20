@@ -151,7 +151,7 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
   );
 };
 
-type MintH2HLockTransactionProgressStatusProps = {
+type MintH2HLockTransactionProgressStatusProps = SubmittingProps & {
   gateway: Gateway;
   transaction: GatewayTransaction | null;
   Fees: ReactNode | null;
@@ -173,6 +173,12 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   lockConfirmations,
   lockTargetConfirmations,
   lockStatus,
+  onSubmit,
+  onReset,
+  submitting,
+  waiting,
+  done,
+  errorSubmitting,
 }) => {
   const { t } = useTranslation();
   const { asset, from, to, amount, fromAverageConfirmationTime } =
@@ -182,16 +188,9 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   const renAsset = getRenAssetName(asset);
   const { RenIcon } = assetConfig;
 
-  const renVM = useChainTransactionSubmitter({ tx: transaction?.renVM });
-  const out = useChainTransactionSubmitter({ tx: transaction?.out });
-
-  const handleSubmitBoth = useCallback(async () => {
-    await renVM.handleSubmit();
-    await out.handleSubmit();
-  }, [out, renVM]);
-
   const Icon = fromChainConfig.Icon;
 
+  // walllet provider fun start
   const { chain } = useSelector($wallet);
   const { connected, provider } = useWallet(to);
   const showSwitchWalletDialog =
@@ -203,6 +202,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
       alterEthereumBaseChainProviderSigner(chains, provider, true);
     }
   }, [chains, provider]);
+  // walllet provider fun end
 
   return (
     <>
@@ -248,33 +248,24 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
           <ActionButton
-            onClick={handleSubmitBoth}
+            onClick={onSubmit}
             disabled={
-              out.submitting ||
-              out.waiting ||
-              out.done ||
-              renVM.submitting ||
-              renVM.waiting ||
-              renVM.done ||
+              submitting ||
+              waiting ||
               lockStatus === ChainTransactionStatus.Confirming
             }
           >
-            {out.submitting || out.waiting || renVM.submitting || renVM.waiting
+            {submitting ||
+            waiting ||
+            lockStatus === ChainTransactionStatus.Confirming
               ? t("gateway.submitting-tx-label")
               : t("gateway.submit-tx-label")}
           </ActionButton>
-          {renVM.errorSubmitting && (
+          {errorSubmitting && (
             <SubmitErrorDialog
               open={true}
-              error={renVM.errorSubmitting}
-              onAction={renVM.handleReset}
-            />
-          )}
-          {out.errorSubmitting && (
-            <SubmitErrorDialog
-              open={true}
-              error={out.errorSubmitting}
-              onAction={out.handleReset}
+              error={errorSubmitting}
+              onAction={onReset}
             />
           )}
         </MultipleActionButtonWrapper>

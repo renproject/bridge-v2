@@ -2,6 +2,7 @@ import React, {
   FunctionComponent,
   useCallback,
   useMemo,
+  useReducer,
   useState,
 } from "react";
 import { makeStyles } from "@material-ui/core";
@@ -77,7 +78,10 @@ export const DebugRenderer: FunctionComponent<Partial<DebugProps>> = ({
   it,
   children,
 }) => {
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
   const noClick = useCallback((event) => {
+    console.log("debug: forceUpdate");
+    forceUpdate();
     event.stopPropagation();
   }, []);
   const classes = useStyles();

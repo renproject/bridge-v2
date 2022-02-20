@@ -327,8 +327,26 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       setResuming(false);
       return;
     }
-    if (isRelease && isH2H) {
-      console.log("TODO: implement");
+    if (isMint && isH2H) {
+      console.log("h2h: mint");
+      history.push({
+        pathname: paths.MINT__GATEWAY_H2H,
+        search:
+          "?" +
+          createGatewayQueryString(
+            {
+              asset,
+              from,
+              to,
+              amount,
+            },
+            {
+              renVMHash,
+            }
+          ),
+      });
+    } else if (isRelease && isH2H) {
+      console.log("h2h release");
       history.push({
         pathname: paths.RELEASE__GATEWAY_H2H,
         search:
@@ -365,8 +383,6 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
             }
           ),
       });
-    } else if (isMint && isH2H) {
-      console.log("TODO: implement");
     }
     dispatch(setTxHistoryOpened(false));
     setResuming(false);

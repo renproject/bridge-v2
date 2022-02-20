@@ -1,7 +1,7 @@
 import { Button } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { MultipleActionButtonWrapper } from "../../../../components/buttons/Buttons";
@@ -10,6 +10,9 @@ import { Link } from "../../../../components/links/Links";
 import { LabelWithValue } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
+import { useNotifications } from "../../../../providers/Notifications";
+import { trimAddress } from "../../../../utils/strings";
+import { useTxsStorage } from "../../../storage/storageHooks";
 import {
   GeneralErrorDialog,
   SubmitErrorDialog,
@@ -74,7 +77,55 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
       autoProviderAlteration: false,
     }
   );
+
+  const { renVMHash } = additionalParams;
+  const [recovering, setRecovering] = useState(false);
+  const [, setRecoveringError] = useState<Error | null>(null);
+  const { persistLocalTx, findLocalTx } = useTxsStorage();
+  const { showNotification } = useNotifications();
+  useEffect(() => {
+    if (renVMHash && fromAccount && gateway !== null && !recovering) {
+      setRecovering(true);
+      console.log("recovering tx: " + trimAddress(renVMHash));
+      const localTx = findLocalTx(fromAccount, renVMHash);
+      if (localTx === null) {
+        console.error(`Unable to find tx for ${fromAccount}, ${renVMHash}`);
+        return;
+      } else {
+        recoverLocalTx(renVMHash, localTx)
+          .then(() => {
+            showNotification(`Transaction ${renVMHash} recovered.`, {
+              variant: "success",
+            });
+          })
+          .catch((error) => {
+            console.error(`Recovering error`, error.message);
+            showNotification(`Failed to recover transaction`, {
+              variant: "error",
+            });
+            setRecoveringError(error);
+          });
+      }
+    }
+  }, [
+    showNotification,
+    fromAccount,
+    renVMHash,
+    recovering,
+    findLocalTx,
+    gateway,
+    recoverLocalTx,
+  ]);
+
   const transaction = transactions[0] || null;
+  (window as any).gateway = gateway;
+  (window as any).transaction = transaction;
+
+  useEffect(() => {
+    if (transaction !== null && fromAccount) {
+      persistLocalTx(fromAccount, transaction);
+    }
+  }, [persistLocalTx, fromAccount, transaction]);
 
   // gateway.inSetup is accepted;
   console.log("gateway", gateway);
@@ -87,7 +138,11 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
         </PaperContent>
       )}
       {gateway !== null && (
-        <MintH2HProcessor gateway={gateway} transaction={transaction} />
+        <MintH2HProcessor
+          gateway={gateway}
+          transaction={transaction}
+          recoveringTx={recovering}
+        />
       )}
       {error !== null && (
         <GeneralErrorDialog
@@ -133,7 +188,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const inSetupApprovalTxMeta = useChainTransactionStatusUpdater({
     tx: gateway.inSetup.approval,
     debugLabel: "inSetup.approval",
-    startTrigger: submittingApprovalDone,
+    startTrigger: submittingApprovalDone || recoveringTx,
   });
 
   const { status: approvalStatus, txUrl: approvalUrl } = inSetupApprovalTxMeta;
@@ -148,6 +203,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     submitting: submittingLock,
     submittingDone: submittingLockDone,
     waiting: waitingLock,
+    done: doneLock,
     errorSubmitting: errorSubmittingLock,
     handleReset: handleResetLock,
   } = gatewayInSubmitter;
@@ -177,22 +233,17 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     debugLabel: "renVM",
   });
 
-  // const handleSubmitBoth = useCallback(async () => {
-  //   await renVMSubmitter.handleSubmit();
-  //   await outSubmitter.handleSubmit();
-  // }, [renVMSubmitter, outSubmitter]);
-
   const { status: renVMStatus, amount: mintAmount } = renVMTxMeta;
 
   const outSubmitter = useChainTransactionSubmitter({ tx: transaction?.out });
   const {
     handleSubmit: handleSubmitMint,
-    handleReset: handleResetMint,
     submitting: submittingMint,
     submittingDone: submittingMintDone,
-    done: doneMint,
     waiting: waitingMint,
+    done: doneMint,
     errorSubmitting: errorSubmittingMint,
+    handleReset: handleResetMint,
   } = outSubmitter;
 
   const outTxMeta = useChainTransactionStatusUpdater({
@@ -230,7 +281,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   );
 
   let Content = null;
-  if (approvalStatus !== ChainTransactionStatus.Done) {
+  if (approvalStatus !== ChainTransactionStatus.Done && !recoveringTx) {
     Content = (
       <Button onClick={handleSubmitApproval} disabled={submittingApproval}>
         Approve
@@ -247,7 +298,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         submitting={submittingLock}
       />
     );
-  } else if (mintStatus === null && renVMStatus === null) {
+  } else if (mintStatus === null) {
     Content = (
       <MintH2HLockTransactionProgressStatus
         gateway={gateway}
@@ -258,6 +309,12 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         lockConfirmations={lockConfirmations}
         lockTargetConfirmations={lockTargetConfirmations}
         lockStatus={lockStatus}
+        onSubmit={handleSubmitLock}
+        submitting={submittingLock}
+        waiting={waitingLock}
+        done={doneLock}
+        errorSubmitting={errorSubmittingLock}
+        onReset={handleResetLock}
       />
     );
   } else if (mintStatus !== ChainTransactionStatus.Done) {
@@ -272,11 +329,12 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         mintConfirmations={mintConfirmations}
         mintTargetConfirmations={mintTargetConfirmations}
         mintStatus={mintStatus}
-        done={doneMint}
-        onReset={handleResetMint}
         onSubmit={handleSubmitMint}
         submitting={submittingMint}
         waiting={waitingMint}
+        done={doneMint}
+        errorSubmitting={errorSubmittingMint}
+        onReset={handleResetMint}
       />
     );
   } else {
