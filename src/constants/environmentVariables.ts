@@ -1,5 +1,6 @@
 const NETWORK = process.env.REACT_APP_NETWORK || "testnet";
-const INFURA_ID = process.env.REACT_APP_INFURA_ID || "";
+const INFURA_ID =
+  process.env.REACT_APP_INFURA_ID || process.env.REACT_APP_INFURA_KEY || "";
 
 const GAS_FEE_ENDPOINT =
   process.env.REACT_APP_GAS_FEE_ENDPOINT ||

@@ -7,11 +7,11 @@ export function useENS(address: string | null | undefined) {
 
   useEffect(() => {
     async function resolveENS() {
-      const provider = new ethers.providers.JsonRpcProvider(
-        `https://mainnet.infura.io/v3/${env.INFURA_ID}`
-      );
-
       if (address && ethers.utils.isAddress(address)) {
+        const provider = new ethers.providers.StaticJsonRpcProvider(
+          `https://mainnet.infura.io/v3/${env.INFURA_ID}`
+        );
+        console.log("resolving ens", address);
         const ensName = await provider.lookupAddress(address);
         if (ensName) setEnsName(ensName);
       }
