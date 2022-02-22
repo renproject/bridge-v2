@@ -93,7 +93,10 @@ export const useGateway = (
 
   useEffect(() => {
     console.log("gateway chains changed");
+    console.log(chains);
+    console.log(...Object.values(chains).map((chain) => chain.chain));
   }, [chains]);
+
   // set up renjs with signers
   useEffect(() => {
     console.log("gateway useEffect renJs and provider");
@@ -101,11 +104,14 @@ export const useGateway = (
       return;
     }
     const initProvider = async () => {
-      //TODO: this renjs is being reinitialized or not?
+      // TODO: this renjs is being reinitialized or not?
+      // TODO: this is the case
+      const chainsArray = Object.values(chains).map((chain) => chain.chain);
+      (window as any).chainsArray = chainsArray;
       const renJs = new RenJS(network, {
         networkDelay: 3000,
         logLevel: LogLevel.Debug,
-      }).withChains(...Object.values(chains).map((chain) => chain.chain));
+      }).withChains(...chainsArray);
       (window as any).renJs = renJs;
       return renJs;
     };

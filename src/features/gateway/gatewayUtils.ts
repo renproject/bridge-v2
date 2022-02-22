@@ -60,6 +60,8 @@ export const createGateway = async (
     throw new Error(`Unknown chain "to": ${gatewayParams.from}`);
   }
 
+  console.log("creating gateway with fromChain", fromChain);
+  console.log("creating gateway with toChain", toChain);
   return await renJS.gateway({
     asset,
     from: fromChain,

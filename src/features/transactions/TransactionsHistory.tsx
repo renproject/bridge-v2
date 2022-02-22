@@ -1,6 +1,5 @@
 import { Box, Button, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Skeleton } from "@material-ui/lab";
 import { Asset, Chain } from "@renproject/chains";
 import BigNumber from "bignumber.js";
 import React, {
@@ -51,8 +50,8 @@ import { $wallet, setChain, setPickerOpened } from "../wallet/walletSlice";
 import {
   AddressOnChainLink,
   BluePadder,
-  FullWidthWrapper,
   CustomChip,
+  FullWidthWrapper,
   InfoChips,
   TxEnumerationHeader,
   WideDialog,
@@ -189,7 +188,9 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   const completedTxs = Object.entries(completedTxsMap);
   const completedCount = completedTxs.length;
 
-  const allTxs = [...pendingTxs, ...completedTxs];
+  const allTxs = [...pendingTxs, ...completedTxs].sort((a, b) => {
+    return b[1].timestamp - a[1].timestamp;
+  });
 
   const handleRemoveTx = useCallback(
     (renVmHash: string) => {

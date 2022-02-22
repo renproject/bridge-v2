@@ -142,10 +142,10 @@ export const alterEthereumBaseChainProviderSigner = (
   const signer = ethersProvider.getSigner();
   // TODO: TBD: Noah : provider stays for the whole process, only signer changes?
   if (alterProvider) {
-    console.log("altering provider");
+    console.log("altering provider", provider, alteredChain);
     alterEthereumBaseChainProvider(chains, provider, alteredChain);
   }
-  console.log("altering signer", signer);
+  console.log("altering signer", signer, alteredChain);
   alterEthereumBaseChainSigner(chains, signer, alteredChain);
 };
 

@@ -11,7 +11,6 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { BackArrowIcon } from "../icons/RenIcons";
 import { BridgePurePaper } from "../layout/Paper";
-import { Debug } from "../utils/Debug";
 
 export const useBridgeModalTitleStyles = makeStyles((theme) => ({
   dialogTitle: {

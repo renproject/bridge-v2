@@ -18,7 +18,6 @@ import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
-  TransactionStatusInfo,
 } from "../../../../components/progress/ProgressHelpers";
 import {
   AssetInfo,

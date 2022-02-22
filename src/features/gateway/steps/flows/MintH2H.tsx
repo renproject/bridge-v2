@@ -1,4 +1,3 @@
-import { Button } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent, useEffect, useState } from "react";
@@ -8,7 +7,6 @@ import { RouteComponentProps } from "react-router";
 import {
   ActionButton,
   ActionButtonWrapper,
-  MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
@@ -49,7 +47,6 @@ import {
 import {
   MintH2HCompletedStatus,
   MintH2HLockTransactionProgressStatus,
-  MintH2HLockTransactionStatus,
   MintH2HMintTransactionProgressStatus,
 } from "./MintH2HStatuses";
 
@@ -62,7 +59,7 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   const {
     gatewayParams,
     additionalParams,
-    error: parseError,
+    error: parseError, // TODO: handle parsing error
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount } = gatewayParams;
   const {
@@ -76,7 +73,7 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
     provider: toProvider,
   } = useWallet(to);
 
-  const { gateway, transactions, recoverLocalTx, error } = useGateway(
+  const { gateway, transactions, recoverLocalTx, error, renJs } = useGateway(
     {
       asset,
       from,
@@ -89,6 +86,16 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
       autoProviderAlteration: false,
     }
   );
+  const chains = useCurrentNetworkChains();
+  const fromChain = chains[from];
+  const toChain = chains[to];
+  useEffect(() => {
+    console.log("changed chains sssss");
+    if (renJs && toProvider) {
+      alterEthereumBaseChainProviderSigner(chains, toProvider, true, to);
+      renJs.withChains(...Object.values(chains).map((chain) => chain.chain));
+    }
+  }, [fromProvider, toProvider]);
 
   const { renVMHash } = additionalParams;
   const [recovering, setRecovering] = useState(false);
@@ -252,12 +259,12 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const showSwitchWalletDialog =
     renVMStatus !== null && !toConnected && chain !== to;
 
-  const chains = useCurrentNetworkChains();
-  useEffect(() => {
-    if (toProvider && chain === to) {
-      alterEthereumBaseChainProviderSigner(chains, toProvider, true, chain);
-    }
-  }, [chains, toProvider, chain, to]);
+  // const chains = useCurrentNetworkChains();
+  // useEffect(() => {
+  //   if (toProvider && chain === to) {
+  //     alterEthereumBaseChainProviderSigner(chains, toProvider, true, chain);
+  //   }
+  // }, [chains, toProvider, chain, to]);
   // wallet provider end
 
   const outSubmitter = useChainTransactionSubmitter({

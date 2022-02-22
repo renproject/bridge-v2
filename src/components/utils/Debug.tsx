@@ -78,7 +78,7 @@ export const DebugRenderer: FunctionComponent<Partial<DebugProps>> = ({
   it,
   children,
 }) => {
-  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const noClick = useCallback((event) => {
     console.log("debug: forceUpdate");
     forceUpdate();
