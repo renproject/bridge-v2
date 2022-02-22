@@ -1,7 +1,7 @@
 import { Asset, Chain } from "@renproject/chains";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { ContractChain, RenNetwork } from "@renproject/utils";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getRenAssetName } from "../../utils/tokensConfig";
 
@@ -12,7 +12,7 @@ import {
 } from "../gateway/gatewayHooks";
 import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
-import { $wallet, setChain } from "./walletSlice";
+import { $wallet, setChain, setPickerOpened } from "./walletSlice";
 import { WalletStatus } from "./walletUtils";
 
 type WalletData = ReturnType<typeof useMultiwallet> & {
@@ -74,6 +74,23 @@ export const useWallet: UseWallet = (chain) => {
     deactivateConnector,
   } as WalletData;
 };
+
+export const useWalletPicker = () => {
+  const dispatch = useDispatch();
+  const { pickerOpened } = useSelector($wallet);
+  const handlePickerOpen = useCallback(() => {
+    dispatch(setPickerOpened(true));
+  }, [dispatch]);
+  const handlePickerClose = useCallback(() => {
+    dispatch(setPickerOpened(false));
+  }, [dispatch]);
+  return {
+    handlePickerOpen,
+    handlePickerClose,
+    pickerOpened,
+  };
+};
+
 export const useCurrentChain = () => {
   const { chain } = useSelector($wallet);
   return chain;

@@ -41,7 +41,9 @@ import { SubmitErrorDialog } from "../../../transactions/components/Transactions
 import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
+  useWallet,
   useWalletAssetHelpers,
+  useWalletPicker,
 } from "../../../wallet/walletHooks";
 import {
   BalanceInfo,
@@ -49,7 +51,10 @@ import {
 } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
 import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
-import { TransactionProgressInfo } from "../../components/TransactionProgressHelpers";
+import {
+  RenVMSubmittingInfo,
+  TransactionProgressInfo,
+} from "../../components/TransactionProgressHelpers";
 import {
   getGatewayParams,
   useEthereumChainAssetBalance,
@@ -243,8 +248,8 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
             {submitting ||
             waiting ||
             lockStatus === ChainTransactionStatus.Confirming
-              ? t("gateway.submitting-tx-label")
-              : t("gateway.submit-tx-label")}
+              ? `Locking on ${fromChainConfig.shortName}...`
+              : `Lock on ${fromChainConfig.shortName}`}
           </ActionButton>
           {errorSubmitting && (
             <SubmitErrorDialog
@@ -264,6 +269,7 @@ type MintH2HMintTransactionProgressStatusProps = SubmittingProps & {
   Fees: ReactNode | null;
   transaction: GatewayTransaction | null;
   renVMStatus: ChainTransactionStatus | null;
+  mintAmount: string | null;
   mintStatus: ChainTransactionStatus | null;
   mintConfirmations: number | null;
   mintTargetConfirmations: number | null;
@@ -278,6 +284,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   Fees,
   transaction,
   renVMStatus,
+  mintAmount,
   mintConfirmations,
   mintTargetConfirmations,
   mintStatus,
@@ -296,6 +303,9 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
 
+  const { connected } = useWallet(to);
+  const { handlePickerOpen, pickerOpened } = useWalletPicker();
+
   const { RenIcon } = assetConfig;
   const Icon = mintChainConfig.Icon;
   return (
@@ -304,7 +314,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
         <ProgressWrapper>
           {renVMStatus === ChainTransactionStatus.Confirming ? (
             <ProgressWithContent processing>
-              <TransactionStatusInfo status="Submitting to RenVM..." />
+              <RenVMSubmittingInfo />
             </ProgressWithContent>
           ) : (
             <ProgressWithContent
@@ -317,7 +327,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
         </ProgressWrapper>
 
         <SimpleAssetInfo
-          label={t("mint.minting-label")}
+          label={t("mint.minting-label")} // TODO: locking
           value={amount}
           asset={asset}
         />
@@ -350,11 +360,21 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
       <PaperContent topPadding darker>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
-          <ActionButton onClick={onSubmit} disabled={submitting || waiting}>
-            {submitting || waiting
-              ? `Minting on ${mintChainConfig.shortName}...`
-              : `Mint on ${mintChainConfig.shortName}`}
-          </ActionButton>
+          {connected && (
+            <ActionButton
+              onClick={onSubmit}
+              disabled={submitting || waiting || !mintAmount}
+            >
+              {submitting || waiting
+                ? `Minting on ${mintChainConfig.shortName}...`
+                : `Mint on ${mintChainConfig.shortName}`}
+            </ActionButton>
+          )}
+          {!connected && (
+            <ActionButton onClick={handlePickerOpen} disabled={pickerOpened}>
+              Connect {mintChainConfig.shortName} Wallet
+            </ActionButton>
+          )}
           {errorSubmitting && (
             <SubmitErrorDialog
               open={true}
@@ -440,7 +460,7 @@ export const MintH2HCompletedStatus: FunctionComponent<
   const { addToken } = walletTokenMeta;
 
   return (
-    <>
+    <PaperContent bottomPadding>
       <ProgressWrapper>
         <ProgressWithContent>
           <BigDoneIcon />
@@ -493,6 +513,6 @@ export const MintH2HCompletedStatus: FunctionComponent<
         )}
       </Box>
       <Debug it={{ walletTokenMeta }} />
-    </>
+    </PaperContent>
   );
 };

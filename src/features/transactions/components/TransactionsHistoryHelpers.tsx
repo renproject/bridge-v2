@@ -25,6 +25,8 @@ export const WideDialog: FunctionComponent<DialogProps> = (props) => {
 };
 
 export const InfoChips = styled("div")({
+  display: "flex",
+  alignItems: "center",
   "& > *": {
     marginRight: 6,
   },

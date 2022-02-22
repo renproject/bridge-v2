@@ -60,11 +60,13 @@ const useSwitchWalletDialogStyles = makeStyles((theme) => ({
 type SwitchWalletDialogProps = DialogProps & {
   targetChain: Chain;
   mode?: "switch" | "change";
+  onClose?: () => void;
 };
 
 export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
   open,
   targetChain,
+  onClose,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -82,6 +84,7 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
       open={open}
       title={t("wallet.wallet-switch-title")}
       maxWidth="xs"
+      onClose={onClose}
     >
       <SpacedPaperContent bottomPadding>
         <div className={styles.top}>

@@ -160,7 +160,7 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
         <GeneralErrorDialog
           open={true}
           reason={"Failed to load gateway"}
-          error={`gateway: ${null}`}
+          error={error}
           actionText={t("navigation.back-to-home-label")}
           onAction={() => history.push({ pathname: paths.HOME })}
         />
@@ -232,20 +232,6 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     txUrl: lockTxUrl,
   } = gatewayInTxMeta;
 
-  // wallet provider fun start
-  const { chain } = useSelector($wallet);
-  const { connected, provider } = useWallet(to);
-  const showSwitchWalletDialog =
-    lockStatus === ChainTransactionStatus.Done && !connected && chain !== to;
-  console.log("ccl", chain, connected, lockStatus);
-  const chains = useCurrentNetworkChains();
-  useEffect(() => {
-    if (provider && chain === to) {
-      alterEthereumBaseChainProviderSigner(chains, provider, false, chain);
-    }
-  }, [chains, provider, chain, to]);
-  // wallet provider fun end
-
   const renVMSubmitter = useChainTransactionSubmitter({
     tx: transaction?.renVM,
     autoSubmit:
@@ -258,8 +244,21 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     startTrigger: renVMSubmitter.submittingDone,
     debugLabel: "renVM",
   });
-
   const { status: renVMStatus, amount: mintAmount } = renVMTxMeta;
+
+  // wallet provider start
+  const { chain } = useSelector($wallet);
+  const { connected: toConnected, provider: toProvider } = useWallet(to);
+  const showSwitchWalletDialog =
+    renVMStatus !== null && !toConnected && chain !== to;
+
+  const chains = useCurrentNetworkChains();
+  useEffect(() => {
+    if (toProvider && chain === to) {
+      alterEthereumBaseChainProviderSigner(chains, toProvider, true, chain);
+    }
+  }, [chains, toProvider, chain, to]);
+  // wallet provider end
 
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
@@ -351,7 +350,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         onReset={handleResetLock}
       />
     );
-  } else if (renVMStatus !== null) {
+  } else if (mintTxUrl === null) {
     Content = (
       <MintH2HMintTransactionProgressStatus
         gateway={gateway}
@@ -360,6 +359,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         outputAmount={outputAmount}
         outputAmountUsd={outputAmountUsd}
         renVMStatus={renVMStatus}
+        mintAmount={mintAmount}
         mintConfirmations={mintConfirmations}
         mintTargetConfirmations={mintTargetConfirmations}
         mintStatus={mintStatus}
@@ -371,7 +371,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         onReset={handleResetMint}
       />
     );
-  } else if (mintTxUrl) {
+  } else {
     Content = (
       <MintH2HCompletedStatus
         gateway={gateway}

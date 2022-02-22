@@ -1,5 +1,6 @@
 import { Box, Button, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Skeleton } from "@material-ui/lab";
 import { Asset, Chain } from "@renproject/chains";
 import BigNumber from "bignumber.js";
 import React, {
@@ -253,6 +254,22 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   );
 };
 
+const resolveTxTypeLabels = (
+  isMint: boolean | null,
+  isRelease: boolean | null,
+  isH2H: boolean | null
+) => {
+  let fullTypeLabel = null;
+  let typeLabel = null;
+  if (isMint !== null && isRelease !== null && isH2H !== null) {
+    typeLabel = isMint ? "Mint" : "Release";
+    const h2hLabel = isH2H ? "H2H " : "";
+    fullTypeLabel = h2hLabel + " " + typeLabel;
+  }
+
+  return { typeLabel, fullTypeLabel };
+};
+
 const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
   root: {
     paddingTop: 15,
@@ -262,12 +279,14 @@ const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
 }));
+
 type RenVMTransactionEntryProps = {
   address: string;
   renVMHash: string;
   localTxData: LocalTxData;
   onRemoveTx: (renVMHash: string) => void;
 };
+
 const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   address,
   renVMHash,
@@ -282,9 +301,11 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const { isMint, isRelease, isH2H } = useGatewayMeta(asset, from, to);
   const { date, time } = getFormattedDateTime(timestamp);
   const { getRenVmExplorerLink } = useRenVMExplorerLink();
-  const typeLabel = isMint ? "Mint" : "Release";
-  const h2hLabel = isH2H ? "H2H " : "";
-  const fullTypeLabel = h2hLabel + typeLabel;
+  const { fullTypeLabel, typeLabel } = resolveTxTypeLabels(
+    isMint,
+    isRelease,
+    isH2H
+  );
 
   const { getAddressExplorerLink: getFromAddressLink } =
     useAddressExplorerLink(from);
@@ -319,9 +340,11 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     setRemoving(false);
   }, [renVMHash, onRemoveTx]);
 
-  const resumeDisabled = amount === null;
+  const resumeDisabled =
+    amount === null || isMint === null || isRelease === null || isH2H === null;
   const [resuming, setResuming] = useState(false);
   const handleResume = useCallback(() => {
+    console.log("resuming tx", renVMHash);
     setResuming(true);
     if (amount === null) {
       setResuming(false);
@@ -407,7 +430,11 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
         <InfoChips>
           <CustomChip label={date} />
           <CustomChip label={time} />
-          <CustomChip label={fullTypeLabel} />
+          {fullTypeLabel === null ? (
+            <InlineSkeleton width={40} height={16} variant="rect" />
+          ) : (
+            <CustomChip label={fullTypeLabel} />
+          )}
           {done ? (
             <CustomChip size="small" color="success" label="Finished" />
           ) : (
@@ -446,13 +473,17 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           <SmallHorizontalPadder>
             <FullWidthWrapper>
               <div>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  component="span"
-                >
-                  {typeLabel}:{" "}
-                </Typography>
+                {typeLabel === null ? (
+                  <InlineSkeleton variant="rect" width={35} height={13} />
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="span"
+                  >
+                    {typeLabel}:
+                  </Typography>
+                )}{" "}
                 <Typography variant="body2" component="span">
                   {amount !== null ? amount : <InlineSkeleton width={30} />}{" "}
                   {assetName}
