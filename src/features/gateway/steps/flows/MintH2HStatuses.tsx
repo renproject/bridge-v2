@@ -2,14 +2,8 @@ import { Box, Divider, Typography } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
 import BigNumber from "bignumber.js";
-import React, {
-  FunctionComponent,
-  ReactNode,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { FunctionComponent, ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
@@ -42,31 +36,25 @@ import {
   getRenAssetName,
 } from "../../../../utils/tokensConfig";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
-import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
-import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
-  useWallet,
   useWalletAssetHelpers,
 } from "../../../wallet/walletHooks";
-import { $wallet } from "../../../wallet/walletSlice";
+import {
+  BalanceInfo,
+  UsdNumberFormatText,
+} from "../../components/BalanceHelpers";
+import { FeesToggler } from "../../components/FeeHelpers";
 import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
 import { TransactionProgressInfo } from "../../components/TransactionProgressHelpers";
 import {
   getGatewayParams,
   useEthereumChainAssetBalance,
 } from "../../gatewayHooks";
-import { useChainTransactionSubmitter } from "../../gatewayTransactionHooks";
-import {
-  BalanceInfo,
-  UsdNumberFormatText,
-} from "../../components/BalanceHelpers";
-import { FeesToggler } from "../../components/FeeHelpers";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
-import { SwitchWalletDialog } from "../shared/WalletSwitchHelpers";
 
 type MintH2HLockTransactionStatusProps = {
   gateway: Gateway;
@@ -181,46 +169,43 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   errorSubmitting,
 }) => {
   const { t } = useTranslation();
-  const { asset, from, to, amount, fromAverageConfirmationTime } =
+  const { asset, from, amount, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const fromChainConfig = getChainConfig(from);
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
   const { RenIcon } = assetConfig;
+  const { balance } = useEthereumChainAssetBalance(
+    gateway.fromChain as ContractChain,
+    asset
+  );
 
   const Icon = fromChainConfig.Icon;
-
-  // walllet provider fun start
-  const { chain } = useSelector($wallet);
-  const { connected, provider } = useWallet(to);
-  const showSwitchWalletDialog =
-    lockStatus === ChainTransactionStatus.Done && !connected && chain !== to;
-  console.log("ccl", chain, connected, lockStatus);
-  const chains = useCurrentNetworkChains();
-  useEffect(() => {
-    if (provider) {
-      alterEthereumBaseChainProviderSigner(chains, provider, true);
-    }
-  }, [chains, provider]);
-  // walllet provider fun end
+  const showProgress =
+    lockConfirmations !== null && lockTargetConfirmations !== null;
 
   return (
     <>
-      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
       <PaperContent bottomPadding>
-        <ProgressWrapper>
-          <ProgressWithContent
-            confirmations={undefinedForNull(lockConfirmations)}
-            targetConfirmations={undefinedForNull(lockTargetConfirmations)}
-          >
-            <Icon fontSize="inherit" />
-          </ProgressWithContent>
-        </ProgressWrapper>
-        <TransactionProgressInfo
-          confirmations={undefinedForNull(lockConfirmations)}
-          target={undefinedForNull(lockTargetConfirmations)}
-          averageConfirmationTime={fromAverageConfirmationTime}
-        />
+        {!showProgress && <BalanceInfo balance={balance} asset={asset} />}
+        {showProgress && (
+          <>
+            <ProgressWrapper>
+              <ProgressWithContent
+                confirmations={undefinedForNull(lockConfirmations)}
+                targetConfirmations={undefinedForNull(lockTargetConfirmations)}
+              >
+                <Icon fontSize="inherit" />
+              </ProgressWithContent>
+            </ProgressWrapper>
+
+            <TransactionProgressInfo
+              confirmations={undefinedForNull(lockConfirmations)}
+              target={undefinedForNull(lockTargetConfirmations)}
+              averageConfirmationTime={fromAverageConfirmationTime}
+            />
+          </>
+        )}
         <SimpleAssetInfo
           label={t("mint.minting-label")}
           value={amount}
@@ -367,8 +352,8 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
         <MultipleActionButtonWrapper>
           <ActionButton onClick={onSubmit} disabled={submitting || waiting}>
             {submitting || waiting
-              ? t("gateway.submitting-tx-label")
-              : t("gateway.submit-tx-label")}
+              ? `Minting on ${mintChainConfig.shortName}...`
+              : `Mint on ${mintChainConfig.shortName}`}
           </ActionButton>
           {errorSubmitting && (
             <SubmitErrorDialog

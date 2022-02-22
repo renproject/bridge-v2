@@ -188,7 +188,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       : "";
 
   const chains = useCurrentNetworkChains();
-  const { account } = useWallet(from);
+  const { account, targetNetwork } = useWallet(from);
   const { balance } = useEthereumChainAssetBalance(
     chains[from].chain as any,
     asset,
@@ -349,6 +349,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       </PaperContent>
       <Debug
         it={{
+          targetNetwork,
           meta,
           amountTouched,
           addressTouched,

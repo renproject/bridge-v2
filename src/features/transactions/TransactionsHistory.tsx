@@ -327,6 +327,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       setResuming(false);
       return;
     }
+    console.log(isMint, isH2H);
     if (isMint && isH2H) {
       console.log("h2h: mint");
       history.push({

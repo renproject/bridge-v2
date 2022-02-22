@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store/rootReducer";
 
-export type FlowType = "mint" | "burn" | null;
-
 export enum SystemType {
   Lightnode = "Lightnode",
   Bandchain = "Bandchain",

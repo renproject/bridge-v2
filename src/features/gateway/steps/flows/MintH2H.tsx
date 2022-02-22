@@ -3,8 +3,13 @@ import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
-import { MultipleActionButtonWrapper } from "../../../../components/buttons/Buttons";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+  MultipleActionButtonWrapper,
+} from "../../../../components/buttons/Buttons";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import { LabelWithValue } from "../../../../components/typography/TypographyHelpers";
@@ -12,12 +17,15 @@ import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { trimAddress } from "../../../../utils/strings";
+import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { useTxsStorage } from "../../../storage/storageHooks";
 import {
   GeneralErrorDialog,
   SubmitErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
 import { useWallet } from "../../../wallet/walletHooks";
+import { $wallet } from "../../../wallet/walletSlice";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
@@ -34,6 +42,10 @@ import {
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
+import {
+  H2HAccountsResolver,
+  SwitchWalletDialog,
+} from "../shared/WalletSwitchHelpers";
 import {
   MintH2HCompletedStatus,
   MintH2HLockTransactionProgressStatus,
@@ -210,8 +222,8 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.in || gateway.in,
-    debugLabel: "in",
     startTrigger: submittingLockDone || recoveringTx,
+    debugLabel: "in",
   });
   const {
     confirmations: lockConfirmations,
@@ -219,6 +231,20 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     status: lockStatus,
     txUrl: lockTxUrl,
   } = gatewayInTxMeta;
+
+  // wallet provider fun start
+  const { chain } = useSelector($wallet);
+  const { connected, provider } = useWallet(to);
+  const showSwitchWalletDialog =
+    lockStatus === ChainTransactionStatus.Done && !connected && chain !== to;
+  console.log("ccl", chain, connected, lockStatus);
+  const chains = useCurrentNetworkChains();
+  useEffect(() => {
+    if (provider && chain === to) {
+      alterEthereumBaseChainProviderSigner(chains, provider, false, chain);
+    }
+  }, [chains, provider, chain, to]);
+  // wallet provider fun end
 
   const renVMSubmitter = useChainTransactionSubmitter({
     tx: transaction?.renVM,
@@ -235,7 +261,10 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   const { status: renVMStatus, amount: mintAmount } = renVMTxMeta;
 
-  const outSubmitter = useChainTransactionSubmitter({ tx: transaction?.out });
+  const outSubmitter = useChainTransactionSubmitter({
+    tx: transaction?.out,
+    debugLabel: "out",
+  });
   const {
     handleSubmit: handleSubmitMint,
     submitting: submittingMint,
@@ -283,22 +312,27 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   let Content = null;
   if (approvalStatus !== ChainTransactionStatus.Done && !recoveringTx) {
     Content = (
-      <Button onClick={handleSubmitApproval} disabled={submittingApproval}>
-        Approve
-      </Button>
+      <PaperContent bottomPadding>
+        <H2HAccountsResolver
+          transactionType="mint"
+          from={from}
+          to={to}
+          disabled={submittingApproval}
+        />
+        <ActionButtonWrapper>
+          <ActionButton
+            onClick={handleSubmitApproval}
+            disabled={submittingApproval}
+          >
+            {submittingApproval
+              ? "Approving Accounts & Contracts..."
+              : "Approve Accounts & Contracts"}
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
     );
-  } else if (lockStatus === null) {
-    Content = (
-      <MintH2HLockTransactionStatus
-        gateway={gateway}
-        Fees={Fees}
-        outputAmount={outputAmount}
-        outputAmountUsd={outputAmountUsd}
-        onSubmit={handleSubmitLock}
-        submitting={submittingLock}
-      />
-    );
-  } else if (mintStatus === null) {
+  } else if (renVMStatus === null) {
+    //in case of failing, submit helpers must be here
     Content = (
       <MintH2HLockTransactionProgressStatus
         gateway={gateway}
@@ -317,7 +351,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         onReset={handleResetLock}
       />
     );
-  } else if (mintStatus !== ChainTransactionStatus.Done) {
+  } else if (renVMStatus !== null) {
     Content = (
       <MintH2HMintTransactionProgressStatus
         gateway={gateway}
@@ -337,7 +371,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         onReset={handleResetMint}
       />
     );
-  } else {
+  } else if (mintTxUrl) {
     Content = (
       <MintH2HCompletedStatus
         gateway={gateway}
@@ -351,6 +385,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   return (
     <>
       {Content}
+      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
       {renVMSubmitter.errorSubmitting && (
         <SubmitErrorDialog
           open={true}

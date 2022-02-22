@@ -1,8 +1,19 @@
-import { Button, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+} from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles } from "@material-ui/core/styles";
 import { Chain } from "@renproject/chains";
-import React, { FunctionComponent, useCallback } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionButtonWrapper } from "../../../../components/buttons/Buttons";
@@ -12,11 +23,16 @@ import {
   SpacedPaperContent,
 } from "../../../../components/layout/Paper";
 import { BridgeModal } from "../../../../components/modals/BridgeModal";
+import { TooltipWithIcon } from "../../../../components/tooltips/TooltipWithIcon";
+import { LabelWithValue } from "../../../../components/typography/TypographyHelpers";
+import { Debug } from "../../../../components/utils/Debug";
 import {
   getChainConfig,
   getChainNetworkConfig,
 } from "../../../../utils/chainsConfig";
+import { trimAddress } from "../../../../utils/strings";
 import { $network } from "../../../network/networkSlice";
+import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
 
 const useSwitchWalletDialogStyles = makeStyles((theme) => ({
@@ -43,6 +59,7 @@ const useSwitchWalletDialogStyles = makeStyles((theme) => ({
 
 type SwitchWalletDialogProps = DialogProps & {
   targetChain: Chain;
+  mode?: "switch" | "change";
 };
 
 export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
@@ -101,5 +118,109 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
         </ActionButtonWrapper>
       </PaperContent>
     </BridgeModal>
+  );
+};
+
+type H2HTransactionType = "mint" | "release";
+
+type H2HAccountsResolverProps = {
+  transactionType: H2HTransactionType;
+  from: Chain;
+  to: Chain;
+  disabled: boolean;
+};
+
+export const H2HAccountsResolver: FunctionComponent<
+  H2HAccountsResolverProps
+> = ({ transactionType, from, to, disabled }) => {
+  const fromChainConfig = getChainConfig(from);
+  const toChainConfig = getChainConfig(to);
+  const [differentAccounts, setDifferentAccounts] = useState(false);
+
+  const handleAccountsModeChange = useCallback((event) => {
+    setDifferentAccounts(event.target.checked);
+  }, []);
+  const { account: fromAccount } = useWallet(from);
+  const { account: toAccount } = useWallet(to);
+
+  const [cachedToAccount, setCachedToAccount] = useState(toAccount);
+  const [cachedFromAccount, setCachedFromAccount] = useState(toAccount);
+
+  useEffect(() => {
+    if (fromAccount) {
+      setCachedFromAccount(fromAccount);
+    }
+  }, [fromAccount]);
+
+  useEffect(() => {
+    if (toAccount) {
+      setCachedToAccount(toAccount);
+    }
+  }, [toAccount]);
+
+  let resolvedToAccount = cachedFromAccount;
+  if (differentAccounts && cachedToAccount) {
+    resolvedToAccount = cachedToAccount;
+  }
+  const [toPickerOpened, setToPickerOpened] = useState(false);
+  const handleToPickerOpened = useCallback(() => {
+    setToPickerOpened(true);
+  }, []);
+
+  return (
+    <>
+      <Box display="flex" alignItems="center">
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={differentAccounts}
+              onChange={handleAccountsModeChange}
+              name="primary"
+              color="primary"
+            />
+          }
+          disabled={disabled}
+          label={
+            <Typography variant="caption">
+              I want to transfer between different accounts{" "}
+              <TooltipWithIcon
+                title={`I will use different accounts for ${fromChainConfig.fullName} and ${toChainConfig.fullName} wallets.`}
+              />
+            </Typography>
+          }
+        />
+      </Box>
+      {cachedFromAccount ? (
+        <LabelWithValue
+          label={`From ${fromChainConfig.shortName}:`}
+          value={trimAddress(cachedFromAccount, 8)}
+        />
+      ) : (
+        <SwitchWalletDialog open={!cachedFromAccount} targetChain={from} />
+      )}
+      <LabelWithValue
+        label={`${transactionType === "mint" ? `Mint` : "Release"} to ${
+          toChainConfig.shortName
+        }:`}
+        value={trimAddress(resolvedToAccount, 8)}
+      />
+      {differentAccounts && !cachedToAccount && (
+        <Button
+          size="small"
+          color="primary"
+          variant="contained"
+          onClick={handleToPickerOpened}
+        >
+          Choose {toChainConfig.shortName} account
+        </Button>
+      )}
+      <SwitchWalletDialog
+        open={toPickerOpened && differentAccounts && !toAccount}
+        targetChain={to}
+      />
+      <Debug
+        it={{ fromAccount, cachedFromAccount, toAccount, cachedToAccount }}
+      />
+    </>
   );
 };

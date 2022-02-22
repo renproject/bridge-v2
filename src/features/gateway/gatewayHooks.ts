@@ -79,16 +79,29 @@ export const useGateway = (
       return [...txs, newTx];
     });
   }, []);
-  const [providerAltered, setProviderAltered] = useState(false);
 
+  const [providerInitiated, setProviderInitiated] = useState(false);
+  useEffect(() => {
+    if (!provider) {
+      return;
+    }
+    if (autoProviderAlteration || !providerInitiated) {
+      alterEthereumBaseChainProviderSigner(chains, provider);
+      setProviderInitiated(true);
+    }
+  }, [chains, provider, autoProviderAlteration, providerInitiated]);
+
+  useEffect(() => {
+    console.log("gateway chains changed");
+  }, [chains]);
   // set up renjs with signers
   useEffect(() => {
     console.log("gateway useEffect renJs and provider");
+    if (!providerInitiated) {
+      return;
+    }
     const initProvider = async () => {
-      if (autoProviderAlteration || !providerAltered) {
-        alterEthereumBaseChainProviderSigner(chains, provider);
-        setProviderAltered(true);
-      }
+      //TODO: this renjs is being reinitialized or not?
       const renJs = new RenJS(network, {
         networkDelay: 3000,
         logLevel: LogLevel.Debug,
@@ -96,16 +109,13 @@ export const useGateway = (
       (window as any).renJs = renJs;
       return renJs;
     };
-    if (!provider) {
-      return;
-    }
     initProvider()
       .then((renJs) => setRenJs(renJs))
       .catch((error) => {
-        console.error(error);
+        console.error("gateway renJs error", error);
         setError(error);
       });
-  }, [network, chains, provider, autoProviderAlteration, providerAltered]);
+  }, [network, chains, providerInitiated]);
 
   // initialize gateway
   useEffect(() => {

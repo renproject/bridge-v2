@@ -50,7 +50,7 @@ export const createNetworkIdMapper = (chain: Chain) => {
       return RenNetwork.Testnet;
     } else {
       console.warn(`Network mapping failed for ${chain}:${id}`);
-      return RenNetwork.Testnet;
+      return RenNetwork.Devnet; // hack to show correct wrong network info
     }
   };
   return mapper;
