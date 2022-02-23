@@ -1,6 +1,11 @@
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
@@ -51,6 +56,36 @@ import {
 } from "./MintH2HStatuses";
 
 export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
+  location,
+  ...rest
+}) => {
+  const {
+    gatewayParams,
+    additionalParams,
+    error: parseError, // TODO: handle parsing error
+  } = parseGatewayQueryString(location.search);
+  const { from, to } = gatewayParams;
+  const { renVMHash } = additionalParams;
+  const [resolvingChains, setResolvingChains] = useState(Boolean(renVMHash));
+  const [chainsResolved, setChainsResolved] = useState(false);
+  const handleChainsResolved = useCallback(() => {
+    setChainsResolved(true);
+  }, []);
+  // resolve chains here
+  if (resolvingChains && !chainsResolved) {
+    return (
+      <H2HAccountsResolver
+        transactionType="mint"
+        from={from}
+        to={to}
+        onResolved={handleChainsResolved}
+      />
+    );
+  }
+  return <MintH2HGatewayProcess location={location} {...rest} />;
+};
+
+export const MintH2HGatewayProcess: FunctionComponent<RouteComponentProps> = ({
   history,
   location,
 }) => {
@@ -67,13 +102,8 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
     connected: fromConnected,
     provider: fromProvider,
   } = useWallet(from);
-  const {
-    account: toAccount,
-    connected: toConnected,
-    provider: toProvider,
-  } = useWallet(to);
 
-  const { gateway, transactions, recoverLocalTx, error, renJs } = useGateway(
+  const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
       asset,
       from,
@@ -86,16 +116,6 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
       autoProviderAlteration: false,
     }
   );
-  const chains = useCurrentNetworkChains();
-  const fromChain = chains[from];
-  const toChain = chains[to];
-  useEffect(() => {
-    console.log("changed chains sssss");
-    if (renJs && toProvider) {
-      alterEthereumBaseChainProviderSigner(chains, toProvider, true, to);
-      renJs.withChains(...Object.values(chains).map((chain) => chain.chain));
-    }
-  }, [fromProvider, toProvider]);
 
   const { renVMHash } = additionalParams;
   const [recovering, setRecovering] = useState(false);
@@ -319,12 +339,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   if (approvalStatus !== ChainTransactionStatus.Done && !recoveringTx) {
     Content = (
       <PaperContent bottomPadding>
-        <H2HAccountsResolver
-          transactionType="mint"
-          from={from}
-          to={to}
-          disabled={submittingApproval}
-        />
+        <span>from/to accounts should be here from created gateway</span>
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleSubmitApproval}

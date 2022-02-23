@@ -18,6 +18,7 @@ import {
   EvmNetworkConfig,
   Fantom,
   Polygon,
+  Goerli,
 } from "@renproject/chains-ethereum";
 import {
   Chain as GatewayChain,
@@ -103,6 +104,7 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     [Chain.Ethereum]: getEthereumBaseChain(Ethereum, network),
     [Chain.BinanceSmartChain]: getEthereumBaseChain(BinanceSmartChain, network),
     [Chain.Polygon]: getEthereumBaseChain(Polygon, network),
+    [Chain.Goerli]: getEthereumBaseChain(Goerli, network),
     [Chain.Avalanche]: getEthereumBaseChain(Avalanche, network),
     [Chain.Arbitrum]: getEthereumBaseChain(Fantom, network),
     [Chain.Fantom]: getEthereumBaseChain(Arbitrum, network),

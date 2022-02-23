@@ -63,6 +63,21 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
             ]
           : []),
       ],
+      [Chain.Goerli]: [
+        {
+          name: Wallet.MetaMask,
+          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          info: PolygonMetamaskConnectorInfo,
+          connector: (() => {
+            const connector = new EthereumInjectedConnector({
+              networkIdMapper: createNetworkIdMapper(Chain.Goerli),
+              debug: true,
+            });
+            connector.getProvider = () => (window as any).ethereum;
+            return connector;
+          })(),
+        },
+      ],
       [Chain.Fantom]: [
         {
           name: Wallet.MetaMask,

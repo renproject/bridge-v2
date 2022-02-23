@@ -98,7 +98,11 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
     fullName: "DigiByte",
   },
   Filecoin: unsetChainConfig,
-  Goerli: unsetChainConfig,
+  Goerli: {
+    Icon: EthereumChainFullIcon, //TODO: change
+    fullName: "Goerli Testnet",
+    networks: createNetworksConfig(1987, 5),
+  },
   Terra: {
     Icon: LunaFullIcon,
     fullName: "Terra",
@@ -148,6 +152,7 @@ export const supportedEthereumChains: Array<Chain> = [
   Chain.Ethereum,
   Chain.BinanceSmartChain,
   Chain.Polygon,
+  Chain.Goerli,
   Chain.Fantom,
   Chain.Avalanche,
   Chain.Arbitrum,

@@ -31,6 +31,8 @@ import {
   getChainNetworkConfig,
 } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
+import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
@@ -130,7 +132,8 @@ type H2HAccountsResolverProps = {
   transactionType: H2HTransactionType;
   from: Chain;
   to: Chain;
-  disabled: boolean;
+  onResolved: () => void;
+  disabled?: boolean;
 };
 
 export const H2HAccountsResolver: FunctionComponent<
@@ -144,7 +147,19 @@ export const H2HAccountsResolver: FunctionComponent<
     setDifferentAccounts(event.target.checked);
   }, []);
   const { account: fromAccount } = useWallet(from);
-  const { account: toAccount } = useWallet(to);
+
+  const {
+    account: toAccount,
+    connected: toConnected,
+    provider: toProvider,
+  } = useWallet(to);
+  const chains = useCurrentNetworkChains();
+  useEffect(() => {
+    console.log("changed chains sssss");
+    if (toProvider) {
+      alterEthereumBaseChainProviderSigner(chains, toProvider, true, to);
+    }
+  }, [toProvider]);
 
   const [cachedToAccount, setCachedToAccount] = useState(toAccount);
   const [cachedFromAccount, setCachedFromAccount] = useState(toAccount);
