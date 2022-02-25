@@ -31,7 +31,12 @@ import {
   getChainNetworkConfig,
 } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
-import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import {
+  alterEthereumBaseChainProviderSigner,
+  ChainInstance,
+  ChainInstanceMap,
+  PartialChainInstanceMap,
+} from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
@@ -126,19 +131,28 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
   );
 };
 
+export type OnAccountsInitiatedParams = {
+  fromAccount: string;
+  fromChain: ChainInstance;
+  toAccount: string;
+  toChain: ChainInstance;
+};
+
 type H2HTransactionType = "mint" | "release";
 
 type H2HAccountsResolverProps = {
   transactionType: H2HTransactionType;
+  chains: PartialChainInstanceMap;
   from: Chain;
   to: Chain;
-  onResolved: () => void;
+  onResolved: (fromAccount: string, toAccount: string) => void;
+  onInitiated: (params: OnAccountsInitiatedParams) => void;
   disabled?: boolean;
 };
 
 export const H2HAccountsResolver: FunctionComponent<
   H2HAccountsResolverProps
-> = ({ transactionType, from, to, disabled }) => {
+> = ({ transactionType, chains, from, to, disabled }) => {
   const fromChainConfig = getChainConfig(from);
   const toChainConfig = getChainConfig(to);
   const [differentAccounts, setDifferentAccounts] = useState(false);
@@ -146,20 +160,22 @@ export const H2HAccountsResolver: FunctionComponent<
   const handleAccountsModeChange = useCallback((event) => {
     setDifferentAccounts(event.target.checked);
   }, []);
-  const { account: fromAccount } = useWallet(from);
+  const { account: fromAccount, provider: fromProvider } = useWallet(from);
+  const { account: toAccount, provider: toProvider } = useWallet(to);
 
-  const {
-    account: toAccount,
-    connected: toConnected,
-    provider: toProvider,
-  } = useWallet(to);
-  const chains = useCurrentNetworkChains();
   useEffect(() => {
-    console.log("changed chains sssss");
-    if (toProvider) {
-      alterEthereumBaseChainProviderSigner(chains, toProvider, true, to);
+    console.log("chains changed from", from);
+    if (fromProvider) {
+      alterEthereumBaseChainProviderSigner(chains, fromProvider, false, from);
     }
-  }, [toProvider]);
+  }, [from, chains, fromProvider]);
+
+  useEffect(() => {
+    console.log("chains changed to", to);
+    if (toProvider) {
+      alterEthereumBaseChainProviderSigner(chains, toProvider, false, to);
+    }
+  }, [to, chains, toProvider]);
 
   const [cachedToAccount, setCachedToAccount] = useState(toAccount);
   const [cachedFromAccount, setCachedFromAccount] = useState(toAccount);

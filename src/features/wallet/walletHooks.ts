@@ -25,26 +25,30 @@ type WalletData = ReturnType<typeof useMultiwallet> & {
 };
 
 const resolveWalletByProvider = (provider: any) => {
+  console.log("wallet resolving");
+  let resolved = Wallet.MetaMask;
+
   if (!provider) {
-    return Wallet.MetaMask; // TODO: is it valid ?
+    resolved = Wallet.MetaMask; // TODO: is it valid ?
   }
   if (provider?.isMetaMask) {
-    return Wallet.MetaMask;
+    resolved = Wallet.MetaMask;
   }
   if (provider?.wallet?._providerUrl?.href?.includes("sollet")) {
-    return Wallet.Sollet;
+    resolved = Wallet.Sollet;
   }
   if (provider?.wallet) {
-    return Wallet.Phantom;
+    resolved = Wallet.Phantom;
   }
   if (provider?.chainId === "0x61" || provider?.chainId?.indexOf("Binance")) {
-    return Wallet.BinanceSmartChain;
+    resolved = Wallet.BinanceSmartChain;
   }
   if (provider?.isMewConnect || provider?.isMEWConnect) {
-    return Wallet.MewConnect;
+    resolved = Wallet.MewConnect;
   }
+  console.log("wallet resolvied", resolved);
   console.warn("Unresolved wallet", provider);
-  return Wallet.MetaMask; // throw error?
+  return resolved;
 };
 
 type UseWallet = (chain: Chain) => WalletData;
@@ -55,6 +59,7 @@ export const useWallet: UseWallet = (chain) => {
   const { account = "", status = WalletStatus.Disconnected } =
     enabledChains?.[chain] || {};
   const provider = enabledChains?.[chain]?.provider;
+  // TODO: crit this is faulty
   const wallet = resolveWalletByProvider(provider);
   const emptyFn = () => {};
   const deactivateConnector =

@@ -1,3 +1,5 @@
+import { Typography } from "@material-ui/core";
+import { Chain } from "@renproject/chains";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -20,7 +22,11 @@ import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { trimAddress } from "../../../../utils/strings";
-import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import {
+  alterEthereumBaseChainProviderSigner,
+  ChainInstanceMap,
+  PartialChainInstanceMap,
+} from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { useTxsStorage } from "../../../storage/storageHooks";
 import {
@@ -47,6 +53,7 @@ import { parseGatewayQueryString } from "../../gatewayUtils";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   H2HAccountsResolver,
+  OnAccountsInitiatedParams,
   SwitchWalletDialog,
 } from "../shared/WalletSwitchHelpers";
 import {
@@ -66,29 +73,75 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   } = parseGatewayQueryString(location.search);
   const { from, to } = gatewayParams;
   const { renVMHash } = additionalParams;
-  const [resolvingChains, setResolvingChains] = useState(Boolean(renVMHash));
+  const [chains, setChains] = useState<ChainInstanceMap | null>(null);
+  const [fromAccount, setFromAccount] = useState<string>("");
+  const [toAccount, setToAccount] = useState<string>("");
+  const [resolvingChains, setResolvingChains] = useState(Boolean(!renVMHash));
   const [chainsResolved, setChainsResolved] = useState(false);
+  const allChains = useCurrentNetworkChains();
+  const [initialChains] = useState<PartialChainInstanceMap | null>({
+    [from]: allChains[from],
+    [to]: allChains[to],
+  });
   const handleChainsResolved = useCallback(() => {
     setChainsResolved(true);
   }, []);
+
+  const handleChainsInitiated = useCallback(
+    ({
+      fromAccount,
+      toAccount,
+      fromChain,
+      toChain,
+    }: OnAccountsInitiatedParams) => {
+      setChains({
+        [from]: fromChain,
+        [to]: toChain,
+      } as ChainInstanceMap);
+      setFromAccount(fromAccount);
+      setToAccount(toAccount);
+    },
+    [from, to]
+  );
+
   // resolve chains here
   if (resolvingChains && !chainsResolved) {
     return (
-      <H2HAccountsResolver
-        transactionType="mint"
-        from={from}
-        to={to}
-        onResolved={handleChainsResolved}
-      />
+      <>
+        <GatewayPaperHeader title={"Choose accounts"} />
+        <PaperContent bottomPadding>
+          <Typography variant="body1">
+            Choose which accounts are you going to use for Mint operation
+          </Typography>
+          <H2HAccountsResolver
+            transactionType="mint"
+            chains={initialChains}
+            from={from}
+            to={to}
+            onResolved={handleChainsResolved}
+            onInitiated={handleChainsInitiated}
+          />
+          <ActionButtonWrapper>
+            <ActionButton onClick={handleChainsResolved}>
+              Accept Accounts
+            </ActionButton>
+          </ActionButtonWrapper>
+        </PaperContent>
+      </>
     );
   }
-  return <MintH2HGatewayProcess location={location} {...rest} />;
+  return (
+    <MintH2HGatewayProcess chains={chains} location={location} {...rest} />
+  );
 };
 
-export const MintH2HGatewayProcess: FunctionComponent<RouteComponentProps> = ({
-  history,
-  location,
-}) => {
+type MintH2HGatewayProcessProps = RouteComponentProps & {
+  chains: ChainInstanceMap | null;
+};
+
+export const MintH2HGatewayProcess: FunctionComponent<
+  MintH2HGatewayProcessProps
+> = ({ history, location, chains }) => {
   const { t } = useTranslation();
 
   const {
@@ -114,6 +167,7 @@ export const MintH2HGatewayProcess: FunctionComponent<RouteComponentProps> = ({
       provider: fromProvider,
       autoTeardown: true,
       autoProviderAlteration: false,
+      chains,
     }
   );
 

@@ -36,6 +36,7 @@ export interface ChainInstance {
 }
 
 export type ChainInstanceMap = Record<Chain, ChainInstance>;
+export type PartialChainInstanceMap = Partial<ChainInstanceMap>;
 
 interface EVMConstructor<EVM> {
   configMap: {
