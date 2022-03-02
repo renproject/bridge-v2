@@ -38,6 +38,13 @@ import { getHours } from "../../../../utils/dates";
 import { trimAddress } from "../../../../utils/strings";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
 import {
+  alterEthereumBaseChainsProviderSigner,
+  ChainInstance,
+  ChainInstanceMap,
+  PartialChainInstanceMap,
+} from "../../../chain/chainUtils";
+import { useCurrentNetworkChains } from "../../../network/networkHooks";
+import {
   GeneralErrorDialog,
   HMSCountdown,
 } from "../../../transactions/components/TransactionsHelpers";
@@ -59,15 +66,15 @@ import {
   useGateway,
   useGatewayFees,
 } from "../../gatewayHooks";
-import { useRenVMChainTransactionStatusUpdater } from "../../gatewayTransactionHooks";
+import {
+  useChainTransactionStatusUpdater,
+  useRenVMChainTransactionStatusUpdater,
+} from "../../gatewayTransactionHooks";
 import {
   getGatewayExpiryTime,
   parseGatewayQueryString,
 } from "../../gatewayUtils";
-import {
-  useDepositTransactionMeta,
-  useTransactionsPagination,
-} from "../../mintHooks";
+import { useTransactionsPagination } from "../../mintHooks";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   MintCompletedStatus,
@@ -94,9 +101,19 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
 
   useSyncWalletChain(to);
   const { connected, provider } = useWallet(to);
+  const allChains = useCurrentNetworkChains();
+  const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
+  useEffect(() => {
+    if (provider) {
+      const newChainsMap = { [from]: allChains[from], [to]: allChains[to] };
+      alterEthereumBaseChainsProviderSigner(newChainsMap, provider, true, from);
+      setChains(newChainsMap);
+    }
+  }, [from, to, provider]);
+
   const { gateway, transactions } = useGateway(
     { asset, from, to, nonce },
-    { provider, autoTeardown: true }
+    { chains }
   );
 
   const fees = useGatewayFees(gateway);
@@ -189,23 +206,39 @@ export const GatewayDepositProcessor: FunctionComponent<
 > = ({ gateway, transaction, onGoToGateway, expiryTime }) => {
   // const lockStatus = ChainTransactionStatus.Done;
   // TODO: crit use dedicated updaters
-  const txMeta = useDepositTransactionMeta(transaction);
   useEffect(() => {
     console.log("tx: changed", transaction);
   }, [transaction]);
+
   const {
-    lockStatus,
-    lockConfirmations,
-    lockTargetConfirmations,
-    lockTxIdFormatted,
-    lockTxUrl,
-    lockAmount,
-    mintStatus,
-    mintConfirmations,
-    mintTargetConfirmations,
-    mintTxUrl,
-    mintTxIdFormatted,
-  } = txMeta;
+    error: lockError,
+    status: lockStatus,
+    confirmations: lockConfirmations,
+    target: lockTargetConfirmations,
+    txId: lockTxId,
+    txIdFormatted: lockTxIdFormatted,
+    txIndex: lockTxIndex,
+    txUrl: lockTxUrl,
+    amount: lockAmount,
+  } = useChainTransactionStatusUpdater({
+    tx: transaction.in,
+    debugLabel: "in",
+  });
+
+  const {
+    error: mintError,
+    status: mintStatus,
+    confirmations: mintConfirmations,
+    target: mintTargetConfirmations,
+    txId: mintTxId,
+    txIdFormatted: mintTxIdFormatted,
+    txIndex: mintTxIndex,
+    txUrl: mintTxUrl,
+  } = useChainTransactionStatusUpdater({
+    tx: transaction.out,
+    debugLabel: "out",
+  });
+
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction.renVM,
   });
@@ -330,7 +363,6 @@ export const GatewayDepositProcessor: FunctionComponent<
           renVmTxMeta,
           mintAssetDecimals,
           hash: transaction.hash,
-          txMeta,
         }}
       />
     </>

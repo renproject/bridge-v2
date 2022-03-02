@@ -130,7 +130,7 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
   } as unknown as ChainInstanceMap;
 };
 
-export const alterEthereumBaseChainProviderSigner = (
+export const alterEthereumBaseChainsProviderSigner = (
   chains: PartialChainInstanceMap,
   provider: any,
   alterProvider?: boolean,
@@ -146,13 +146,13 @@ export const alterEthereumBaseChainProviderSigner = (
   // TODO: TBD: Noah : provider stays for the whole process, only signer changes?
   if (alterProvider) {
     console.log("altering provider", provider, alteredChain);
-    alterEthereumBaseChainProvider(chains, provider, alteredChain);
+    alterEthereumBaseChainsProvider(chains, provider, alteredChain);
   }
   console.log("altering signer", signer, alteredChain);
-  alterEthereumBaseChainSigner(chains, signer, alteredChain);
+  alterEthereumBaseChainsSigner(chains, signer, alteredChain);
 };
 
-export const alterEthereumBaseChainSigner = (
+export const alterEthereumBaseChainsSigner = (
   chains: PartialChainInstanceMap,
   signer: any,
   alteredChain?: Chain
@@ -174,7 +174,7 @@ export const alterEthereumBaseChainSigner = (
   });
 };
 
-export const alterEthereumBaseChainProvider = (
+export const alterEthereumBaseChainsProvider = (
   chains: PartialChainInstanceMap,
   provider: any,
   alteredChain?: Chain

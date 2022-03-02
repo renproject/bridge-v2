@@ -32,7 +32,7 @@ import {
 } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
 import {
-  alterEthereumBaseChainProviderSigner,
+  alterEthereumBaseChainsProviderSigner,
   ChainInstance,
   PartialChainInstanceMap,
 } from "../../../chain/chainUtils";
@@ -164,14 +164,14 @@ export const H2HAccountsResolver: FunctionComponent<
   useEffect(() => {
     console.log("chains changed from", from);
     if (fromProvider && chains !== null) {
-      alterEthereumBaseChainProviderSigner(chains, fromProvider, true, from);
+      alterEthereumBaseChainsProviderSigner(chains, fromProvider, true, from);
     }
   }, [from, chains, fromProvider]);
 
   useEffect(() => {
     console.log("chains changed to", to);
     if (toProvider && chains !== null) {
-      alterEthereumBaseChainProviderSigner(chains, toProvider, true, to);
+      alterEthereumBaseChainsProviderSigner(chains, toProvider, true, to);
     }
   }, [to, chains, toProvider]);
 

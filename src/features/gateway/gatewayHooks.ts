@@ -21,8 +21,9 @@ import { fromGwei } from "../../utils/converters";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { isDefined } from "../../utils/objects";
 import {
-  alterEthereumBaseChainProviderSigner,
+  alterEthereumBaseChainsProviderSigner,
   ChainInstanceMap,
+  PartialChainInstanceMap,
 } from "../chain/chainUtils";
 import { $exchangeRates, $gasPrices } from "../marketData/marketDataSlice";
 import {
@@ -44,11 +45,10 @@ type UseGatewayCreateParams = {
 };
 
 type UseGatewayAdditionalParams = {
-  provider: any;
+  chains: PartialChainInstanceMap | null;
   autoTeardown?: boolean;
   autoProviderAlteration?: boolean;
   initialGateway?: Gateway | null;
-  chains?: ChainInstanceMap | null;
 };
 
 export type TxRecoverer = (
@@ -59,10 +59,8 @@ export type TxRecoverer = (
 export const useGateway = (
   { asset, from, to, nonce, toAddress, amount }: UseGatewayCreateParams,
   {
-    provider,
-    autoTeardown = false,
+    autoTeardown = true,
     initialGateway = null,
-    autoProviderAlteration = true,
     chains = null,
   }: UseGatewayAdditionalParams
 ) => {
@@ -84,37 +82,13 @@ export const useGateway = (
     });
   }, []);
 
-  const renJsChains = useChains(network);
-  const resolvedChains = chains || renJsChains;
-
-  const [providerInitiated, setProviderInitiated] = useState(true);
-  useEffect(() => {
-    if (!provider) {
-      return;
-    }
-    if (autoProviderAlteration || !providerInitiated) {
-      alterEthereumBaseChainProviderSigner(renJsChains, provider);
-      setProviderInitiated(true);
-    }
-  }, [renJsChains, provider, autoProviderAlteration, providerInitiated]);
-
-  useEffect(() => {
-    console.log("gateway chains changed");
-    console.log(resolvedChains);
-    console.log(...Object.values(resolvedChains).map((chain) => chain.chain));
-  }, [resolvedChains]);
-
   useEffect(() => {
     console.log("gateway useEffect renJs and provider");
-    if (!providerInitiated) {
+    if (!chains) {
       return;
     }
     const initProvider = async () => {
-      // TODO: this renjs is being reinitialized or not?
-      // TODO: this is the case
-      const chainsArray = Object.values(resolvedChains).map(
-        (chain) => chain.chain
-      );
+      const chainsArray = Object.values(chains).map((chain) => chain.chain);
       (window as any).chainsArray = chainsArray;
       const renJs = new RenJS(network, {
         networkDelay: 3000,
@@ -129,18 +103,17 @@ export const useGateway = (
         console.error("gateway renJs error", error);
         setError(error);
       });
-  }, [network, resolvedChains, providerInitiated]);
+  }, [network, chains]);
 
-  // initialize gatewayrenJsChains
   useEffect(() => {
     console.log("gateway useEffect gateway init");
     let newGateway: Gateway | null = null;
-    if (renJs) {
+    if (renJs && chains !== null) {
       const initializeGateway = async () => {
         newGateway = await createGateway(
           renJs,
           { asset, from, to, nonce, toAddress, amount },
-          renJsChains
+          chains
         );
         console.log("gateway created", newGateway);
         newGateway.on("transaction", addTransaction);
@@ -167,7 +140,6 @@ export const useGateway = (
     renJs,
     addTransaction,
     asset,
-    renJsChains,
     from,
     to,
     nonce,

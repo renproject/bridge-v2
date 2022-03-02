@@ -22,7 +22,7 @@ import {
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
-import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import { alterEthereumBaseChainsProviderSigner } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
@@ -94,7 +94,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
 
   useEffect(() => {
     if (connected) {
-      alterEthereumBaseChainProviderSigner(chains, provider, true, chain);
+      alterEthereumBaseChainsProviderSigner(chains, provider, true, chain);
     }
   }, [chains, chain, provider, connected]);
   // provider fun end

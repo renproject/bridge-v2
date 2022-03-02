@@ -8,7 +8,7 @@ import {
   supportedEthereumChains,
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
-import { ChainInstanceMap } from "../chain/chainUtils";
+import { ChainInstanceMap, PartialChainInstanceMap } from "../chain/chainUtils";
 
 export interface CreateGatewayParams {
   asset: Asset;
@@ -22,38 +22,39 @@ export interface CreateGatewayParams {
 export const createGateway = async (
   renJS: RenJS,
   gatewayParams: CreateGatewayParams,
-  chains: ChainInstanceMap
+  chains: PartialChainInstanceMap
 ): Promise<Gateway> => {
   if (!gatewayParams.from || !gatewayParams.to) {
     throw new Error(`Missing gateway field.`);
+  }
+  const fromChainInstance = chains[gatewayParams.from];
+  const toChainInstance = chains[gatewayParams.to];
+  if (!fromChainInstance || !toChainInstance) {
+    throw new Error(`Missing chain instances.`);
   }
 
   const { asset, nonce } = gatewayParams;
   console.log("gatewayParams", gatewayParams);
   let fromChain;
   if (supportedEthereumChains.includes(gatewayParams.from)) {
-    fromChain = (chains[gatewayParams.from].chain as EthereumBaseChain).Account(
-      {
-        amount: gatewayParams.amount,
-        convertToWei: true,
-      }
-    );
+    fromChain = (fromChainInstance.chain as EthereumBaseChain).Account({
+      amount: gatewayParams.amount,
+      convertToWei: true,
+    });
   } else if (supportedBitcoinChains.includes(gatewayParams.from)) {
-    fromChain = (
-      chains[gatewayParams.from].chain as BitcoinBaseChain
-    ).GatewayAddress();
+    fromChain = (fromChainInstance.chain as BitcoinBaseChain).GatewayAddress();
   } else {
     throw new Error(`Unknown chain "from": ${gatewayParams.from}`);
   }
 
   let toChain;
   if (supportedEthereumChains.includes(gatewayParams.to)) {
-    toChain = (chains[gatewayParams.to].chain as Ethereum).Account();
+    toChain = (toChainInstance.chain as Ethereum).Account();
   } else if (supportedBitcoinChains.includes(gatewayParams.to)) {
     if (!gatewayParams.toAddress) {
       throw new Error(`No recipient address provided.`);
     }
-    toChain = (chains[gatewayParams.to].chain as BitcoinBaseChain).Address(
+    toChain = (toChainInstance.chain as BitcoinBaseChain).Address(
       gatewayParams.toAddress
     );
   } else {
