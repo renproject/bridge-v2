@@ -34,10 +34,8 @@ import { trimAddress } from "../../../../utils/strings";
 import {
   alterEthereumBaseChainProviderSigner,
   ChainInstance,
-  ChainInstanceMap,
   PartialChainInstanceMap,
 } from "../../../chain/chainUtils";
-import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
@@ -142,7 +140,7 @@ type H2HTransactionType = "mint" | "release";
 
 type H2HAccountsResolverProps = {
   transactionType: H2HTransactionType;
-  chains: PartialChainInstanceMap;
+  chains: PartialChainInstanceMap | null;
   from: Chain;
   to: Chain;
   onResolved: (fromAccount: string, toAccount: string) => void;
@@ -152,7 +150,7 @@ type H2HAccountsResolverProps = {
 
 export const H2HAccountsResolver: FunctionComponent<
   H2HAccountsResolverProps
-> = ({ transactionType, chains, from, to, disabled }) => {
+> = ({ transactionType, chains, from, to, disabled, onInitiated }) => {
   const fromChainConfig = getChainConfig(from);
   const toChainConfig = getChainConfig(to);
   const [differentAccounts, setDifferentAccounts] = useState(false);
@@ -165,15 +163,15 @@ export const H2HAccountsResolver: FunctionComponent<
 
   useEffect(() => {
     console.log("chains changed from", from);
-    if (fromProvider) {
-      alterEthereumBaseChainProviderSigner(chains, fromProvider, false, from);
+    if (fromProvider && chains !== null) {
+      alterEthereumBaseChainProviderSigner(chains, fromProvider, true, from);
     }
   }, [from, chains, fromProvider]);
 
   useEffect(() => {
     console.log("chains changed to", to);
-    if (toProvider) {
-      alterEthereumBaseChainProviderSigner(chains, toProvider, false, to);
+    if (toProvider && chains !== null) {
+      alterEthereumBaseChainProviderSigner(chains, toProvider, true, to);
     }
   }, [to, chains, toProvider]);
 
@@ -200,6 +198,21 @@ export const H2HAccountsResolver: FunctionComponent<
   const handleToPickerOpened = useCallback(() => {
     setToPickerOpened(true);
   }, []);
+
+  const handleDone = () => {
+    if (chains) {
+      const fromChain = chains[from];
+      const toChain = chains[to];
+      if (fromChain && toChain) {
+        onInitiated({
+          fromAccount: cachedFromAccount,
+          toAccount: cachedToAccount,
+          fromChain,
+          toChain,
+        });
+      }
+    }
+  };
 
   return (
     <>
@@ -248,6 +261,7 @@ export const H2HAccountsResolver: FunctionComponent<
           Choose {toChainConfig.shortName} account
         </Button>
       )}
+      <Button onClick={handleDone}>Inner done</Button>
       <SwitchWalletDialog
         open={toPickerOpened && differentAccounts && !toAccount}
         targetChain={to}

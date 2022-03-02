@@ -1,5 +1,4 @@
 import { Typography } from "@material-ui/core";
-import { Chain } from "@renproject/chains";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -23,7 +22,6 @@ import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { trimAddress } from "../../../../utils/strings";
 import {
-  alterEthereumBaseChainProviderSigner,
   ChainInstanceMap,
   PartialChainInstanceMap,
 } from "../../../chain/chainUtils";
@@ -76,7 +74,7 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   const [chains, setChains] = useState<ChainInstanceMap | null>(null);
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>("");
-  const [resolvingChains, setResolvingChains] = useState(Boolean(!renVMHash));
+  const [resolvingChains] = useState(Boolean(!renVMHash));
   const [chainsResolved, setChainsResolved] = useState(false);
   const allChains = useCurrentNetworkChains();
   const [initialChains] = useState<PartialChainInstanceMap | null>({
@@ -104,6 +102,7 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
     [from, to]
   );
 
+  console.log(fromAccount, toAccount, parseError);
   // resolve chains here
   if (resolvingChains && !chainsResolved) {
     return (
@@ -144,15 +143,16 @@ export const MintH2HGatewayProcess: FunctionComponent<
 > = ({ history, location, chains }) => {
   const { t } = useTranslation();
 
+  // TODO: this should come from partent component
   const {
     gatewayParams,
     additionalParams,
-    error: parseError, // TODO: handle parsing error
+    // error: parseError, // TODO: handle parsing error
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount } = gatewayParams;
   const {
     account: fromAccount,
-    connected: fromConnected,
+    // connected: fromConnected,
     provider: fromProvider,
   } = useWallet(from);
 
@@ -329,7 +329,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   // wallet provider start
   const { chain } = useSelector($wallet);
-  const { connected: toConnected, provider: toProvider } = useWallet(to);
+  const { connected: toConnected } = useWallet(to);
   const showSwitchWalletDialog =
     renVMStatus !== null && !toConnected && chain !== to;
 
@@ -348,7 +348,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const {
     handleSubmit: handleSubmitMint,
     submitting: submittingMint,
-    submittingDone: submittingMintDone,
+    // submittingDone: submittingMintDone,
     waiting: waitingMint,
     done: doneMint,
     errorSubmitting: errorSubmittingMint,

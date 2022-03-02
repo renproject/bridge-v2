@@ -131,7 +131,7 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
 };
 
 export const alterEthereumBaseChainProviderSigner = (
-  chains: ChainInstanceMap,
+  chains: PartialChainInstanceMap,
   provider: any,
   alterProvider?: boolean,
   alteredChain?: Chain
@@ -153,7 +153,7 @@ export const alterEthereumBaseChainProviderSigner = (
 };
 
 export const alterEthereumBaseChainSigner = (
-  chains: ChainInstanceMap,
+  chains: PartialChainInstanceMap,
   signer: any,
   alteredChain?: Chain
 ) => {
@@ -161,11 +161,8 @@ export const alterEthereumBaseChainSigner = (
     ? supportedEthereumChains.filter((chainName) => chainName === alteredChain)
     : supportedEthereumChains;
   alteredChains.forEach((chainName) => {
-    if (
-      chains[chainName]?.chain &&
-      (chains[chainName].chain as EthereumBaseChain).withSigner
-    ) {
-      (chains[chainName].chain as EthereumBaseChain).withSigner!(signer);
+    if ((chains[chainName]?.chain as EthereumBaseChain).withSigner) {
+      (chains[chainName]?.chain as EthereumBaseChain).withSigner!(signer);
       console.log("altered signer for", alteredChains.join(", "));
     } else {
       throw new Error(
@@ -178,7 +175,7 @@ export const alterEthereumBaseChainSigner = (
 };
 
 export const alterEthereumBaseChainProvider = (
-  chains: ChainInstanceMap,
+  chains: PartialChainInstanceMap,
   provider: any,
   alteredChain?: Chain
 ) => {
@@ -186,11 +183,8 @@ export const alterEthereumBaseChainProvider = (
     ? supportedEthereumChains.filter((chainName) => chainName === alteredChain)
     : supportedEthereumChains;
   alteredChains.forEach((chainName) => {
-    if (
-      chains[chainName]?.chain &&
-      (chains[chainName].chain as EthereumBaseChain).withProvider
-    ) {
-      (chains[chainName].chain as EthereumBaseChain).withProvider!(provider);
+    if ((chains[chainName]?.chain as EthereumBaseChain).withProvider) {
+      (chains[chainName]?.chain as EthereumBaseChain).withProvider!(provider);
       console.log("altered provider for", alteredChains.join(", "));
     } else {
       throw new Error(

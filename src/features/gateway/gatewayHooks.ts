@@ -100,7 +100,7 @@ export const useGateway = (
 
   useEffect(() => {
     console.log("gateway chains changed");
-    console.log(renJsChains);
+    console.log(resolvedChains);
     console.log(...Object.values(resolvedChains).map((chain) => chain.chain));
   }, [resolvedChains]);
 
@@ -129,9 +129,9 @@ export const useGateway = (
         console.error("gateway renJs error", error);
         setError(error);
       });
-  }, [network, renJsChains, providerInitiated]);
+  }, [network, resolvedChains, providerInitiated]);
 
-  // initialize gateway
+  // initialize gatewayrenJsChains
   useEffect(() => {
     console.log("gateway useEffect gateway init");
     let newGateway: Gateway | null = null;
