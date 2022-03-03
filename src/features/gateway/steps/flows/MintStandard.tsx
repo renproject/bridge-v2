@@ -39,8 +39,6 @@ import { trimAddress } from "../../../../utils/strings";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
 import {
   alterEthereumBaseChainsProviderSigner,
-  ChainInstance,
-  ChainInstanceMap,
   PartialChainInstanceMap,
 } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
@@ -68,6 +66,7 @@ import {
 } from "../../gatewayHooks";
 import {
   useChainTransactionStatusUpdater,
+  useChainTransactionSubmitter,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import {
@@ -106,10 +105,10 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   useEffect(() => {
     if (provider) {
       const newChainsMap = { [from]: allChains[from], [to]: allChains[to] };
-      alterEthereumBaseChainsProviderSigner(newChainsMap, provider, true, from);
+      alterEthereumBaseChainsProviderSigner(newChainsMap, provider, true, to);
       setChains(newChainsMap);
     }
-  }, [from, to, provider]);
+  }, [from, to, allChains, provider]);
 
   const { gateway, transactions } = useGateway(
     { asset, from, to, nonce },
@@ -139,7 +138,16 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
     setCurrentDeposit("gateway");
   }, []);
 
-  const transaction = transactions.find((tx) => tx.hash === currentDeposit);
+  const [transaction, setTransaction] = useState<GatewayTransaction | null>(
+    null
+  );
+  useEffect(() => {
+    const found = transactions.find((tx) => tx.hash === currentDeposit);
+    if (found) {
+      setTransaction(found);
+    }
+  }, [transactions, currentDeposit]);
+
   return (
     <>
       <GatewayPaperHeader title={paperTitle} />
@@ -210,6 +218,20 @@ export const GatewayDepositProcessor: FunctionComponent<
     console.log("tx: changed", transaction);
   }, [transaction]);
 
+  const { decimals: lockAssetDecimals } = useChainInstanceAssetDecimals(
+    gateway.fromChain,
+    gateway.params.asset
+  );
+  const { decimals: mintAssetDecimals } = useChainInstanceAssetDecimals(
+    gateway.toChain,
+    gateway.params.asset
+  );
+
+  const inTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction.in,
+    debugLabel: "in",
+  });
+
   const {
     error: lockError,
     status: lockStatus,
@@ -220,9 +242,23 @@ export const GatewayDepositProcessor: FunctionComponent<
     txIndex: lockTxIndex,
     txUrl: lockTxUrl,
     amount: lockAmount,
-  } = useChainTransactionStatusUpdater({
-    tx: transaction.in,
-    debugLabel: "in",
+  } = inTxMeta;
+
+  const renVmSubmitter = useChainTransactionSubmitter({
+    tx: transaction.renVM,
+    autoSubmit: lockStatus === ChainTransactionStatus.Done,
+  });
+  const { submittingDone: renVmSubmittingDone } = renVmSubmitter;
+  const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
+    tx: transaction.renVM,
+    startTrigger: renVmSubmittingDone,
+  });
+  const { amount: mintAmount, status: renVMStatus } = renVmTxMeta;
+
+  const outTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction.out,
+    debugLabel: "out",
+    startTrigger: renVMStatus === ChainTransactionStatus.Done,
   });
 
   const {
@@ -234,24 +270,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     txIdFormatted: mintTxIdFormatted,
     txIndex: mintTxIndex,
     txUrl: mintTxUrl,
-  } = useChainTransactionStatusUpdater({
-    tx: transaction.out,
-    debugLabel: "out",
-  });
-
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
-    tx: transaction.renVM,
-  });
-  const { amount: mintAmount, status: renVMStatus } = renVmTxMeta;
-
-  const { decimals: lockAssetDecimals } = useChainInstanceAssetDecimals(
-    gateway.fromChain,
-    gateway.params.asset
-  );
-  const { decimals: mintAssetDecimals } = useChainInstanceAssetDecimals(
-    gateway.toChain,
-    gateway.params.asset
-  );
+  } = outTxMeta;
 
   const [submitting, setSubmitting] = useState(false);
   const [renVMSubmitting, setRenVMSubmitting] = useState(false);

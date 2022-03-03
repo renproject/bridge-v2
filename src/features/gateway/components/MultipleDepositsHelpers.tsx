@@ -177,7 +177,10 @@ const DepositNavigationButton: FunctionComponent<
   // const mintChainConfig = getChainConfig(transaction.toChain.chain);
 
   //TODO: remove
-  const lockTxMeta = useChainTransactionStatusUpdater({ tx: transaction.in });
+  const lockTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction.in,
+    debugLabel: "in p",
+  });
   const {
     amount: lockAmount,
     status: lockStatus,
@@ -185,7 +188,11 @@ const DepositNavigationButton: FunctionComponent<
     target: lockTargetConfirmations,
     error: lockError,
   } = lockTxMeta;
-  const mintTxMeta = useChainTransactionStatusUpdater({ tx: transaction.out });
+  const mintTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction.out,
+    startTrigger: lockStatus === ChainTransactionStatus.Done,
+    debugLabel: "out p",
+  });
 
   const lockTxAmount =
     lockAssetDecimals !== null && lockAmount !== null

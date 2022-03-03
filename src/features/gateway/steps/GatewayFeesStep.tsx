@@ -43,6 +43,7 @@ import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { feesDecimalImpact } from "../../../utils/numbers";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
+import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { useWallet } from "../../wallet/walletHooks";
 import { AddressLabel } from "../components/AddressHelpers";
 import { BalanceInfo } from "../components/BalanceHelpers";
@@ -89,6 +90,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   //why gateway is initialized without amount?
   console.log("amount", activeAmount, activeChain);
+  const chains = useCurrentNetworkChains();
   const { gateway } = useGateway(
     {
       asset,
@@ -97,7 +99,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       amount: activeAmount,
       toAddress,
     },
-    { provider, autoTeardown: true }
+    { chains }
   );
   const fees = useGatewayFeesWithRates(gateway, activeAmount);
   const { balance } = useEthereumChainAssetBalance(

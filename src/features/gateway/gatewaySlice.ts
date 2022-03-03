@@ -13,7 +13,7 @@ type GatewayState = {
 };
 
 let initialState: GatewayState = {
-  asset: Asset.DAI,
+  asset: Asset.BTC,
   from: Chain.Ethereum,
   to: Chain.BinanceSmartChain,
   amount: "1", //TODO: crit

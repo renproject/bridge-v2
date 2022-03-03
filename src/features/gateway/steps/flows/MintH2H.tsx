@@ -164,9 +164,6 @@ export const MintH2HGatewayProcess: FunctionComponent<
       amount,
     },
     {
-      provider: fromProvider,
-      autoTeardown: true,
-      autoProviderAlteration: false,
       chains,
     }
   );

@@ -25,29 +25,28 @@ type WalletData = ReturnType<typeof useMultiwallet> & {
 };
 
 const resolveWalletByProvider = (provider: any) => {
-  console.log("wallet resolving");
   let resolved = Wallet.MetaMask;
 
+  // TODO: we should persist wallet selection somewhere
   if (!provider) {
-    resolved = Wallet.MetaMask; // TODO: is it valid ?
-  }
-  if (provider?.isMetaMask) {
+    resolved = Wallet.MetaMask; //default wallet
+  } else if (provider?.isMetaMask) {
     resolved = Wallet.MetaMask;
-  }
-  if (provider?.wallet?._providerUrl?.href?.includes("sollet")) {
+  } else if (provider?.wallet?._providerUrl?.href?.includes("sollet")) {
     resolved = Wallet.Sollet;
-  }
-  if (provider?.wallet) {
+  } else if (provider?.wallet) {
     resolved = Wallet.Phantom;
-  }
-  if (provider?.chainId === "0x61" || provider?.chainId?.indexOf("Binance")) {
+  } else if (
+    provider?.chainId === "0x61" ||
+    provider?.chainId?.indexOf("Binance")
+  ) {
     resolved = Wallet.BinanceSmartChain;
-  }
-  if (provider?.isMewConnect || provider?.isMEWConnect) {
+  } else if (provider?.isMewConnect || provider?.isMEWConnect) {
     resolved = Wallet.MewConnect;
+  } else {
+    console.warn("Unresolved wallet", provider);
   }
   console.log("wallet resolvied", resolved);
-  console.warn("Unresolved wallet", provider);
   return resolved;
 };
 

@@ -106,7 +106,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
       to,
       amount,
     },
-    { provider, autoTeardown: true, autoProviderAlteration: false }
+    { chains }
   );
 
   useDebugValue(gateway);

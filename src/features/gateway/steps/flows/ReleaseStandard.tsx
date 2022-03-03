@@ -12,6 +12,7 @@ import {
 } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
+import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
@@ -60,9 +61,10 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   useSyncWalletChain(from);
   const { connected, provider, account } = useCurrentChainWallet();
 
+  const chains = useCurrentNetworkChains();
   const { gateway, transactions, recoverLocalTx } = useGateway(
     { asset, from, to, amount, toAddress },
-    { provider, autoTeardown: true }
+    { chains }
   );
 
   const { renVMHash } = additionalParams;

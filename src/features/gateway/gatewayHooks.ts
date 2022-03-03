@@ -137,6 +137,7 @@ export const useGateway = (
       }
     };
   }, [
+    chains,
     renJs,
     addTransaction,
     asset,

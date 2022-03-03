@@ -107,7 +107,7 @@ type ChainTransactionStatusUpdater = {
 export const useChainTransactionStatusUpdater = ({
   tx,
   startTrigger = true,
-  waitTarget,
+  waitTarget = 1,
   debugLabel = "",
 }: ChainTransactionStatusUpdater) => {
   const l = useLabeler(debugLabel);
