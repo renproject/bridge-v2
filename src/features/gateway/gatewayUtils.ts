@@ -8,7 +8,7 @@ import {
   supportedEthereumChains,
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
-import { ChainInstanceMap, PartialChainInstanceMap } from "../chain/chainUtils";
+import { PartialChainInstanceMap } from "../chain/chainUtils";
 
 export interface CreateGatewayParams {
   asset: Asset;

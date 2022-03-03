@@ -153,7 +153,7 @@ export const MintH2HGatewayProcess: FunctionComponent<
   const {
     account: fromAccount,
     // connected: fromConnected,
-    provider: fromProvider,
+    // provider: fromProvider,
   } = useWallet(from);
 
   const { gateway, transactions, recoverLocalTx, error } = useGateway(

@@ -20,11 +20,7 @@ import { supportedEthereumChains } from "../../utils/chainsConfig";
 import { fromGwei } from "../../utils/converters";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { isDefined } from "../../utils/objects";
-import {
-  alterEthereumBaseChainsProviderSigner,
-  ChainInstanceMap,
-  PartialChainInstanceMap,
-} from "../chain/chainUtils";
+import { PartialChainInstanceMap } from "../chain/chainUtils";
 import { $exchangeRates, $gasPrices } from "../marketData/marketDataSlice";
 import {
   findAssetExchangeRate,
@@ -91,7 +87,6 @@ export const useGateway = (
       const chainsArray = Object.values(chains).map((chain) => chain.chain);
       (window as any).chainsArray = chainsArray;
       const renJs = new RenJS(network, {
-        networkDelay: 3000,
         logLevel: LogLevel.Debug,
       }).withChains(...chainsArray);
       (window as any).renJs = renJs;

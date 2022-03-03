@@ -12,7 +12,12 @@ import {
   TxSubmitter,
   TxWaiter,
 } from "@renproject/utils";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -43,6 +48,10 @@ import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { feesDecimalImpact } from "../../../utils/numbers";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
+import {
+  alterEthereumBaseChainsProviderSigner,
+  PartialChainInstanceMap,
+} from "../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { useWallet } from "../../wallet/walletHooks";
 import { AddressLabel } from "../components/AddressHelpers";
@@ -90,7 +99,15 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   //why gateway is initialized without amount?
   console.log("amount", activeAmount, activeChain);
-  const chains = useCurrentNetworkChains();
+  const allChains = useCurrentNetworkChains();
+  const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
+  useEffect(() => {
+    if (provider) {
+      alterEthereumBaseChainsProviderSigner(allChains, provider, true);
+      setChains(allChains);
+    }
+  }, [allChains, provider]);
+
   const { gateway } = useGateway(
     {
       asset,

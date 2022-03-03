@@ -4,7 +4,6 @@ import {
   DepositEntryStatus,
   DepositPhase,
 } from "./components/MultipleDepositsHelpers";
-import { useChainTransactionStatusUpdater } from "./gatewayTransactionHooks";
 
 export const depositSorter = (a: any, b: any) => {
   const aConf = a.detectedAt || 0;

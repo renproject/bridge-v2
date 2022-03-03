@@ -59,7 +59,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount, toAddress } = gatewayParams;
   useSyncWalletChain(from);
-  const { connected, provider, account } = useCurrentChainWallet();
+  const { connected, account } = useCurrentChainWallet();
 
   const chains = useCurrentNetworkChains();
   const { gateway, transactions, recoverLocalTx } = useGateway(

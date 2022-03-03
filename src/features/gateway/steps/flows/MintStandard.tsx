@@ -233,13 +233,13 @@ export const GatewayDepositProcessor: FunctionComponent<
   });
 
   const {
-    error: lockError,
+    // error: lockError,
     status: lockStatus,
     confirmations: lockConfirmations,
     target: lockTargetConfirmations,
-    txId: lockTxId,
+    // txId: lockTxId,
     txIdFormatted: lockTxIdFormatted,
-    txIndex: lockTxIndex,
+    // txIndex: lockTxIndex,
     txUrl: lockTxUrl,
     amount: lockAmount,
   } = inTxMeta;
@@ -262,13 +262,13 @@ export const GatewayDepositProcessor: FunctionComponent<
   });
 
   const {
-    error: mintError,
+    // error: mintError,
     status: mintStatus,
     confirmations: mintConfirmations,
     target: mintTargetConfirmations,
-    txId: mintTxId,
+    // txId: mintTxId,
     txIdFormatted: mintTxIdFormatted,
-    txIndex: mintTxIndex,
+    // txIndex: mintTxIndex,
     txUrl: mintTxUrl,
   } = outTxMeta;
 
