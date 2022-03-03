@@ -128,7 +128,6 @@ export const MintDepositConfirmationStatus: FunctionComponent<
         <Typography variant="body1" align="center">
           {lockConfirmations !== null && lockTargetConfirmations !== null ? (
             <>
-              {lockConfirmations} of {lockTargetConfirmations} confirmations
               {t("tx.confirmations-of-target-counter-message", {
                 confirmations: lockConfirmations,
                 target: lockTargetConfirmations,

@@ -34,6 +34,11 @@ export const walletIcon = (Icon: FunctionComponent) => {
   return createPaddedIcon(Icon, walletIconSize);
 };
 
+const chainIconSize = 256;
+export const chainIcon = (Icon: FunctionComponent) => {
+  return createPaddedIcon(Icon, chainIconSize);
+};
+
 const useIconWithLabelStyles = makeStyles((theme) => ({
   root: {
     display: "inline-flex",

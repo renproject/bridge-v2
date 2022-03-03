@@ -1,5 +1,23 @@
+import { createSvgIcon } from "@material-ui/core";
 import { Asset, Chain, chains } from "@renproject/chains";
+import {
+  Avalanche,
+  Bch,
+  BinanceSmartChain,
+  Btc,
+  Digi,
+  Doge,
+  Ethereum,
+  Fil,
+  Luna,
+  Phantom,
+  Polygon,
+  Solana,
+  Zec,
+} from "@renproject/icons";
+
 import { RenNetwork } from "@renproject/utils";
+import { chainIcon } from "../components/icons/IconHelpers";
 import {
   ArbitrumCircleIcon,
   AvalancheChainCircleIcon,
@@ -13,6 +31,7 @@ import {
   FantomCircleIcon,
   LunaFullIcon,
   PolygonFullIcon,
+  SolanaFullIcon,
   ZecIcon,
 } from "../components/icons/RenIcons";
 import {
@@ -54,27 +73,30 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
     networks: createNetworksConfig(42161, 421611),
   },
   Avalanche: {
-    Icon: AvalancheChainCircleIcon,
+    Icon: chainIcon(Avalanche),
     fullName: "Avalanche",
     networks: createNetworksConfig(43114, 43113),
   },
   BinanceSmartChain: {
-    Icon: BinanceChainFullIcon,
+    Icon: chainIcon(BinanceSmartChain),
     fullName: "Binance Smart Chain",
     shortName: "BSC",
     networks: createNetworksConfig(56, 97),
   },
   Bitcoin: {
-    Icon: BitcoinIcon,
+    Icon: chainIcon(Btc),
     fullName: "Bitcoin",
   },
   BitcoinCash: {
-    Icon: BchFullIcon,
+    Icon: chainIcon(Bch),
     fullName: "Bitcoin Cash",
   },
-  Dogecoin: unsetChainConfig,
+  Dogecoin: {
+    Icon: chainIcon(Doge),
+    fullName: "Dogecoin",
+  },
   Ethereum: {
-    Icon: EthereumChainFullIcon,
+    Icon: chainIcon(Ethereum),
     fullName: "Ethereum",
     shortName: "Eth",
     networks: {
@@ -83,31 +105,40 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
     },
   },
   Fantom: {
-    Icon: FantomCircleIcon,
+    Icon: chainIcon(Phantom),
     fullName: "Fantom",
     networks: createNetworksConfig(250, 4002),
   },
   Polygon: {
-    Icon: PolygonFullIcon,
+    Icon: chainIcon(Polygon),
     fullName: "Polygon",
     networks: createNetworksConfig(137, 80001),
   },
-  Zcash: { Icon: ZecIcon, fullName: "Zcash" },
+  Zcash: {
+    Icon: chainIcon(Zec),
+    fullName: "Zcash",
+  },
   DigiByte: {
-    Icon: DgbFullIcon,
+    Icon: chainIcon(Digi),
     fullName: "DigiByte",
   },
-  Filecoin: unsetChainConfig,
+  Filecoin: {
+    Icon: chainIcon(Fil),
+    fullName: "Filecoin",
+  },
   Goerli: {
-    Icon: EthereumChainFullIcon, //TODO: change
+    Icon: chainIcon(Ethereum),
     fullName: "Goerli Testnet",
-    networks: createNetworksConfig(1987, 5),
+    networks: createNetworksConfig(1, 5),
   },
   Terra: {
-    Icon: LunaFullIcon,
+    Icon: chainIcon(Luna),
     fullName: "Terra",
   },
-  Solana: unsetChainConfig,
+  Solana: {
+    Icon: chainIcon(Solana),
+    fullName: "Solana",
+  },
 };
 
 export const chainsConfig = chainsBaseConfig;
@@ -152,13 +183,15 @@ export const supportedEthereumChains: Array<Chain> = [
   Chain.Ethereum,
   Chain.BinanceSmartChain,
   Chain.Polygon,
-  Chain.Goerli,
+  // Chain.Goerli,
   Chain.Fantom,
   Chain.Avalanche,
   Chain.Arbitrum,
 ];
 
-const mintChains = supportedEthereumChains;
+export const supportedSolanaChains: Array<Chain> = [Chain.Solana];
+
+const mintChains = [...supportedEthereumChains, ...supportedSolanaChains];
 
 export const isChainConnectionRequired = (chain: Chain) =>
   supportedEthereumChains.includes(chain);

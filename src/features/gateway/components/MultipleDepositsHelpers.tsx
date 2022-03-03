@@ -176,6 +176,10 @@ const DepositNavigationButton: FunctionComponent<
   // const lockChainConfig = getChainConfig(transaction.fromChain.chain);
   // const mintChainConfig = getChainConfig(transaction.toChain.chain);
 
+  // const p = useChainTransactionSubmitter({
+  //   tx: transaction.in,
+  //   autoSubmit: isTxSubmittable(transaction.in),
+  // });
   //TODO: remove
   const lockTxMeta = useChainTransactionStatusUpdater({
     tx: transaction.in,

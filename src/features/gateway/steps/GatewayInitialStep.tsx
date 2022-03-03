@@ -84,6 +84,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const filterChains = useCallback(
     (asset: Asset) => {
       const { lockChain, mintChains } = getAssetConfig(asset);
+      console.log("mintChains", mintChains);
       if (isMint) {
         setFromChains([lockChain]);
         setToChains(mintChains);

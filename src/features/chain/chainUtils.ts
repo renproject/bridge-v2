@@ -3,12 +3,10 @@ import {
   Bitcoin,
   BitcoinBaseChain,
   BitcoinCash,
+  DigiByte,
   Dogecoin,
   Zcash,
-  DigiByte,
 } from "@renproject/chains-bitcoin";
-import { Terra } from "@renproject/chains-terra";
-
 import {
   Arbitrum,
   Avalanche,
@@ -17,14 +15,18 @@ import {
   EthProvider,
   EvmNetworkConfig,
   Fantom,
-  Polygon,
   Goerli,
+  Polygon,
 } from "@renproject/chains-ethereum";
+import { Solana } from "@renproject/chains-solana";
+import { Terra } from "@renproject/chains-terra";
+
 import {
   Chain as GatewayChain,
   DepositChain,
   RenNetwork,
 } from "@renproject/utils";
+import { clusterApiUrl, Connection } from "@solana/web3.js";
 import { ethers, providers } from "ethers";
 import { supportedEthereumChains } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
@@ -88,6 +90,26 @@ export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
   };
 };
 
+export const getSolanaChain = (
+  network: RenNetwork
+): ChainInstance & {
+  chain: Solana;
+} => {
+  const provider = new Connection(
+    clusterApiUrl(network === RenNetwork.Mainnet ? "mainnet-beta" : "testnet")
+  );
+  // const provider = new Connection("ren.rpcpool.net")
+
+  return {
+    chain: new Solana({
+      network,
+      provider,
+    }),
+    connectionRequired: true,
+    accounts: [],
+  };
+};
+
 const getBitcoinBaseChain = <BTC extends BitcoinBaseChain>(ChainClass: BTC) => {
   return {
     chain: ChainClass,
@@ -105,7 +127,7 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     [Chain.Ethereum]: getEthereumBaseChain(Ethereum, network),
     [Chain.BinanceSmartChain]: getEthereumBaseChain(BinanceSmartChain, network),
     [Chain.Polygon]: getEthereumBaseChain(Polygon, network),
-    [Chain.Goerli]: getEthereumBaseChain(Goerli, network),
+    // [Chain.Goerli]: getEthereumBaseChain(Goerli, network),
     [Chain.Avalanche]: getEthereumBaseChain(Avalanche, network),
     [Chain.Arbitrum]: getEthereumBaseChain(Fantom, network),
     [Chain.Fantom]: getEthereumBaseChain(Arbitrum, network),
@@ -119,6 +141,10 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     [Chain.DigiByte]: getBitcoinBaseChain(new DigiByte({ network })),
   };
 
+  const solanaBaseChains = {
+    [Chain.Solana]: getSolanaChain(network),
+  };
+
   const depositBaseChains = {
     // @ts-ignore
     [Chain.Terra]: getDepositBaseChain(new Terra({ network })),
@@ -127,6 +153,7 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     ...ethereumBaseChains,
     ...bitcoinBaseChains,
     ...depositBaseChains,
+    ...solanaBaseChains,
   } as unknown as ChainInstanceMap;
 };
 

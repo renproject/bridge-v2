@@ -114,17 +114,17 @@ export const useGasPrices = () => {
       chain: Chain.Arbitrum,
       standard: 0.4, // avg gas price
     };
-    // const solanaPrice = {
-    //   chain: Chain.Solana,
-    //   standard: 6, // extrapolated to make it around 0,001 SOL
-    // };
+    const solanaPrice = {
+      chain: Chain.Solana,
+      standard: 6, // extrapolated to make it around 0,001 SOL
+    };
     const gasPrices = [
       ethPrice,
       bscPrice,
       avaxPrice,
       ftmPrice,
       maticPrice,
-      // solanaPrice,
+      solanaPrice,
       arbPrice,
     ] as Array<GasPrice>;
 

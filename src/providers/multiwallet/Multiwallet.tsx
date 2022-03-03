@@ -17,6 +17,7 @@ import {
 } from "../../features/wallet/components/WalletHelpers";
 import { createNetworkIdMapper } from "../../utils/networksConfig";
 import { Wallet } from "../../utils/walletsConfig";
+import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 
 export const walletPickerModalConfig = (network: RenNetwork) => {
   return {
@@ -63,21 +64,21 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
             ]
           : []),
       ],
-      [Chain.Goerli]: [
-        {
-          name: Wallet.MetaMask,
-          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
-          info: PolygonMetamaskConnectorInfo,
-          connector: (() => {
-            const connector = new EthereumInjectedConnector({
-              networkIdMapper: createNetworkIdMapper(Chain.Goerli),
-              debug: true,
-            });
-            connector.getProvider = () => (window as any).ethereum;
-            return connector;
-          })(),
-        },
-      ],
+      // [Chain.Goerli]: [
+      //   {
+      //     name: Wallet.MetaMask,
+      //     logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+      //     info: PolygonMetamaskConnectorInfo,
+      //     connector: (() => {
+      //       const connector = new EthereumInjectedConnector({
+      //         networkIdMapper: createNetworkIdMapper(Chain.Goerli),
+      //         debug: true,
+      //       });
+      //       connector.getProvider = () => (window as any).ethereum;
+      //       return connector;
+      //     })(),
+      //   },
+      // ],
       [Chain.Fantom]: [
         {
           name: Wallet.MetaMask,
@@ -147,33 +148,33 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
             ]
           : []),
       ],
-      // [Chain.Solana]: [
-      //   {
-      //     name: "Phantom",
-      //     logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
-      //     connector: new SolanaConnector({
-      //       debug: true,
-      //       providerURL: (window as any).solana || "https://www.phantom.app",
-      //       clusterURL:
-      //         network === RenNetwork.Mainnet
-      //           ? "https://ren.rpcpool.com/"
-      //           : undefined,
-      //       network,
-      //     }),
-      //   },
-      //   {
-      //     name: "Sollet.io",
-      //     logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
-      //     connector: new SolanaConnector({
-      //       providerURL: "https://www.sollet.io",
-      //       clusterURL:
-      //         network === RenNetwork.Mainnet
-      //           ? "https://ren.rpcpool.com/"
-      //           : undefined,
-      //       network,
-      //     }),
-      //   },
-      // ],
+      [Chain.Solana]: [
+        {
+          name: Wallet.Phantom,
+          logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
+          connector: new SolanaConnector({
+            debug: true,
+            providerURL: (window as any).solana || "https://www.phantom.app",
+            clusterURL:
+              network === RenNetwork.Mainnet
+                ? "https://ren.rpcpool.com/"
+                : undefined,
+            network,
+          }),
+        },
+        {
+          name: Wallet.Sollet,
+          logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
+          connector: new SolanaConnector({
+            providerURL: "https://www.sollet.io",
+            clusterURL:
+              network === RenNetwork.Mainnet
+                ? "https://ren.rpcpool.com/"
+                : undefined,
+            network,
+          }),
+        },
+      ],
       [Chain.Arbitrum]: [
         {
           name: Wallet.MetaMask,

@@ -1,6 +1,12 @@
 // TODO: move to multiwallet
 import { Chain } from "@renproject/chains";
-import { BinanceChainWallet, MetaMask } from "@renproject/icons";
+import {
+  BinanceChainWallet,
+  MetaMask,
+  MyEtherWallet,
+  PhantomWallet,
+  Sollet,
+} from "@renproject/icons";
 import { walletIcon } from "../components/icons/IconHelpers";
 import {
   CustomSvgIconComponent,
@@ -27,26 +33,42 @@ export type WalletLabelsConfig = {
 
 type WalletBaseConfig = WalletIconsConfig & WalletLabelsConfig & {};
 
-const unsetWalletConfig: WalletBaseConfig = {
+export const unsetWalletConfig: WalletBaseConfig = {
   Icon: EmptyCircleIcon,
   fullName: "Unset full name",
 };
 
 const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
-  BinanceSmartChain: {
+  [Wallet.BinanceSmartChain]: {
     fullName: "Binance Wallet",
     shortName: "Binance Wallet",
     Icon: walletIcon(BinanceChainWallet),
   },
-  MetaMask: {
+  [Wallet.MetaMask]: {
     fullName: "MetaMask Wallet",
     shortName: "MetaMask",
     Icon: walletIcon(MetaMask),
   },
-  MewConnect: unsetWalletConfig,
-  Phantom: unsetWalletConfig,
-  Sollet: unsetWalletConfig,
-  WalletConnect: unsetWalletConfig,
+  [Wallet.MewConnect]: {
+    fullName: "MyEther Wallet",
+    shortName: "MEW",
+    Icon: walletIcon(MyEtherWallet),
+  },
+  [Wallet.Phantom]: {
+    fullName: "Phantom Wallet",
+    shortName: "Phantom",
+    Icon: walletIcon(PhantomWallet),
+  },
+  [Wallet.Sollet]: {
+    fullName: "Sollet.io Wallet",
+    shortName: "Sollet.io",
+    Icon: walletIcon(Sollet),
+  },
+  [Wallet.WalletConnect]: {
+    fullName: "WalletConnect",
+    shortName: "WalletConnect",
+    Icon: EmptyCircleIcon,
+  },
 };
 
 export const walletsConfig = walletsBaseConfig;
@@ -66,7 +88,7 @@ const defaultChainWallets: Partial<Record<Chain, Wallet>> = {
   [Chain.Polygon]: Wallet.MetaMask,
   [Chain.Avalanche]: Wallet.MetaMask,
   [Chain.Arbitrum]: Wallet.MetaMask,
-  // [Chain.Solana]: Wallet.Sollet
+  [Chain.Solana]: Wallet.Sollet,
 };
 
 export const getDefaultWalletForChain = (chain: Chain) => {

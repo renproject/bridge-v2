@@ -232,6 +232,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     debugLabel: "in",
   });
 
+  // const lockStatus = ChainTransactionStatus.Done;
   const {
     // error: lockError,
     status: lockStatus,
