@@ -517,7 +517,7 @@ export const getGatewayParams = (gateway: Gateway) => {
   const asset = gateway.params.asset as Asset;
   const from = gateway.params.from.chain as Chain;
   const to = gateway.params.to.chain as Chain;
-  const fromAmount = gateway.params.from.params.amount as string;
+  const fromAmount = gateway.params.from.params?.amount as string;
   const toAddress = gateway.params.to.address as string;
   const fromAverageConfirmationTime =
     gateway.fromChain.network.averageConfirmationTime;
@@ -527,7 +527,7 @@ export const getGatewayParams = (gateway: Gateway) => {
     asset,
     from,
     to,
-    amount: fromAmount,
+    amount: fromAmount || null,
     fromAmount,
     toAddress,
     fromAverageConfirmationTime,

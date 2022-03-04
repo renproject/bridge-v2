@@ -38,6 +38,7 @@ import { getHours } from "../../../../utils/dates";
 import { trimAddress } from "../../../../utils/strings";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
 import {
+  alterContractChainProviderSigner,
   alterEthereumBaseChainsProviderSigner,
   PartialChainInstanceMap,
 } from "../../../chain/chainUtils";
@@ -65,6 +66,7 @@ import {
   useGatewayFees,
 } from "../../gatewayHooks";
 import {
+  isTxSubmittable,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
   useRenVMChainTransactionStatusUpdater,
@@ -104,8 +106,8 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
   useEffect(() => {
     if (provider) {
+      alterContractChainProviderSigner(allChains, to, provider, true);
       const newChainsMap = { [from]: allChains[from], [to]: allChains[to] };
-      alterEthereumBaseChainsProviderSigner(newChainsMap, provider, true, to);
       setChains(newChainsMap);
     }
   }, [from, to, allChains, provider]);
@@ -232,7 +234,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     debugLabel: "in",
   });
 
-  // const lockStatus = ChainTransactionStatus.Done;
+  // const lockStatus = ChainTransactionStatus.Confirming;
   const {
     // error: lockError,
     status: lockStatus,
@@ -247,7 +249,9 @@ export const GatewayDepositProcessor: FunctionComponent<
 
   const renVmSubmitter = useChainTransactionSubmitter({
     tx: transaction.renVM,
-    autoSubmit: lockStatus === ChainTransactionStatus.Done,
+    autoSubmit:
+      lockStatus === ChainTransactionStatus.Done &&
+      isTxSubmittable(transaction.renVM),
   });
   const { submittingDone: renVmSubmittingDone } = renVmSubmitter;
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
@@ -256,10 +260,15 @@ export const GatewayDepositProcessor: FunctionComponent<
   });
   const { amount: mintAmount, status: renVMStatus } = renVmTxMeta;
 
+  const outSubmitter = useChainTransactionSubmitter({
+    tx: transaction.out,
+    debugLabel: "out",
+  });
+  const { submittingDone: mintSubmittingDone } = outSubmitter;
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction.out,
     debugLabel: "out",
-    startTrigger: renVMStatus === ChainTransactionStatus.Done,
+    startTrigger: mintSubmittingDone,
   });
 
   const {

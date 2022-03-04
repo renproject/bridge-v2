@@ -61,7 +61,11 @@ import {
   useWalletAssetHelpers,
 } from "../../../wallet/walletHooks";
 import { GatewayTransactionValidityMessage } from "../../components/MintHelpers";
-import { RenVMSubmittingInfo } from "../../components/TransactionProgressHelpers";
+import {
+  RenVMSubmittingInfo,
+  TransactionProgressInfo,
+} from "../../components/TransactionProgressHelpers";
+import { getGatewayParams } from "../../gatewayHooks";
 import { maxConfirmations } from "../../gatewayTransactionUtils";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
 
@@ -93,8 +97,10 @@ export const MintDepositConfirmationStatus: FunctionComponent<
 }) => {
   const { t } = useTranslation();
   const [, setTitle] = usePaperTitle();
-  const lockAssetConfig = getAssetConfig(gateway.params.asset);
-  const lockChainConfig = getChainConfig(gateway.fromChain.chain);
+  const { asset, from, fromAverageConfirmationTime } =
+    getGatewayParams(gateway);
+  const lockAssetConfig = getAssetConfig(asset);
+  const lockChainConfig = getChainConfig(from);
 
   const { Icon } = lockAssetConfig;
 
@@ -138,6 +144,11 @@ export const MintDepositConfirmationStatus: FunctionComponent<
           )}
         </Typography>
       </SmallWrapper>
+      <TransactionProgressInfo
+        confirmations={lockConfirmations}
+        target={lockTargetConfirmations}
+        averageConfirmationTime={fromAverageConfirmationTime}
+      />
       <MediumWrapper>
         {lockAmountFormatted !== null ? (
           <BigAssetAmount

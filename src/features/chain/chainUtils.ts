@@ -122,7 +122,7 @@ const getBitcoinBaseChain = <BTC extends BitcoinBaseChain>(ChainClass: BTC) => {
   };
 };
 
-const getDepositBaseChain = <TRR extends DepositChain>(ChainClass: TRR) => {
+const getDepositBaseChain = <DBC extends DepositChain>(ChainClass: DBC) => {
   return {
     chain: ChainClass,
   };
@@ -168,10 +168,13 @@ export const alterContractChainProviderSigner = (
   provider: any,
   alterProvider?: boolean
 ) => {
+  console.log("ContractChainProviderSigner", alteredChain);
   if (!contractChains.includes(alteredChain)) {
     throw new Error(`Altering failed: Not a contract chain: ${alteredChain}.`);
   }
   if (alteredChain === Chain.Solana) {
+    console.log("Solana", provider);
+    (window as any).solanaProvider = provider;
     // TODO:Noah how to do it for Solana
   } else if (supportedEthereumChains.includes(alteredChain)) {
     alterEthereumBaseChainsProviderSigner(
