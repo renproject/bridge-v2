@@ -221,10 +221,10 @@ export const useChainAssetAddress = (
       return;
     }
     const getAddress = async () => {
-      if (!isDefined(chainInstance.getMintGateway)) {
+      if (!isDefined(chainInstance.getMintAsset)) {
         throw new Error(`Unable to resolve contract address for ${asset}`);
       }
-      return (chainInstance as ContractChain).getMintGateway(asset);
+      return (chainInstance as ContractChain).getMintAsset(asset);
     };
     getAddress()
       .then((addr) => {
@@ -418,11 +418,10 @@ export const useGatewayFees = (
   };
 };
 
-//TODO: crit finish when field ready Noah
 const getNativeFeeAssets = (gateway: Gateway) => {
   return {
-    fromChainFeeAsset: Object.values(gateway.fromChain.assets)[0] as Asset,
-    toChainFeeAsset: Object.values(gateway.toChain.assets)[0] as Asset,
+    fromChainFeeAsset: gateway.fromChain.network.nativeAsset?.symbol as Asset,
+    toChainFeeAsset: gateway.toChain.network.nativeAsset?.symbol as Asset,
   };
 };
 

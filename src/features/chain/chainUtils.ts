@@ -17,6 +17,7 @@ import {
   Fantom,
   Polygon,
 } from "@renproject/chains-ethereum";
+import SolanaWallet from "@project-serum/sol-wallet-adapter";
 import { Solana } from "@renproject/chains-solana";
 import { Terra } from "@renproject/chains-terra";
 
@@ -97,15 +98,18 @@ export const getSolanaChain = (
 ): ChainInstance & {
   chain: Solana;
 } => {
-  const provider = new Connection(
-    clusterApiUrl(network === RenNetwork.Mainnet ? "mainnet-beta" : "testnet")
-  );
+  const solanaNetwork =
+    network === RenNetwork.Mainnet ? "mainnet-beta" : "testnet";
+  const provider = new Connection(clusterApiUrl(solanaNetwork));
   // const provider = new Connection("ren.rpcpool.net")
-
+  const signer =
+    ((window as any).solana as SolanaWallet) ||
+    new SolanaWallet(provider, network);
   return {
     chain: new Solana({
       network,
       provider,
+      signer,
     }),
     connectionRequired: true,
     accounts: [],

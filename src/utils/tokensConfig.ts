@@ -20,6 +20,8 @@ import {
   Zec,
   Luna,
   RenLuna,
+  Sol,
+  RenSol,
 } from "@renproject/icons";
 import {
   nativeTokenIcon,
@@ -176,7 +178,10 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   ROOK: unsetAssetConfig,
   SUSHI: unsetAssetConfig,
   SOL: {
-    ...unsetAssetConfig,
+    Icon: nativeTokenIcon(Sol),
+    RenIcon: wrappedTokenIcon(RenSol),
+    shortName: "SOL",
+    fullName: "Solana",
     rateService: AssetRateService.Coingecko,
     rateSymbol: "solana",
   },
