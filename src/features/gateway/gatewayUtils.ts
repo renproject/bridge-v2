@@ -1,11 +1,13 @@
 import { Asset, Chain } from "@renproject/chains";
 import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Ethereum } from "@renproject/chains-ethereum";
+import { Solana } from "@renproject/chains-solana";
 import RenJS, { Gateway } from "@renproject/ren";
 import queryString from "query-string";
 import {
   supportedBitcoinChains,
   supportedEthereumChains,
+  supportedSolanaChains,
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { PartialChainInstanceMap } from "../chain/chainUtils";
@@ -41,6 +43,11 @@ export const createGateway = async (
       amount: gatewayParams.amount,
       convertToWei: true,
     });
+  } else if (supportedSolanaChains.includes(gatewayParams.from)) {
+    // TODO: crit finish
+    fromChain = (fromChainInstance.chain as Solana).Account({
+      amount: gatewayParams.amount,
+    });
   } else if (supportedBitcoinChains.includes(gatewayParams.from)) {
     fromChain = (fromChainInstance.chain as BitcoinBaseChain).GatewayAddress();
   } else {
@@ -50,6 +57,9 @@ export const createGateway = async (
   let toChain;
   if (supportedEthereumChains.includes(gatewayParams.to)) {
     toChain = (toChainInstance.chain as Ethereum).Account();
+  } else if (supportedSolanaChains.includes(gatewayParams.to)) {
+    // TODO: crit finish
+    toChain = (toChainInstance.chain as Solana).Account();
   } else if (supportedBitcoinChains.includes(gatewayParams.to)) {
     if (!gatewayParams.toAddress) {
       throw new Error(`No recipient address provided.`);
@@ -58,7 +68,7 @@ export const createGateway = async (
       gatewayParams.toAddress
     );
   } else {
-    throw new Error(`Unknown chain "to": ${gatewayParams.from}`);
+    throw new Error(`Unknown chain "to": ${gatewayParams.to}`);
   }
 
   console.log("creating gateway with fromChain", fromChain);

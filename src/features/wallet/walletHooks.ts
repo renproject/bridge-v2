@@ -32,6 +32,8 @@ const resolveWalletByProvider = (provider: any) => {
     resolved = Wallet.MetaMask; //default wallet
   } else if (provider?.isMetaMask) {
     resolved = Wallet.MetaMask;
+  } else if (provider?.isCoinbaseWallet) {
+    resolved = Wallet.Coinbase;
   } else if (provider?.wallet?._providerUrl?.href?.includes("sollet")) {
     resolved = Wallet.Sollet;
   } else if (provider?.wallet) {

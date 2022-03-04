@@ -191,10 +191,15 @@ export const supportedEthereumChains: Array<Chain> = [
 
 export const supportedSolanaChains: Array<Chain> = [Chain.Solana];
 
+export const contractChains = [
+  ...supportedEthereumChains,
+  ...supportedSolanaChains,
+];
+
 const mintChains = [...supportedEthereumChains, ...supportedSolanaChains];
 
 export const isChainConnectionRequired = (chain: Chain) =>
-  supportedEthereumChains.includes(chain);
+  contractChains.includes(chain);
 
 export const assetChainsArray = Object.values(chains).reduce(
   (acc, chain) => [

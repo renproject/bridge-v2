@@ -24,11 +24,15 @@ import { Terra } from "@renproject/chains-terra";
 import {
   Chain as GatewayChain,
   DepositChain,
+  isContractChain,
   RenNetwork,
 } from "@renproject/utils";
 import { clusterApiUrl, Connection } from "@solana/web3.js";
 import { ethers, providers } from "ethers";
-import { supportedEthereumChains } from "../../utils/chainsConfig";
+import {
+  contractChains,
+  supportedEthereumChains,
+} from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 
 export interface ChainInstance {
@@ -155,6 +159,26 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     ...depositBaseChains,
     ...solanaBaseChains,
   } as unknown as ChainInstanceMap;
+};
+export const alterContractChainProviderSigner = (
+  chains: PartialChainInstanceMap,
+  alteredChain: Chain,
+  provider: any,
+  alterProvider?: boolean
+) => {
+  if (!contractChains.includes(alteredChain)) {
+    throw new Error(`Altering failed: Not a contract chain: ${alteredChain}.`);
+  }
+  if (alteredChain === Chain.Solana) {
+    // TODO:Noah how to do it for Solana
+  } else if (supportedEthereumChains.includes(alteredChain)) {
+    alterEthereumBaseChainsProviderSigner(
+      chains,
+      provider,
+      alterProvider,
+      alteredChain
+    );
+  }
 };
 
 export const alterEthereumBaseChainsProviderSigner = (

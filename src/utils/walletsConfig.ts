@@ -17,6 +17,7 @@ export enum Wallet {
   MetaMask = "MetaMask",
   WalletConnect = "WalletConnect",
   MewConnect = "MewConnect",
+  Coinbase = "Coinbase",
   BinanceSmartChain = "BinanceSmartChain",
   Sollet = "Sollet",
   Phantom = "Phantom",
@@ -67,6 +68,11 @@ const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
   [Wallet.WalletConnect]: {
     fullName: "WalletConnect",
     shortName: "WalletConnect",
+    Icon: EmptyCircleIcon,
+  },
+  [Wallet.Coinbase]: {
+    fullName: "Coinbase Wallet",
+    shortName: "Coinbase",
     Icon: EmptyCircleIcon,
   },
 };

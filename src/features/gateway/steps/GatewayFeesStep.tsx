@@ -6,6 +6,7 @@ import {
   IconButton,
   Typography,
 } from "@material-ui/core";
+import { Chain } from "@renproject/chains";
 import {
   ChainTransactionStatus,
   ContractChain,
@@ -49,6 +50,7 @@ import { paths } from "../../../pages/routes";
 import { feesDecimalImpact } from "../../../utils/numbers";
 import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
 import {
+  alterContractChainProviderSigner,
   alterEthereumBaseChainsProviderSigner,
   PartialChainInstanceMap,
 } from "../../chain/chainUtils";
@@ -103,7 +105,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
   useEffect(() => {
     if (provider) {
-      alterEthereumBaseChainsProviderSigner(allChains, provider, true);
+      alterContractChainProviderSigner(allChains, activeChain, provider, true);
       setChains(allChains);
     }
   }, [allChains, provider]);
