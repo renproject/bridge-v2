@@ -15,7 +15,6 @@ import {
   EthProvider,
   EvmNetworkConfig,
   Fantom,
-  Goerli,
   Polygon,
 } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
@@ -24,7 +23,6 @@ import { Terra } from "@renproject/chains-terra";
 import {
   Chain as GatewayChain,
   DepositChain,
-  isContractChain,
   RenNetwork,
 } from "@renproject/utils";
 import { clusterApiUrl, Connection } from "@solana/web3.js";

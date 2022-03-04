@@ -1,4 +1,3 @@
-import { createSvgIcon } from "@material-ui/core";
 import { Asset, Chain, chains } from "@renproject/chains";
 import {
   Avalanche,
@@ -20,19 +19,7 @@ import { RenNetwork } from "@renproject/utils";
 import { chainIcon } from "../components/icons/IconHelpers";
 import {
   ArbitrumCircleIcon,
-  AvalancheChainCircleIcon,
-  BchFullIcon,
-  BinanceChainFullIcon,
-  BitcoinIcon,
   CustomSvgIconComponent,
-  DgbFullIcon,
-  EmptyCircleIcon,
-  EthereumChainFullIcon,
-  FantomCircleIcon,
-  LunaFullIcon,
-  PolygonFullIcon,
-  SolanaFullIcon,
-  ZecIcon,
 } from "../components/icons/RenIcons";
 import {
   createNetworkConfig,
@@ -60,11 +47,6 @@ type ChainBaseConfig = ChainIconsConfig &
   ChainNetworksConfig & {};
 
 export type ChainConfig = ChainBaseConfig & {};
-
-const unsetChainConfig: ChainConfig = {
-  Icon: EmptyCircleIcon,
-  fullName: "Unset full name",
-};
 
 const chainsBaseConfig: Record<Chain, ChainConfig> = {
   Arbitrum: {
