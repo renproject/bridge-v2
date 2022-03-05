@@ -46,11 +46,7 @@ import {
   getChainNetworkConfig,
 } from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
-import {
-  getDefaultWalletForChain,
-  getWalletConfig,
-  Wallet,
-} from "../../../utils/walletsConfig";
+import { getWalletConfig, Wallet } from "../../../utils/walletsConfig";
 import { useSwitchChainHelpers, useWallet } from "../walletHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import { setPickerOpened } from "../walletSlice";
@@ -140,14 +136,12 @@ export const WalletChainLabel: WalletPickerProps<
 export const WalletConnectingInfo: WalletPickerProps<
   any,
   any
->["ConnectingInfo"] = ({ chain, onClose }) => {
+>["ConnectingInfo"] = ({ chain, name, onClose }) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const chainConfig = getChainConfig(chain as Chain);
 
-  // TODO: There should be better mapping.
-  const wallet = getDefaultWalletForChain(chain as Chain);
-  const walletConfig = getWalletConfig(wallet);
+  const walletConfig = getWalletConfig(name as Wallet);
 
   const { Icon } = walletConfig;
   const [isPassed] = useTimeout(3000);

@@ -261,7 +261,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 }) => {
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
-  const fees = useGatewayFeesWithRates(gateway, amount);
+  const fees = useGatewayFeesWithRates(gateway, amount || 0);
 
   const { outputAmount, outputAmountUsd } = fees;
 
@@ -352,10 +352,11 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     handleReset: handleResetMint,
   } = outSubmitter;
 
+  const recovering = true;
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
     debugLabel: "out",
-    startTrigger: outSubmitter.submittingDone,
+    startTrigger: outSubmitter.submittingDone || recovering,
   });
   const {
     status: mintStatus,

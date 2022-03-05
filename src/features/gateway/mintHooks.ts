@@ -1,9 +1,5 @@
 import { GatewayTransaction } from "@renproject/ren/build/main/gatewayTransaction";
 import { useCallback, useEffect, useState } from "react";
-import {
-  DepositEntryStatus,
-  DepositPhase,
-} from "./components/MultipleDepositsHelpers";
 
 export const depositSorter = (a: any, b: any) => {
   const aConf = a.detectedAt || 0;
@@ -46,11 +42,4 @@ export const useTransactionsPagination = (
     handlePrev,
     total,
   };
-};
-
-export const getDepositTransactionMeta = (transaction: GatewayTransaction) => {
-  const depositStatus = DepositEntryStatus.PENDING;
-  const depositPhase = DepositPhase.LOCK;
-
-  return { depositStatus, depositPhase };
 };

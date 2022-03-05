@@ -54,6 +54,7 @@ import {
   WalletWrongNetworkInfo,
 } from "../features/wallet/components/WalletHelpers";
 import {
+  useDirtySolanaWalletDetector,
   useSyncWalletNetwork,
   useWallet,
 } from "../features/wallet/walletHooks";
@@ -120,6 +121,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     handleWalletMenuClose();
   }, [deactivateConnector, handleWalletMenuClose]);
 
+  const found = useDirtySolanaWalletDetector();
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
       targetNetwork: network,
@@ -131,13 +133,13 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WrongNetworkInfo: WalletWrongNetworkInfo,
       WalletEntryButton,
       WalletChainLabel,
-      config: walletPickerModalConfig(network),
+      config: walletPickerModalConfig(network, found),
       connectingTitle: t("wallet.connecting"),
       wrongNetworkTitle: t("wallet.wrong-network-title"),
       connectWalletTitle: t("wallet.connect-wallet"),
     };
     return options;
-  }, [t, pickerClasses, handleWalletPickerClose, network, chain]);
+  }, [t, pickerClasses, handleWalletPickerClose, network, chain, found]);
 
   // const debugWallet = useWallet(multiwalletChain); //remove
   // const debugMultiwallet = useMultiwallet(); //remove

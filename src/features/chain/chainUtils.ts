@@ -20,6 +20,7 @@ import {
 import SolanaWallet from "@project-serum/sol-wallet-adapter";
 import { Solana } from "@renproject/chains-solana";
 import { Terra } from "@renproject/chains-terra";
+import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 
 import {
   Chain as GatewayChain,
@@ -34,8 +35,8 @@ import {
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 
-export interface ChainInstance {
-  chain: GatewayChain;
+export interface ChainInstance<C = GatewayChain> {
+  chain: C;
   connectionRequired?: boolean;
   accounts?: string[];
 }
@@ -100,11 +101,14 @@ export const getSolanaChain = (
 } => {
   const solanaNetwork =
     network === RenNetwork.Mainnet ? "mainnet-beta" : "testnet";
-  const provider = new Connection(clusterApiUrl(solanaNetwork));
-  // const provider = new Connection("ren.rpcpool.net")
+  const rpcUrl = clusterApiUrl(solanaNetwork);
+  const provider = new Connection(rpcUrl);
+  console.log(rpcUrl);
   const signer =
     ((window as any).solana as SolanaWallet) ||
-    new SolanaWallet(provider, network);
+    new SolanaWallet(rpcUrl, network);
+  console.log("solana signer", (window as any).solana, signer);
+  console.log(signer);
   return {
     chain: new Solana({
       network,
@@ -114,6 +118,17 @@ export const getSolanaChain = (
     connectionRequired: true,
     accounts: [],
   };
+};
+
+const alterSolanaChainProviderSigner = (
+  chainInstance: ChainInstance<Solana>,
+  provider: SolanaConnector,
+  alterProvider?: boolean
+) => {
+  if (alterProvider) {
+    chainInstance.chain.withProvider(provider.connection);
+  }
+  chainInstance.chain.withSigner(provider.wallet as unknown as SolanaWallet);
 };
 
 const getBitcoinBaseChain = <BTC extends BitcoinBaseChain>(ChainClass: BTC) => {
@@ -165,7 +180,7 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
 export const alterContractChainProviderSigner = (
   chains: PartialChainInstanceMap,
   alteredChain: Chain,
-  provider: any,
+  provider: SolanaConnector,
   alterProvider?: boolean
 ) => {
   console.log("ContractChainProviderSigner", alteredChain);
@@ -175,7 +190,11 @@ export const alterContractChainProviderSigner = (
   if (alteredChain === Chain.Solana) {
     console.log("Solana", provider);
     (window as any).solanaProvider = provider;
-    // TODO:Noah how to do it for Solana
+    alterSolanaChainProviderSigner(
+      chains[alteredChain] as ChainInstance<Solana>,
+      provider as SolanaConnector,
+      false
+    );
   } else if (supportedEthereumChains.includes(alteredChain)) {
     alterEthereumBaseChainsProviderSigner(
       chains,

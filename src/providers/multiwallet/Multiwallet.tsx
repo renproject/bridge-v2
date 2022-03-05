@@ -19,7 +19,10 @@ import { createNetworkIdMapper } from "../../utils/networksConfig";
 import { Wallet } from "../../utils/walletsConfig";
 import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 
-export const walletPickerModalConfig = (network: RenNetwork) => {
+export const walletPickerModalConfig = (
+  network: RenNetwork,
+  reinit = false
+) => {
   return {
     chains: {
       [Chain.Ethereum]: [
@@ -162,6 +165,23 @@ export const walletPickerModalConfig = (network: RenNetwork) => {
             network,
           }),
         },
+        // {
+        //   name: Wallet.Phantom,
+        //   logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
+        //   connector: (() => {
+        //     const connector = new SolanaConnector({
+        //       debug: true,
+        //       providerURL: (window as any).solana || "https://www.phantom.app",
+        //       clusterURL:
+        //         network === RenNetwork.Mainnet
+        //           ? "https://ren.rpcpool.com/"
+        //           : undefined,
+        //       network,
+        //     });
+        //     connector.getProvider = () => (window as any).solana;
+        //     return connector;
+        //   })(),
+        // },
         {
           name: Wallet.Sollet,
           logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",

@@ -1,10 +1,16 @@
 import { Box, Grow, Typography } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Skeleton, ToggleButtonProps } from "@material-ui/lab";
 import { Asset, Chain } from "@renproject/chains";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
+import BigNumber from "bignumber.js";
 import QRCode from "qrcode.react";
-import { FunctionComponent, useCallback, useEffect, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import {
@@ -14,6 +20,7 @@ import {
   TransactionDetailsButton,
 } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
+import { CompletedIcon } from "../../../../components/icons/RenIcons";
 import {
   BigTopWrapper,
   CenteringSpacedBox,
@@ -35,11 +42,11 @@ import {
 import { orangeLight } from "../../../../theme/colors";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
+import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
 import { getAssetConfig } from "../../../../utils/tokensConfig";
 import {
   alterContractChainProviderSigner,
-  alterEthereumBaseChainsProviderSigner,
   PartialChainInstanceMap,
 } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
@@ -59,7 +66,13 @@ import {
   DepositWrapper,
   GatewayAddressValidityMessage,
 } from "../../components/MintHelpers";
-import { ResponsiveDepositNavigation } from "../../components/MultipleDepositsHelpers";
+import {
+  CircledProgressWithContent,
+  DepositLoaderStatus,
+  DepositToggleButton,
+  MoreInfo,
+  ResponsiveDepositNavigation,
+} from "../../components/MultipleDepositsHelpers";
 import {
   useChainInstanceAssetDecimals,
   useGateway,
@@ -147,8 +160,20 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
     const found = transactions.find((tx) => tx.hash === currentDeposit);
     if (found) {
       setTransaction(found);
+    } else {
+      setTransaction(null);
     }
   }, [transactions, currentDeposit]);
+
+  const [reloading, setReloading] = useState(false);
+  useEffect(() => {
+    setReloading(true);
+    const timeout = setTimeout(() => {
+      setReloading(false);
+    }, 1000);
+    return () => clearTimeout(timeout);
+  }, [transaction]);
+  (window as any).transaction = transaction;
 
   return (
     <>
@@ -175,12 +200,16 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
                 expiryTime={expiryTime}
               />
               {transaction ? (
-                <GatewayDepositProcessor
-                  gateway={gateway}
-                  transaction={transaction}
-                  onGoToGateway={handleGoToGateway}
-                  expiryTime={expiryTime}
-                />
+                reloading ? (
+                  <DepositLoaderStatus />
+                ) : (
+                  <GatewayDepositProcessor
+                    gateway={gateway}
+                    transaction={transaction}
+                    onGoToGateway={handleGoToGateway}
+                    expiryTime={expiryTime}
+                  />
+                )
               ) : (
                 <MintGatewayAddress
                   gateway={gateway}
@@ -252,19 +281,27 @@ export const GatewayDepositProcessor: FunctionComponent<
     autoSubmit:
       lockStatus === ChainTransactionStatus.Done &&
       isTxSubmittable(transaction.renVM),
+    debugLabel: "renVM",
   });
-  const { submittingDone: renVmSubmittingDone } = renVmSubmitter;
+  const { submittingDone: renVMSubmittingDone, submitting: renVMSubmitting } =
+    renVmSubmitter;
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction.renVM,
-    startTrigger: renVmSubmittingDone,
+    startTrigger: renVMSubmittingDone,
   });
-  const { amount: mintAmount, status: renVMStatus } = renVmTxMeta;
+  const { amount: mintAmount } = renVmTxMeta;
 
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction.out,
     debugLabel: "out",
   });
-  const { submittingDone: mintSubmittingDone } = outSubmitter;
+  const {
+    submittingDone: mintSubmittingDone,
+    handleSubmit: handleSubmitMint,
+    submitting: submittingMint,
+    handleReset: handleResetMint,
+    errorSubmitting: submittingMintError,
+  } = outSubmitter;
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction.out,
     debugLabel: "out",
@@ -281,32 +318,6 @@ export const GatewayDepositProcessor: FunctionComponent<
     // txIndex: mintTxIndex,
     txUrl: mintTxUrl,
   } = outTxMeta;
-
-  const [submitting, setSubmitting] = useState(false);
-  const [renVMSubmitting, setRenVMSubmitting] = useState(false);
-  const [submittingError, setSubmittingError] = useState();
-  const handleSubmit = useCallback(async () => {
-    if (transaction.out.submit) {
-      console.log("txOut", transaction);
-      setSubmittingError(undefined);
-      setSubmitting(true);
-      try {
-        if (renVMStatus !== ChainTransactionStatus.Done) {
-          setRenVMSubmitting(true);
-          await transaction.renVM.submit();
-          await transaction.renVM.wait();
-          setRenVMSubmitting(false);
-        }
-        await transaction.out.submit();
-      } catch (error: any) {
-        setSubmittingError(error);
-      }
-      setSubmitting(false);
-    }
-  }, [transaction, renVMStatus]);
-  const handleReload = useCallback(() => {
-    setSubmittingError(undefined);
-  }, []);
 
   let Content = null;
   if (lockStatus !== ChainTransactionStatus.Done) {
@@ -330,7 +341,7 @@ export const GatewayDepositProcessor: FunctionComponent<
         Content = <span>reverted</span>;
         break;
       default:
-        Content = <GatewayLoaderStatus />;
+        Content = <DepositLoaderStatus reason="Updating Deposit..." />;
     }
   } else if (
     mintStatus === null &&
@@ -347,11 +358,11 @@ export const GatewayDepositProcessor: FunctionComponent<
         lockAmount={lockAmount}
         lockTxId={lockTxIdFormatted}
         lockTxUrl={lockTxUrl}
-        onSubmit={handleSubmit}
-        onRetry={handleSubmit}
-        onReload={handleReload}
-        submitting={submitting}
-        submittingError={submittingError}
+        onSubmit={handleSubmitMint}
+        onRetry={handleSubmitMint}
+        onReload={handleResetMint}
+        submitting={submittingMint}
+        submittingError={submittingMintError}
         renVMSubmitting={renVMSubmitting}
       />
     );
@@ -389,7 +400,11 @@ export const GatewayDepositProcessor: FunctionComponent<
       {Content}
       <Debug
         it={{
+          inTxMeta,
+          renVmSubmitter,
           renVmTxMeta,
+          outTxMeta,
+          outSubmitter,
           mintAssetDecimals,
           hash: transaction.hash,
         }}
@@ -537,5 +552,166 @@ export const MintGatewayAddress: FunctionComponent<MintGatewayAddressProps> = ({
         </BigTopWrapper>
       </Box>
     </>
+  );
+};
+
+type DepositNavigationToggleButton = ToggleButtonProps & {
+  gateway: Gateway;
+  transaction: GatewayTransaction;
+};
+
+export const DepositNavigationButton: FunctionComponent<
+  DepositNavigationToggleButton
+> = ({ transaction, gateway, ...rest }) => {
+  const { t } = useTranslation();
+  const { decimals: lockAssetDecimals } = useChainInstanceAssetDecimals(
+    gateway.fromChain,
+    gateway.params.asset
+  );
+
+  const lockAssetConfig = getAssetConfig(transaction.params.asset);
+  // const lockChainConfig = getChainConfig(transaction.fromChain.chain);
+  // const mintChainConfig = getChainConfig(transaction.toChain.chain);
+
+  // const p = useChainTransactionSubmitter({
+  //   tx: transaction.in,
+  //   autoSubmit: isTxSubmittable(transaction.in),
+  // });
+  //TODO: remove
+  const lockTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction.in,
+    debugLabel: "in p",
+  });
+  const {
+    amount: lockAmount,
+    status: lockStatus,
+    confirmations: lockConfirmations,
+    target: lockTargetConfirmations,
+    error: lockError,
+  } = lockTxMeta;
+  const mintTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction.out,
+    startTrigger: lockStatus === ChainTransactionStatus.Done,
+    debugLabel: "out p",
+  });
+
+  const lockTxAmount =
+    lockAssetDecimals !== null && lockAmount !== null
+      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
+      : null;
+
+  const { status: mintStatus, txUrl: mintTxUrl } = mintTxMeta;
+  const Icon = lockAssetConfig.Icon;
+  //some universal loader
+  let PendingProgress = (
+    <CircledProgressWithContent processing>
+      <Icon fontSize="large" />
+    </CircledProgressWithContent>
+  );
+  let PendingContent = (
+    <div>
+      <Skeleton variant="text" width={100} height={22} />
+      <Skeleton variant="text" width={70} height={16} />
+    </div>
+  );
+  let Content: any = PendingContent;
+  let Progress: any = PendingProgress;
+  // const lockStatus = ChainTransactionStatus.Confirming;
+  // const mintStatus = null;
+
+  if (lockStatus !== ChainTransactionStatus.Done) {
+    if (lockStatus === ChainTransactionStatus.Confirming) {
+      const Icon = lockAssetConfig.Icon;
+      Progress = (
+        <CircledProgressWithContent
+          color={lockAssetConfig.color}
+          confirmations={
+            lockConfirmations !== null ? lockConfirmations : undefined
+          }
+          targetConfirmations={
+            lockTargetConfirmations !== null
+              ? lockTargetConfirmations
+              : undefined
+          }
+        >
+          <Icon fontSize="large" />
+        </CircledProgressWithContent>
+      );
+      Content = (
+        <div>
+          <Typography variant="body1" color="textPrimary">
+            {lockTxAmount} {lockAssetConfig.shortName}
+          </Typography>
+          {lockTargetConfirmations !== 0 ? (
+            <Typography variant="body2" color="textSecondary">
+              {t("mint.deposit-navigation-confirmations-label", {
+                confirmations: lockConfirmations,
+                targetConfirmations: lockTargetConfirmations,
+              })}
+            </Typography>
+          ) : (
+            <Skeleton variant="text" width={100} height={14} />
+          )}
+        </div>
+      );
+    } else {
+      Progress = PendingProgress;
+      Content = PendingContent;
+    }
+  } else if (
+    mintStatus === null &&
+    lockStatus === ChainTransactionStatus.Done
+  ) {
+    const Icon = lockAssetConfig.Icon;
+    Progress = (
+      <CircledProgressWithContent
+        color={lockAssetConfig.color}
+        confirmations={undefinedForNull(lockConfirmations)}
+        targetConfirmations={undefinedForNull(lockTargetConfirmations)}
+        indicator={true}
+      >
+        <Icon fontSize="large" />
+      </CircledProgressWithContent>
+    );
+    Content = (
+      <div>
+        <Typography variant="body1" color="textPrimary">
+          {lockTxAmount !== null ? (
+            lockTxAmount
+          ) : (
+            <Skeleton variant="text" width={70} height={14} />
+          )}{" "}
+          {lockAssetConfig.shortName}
+        </Typography>
+        <Typography variant="body2" color="primary">
+          {t("mint.deposit-navigation-ready-to-mint-label")}
+        </Typography>
+      </div>
+    );
+  } else if (mintTxUrl !== null || mintStatus === ChainTransactionStatus.Done) {
+    Progress = (
+      <CircledProgressWithContent>
+        <CompletedIcon fontSize="large" />
+      </CircledProgressWithContent>
+    );
+    Content = (
+      <div>
+        <Typography variant="body1" color="textPrimary">
+          {lockTxAmount} {lockAssetConfig.shortName}
+        </Typography>
+        <Typography variant="body2" color="primary">
+          {t("mint.deposit-navigation-completed-label")}
+        </Typography>
+      </div>
+    );
+    // }
+  }
+
+  return (
+    <DepositToggleButton {...rest}>
+      {Progress}
+      <MoreInfo>{Content}</MoreInfo>
+      <Debug disable it={{ lockError, lockTxMeta, mintTxMeta }} />
+    </DepositToggleButton>
   );
 };

@@ -34,7 +34,7 @@ export const walletIcon = (Icon: FunctionComponent) => {
   return createPaddedIcon(Icon, walletIconSize);
 };
 
-const chainIconSize = 256;
+const chainIconSize = 200;
 export const chainIcon = (Icon: FunctionComponent) => {
   return createPaddedIcon(Icon, chainIconSize);
 };

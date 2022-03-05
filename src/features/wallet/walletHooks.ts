@@ -1,7 +1,7 @@
 import { Asset, Chain } from "@renproject/chains";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { ContractChain, RenNetwork } from "@renproject/utils";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getRenAssetName } from "../../utils/tokensConfig";
 
@@ -218,4 +218,30 @@ export const useWalletAssetHelpers = (chain: Chain, asset: Asset | string) => {
   }, [address, decimals, provider, renAssetName]);
 
   return { address, decimals, addToken };
+};
+
+// this will try to find window.solana wallet up to 5 seconds after page load
+// solana wallet sometimes is not present after page load
+export const useDirtySolanaWalletDetector = () => {
+  const [count, setCount] = useState(0);
+  const [found, setFound] = useState(Boolean((window as any).solana));
+  const [isRunning, setIsRunning] = useState(!Boolean((window as any).solana));
+  if (count > 5) {
+    setIsRunning(false);
+  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount((c) => c + 1);
+      if ((window as any).solana) {
+        setFound(true);
+        setIsRunning(false);
+      }
+    }, 1000);
+    if (!isRunning) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isRunning]);
+
+  return found;
 };

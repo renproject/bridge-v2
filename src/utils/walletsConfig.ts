@@ -87,6 +87,7 @@ export const getWalletConfig = (wallet: Wallet) => {
   return config;
 };
 
+// deprecated;
 const defaultChainWallets: Partial<Record<Chain, Wallet>> = {
   [Chain.Ethereum]: Wallet.MetaMask,
   [Chain.BinanceSmartChain]: Wallet.BinanceSmartChain,
@@ -97,6 +98,7 @@ const defaultChainWallets: Partial<Record<Chain, Wallet>> = {
   [Chain.Solana]: Wallet.Sollet,
 };
 
+// deprecated;
 export const getDefaultWalletForChain = (chain: Chain) => {
   const wallet = defaultChainWallets[chain];
   if (wallet) {

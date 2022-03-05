@@ -127,7 +127,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<
           confirmations={undefinedForNull(lockConfirmations)}
           targetConfirmations={undefinedForNull(lockTargetConfirmations)}
         >
-          <Icon fontSize="inherit" color="inherit" />
+          <Icon fontSize="large" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
       <SmallWrapper>

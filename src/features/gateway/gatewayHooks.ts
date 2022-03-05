@@ -527,7 +527,7 @@ export const getGatewayParams = (gateway: Gateway) => {
     asset,
     from,
     to,
-    amount: fromAmount || null,
+    amount: fromAmount || 0,
     fromAmount,
     toAddress,
     fromAverageConfirmationTime,
