@@ -852,45 +852,6 @@ export const supportedBurnChains = [
   BridgeChain.ARBITRUMC,
 ];
 
-export const supportedReleaseCurrencies = supportedLockCurrencies.map(
-  (x) => ("REN" + x) as BridgeCurrency
-);
-
-export const toMintedCurrency = (lockedCurrency: BridgeCurrency) => {
-  switch (lockedCurrency) {
-    case BridgeCurrency.BTC:
-      return BridgeCurrency.RENBTC;
-    case BridgeCurrency.BCH:
-      return BridgeCurrency.RENBCH;
-    case BridgeCurrency.DOGE:
-      return BridgeCurrency.RENDOGE;
-    case BridgeCurrency.ZEC:
-      return BridgeCurrency.RENZEC;
-    default:
-      const fallback =
-        BridgeCurrency[("REN" + lockedCurrency) as BridgeCurrency];
-      if (fallback) return fallback;
-      return BridgeCurrency.UNKNOWN;
-  }
-};
-
-export const toReleasedCurrency = (burnedCurrency: BridgeCurrency) => {
-  switch (burnedCurrency) {
-    case BridgeCurrency.RENBTC:
-      return BridgeCurrency.BTC;
-    case BridgeCurrency.RENBCH:
-      return BridgeCurrency.BCH;
-    case BridgeCurrency.RENDOGE:
-      return BridgeCurrency.DOGE;
-    case BridgeCurrency.RENZEC:
-      return BridgeCurrency.ZEC;
-    default:
-      const fallback = BridgeCurrency[getNativeCurrency(burnedCurrency)];
-      if (fallback) return fallback;
-      return BridgeCurrency.UNKNOWN;
-  }
-};
-
 export type BridgeWalletConfig = LabelsConfig &
   ColorsConfig &
   MainIconConfig & {
@@ -963,38 +924,4 @@ export const walletsConfig: Record<BridgeWallet, BridgeWalletConfig> = {
     chain: BridgeChain.UNKNOWNC,
     rentxName: "unknown",
   },
-};
-
-const unknownWalletConfig = walletsConfig[BridgeWallet.UNKNOWNW];
-
-export const getWalletConfigOld = (symbol: BridgeWallet) =>
-  walletsConfig[symbol] || unknownWalletConfig;
-
-export const getWalletConfigByRentxName = (name: string) =>
-  Object.values(walletsConfig).find((wallet) => wallet.rentxName === name) ||
-  unknownWalletConfig;
-
-// FIXME: hacky, lets not have two different enums for the same things (supported networks)
-// Maybe we should raise the enum into ren-js, just like we have RenNetwork
-export const bridgeChainToRenChain = (bridgeChain: BridgeChain): RenChain => {
-  switch (bridgeChain) {
-    case BridgeChain.ETHC:
-      return RenChain.ethereum;
-    case BridgeChain.BSCC:
-      return RenChain.binanceSmartChain;
-    case BridgeChain.FTMC:
-      return RenChain.fantom;
-    case BridgeChain.MATICC:
-      return RenChain.polygon;
-    case BridgeChain.SOLC:
-      return RenChain.solana;
-    case BridgeChain.ARBITRUMC:
-      return RenChain.arbitrum;
-    default:
-      return RenChain.unknown;
-  }
-};
-
-export const getNativeCurrency = (renAsset: string) => {
-  return renAsset.split("REN").pop() as BridgeCurrency;
 };

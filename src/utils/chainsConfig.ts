@@ -207,3 +207,5 @@ export const getAssetChainsConfig = (asset: Asset) => {
     lockChainConnectionRequired: info.lockChainConnectionRequired,
   } as AssetChainsConfig;
 };
+
+export const supportedContractChains = contractChains;

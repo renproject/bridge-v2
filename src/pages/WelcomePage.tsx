@@ -13,12 +13,8 @@ import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
 import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
-import {
-  getChainConfigOld,
-  getCurrencyConfig,
-  supportedBurnChains,
-  supportedReleaseCurrencies,
-} from "../utils/assetConfigs";
+import { getChainConfig, supportedContractChains } from "../utils/chainsConfig";
+import { getAssetConfig, supportedAssets } from "../utils/tokensConfig";
 import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
@@ -161,13 +157,13 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               {t("common.assets-label")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
-              {supportedReleaseCurrencies.map((x) => {
-                const curConfig = getCurrencyConfig(x);
+              {supportedAssets.map((asset) => {
+                const assetConfig = getAssetConfig(asset);
                 return (
                   <li className={styles.assetListItem}>
                     <IconWithLabel
-                      label={curConfig.full}
-                      Icon={curConfig.FullIcon}
+                      label={assetConfig.fullName}
+                      Icon={assetConfig.Icon}
                     />
                   </li>
                 );
@@ -189,13 +185,13 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
               {t("common.destination-label")}
             </Typography>
             <UnstyledList className={styles.assetsList}>
-              {supportedBurnChains.map((x) => {
-                const chainConf = getChainConfigOld(x);
+              {supportedContractChains.map((chain) => {
+                const chainConfig = getChainConfig(chain);
                 return (
                   <li className={styles.assetListItem}>
                     <IconWithLabel
-                      label={chainConf.full}
-                      Icon={chainConf.FullIcon}
+                      label={chainConfig.fullName}
+                      Icon={chainConfig.Icon}
                     />
                   </li>
                 );
