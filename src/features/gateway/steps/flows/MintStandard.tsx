@@ -296,7 +296,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     debugLabel: "out",
   });
   const {
-    submittingDone: mintSubmittingDone,
+    submittingDone: submittingMintDone,
     handleSubmit: handleSubmitMint,
     submitting: submittingMint,
     handleReset: handleResetMint,
@@ -305,7 +305,8 @@ export const GatewayDepositProcessor: FunctionComponent<
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction.out,
     debugLabel: "out",
-    startTrigger: mintSubmittingDone,
+    startTrigger:
+      submittingMintDone || lockStatus === ChainTransactionStatus.Done,
   });
 
   const {

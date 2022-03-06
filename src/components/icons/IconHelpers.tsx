@@ -34,9 +34,13 @@ export const walletIcon = (Icon: FunctionComponent) => {
   return createPaddedIcon(Icon, walletIconSize);
 };
 
-const chainIconSize = 200;
+const chainIconSize = 254;
 export const chainIcon = (Icon: FunctionComponent) => {
   return createPaddedIcon(Icon, chainIconSize);
+};
+
+export const chainIconFromToken = (Icon: FunctionComponent) => {
+  return createPaddedIcon(Icon, nativeTokenIconSize);
 };
 
 const useIconWithLabelStyles = makeStyles((theme) => ({

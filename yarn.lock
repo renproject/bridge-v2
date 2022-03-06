@@ -2931,10 +2931,10 @@
   resolved "https://registry.yarnpkg.com/@renproject/fonts/-/fonts-2.0.0-alpha.2.tgz#ac1027e02d9c00af9182ac7e14f37ec8943294f0"
   integrity sha512-s2BKIQVeE+GRT4ehCGY7PZT14aH8CQRabrMyWn2uQt2xZd6P59IY3YDFEaqqHmbm7KCaeh8XIepwHLyC+XHEAA==
 
-"@renproject/icons@^0.0.1-alpha.3":
-  version "0.0.1-alpha.3"
-  resolved "https://registry.npmjs.org/@renproject/icons/-/icons-0.0.1-alpha.3.tgz"
-  integrity sha512-anLhjjKdpm1WaJxH/JDCt1mC1mV/0eUijJkBR5IR8ZKGPfuE7GTp4+wvxXgn2FPyGQzQo2QrJjA4Moj72SNtGg==
+"@renproject/icons@^0.0.1-alpha.4":
+  version "0.0.1-alpha.4"
+  resolved "https://registry.yarnpkg.com/@renproject/icons/-/icons-0.0.1-alpha.4.tgz#d4bdc1be092275414a3e573d7b537bec8f618081"
+  integrity sha512-LujIU+Kbrtt8FNMZARQJqoGaHQY3XAIoxISz171UWd5fSk2oEp6QJ28A44De+ibcEaqVzwwteL58hY3WK0MJyw==
 
 "@renproject/interfaces@2.5.9", "@renproject/interfaces@^2.5.2", "@renproject/interfaces@^2.5.9":
   version "2.5.9"

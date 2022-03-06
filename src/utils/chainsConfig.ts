@@ -1,5 +1,6 @@
 import { Asset, Chain, chains } from "@renproject/chains";
 import {
+  Arbitrum,
   Avalanche,
   Bch,
   BinanceSmartChain,
@@ -7,20 +8,17 @@ import {
   Digi,
   Doge,
   Ethereum,
+  Fantom,
   Fil,
   Luna,
-  Phantom,
   Polygon,
   Solana,
   Zec,
 } from "@renproject/icons";
 
 import { RenNetwork } from "@renproject/utils";
-import { chainIcon } from "../components/icons/IconHelpers";
-import {
-  ArbitrumCircleIcon,
-  CustomSvgIconComponent,
-} from "../components/icons/RenIcons";
+import { chainIcon, chainIconFromToken } from "../components/icons/IconHelpers";
+import { CustomSvgIconComponent } from "../components/icons/RenIcons";
 import {
   createNetworkConfig,
   createNetworksConfig,
@@ -50,7 +48,7 @@ export type ChainConfig = ChainBaseConfig & {};
 
 const chainsBaseConfig: Record<Chain, ChainConfig> = {
   Arbitrum: {
-    Icon: ArbitrumCircleIcon,
+    Icon: chainIcon(Arbitrum),
     fullName: "Arbitrum",
     networks: createNetworksConfig(42161, 421611),
   },
@@ -66,15 +64,15 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
     networks: createNetworksConfig(56, 97),
   },
   Bitcoin: {
-    Icon: chainIcon(Btc),
+    Icon: chainIconFromToken(Btc),
     fullName: "Bitcoin",
   },
   BitcoinCash: {
-    Icon: chainIcon(Bch),
+    Icon: chainIconFromToken(Bch),
     fullName: "Bitcoin Cash",
   },
   Dogecoin: {
-    Icon: chainIcon(Doge),
+    Icon: chainIconFromToken(Doge),
     fullName: "Dogecoin",
   },
   Ethereum: {
@@ -87,7 +85,7 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
     },
   },
   Fantom: {
-    Icon: chainIcon(Phantom),
+    Icon: chainIcon(Fantom),
     fullName: "Fantom",
     networks: createNetworksConfig(250, 4002),
   },
@@ -97,15 +95,15 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
     networks: createNetworksConfig(137, 80001),
   },
   Zcash: {
-    Icon: chainIcon(Zec),
+    Icon: chainIconFromToken(Zec),
     fullName: "Zcash",
   },
   DigiByte: {
-    Icon: chainIcon(Digi),
+    Icon: chainIconFromToken(Digi),
     fullName: "DigiByte",
   },
   Filecoin: {
-    Icon: chainIcon(Fil),
+    Icon: chainIconFromToken(Fil),
     fullName: "Filecoin",
   },
   Goerli: {

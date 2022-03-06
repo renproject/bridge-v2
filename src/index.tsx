@@ -12,17 +12,16 @@ import { lightTheme } from "./theme/theme";
 import "./i18n/i18n";
 import * as Sentry from "@sentry/react";
 
-if (process.env.REACT_APP_SENTRY_DSN) {
-  Sentry.init({
-    dsn: process.env.REACT_APP_SENTRY_DSN,
-    environment:
-      process.env.NODE_ENV === "development"
-        ? "dev"
-        : window.location.origin.includes("bridge.renproject.io")
+if (process.env.NODE_ENV !== "development") {
+  if (process.env.REACT_APP_SENTRY_DSN) {
+    Sentry.init({
+      dsn: process.env.REACT_APP_SENTRY_DSN,
+      environment: window.location.origin.includes("bridge.renproject.io")
         ? "prod"
         : "staging",
-    release: process.env.REACT_APP_VERSION,
-  });
+      release: process.env.REACT_APP_VERSION,
+    });
+  }
 }
 
 const render = () => {
