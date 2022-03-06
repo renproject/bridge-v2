@@ -12,10 +12,6 @@ const BSC_MM_ENABLED = Boolean(process.env.REACT_APP_BSC_MM_ENABLED);
 const TX_HISTORY_EXPLORATION = Boolean(
   process.env.REACT_TX_HISTORY_EXPLORATION
 );
-// TODO: deprecated after v3 launch
-const ENABLED_CURRENCIES = process.env.REACT_APP_ENABLED_CURRENCIES?.split(
-  ","
-) || ["*"];
 
 const ENABLED_ASSETS = process.env.REACT_APP_ENABLED_ASSETS?.split(",") || [
   "*",
@@ -39,7 +35,6 @@ export const env = {
   MEWCONNECT_ENABLED,
   WALLETCONNECT_ENABLED,
   TX_HISTORY_EXPLORATION,
-  ENABLED_CURRENCIES,
   ENABLED_ASSETS,
   V2_DEPRECATION_TIME,
   REVERT_SOLANA_PAYLOADS_DATE,
