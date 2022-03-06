@@ -11,7 +11,7 @@ import {
   useSetPaperTitle,
 } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
-import { getAssetConfig } from "../../../../utils/tokensConfig";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";

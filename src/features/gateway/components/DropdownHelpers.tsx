@@ -9,7 +9,7 @@ import {
   getAssetConfig,
   getRenAssetFullName,
   getRenAssetName,
-} from "../../../utils/tokensConfig";
+} from "../../../utils/assetsConfig";
 
 export const getAssetOptionData: GetOptionDataFn = (
   name: string,

@@ -47,7 +47,7 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { feesDecimalImpact } from "../../../utils/numbers";
-import { getAssetConfig, getRenAssetName } from "../../../utils/tokensConfig";
+import { getAssetConfig, getRenAssetName } from "../../../utils/assetsConfig";
 import {
   alterContractChainProviderSigner,
   PartialChainInstanceMap,

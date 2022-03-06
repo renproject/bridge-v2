@@ -48,7 +48,7 @@ import { getRemainingTime } from "../../../../utils/time";
 import {
   getAssetConfig,
   getRenAssetFullName,
-} from "../../../../utils/tokensConfig";
+} from "../../../../utils/assetsConfig";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import {

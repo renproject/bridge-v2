@@ -21,7 +21,7 @@ import {
 } from "../../../../providers/TitleProviders";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
-import { getAssetConfig } from "../../../../utils/tokensConfig";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { alterEthereumBaseChainsProviderSigner } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";

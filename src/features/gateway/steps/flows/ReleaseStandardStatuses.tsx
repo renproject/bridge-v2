@@ -37,7 +37,7 @@ import { trimAddress } from "../../../../utils/strings";
 import {
   getAssetConfig,
   getRenAssetConfig,
-} from "../../../../utils/tokensConfig";
+} from "../../../../utils/assetsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { AddressLabel } from "../../components/AddressHelpers";

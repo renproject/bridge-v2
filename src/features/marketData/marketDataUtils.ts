@@ -5,7 +5,7 @@ import {
   AssetRateService,
   assetsConfig,
   getAssetSymbolByRateSymbol,
-} from "../../utils/tokensConfig";
+} from "../../utils/assetsConfig";
 
 export const USD_SYMBOL = "USD";
 

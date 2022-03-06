@@ -25,7 +25,7 @@ import {
   NetworkConfig,
   NetworksConfig,
 } from "./networksConfig";
-import { AssetChainsConfig } from "./tokensConfig";
+import { AssetChainsConfig } from "./assetsConfig";
 
 export type ChainIconsConfig = {
   Icon: CustomSvgIconComponent;

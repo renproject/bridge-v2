@@ -14,7 +14,7 @@ import { links, storageKeys } from "../constants/constants";
 import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
 import { getChainConfig, supportedContractChains } from "../utils/chainsConfig";
-import { getAssetConfig, supportedAssets } from "../utils/tokensConfig";
+import { getAssetConfig, supportedAssets } from "../utils/assetsConfig";
 import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({

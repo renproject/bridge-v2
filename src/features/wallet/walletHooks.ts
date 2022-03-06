@@ -3,7 +3,7 @@ import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { ContractChain, RenNetwork } from "@renproject/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getRenAssetName } from "../../utils/tokensConfig";
+import { getRenAssetName } from "../../utils/assetsConfig";
 
 import { Wallet } from "../../utils/walletsConfig";
 import {

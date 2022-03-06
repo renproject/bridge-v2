@@ -25,7 +25,7 @@ import { undefinedForNull } from "../../../../utils/propsUtils";
 import {
   getAssetConfig,
   getRenAssetConfig,
-} from "../../../../utils/tokensConfig";
+} from "../../../../utils/assetsConfig";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import {
   BalanceInfo,

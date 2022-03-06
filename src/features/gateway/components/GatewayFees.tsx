@@ -7,7 +7,7 @@ import { NumberFormatText } from "../../../components/formatting/NumberFormatTex
 import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { getChainConfig } from "../../../utils/chainsConfig";
-import { assetsConfig, getAssetConfig } from "../../../utils/tokensConfig";
+import { assetsConfig, getAssetConfig } from "../../../utils/assetsConfig";
 import { useGatewayFeesWithRates, useGatewayMeta } from "../gatewayHooks";
 
 type GatewayFeesProps = ReturnType<typeof useGatewayFeesWithRates> & {

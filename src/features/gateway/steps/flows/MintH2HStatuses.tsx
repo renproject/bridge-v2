@@ -33,7 +33,7 @@ import { undefinedForNull } from "../../../../utils/propsUtils";
 import {
   getAssetConfig,
   getRenAssetName,
-} from "../../../../utils/tokensConfig";
+} from "../../../../utils/assetsConfig";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";

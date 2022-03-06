@@ -44,7 +44,7 @@ import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
-import { getAssetConfig } from "../../../../utils/tokensConfig";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
 import {
   alterContractChainProviderSigner,
   PartialChainInstanceMap,

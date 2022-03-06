@@ -35,7 +35,7 @@ import {
 } from "../../utils/chainsConfig";
 import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
-import { getAssetConfig, getRenAssetConfig } from "../../utils/tokensConfig";
+import { getAssetConfig, getRenAssetConfig } from "../../utils/assetsConfig";
 import { getChainOptionData } from "../gateway/components/DropdownHelpers";
 import { useAssetDecimals, useGatewayMeta } from "../gateway/gatewayHooks";
 import { createGatewayQueryString } from "../gateway/gatewayUtils";

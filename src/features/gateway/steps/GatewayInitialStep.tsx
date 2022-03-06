@@ -35,7 +35,7 @@ import {
   getAssetConfig,
   getRenAssetConfig,
   supportedAssets,
-} from "../../../utils/tokensConfig";
+} from "../../../utils/assetsConfig";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
