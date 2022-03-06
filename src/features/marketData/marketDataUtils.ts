@@ -1,17 +1,11 @@
 import { ReferenceData } from "@bandprotocol/bandchain.js/lib/data";
 import { Asset, Chain } from "@renproject/chains";
 import { uniqueArray } from "../../utils/arrays";
-import { getCurrencyConfigByBandchainSymbol } from "../../utils/assetConfigs";
 import {
   AssetRateService,
   assetsConfig,
   getAssetSymbolByRateSymbol,
 } from "../../utils/tokensConfig";
-
-const mapBandchainToCurrencySymbol = (symbol: string) => {
-  const config = getCurrencyConfigByBandchainSymbol(symbol);
-  return config.symbol;
-};
 
 export const USD_SYMBOL = "USD";
 
@@ -42,19 +36,6 @@ export type CoingeckoReferenceData = {
   id: string;
   symbol: string;
   current_price: number;
-};
-
-export const mapBandchainToExchangeRate = (
-  referenceData: Array<BandchainReferenceData>
-) => {
-  return referenceData.map((entry: any) => {
-    const [rateSymbol, quote] = entry.pair.split("/");
-    const data: ExchangeRate = {
-      pair: getPair(mapBandchainToCurrencySymbol(rateSymbol), quote),
-      rate: entry.rate,
-    };
-    return data;
-  });
 };
 
 export const mapCoingeckoToExchangeRate = (
