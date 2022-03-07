@@ -2,10 +2,10 @@
 import {
   BinanceChainWallet,
   CoinbaseWallet,
-  MetaMask,
+  MetaMaskWallet,
   MyEtherWallet,
   PhantomWallet,
-  Sollet,
+  SolletWallet,
 } from "@renproject/icons";
 import { walletIcon } from "../components/icons/IconHelpers";
 import {
@@ -48,7 +48,7 @@ const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
   [Wallet.MetaMask]: {
     fullName: "MetaMask Wallet",
     shortName: "MetaMask",
-    Icon: walletIcon(MetaMask),
+    Icon: walletIcon(MetaMaskWallet),
   },
   [Wallet.MyEtherWallet]: {
     fullName: "MyEther Wallet",
@@ -63,7 +63,7 @@ const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
   [Wallet.Sollet]: {
     fullName: "Sollet.io Wallet",
     shortName: "Sollet.io",
-    Icon: walletIcon(Sollet),
+    Icon: walletIcon(SolletWallet),
   },
   [Wallet.WalletConnect]: {
     fullName: "WalletConnect",

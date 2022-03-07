@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@bandprotocol/bandchain.js": "2.0.3",
+    "@emotion/react": "^11.8.1",
+    "@emotion/styled": "^11.8.1",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
@@ -13,7 +15,7 @@
     "@renproject/chains-ethereum": "^3.0.0-alpha.11",
     "@renproject/chains-solana": "^3.0.0-alpha.11",
     "@renproject/fonts": "^2.0.0-alpha.2",
-    "@renproject/icons": "^0.0.1-alpha.4",
+    "@renproject/icons": "^0.0.1-alpha.6",
     "@renproject/interfaces": "2.5.9",
     "@renproject/multiwallet-binancesmartchain-injected-connector": "2.5.9",
     "@renproject/multiwallet-ethereum-injected-connector": "2.5.9",

@@ -5,7 +5,7 @@ import {
   Bch,
   BinanceSmartChain,
   Btc,
-  Digi,
+  Dgb,
   Doge,
   Ethereum,
   Fantom,
@@ -99,7 +99,7 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
     fullName: "Zcash",
   },
   DigiByte: {
-    Icon: chainIconFromToken(Digi),
+    Icon: chainIconFromToken(Dgb),
     fullName: "DigiByte",
   },
   Filecoin: {
