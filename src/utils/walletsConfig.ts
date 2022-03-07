@@ -1,7 +1,7 @@
 // TODO: move to multiwallet
-import { Chain } from "@renproject/chains";
 import {
   BinanceChainWallet,
+  CoinbaseWallet,
   MetaMask,
   MyEtherWallet,
   PhantomWallet,
@@ -16,7 +16,7 @@ import {
 export enum Wallet {
   MetaMask = "MetaMask",
   WalletConnect = "WalletConnect",
-  MewConnect = "MewConnect",
+  MyEtherWallet = "MyEtherWallet",
   Coinbase = "Coinbase",
   BinanceSmartChain = "BinanceSmartChain",
   Sollet = "Sollet",
@@ -50,7 +50,7 @@ const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
     shortName: "MetaMask",
     Icon: walletIcon(MetaMask),
   },
-  [Wallet.MewConnect]: {
+  [Wallet.MyEtherWallet]: {
     fullName: "MyEther Wallet",
     shortName: "MEW",
     Icon: walletIcon(MyEtherWallet),
@@ -73,7 +73,7 @@ const walletsBaseConfig: Record<Wallet, WalletBaseConfig> = {
   [Wallet.Coinbase]: {
     fullName: "Coinbase Wallet",
     shortName: "Coinbase",
-    Icon: EmptyCircleIcon,
+    Icon: walletIcon(CoinbaseWallet),
   },
 };
 
@@ -85,25 +85,4 @@ export const getWalletConfig = (wallet: Wallet) => {
     throw new Error(`Wallet config not found for ${wallet}`);
   }
   return config;
-};
-
-// deprecated;
-const defaultChainWallets: Partial<Record<Chain, Wallet>> = {
-  [Chain.Ethereum]: Wallet.MetaMask,
-  [Chain.BinanceSmartChain]: Wallet.BinanceSmartChain,
-  [Chain.Fantom]: Wallet.MetaMask,
-  [Chain.Polygon]: Wallet.MetaMask,
-  [Chain.Avalanche]: Wallet.MetaMask,
-  [Chain.Arbitrum]: Wallet.MetaMask,
-  [Chain.Solana]: Wallet.Sollet,
-};
-
-// deprecated;
-export const getDefaultWalletForChain = (chain: Chain) => {
-  const wallet = defaultChainWallets[chain];
-  if (wallet) {
-    return wallet;
-  }
-  console.warn(`Unable to find default wallet for chain: ${chain})`);
-  return Wallet.MetaMask;
 };

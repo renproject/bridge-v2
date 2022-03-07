@@ -44,7 +44,7 @@ const resolveWalletByProvider = (provider: any) => {
   ) {
     resolved = Wallet.BinanceSmartChain;
   } else if (provider?.isMewConnect || provider?.isMEWConnect) {
-    resolved = Wallet.MewConnect;
+    resolved = Wallet.MyEtherWallet;
   } else {
     console.warn("Unresolved wallet", provider);
   }

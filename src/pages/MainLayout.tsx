@@ -59,7 +59,7 @@ import {
   useWallet,
 } from "../features/wallet/walletHooks";
 import { $wallet, setPickerOpened } from "../features/wallet/walletSlice";
-import { walletPickerModalConfig } from "../providers/multiwallet/Multiwallet";
+import { getMultiwalletConfig } from "../providers/multiwallet/multiwalletConfig";
 
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
@@ -133,7 +133,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       WrongNetworkInfo: WalletWrongNetworkInfo,
       WalletEntryButton,
       WalletChainLabel,
-      config: walletPickerModalConfig(network, found),
+      config: getMultiwalletConfig(network, found),
       connectingTitle: t("wallet.connecting"),
       wrongNetworkTitle: t("wallet.wrong-network-title"),
       connectWalletTitle: t("wallet.connect-wallet"),

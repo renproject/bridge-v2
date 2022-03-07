@@ -1,13 +1,11 @@
 import { Chain } from "@renproject/chains";
-import { RenNetwork } from "@renproject/utils";
 import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 import { EthereumMEWConnectConnector } from "@renproject/multiwallet-ethereum-mewconnect-connector";
 import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
-import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multiwallet-ui";
-import React, { FunctionComponent } from "react";
+import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
+import { RenNetwork } from "@renproject/utils";
 import { env } from "../../constants/environmentVariables";
-import { featureFlags } from "../../constants/featureFlags";
 import {
   ArbitrumMetamaskConnectorInfo,
   AvalancheMetamaskConnectorInfo,
@@ -17,28 +15,59 @@ import {
 } from "../../features/wallet/components/WalletHelpers";
 import { createNetworkIdMapper } from "../../utils/networksConfig";
 import { Wallet } from "../../utils/walletsConfig";
-import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 
-export const walletPickerModalConfig = (
-  network: RenNetwork,
-  reinit = false
-) => {
+const isEnabled = (chain: Chain, wallet: Wallet) => {
+  const entries = env.ENABLED_EXTRA_WALLETS;
+  if (entries.length === 1 && entries[0] === "*") {
+    return true;
+  }
+  for (const entry of entries) {
+    console.log(entry);
+    const [chainSymbol, wallets] = entry.split("/");
+    if (chainSymbol === chain) {
+      if (wallets === "*") {
+        return true;
+      } else {
+        const walletSymbols = wallets.split("|");
+        //return true/false only if chain info present and wallet enumerated;
+        return walletSymbols.includes(wallet);
+      }
+    }
+  }
+  return false;
+};
+
+console.log(
+  "wallet enabled MyEtherWallet",
+  isEnabled(Chain.Ethereum, Wallet.MyEtherWallet)
+);
+console.log(
+  "wallet enabled WalletConnect",
+  isEnabled(Chain.Ethereum, Wallet.WalletConnect)
+);
+
+console.log(
+  "wallet enabled BinanceSmartChain",
+  isEnabled(Chain.BinanceSmartChain, Wallet.MetaMask)
+);
+
+export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
   return {
     chains: {
       [Chain.Ethereum]: [
         {
           name: Wallet.MetaMask,
-          logo: "https://avatars1.githubusercontent.com/u/11744586?s=60&v=4s",
+          logo: "",
           connector: new EthereumInjectedConnector({
             debug: env.DEV,
             networkIdMapper: createNetworkIdMapper(Chain.Ethereum),
           }),
         },
-        ...(featureFlags.enableMEWConnect
+        ...(isEnabled(Chain.Ethereum, Wallet.MyEtherWallet)
           ? [
               {
-                name: Wallet.MewConnect,
-                logo: "https://avatars1.githubusercontent.com/u/24321658?s=60&v=4s",
+                name: Wallet.MyEtherWallet,
+                logo: "",
                 connector: new EthereumMEWConnectConnector({
                   debug: env.DEV,
                   rpc: {
@@ -50,11 +79,11 @@ export const walletPickerModalConfig = (
               },
             ]
           : []),
-        ...(featureFlags.enableWalletConnect
+        ...(isEnabled(Chain.Ethereum, Wallet.Coinbase)
           ? [
               {
-                name: Wallet.WalletConnect,
-                logo: "https://avatars0.githubusercontent.com/u/37784886?s=60&v=4",
+                name: Wallet.Coinbase,
+                logo: "",
                 connector: new EthereumWalletConnectConnector({
                   rpc: {
                     42: `https://kovan.infura.io/v3/${env.INFURA_ID}`,
@@ -67,6 +96,22 @@ export const walletPickerModalConfig = (
             ]
           : []),
       ],
+      // ...(isEnabled(Chain.Ethereum, Wallet.WalletConnect)
+      //   ? [
+      //       {
+      //         name: Wallet.WalletConnect,
+      //         logo: "",
+      //         connector: new EthereumWalletConnectConnector({
+      //           rpc: {
+      //             42: `https://kovan.infura.io/v3/${env.INFURA_ID}`,
+      //             1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
+      //           },
+      //           qrcode: true,
+      //           debug: true,
+      //         }),
+      //       },
+      //     ]
+      //   : []),
       // [Chain.Goerli]: [
       //   {
       //     name: Wallet.MetaMask,
@@ -85,7 +130,7 @@ export const walletPickerModalConfig = (
       [Chain.Fantom]: [
         {
           name: Wallet.MetaMask,
-          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          logo: "",
           info: FantomMetamaskConnectorInfo,
           connector: (() => {
             const connector = new EthereumInjectedConnector({
@@ -100,7 +145,7 @@ export const walletPickerModalConfig = (
       [Chain.Polygon]: [
         {
           name: Wallet.MetaMask,
-          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          logo: "",
           info: PolygonMetamaskConnectorInfo,
           connector: (() => {
             const connector = new EthereumInjectedConnector({
@@ -115,7 +160,7 @@ export const walletPickerModalConfig = (
       [Chain.Avalanche]: [
         {
           name: Wallet.MetaMask,
-          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          logo: "",
           info: AvalancheMetamaskConnectorInfo,
           connector: (() => {
             const connector = new EthereumInjectedConnector({
@@ -130,15 +175,15 @@ export const walletPickerModalConfig = (
       [Chain.BinanceSmartChain]: [
         {
           name: Wallet.BinanceSmartChain,
-          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          logo: "",
           connector: new BinanceSmartChainInjectedConnector({ debug: true }),
         },
         // TODO: move this config into its own connector?
-        ...(featureFlags.enableBSCMetamask || true
+        ...(isEnabled(Chain.BinanceSmartChain, Wallet.MetaMask)
           ? [
               {
                 name: Wallet.MetaMask,
-                logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+                logo: "",
                 info: BinanceMetamaskConnectorInfo,
                 connector: (() => {
                   const connector = new BinanceSmartChainInjectedConnector({
@@ -154,7 +199,7 @@ export const walletPickerModalConfig = (
       [Chain.Solana]: [
         {
           name: Wallet.Phantom,
-          logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
+          logo: "",
           connector: new SolanaConnector({
             debug: true,
             providerURL: (window as any).solana || "https://www.phantom.app",
@@ -165,26 +210,9 @@ export const walletPickerModalConfig = (
             network,
           }),
         },
-        // {
-        //   name: Wallet.Phantom,
-        //   logo: "https://avatars1.githubusercontent.com/u/78782331?s=60&v=4",
-        //   connector: (() => {
-        //     const connector = new SolanaConnector({
-        //       debug: true,
-        //       providerURL: (window as any).solana || "https://www.phantom.app",
-        //       clusterURL:
-        //         network === RenNetwork.Mainnet
-        //           ? "https://ren.rpcpool.com/"
-        //           : undefined,
-        //       network,
-        //     });
-        //     connector.getProvider = () => (window as any).solana;
-        //     return connector;
-        //   })(),
-        // },
         {
           name: Wallet.Sollet,
-          logo: "https://avatars1.githubusercontent.com/u/69240779?s=60&v=4",
+          logo: "",
           connector: new SolanaConnector({
             providerURL: "https://www.sollet.io",
             clusterURL:
@@ -198,7 +226,7 @@ export const walletPickerModalConfig = (
       [Chain.Arbitrum]: [
         {
           name: Wallet.MetaMask,
-          logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
+          logo: "",
           info: ArbitrumMetamaskConnectorInfo,
           connector: (() => {
             const connector = new EthereumInjectedConnector({
@@ -212,8 +240,4 @@ export const walletPickerModalConfig = (
       ],
     },
   };
-};
-
-export const MultiwalletProvider: FunctionComponent = ({ children }) => {
-  return <RenMultiwalletProvider>{children}</RenMultiwalletProvider>;
 };

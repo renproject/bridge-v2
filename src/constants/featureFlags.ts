@@ -12,7 +12,6 @@ export const featureFlags = {
   enableWalletConnect:
     env.WALLETCONNECT_ENABLED ||
     queryString.parse(window.location.search).walletConnectEnabled,
-  enableTxHistoryExploration:
-    env.TX_HISTORY_EXPLORATION ||
-    queryString.parse(window.location.search).txHistoryExploration,
 };
+
+console.log(featureFlags);

@@ -9,35 +9,25 @@ const WALLETCONNECT_ENABLED = Boolean(
   process.env.REACT_APP_WALLETCONNECT_ENABLED
 );
 const BSC_MM_ENABLED = Boolean(process.env.REACT_APP_BSC_MM_ENABLED);
-const TX_HISTORY_EXPLORATION = Boolean(
-  process.env.REACT_TX_HISTORY_EXPLORATION
-);
+
+//like "Ethereum/MyEtherWallet|WalletConnect,BinanceSmartChain/MetaMask";
+const ENABLED_EXTRA_WALLETS =
+  process.env.REACT_APP_ENABLED_EXTRA_WALLETS?.split(",") || ["*"];
 
 const ENABLED_ASSETS = process.env.REACT_APP_ENABLED_ASSETS?.split(",") || [
   "*",
 ];
-
-const V2_DEPRECATION_TIME =
-  new Date(process.env.REACT_APP_V2_DEPRECATION_DATE || "invalid").getTime() ||
-  new Date("2222-12-12").getTime();
-
-const REVERT_SOLANA_PAYLOADS_DATE =
-  new Date(
-    process.env.REACT_APP_REVERT_SOLANA_PAYLOADS_DATE || "invalid"
-  ).getTime() || new Date("2222-12-12").getTime();
 
 export const env = {
   DEV,
   NETWORK,
   INFURA_ID,
   XSTATE_DEVTOOLS,
+  ENABLED_ASSETS,
+  ENABLED_EXTRA_WALLETS,
   BSC_MM_ENABLED,
   MEWCONNECT_ENABLED,
   WALLETCONNECT_ENABLED,
-  TX_HISTORY_EXPLORATION,
-  ENABLED_ASSETS,
-  V2_DEPRECATION_TIME,
-  REVERT_SOLANA_PAYLOADS_DATE,
 };
 
 if (DEV) console.debug("env", env, process);
