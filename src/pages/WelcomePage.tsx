@@ -1,6 +1,13 @@
 import { Container, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { FunctionComponent, useCallback, useEffect } from "react";
+import { DynamicTokenIcon } from "@renproject/icons";
+import { ChainType } from "@renproject/icons/lib/components/DynamicTokenIcon";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
@@ -13,8 +20,12 @@ import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
 import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
+import {
+  getAssetConfig,
+  getRenAssetName,
+  supportedAssets,
+} from "../utils/assetsConfig";
 import { getChainConfig, supportedContractChains } from "../utils/chainsConfig";
-import { getAssetConfig, supportedAssets } from "../utils/assetsConfig";
 import { paths } from "./routes";
 
 const useStyles = makeStyles((theme) => ({
@@ -81,6 +92,29 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.up("md")]: {
       padding: 0,
+    },
+  },
+  renAssetsLabel: {
+    marginTop: 40,
+    color: theme.customColors.textLight,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  renAssets: {
+    marginTop: -50,
+    marginBottom: 60,
+    display: "flex",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+  },
+  renAssetItem: {
+    margin: `4px`,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    "& > div": {
+      marginTop: -60,
     },
   },
   avalancheIcon: {
@@ -205,7 +239,68 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
             </UnstyledList>
           </div>
         </div>
+        <div>
+          <Typography
+            className={styles.renAssetsLabel}
+            variant="overline"
+            component="h2"
+            align="center"
+          >
+            Ren {t("common.assets-label")}
+          </Typography>
+        </div>
+        <div className={styles.renAssets}>
+          {supportedAssets.map((asset, index) => {
+            const assetConfig = getAssetConfig(asset);
+            return (
+              <ChainAssetRotator
+                className={styles.renAssetItem}
+                start={Math.min(supportedContractChains.length - 1, index)}
+                Icon={assetConfig.Icon}
+              >
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  component="div"
+                >
+                  {getRenAssetName(asset)}
+                </Typography>
+              </ChainAssetRotator>
+            );
+          })}
+        </div>
       </Container>
     </MobileLayout>
+  );
+};
+
+type ChainAssetRotatorProps = {
+  Icon: FunctionComponent<any>;
+  start?: number;
+  className?: string;
+};
+
+const ChainAssetRotator: FunctionComponent<ChainAssetRotatorProps> = ({
+  className,
+  Icon,
+  start = 0,
+  children,
+}) => {
+  const [ci, setCi] = useState(start);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCi((c) => (c === supportedContractChains.length - 1 ? 0 : c + 1));
+    }, 5000 + (-start / 2) * 300);
+    return () => clearInterval(interval);
+  }, [start]);
+
+  const chain = supportedContractChains[ci];
+
+  return (
+    <div className={className}>
+      <DynamicTokenIcon chain={chain as ChainType} Icon={Icon} size={99} />
+      {children}
+    </div>
   );
 };
