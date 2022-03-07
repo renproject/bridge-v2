@@ -2,7 +2,6 @@ import { Chain } from "@renproject/chains";
 import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 import { EthereumMEWConnectConnector } from "@renproject/multiwallet-ethereum-mewconnect-connector";
-import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
 import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 import { RenNetwork } from "@renproject/utils";
 import { env } from "../../constants/environmentVariables";
@@ -15,6 +14,7 @@ import {
 } from "../../features/wallet/components/WalletHelpers";
 import { createNetworkIdMapper } from "../../utils/networksConfig";
 import { Wallet } from "../../utils/walletsConfig";
+import { CoinbaseInjectedConnector } from "./CoinbaseInjectedConnector";
 
 const isEnabled = (chain: Chain, wallet: Wallet) => {
   const entries = env.ENABLED_EXTRA_WALLETS;
@@ -36,20 +36,6 @@ const isEnabled = (chain: Chain, wallet: Wallet) => {
   }
   return false;
 };
-
-console.log(
-  "wallet enabled MyEtherWallet",
-  isEnabled(Chain.Ethereum, Wallet.MyEtherWallet)
-);
-console.log(
-  "wallet enabled WalletConnect",
-  isEnabled(Chain.Ethereum, Wallet.WalletConnect)
-);
-
-console.log(
-  "wallet enabled BinanceSmartChain",
-  isEnabled(Chain.BinanceSmartChain, Wallet.MetaMask)
-);
 
 export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
   return {
@@ -84,13 +70,9 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
               {
                 name: Wallet.Coinbase,
                 logo: "",
-                connector: new EthereumWalletConnectConnector({
-                  rpc: {
-                    42: `https://kovan.infura.io/v3/${env.INFURA_ID}`,
-                    1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
-                  },
-                  qrcode: true,
-                  debug: true,
+                connector: new CoinbaseInjectedConnector({
+                  debug: env.DEV,
+                  networkIdMapper: createNetworkIdMapper(Chain.Ethereum),
                 }),
               },
             ]

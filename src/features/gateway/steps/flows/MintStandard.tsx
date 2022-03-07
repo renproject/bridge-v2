@@ -53,6 +53,7 @@ import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import {
   GeneralErrorDialog,
   HMSCountdown,
+  TransactionRevertedErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import {
@@ -285,11 +286,15 @@ export const GatewayDepositProcessor: FunctionComponent<
   });
   const { submittingDone: renVMSubmittingDone, submitting: renVMSubmitting } =
     renVmSubmitter;
-  const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
+  const renVMTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction.renVM,
     startTrigger: renVMSubmittingDone,
   });
-  const { amount: mintAmount } = renVmTxMeta;
+  const {
+    amount: mintAmount,
+    error: renVMError,
+    status: renVMStatus,
+  } = renVMTxMeta;
 
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction.out,
@@ -319,6 +324,11 @@ export const GatewayDepositProcessor: FunctionComponent<
     // txIndex: mintTxIndex,
     txUrl: mintTxUrl,
   } = outTxMeta;
+
+  //TODO: fix types, create general error helpers;
+  const isRevertedError =
+    renVMError !== null &&
+    (renVMError as any).code === "RENVM_TRANSACTION_REVERTED";
 
   let Content = null;
   if (lockStatus !== ChainTransactionStatus.Done) {
@@ -364,6 +374,9 @@ export const GatewayDepositProcessor: FunctionComponent<
         onReload={handleResetMint}
         submitting={submittingMint}
         submittingError={submittingMintError}
+        submittingDisabled={
+          renVMSubmitting || renVMStatus !== ChainTransactionStatus.Done
+        }
         renVMSubmitting={renVMSubmitting}
       />
     );
@@ -399,11 +412,12 @@ export const GatewayDepositProcessor: FunctionComponent<
   return (
     <>
       {Content}
+      <TransactionRevertedErrorDialog open={isRevertedError} />
       <Debug
         it={{
           inTxMeta,
           renVmSubmitter,
-          renVmTxMeta,
+          renVmTxMeta: renVMTxMeta,
           outTxMeta,
           outSubmitter,
           mintAssetDecimals,

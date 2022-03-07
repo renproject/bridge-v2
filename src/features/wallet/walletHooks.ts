@@ -60,7 +60,7 @@ export const useWallet: UseWallet = (chain) => {
   const { account = "", status = WalletStatus.Disconnected } =
     enabledChains?.[chain] || {};
   const provider = enabledChains?.[chain]?.provider;
-  // TODO: crit this is faulty
+  // TODO: crit this is faulty FIX this
   const wallet = resolveWalletByProvider(provider);
   const emptyFn = () => {};
   const deactivateConnector =

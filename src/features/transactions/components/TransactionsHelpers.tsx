@@ -457,6 +457,33 @@ export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   );
 };
 
+export const TransactionRevertedErrorDialog: FunctionComponent<
+  ErrorWithActionProps
+> = ({ ...props }) => {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const backToHome = useCallback(() => {
+    history.push({
+      pathname: paths.HOME,
+    });
+  }, [history]);
+
+  return (
+    <ErrorDialog
+      title={t("common.error-label")}
+      reason={"Transaction Reverted"}
+      actionText={"Back to Home"}
+      onAction={backToHome}
+      {...props}
+    >
+      <span>
+        Transaction can be reverted when amount after deducting fees is too low
+        to proceed.
+      </span>
+    </ErrorDialog>
+  );
+};
+
 export const GatewayAddressTimeoutErrorDialog: FunctionComponent<
   ErrorWithActionProps
 > = (props) => {

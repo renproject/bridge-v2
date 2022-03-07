@@ -189,10 +189,12 @@ type MintDepositAcceptedStatusProps = {
   lockAssetDecimals: number | null;
   lockTxId: string | null;
   lockTxUrl: string | null;
-  onSubmit: () => void;
   onReload: () => void;
+  //TODO: use submittable interface
+  onSubmit: () => void;
   onRetry: () => void;
   submitting: boolean;
+  submittingDisabled: boolean;
   submittingError?: Error | string;
   renVMSubmitting: boolean;
 };
@@ -212,6 +214,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   onSubmit,
   submittingError,
   submitting,
+  submittingDisabled,
   onReload,
   onRetry,
   renVMSubmitting,
@@ -317,7 +320,10 @@ export const MintDepositAcceptedStatus: FunctionComponent<
         {t("mint.received-label")}
       </Typography>
       <ActionButtonWrapper>
-        <ActionButton onClick={onSubmit} disabled={submitting}>
+        <ActionButton
+          onClick={onSubmit}
+          disabled={submitting || submittingDisabled}
+        >
           {submitting ? t("mint.minting-label") : t("mint.mint-label")}{" "}
           {getRenAssetFullName(lockAssetConfig.fullName)}
           {submitting && "..."}
