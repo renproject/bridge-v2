@@ -24,7 +24,6 @@
     "@renproject/multiwallet-solana-connector": "2.5.9",
     "@renproject/multiwallet-ui": "2.5.10-alpha.0",
     "@renproject/ren": "^3.0.0-alpha.12",
-    "@renproject/ren-tx": "^2.5.10-1",
     "@renproject/utils": "^3.0.0-alpha.12",
     "@sentry/react": "^6.5.1",
     "@solana/web3.js": "^1.36.0",
@@ -33,7 +32,7 @@
     "@testing-library/user-event": "^7.1.2",
     "@types/classnames": "^2.2.10",
     "@types/jest": "^24.0.0",
-    "@types/node": "^12.0.0",
+    "@types/node": "^17",
     "@types/numeral": "^0.0.28",
     "@types/qrcode.react": "^1.0.1",
     "@types/react": "^16.9.0",
@@ -41,16 +40,22 @@
     "@types/react-redux": "^7.1.9",
     "@types/react-router-dom": "^5.1.5",
     "@walletconnect/web3-provider": "^1.3.1",
+    "assert": "^2.0.0",
     "bignumber.js": "^9.0.2",
+    "buffer": "^6.0.3",
     "classnames": "^2.2.6",
+    "crypto-browserify": "^3.12.0",
     "dotenv": "^10.0.0",
-    "ethers": "^5.5.2",
+    "ethers": "^5.5.4",
+    "https-browserify": "^1.0.0",
     "i18next": "^20.3.3",
     "i18next-browser-languagedetector": "^6.1.2",
     "i18next-http-backend": "^1.2.6",
     "i18next-intervalplural-postprocessor": "^3.0.0",
     "notistack": "^1.0.10",
     "numeral": "^2.0.6",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
     "qrcode.react": "^1.0.0",
     "query-string": "^6.13.6",
     "react": "^17.0.1",
@@ -61,22 +66,26 @@
     "react-number-format": "^4.5.5",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^5.0.0",
     "react-use": "^15.3.4",
     "redux": "^4.1.0",
+    "source-map-explorer": "^2.5.2",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
     "text-encoding": "^0.7.0",
     "typescript": "^4.5.5",
-    "xstate": "^4.17.0"
+    "url": "^0.11.0"
   },
   "resolutions": {
     "blake2b": "2.1.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "start": "GENERATE_SOURCEMAP=false react-app-rewired start",
+    "build": "react-app-rewired --max-old-space-size=8192 build",
+    "test": "react-app-rewired test",
     "lint": "eslint --ext js,ts,tsx src",
-    "eject": "react-scripts eject",
+    "eject": "react-app-rewired eject",
     "scan": "i18next 'src/**/*.{tsx,ts}'"
   },
   "jest": {
@@ -98,6 +107,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.13.0",
     "@babel/preset-env": "^7.15.8",
     "netlify-cli": "^2.71.0",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "react-app-rewired": "^2.2.1"
   }
 }
