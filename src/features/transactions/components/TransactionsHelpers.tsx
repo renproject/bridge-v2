@@ -10,11 +10,6 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import {
-  BurnSession,
-  ErroringBurnSession,
-  GatewaySession,
-} from "@renproject/ren-tx";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -58,15 +53,6 @@ import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 import { getRemainingTime } from "../../../utils/time";
-// import {
-//   GATEWAY_EXPIRY_OFFSET_MS,
-//   getRemainingTime,
-// } from "../../mint-old/mintUtils";
-// import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
-
-export type AnyBurnSession =
-  | BurnSession<any, any>
-  | ErroringBurnSession<any, any>;
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -266,12 +252,6 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
       </ProgressWrapper>
     </>
   );
-};
-
-export type TransactionItemProps = {
-  tx: GatewaySession<any>;
-  isActive?: boolean;
-  onContinue?: ((depositHash?: string) => void) | (() => void);
 };
 
 type HMSCountdownProps = { milliseconds: number };
