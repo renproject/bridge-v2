@@ -296,6 +296,17 @@ export const GatewayDepositProcessor: FunctionComponent<
     status: renVMStatus,
   } = renVMTxMeta;
 
+  const ctaSubmitter = useChainTransactionSubmitter({
+    tx: transaction.outSetup.createTokenAccount,
+    debugLabel: "outSetup cta",
+  });
+  const { handleSubmit: handleCtaSubmit } = ctaSubmitter;
+
+  const ctaTxMeta = useChainTransactionStatusUpdater({
+    tx: transaction.outSetup.createTokenAccount,
+    debugLabel: "outSetup cta",
+  });
+
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction.out,
     debugLabel: "out",
@@ -307,6 +318,20 @@ export const GatewayDepositProcessor: FunctionComponent<
     handleReset: handleResetMint,
     errorSubmitting: submittingMintError,
   } = outSubmitter;
+
+  const [submittingOutSetup, setSubmittingOutSetup] = useState(false);
+  const handleSubmit = useCallback(async () => {
+    setSubmittingOutSetup(true);
+    for (const key of Object.keys(transaction.outSetup)) {
+      if (transaction.outSetup[key]) {
+        await transaction.outSetup[key].submit?.();
+        await transaction.outSetup[key].wait();
+      }
+    }
+    setSubmittingOutSetup(false);
+    await handleSubmitMint();
+  }, [handleSubmitMint]);
+
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction.out,
     debugLabel: "out",
@@ -369,13 +394,15 @@ export const GatewayDepositProcessor: FunctionComponent<
         lockAmount={lockAmount}
         lockTxId={lockTxIdFormatted}
         lockTxUrl={lockTxUrl}
-        onSubmit={handleSubmitMint}
-        onRetry={handleSubmitMint}
+        onSubmit={handleSubmit}
+        onRetry={handleSubmit}
         onReload={handleResetMint}
-        submitting={submittingMint}
+        submitting={submittingMint || submittingOutSetup}
         submittingError={submittingMintError}
         submittingDisabled={
-          renVMSubmitting || renVMStatus !== ChainTransactionStatus.Done
+          submittingOutSetup ||
+          renVMSubmitting ||
+          renVMStatus !== ChainTransactionStatus.Done
         }
         renVMSubmitting={renVMSubmitting}
       />
@@ -418,6 +445,8 @@ export const GatewayDepositProcessor: FunctionComponent<
           inTxMeta,
           renVmSubmitter,
           renVmTxMeta: renVMTxMeta,
+          ctaSubmitter,
+          ctaTxMeta,
           outTxMeta,
           outSubmitter,
           mintAssetDecimals,

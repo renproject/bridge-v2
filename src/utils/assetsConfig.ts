@@ -1,27 +1,28 @@
 import { Asset, Chain } from "@renproject/chains";
 import {
+  assetsColors,
   Bch,
   Bnb,
   Btc,
   Dai,
-  Doge,
   Dgb,
-  RenDgb,
+  Doge,
   Eth,
   Fil,
+  Luna,
   RenBch,
   RenBnb,
   RenBtc,
   RenDai,
+  RenDgb,
   RenDoge,
   RenEth,
   RenFil,
-  RenZec,
-  Zec,
-  Luna,
   RenLuna,
-  Sol,
   RenSol,
+  RenZec,
+  Sol,
+  Zec,
 } from "@renproject/icons";
 import {
   nativeTokenIcon,
@@ -33,7 +34,6 @@ import {
 } from "../components/icons/RenIcons";
 
 import { env } from "../constants/environmentVariables";
-import { bitcoinOrange } from "../theme/colors";
 import { getAssetChainsConfig } from "./chainsConfig";
 
 export type AssetIconsConfig = {
@@ -51,17 +51,12 @@ export enum AssetRateService {
   Coingecko = "Coingecko",
 }
 
-export type AssetColorsConfig = {
-  color?: string;
-};
-
 export type AssetRateConfig = {
   rateService?: AssetRateService;
   rateSymbol?: string;
 };
 
 type AssetBaseConfig = AssetIconsConfig &
-  AssetColorsConfig &
   AssetLabelsConfig &
   AssetRateConfig & {};
 
@@ -103,7 +98,6 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   BTC: {
     Icon: nativeTokenIcon(Btc),
     RenIcon: wrappedTokenIcon(RenBtc),
-    color: bitcoinOrange,
     shortName: "BTC",
     fullName: "Bitcoin",
     rateService: AssetRateService.Coingecko,
@@ -199,11 +193,24 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   gETH: unsetAssetConfig,
 };
 
+const getAssetColorConfig = (asset: Asset) => {
+  const color = assetsColors[asset];
+  return color.primary;
+};
+
 export type AssetChainsConfig = {
   lockChain: Chain;
   mintChains: Array<Chain>;
   lockChainConnectionRequired?: boolean; // better name?
 };
+
+export type AssetColorConfig = {
+  color: string;
+};
+
+export type AssetConfig = AssetBaseConfig &
+  AssetColorConfig &
+  AssetChainsConfig;
 
 export const assetsConfig = Object.fromEntries(
   Object.entries(assetsBaseConfig).map(([asset, config]) => [
@@ -211,9 +218,10 @@ export const assetsConfig = Object.fromEntries(
     {
       ...config,
       ...getAssetChainsConfig(asset as Asset),
+      color: getAssetColorConfig(asset as Asset),
     },
   ])
-);
+) as Record<Asset, AssetConfig>;
 
 console.log("assetsConfig", assetsConfig);
 

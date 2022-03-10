@@ -130,20 +130,6 @@ export const MintDepositConfirmationStatus: FunctionComponent<
           <Icon fontSize="large" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
-      <SmallWrapper>
-        <Typography variant="body1" align="center">
-          {lockConfirmations !== null && lockTargetConfirmations !== null ? (
-            <>
-              {t("tx.confirmations-of-target-counter-message", {
-                confirmations: lockConfirmations,
-                target: lockTargetConfirmations,
-              })}
-            </>
-          ) : (
-            <Skeleton variant="text" width={120} height={14} />
-          )}
-        </Typography>
-      </SmallWrapper>
       <TransactionProgressInfo
         confirmations={lockConfirmations}
         target={lockTargetConfirmations}
