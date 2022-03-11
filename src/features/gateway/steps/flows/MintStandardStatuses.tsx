@@ -20,10 +20,7 @@ import {
   TransactionDetailsButton,
 } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import {
-  MediumWrapper,
-  SmallWrapper,
-} from "../../../../components/layout/LayoutHelpers";
+import { MediumWrapper } from "../../../../components/layout/LayoutHelpers";
 import { Link } from "../../../../components/links/Links";
 import {
   BigDoneIcon,
@@ -41,14 +38,14 @@ import {
   useSetPaperTitle,
 } from "../../../../providers/TitleProviders";
 import { orangeLight } from "../../../../theme/colors";
-import { getChainConfig } from "../../../../utils/chainsConfig";
-import { getHours } from "../../../../utils/dates";
-import { undefinedForNull } from "../../../../utils/propsUtils";
-import { getRemainingTime } from "../../../../utils/time";
 import {
   getAssetConfig,
   getRenAssetFullName,
 } from "../../../../utils/assetsConfig";
+import { getChainConfig } from "../../../../utils/chainsConfig";
+import { getHours } from "../../../../utils/dates";
+import { undefinedForNull } from "../../../../utils/propsUtils";
+import { getRemainingTime } from "../../../../utils/time";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import {

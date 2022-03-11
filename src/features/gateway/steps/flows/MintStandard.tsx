@@ -296,17 +296,6 @@ export const GatewayDepositProcessor: FunctionComponent<
     status: renVMStatus,
   } = renVMTxMeta;
 
-  const ctaSubmitter = useChainTransactionSubmitter({
-    tx: transaction.outSetup.createTokenAccount,
-    debugLabel: "outSetup cta",
-  });
-  const { handleSubmit: handleCtaSubmit } = ctaSubmitter;
-
-  const ctaTxMeta = useChainTransactionStatusUpdater({
-    tx: transaction.outSetup.createTokenAccount,
-    debugLabel: "outSetup cta",
-  });
-
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction.out,
     debugLabel: "out",
@@ -330,7 +319,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     }
     setSubmittingOutSetup(false);
     await handleSubmitMint();
-  }, [handleSubmitMint]);
+  }, [handleSubmitMint, transaction.outSetup]);
 
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction.out,
@@ -445,8 +434,6 @@ export const GatewayDepositProcessor: FunctionComponent<
           inTxMeta,
           renVmSubmitter,
           renVmTxMeta: renVMTxMeta,
-          ctaSubmitter,
-          ctaTxMeta,
           outTxMeta,
           outSubmitter,
           mintAssetDecimals,
