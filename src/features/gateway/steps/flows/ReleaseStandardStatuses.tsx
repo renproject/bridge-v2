@@ -53,7 +53,7 @@ import {
 } from "../../components/TransactionProgressHelpers";
 import {
   getGatewayParams,
-  useEthereumChainAssetBalance,
+  useContractChainAssetBalance,
 } from "../../gatewayHooks";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
 
@@ -86,7 +86,7 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
   const assetConfig = getAssetConfig(asset);
   const renAssetConfig = getRenAssetConfig(asset);
   const { Icon } = assetConfig;
-  const { balance } = useEthereumChainAssetBalance(
+  const { balance } = useContractChainAssetBalance(
     gateway.fromChain,
     asset,
     account

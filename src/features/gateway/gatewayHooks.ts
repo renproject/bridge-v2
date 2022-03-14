@@ -16,9 +16,8 @@ import {
   MINT_GAS_UNIT_COST,
   RELEASE_GAS_UNIT_COST,
 } from "../../constants/constants";
-import { supportedEthereumChains } from "../../utils/chainsConfig";
+import { supportedContractChains } from "../../utils/chainsConfig";
 import { fromGwei } from "../../utils/converters";
-import { EthereumBaseChain } from "../../utils/missingTypes";
 import { isDefined } from "../../utils/objects";
 import { PartialChainInstanceMap } from "../chain/chainUtils";
 import { $exchangeRates, $gasPrices } from "../marketData/marketDataSlice";
@@ -238,7 +237,7 @@ export const useChainAssetAddress = (
   return { address, error };
 };
 
-export const useEthereumChainAssetBalance = (
+export const useContractChainAssetBalance = (
   chainInstance: Chain | DepositChain | ContractChain | null | undefined,
   asset: string,
   address?: string
@@ -251,7 +250,7 @@ export const useEthereumChainAssetBalance = (
     if (
       !instance ||
       decimals === null ||
-      !supportedEthereumChains.includes(instance.chain as Chain)
+      !supportedContractChains.includes(instance.chain as Chain)
     ) {
       return;
     }
@@ -259,7 +258,7 @@ export const useEthereumChainAssetBalance = (
       console.log(`asset balance ${instance?.chain}/${asset}: ${decimals}`);
       setBalance(null);
       const balanceBn = (
-        await (instance as EthereumBaseChain).getBalance(asset, address)
+        await (instance as ContractChain).getBalance(asset, address || "")
       ).shiftedBy(-decimals);
       setBalance(balanceBn.toFixed());
       console.log(`gateway balance: ${balanceBn}`);

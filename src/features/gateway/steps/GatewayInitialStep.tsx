@@ -48,7 +48,7 @@ import {
 import { MintIntro } from "../components/MintHelpers";
 import {
   useAddressValidator,
-  useEthereumChainAssetBalance,
+  useContractChainAssetBalance,
   useGatewayMeta,
 } from "../gatewayHooks";
 import {
@@ -190,7 +190,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   const chains = useCurrentNetworkChains();
   const { account, targetNetwork } = useWallet(from);
-  const { balance } = useEthereumChainAssetBalance(
+  const { balance } = useContractChainAssetBalance(
     chains[from].chain as any,
     asset,
     account

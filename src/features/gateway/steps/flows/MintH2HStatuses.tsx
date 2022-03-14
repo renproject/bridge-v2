@@ -56,7 +56,7 @@ import {
 } from "../../components/TransactionProgressHelpers";
 import {
   getGatewayParams,
-  useEthereumChainAssetBalance,
+  useContractChainAssetBalance,
 } from "../../gatewayHooks";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
 
@@ -88,7 +88,7 @@ export const MintH2HLockTransactionStatus: FunctionComponent<
   const { asset, amount } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
-  const { balance } = useEthereumChainAssetBalance(
+  const { balance } = useContractChainAssetBalance(
     gateway.fromChain as ContractChain,
     asset
   );
@@ -179,7 +179,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   const assetConfig = getAssetConfig(asset);
   const renAsset = getRenAssetName(asset);
   const { RenIcon } = assetConfig;
-  const { balance } = useEthereumChainAssetBalance(
+  const { balance } = useContractChainAssetBalance(
     gateway.fromChain as ContractChain,
     asset
   );
