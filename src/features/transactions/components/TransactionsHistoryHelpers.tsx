@@ -2,7 +2,7 @@ import { Chip, ChipProps, Dialog, Typography } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import classNames from "classnames";
-import { FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomSvgIconComponent } from "../../../components/icons/RenIcons";
 import { SmallHorizontalPadder } from "../../../components/layout/LayoutHelpers";
@@ -149,5 +149,29 @@ export const AddressOnChainLink: FunctionComponent<AddressOnChainLinkProps> = ({
       <span className={styles.separator}>{t("common.on")}</span>
       <Icon />
     </div>
+  );
+};
+
+type AddressInfoProps = AddressOnChainLinkProps & {
+  label: string;
+};
+
+export const AddressInfo: FunctionComponent<AddressInfoProps> = ({
+  address,
+  addressUrl,
+  Icon,
+  label,
+}) => {
+  return (
+    <BluePadder>
+      <FullWidthWrapper>
+        <Typography variant="body2">{label}</Typography>
+        <AddressOnChainLink
+          address={address}
+          addressUrl={addressUrl}
+          Icon={Icon}
+        />
+      </FullWidthWrapper>
+    </BluePadder>
   );
 };

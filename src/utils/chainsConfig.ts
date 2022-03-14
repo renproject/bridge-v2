@@ -5,6 +5,7 @@ import {
   Bch,
   BinanceSmartChain,
   Btc,
+  chainsColors,
   Dgb,
   Doge,
   Ethereum,
@@ -44,9 +45,13 @@ type ChainBaseConfig = ChainIconsConfig &
   ChainLabelsConfig &
   ChainNetworksConfig & {};
 
-export type ChainConfig = ChainBaseConfig & {};
+export type ChainColorConfig = {
+  color: string;
+};
 
-const chainsBaseConfig: Record<Chain, ChainConfig> = {
+export type ChainConfig = ChainBaseConfig & ChainColorConfig & {};
+
+const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Arbitrum: {
     Icon: chainIcon(Arbitrum),
     fullName: "Arbitrum",
@@ -121,7 +126,20 @@ const chainsBaseConfig: Record<Chain, ChainConfig> = {
   },
 };
 
-export const chainsConfig = chainsBaseConfig;
+const getChainColorConfig = (chain: Chain) => {
+  const color = chainsColors[chain];
+  return color.primary;
+};
+
+export const chainsConfig = Object.fromEntries(
+  Object.entries(chainsBaseConfig).map(([chain, config]) => [
+    chain,
+    {
+      ...config,
+      color: getChainColorConfig(chain as Chain),
+    },
+  ])
+) as Record<Chain, ChainConfig>;
 
 export const getChainConfig = (chain: Chain | string) => {
   const config = chainsConfig[chain as Chain];
@@ -150,6 +168,7 @@ export const getChainNetworkConfig = (chain: Chain, network: RenNetwork) => {
 type AssetChainsData = AssetChainsConfig & {
   asset: Asset;
 };
+
 export const supportedBitcoinChains: Array<Chain> = [
   Chain.Bitcoin,
   Chain.BitcoinCash,

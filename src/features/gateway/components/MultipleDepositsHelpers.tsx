@@ -35,12 +35,6 @@ import {
 import { depositSorter } from "../mintHooks";
 import { DepositNavigationButton } from "../steps/flows/MintStandard";
 
-export enum DepositPhase {
-  LOCK = "lock",
-  MINT = "mint",
-  NONE = "",
-}
-
 const transition = "all 1s ease-out, border 0.5s ease-out";
 
 const StyledToggleButtonGroup = withStyles((theme) => ({

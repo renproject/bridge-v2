@@ -180,9 +180,13 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
 export const alterContractChainProviderSigner = (
   chains: PartialChainInstanceMap,
   alteredChain: Chain,
-  provider: SolanaConnector,
+  provider: SolanaConnector | any,
   alterProvider?: boolean
 ) => {
+  if (!provider) {
+    console.error(`Altering failed: No provider`);
+    return;
+  }
   console.log("ContractChainProviderSigner", alteredChain);
   if (!contractChains.includes(alteredChain)) {
     throw new Error(`Altering failed: Not a contract chain: ${alteredChain}.`);
@@ -269,4 +273,12 @@ export const alterEthereumBaseChainsProvider = (
       );
     }
   });
+};
+
+export const pickChains = (
+  chains: ChainInstanceMap,
+  from: Chain,
+  to: Chain
+) => {
+  return { [from]: chains[from], [to]: chains[to] };
 };

@@ -14,7 +14,6 @@ import {
 } from "../../features/wallet/components/WalletHelpers";
 import { createNetworkIdMapper } from "../../utils/networksConfig";
 import { Wallet } from "../../utils/walletsConfig";
-import { CoinbaseInjectedConnector } from "./CoinbaseInjectedConnector";
 
 const isEnabled = (chain: Chain, wallet: Wallet) => {
   const entries = env.ENABLED_EXTRA_WALLETS;
@@ -65,18 +64,18 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
               },
             ]
           : []),
-        ...(isEnabled(Chain.Ethereum, Wallet.Coinbase)
-          ? [
-              {
-                name: Wallet.Coinbase,
-                logo: "",
-                connector: new CoinbaseInjectedConnector({
-                  debug: env.DEV,
-                  networkIdMapper: createNetworkIdMapper(Chain.Ethereum),
-                }),
-              },
-            ]
-          : []),
+        // ...(isEnabled(Chain.Ethereum, Wallet.Coinbase)
+        //   ? [
+        //       {
+        //         name: Wallet.Coinbase,
+        //         logo: "",
+        //         connector: new CoinbaseInjectedConnector({
+        //           debug: env.DEV,
+        //           networkIdMapper: createNetworkIdMapper(Chain.Ethereum),
+        //         }),
+        //       },
+        //     ]
+        //   : []),
       ],
       // ...(isEnabled(Chain.Ethereum, Wallet.WalletConnect)
       //   ? [

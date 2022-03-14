@@ -37,7 +37,6 @@ import {
   useSetActionRequired,
   useSetPaperTitle,
 } from "../../../../providers/TitleProviders";
-import { orangeLight } from "../../../../theme/colors";
 import {
   getAssetConfig,
   getRenAssetFullName,
@@ -120,11 +119,11 @@ export const MintDepositConfirmationStatus: FunctionComponent<
     <>
       <ProgressWrapper>
         <ProgressWithContent
-          color={lockAssetConfig.color || orangeLight}
+          color={lockAssetConfig.color}
           confirmations={undefinedForNull(lockConfirmations)}
           targetConfirmations={undefinedForNull(lockTargetConfirmations)}
         >
-          <Icon fontSize="large" color="inherit" />
+          <Icon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>
       <TransactionProgressInfo

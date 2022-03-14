@@ -39,7 +39,6 @@ import {
   usePaperTitle,
   useSetPaperTitle,
 } from "../../../../providers/TitleProviders";
-import { orangeLight } from "../../../../theme/colors";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
 import { undefinedForNull } from "../../../../utils/propsUtils";
@@ -48,6 +47,7 @@ import { getAssetConfig } from "../../../../utils/assetsConfig";
 import {
   alterContractChainProviderSigner,
   PartialChainInstanceMap,
+  pickChains,
 } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import {
@@ -121,8 +121,8 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   useEffect(() => {
     if (provider) {
       alterContractChainProviderSigner(allChains, to, provider, true);
-      const newChainsMap = { [from]: allChains[from], [to]: allChains[to] };
-      setChains(newChainsMap);
+      const gatewayChains = pickChains(allChains, from, to);
+      setChains(gatewayChains);
     }
   }, [from, to, allChains, provider]);
 
@@ -284,11 +284,10 @@ export const GatewayDepositProcessor: FunctionComponent<
       isTxSubmittable(transaction.renVM),
     debugLabel: "renVM",
   });
-  const { submittingDone: renVMSubmittingDone, submitting: renVMSubmitting } =
-    renVmSubmitter;
+  const { submitting: renVMSubmitting } = renVmSubmitter;
   const renVMTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction.renVM,
-    startTrigger: renVMSubmittingDone,
+    // startTrigger: renVMSubmittingDone, //this blocks resolving from url
   });
   const {
     amount: mintAmount,
@@ -486,15 +485,14 @@ export const MintGatewayAddress: FunctionComponent<MintGatewayAddressProps> = ({
 
   const lockCurrencyConfig = getAssetConfig(gateway.params.asset as Asset);
   const lockChainConfig = getChainConfig(gateway.fromChain.chain as Chain);
-  // const { color } = lockCurrencyConfig;
-  const color = orangeLight;
   const { Icon } = lockChainConfig;
+
   useSetPaperTitle(t("mint.gateway-address-title"));
 
   return (
     <>
       <ProgressWrapper>
-        <ProgressWithContent color={color || orangeLight} size={64}>
+        <ProgressWithContent color={lockChainConfig.color} size={64}>
           <Icon fontSize="inherit" color="inherit" />
         </ProgressWithContent>
       </ProgressWrapper>

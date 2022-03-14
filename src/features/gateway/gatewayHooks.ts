@@ -115,7 +115,7 @@ export const useGateway = (
         (window as any).gateway = newGateway;
         return newGateway;
       };
-      console.log("gateway initializing");
+      console.log("gateway initializing", chains);
       initializeGateway()
         .then((newGateway) => setGateway(newGateway))
         .catch((error) => {

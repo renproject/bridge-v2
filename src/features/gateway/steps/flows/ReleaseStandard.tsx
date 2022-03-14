@@ -10,16 +10,18 @@ import {
   usePaperTitle,
   useSetPaperTitle,
 } from "../../../../providers/TitleProviders";
-import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
+import { getChainConfig } from "../../../../utils/chainsConfig";
+import {
+  alterContractChainProviderSigner,
+  PartialChainInstanceMap,
+  pickChains,
+} from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
-import {
-  useCurrentChainWallet,
-  useSyncWalletChain,
-} from "../../../wallet/walletHooks";
+import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
@@ -59,9 +61,18 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount, toAddress } = gatewayParams;
   useSyncWalletChain(from);
-  const { connected, account } = useCurrentChainWallet();
+  const { connected, account, provider } = useWallet(from);
 
-  const chains = useCurrentNetworkChains();
+  const allChains = useCurrentNetworkChains();
+  const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
+  useEffect(() => {
+    if (provider) {
+      alterContractChainProviderSigner(allChains, from, provider, true);
+      const gatewayChains = pickChains(allChains, from, to);
+      setChains(gatewayChains);
+    }
+  }, [from, to, allChains, provider]);
+
   const { gateway, transactions, recoverLocalTx } = useGateway(
     { asset, from, to, amount, toAddress },
     { chains }
