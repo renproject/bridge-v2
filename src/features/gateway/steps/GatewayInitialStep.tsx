@@ -23,24 +23,22 @@ import {
   BigOutlinedTextFieldWrapper,
   OutlinedTextField,
 } from "../../../components/inputs/OutlinedTextField";
-import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../components/layout/Paper";
-import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
-import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
-import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import {
   getAssetConfig,
   getRenAssetConfig,
   supportedAssets,
 } from "../../../utils/assetsConfig";
+import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { useCurrentChainWallet, useWallet } from "../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../wallet/walletSlice";
+import { BalanceInfo } from "../components/BalanceHelpers";
 import {
   getAssetOptionData,
   getChainOptionData,
@@ -264,18 +262,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           </BigCurrencyInputWrapper>
         )}
         {connected && isFromContractChain ? (
-          <HorizontalPadder>
-            <LabelWithValue
-              label={`${renAssetConfig.shortName} ${t("common.balance")}:`}
-              value={
-                balance !== null ? (
-                  balance
-                ) : (
-                  <InlineSkeleton height={17} width={45} />
-                )
-              }
-            />
-          </HorizontalPadder>
+          <BalanceInfo balance={balance} asset={renAssetConfig.shortName} />
         ) : null}
         <RichDropdownWrapper>
           <RichDropdown

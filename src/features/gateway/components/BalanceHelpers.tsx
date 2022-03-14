@@ -1,4 +1,5 @@
 import { Fade } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import { Asset, Chain } from "@renproject/chains";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,17 +14,24 @@ type BalanceInfoProps = {
   chain?: Chain | string;
 };
 
+const useBalanceInfoStyles = makeStyles((theme) => ({
+  value: {
+    color: theme.palette.text.primary,
+  },
+}));
+
 export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
   balance,
   asset,
 }) => {
+  const styles = useBalanceInfoStyles();
   const { t } = useTranslation();
   return (
     <HorizontalPadder>
       <LabelWithValue
         label={t("common.balance") + ":"}
         value={
-          <span>
+          <span className={styles.value}>
             {balance === null ? (
               <InlineSkeleton
                 variant="rect"
