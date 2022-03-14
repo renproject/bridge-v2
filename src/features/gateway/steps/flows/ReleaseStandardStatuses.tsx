@@ -12,10 +12,7 @@ import {
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import {
-  HorizontalPadder,
-  MediumTopWrapper,
-} from "../../../../components/layout/LayoutHelpers";
+import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import {
@@ -30,17 +27,17 @@ import {
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
-import { getChainConfig } from "../../../../utils/chainsConfig";
-import { feesDecimalImpact } from "../../../../utils/numbers";
-import { undefinedForNull } from "../../../../utils/propsUtils";
-import { trimAddress } from "../../../../utils/strings";
 import {
   getAssetConfig,
   getRenAssetConfig,
 } from "../../../../utils/assetsConfig";
+import { getChainConfig } from "../../../../utils/chainsConfig";
+import { feesDecimalImpact } from "../../../../utils/numbers";
+import { undefinedForNull } from "../../../../utils/propsUtils";
+import { trimAddress } from "../../../../utils/strings";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
-import { AddressLabel } from "../../components/AddressHelpers";
+import { AddressInfo } from "../../../transactions/components/TransactionsHistoryHelpers";
 import {
   BalanceInfo,
   UsdNumberFormatText,
@@ -121,12 +118,11 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
           />
         </MediumTopWrapper>
         <MediumTopWrapper>
-          <HorizontalPadder>
-            <AddressLabel
-              address={toAddress}
-              url={gateway.toChain.addressExplorerLink(toAddress)}
-            />
-          </HorizontalPadder>
+          <AddressInfo
+            address={toAddress}
+            addressUrl={gateway.toChain.addressExplorerLink(toAddress)}
+            label="Recipient Address"
+          />
         </MediumTopWrapper>
       </PaperContent>
       <Divider />

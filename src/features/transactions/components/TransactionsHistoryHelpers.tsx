@@ -112,7 +112,7 @@ const useAddressOnChainLinkStyles = makeStyles(() => ({
   root: {
     display: "flex",
     alignItems: "center",
-    fontSize: 14,
+    fontSize: 13,
   },
   link: {},
   separator: {
@@ -124,7 +124,7 @@ const useAddressOnChainLinkStyles = makeStyles(() => ({
 type AddressOnChainLinkProps = {
   address: string;
   addressUrl?: string;
-  Icon: CustomSvgIconComponent;
+  Icon?: CustomSvgIconComponent;
 };
 
 export const AddressOnChainLink: FunctionComponent<AddressOnChainLinkProps> = ({
@@ -146,11 +146,25 @@ export const AddressOnChainLink: FunctionComponent<AddressOnChainLinkProps> = ({
       >
         {trimAddress(address)}
       </CustomLink>
-      <span className={styles.separator}>{t("common.on")}</span>
-      <Icon />
+      {Icon !== undefined && (
+        <>
+          {" "}
+          <span className={styles.separator}>{t("common.on")}</span>
+          <Icon />
+        </>
+      )}
     </div>
   );
 };
+
+const useAddressInfoStyles = makeStyles(() => ({
+  wrapper: {
+    minHeight: 26,
+  },
+  label: {
+    fontSize: 14,
+  },
+}));
 
 type AddressInfoProps = AddressOnChainLinkProps & {
   label: string;
@@ -162,9 +176,10 @@ export const AddressInfo: FunctionComponent<AddressInfoProps> = ({
   Icon,
   label,
 }) => {
+  const styles = useAddressInfoStyles();
   return (
     <BluePadder>
-      <FullWidthWrapper>
+      <FullWidthWrapper className={styles.wrapper}>
         <Typography variant="body2">{label}</Typography>
         <AddressOnChainLink
           address={address}

@@ -517,7 +517,7 @@ export const getGatewayParams = (gateway: Gateway) => {
   const from = gateway.params.from.chain as Chain;
   const to = gateway.params.to.chain as Chain;
   const fromAmount = gateway.params.from.params?.amount as string;
-  const toAddress = gateway.params.to.address as string;
+  const toAddress = gateway.params.to.params?.address as string;
   const fromAverageConfirmationTime =
     gateway.fromChain.network.averageConfirmationTime;
   const toAverageConfirmationTime =
