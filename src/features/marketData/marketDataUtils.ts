@@ -1,6 +1,4 @@
-import { ReferenceData } from "@bandprotocol/bandchain.js/lib/data";
 import { Asset, Chain } from "@renproject/chains";
-import { uniqueArray } from "../../utils/arrays";
 import {
   AssetRateService,
   assetsConfig,
@@ -11,17 +9,6 @@ export const USD_SYMBOL = "USD";
 
 const getPair = (base: string, quote: string) => `${base}/${quote}`;
 
-export const bandchainReferencePairs = uniqueArray(
-  Object.entries(assetsConfig)
-    // .filter(([asset]) => supportedAssets.includes(asset as Asset))
-    .filter(
-      ([asset, config]) => config.rateService === AssetRateService.Bandchain
-    )
-    .map(([asset, config]) => config.rateSymbol || asset)
-).map((symbol: string) => getPair(symbol, USD_SYMBOL));
-
-console.log("bandchainReferencePairs", bandchainReferencePairs);
-
 export const coingeckoSymbols = Object.entries(assetsConfig)
   .filter(
     ([asset, config]) => config.rateService === AssetRateService.Coingecko
@@ -29,8 +16,6 @@ export const coingeckoSymbols = Object.entries(assetsConfig)
   .map(([asset, entry]) => entry.rateSymbol || asset);
 
 console.log("coingeckoSymbols", coingeckoSymbols);
-
-export type BandchainReferenceData = ReferenceData;
 
 export type CoingeckoReferenceData = {
   id: string;

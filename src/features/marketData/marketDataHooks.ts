@@ -2,12 +2,10 @@ import { Chain } from "@renproject/chains";
 import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useInterval } from "react-use";
-import { getBandchain } from "../../services/bandchain";
 import { useReportSystemStatus } from "../ui/uiHooks";
 import { SystemStatus, SystemType } from "../ui/uiSlice";
 import { setExchangeRates, setGasPrices } from "./marketDataSlice";
 import {
-  bandchainReferencePairs,
   CoingeckoReferenceData,
   coingeckoSymbols,
   GasPrice,
@@ -15,10 +13,6 @@ import {
 } from "./marketDataUtils";
 
 const dataRefreshInterval = 30; // seconds
-
-export const fetchBandchainExchangeRates = () => {
-  return getBandchain().getReferenceData(bandchainReferencePairs, 10, 16);
-};
 
 const fetchCoingeckoExchangeRates = async () => {
   return fetch(
