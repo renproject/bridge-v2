@@ -262,7 +262,11 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           </BigCurrencyInputWrapper>
         )}
         {connected && isFromContractChain ? (
-          <BalanceInfo balance={balance} asset={renAssetConfig.shortName} />
+          <BalanceInfo
+            balance={balance}
+            asset={renAssetConfig.shortName}
+            chain={isH2H ? from : undefined}
+          />
         ) : null}
         <RichDropdownWrapper>
           <RichDropdown

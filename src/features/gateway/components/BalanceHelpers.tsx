@@ -6,7 +6,9 @@ import { useTranslation } from "react-i18next";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
 import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
+import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
+import { getChainConfig } from "../../../utils/chainsConfig";
 
 type BalanceInfoProps = {
   balance: string | number | null;
@@ -23,13 +25,20 @@ const useBalanceInfoStyles = makeStyles((theme) => ({
 export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
   balance,
   asset,
+  chain,
 }) => {
   const styles = useBalanceInfoStyles();
   const { t } = useTranslation();
   return (
     <HorizontalPadder>
       <LabelWithValue
-        label={t("common.balance") + ":"}
+        label={
+          <>
+            {t("common.balance")}
+            {chain ? ` (${getChainConfig(chain).shortName})` : null}
+            {":"}
+          </>
+        }
         value={
           <span className={styles.value}>
             {balance === null ? (

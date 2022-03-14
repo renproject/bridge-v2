@@ -7,7 +7,7 @@ import { InlineSkeleton } from "../progress/ProgressHelpers";
 import { TooltipWithIcon } from "../tooltips/TooltipWithIcon";
 
 export type LabelWithValueProps = {
-  label: string;
+  label: string | ReactNode;
   labelTooltip?: string;
   value: string | number | ReactNode;
   valueEquivalent?: string | number | ReactNode;
