@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
 import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
-import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { getChainConfig } from "../../../utils/chainsConfig";
 

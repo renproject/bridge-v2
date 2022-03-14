@@ -57,7 +57,6 @@ import {
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { AddressInfo } from "../../transactions/components/TransactionsHistoryHelpers";
 import { useWallet } from "../../wallet/walletHooks";
-import { AddressLabel } from "../components/AddressHelpers";
 import { BalanceInfo } from "../components/BalanceHelpers";
 import { GatewayFees } from "../components/GatewayFees";
 import {
