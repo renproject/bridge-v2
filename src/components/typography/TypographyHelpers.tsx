@@ -14,6 +14,7 @@ export type LabelWithValueProps = {
   loading?: boolean;
   colorVariant?: "inherit" | "reversed";
   marginVariant?: "none";
+  fontSizeVariant?: "bigger";
 };
 
 const getElementColor = (
@@ -29,7 +30,10 @@ const getElementColor = (
 
 const useLabelWithValueStyles = makeStyles<
   Theme,
-  Pick<LabelWithValueProps, "colorVariant" | "marginVariant">
+  Pick<
+    LabelWithValueProps,
+    "colorVariant" | "marginVariant" | "fontSizeVariant"
+  >
 >((theme) => {
   const grey = theme.palette.grey[600];
   const black = theme.palette.common.black;
@@ -38,13 +42,14 @@ const useLabelWithValueStyles = makeStyles<
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      fontSize: 13,
+      fontSize: (props) => (props.fontSizeVariant === "bigger" ? 14 : 13),
       marginBottom: (props) => (props.marginVariant === "none" ? 0 : 8),
     },
     labelWrapper: {
       flexShrink: 0,
       maxWidth: "50%",
       color: (props) => getElementColor(props, grey, black),
+      marginRight: 8,
     },
     labelTooltip: {
       marginLeft: 4,
@@ -78,9 +83,14 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
   loading,
   colorVariant,
   marginVariant,
+  fontSizeVariant,
   ...rest
 }) => {
-  const styles = useLabelWithValueStyles({ colorVariant, marginVariant });
+  const styles = useLabelWithValueStyles({
+    colorVariant,
+    marginVariant,
+    fontSizeVariant,
+  });
   return (
     <div className={styles.root} {...rest}>
       <div className={styles.labelWrapper}>

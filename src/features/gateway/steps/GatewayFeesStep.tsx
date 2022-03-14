@@ -1,4 +1,5 @@
 import {
+  Box,
   ButtonProps,
   Checkbox,
   Divider,
@@ -31,6 +32,7 @@ import { OutlinedTextField } from "../../../components/inputs/OutlinedTextField"
 import {
   HorizontalPadder,
   MediumTopWrapper,
+  SmallHorizontalUnpadder,
 } from "../../../components/layout/LayoutHelpers";
 import {
   PaperActions,
@@ -53,6 +55,7 @@ import {
   PartialChainInstanceMap,
 } from "../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
+import { AddressInfo } from "../../transactions/components/TransactionsHistoryHelpers";
 import { useWallet } from "../../wallet/walletHooks";
 import { AddressLabel } from "../components/AddressHelpers";
 import { BalanceInfo } from "../components/BalanceHelpers";
@@ -291,15 +294,20 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       <Divider />
       <PaperContent topPadding bottomPadding>
         <Typography variant="body2" paragraph>
-          {t("fees.fees-label")}
+          Details
         </Typography>
         <GatewayFees {...fees} asset={asset} from={from} to={to} />
-        {isRelease && !isH2H && (
-          <AddressLabel
-            address={toAddress}
-            url={gateway?.toChain.addressExplorerLink(toAddress)}
-          />
-        )}
+        <Box mt={2} mb={5}>
+          {isRelease && !isH2H && (
+            <SmallHorizontalUnpadder>
+              <AddressInfo
+                label="Recipient Address"
+                address={toAddress}
+                addressUrl={gateway?.toChain.addressExplorerLink(toAddress)}
+              />
+            </SmallHorizontalUnpadder>
+          )}
+        </Box>
         <HorizontalPadder>
           {showAck && (
             <FormControlLabel

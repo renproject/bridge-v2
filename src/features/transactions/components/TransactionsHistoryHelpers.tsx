@@ -112,7 +112,7 @@ const useAddressOnChainLinkStyles = makeStyles(() => ({
   root: {
     display: "flex",
     alignItems: "center",
-    fontSize: 13,
+    fontSize: 14,
   },
   link: {},
   separator: {

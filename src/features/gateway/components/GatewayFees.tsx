@@ -70,6 +70,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
     <>
       {renVMFeePercent !== null || renVMFeeAmount ? (
         <LabelWithValue
+          fontSizeVariant="bigger"
           label={t("fees.ren-fee-label")}
           value={
             renVMFeeAmount ? (
@@ -102,6 +103,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       )}
       {Boolean(fromChainFeeLabel) ? (
         <LabelWithValue
+          fontSizeVariant="bigger"
           label={fromChainFeeLabel}
           value={
             fromChainFeeAmount !== null && fromChainFeeAsset !== null ? (
@@ -131,6 +133,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
       )}
       {Boolean(toChainFeeLabel) ? (
         <LabelWithValue
+          fontSizeVariant="bigger"
           label={toChainFeeLabel}
           value={
             toChainFeeAmount !== null && toChainFeeAsset !== null ? (

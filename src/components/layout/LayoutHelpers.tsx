@@ -38,6 +38,11 @@ export const BigTopWrapper = styled("div")({
   marginTop: 40,
 });
 
+export const SmallHorizontalUnpadder = styled("div")({
+  marginLeft: -8,
+  marginRight: -8,
+});
+
 export const SmallHorizontalPadder = styled("div")({
   paddingLeft: 8,
   paddingRight: 8,
