@@ -288,7 +288,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               options={fromChains}
               value={from}
               onChange={handleFromChange}
-              multipleNames={false}
             />
           </RichDropdownWrapper>
         </Collapse>
@@ -301,7 +300,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               options={toChains}
               value={to}
               onChange={handleToChange}
-              multipleNames={false}
             />
           </RichDropdownWrapper>
         </Collapse>

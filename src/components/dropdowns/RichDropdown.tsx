@@ -87,23 +87,25 @@ type RichDropdownProps = SelectProps & {
   options?: Array<string>;
   getOptionData?: GetOptionDataFn;
   optionMode?: boolean;
-  multipleNames?: boolean;
+  nameVariant?: "multiple" | "short" | "full";
   balances?: Array<DropdownAssetBalance>;
   getAssetBalance?: GetAssetBalanceFn;
   condensed?: boolean;
   label?: string;
   supplementalLabel?: string;
+  showNone?: boolean;
+  noneLabel?: string;
 };
 
 const getOptionDataDefault: GetOptionDataFn = (
   option,
   optionFlag?: boolean
 ) => {
-  let full = "Select";
-  let short = "Select";
+  let fullName = "Select";
+  let shortName = "Select";
   let Icon = EmptyCircleIcon;
 
-  return { value: option, fullName: full, shortName: short, Icon };
+  return { value: option, fullName, shortName, Icon };
 };
 
 const getAssetBalanceDefault: GetAssetBalanceFn = (option, balances = []) => {
@@ -112,15 +114,18 @@ const getAssetBalanceDefault: GetAssetBalanceFn = (option, balances = []) => {
 };
 
 export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
-  multipleNames = true,
+  nameVariant = "multiple",
   options = [],
   getOptionData = getOptionDataDefault,
   condensed = false,
   label,
   balances = [],
   getAssetBalance = getAssetBalanceDefault,
-  supplementalLabel = "Options",
+  supplementalLabel,
   optionMode = false,
+  value,
+  showNone = false,
+  noneLabel,
   ...rest
 }) => {
   const styles = useRichDropdownStyles();
@@ -144,13 +149,17 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
           </Box>
           <Box flexGrow={1}>
             <Typography variant="body2">
-              {multipleNames ? shortName : fullName}
+              {nameVariant === "multiple"
+                ? shortName
+                : nameVariant === "short"
+                ? shortName
+                : fullName}
             </Typography>
           </Box>
         </Box>
       );
     },
-    [multipleNames, styles, label, condensed, getOptionData, optionMode]
+    [nameVariant, styles, label, condensed, getOptionData, optionMode]
   );
   return (
     <div>
@@ -167,8 +176,23 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
           },
           getContentAnchorEl: null,
         }}
+        value={value}
         {...rest}
       >
+        {showNone && (
+          <MenuItem value="" selected={value === ""}>
+            <Box display="flex" alignItems="center" width="100%">
+              <Box width="45px" className={styles.iconWrapper}>
+                <EmptyCircleIcon className={styles.listIcon} />
+              </Box>
+              <Box flexGrow={1}>
+                <Typography variant="body1" className={styles.assetName}>
+                  {noneLabel}
+                </Typography>
+              </Box>
+            </Box>
+          </MenuItem>
+        )}
         <ListSubheader className={styles.listSubheader}>
           <Box display="flex" alignItems="center" width="100%">
             <Box width="45px" />
@@ -203,9 +227,13 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
                   </Box>
                   <Box flexGrow={1}>
                     <Typography variant="body1" className={styles.assetName}>
-                      {multipleNames ? shortName : fullName}
+                      {nameVariant === "multiple"
+                        ? shortName
+                        : nameVariant === "short"
+                        ? shortName
+                        : fullName}
                     </Typography>
-                    {multipleNames && (
+                    {nameVariant === "multiple" && (
                       <Typography
                         color="textSecondary"
                         className={styles.assetFullName}

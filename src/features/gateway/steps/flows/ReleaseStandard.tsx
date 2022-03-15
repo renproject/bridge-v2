@@ -117,7 +117,6 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     recoverLocalTx,
   ]);
 
-  console.log("gateway", gateway);
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
 
@@ -193,10 +192,9 @@ const ReleaseStandardProcessor: FunctionComponent<
   );
 
   const { outputAmount, outputAmountUsd } = fees;
-  // TODO: this can be faulty
-  const tx = useGatewayFirstTransaction(gateway);
+  const transaction = useGatewayFirstTransaction(gateway);
   const gatewayInSubmitter = useChainTransactionSubmitter({
-    tx: tx?.in || gateway.in,
+    tx: transaction?.in || gateway.in,
     debugLabel: "gatewayIn",
   });
 
@@ -211,15 +209,15 @@ const ReleaseStandardProcessor: FunctionComponent<
   } = gatewayInSubmitter;
 
   useEffect(() => {
-    if (submittingDone && tx !== null) {
-      persistLocalTx(account, tx);
+    if (submittingDone && transaction !== null) {
+      persistLocalTx(account, transaction);
     }
-  }, [persistLocalTx, account, submittingDone, tx]);
+  }, [persistLocalTx, account, submittingDone, transaction]);
 
-  (window as any).tx = tx;
+  (window as any).transaction = transaction;
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
-    tx: tx?.in || gateway.in,
+    tx: transaction?.in || gateway.in,
     startTrigger: submittingDone || recoveringTx,
     debugLabel: "gatewayIn",
   });
@@ -230,13 +228,14 @@ const ReleaseStandardProcessor: FunctionComponent<
     txUrl: burnTxUrl,
   } = gatewayInTxMeta;
   const renVmSubmitter = useChainTransactionSubmitter({
-    tx: tx?.renVM,
+    tx: transaction?.renVM,
     autoSubmit:
-      burnStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.renVM),
+      burnStatus === ChainTransactionStatus.Done &&
+      isTxSubmittable(transaction?.renVM),
     debugLabel: "renVM",
   });
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
-    tx: tx?.renVM,
+    tx: transaction?.renVM,
     startTrigger: renVmSubmitter.submittingDone,
     debugLabel: "renVM",
   });
@@ -244,13 +243,14 @@ const ReleaseStandardProcessor: FunctionComponent<
 
   // TODO: looks like outSubmitter is not required
   const outSubmitter = useChainTransactionSubmitter({
-    tx: tx?.out,
+    tx: transaction?.out,
     autoSubmit:
-      renVMStatus === ChainTransactionStatus.Done && isTxSubmittable(tx?.out),
+      renVMStatus === ChainTransactionStatus.Done &&
+      isTxSubmittable(transaction?.out),
     debugLabel: "out",
   });
   const outTxMeta = useChainTransactionStatusUpdater({
-    tx: tx?.out,
+    tx: transaction?.out,
     debugLabel: "out",
     // startTrigger: outSubmitter.submittingDone, //TODO: not required?
   });
@@ -261,10 +261,10 @@ const ReleaseStandardProcessor: FunctionComponent<
   } = outTxMeta;
 
   useEffect(() => {
-    if (tx !== null && releaseTxUrl !== null) {
-      persistLocalTx(account, tx, true);
+    if (transaction !== null && releaseTxUrl !== null) {
+      persistLocalTx(account, transaction, true);
     }
-  }, [persistLocalTx, account, releaseTxUrl, tx]);
+  }, [persistLocalTx, account, releaseTxUrl, transaction]);
 
   // useEffect(() => {
   //   console.log("tx: persist changed", persistLocalTx);

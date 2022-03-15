@@ -35,8 +35,15 @@ import {
 } from "../../utils/chainsConfig";
 import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
-import { getAssetConfig, getRenAssetConfig } from "../../utils/assetsConfig";
-import { getChainOptionData } from "../gateway/components/DropdownHelpers";
+import {
+  getAssetConfig,
+  getRenAssetConfig,
+  supportedAssets,
+} from "../../utils/assetsConfig";
+import {
+  getAssetOptionData,
+  getChainOptionData,
+} from "../gateway/components/DropdownHelpers";
 import { useAssetDecimals, useGatewayMeta } from "../gateway/gatewayHooks";
 import { createGatewayQueryString } from "../gateway/gatewayUtils";
 import {
@@ -86,6 +93,11 @@ export const TransactionsHistory: FunctionComponent = () => {
   const { connected, account } = useCurrentChainWallet();
   const chainConfig = getChainConfig(chain);
 
+  const [asset, setAsset] = useState<Asset>();
+  const handleAssetChange = useCallback((event) => {
+    setAsset(event.target.value);
+  }, []);
+
   const handleTxHistoryClose = useCallback(() => {
     dispatch(setTxHistoryOpened(false));
   }, [dispatch]);
@@ -118,9 +130,21 @@ export const TransactionsHistory: FunctionComponent = () => {
                   options={supportedEthereumChains}
                   value={chain}
                   onChange={handleChainChange}
-                  multipleNames={false}
+                  nameVariant="full"
                 />
                 {Boolean(account) && <span>{trimAddress(account, 8)}</span>}
+                <RichDropdown
+                  className={styles.dropdown}
+                  condensed
+                  label={t("common.asset-label")}
+                  getOptionData={getAssetOptionData}
+                  options={supportedAssets}
+                  value={asset}
+                  onChange={handleAssetChange}
+                  nameVariant="short"
+                  showNone
+                  noneLabel="All Assets"
+                />
               </div>
             }
           />
@@ -149,7 +173,9 @@ export const TransactionsHistory: FunctionComponent = () => {
           </BigWrapper>
         </BigTopWrapper>
       )}
-      {connected && <AddressTransactions address={account} from={chain} />}
+      {connected && (
+        <AddressTransactions address={account} from={chain} asset={asset} />
+      )}
     </WideDialog>
   );
 };
@@ -165,11 +191,13 @@ export const decomposeLocalTxParams = (localTx: LocalTxData) => {
 type AddressTransactionsProps = {
   address: string;
   from?: Chain | string;
+  asset?: Asset | string;
 };
 
 const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   address,
   from,
+  asset,
 }) => {
   const styles = useTransactionHistoryStyles();
   const { localTxs, removeLocalTx, getLocalTxsForAddress } = useTxsStorage();
@@ -177,6 +205,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   const pendingTxsMap = getLocalTxsForAddress(address, {
     done: false,
     from,
+    asset,
   });
   const pendingTxs = Object.entries(pendingTxsMap);
   const pendingCount = Object.entries(pendingTxs).length;
@@ -184,6 +213,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   const completedTxsMap = getLocalTxsForAddress(address, {
     done: true,
     from,
+    asset,
   });
   const completedTxs = Object.entries(completedTxsMap);
   const completedCount = completedTxs.length;
