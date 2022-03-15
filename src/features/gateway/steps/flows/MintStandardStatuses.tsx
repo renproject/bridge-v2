@@ -152,11 +152,6 @@ export const MintDepositConfirmationStatus: FunctionComponent<
           link={lockTxUrl}
         />
       )}
-      <ProcessingTimeWrapper>
-        <Typography variant="caption" component="p" align="center">
-          Estimated time remaining: {lockProcessingTime} minutes
-        </Typography>
-      </ProcessingTimeWrapper>
     </>
   );
 };
