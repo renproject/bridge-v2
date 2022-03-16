@@ -47,10 +47,7 @@ import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getRemainingTime } from "../../../../utils/time";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
-import {
-  ProcessingTimeWrapper,
-  SubmitErrorDialog,
-} from "../../../transactions/components/TransactionsHelpers";
+import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
@@ -105,7 +102,6 @@ export const MintDepositConfirmationStatus: FunctionComponent<
     lockAmount !== null && lockAssetDecimals !== null
       ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
       : null;
-  const lockProcessingTime = 500;
 
   useEffect(() => {
     setTitle(

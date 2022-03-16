@@ -2,6 +2,7 @@ import { Container, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Btc, DynamicTokenIcon } from "@renproject/icons";
 import { ChainType } from "@renproject/icons/lib/components/DynamicTokenIcon";
+import { useLottie } from "lottie-react";
 import React, {
   FunctionComponent,
   useCallback,
@@ -21,7 +22,20 @@ import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
 import { getAssetConfig, supportedAssets } from "../utils/assetsConfig";
 import { getChainConfig, supportedContractChains } from "../utils/chainsConfig";
+import bridgeLanding from "../assets/animations/bridge_landing.json";
 import { paths } from "./routes";
+
+const Animation = () => {
+  const options = {
+    animationData: bridgeLanding,
+    loop: true,
+    autoplay: true,
+  };
+
+  const { View } = useLottie(options);
+
+  return View;
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -185,6 +199,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         </Typography>
         <NarrowCenteredWrapper className={styles.rotator}>
           <ChainAssetRotator />
+          <Animation />
         </NarrowCenteredWrapper>
         <NarrowCenteredWrapper>
           <ActionButton className={styles.button} onClick={handleAgree}>
