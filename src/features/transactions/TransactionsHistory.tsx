@@ -73,7 +73,7 @@ const useTransactionHistoryStyles = makeStyles({
   intro: {
     marginRight: 10,
   },
-  dropdown: {
+  spacer: {
     marginRight: 10,
   },
   pagination: {
@@ -122,7 +122,7 @@ export const TransactionsHistory: FunctionComponent = () => {
               <div className={styles.title}>
                 <span className={styles.intro}>Tx history for</span>
                 <RichDropdown
-                  className={styles.dropdown}
+                  className={styles.spacer}
                   condensed
                   label={t("common.chain-label")}
                   supplementalLabel={t("common.blockchain-label")}
@@ -132,9 +132,12 @@ export const TransactionsHistory: FunctionComponent = () => {
                   onChange={handleChainChange}
                   nameVariant="full"
                 />
-                {Boolean(account) && <span>{trimAddress(account, 8)}</span>}
+                {Boolean(account) && (
+                  <span className={styles.spacer}>
+                    {trimAddress(account, 8)}
+                  </span>
+                )}
                 <RichDropdown
-                  className={styles.dropdown}
                   condensed
                   label={t("common.asset-label")}
                   getOptionData={getAssetOptionData}
