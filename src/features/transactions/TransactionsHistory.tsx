@@ -77,6 +77,9 @@ const useTransactionHistoryStyles = makeStyles({
   spacer: {
     marginRight: 10,
   },
+  transactions: {
+    minHeight: 300,
+  },
   pagination: {
     paddingTop: 10,
     paddingLeft: 30,
@@ -251,7 +254,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   const endIndex = startIndex + rowsPerPage;
   return (
     <>
-      <div>
+      <div className={styles.transactions}>
         <TxEnumerationHeader>
           {pendingCount > 0 && (
             <span>
