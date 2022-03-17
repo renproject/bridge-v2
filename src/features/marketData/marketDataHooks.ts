@@ -65,7 +65,7 @@ export const useGasPrices = () => {
         return response.json();
       })
       .catch((error) => {
-        console.error(error);
+        // console.error(error);
         report(SystemType.Anyblock, SystemStatus.Failure);
         return {
           fast: 50, // fallback

@@ -46,6 +46,7 @@ import {
 } from "../gateway/components/DropdownHelpers";
 import { useAssetDecimals, useGatewayMeta } from "../gateway/gatewayHooks";
 import { createGatewayQueryString } from "../gateway/gatewayUtils";
+import { GatewayLocationState } from "../gateway/steps/gatewayRoutingUtils";
 import {
   useAddressExplorerLink,
   useRenVMExplorerLink,
@@ -184,9 +185,9 @@ export const TransactionsHistory: FunctionComponent = () => {
 };
 
 export const decomposeLocalTxParams = (localTx: LocalTxData) => {
-  const asset = localTx.params.asset as Asset;
-  const from = localTx.params.fromTx.chain as Chain;
-  const to = localTx.params.to.chain as Chain;
+  const asset = localTx?.params?.asset as Asset;
+  const from = localTx?.params?.fromTx?.chain as Chain;
+  const to = localTx?.params?.to.chain as Chain;
 
   return { asset, from, to };
 };
@@ -385,9 +386,13 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       return;
     }
     console.log(isMint, isH2H);
+    const state: GatewayLocationState = {
+      renVMHashReplaced: true,
+    };
     if (isMint && isH2H) {
       console.log("h2h: mint");
       history.push({
+        state,
         pathname: paths.MINT__GATEWAY_H2H,
         search:
           "?" +
@@ -406,6 +411,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     } else if (isRelease && isH2H) {
       console.log("h2h release");
       history.push({
+        state,
         pathname: paths.RELEASE__GATEWAY_H2H,
         search:
           "?" +
@@ -425,21 +431,20 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     } else if (isRelease) {
       console.log("standard release");
       history.push({
+        state,
         pathname: paths.RELEASE__GATEWAY_STANDARD,
-        search:
-          "?" +
-          createGatewayQueryString(
-            {
-              asset,
-              from,
-              to,
-              amount,
-              toAddress,
-            },
-            {
-              renVMHash,
-            }
-          ),
+        search: createGatewayQueryString(
+          {
+            asset,
+            from,
+            to,
+            amount,
+            toAddress,
+          },
+          {
+            renVMHash,
+          }
+        ),
       });
     }
     dispatch(setTxHistoryOpened(false));

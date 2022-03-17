@@ -88,6 +88,10 @@ export const useTxsStorage = () => {
   const persistLocalTx: LocalTxPersistor = useCallback(
     (web3Address: string, tx: GatewayTransaction, done = false) => {
       console.log("tx: persisting local tx", tx, done);
+      if (!tx.hash) {
+        console.warn("Unable to persist tx", tx);
+        return;
+      }
       setLocalTxs((txs) => ({
         ...txs,
         [web3Address]: {
@@ -139,17 +143,17 @@ export const useTxsStorage = () => {
       }
       if (asset) {
         resultEntries = resultEntries.filter(
-          ([hash, tx]) => tx.params.asset === asset
+          ([hash, tx]) => tx.params?.asset === asset
         );
       }
       if (from) {
         resultEntries = resultEntries.filter(
-          ([hash, tx]) => tx.params.fromTx.chain === from
+          ([hash, tx]) => tx.params?.fromTx?.chain === from
         );
       }
       if (to) {
         resultEntries = resultEntries.filter(
-          ([hash, tx]) => tx.params.to.chain === to
+          ([hash, tx]) => tx.params?.to?.chain === to
         );
       }
       return Object.fromEntries(resultEntries);
