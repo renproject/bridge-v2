@@ -1,7 +1,5 @@
-import { Container, styled, Typography } from "@material-ui/core";
+import { Container, Fade, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Btc, DynamicTokenIcon } from "@renproject/icons";
-import { ChainType } from "@renproject/icons/lib/components/DynamicTokenIcon";
 import { useLottie } from "lottie-react";
 import React, {
   FunctionComponent,
@@ -11,6 +9,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
+import bridgeLanding from "../assets/animations/bridge_landing.json";
 import { ActionButton } from "../components/buttons/Buttons";
 import { WarningIcon } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
@@ -22,7 +21,6 @@ import { useNotifications } from "../providers/Notifications";
 import { usePageTitle } from "../providers/TitleProviders";
 import { getAssetConfig, supportedAssets } from "../utils/assetsConfig";
 import { getChainConfig, supportedContractChains } from "../utils/chainsConfig";
-import bridgeLanding from "../assets/animations/bridge_landing.json";
 import { paths } from "./routes";
 
 const Animation = () => {
@@ -199,7 +197,6 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         </Typography>
         <NarrowCenteredWrapper className={styles.rotator}>
           <ChainAssetRotator />
-          <Animation />
         </NarrowCenteredWrapper>
         <NarrowCenteredWrapper>
           <ActionButton className={styles.button} onClick={handleAgree}>
@@ -218,7 +215,10 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
                 const assetConfig = getAssetConfig(asset);
                 const { RenIcon } = assetConfig;
                 return (
-                  <li className={styles.assetListItem}>
+                  <li
+                    className={styles.assetListItem}
+                    key={assetConfig.shortName}
+                  >
                     <RenIcon className={styles.assetIcon} />
                   </li>
                 );
@@ -239,7 +239,10 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
                 const chainConfig = getChainConfig(chain);
                 const { Icon } = chainConfig;
                 return (
-                  <li className={styles.assetListItem}>
+                  <li
+                    className={styles.assetListItem}
+                    key={chainConfig.shortName}
+                  >
                     <Icon width={46} height={46} className={styles.chainIcon} />
                   </li>
                 );
@@ -258,29 +261,64 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
 };
 
 type ChainAssetRotatorProps = {
-  start?: number;
   className?: string;
 };
 
+const useChainAssetRotatorStyles = makeStyles(() => ({
+  root: {
+    fontSize: 200,
+  },
+}));
+
+const timeout = 5000;
+const offset = timeout / 3;
+
 const ChainAssetRotator: FunctionComponent<ChainAssetRotatorProps> = ({
   className,
-  start = 0,
   children,
 }) => {
-  const [ci, setCi] = useState(start);
+  const styles = useChainAssetRotatorStyles();
+  // const [ci, setCi] = useState(0);
+  const [ai, setAi] = useState(0);
+  const [show, setShow] = useState(false);
+  // const chainsCount = supportedContractChains.length;
+  const assetsCount = supportedAssets.length;
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCi((c) => (c === supportedContractChains.length - 1 ? 0 : c + 1));
-    }, 5000 + (-start / 2) * 300);
-    return () => clearInterval(interval);
-  }, [start]);
+    setShow(true);
+    // const switchCiTick = setInterval(() => {
+    //   setCi((i) => (i === chainsCount - 1 ? 0 : i + 1));
+    // }, timeout);
 
-  const chain = supportedContractChains[ci];
+    const hideTick = setTimeout(() => {
+      setShow(false);
+    }, timeout - offset);
 
+    const switchAiTick = setTimeout(() => {
+      setAi(ai === assetsCount - 1 ? 0 : ai + 1);
+    }, timeout);
+
+    // const showTick = setTimeout(() => {
+    //   setShow(true);
+    // }, timeout * chainsCount + offset);
+
+    return () => {
+      // clearInterval(switchCiTick);
+      clearTimeout(switchAiTick);
+      clearTimeout(hideTick);
+      // clearTimeout(showTick);
+    };
+  }, [assetsCount, ai]);
+
+  // const chain = supportedContractChains[ci];
+  const asset = supportedAssets[ai];
+  const assetConfig = getAssetConfig(asset);
+  const { RenIcon } = assetConfig;
   return (
     <div className={className}>
-      <DynamicTokenIcon chain={chain as ChainType} Icon={Btc} size={180} />
+      <Fade in={show} timeout={{ enter: 500, exit: 100 }}>
+        <RenIcon className={styles.root} />
+      </Fade>
       {children}
     </div>
   );
