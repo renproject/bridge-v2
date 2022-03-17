@@ -1,6 +1,6 @@
 import { Container, Fade, styled, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { useLottie } from "lottie-react";
+// import { useLottie } from "lottie-react";
 import React, {
   FunctionComponent,
   useCallback,
@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
-import bridgeLanding from "../assets/animations/bridge_landing.json";
+// import bridgeLanding from "../assets/animations/bridge_landing.json";
 import { ActionButton } from "../components/buttons/Buttons";
 import { WarningIcon } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
@@ -23,17 +23,17 @@ import { getAssetConfig, supportedAssets } from "../utils/assetsConfig";
 import { getChainConfig, supportedContractChains } from "../utils/chainsConfig";
 import { paths } from "./routes";
 
-const Animation = () => {
-  const options = {
-    animationData: bridgeLanding,
-    loop: true,
-    autoplay: true,
-  };
-
-  const { View } = useLottie(options);
-
-  return View;
-};
+// const Animation = () => {
+//   const options = {
+//     animationData: bridgeLanding,
+//     loop: true,
+//     autoplay: true,
+//   };
+//
+//   const { View } = useLottie(options);
+//
+//   return View;
+// };
 
 const useStyles = makeStyles((theme) => ({
   root: {},

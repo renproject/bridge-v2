@@ -209,7 +209,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   } = gatewayInSubmitter;
 
   useEffect(() => {
-    if (submittingDone && transaction !== null) {
+    if (transaction !== null && (!!transaction.hash || submittingDone)) {
       persistLocalTx(account, transaction);
     }
   }, [persistLocalTx, account, submittingDone, transaction]);
@@ -236,7 +236,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   });
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
-    startTrigger: renVmSubmitter.submittingDone,
+    startTrigger: renVmSubmitter.submittingDone || recoveringTx,
     debugLabel: "renVM",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;

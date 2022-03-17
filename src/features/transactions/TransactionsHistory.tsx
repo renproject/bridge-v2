@@ -355,7 +355,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const renVMUrl = getRenVmExplorerLink(renVMHash);
   const fromAddressUrl = getFromAddressLink(address);
   const toAddressUrl = getToAddressLink(address);
-  const toAddress = (params.to as any).address || ""; //TODO consider adding to decomposeLocalTxparams
+  const toAddress = (params.to as any).params.address || ""; //TODO consider adding to decomposeLocalTxparams
   const amount =
     fromAssetDecimals !== null
       ? new BigNumber(params.fromTx.amount)
