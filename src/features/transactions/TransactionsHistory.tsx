@@ -78,7 +78,13 @@ const useTransactionHistoryStyles = makeStyles({
     marginRight: 10,
   },
   transactions: {
-    minHeight: 300,
+    // minHeight: 300,
+  },
+  noTransactions: {
+    height: 200,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   pagination: {
     paddingTop: 10,
@@ -278,12 +284,19 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
           }
           return null;
         })}
+        {totalCount === 0 && (
+          <div className={styles.noTransactions}>
+            <Typography variant="h6">
+              No transactions for selected filters
+            </Typography>
+          </div>
+        )}
       </div>
       <div className={styles.pagination}>
         <SimplePagination
           count={totalCount}
           rowsPerPage={rowsPerPage}
-          page={page}
+          page={totalCount > 0 ? page : 0}
           onPageChange={handleChangePage}
         />
       </div>
