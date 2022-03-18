@@ -1,5 +1,14 @@
-import { Box, Button, Grid, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { Asset, Chain } from "@renproject/chains";
 import BigNumber from "bignumber.js";
 import React, {
@@ -70,6 +79,7 @@ const useTransactionHistoryStyles = makeStyles({
   title: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
   },
   intro: {
     marginRight: 10,
@@ -123,6 +133,14 @@ export const TransactionsHistory: FunctionComponent = () => {
     [dispatch]
   );
 
+  const handleRemoveAll = useCallback(() => {
+    //dp
+  }, []);
+
+  const handleRemoveVisible = useCallback(() => {
+    //do
+  }, []);
+
   return (
     <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
       {
@@ -130,7 +148,7 @@ export const TransactionsHistory: FunctionComponent = () => {
           <TransactionsHeader
             title={
               <div className={styles.title}>
-                <span className={styles.intro}>Tx history for</span>
+                <span className={styles.intro}>Txs:</span>
                 <RichDropdown
                   className={styles.spacer}
                   condensed
@@ -160,7 +178,12 @@ export const TransactionsHistory: FunctionComponent = () => {
                 />
               </div>
             }
-          />
+          >
+            <TxHistoryMenu
+              onRemoveVisible={handleRemoveVisible}
+              onRemoveAll={handleRemoveAll}
+            />
+          </TransactionsHeader>
         </>
       }
       {!connected && (
@@ -190,6 +213,59 @@ export const TransactionsHistory: FunctionComponent = () => {
         <AddressTransactions address={account} from={chain} asset={asset} />
       )}
     </WideDialog>
+  );
+};
+
+type TxHistoryMenuProps = {
+  onRemoveVisible: () => void;
+  onRemoveAll: () => void;
+};
+
+const TxHistoryMenu: FunctionComponent<TxHistoryMenuProps> = () => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleOpen = useCallback((event: any) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleToggleMenu = useCallback(
+    (event) => {
+      if (anchorEl === null) {
+        handleOpen(event);
+      } else {
+        handleClose();
+      }
+    },
+    [anchorEl, handleOpen, handleClose]
+  );
+
+  const handleConfirm = useCallback(() => {}, []);
+  return (
+    <div>
+      <IconButton
+        onClick={handleToggleMenu}
+        aria-controls="history-menu"
+        aria-haspopup="true"
+      >
+        <MoreVertIcon />
+      </IconButton>
+
+      <Menu
+        id="history-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Remove Visible Txs</MenuItem>
+        <MenuItem onClick={handleClose}>Remove All Txs</MenuItem>
+      </Menu>
+    </div>
   );
 };
 

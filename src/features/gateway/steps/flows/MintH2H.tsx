@@ -321,7 +321,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         updateChains(pickChains(allChains, from, to));
       }
     }
-  }, [allChains, activeChain, provider]);
+  }, [allChains, activeChain, provider, connected, from, to, updateChains]);
 
   const { chain } = useSelector($wallet);
   const { connected: toConnected } = useWallet(to);
