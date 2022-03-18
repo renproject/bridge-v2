@@ -19,9 +19,9 @@ import {
   usePaperTitle,
   useSetPaperTitle,
 } from "../../../../providers/TitleProviders";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
-import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
@@ -30,7 +30,6 @@ import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelp
 import {
   useCurrentChain,
   useCurrentChainWallet,
-  useSyncWalletChain,
   useWallet,
 } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";

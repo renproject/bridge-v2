@@ -1,4 +1,3 @@
-import { Chain } from "@renproject/chains";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -23,7 +22,6 @@ import { useNotifications } from "../../../../providers/Notifications";
 import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
-  alterEthereumBaseChainProviderSigner,
   PartialChainInstanceMap,
   pickChains,
 } from "../../../chain/chainUtils";
@@ -34,7 +32,7 @@ import {
   SubmitErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
-import { $wallet, setChain } from "../../../wallet/walletSlice";
+import { $wallet } from "../../../wallet/walletSlice";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
@@ -135,7 +133,7 @@ export const MintH2HGatewayProcess: FunctionComponent<
   //   // provider: fromProvider,
   // } = useWallet(from);
 
-  const { gateway, transactions, recoverLocalTx, renJs, error } = useGateway(
+  const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
       asset,
       from,
@@ -242,7 +240,6 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   recoveringTx,
   updateChains,
 }) => {
-  const dispatch = useDispatch();
   const allChains = useCurrentNetworkChains();
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);

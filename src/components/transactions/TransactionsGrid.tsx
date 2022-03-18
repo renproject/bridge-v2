@@ -28,7 +28,7 @@ const useTransactionsHeaderStyles = makeStyles((theme) => ({
     background: theme.palette.common.white,
     boxShadow: standardShadow,
     display: "flex",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   header: {},

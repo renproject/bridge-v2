@@ -10,7 +10,12 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  ReactNode,
+  useCallback,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { useInterval } from "react-use";
@@ -303,7 +308,7 @@ export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
   );
 };
 
-const ErrorIconWrapper = styled("div")(({ theme }) => ({
+export const DialogIconWrapper = styled("div")(({ theme }) => ({
   fontSize: 72,
   lineHeight: 1,
   marginTop: 8,
@@ -359,9 +364,9 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   return (
     <BridgeModal open={open} title={title} maxWidth="xs">
       <SpacedPaperContent autoOverflow>
-        <ErrorIconWrapper>
+        <DialogIconWrapper>
           <WarningIcon fontSize="inherit" color="inherit" />
-        </ErrorIconWrapper>
+        </DialogIconWrapper>
         <Typography variant="h5" align="center" gutterBottom>
           {reason}
         </Typography>
@@ -525,9 +530,9 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   return (
     <BridgeModal open={open} title={title} maxWidth="xs">
       <SpacedPaperContent>
-        <ErrorIconWrapper>
+        <DialogIconWrapper>
           <SpecialAlertIcon fontSize="inherit" color="inherit" />
-        </ErrorIconWrapper>
+        </DialogIconWrapper>
         <Typography variant="h5" align="center" gutterBottom>
           {reason}
         </Typography>
@@ -628,5 +633,51 @@ export const PageLeaveWarningDialog: FunctionComponent<
         this page.
       </span>
     </WarningDialog>
+  );
+};
+
+type ConfirmDialogProps = Omit<WarningWithActionsProps, "open"> & {
+  onAction: () => void;
+  actionText?: string;
+  renderComponent: (onConfirmAction: () => void) => ReactNode;
+};
+
+export const WithConfirmDialog: FunctionComponent<ConfirmDialogProps> = ({
+  onAction,
+  title = "Are you sure?",
+  renderComponent,
+  mainActionText = "Cancel",
+  actionText = "Confirm",
+  ...rest
+}) => {
+  const [open, setOpen] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const handleConfirm = useCallback(() => {
+    setOpen(true);
+  }, []);
+
+  const handleAction = useCallback(() => {
+    onAction();
+    setOpen(false);
+  }, [onAction]);
+
+  return (
+    <>
+      {renderComponent(handleConfirm)}
+      <WarningDialog
+        open={open}
+        maxWidth="xs"
+        title={title}
+        alternativeActionText={actionText}
+        onAlternativeAction={handleAction}
+        onMainAction={handleClose}
+        mainActionText={mainActionText}
+        {...rest}
+      />
+    </>
   );
 };

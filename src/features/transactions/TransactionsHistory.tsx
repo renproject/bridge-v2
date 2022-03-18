@@ -39,16 +39,16 @@ import { TransactionsHeader } from "../../components/transactions/TransactionsGr
 import { Debug } from "../../components/utils/Debug";
 import { paths } from "../../pages/routes";
 import {
+  getAssetConfig,
+  getRenAssetConfig,
+  supportedAssets,
+} from "../../utils/assetsConfig";
+import {
   getChainConfig,
   supportedEthereumChains,
 } from "../../utils/chainsConfig";
 import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
-import {
-  getAssetConfig,
-  getRenAssetConfig,
-  supportedAssets,
-} from "../../utils/assetsConfig";
 import {
   getAssetOptionData,
   getChainOptionData,
@@ -64,6 +64,7 @@ import { LocalTxData, useTxsStorage } from "../storage/storageHooks";
 import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { useCurrentChainWallet } from "../wallet/walletHooks";
 import { $wallet, setChain, setPickerOpened } from "../wallet/walletSlice";
+import { WithConfirmDialog } from "./components/TransactionsHelpers";
 import {
   AddressOnChainLink,
   BluePadder,
@@ -180,8 +181,9 @@ export const TransactionsHistory: FunctionComponent = () => {
             }
           >
             <TxHistoryMenu
-              onRemoveVisible={handleRemoveVisible}
+              onRemoveFiltered={handleRemoveVisible}
               onRemoveAll={handleRemoveAll}
+              disabled={!connected}
             />
           </TransactionsHeader>
         </>
@@ -217,11 +219,16 @@ export const TransactionsHistory: FunctionComponent = () => {
 };
 
 type TxHistoryMenuProps = {
-  onRemoveVisible: () => void;
+  onRemoveFiltered: () => void;
   onRemoveAll: () => void;
+  disabled?: boolean;
 };
 
-const TxHistoryMenu: FunctionComponent<TxHistoryMenuProps> = () => {
+const TxHistoryMenu: FunctionComponent<TxHistoryMenuProps> = ({
+  onRemoveFiltered,
+  onRemoveAll,
+  disabled,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -244,26 +251,55 @@ const TxHistoryMenu: FunctionComponent<TxHistoryMenuProps> = () => {
     [anchorEl, handleOpen, handleClose]
   );
 
-  const handleConfirm = useCallback(() => {}, []);
+  const handleRemoveFiltered = useCallback(() => {
+    onRemoveFiltered();
+    handleClose();
+  }, [onRemoveFiltered, handleClose]);
+
+  const handleRemoveAll = useCallback(() => {
+    onRemoveAll();
+    handleClose();
+  }, [onRemoveAll, handleClose]);
+
+  const warningActionText = "Remove Transactions from History";
+  const warningReason =
+    "This action is permanent. If you have unfinished transactions, your funds could be lost.";
   return (
     <div>
       <IconButton
         onClick={handleToggleMenu}
         aria-controls="history-menu"
         aria-haspopup="true"
+        disabled={disabled}
       >
         <MoreVertIcon />
       </IconButton>
-
       <Menu
         id="history-menu"
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
         anchorEl={anchorEl}
         keepMounted
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Remove Visible Txs</MenuItem>
-        <MenuItem onClick={handleClose}>Remove All Txs</MenuItem>
+        <WithConfirmDialog
+          reason={warningReason}
+          actionText={warningActionText}
+          onAction={handleRemoveFiltered}
+          renderComponent={(onConfirm) => (
+            <MenuItem onClick={onConfirm}>Remove Filtered Txs</MenuItem>
+          )}
+        />
+        <WithConfirmDialog
+          reason={warningReason}
+          actionText={warningActionText}
+          onAction={handleRemoveAll}
+          renderComponent={(onConfirm) => (
+            <MenuItem onClick={onConfirm} disabled={true}>
+              Remove All Txs
+            </MenuItem>
+          )}
+        />
       </Menu>
     </div>
   );

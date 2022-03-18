@@ -48,15 +48,15 @@ import {
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
-import { feesDecimalImpact } from "../../../utils/numbers";
 import { getAssetConfig, getRenAssetName } from "../../../utils/assetsConfig";
+import { feesDecimalImpact } from "../../../utils/numbers";
 import {
   alterContractChainProviderSigner,
   PartialChainInstanceMap,
 } from "../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { AddressInfo } from "../../transactions/components/TransactionsHistoryHelpers";
-import { useSyncWalletChain, useWallet } from "../../wallet/walletHooks";
+import { useWallet } from "../../wallet/walletHooks";
 import { BalanceInfo } from "../components/BalanceHelpers";
 import { GatewayFees } from "../components/GatewayFees";
 import {
@@ -103,7 +103,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   //why gateway is initialized without amount?
   console.log("amount", activeAmount, activeChain);
   const allChains = useCurrentNetworkChains();
-  const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
+  const [, setChains] = useState<PartialChainInstanceMap | null>(null);
   useEffect(() => {
     if (provider) {
       alterContractChainProviderSigner(allChains, activeChain, provider, false);
