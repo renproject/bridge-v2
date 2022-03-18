@@ -100,6 +100,7 @@ const useTransactionHistoryStyles = makeStyles({
   },
   pagination: {
     paddingTop: 10,
+    paddingBottom: 10,
     paddingLeft: 30,
     paddingRight: 30,
   },
