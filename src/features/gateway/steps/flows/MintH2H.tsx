@@ -1,4 +1,3 @@
-import { Box, Typography } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -21,10 +20,7 @@ import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { trimAddress } from "../../../../utils/strings";
-import {
-  ChainInstanceMap,
-  PartialChainInstanceMap,
-} from "../../../chain/chainUtils";
+import { pickChains } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { useTxsStorage } from "../../../storage/storageHooks";
 import {
@@ -51,7 +47,6 @@ import { parseGatewayQueryString } from "../../gatewayUtils";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   H2HAccountsResolver,
-  OnAccountsInitiatedParams,
   SwitchWalletDialog,
 } from "../shared/WalletSwitchHelpers";
 import {
@@ -71,78 +66,50 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   } = parseGatewayQueryString(location.search);
   const { from, to } = gatewayParams;
   const { renVMHash } = additionalParams;
-  const [chains, setChains] = useState<ChainInstanceMap | null>(null);
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>("");
-  const [resolvingChains] = useState(Boolean(!renVMHash));
-  const [chainsResolved, setChainsResolved] = useState(false);
-  const allChains = useCurrentNetworkChains();
-  const [initialChains] = useState<PartialChainInstanceMap | null>({
-    [from]: allChains[from],
-    [to]: allChains[to],
-  });
-  const handleChainsResolved = useCallback(() => {
-    setChainsResolved(true);
-  }, []);
+  const [shouldResolveAccounts] = useState(Boolean(!renVMHash));
 
-  const handleChainsInitiated = useCallback(
-    ({
-      fromAccount,
-      toAccount,
-      fromChain,
-      toChain,
-    }: OnAccountsInitiatedParams) => {
-      setChains({
-        [from]: fromChain,
-        [to]: toChain,
-      } as ChainInstanceMap);
-      setFromAccount(fromAccount);
-      setToAccount(toAccount);
+  const handleChainsResolved = useCallback(
+    (resolvedFromAccount: string, resolvedToAccount: string) => {
+      setFromAccount(resolvedFromAccount);
+      setToAccount(resolvedToAccount);
     },
-    [from, to]
+    []
   );
 
   console.log(fromAccount, toAccount, parseError);
+  const accountsResolved = fromAccount && toAccount;
   // resolve chains here
-  if (resolvingChains && !chainsResolved) {
+  if (shouldResolveAccounts && !accountsResolved) {
     return (
-      <>
-        <GatewayPaperHeader title={"Choose accounts"} />
-        <PaperContent bottomPadding>
-          <Box mt={1} mb={1}>
-            <Typography variant="h6" align="center">
-              Choose which accounts are you going to use for Mint operation
-            </Typography>
-          </Box>
-          <H2HAccountsResolver
-            transactionType="mint"
-            chains={initialChains}
-            from={from}
-            to={to}
-            onResolved={handleChainsResolved}
-            onInitiated={handleChainsInitiated}
-          />
-          <ActionButtonWrapper>
-            <ActionButton onClick={handleChainsResolved}>
-              Accept Accounts
-            </ActionButton>
-          </ActionButtonWrapper>
-        </PaperContent>
-      </>
+      <H2HAccountsResolver
+        transactionType="mint"
+        from={from}
+        to={to}
+        onResolved={handleChainsResolved}
+      />
     );
   }
   return (
-    <MintH2HGatewayProcess chains={chains} location={location} {...rest} />
+    <MintH2HGatewayProcess
+      location={location}
+      fromAccount={fromAccount}
+      toAccount={toAccount}
+      {...rest}
+    />
   );
 };
 
 type MintH2HGatewayProcessProps = RouteComponentProps & {
-  chains: ChainInstanceMap | null;
+  fromAccount: string;
+  toAccount: string;
 };
 
 export const MintH2HGatewayProcess: FunctionComponent<
   MintH2HGatewayProcessProps
-> = ({ history, location, chains }) => {
+> = ({ history, location, fromAccount, toAccount }) => {
+  const allChains = useCurrentNetworkChains();
   const { t } = useTranslation();
 
   // TODO: this should come from partent component
@@ -152,11 +119,13 @@ export const MintH2HGatewayProcess: FunctionComponent<
     // error: parseError, // TODO: handle parsing error
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount } = gatewayParams;
-  const {
-    account: fromAccount,
-    // connected: fromConnected,
-    // provider: fromProvider,
-  } = useWallet(from);
+  const [gatewayChains] = useState(pickChains(allChains, from, to));
+
+  // const {
+  //   account: fromAccount,
+  //   // connected: fromConnected,
+  //   // provider: fromProvider,
+  // } = useWallet(from);
 
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
@@ -166,7 +135,7 @@ export const MintH2HGatewayProcess: FunctionComponent<
       amount,
     },
     {
-      chains,
+      chains: gatewayChains,
     }
   );
 

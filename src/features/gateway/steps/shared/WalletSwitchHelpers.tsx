@@ -17,7 +17,10 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { ActionButtonWrapper } from "../../../../components/buttons/Buttons";
+import {
+  ActionButton,
+  ActionButtonWrapper,
+} from "../../../../components/buttons/Buttons";
 import { DeleteIcon, WalletIcon } from "../../../../components/icons/RenIcons";
 import {
   PaperContent,
@@ -32,14 +35,12 @@ import {
   getChainNetworkConfig,
 } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
-import {
-  alterEthereumBaseChainProviderSigner,
-  ChainInstance,
-  PartialChainInstanceMap,
-} from "../../../chain/chainUtils";
+import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
+import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
 
 const useSwitchWalletDialogStyles = makeStyles((theme) => ({
   top: {
@@ -135,28 +136,20 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
   );
 };
 
-export type OnAccountsInitiatedParams = {
-  fromAccount: string;
-  fromChain: ChainInstance;
-  toAccount: string;
-  toChain: ChainInstance;
-};
-
 type H2HTransactionType = "mint" | "release";
 
 type H2HAccountsResolverProps = {
   transactionType: H2HTransactionType;
-  chains: PartialChainInstanceMap | null;
   from: Chain;
   to: Chain;
   onResolved: (fromAccount: string, toAccount: string) => void;
-  onInitiated: (params: OnAccountsInitiatedParams) => void;
   disabled?: boolean;
 };
 
 export const H2HAccountsResolver: FunctionComponent<
   H2HAccountsResolverProps
-> = ({ transactionType, chains, from, to, disabled, onInitiated }) => {
+> = ({ transactionType, from, to, disabled, onResolved }) => {
+  const allChains = useCurrentNetworkChains();
   const fromChainConfig = getChainConfig(from);
   const toChainConfig = getChainConfig(to);
   const [differentAccounts, setDifferentAccounts] = useState(false);
@@ -173,17 +166,17 @@ export const H2HAccountsResolver: FunctionComponent<
 
   useEffect(() => {
     console.log("chains changed from", from);
-    if (fromProvider && chains !== null) {
-      alterEthereumBaseChainProviderSigner(chains, from, fromProvider);
+    if (fromProvider) {
+      alterEthereumBaseChainProviderSigner(allChains, from, fromProvider);
     }
-  }, [from, chains, fromProvider]);
+  }, [from, allChains, fromProvider]);
 
   useEffect(() => {
     console.log("chains changed to", to);
-    if (toProvider && chains !== null) {
-      alterEthereumBaseChainProviderSigner(chains, to, toProvider);
+    if (toProvider) {
+      alterEthereumBaseChainProviderSigner(allChains, to, toProvider);
     }
-  }, [to, chains, toProvider]);
+  }, [to, allChains, toProvider]);
 
   const [cachedToAccount, setCachedToAccount] = useState(toAccount);
   const [cachedFromAccount, setCachedFromAccount] = useState(toAccount);
@@ -209,90 +202,94 @@ export const H2HAccountsResolver: FunctionComponent<
     setToPickerOpened(false);
   }, [toAccount]);
 
-  const handleDone = () => {
-    if (chains) {
-      const fromChain = chains[from];
-      const toChain = chains[to];
-      if (fromChain && toChain) {
-        onInitiated({
-          fromAccount: cachedFromAccount,
-          toAccount: cachedToAccount,
-          fromChain,
-          toChain,
-        });
-      }
-    }
-  };
+  const handleResolved = useCallback(() => {
+    onResolved(cachedFromAccount, cachedToAccount);
+  }, [onResolved, cachedFromAccount, cachedToAccount]);
 
   return (
     <>
-      <Box display="flex" alignItems="center">
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={differentAccounts}
-              onChange={handleAccountsModeChange}
-              name="primary"
-              color="primary"
-            />
-          }
-          disabled={disabled}
-          label={
-            <Typography variant="caption">
-              I want to transfer between different accounts{" "}
-              <TooltipWithIcon
-                title={`I will use different accounts for ${fromChainConfig.fullName} and ${toChainConfig.fullName} wallets.`}
-              />
-            </Typography>
-          }
-        />
-      </Box>
-      {cachedFromAccount ? (
-        <LabelWithValue
-          label={`From ${fromChainConfig.shortName}:`}
-          value={trimAddress(cachedFromAccount, 8)}
-        />
-      ) : (
-        <SwitchWalletDialog open={!cachedFromAccount} targetChain={from} />
-      )}
-      <LabelWithValue
-        label={`${transactionType === "mint" ? `Mint` : "Release"} to ${
-          toChainConfig.shortName
-        }:`}
-        value={
-          <span>
-            {differentAccounts && cachedToAccount && (
-              <IconButton
-                onClick={handleToPickerOpened}
-                title="Pick new wallet/account"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            )}
-            {trimAddress(cachedToAccount, 8)}
-            {differentAccounts && !cachedToAccount && (
-              <Button
-                size="small"
+      <GatewayPaperHeader title={"Choose accounts"} />
+      <PaperContent bottomPadding>
+        <Box mt={3} mb={3}>
+          <Typography variant="h6" align="center">
+            Choose which accounts are you going to use for{" "}
+            {transactionType === "mint" ? "Mint" : "Release"} transaction
+          </Typography>
+        </Box>
+        <Box display="flex" alignItems="center">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={differentAccounts}
+                onChange={handleAccountsModeChange}
+                name="primary"
                 color="primary"
-                variant="contained"
-                onClick={handleToPickerOpened}
-              >
-                Choose {toChainConfig.shortName} account
-              </Button>
-            )}
-          </span>
-        }
-      />
-
-      <Button onClick={handleDone}>Inner done</Button>
-      <SwitchWalletDialog
-        open={toPickerOpened && differentAccounts}
-        targetChain={to}
-        disconnect={deactivateTo}
-      />
-      <Debug
-        it={{ fromAccount, cachedFromAccount, toAccount, cachedToAccount }}
-      />
+              />
+            }
+            disabled={disabled}
+            label={
+              <Typography variant="caption">
+                I want to transfer between different accounts{" "}
+                <TooltipWithIcon
+                  title={`I will use different accounts for ${fromChainConfig.fullName} and ${toChainConfig.fullName} wallets.`}
+                />
+              </Typography>
+            }
+          />
+        </Box>
+        {cachedFromAccount ? (
+          <LabelWithValue
+            label={`From ${fromChainConfig.shortName}:`}
+            value={trimAddress(cachedFromAccount, 8)}
+          />
+        ) : (
+          <SwitchWalletDialog open={!cachedFromAccount} targetChain={from} />
+        )}
+        <LabelWithValue
+          label={`${transactionType === "mint" ? `Mint` : "Release"} to ${
+            toChainConfig.shortName
+          }:`}
+          value={
+            <>
+              {differentAccounts && cachedToAccount && (
+                <IconButton
+                  onClick={handleToPickerOpened}
+                  title="Pick new wallet/account"
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              )}
+              {trimAddress(cachedToAccount, 8)}
+              {differentAccounts && !cachedToAccount && (
+                <Button
+                  size="small"
+                  color="primary"
+                  variant="contained"
+                  onClick={handleToPickerOpened}
+                >
+                  Choose {toChainConfig.shortName} account
+                </Button>
+              )}
+            </>
+          }
+        />
+        <SwitchWalletDialog
+          open={toPickerOpened && differentAccounts}
+          targetChain={to}
+          disconnect={deactivateTo}
+        />
+        <ActionButtonWrapper>
+          <ActionButton
+            onClick={handleResolved}
+            disabled={!cachedToAccount || !cachedFromAccount}
+          >
+            Accept Accounts
+          </ActionButton>
+        </ActionButtonWrapper>
+        <Debug
+          it={{ fromAccount, cachedFromAccount, toAccount, cachedToAccount }}
+        />
+      </PaperContent>
     </>
   );
 };
