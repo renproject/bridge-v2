@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import {
   ActionButton,

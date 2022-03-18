@@ -23,6 +23,7 @@ import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
+  RedButton,
 } from "../../components/buttons/Buttons";
 import { RichDropdown } from "../../components/dropdowns/RichDropdown";
 import {
@@ -277,29 +278,32 @@ const TxHistoryMenu: FunctionComponent<TxHistoryMenuProps> = ({
       <Menu
         id="history-menu"
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        getContentAnchorEl={null}
         anchorEl={anchorEl}
         keepMounted
         open={open}
         onClose={handleClose}
       >
-        <WithConfirmDialog
-          reason={warningReason}
-          actionText={warningActionText}
-          onAction={handleRemoveFiltered}
-          renderComponent={(onConfirm) => (
-            <MenuItem onClick={onConfirm}>Remove Filtered Txs</MenuItem>
-          )}
-        />
-        <WithConfirmDialog
-          reason={warningReason}
-          actionText={warningActionText}
-          onAction={handleRemoveAll}
-          renderComponent={(onConfirm) => (
-            <MenuItem onClick={onConfirm} disabled={true}>
-              Remove All Txs
-            </MenuItem>
-          )}
-        />
+        <div>
+          <WithConfirmDialog
+            reason={warningReason}
+            actionText={warningActionText}
+            onAction={handleRemoveFiltered}
+            renderComponent={(onConfirm) => (
+              <MenuItem onClick={onConfirm}>Remove Filtered Txs</MenuItem>
+            )}
+          />
+          <WithConfirmDialog
+            reason={warningReason}
+            actionText={warningActionText}
+            onAction={handleRemoveAll}
+            renderComponent={(onConfirm, innerRef) => (
+              <MenuItem ref={innerRef} onClick={onConfirm} disabled={true}>
+                Remove All Txs
+              </MenuItem>
+            )}
+          />
+        </div>
       </Menu>
     </div>
   );
@@ -660,16 +664,40 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
             </FullWidthWrapper>
           </SmallHorizontalPadder>
           <Box mt={2}>
-            <Button
-              variant="outlined"
-              size="small"
-              color={done ? "primary" : "secondary"}
-              fullWidth
-              disabled={removing}
-              onClick={handleRemove}
-            >
-              Delete from Local Storage
-            </Button>
+            {done ? (
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                fullWidth
+                disabled={removing}
+                onClick={handleRemove}
+              >
+                Remove from Local Storage
+              </Button>
+            ) : (
+              <WithConfirmDialog
+                onAction={handleRemove}
+                reason="This transaction seems to be pending. Resume and finish it first."
+                actionText="I consent, remove Transaction"
+                renderComponent={(onConfirm) => (
+                  <RedButton
+                    variant="outlined"
+                    size="small"
+                    color="secondary"
+                    fullWidth
+                    disabled={removing}
+                    onClick={onConfirm}
+                  >
+                    Remove from Local Storage
+                  </RedButton>
+                )}
+              >
+                <Typography variant="body1" color="textSecondary">
+                  Or ensure it is completed it in RenVM Explorer
+                </Typography>
+              </WithConfirmDialog>
+            )}
           </Box>
         </Grid>
         <Grid item sm={12} md={6}>

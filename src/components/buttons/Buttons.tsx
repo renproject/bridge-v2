@@ -549,5 +549,9 @@ export const SecondaryActionButton: FunctionComponent<ButtonProps> = (
 export const RedButton = withStyles((theme) => ({
   root: {
     color: theme.palette.error.main,
+    borderColor: theme.palette.error.light,
+    "&:hover": {
+      borderColor: theme.palette.error.dark,
+    },
   },
 }))(Button);

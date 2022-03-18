@@ -639,7 +639,10 @@ export const PageLeaveWarningDialog: FunctionComponent<
 type ConfirmDialogProps = Omit<WarningWithActionsProps, "open"> & {
   onAction: () => void;
   actionText?: string;
-  renderComponent: (onConfirmAction: () => void) => ReactNode;
+  renderComponent: (
+    onConfirm: () => void,
+    innerRef?: React.Ref<any> | undefined
+  ) => ReactNode;
 };
 
 export const WithConfirmDialog: FunctionComponent<ConfirmDialogProps> = ({
