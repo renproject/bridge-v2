@@ -222,7 +222,6 @@ export const alterEthereumBaseChainsProviderSigner = (
   );
   const ethersProvider = new ethers.providers.Web3Provider(provider);
   const signer = ethersProvider.getSigner();
-  // TODO: TBD: Noah : provider stays for the whole process, only signer changes?
   if (alterProvider) {
     console.log("altering provider", provider, alteredChain);
     alterEthereumBaseChainsProvider(chains, provider, alteredChain);

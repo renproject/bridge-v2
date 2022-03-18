@@ -3,6 +3,7 @@ import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Ethereum } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
 import RenJS, { Gateway } from "@renproject/ren";
+// import BigNumber from "bignumber.js";
 import queryString from "query-string";
 import {
   supportedBitcoinChains,
@@ -39,13 +40,21 @@ export const createGateway = async (
   console.log("gatewayParams", gatewayParams);
   let fromChain;
   if (supportedEthereumChains.includes(gatewayParams.from)) {
-    fromChain = (fromChainInstance.chain as EthereumBaseChain).Account({
+    fromChain = (
+      fromChainInstance.chain as unknown as EthereumBaseChain
+    ).Account({
       amount: gatewayParams.amount,
       convertToWei: true,
     });
   } else if (supportedSolanaChains.includes(gatewayParams.from)) {
+    const solana = fromChainInstance.chain as Solana;
+    // const decimals = await solana.assetDecimals(asset);
     // TODO: crit finish
-    fromChain = (fromChainInstance.chain as Solana).Account({
+    // const tokenAddress = await solana.getAssociatedTokenAccount(asset);
+    fromChain = solana.Account({
+      // amount: new BigNumber(gatewayParams.amount || "")
+      //   .shiftedBy(decimals)
+      //   .toString(),
       amount: gatewayParams.amount,
     });
   } else if (supportedBitcoinChains.includes(gatewayParams.from)) {
@@ -56,7 +65,7 @@ export const createGateway = async (
 
   let toChain;
   if (supportedEthereumChains.includes(gatewayParams.to)) {
-    toChain = (toChainInstance.chain as Ethereum).Account();
+    toChain = (toChainInstance.chain as unknown as Ethereum).Account();
   } else if (supportedSolanaChains.includes(gatewayParams.to)) {
     // TODO: crit finish
     toChain = (toChainInstance.chain as Solana).Account();

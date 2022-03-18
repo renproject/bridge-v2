@@ -56,7 +56,7 @@ import {
 } from "../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { AddressInfo } from "../../transactions/components/TransactionsHistoryHelpers";
-import { useWallet } from "../../wallet/walletHooks";
+import { useSyncWalletChain, useWallet } from "../../wallet/walletHooks";
 import { BalanceInfo } from "../components/BalanceHelpers";
 import { GatewayFees } from "../components/GatewayFees";
 import {
@@ -97,6 +97,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     to
   );
   const activeChain = isFromContractChain ? from : to;
+  // useSyncWalletChain(activeChain);
   const { connected, provider, account } = useWallet(activeChain);
 
   //why gateway is initialized without amount?
@@ -105,7 +106,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
   useEffect(() => {
     if (provider) {
-      alterContractChainProviderSigner(allChains, activeChain, provider, true);
+      alterContractChainProviderSigner(allChains, activeChain, provider, false);
       setChains(allChains);
     }
   }, [allChains, activeChain, provider]);
@@ -118,7 +119,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       amount: activeAmount,
       toAddress,
     },
-    { chains }
+    { chains: allChains }
   );
   const fees = useGatewayFeesWithRates(gateway, activeAmount);
 
@@ -249,7 +250,9 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     <>
       {Header}
       <PaperContent bottomPadding>
-        {showBalance && <BalanceInfo balance={balance} asset={renAsset} />}
+        {showBalance && (
+          <BalanceInfo balance={balance} asset={renAsset} chain={activeChain} />
+        )}
         {isMint && (
           <OutlinedTextField
             value={activeAmount}
