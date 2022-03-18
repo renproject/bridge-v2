@@ -71,7 +71,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
   useEffect(() => {
     if (provider) {
-      alterContractChainProviderSigner(allChains, from, provider, true);
+      alterContractChainProviderSigner(allChains, from, provider);
       const gatewayChains = pickChains(allChains, from, to);
       setChains(gatewayChains);
     }

@@ -30,6 +30,7 @@ import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelp
 import {
   useCurrentChain,
   useCurrentChainWallet,
+  useSyncWalletChain,
   useWallet,
 } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
@@ -74,6 +75,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   const toggleActiveChain = useCallback(() => {
     setActiveChain(activeChain === from ? to : from);
   }, [activeChain, from, to]);
+  // useSyncWalletChain(activeChain)
   useEffect(() => {
     dispatch(setChain(activeChain));
   }, [dispatch, activeChain]);

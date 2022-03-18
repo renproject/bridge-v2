@@ -78,6 +78,7 @@ export const useGateway = (
   }, []);
 
   useEffect(() => {
+    // setRenJs(null); // added
     console.log("gateway useEffect renJs and provider");
     if (!chains) {
       return;
@@ -100,6 +101,7 @@ export const useGateway = (
   }, [network, chains]);
 
   useEffect(() => {
+    // setGateway(null); // added
     console.log("gateway useEffect gateway init");
     let newGateway: Gateway | null = null;
     if (renJs && chains !== null) {

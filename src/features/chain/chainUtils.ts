@@ -243,7 +243,7 @@ export const alterEthereumBaseChainSigner = (
   alteredChains.forEach((chainName) => {
     if ((chains[chainName]?.chain as EthereumBaseChain).withSigner) {
       (chains[chainName]?.chain as EthereumBaseChain).withSigner!(signer);
-      console.log("altered signer for", alteredChains.join(", "));
+      console.log("altered signer for", alteredChains.join(", "), signer);
     } else {
       throw new Error(
         `Altering signer failed: Unable to find chain ${chainName} in chains ${Object.keys(

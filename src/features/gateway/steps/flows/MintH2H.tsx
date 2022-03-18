@@ -1,3 +1,4 @@
+import { Chain } from "@renproject/chains";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -7,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import {
   ActionButton,
@@ -20,15 +21,20 @@ import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { trimAddress } from "../../../../utils/strings";
-import { pickChains } from "../../../chain/chainUtils";
+import {
+  alterContractChainProviderSigner,
+  alterEthereumBaseChainProviderSigner,
+  PartialChainInstanceMap,
+  pickChains,
+} from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { useTxsStorage } from "../../../storage/storageHooks";
 import {
   GeneralErrorDialog,
   SubmitErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
-import { useWallet } from "../../../wallet/walletHooks";
-import { $wallet } from "../../../wallet/walletSlice";
+import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
+import { $wallet, setChain } from "../../../wallet/walletSlice";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
@@ -119,7 +125,9 @@ export const MintH2HGatewayProcess: FunctionComponent<
     // error: parseError, // TODO: handle parsing error
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount } = gatewayParams;
-  const [gatewayChains] = useState(pickChains(allChains, from, to));
+  const [gatewayChains, setGatewayChains] = useState(
+    pickChains(allChains, from, to)
+  );
 
   // const {
   //   account: fromAccount,
@@ -127,12 +135,13 @@ export const MintH2HGatewayProcess: FunctionComponent<
   //   // provider: fromProvider,
   // } = useWallet(from);
 
-  const { gateway, transactions, recoverLocalTx, error } = useGateway(
+  const { gateway, transactions, recoverLocalTx, renJs, error } = useGateway(
     {
       asset,
       from,
       to,
       amount,
+      toAddress: toAccount,
     },
     {
       chains: gatewayChains,
@@ -203,6 +212,7 @@ export const MintH2HGatewayProcess: FunctionComponent<
           gateway={gateway}
           transaction={transaction}
           recoveringTx={recovering}
+          updateChains={setGatewayChains}
         />
       )}
       {error !== null && (
@@ -223,13 +233,17 @@ type MintH2HProcessorProps = {
   gateway: Gateway;
   transaction: GatewayTransaction | null;
   recoveringTx?: boolean;
+  updateChains?: (chains: PartialChainInstanceMap) => void;
 };
 
 const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   gateway,
   transaction,
   recoveringTx,
+  updateChains,
 }) => {
+  const dispatch = useDispatch();
+  const allChains = useCurrentNetworkChains();
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
   const fees = useGatewayFeesWithRates(gateway, amount || 0);
@@ -296,6 +310,19 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const { status: renVMStatus, amount: mintAmount } = renVMTxMeta;
 
   // wallet provider start
+  const activeChain = renVMStatus !== null ? to : from;
+  useSyncWalletChain(activeChain);
+  const { connected, provider } = useWallet(activeChain);
+  useEffect(() => {
+    console.log("chains changed from", activeChain);
+    if (provider && connected) {
+      alterContractChainProviderSigner(allChains, activeChain, provider);
+      if (updateChains) {
+        updateChains(pickChains(allChains, from, to));
+      }
+    }
+  }, [allChains, activeChain, provider]);
+
   const { chain } = useSelector($wallet);
   const { connected: toConnected } = useWallet(to);
   const showSwitchWalletDialog =

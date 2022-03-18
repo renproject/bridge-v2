@@ -20,6 +20,7 @@ export interface CreateGatewayParams {
   nonce?: string | number;
   amount?: string;
   toAddress?: string;
+  fromAddress?: string;
 }
 
 export const createGateway = async (
@@ -40,12 +41,21 @@ export const createGateway = async (
   console.log("gatewayParams", gatewayParams);
   let fromChain;
   if (supportedEthereumChains.includes(gatewayParams.from)) {
-    fromChain = (
-      fromChainInstance.chain as unknown as EthereumBaseChain
-    ).Account({
-      amount: gatewayParams.amount,
-      convertToWei: true,
-    });
+    const ethereumChain =
+      fromChainInstance.chain as unknown as EthereumBaseChain;
+    console.log("resolving fromAddress", gatewayParams);
+    if (gatewayParams.fromAddress) {
+      fromChain = ethereumChain.Address({
+        address: gatewayParams.fromAddress,
+        amount: gatewayParams.amount,
+        convertToWei: true,
+      });
+    } else {
+      fromChain = ethereumChain.Account({
+        amount: gatewayParams.amount,
+        convertToWei: true,
+      });
+    }
   } else if (supportedSolanaChains.includes(gatewayParams.from)) {
     const solana = fromChainInstance.chain as Solana;
     // const decimals = await solana.assetDecimals(asset);
@@ -65,7 +75,13 @@ export const createGateway = async (
 
   let toChain;
   if (supportedEthereumChains.includes(gatewayParams.to)) {
-    toChain = (toChainInstance.chain as unknown as Ethereum).Account();
+    const ethereumChain = toChainInstance.chain as unknown as Ethereum;
+    console.log("resolving toAddress", gatewayParams);
+    if (gatewayParams.toAddress) {
+      toChain = ethereumChain.Address({ address: gatewayParams.toAddress });
+    } else {
+      toChain = ethereumChain.Account();
+    }
   } else if (supportedSolanaChains.includes(gatewayParams.to)) {
     // TODO: crit finish
     toChain = (toChainInstance.chain as Solana).Account();

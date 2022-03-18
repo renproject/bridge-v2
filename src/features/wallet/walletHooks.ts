@@ -48,7 +48,6 @@ const resolveWalletByProvider = (provider: any) => {
   } else {
     console.warn("Unresolved wallet", provider);
   }
-  console.log("wallet resolvied", resolved);
   return resolved;
 };
 
