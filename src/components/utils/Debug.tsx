@@ -30,7 +30,7 @@ const useStyles = makeStyles({
   },
 });
 
-const off = false; // process.env.NODE_ENV === "production";
+const off = process.env.NODE_ENV === "production";
 
 type DebugProps = {
   it: any;

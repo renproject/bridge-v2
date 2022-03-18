@@ -12,6 +12,9 @@ import { lightTheme } from "./theme/theme";
 import "./i18n/i18n";
 import * as Sentry from "@sentry/react";
 
+// clean history state after page reaload
+window.history.replaceState({}, document.title);
+
 if (process.env.NODE_ENV !== "development") {
   if (process.env.REACT_APP_SENTRY_DSN) {
     Sentry.init({
