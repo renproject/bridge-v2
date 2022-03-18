@@ -164,14 +164,14 @@ export const H2HAccountsResolver: FunctionComponent<
   useEffect(() => {
     console.log("chains changed from", from);
     if (fromProvider && chains !== null) {
-      alterEthereumBaseChainsProviderSigner(chains, fromProvider, true, from);
+      alterEthereumBaseChainsProviderSigner(chains, from, fromProvider);
     }
   }, [from, chains, fromProvider]);
 
   useEffect(() => {
     console.log("chains changed to", to);
     if (toProvider && chains !== null) {
-      alterEthereumBaseChainsProviderSigner(chains, toProvider, true, to);
+      alterEthereumBaseChainsProviderSigner(chains, to, toProvider);
     }
   }, [to, chains, toProvider]);
 

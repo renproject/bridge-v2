@@ -94,7 +94,8 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
 
   useEffect(() => {
     if (connected) {
-      alterEthereumBaseChainsProviderSigner(chains, provider, true, chain);
+      // TODO: finish
+      alterEthereumBaseChainsProviderSigner(chains, chain, provider);
     }
   }, [chains, chain, provider, connected]);
   // provider fun end

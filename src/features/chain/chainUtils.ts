@@ -177,6 +177,7 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     ...solanaBaseChains,
   } as unknown as ChainInstanceMap;
 };
+
 export const alterContractChainProviderSigner = (
   chains: PartialChainInstanceMap,
   alteredChain: Chain,
@@ -202,18 +203,18 @@ export const alterContractChainProviderSigner = (
   } else if (supportedEthereumChains.includes(alteredChain)) {
     alterEthereumBaseChainsProviderSigner(
       chains,
+      alteredChain,
       provider,
-      alterProvider,
-      alteredChain
+      alterProvider
     );
   }
 };
 
 export const alterEthereumBaseChainsProviderSigner = (
   chains: PartialChainInstanceMap,
+  alteredChain: Chain,
   provider: any,
-  alterProvider?: boolean,
-  alteredChain?: Chain
+  alterProvider?: boolean
 ) => {
   console.log(
     `altering provider signer`,
@@ -222,18 +223,19 @@ export const alterEthereumBaseChainsProviderSigner = (
   );
   const ethersProvider = new ethers.providers.Web3Provider(provider);
   const signer = ethersProvider.getSigner();
+  console.log("altering signer", signer, alteredChain);
+  alterEthereumBaseChainsSigner(chains, alteredChain, signer);
+
   if (alterProvider) {
     console.log("altering provider", provider, alteredChain);
-    alterEthereumBaseChainsProvider(chains, provider, alteredChain);
+    alterEthereumBaseChainsProvider(chains, alteredChain, provider);
   }
-  console.log("altering signer", signer, alteredChain);
-  alterEthereumBaseChainsSigner(chains, signer, alteredChain);
 };
 
 export const alterEthereumBaseChainsSigner = (
   chains: PartialChainInstanceMap,
-  signer: any,
-  alteredChain?: Chain
+  alteredChain: Chain,
+  signer: any
 ) => {
   const alteredChains = alteredChain
     ? supportedEthereumChains.filter((chainName) => chainName === alteredChain)
@@ -254,8 +256,8 @@ export const alterEthereumBaseChainsSigner = (
 
 export const alterEthereumBaseChainsProvider = (
   chains: PartialChainInstanceMap,
-  provider: any,
-  alteredChain?: Chain
+  alteredChain: Chain,
+  provider: any
 ) => {
   const alteredChains = alteredChain
     ? supportedEthereumChains.filter((chainName) => chainName === alteredChain)
