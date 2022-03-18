@@ -201,7 +201,7 @@ export const alterContractChainProviderSigner = (
       false
     );
   } else if (supportedEthereumChains.includes(alteredChain)) {
-    alterEthereumBaseChainsProviderSigner(
+    alterEthereumBaseChainProviderSigner(
       chains,
       alteredChain,
       provider,
@@ -210,7 +210,7 @@ export const alterContractChainProviderSigner = (
   }
 };
 
-export const alterEthereumBaseChainsProviderSigner = (
+export const alterEthereumBaseChainProviderSigner = (
   chains: PartialChainInstanceMap,
   alteredChain: Chain,
   provider: any,
@@ -224,15 +224,15 @@ export const alterEthereumBaseChainsProviderSigner = (
   const ethersProvider = new ethers.providers.Web3Provider(provider);
   const signer = ethersProvider.getSigner();
   console.log("altering signer", signer, alteredChain);
-  alterEthereumBaseChainsSigner(chains, alteredChain, signer);
+  alterEthereumBaseChainSigner(chains, alteredChain, signer);
 
   if (alterProvider) {
     console.log("altering provider", provider, alteredChain);
-    alterEthereumBaseChainsProvider(chains, alteredChain, provider);
+    alterEthereumBaseChainProvider(chains, alteredChain, provider);
   }
 };
 
-export const alterEthereumBaseChainsSigner = (
+export const alterEthereumBaseChainSigner = (
   chains: PartialChainInstanceMap,
   alteredChain: Chain,
   signer: any
@@ -254,7 +254,7 @@ export const alterEthereumBaseChainsSigner = (
   });
 };
 
-export const alterEthereumBaseChainsProvider = (
+export const alterEthereumBaseChainProvider = (
   chains: PartialChainInstanceMap,
   alteredChain: Chain,
   provider: any

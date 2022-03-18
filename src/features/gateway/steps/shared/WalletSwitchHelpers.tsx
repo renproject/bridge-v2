@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  IconButton,
   Typography,
 } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
@@ -17,7 +18,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { ActionButtonWrapper } from "../../../../components/buttons/Buttons";
-import { WalletIcon } from "../../../../components/icons/RenIcons";
+import { DeleteIcon, WalletIcon } from "../../../../components/icons/RenIcons";
 import {
   PaperContent,
   SpacedPaperContent,
@@ -32,7 +33,7 @@ import {
 } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
 import {
-  alterEthereumBaseChainsProviderSigner,
+  alterEthereumBaseChainProviderSigner,
   ChainInstance,
   PartialChainInstanceMap,
 } from "../../../chain/chainUtils";
@@ -66,12 +67,14 @@ type SwitchWalletDialogProps = DialogProps & {
   targetChain: Chain;
   mode?: "switch" | "change";
   onClose?: () => void;
+  disconnect?: () => void;
 };
 
 export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
   open,
   targetChain,
   onClose,
+  disconnect,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -80,9 +83,12 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
   const { network } = useSelector($network);
   const networkConfig = getChainNetworkConfig(targetChain, network);
   const handleSwitch = useCallback(() => {
+    if (disconnect) {
+      disconnect();
+    }
     dispatch(setChain(targetChain));
     dispatch(setPickerOpened(true));
-  }, [dispatch, targetChain]);
+  }, [dispatch, targetChain, disconnect]);
 
   return (
     <BridgeModal
@@ -159,19 +165,23 @@ export const H2HAccountsResolver: FunctionComponent<
     setDifferentAccounts(event.target.checked);
   }, []);
   const { account: fromAccount, provider: fromProvider } = useWallet(from);
-  const { account: toAccount, provider: toProvider } = useWallet(to);
+  const {
+    account: toAccount,
+    provider: toProvider,
+    deactivateConnector: deactivateTo,
+  } = useWallet(to);
 
   useEffect(() => {
     console.log("chains changed from", from);
     if (fromProvider && chains !== null) {
-      alterEthereumBaseChainsProviderSigner(chains, from, fromProvider);
+      alterEthereumBaseChainProviderSigner(chains, from, fromProvider);
     }
   }, [from, chains, fromProvider]);
 
   useEffect(() => {
     console.log("chains changed to", to);
     if (toProvider && chains !== null) {
-      alterEthereumBaseChainsProviderSigner(chains, to, toProvider);
+      alterEthereumBaseChainProviderSigner(chains, to, toProvider);
     }
   }, [to, chains, toProvider]);
 
@@ -185,19 +195,19 @@ export const H2HAccountsResolver: FunctionComponent<
   }, [fromAccount]);
 
   useEffect(() => {
-    if (toAccount) {
-      setCachedToAccount(toAccount);
-    }
-  }, [toAccount]);
+    const newToAccount = differentAccounts ? toAccount : fromAccount;
+    setCachedToAccount(newToAccount);
+  }, [toAccount, fromAccount, differentAccounts]);
 
-  let resolvedToAccount = cachedFromAccount;
-  if (differentAccounts && cachedToAccount) {
-    resolvedToAccount = cachedToAccount;
-  }
   const [toPickerOpened, setToPickerOpened] = useState(false);
   const handleToPickerOpened = useCallback(() => {
+    deactivateTo();
     setToPickerOpened(true);
-  }, []);
+  }, [deactivateTo]);
+
+  useEffect(() => {
+    setToPickerOpened(false);
+  }, [toAccount]);
 
   const handleDone = () => {
     if (chains) {
@@ -249,22 +259,36 @@ export const H2HAccountsResolver: FunctionComponent<
         label={`${transactionType === "mint" ? `Mint` : "Release"} to ${
           toChainConfig.shortName
         }:`}
-        value={trimAddress(resolvedToAccount, 8)}
+        value={
+          <span>
+            {differentAccounts && cachedToAccount && (
+              <IconButton
+                onClick={handleToPickerOpened}
+                title="Pick new wallet/account"
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            )}
+            {trimAddress(cachedToAccount, 8)}
+            {differentAccounts && !cachedToAccount && (
+              <Button
+                size="small"
+                color="primary"
+                variant="contained"
+                onClick={handleToPickerOpened}
+              >
+                Choose {toChainConfig.shortName} account
+              </Button>
+            )}
+          </span>
+        }
       />
-      {differentAccounts && !cachedToAccount && (
-        <Button
-          size="small"
-          color="primary"
-          variant="contained"
-          onClick={handleToPickerOpened}
-        >
-          Choose {toChainConfig.shortName} account
-        </Button>
-      )}
+
       <Button onClick={handleDone}>Inner done</Button>
       <SwitchWalletDialog
-        open={toPickerOpened && differentAccounts && !toAccount}
+        open={toPickerOpened && differentAccounts}
         targetChain={to}
+        disconnect={deactivateTo}
       />
       <Debug
         it={{ fromAccount, cachedFromAccount, toAccount, cachedToAccount }}

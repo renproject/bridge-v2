@@ -1,4 +1,4 @@
-import { Typography } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -109,9 +109,11 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
       <>
         <GatewayPaperHeader title={"Choose accounts"} />
         <PaperContent bottomPadding>
-          <Typography variant="body1">
-            Choose which accounts are you going to use for Mint operation
-          </Typography>
+          <Box mt={1} mb={1}>
+            <Typography variant="h6" align="center">
+              Choose which accounts are you going to use for Mint operation
+            </Typography>
+          </Box>
           <H2HAccountsResolver
             transactionType="mint"
             chains={initialChains}
