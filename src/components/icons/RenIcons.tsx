@@ -89,6 +89,7 @@ import AddIcon from "@material-ui/icons/Add";
 import BlockIcon from "@material-ui/icons/Block";
 import CompletedIcon from "@material-ui/icons/Done";
 import DeleteIcon from "@material-ui/icons/Delete";
+import RemoveIcon from "@material-ui/icons/RemoveCircleOutline";
 import HomeIcon from "@material-ui/icons/Home";
 import WarningIcon from "@material-ui/icons/Warning";
 import LanguageIcon from "@material-ui/icons/Language";
@@ -100,6 +101,7 @@ export {
   BlockIcon,
   AddIcon,
   DeleteIcon,
+  RemoveIcon,
   WarningIcon,
   HomeIcon,
   LanguageIcon,

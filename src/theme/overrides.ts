@@ -72,6 +72,10 @@ export const overrides = (palette: Palette): Overrides => {
         backgroundColor: "#F1F1F6",
         borderRadius: 8,
         height: 22,
+        "& $avatarSmall": {
+          width: 13,
+          height: 13,
+        },
       },
       sizeSmall: {
         height: 16,

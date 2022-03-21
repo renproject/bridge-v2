@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  DialogTitle,
   Grid,
   IconButton,
   Menu,
@@ -8,6 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import CloseIcon from "@material-ui/icons/Close";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { Asset, Chain } from "@renproject/chains";
 import BigNumber from "bignumber.js";
@@ -23,9 +25,9 @@ import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
-  RedButton,
 } from "../../components/buttons/Buttons";
 import { RichDropdown } from "../../components/dropdowns/RichDropdown";
+import { RemoveIcon } from "../../components/icons/RenIcons";
 import {
   BigTopWrapper,
   BigWrapper,
@@ -36,7 +38,6 @@ import {
 import { CustomLink } from "../../components/links/Links";
 import { SimplePagination } from "../../components/pagination/SimplePagination";
 import { InlineSkeleton } from "../../components/progress/ProgressHelpers";
-import { TransactionsHeader } from "../../components/transactions/TransactionsGrid";
 import { Debug } from "../../components/utils/Debug";
 import { paths } from "../../pages/routes";
 import {
@@ -72,19 +73,48 @@ import {
   CustomChip,
   FullWidthWrapper,
   InfoChips,
-  TxEnumerationHeader,
   WideDialog,
 } from "./components/TransactionsHistoryHelpers";
 import { $txHistory, setTxHistoryOpened } from "./transactionsSlice";
 
-const useTransactionHistoryStyles = makeStyles({
+const standardPaddings = {
+  paddingLeft: 40,
+  paddingRight: 40,
+};
+
+const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
+
+const useTransactionHistoryStyles = makeStyles((theme) => ({
   title: {
+    margin: 0,
+    padding: theme.spacing(2),
+  },
+  closeButton: {
+    position: "absolute",
+    right: 12,
+    top: 12,
+    fontSize: 14,
+  },
+  filters: {
+    ...standardPaddings,
+    paddingTop: 9,
+    paddingBottom: 9,
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    background: theme.palette.common.white,
+    boxShadow: standardShadow,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  filtersControls: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  filtersActions: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
-  },
-  intro: {
-    marginRight: 10,
+    marginLeft: theme.spacing(2),
   },
   spacer: {
     marginRight: 10,
@@ -104,7 +134,7 @@ const useTransactionHistoryStyles = makeStyles({
     paddingLeft: 30,
     paddingRight: 30,
   },
-});
+}));
 
 export const TransactionsHistory: FunctionComponent = () => {
   const styles = useTransactionHistoryStyles();
@@ -140,56 +170,60 @@ export const TransactionsHistory: FunctionComponent = () => {
     //dp
   }, []);
 
-  const handleRemoveVisible = useCallback(() => {
+  const handleRemoveFiltered = useCallback(() => {
     //do
   }, []);
 
   return (
     <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
-      {
-        <>
-          <TransactionsHeader
-            title={
-              <div className={styles.title}>
-                <span className={styles.intro}>Txs:</span>
-                <RichDropdown
-                  className={styles.spacer}
-                  condensed
-                  label={t("common.chain-label")}
-                  supplementalLabel={t("common.blockchain-label")}
-                  getOptionData={getChainOptionData}
-                  options={supportedEthereumChains}
-                  value={chain}
-                  onChange={handleChainChange}
-                  nameVariant="full"
-                />
-                {Boolean(account) && (
-                  <span className={styles.spacer}>
-                    {trimAddress(account, 8)}
-                  </span>
-                )}
-                <RichDropdown
-                  condensed
-                  label={t("common.asset-label")}
-                  getOptionData={getAssetOptionData}
-                  options={supportedAssets}
-                  value={asset}
-                  onChange={handleAssetChange}
-                  nameVariant="short"
-                  showNone
-                  noneLabel="All Assets"
-                />
-              </div>
-            }
-          >
-            <TxHistoryMenu
-              onRemoveFiltered={handleRemoveVisible}
-              onRemoveAll={handleRemoveAll}
-              disabled={!connected}
-            />
-          </TransactionsHeader>
-        </>
-      }
+      <DialogTitle>
+        <Typography variant="h6" align="center">
+          Transaction History
+        </Typography>
+        <IconButton
+          aria-label="close"
+          className={styles.closeButton}
+          onClick={handleTxHistoryClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <div className={styles.filters}>
+        <div className={styles.filtersControls}>
+          <RichDropdown
+            className={styles.spacer}
+            condensed
+            label={t("common.chain-label")}
+            supplementalLabel={t("common.blockchain-label")}
+            getOptionData={getChainOptionData}
+            options={supportedEthereumChains}
+            value={chain}
+            onChange={handleChainChange}
+            nameVariant="full"
+          />
+          {Boolean(account) && (
+            <span className={styles.spacer}>{trimAddress(account, 8)}</span>
+          )}
+          <RichDropdown
+            condensed
+            label={t("common.asset-label")}
+            getOptionData={getAssetOptionData}
+            options={supportedAssets}
+            value={asset}
+            onChange={handleAssetChange}
+            nameVariant="short"
+            showNone
+            noneLabel="All Assets"
+          />
+        </div>
+        <div className={styles.filtersActions}>
+          <TxHistoryMenu
+            onRemoveFiltered={handleRemoveFiltered}
+            onRemoveAll={handleRemoveAll}
+            disabled={!connected}
+          />
+        </div>
+      </div>
       {!connected && (
         <BigTopWrapper>
           <MediumWrapper>
@@ -378,14 +412,6 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   return (
     <>
       <div className={styles.transactions}>
-        <TxEnumerationHeader>
-          {pendingCount > 0 && (
-            <span>
-              Pending ({pendingCount}){completedCount > 0 && <span> | </span>}
-            </span>
-          )}
-          {completedCount > 0 && <span>Completed ({completedCount}) </span>}
-        </TxEnumerationHeader>
         {allTxs.map(([renVMHash, localTxData], index) => {
           const isInRange = index >= startIndex && index < endIndex;
           if (isInRange) {
@@ -446,6 +472,12 @@ const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
     paddingLeft: 30,
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
+  topBar: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
 }));
 
 type RenVMTransactionEntryProps = {
@@ -469,11 +501,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const { isMint, isRelease, isH2H } = useGatewayMeta(asset, from, to);
   const { date, time } = getFormattedDateTime(timestamp);
   const { getRenVmExplorerLink } = useRenVMExplorerLink();
-  const { fullTypeLabel, typeLabel } = resolveTxTypeLabels(
-    isMint,
-    isRelease,
-    isH2H
-  );
+  const { typeLabel } = resolveTxTypeLabels(isMint, isRelease, isH2H);
 
   const { getAddressExplorerLink: getFromAddressLink } =
     useAddressExplorerLink(from);
@@ -598,22 +626,35 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
 
   return (
     <div className={styles.root}>
-      <Box mb={1}>
+      <div className={styles.topBar}>
         <InfoChips>
           <CustomChip label={date} />
           <CustomChip label={time} />
-          {fullTypeLabel === null ? (
+          {typeLabel === null ? (
             <InlineSkeleton width={40} height={16} variant="rect" />
           ) : (
-            <CustomChip label={fullTypeLabel} />
+            <CustomChip label={typeLabel} />
           )}
           {done ? (
-            <CustomChip size="small" color="success" label="Finished" />
+            <CustomChip size="small" color="done" label="Finished" />
           ) : (
-            <CustomChip size="small" color="primary" label="Pending" />
+            <CustomChip size="small" color="pending" label="Pending" />
           )}
         </InfoChips>
-      </Box>
+        <div>
+          {done && (
+            <CustomChip
+              size="small"
+              color="advanced"
+              clickable
+              label="Remove from Local Storage"
+              onClick={handleRemove}
+              disabled={removing}
+              avatar={<RemoveIcon />}
+            />
+          )}
+        </div>
+      </div>
       <Grid container spacing={2}>
         <Grid item sm={12} md={6}>
           <BluePadder>
@@ -664,42 +705,6 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
               <AssetIcon />
             </FullWidthWrapper>
           </SmallHorizontalPadder>
-          <Box mt={2}>
-            {done ? (
-              <Button
-                variant="outlined"
-                size="small"
-                color="primary"
-                fullWidth
-                disabled={removing}
-                onClick={handleRemove}
-              >
-                Remove from Local Storage
-              </Button>
-            ) : (
-              <WithConfirmDialog
-                onAction={handleRemove}
-                reason="This transaction seems to be pending. Resume and finish it first."
-                actionText="I consent, remove Transaction"
-                renderComponent={(onConfirm) => (
-                  <RedButton
-                    variant="outlined"
-                    size="small"
-                    color="secondary"
-                    fullWidth
-                    disabled={removing}
-                    onClick={onConfirm}
-                  >
-                    Remove from Local Storage
-                  </RedButton>
-                )}
-              >
-                <Typography variant="body1" color="textSecondary">
-                  Or ensure it is completed it in RenVM Explorer
-                </Typography>
-              </WithConfirmDialog>
-            )}
-          </Box>
         </Grid>
         <Grid item sm={12} md={6}>
           <SmallHorizontalPadder>
@@ -725,7 +730,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           </SmallHorizontalPadder>
           <Box mt={2}>
             <Button
-              variant="contained"
+              variant={done ? "outlined" : "contained"}
               size="small"
               color="primary"
               fullWidth

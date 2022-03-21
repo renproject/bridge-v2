@@ -1,4 +1,4 @@
-import { Chip, ChipProps, Dialog, Typography } from "@material-ui/core";
+import { Chip, ChipProps, darken, Dialog, Typography } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import classNames from "classnames";
@@ -32,19 +32,19 @@ export const InfoChips = styled("div")({
   },
 });
 
-const TxEnumerationWrapper = styled("div")({
+const TxFiltersWrapper = styled("div")({
   paddingTop: 10,
   paddingLeft: 38,
   paddingRight: 38,
 });
 
-export const TxEnumerationHeader: FunctionComponent = ({ children }) => {
+export const TxFiltersHeader: FunctionComponent = ({ children }) => {
   return (
-    <TxEnumerationWrapper>
+    <TxFiltersWrapper>
       <Typography variant="body2">
         <strong>{children}</strong>
       </Typography>
-    </TxEnumerationWrapper>
+    </TxFiltersWrapper>
   );
 };
 
@@ -61,6 +61,18 @@ const useInfoChipStyles = makeStyles((theme) => ({
   info: {
     backgroundColor: theme.palette.success.light,
   },
+  pending: {
+    backgroundColor: theme.customColors.chipPending,
+  },
+  done: {
+    backgroundColor: theme.customColors.chipDone,
+  },
+  advanced: {
+    backgroundColor: theme.customColors.chipAdvanced,
+    "&:hover": {
+      backgroundColor: darken(theme.customColors.chipAdvanced, 0.05),
+    },
+  },
 }));
 
 type CustomChipProps = Omit<ChipProps, "color"> & {
@@ -71,6 +83,9 @@ type CustomChipProps = Omit<ChipProps, "color"> & {
     | "warning"
     | "success"
     | "info"
+    | "pending"
+    | "done"
+    | "advanced"
     | "default";
 };
 
@@ -85,6 +100,9 @@ export const CustomChip: FunctionComponent<CustomChipProps> = ({
     [styles.error]: color === "error",
     [styles.warning]: color === "warning",
     [styles.info]: color === "info",
+    [styles.pending]: color === "pending",
+    [styles.done]: color === "done",
+    [styles.advanced]: color === "advanced",
   });
   let resolvedColor = undefined;
   if (["primary", "secondary", "default"].includes(color)) {

@@ -63,3 +63,7 @@ export const alertSuccessBackground = "#EDF7EA";
 
 export const popoverBackground = "#CCE2FA";
 export const popoverTextColor = graphiteLight;
+
+export const chipPending = "#E8F3FF";
+export const chipDone = "#6BFFB8";
+export const chipAdvanced = "#FFD2D5";
