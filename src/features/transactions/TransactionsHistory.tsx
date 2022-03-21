@@ -77,11 +77,6 @@ import {
 } from "./components/TransactionsHistoryHelpers";
 import { $txHistory, setTxHistoryOpened } from "./transactionsSlice";
 
-const standardPaddings = {
-  paddingLeft: 40,
-  paddingRight: 40,
-};
-
 const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
 
 const useTransactionHistoryStyles = makeStyles((theme) => ({
@@ -96,7 +91,8 @@ const useTransactionHistoryStyles = makeStyles((theme) => ({
     fontSize: 14,
   },
   filters: {
-    ...standardPaddings,
+    paddingLeft: 40,
+    paddingRight: 30,
     paddingTop: 9,
     paddingBottom: 9,
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -193,7 +189,7 @@ export const TransactionsHistory: FunctionComponent = () => {
           <RichDropdown
             className={styles.spacer}
             condensed
-            label={t("common.chain-label")}
+            label={t("common.from-label")}
             supplementalLabel={t("common.blockchain-label")}
             getOptionData={getChainOptionData}
             options={supportedEthereumChains}
@@ -201,9 +197,6 @@ export const TransactionsHistory: FunctionComponent = () => {
             onChange={handleChainChange}
             nameVariant="full"
           />
-          {Boolean(account) && (
-            <span className={styles.spacer}>{trimAddress(account, 8)}</span>
-          )}
           <RichDropdown
             condensed
             label={t("common.asset-label")}

@@ -11,21 +11,18 @@ import {
   getRenAssetName,
 } from "../../../utils/assetsConfig";
 
-export const getAssetOptionData: GetOptionDataFn = (
-  name: string,
-  wrappedAsset = false
-) => {
+export const getAssetOptionData: GetOptionDataFn = (name: string, props) => {
   if (!name) {
     return {
       Icon: EmptyCircleIcon,
-      fullName: "Select",
-      shortName: "Select",
+      fullName: props.noneLabel || props.label || "Select",
+      shortName: props.noneLabel || props.label || "Select",
       value: name,
     };
   }
   const config = getAssetConfig(name as Asset);
   const { fullName, shortName } = config;
-
+  const wrappedAsset = props.optionMode;
   return {
     Icon: wrappedAsset ? config.RenIcon : config.Icon,
     fullName: wrappedAsset ? getRenAssetFullName(fullName) : fullName,
@@ -34,12 +31,12 @@ export const getAssetOptionData: GetOptionDataFn = (
   } as OptionData;
 };
 
-export const getChainOptionData: GetOptionDataFn = (name: string) => {
+export const getChainOptionData: GetOptionDataFn = (name: string, props) => {
   if (!name) {
     return {
       Icon: EmptyCircleIcon,
-      fullName: "Select",
-      shortName: "Select",
+      fullName: props.noneLabel || props.label || "Select",
+      shortName: props.noneLabel || props.label || "Select",
       value: name,
     };
   }
