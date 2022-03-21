@@ -85,6 +85,7 @@ import { ReactComponent as SolanaCircle } from "./../../assets/icons/solana-circ
 import { ReactComponent as Sollet } from "./../../assets/icons/sollet.svg";
 import { ReactComponent as Phantom } from "./../../assets/icons/phantom-icon-purple.svg";
 
+import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import AddIcon from "@material-ui/icons/Add";
 import BlockIcon from "@material-ui/icons/Block";
 import CompletedIcon from "@material-ui/icons/Done";
@@ -97,6 +98,7 @@ import CheckedIcon from "@material-ui/icons/Check";
 import SyncProblemIcon from "@material-ui/icons/SyncProblem";
 
 export {
+  ArrowRightIcon,
   CompletedIcon,
   BlockIcon,
   AddIcon,

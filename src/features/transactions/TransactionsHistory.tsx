@@ -27,7 +27,7 @@ import {
   ActionButtonWrapper,
 } from "../../components/buttons/Buttons";
 import { RichDropdown } from "../../components/dropdowns/RichDropdown";
-import { RemoveIcon } from "../../components/icons/RenIcons";
+import { ArrowRightIcon, RemoveIcon } from "../../components/icons/RenIcons";
 import {
   BigTopWrapper,
   BigWrapper,
@@ -471,6 +471,16 @@ const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
     alignItems: "center",
     marginBottom: 8,
   },
+  fromWrapper: {
+    position: "relative",
+  },
+  arrow: {
+    position: "absolute",
+    right: -12,
+    top: 12,
+    color: theme.palette.grey[600],
+    fontSize: 24,
+  },
 }));
 
 type RenVMTransactionEntryProps = {
@@ -648,8 +658,8 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           )}
         </div>
       </div>
-      <Grid container spacing={2}>
-        <Grid item sm={12} md={6}>
+      <Grid container spacing={3}>
+        <Grid item sm={12} md={6} className={styles.fromWrapper}>
           <BluePadder>
             <FullWidthWrapper>
               <Typography variant="body2">Sender Address</Typography>
@@ -660,6 +670,9 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
               />
             </FullWidthWrapper>
           </BluePadder>
+          <div className={styles.arrow}>
+            <ArrowRightIcon fontSize="inherit" />
+          </div>
         </Grid>
         <Grid item sm={12} md={6}>
           <BluePadder>
@@ -674,7 +687,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           </BluePadder>
         </Grid>
       </Grid>
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         <Grid item sm={12} md={6}>
           <SmallHorizontalPadder>
             <FullWidthWrapper>
