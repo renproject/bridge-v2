@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import classNames from "classnames";
 import React, { FunctionComponent, useMemo } from "react";
 import { NumberFormatText } from "../formatting/NumberFormatText";
 import { CustomSvgIconComponent, EmptyCircleIcon } from "../icons/RenIcons";
@@ -41,6 +42,10 @@ const useRichDropdownStyles = makeStyles((theme) => ({
     display: "inline-flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  listItemCondensed: {
+    // paddingLeft: 4,
+    paddingRight: 10,
   },
   listIcon: iconStyles,
   assetName: {
@@ -128,7 +133,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
 }) => {
   const styles = useRichDropdownStyles();
   const condensedSelectClasses = useCondensedSelectStyles();
-
+  const listItemClassName = condensed ? styles.listItemCondensed : undefined;
   const valueRenderer = useMemo(
     () => (option: any) => {
       const { Icon, fullName, shortName } = getOptionData(option, {
@@ -181,7 +186,12 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
         {...rest}
       >
         {showNone && (
-          <MenuItem value="" selected={value === ""} disableGutters={condensed}>
+          <MenuItem
+            value=""
+            selected={value === ""}
+            disableGutters={condensed}
+            className={listItemClassName}
+          >
             <Box display="flex" alignItems="center" width="100%">
               <Box width="45px" className={styles.iconWrapper}>
                 <EmptyCircleIcon className={styles.listIcon} />
@@ -195,7 +205,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
           </MenuItem>
         )}
         <ListSubheader
-          className={styles.listSubheader}
+          className={classNames(styles.listSubheader, listItemClassName)}
           disableGutters={condensed}
         >
           <Box display="flex" alignItems="center" width="100%">
@@ -224,7 +234,12 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
           .map((option) => getOptionData(option, { optionMode }))
           .map(({ value, Icon, fullName, shortName }) => {
             return (
-              <MenuItem key={value} value={value} disableGutters={condensed}>
+              <MenuItem
+                key={value}
+                value={value}
+                disableGutters={condensed}
+                className={listItemClassName}
+              >
                 <Box display="flex" alignItems="center" width="100%">
                   <Box width="45px" className={styles.iconWrapper}>
                     <Icon className={styles.listIcon} />

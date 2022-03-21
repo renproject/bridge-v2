@@ -476,8 +476,8 @@ const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
   },
   arrow: {
     position: "absolute",
-    right: -12,
     top: 12,
+    right: -12,
     color: theme.palette.grey[600],
     fontSize: 24,
   },
