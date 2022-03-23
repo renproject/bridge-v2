@@ -1,10 +1,10 @@
 import { Chain } from "@renproject/chains";
 import { RenNetwork } from "@renproject/utils";
 import queryString from "query-string";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { getDefaultChains } from "../chain/chainUtils";
+import { ChainInstanceMap, getDefaultChains } from "../chain/chainUtils";
 import { $network, setNetwork } from "./networkSlice";
 
 const supportedParamNetworks = [RenNetwork.Mainnet, RenNetwork.Testnet];
@@ -23,17 +23,19 @@ export const useSetNetworkFromParam = () => {
   }, [dispatch, parsed.network]);
 };
 
-const chainsCache = new Map();
+const chainsCache: Partial<Record<RenNetwork, ChainInstanceMap>> = {};
 
 export const useChains = (network: RenNetwork) => {
-  return useMemo(() => {
-    return getDefaultChains(network);
-  }, [network]);
+  if (!chainsCache[network]) {
+    chainsCache[network] = getDefaultChains(network);
+  }
+  return chainsCache[network] as ChainInstanceMap;
 };
 
 export const useCurrentNetworkChains = () => {
   const { network } = useSelector($network);
   const chains = useChains(network);
+  return chains;
 };
 
 export const useRenVMExplorerLink = () => {
