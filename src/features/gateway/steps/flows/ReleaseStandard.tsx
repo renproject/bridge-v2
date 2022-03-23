@@ -64,6 +64,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     error: parseError,
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount, toAddress } = gatewayParams;
+  const { renVMHash } = additionalParams;
   useSyncWalletChain(from);
   const { connected, account, provider } = useWallet(from);
 
@@ -84,7 +85,6 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
 
   const [recoveringTx, setRecoveringTx] = useState(false);
   const [recoveringError, setRecoveringError] = useState<Error | null>(null);
-  const { renVMHash } = additionalParams;
   const { renVMHashDetected, renVMHashReplaced } = useGatewayLocationState();
   const [reloading, setReloading] = useState(false);
   useEffect(() => {

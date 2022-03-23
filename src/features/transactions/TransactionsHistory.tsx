@@ -173,7 +173,7 @@ export const TransactionsHistory: FunctionComponent = () => {
   return (
     <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
       <DialogTitle>
-        <Typography variant="h6" align="center">
+        <Typography variant="h6" align="center" component="span">
           Transaction History
         </Typography>
         <IconButton
@@ -566,6 +566,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
               from,
               to,
               amount,
+              toAddress,
             },
             {
               renVMHash,

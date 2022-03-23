@@ -31,10 +31,12 @@ import {
   GeneralErrorDialog,
   SubmitErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
+import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
+import { PCW } from "../../components/PaperHelpers";
 import {
   getGatewayParams,
   useChainInstanceAssetDecimals,
@@ -68,11 +70,12 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
     additionalParams,
     error: parseError, // TODO: handle parsing error
   } = parseGatewayQueryString(location.search);
-  const { from, to } = gatewayParams;
+  const { from, to, toAddress } = gatewayParams;
   const { renVMHash } = additionalParams;
   const [fromAccount, setFromAccount] = useState<string>("");
-  const [toAccount, setToAccount] = useState<string>("");
+  const [toAccount, setToAccount] = useState<string>(toAddress || "");
   const [shouldResolveAccounts] = useState(Boolean(!renVMHash));
+  // const [shouldResolveAccounts] = useState(true);
 
   const handleChainsResolved = useCallback(
     (resolvedFromAccount: string, resolvedToAccount: string) => {
@@ -84,7 +87,12 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
 
   console.log(fromAccount, toAccount, parseError);
   const accountsResolved = fromAccount && toAccount;
-  // resolve chains here
+
+  // useEffect(() => {
+  //   // resolve accounts for recovering transactions
+  // }, [shouldResolveAccounts]);
+
+  // resolve accounts for new transactions
   if (shouldResolveAccounts && !accountsResolved) {
     return (
       <H2HAccountsResolver
@@ -122,16 +130,10 @@ export const MintH2HGatewayProcess: FunctionComponent<
     additionalParams,
     // error: parseError, // TODO: handle parsing error
   } = parseGatewayQueryString(location.search);
-  const { asset, from, to, amount } = gatewayParams;
+  const { asset, from, to, amount, toAddress } = gatewayParams;
   const [gatewayChains, setGatewayChains] = useState(
     pickChains(allChains, from, to)
   );
-
-  // const {
-  //   account: fromAccount,
-  //   // connected: fromConnected,
-  //   // provider: fromProvider,
-  // } = useWallet(from);
 
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
@@ -139,7 +141,7 @@ export const MintH2HGatewayProcess: FunctionComponent<
       from,
       to,
       amount,
-      toAddress: toAccount,
+      toAddress: toAccount || toAddress,
     },
     {
       chains: gatewayChains,
@@ -242,7 +244,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 }) => {
   const allChains = useCurrentNetworkChains();
   const { t } = useTranslation();
-  const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { asset, from, to, amount, toAddress } = getGatewayParams(gateway);
   const fees = useGatewayFeesWithRates(gateway, amount || 0);
 
   const { outputAmount, outputAmountUsd } = fees;
@@ -281,7 +283,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   } = gatewayInSubmitter;
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
-    tx: transaction?.in || gateway.in,
+    tx: gateway.in, // keep attached to transaction
     startTrigger: submittingLockDone || recoveringTx,
     debugLabel: "in",
   });
@@ -336,7 +338,9 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
     debugLabel: "out",
+    autoSubmit: recoveringTx,
   });
+
   const {
     handleSubmit: handleSubmitMint,
     submitting: submittingMint,
@@ -347,11 +351,10 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     handleReset: handleResetMint,
   } = outSubmitter;
 
-  const recovering = true;
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
     debugLabel: "out",
-    startTrigger: outSubmitter.submittingDone || recovering,
+    startTrigger: outSubmitter.submittingDone,
   });
   const {
     status: mintStatus,
@@ -382,23 +385,37 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     </GatewayFees>
   );
 
+  const {
+    account: fromAddress,
+    connected: fromConnected,
+    provider: fromProvider,
+  } = useWallet(from);
+
   let Content = null;
   if (approvalStatus !== ChainTransactionStatus.Done && !recoveringTx) {
-    Content = (
-      <PaperContent bottomPadding>
-        <span>from/to accounts should be here from created gateway</span>
-        <ActionButtonWrapper>
-          <ActionButton
-            onClick={handleSubmitApproval}
-            disabled={submittingApproval}
-          >
-            {submittingApproval
-              ? "Approving Accounts & Contracts..."
-              : "Approve Accounts & Contracts"}
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
-    );
+    if (!fromConnected) {
+      Content = (
+        <PCW>
+          <ConnectWalletPaperSection chain={from} account={fromAddress} />
+        </PCW>
+      );
+    } else {
+      Content = (
+        <PaperContent bottomPadding>
+          <span>from/to accounts should be here from created gateway</span>
+          <ActionButtonWrapper>
+            <ActionButton
+              onClick={handleSubmitApproval}
+              disabled={submittingApproval}
+            >
+              {submittingApproval
+                ? "Approving Accounts & Contracts..."
+                : "Approve Accounts & Contracts"}
+            </ActionButton>
+          </ActionButtonWrapper>
+        </PaperContent>
+      );
+    }
   } else if (renVMStatus === null) {
     //in case of failing, submit helpers must be here
     Content = (
@@ -464,6 +481,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       )}
       <Debug
         it={{
+          recoveringTx,
           count: gateway.transactions.count(),
           inSetupApprovalSubmitter,
           inSetupApprovalTxMeta,

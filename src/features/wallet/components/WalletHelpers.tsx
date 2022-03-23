@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
-import { Chain } from "@renproject/chains";
+import { Asset, Chain } from "@renproject/chains";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import { RenNetwork } from "@renproject/utils";
 import classNames from "classnames";
@@ -707,12 +707,32 @@ export const AddTokenButton: FunctionComponent<AddTokenButtonProps> = ({
   );
 };
 
-export const ConnectWalletPaperSection: FunctionComponent = () => {
+type ConnectWalletPaperSectionProps = {
+  chain?: Chain;
+  account?: string;
+  wallet?: Wallet;
+  asset?: Asset;
+};
+
+export const ConnectWalletPaperSection: FunctionComponent<
+  ConnectWalletPaperSectionProps
+> = ({ chain, account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const handleWalletPickerOpen = useCallback(() => {
     dispatch(setPickerOpened(true));
   }, [dispatch]);
+
+  let message = "";
+  if (chain) {
+    let accountMessage = "";
+    if (account) {
+      accountMessage = `, associated with ${trimAddress(account)} account`;
+    }
+    const chainConfig = getChainConfig(chain);
+    message = `Please connect ${chainConfig.fullName} compatible wallet${accountMessage}.`;
+  }
+
   return (
     <>
       <PaperSpacerWrapper>
@@ -720,6 +740,13 @@ export const ConnectWalletPaperSection: FunctionComponent = () => {
           <WalletConnectionProgress />
         </CenteringSpacedBox>
       </PaperSpacerWrapper>
+      {Boolean(message) && (
+        <Box mb={2}>
+          <Typography variant="body1" align="center">
+            {message}
+          </Typography>
+        </Box>
+      )}
       <Box mb={2}>
         <ActionButton onClick={handleWalletPickerOpen}>
           {t("wallet.connect")}
