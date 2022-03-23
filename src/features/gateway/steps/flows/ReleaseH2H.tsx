@@ -1,38 +1,27 @@
-import { Button } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
   FunctionComponent,
   useCallback,
-  useDebugValue,
   useEffect,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
-import {
-  usePaperTitle,
-  useSetPaperTitle,
-} from "../../../../providers/TitleProviders";
+import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
-import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import { pickChains } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
-import {
-  useCurrentChain,
-  useCurrentChainWallet,
-  useWallet,
-} from "../../../wallet/walletHooks";
-import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
+import { useWallet } from "../../../wallet/walletHooks";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import {
@@ -49,6 +38,7 @@ import {
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
+import { H2HAccountsResolver } from "../shared/WalletSwitchHelpers";
 import {
   ReleaseH2HBurnProgressStatus,
   ReleaseH2HBurnStatus,
@@ -56,50 +46,77 @@ import {
 
 export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   location,
-  history,
+  ...rest
 }) => {
+  const {
+    gatewayParams,
+    additionalParams,
+    error: parseError, // TODO: handle parsing error
+  } = parseGatewayQueryString(location.search);
+  const { from, to, toAddress } = gatewayParams;
+  const { renVMHash } = additionalParams;
+  const [fromAccount, setFromAccount] = useState<string>("");
+  const [toAccount, setToAccount] = useState<string>(toAddress || "");
+  const [shouldResolveAccounts] = useState(Boolean(!renVMHash));
+
+  const handleAccountsResolved = useCallback(
+    (resolvedFromAccount: string, resolvedToAccount: string) => {
+      setFromAccount(resolvedFromAccount);
+      setToAccount(resolvedToAccount);
+    },
+    []
+  );
+
+  const accountsResolved = fromAccount && toAccount;
+
+  // resolve accounts for new transactions
+  if (shouldResolveAccounts && !accountsResolved) {
+    return (
+      <H2HAccountsResolver
+        transactionType="release"
+        from={from}
+        to={to}
+        onResolved={handleAccountsResolved}
+      />
+    );
+  }
+
+  return (
+    <ReleaseH2HGatewayProcess
+      location={location}
+      fromAccount={fromAccount}
+      toAccount={toAccount}
+      {...rest}
+    />
+  );
+};
+
+type ReleaseH2HGatewayProcessProps = RouteComponentProps & {
+  fromAccount: string;
+  toAccount: string;
+};
+const ReleaseH2HGatewayProcess: FunctionComponent<
+  ReleaseH2HGatewayProcessProps
+> = ({ location, history, fromAccount, toAccount }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const [paperTitle] = usePaperTitle();
+  const allChains = useCurrentNetworkChains();
 
   const {
     gatewayParams,
     additionalParams,
     error: parseError,
   } = parseGatewayQueryString(location.search);
-  const { asset, from, to, amount } = gatewayParams;
+  // TODO: getting toAddress from url may lead to problems, better decode it from renVM
+  const { asset, from, to, amount, toAddress: toAddressParam } = gatewayParams;
+  const { renVMHash } = additionalParams;
 
-  // provider fun start
-  const [activeChain, setActiveChain] = useState(from);
-  const toggleActiveChain = useCallback(() => {
-    setActiveChain(activeChain === from ? to : from);
-  }, [activeChain, from, to]);
-  // useSyncWalletChain(activeChain)
-  useEffect(() => {
-    dispatch(setChain(activeChain));
-  }, [dispatch, activeChain]);
+  const [gatewayChains] = useState(pickChains(allChains, from, to));
 
-  const { account: fromAccount, connected: fromConnected } = useWallet(from);
-  const { account: toAccount, connected: toConnected } = useWallet(to);
-
-  const { provider, connected } = useCurrentChainWallet();
-
-  const chains = useCurrentNetworkChains();
-  const chain = useCurrentChain();
-  useEffect(() => {
-    if (activeChain !== chain) {
-      dispatch(setChain(activeChain));
-      dispatch(setPickerOpened(true));
-    }
-  }, [dispatch, activeChain, chain]);
-
-  useEffect(() => {
-    if (connected) {
-      // TODO: finish
-      alterEthereumBaseChainProviderSigner(chains, chain, provider);
-    }
-  }, [chains, chain, provider, connected]);
-  // provider fun end
+  const { account: fromAccountWallet, connected: fromConnected } =
+    useWallet(from);
+  // TODO: warnings
+  const toAddress = toAccount || toAddressParam;
+  const fromAddress = fromAccount || fromAccountWallet;
 
   const { gateway, transactions, recoverLocalTx } = useGateway(
     {
@@ -107,41 +124,22 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
       from,
       to,
       amount,
+      toAddress: toAddress,
     },
-    { chains }
+    { chains: gatewayChains }
   );
 
-  useDebugValue(gateway);
-  useDebugValue(transactions);
-
-  useEffect(() => {
-    console.log("changed: provider", provider);
-  }, [provider]);
-
-  useEffect(() => {
-    console.log("changed: gateway", gateway);
-  }, [gateway]);
-
-  useEffect(() => {
-    console.log("changed: transactions", transactions);
-  }, [transactions]);
-
-  useEffect(() => {
-    console.log("changed: gateway.transactions", gateway?.transactions);
-  }, [gateway?.transactions]);
-
-  const { renVMHash } = additionalParams;
   const [recovering, setRecovering] = useState(false);
   const [, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
   const { showNotification } = useNotifications();
   useEffect(() => {
-    if (renVMHash && fromAccount && gateway !== null && !recovering) {
+    if (renVMHash && fromAddress && gateway !== null && !recovering) {
       setRecovering(true);
       console.log("recovering tx: " + trimAddress(renVMHash));
-      const localTx = findLocalTx(fromAccount, renVMHash);
+      const localTx = findLocalTx(fromAddress, renVMHash);
       if (localTx === null) {
-        console.error(`Unable to find tx for ${fromAccount}, ${renVMHash}`);
+        console.error(`Unable to find tx for ${fromAddress}, ${renVMHash}`);
         return;
       } else {
         recoverLocalTx(renVMHash, localTx)
@@ -161,7 +159,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
     }
   }, [
     showNotification,
-    fromAccount,
+    fromAddress,
     renVMHash,
     recovering,
     findLocalTx,
@@ -177,7 +175,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
 
   return (
     <>
-      <GatewayPaperHeader title={paperTitle} />
+      <GatewayPaperHeader title="Release" />
       <PaperContent>
         {Boolean(parseError) && (
           <GeneralErrorDialog
@@ -189,29 +187,22 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
             }
           />
         )}
-        {!fromConnected && <ConnectWalletPaperSection />}
+        {!fromConnected && <ConnectWalletPaperSection chain={from} />}
         {fromConnected && !gateway && <GatewayLoaderStatus />}
       </PaperContent>
-      <Button color="primary" onClick={toggleActiveChain}>
-        Switch to {activeChain === from ? to : from}
-      </Button>
       {fromConnected && gateway !== null && (
         <ReleaseH2HProcessor
           gateway={gateway}
           transaction={transaction}
-          fromAccount={fromAccount}
+          fromAccount={fromAddress}
           persistLocalTx={persistLocalTx}
           recoveringTx={recovering}
         />
       )}
       <Debug
         it={{
-          chain,
-          activeChain,
-          fromConnected,
-          fromAccount,
-          toConnected,
-          toAccount,
+          fromAddress,
+          toAddress,
           renVMHash,
           gatewayParams,
         }}

@@ -213,7 +213,7 @@ export const H2HAccountsResolver: FunctionComponent<
         <Box mt={3} mb={3}>
           <Typography variant="h6" align="center">
             Choose which accounts are you going to use for{" "}
-            {transactionType === "mint" ? "Mint" : "Release"} transaction
+            {transactionType === "mint" ? "mint" : "release"} transaction
           </Typography>
         </Box>
         <Box display="flex" alignItems="center">

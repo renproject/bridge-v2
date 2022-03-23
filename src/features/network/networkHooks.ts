@@ -23,6 +23,8 @@ export const useSetNetworkFromParam = () => {
   }, [dispatch, parsed.network]);
 };
 
+const chainsCache = new Map();
+
 export const useChains = (network: RenNetwork) => {
   return useMemo(() => {
     return getDefaultChains(network);
@@ -31,9 +33,7 @@ export const useChains = (network: RenNetwork) => {
 
 export const useCurrentNetworkChains = () => {
   const { network } = useSelector($network);
-  return useMemo(() => {
-    return getDefaultChains(network);
-  }, [network]);
+  const chains = useChains(network);
 };
 
 export const useRenVMExplorerLink = () => {

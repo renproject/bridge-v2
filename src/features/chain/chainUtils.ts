@@ -244,6 +244,11 @@ export const alterEthereumBaseChainSigner = (
     if ((chains[chainName]?.chain as EthereumBaseChain).withSigner) {
       (chains[chainName]?.chain as EthereumBaseChain).withSigner!(signer);
       console.log("altered signer for", alteredChains.join(", "), signer);
+      console.log(
+        "new altered signer for",
+        alteredChains.join(", "),
+        (chains[chainName]?.chain as EthereumBaseChain).signer
+      );
     } else {
       throw new Error(
         `Altering signer failed: Unable to find chain ${chainName} in chains ${Object.keys(
@@ -281,5 +286,8 @@ export const pickChains = (
   from: Chain,
   to: Chain
 ) => {
-  return { [from]: chains[from], [to]: chains[to] };
+  const pickedChains = { [from]: chains[from], [to]: chains[to] };
+  (window as any).pickedChains = pickedChains;
+  console.log("chains picked", pickedChains);
+  return pickedChains;
 };

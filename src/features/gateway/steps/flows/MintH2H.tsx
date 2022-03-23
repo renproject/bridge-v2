@@ -75,9 +75,8 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>(toAddress || "");
   const [shouldResolveAccounts] = useState(Boolean(!renVMHash));
-  // const [shouldResolveAccounts] = useState(true);
 
-  const handleChainsResolved = useCallback(
+  const handleAccountsResolved = useCallback(
     (resolvedFromAccount: string, resolvedToAccount: string) => {
       setFromAccount(resolvedFromAccount);
       setToAccount(resolvedToAccount);
@@ -88,10 +87,6 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   console.log(fromAccount, toAccount, parseError);
   const accountsResolved = fromAccount && toAccount;
 
-  // useEffect(() => {
-  //   // resolve accounts for recovering transactions
-  // }, [shouldResolveAccounts]);
-
   // resolve accounts for new transactions
   if (shouldResolveAccounts && !accountsResolved) {
     return (
@@ -99,15 +94,15 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
         transactionType="mint"
         from={from}
         to={to}
-        onResolved={handleChainsResolved}
+        onResolved={handleAccountsResolved}
       />
     );
   }
   return (
     <MintH2HGatewayProcess
-      location={location}
       fromAccount={fromAccount}
       toAccount={toAccount}
+      location={location}
       {...rest}
     />
   );
@@ -121,20 +116,23 @@ type MintH2HGatewayProcessProps = RouteComponentProps & {
 export const MintH2HGatewayProcess: FunctionComponent<
   MintH2HGatewayProcessProps
 > = ({ history, location, fromAccount, toAccount }) => {
-  const allChains = useCurrentNetworkChains();
   const { t } = useTranslation();
+  const allChains = useCurrentNetworkChains();
 
-  // TODO: this should come from partent component
   const {
     gatewayParams,
     additionalParams,
     // error: parseError, // TODO: handle parsing error
   } = parseGatewayQueryString(location.search);
-  const { asset, from, to, amount, toAddress } = gatewayParams;
+  const { asset, from, to, amount, toAddress: toAddressParam } = gatewayParams;
   const [gatewayChains, setGatewayChains] = useState(
     pickChains(allChains, from, to)
   );
 
+  const { account: fromAccountWallet } = useWallet(from);
+  // TODO: warnings
+  const toAddress = toAccount || toAddressParam;
+  const fromAddress = fromAccount || fromAccountWallet;
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
       asset,
@@ -154,12 +152,12 @@ export const MintH2HGatewayProcess: FunctionComponent<
   const { persistLocalTx, findLocalTx } = useTxsStorage();
   const { showNotification } = useNotifications();
   useEffect(() => {
-    if (renVMHash && fromAccount && gateway !== null && !recovering) {
+    if (renVMHash && fromAddress && gateway !== null && !recovering) {
       setRecovering(true);
       console.log("recovering tx: " + trimAddress(renVMHash));
-      const localTx = findLocalTx(fromAccount, renVMHash);
+      const localTx = findLocalTx(fromAddress, renVMHash);
       if (localTx === null) {
-        console.error(`Unable to find tx for ${fromAccount}, ${renVMHash}`);
+        console.error(`Unable to find tx for ${fromAddress}, ${renVMHash}`);
         return;
       } else {
         recoverLocalTx(renVMHash, localTx)
@@ -179,7 +177,8 @@ export const MintH2HGatewayProcess: FunctionComponent<
     }
   }, [
     showNotification,
-    fromAccount,
+    fromAddress,
+    toAddress,
     renVMHash,
     recovering,
     findLocalTx,
@@ -201,7 +200,7 @@ export const MintH2HGatewayProcess: FunctionComponent<
   console.log("gateway", gateway);
   return (
     <>
-      <GatewayPaperHeader title={"Mint"} />
+      <GatewayPaperHeader title="Mint" />
       {gateway === null && (
         <PaperContent bottomPadding>
           <GatewayLoaderStatus />
@@ -244,7 +243,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 }) => {
   const allChains = useCurrentNetworkChains();
   const { t } = useTranslation();
-  const { asset, from, to, amount, toAddress } = getGatewayParams(gateway);
+  const { asset, from, to, amount } = getGatewayParams(gateway);
   const fees = useGatewayFeesWithRates(gateway, amount || 0);
 
   const { outputAmount, outputAmountUsd } = fees;
@@ -385,11 +384,8 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     </GatewayFees>
   );
 
-  const {
-    account: fromAddress,
-    connected: fromConnected,
-    provider: fromProvider,
-  } = useWallet(from);
+  const { account: fromAddress, connected: fromConnected } = useWallet(from);
+  // TODO: provider alteration here?
 
   let Content = null;
   if (approvalStatus !== ChainTransactionStatus.Done && !recoveringTx) {

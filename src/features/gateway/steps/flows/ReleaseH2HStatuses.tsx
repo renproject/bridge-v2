@@ -66,7 +66,7 @@ export const ReleaseH2HBurnStatus: FunctionComponent<
   errorSubmitting,
 }) => {
   const { t } = useTranslation();
-  const { asset, amount } = getGatewayParams(gateway);
+  const { asset, amount, from } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
   const renAssetConfig = getRenAssetConfig(asset);
   const { Icon } = assetConfig;
@@ -75,7 +75,11 @@ export const ReleaseH2HBurnStatus: FunctionComponent<
   return (
     <>
       <PaperContent bottomPadding>
-        <BalanceInfo balance={balance} asset={renAssetConfig.shortName} />
+        <BalanceInfo
+          balance={balance}
+          asset={renAssetConfig.shortName}
+          chain={from}
+        />
         <SimpleAssetInfo
           label={t("release.releasing-label")}
           value={amount}
@@ -151,12 +155,12 @@ export const ReleaseH2HBurnProgressStatus: FunctionComponent<
   const { t } = useTranslation();
   const { asset, from, amount, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
-  const burnChainIcon = getChainConfig(from);
+  const burnChainConfig = getChainConfig(from);
   const assetConfig = getAssetConfig(asset);
   const renAssetConfig = getRenAssetConfig(asset);
   const { Icon: AssetIcon } = assetConfig;
 
-  const BurnChainIcon = burnChainIcon.Icon;
+  const BurnChainIcon = burnChainConfig.Icon;
 
   return (
     <>
@@ -173,6 +177,7 @@ export const ReleaseH2HBurnProgressStatus: FunctionComponent<
               <ProgressWithContent
                 confirmations={undefinedForNull(burnConfirmations)}
                 targetConfirmations={undefinedForNull(burnTargetConfirmations)}
+                color={burnChainConfig.color}
               >
                 <BurnChainIcon fontSize="inherit" />
               </ProgressWithContent>
