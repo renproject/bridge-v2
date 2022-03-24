@@ -359,7 +359,6 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
     releaseAmountFormatted,
     releaseAssetConfig,
     releaseChainConfig,
-    burnAssetConfig,
     releaseTxUrl,
     t,
   ]);

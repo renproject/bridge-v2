@@ -355,12 +355,14 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const { connected: fromConnected } = useWallet(from);
 
+  const isCompleted = releaseTxUrl !== null;
+
   useEffect(() => {
     console.log("persisting final tx", transaction, releaseTxUrl);
-    if (transaction !== null && releaseTxUrl !== null) {
+    if (transaction !== null && isCompleted) {
       persistLocalTx(fromAccount, transaction, true);
     }
-  }, [persistLocalTx, fromAccount, releaseTxUrl, transaction]);
+  }, [persistLocalTx, fromAccount, isCompleted, transaction]);
 
   let Content = null;
   if (renVMStatus === null) {
@@ -425,7 +427,10 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   return (
     <>
       {Content}
-      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
+      <SwitchWalletDialog
+        open={!isCompleted && showSwitchWalletDialog}
+        targetChain={to}
+      />
       <Debug
         it={{
           recoveringTx,
