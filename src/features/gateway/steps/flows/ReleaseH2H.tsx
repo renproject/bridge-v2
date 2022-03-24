@@ -16,14 +16,18 @@ import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
-import { pickChains } from "../../../chain/chainUtils";
+import {
+  alterContractChainProviderSigner,
+  pickChains,
+} from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
-import { useWallet } from "../../../wallet/walletHooks";
+import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
+import { PCW } from "../../components/PaperHelpers";
 import {
   getGatewayParams,
   useChainInstanceAssetDecimals,
@@ -34,11 +38,15 @@ import {
   isTxSubmittable,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
+  useGatewayFirstTransaction,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
-import { H2HAccountsResolver } from "../shared/WalletSwitchHelpers";
+import {
+  H2HAccountsResolver,
+  SwitchWalletDialog,
+} from "../shared/WalletSwitchHelpers";
 import {
   ReleaseH2HBurnProgressStatus,
   ReleaseH2HBurnStatus,
@@ -48,11 +56,9 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   location,
   ...rest
 }) => {
-  const {
-    gatewayParams,
-    additionalParams,
-    error: parseError, // TODO: handle parsing error
-  } = parseGatewayQueryString(location.search);
+  const { gatewayParams, additionalParams } = parseGatewayQueryString(
+    location.search
+  );
   const { from, to, toAddress } = gatewayParams;
   const { renVMHash } = additionalParams;
   const [fromAccount, setFromAccount] = useState<string>("");
@@ -80,12 +86,11 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
       />
     );
   }
-
   return (
     <ReleaseH2HGatewayProcess
-      location={location}
       fromAccount={fromAccount}
       toAccount={toAccount}
+      location={location}
       {...rest}
     />
   );
@@ -97,7 +102,7 @@ type ReleaseH2HGatewayProcessProps = RouteComponentProps & {
 };
 const ReleaseH2HGatewayProcess: FunctionComponent<
   ReleaseH2HGatewayProcessProps
-> = ({ location, history, fromAccount, toAccount }) => {
+> = ({ history, location, fromAccount, toAccount }) => {
   const { t } = useTranslation();
   const allChains = useCurrentNetworkChains();
 
@@ -112,13 +117,12 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
 
   const [gatewayChains] = useState(pickChains(allChains, from, to));
 
-  const { account: fromAccountWallet, connected: fromConnected } =
-    useWallet(from);
+  const { account: fromAccountWallet } = useWallet(from);
   // TODO: warnings
   const toAddress = toAccount || toAddressParam;
   const fromAddress = fromAccount || fromAccountWallet;
 
-  const { gateway, transactions, recoverLocalTx } = useGateway(
+  const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
       asset,
       from,
@@ -129,13 +133,13 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
     { chains: gatewayChains }
   );
 
-  const [recovering, setRecovering] = useState(false);
+  const [recoveringTx, setRecoveringTx] = useState(false);
   const [, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
   const { showNotification } = useNotifications();
   useEffect(() => {
-    if (renVMHash && fromAddress && gateway !== null && !recovering) {
-      setRecovering(true);
+    if (renVMHash && fromAddress && gateway !== null && !recoveringTx) {
+      setRecoveringTx(true);
       console.log("recovering tx: " + trimAddress(renVMHash));
       const localTx = findLocalTx(fromAddress, renVMHash);
       if (localTx === null) {
@@ -161,7 +165,7 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
     showNotification,
     fromAddress,
     renVMHash,
-    recovering,
+    recoveringTx,
     findLocalTx,
     gateway,
     recoverLocalTx,
@@ -171,32 +175,42 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
 
+  // const transaction = useGatewayFirstTransaction(gateway);
   const transaction = transactions[0] || null;
+  (window as any).transaction = transaction;
 
   return (
     <>
       <GatewayPaperHeader title="Release" />
-      <PaperContent>
-        {Boolean(parseError) && (
-          <GeneralErrorDialog
-            open={true}
-            reason={parseError}
-            alternativeActionText={t("navigation.back-to-start-label")}
-            onAlternativeAction={() =>
-              history.push({ pathname: paths.RELEASE })
-            }
-          />
-        )}
-        {!fromConnected && <ConnectWalletPaperSection chain={from} />}
-        {fromConnected && !gateway && <GatewayLoaderStatus />}
-      </PaperContent>
-      {fromConnected && gateway !== null && (
+      {Boolean(parseError) && (
+        <GeneralErrorDialog
+          open={true}
+          reason={parseError}
+          alternativeActionText={t("navigation.back-to-start-label")}
+          onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
+        />
+      )}
+      {gateway === null && (
+        <PCW>
+          <GatewayLoaderStatus />
+        </PCW>
+      )}
+      {gateway !== null && (
         <ReleaseH2HProcessor
           gateway={gateway}
           transaction={transaction}
           fromAccount={fromAddress}
           persistLocalTx={persistLocalTx}
-          recoveringTx={recovering}
+          recoveringTx={recoveringTx}
+        />
+      )}
+      {error !== null && (
+        <GeneralErrorDialog
+          open={true}
+          reason={"Failed to load gateway"}
+          error={error}
+          actionText={t("navigation.back-to-home-label")}
+          onAction={() => history.push({ pathname: paths.HOME })}
         />
       )}
       <Debug
@@ -227,6 +241,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   transaction,
 }) => {
   const { t } = useTranslation();
+  const allChains = useCurrentNetworkChains();
   const { asset, from, to, amount } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
   const burnChainConfig = getChainConfig(from);
@@ -241,8 +256,8 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   const { outputAmount, outputAmountUsd } = fees;
 
   const gatewayInSubmitter = useChainTransactionSubmitter({
-    tx: gateway.in,
-    debugLabel: "in",
+    tx: transaction?.in || gateway.in,
+    debugLabel: "gatewayIn",
   });
 
   const {
@@ -255,26 +270,24 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     handleReset: handleResetBurn,
   } = gatewayInSubmitter;
 
-  (window as any).tx = transaction;
-  (window as any).gateway = gateway;
-
   useEffect(() => {
-    if (submittingBurnDone && transaction !== null && fromAccount) {
+    if (fromAccount && transaction !== null) {
       persistLocalTx(fromAccount, transaction);
     }
   }, [persistLocalTx, fromAccount, submittingBurnDone, transaction]);
 
-  (window as any).tx = transaction;
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.in || gateway.in,
     startTrigger: submittingBurnDone || recoveringTx,
-    debugLabel: "in",
+    debugLabel: "gatewayIn",
   });
   const {
     status: burnStatus,
     confirmations: burnConfirmations,
     target: burnTargetConfirmations,
   } = gatewayInTxMeta;
+
+  console.log("xyz", transaction?.renVM);
 
   const renVmSubmitter = useChainTransactionSubmitter({
     tx: transaction?.renVM,
@@ -286,10 +299,26 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
-    startTrigger: renVmSubmitter.submittingDone,
+    startTrigger: renVmSubmitter.submittingDone || recoveringTx,
     debugLabel: "renVM",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
+  // wallet provider start
+
+  const activeChain = renVMStatus !== null ? to : from;
+  useSyncWalletChain(activeChain);
+  const { connected, provider } = useWallet(activeChain);
+  const { connected: toConnected } = useWallet(to);
+  const showSwitchWalletDialog =
+    renVMStatus !== null && !toConnected && activeChain === to;
+
+  useEffect(() => {
+    console.log("activeChain changed", activeChain);
+    if (provider && connected) {
+      alterContractChainProviderSigner(allChains, activeChain, provider);
+    }
+  }, [allChains, activeChain, provider, connected]);
+
   const { decimals: releaseAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.toChain,
     gateway.params.asset
@@ -297,35 +326,42 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
-    autoSubmit:
-      renVMStatus === ChainTransactionStatus.Done && // TODO: crit check this, shouldn't be automatic
-      isTxSubmittable(transaction?.out),
     debugLabel: "out",
   });
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
-    startTrigger: outSubmitter.submittingDone,
+    startTrigger: outSubmitter.submittingDone || recoveringTx,
     debugLabel: "out",
   });
   const { txUrl: releaseTxUrl } = outTxMeta;
 
+  const { connected: fromConnected } = useWallet(from);
+
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {
-    Content = (
-      <ReleaseH2HBurnStatus
-        gateway={gateway}
-        Fees={Fees}
-        burnStatus={burnStatus}
-        outputAmount={outputAmount}
-        outputAmountUsd={outputAmountUsd}
-        onSubmit={handleSubmitBurn}
-        onReset={handleResetBurn}
-        done={doneBurn}
-        waiting={waitingBurn}
-        submitting={submittingBurn}
-        errorSubmitting={errorSubmittingBurn}
-      />
-    );
+    if (!fromConnected) {
+      Content = (
+        <PCW>
+          <ConnectWalletPaperSection chain={from} />
+        </PCW>
+      );
+    } else {
+      Content = (
+        <ReleaseH2HBurnStatus
+          gateway={gateway}
+          Fees={Fees}
+          burnStatus={burnStatus}
+          outputAmount={outputAmount}
+          outputAmountUsd={outputAmountUsd}
+          onSubmit={handleSubmitBurn}
+          onReset={handleResetBurn}
+          done={doneBurn}
+          waiting={waitingBurn}
+          submitting={submittingBurn}
+          errorSubmitting={errorSubmittingBurn}
+        />
+      );
+    }
   } else if (
     burnStatus === ChainTransactionStatus.Confirming ||
     releaseTxUrl === null
@@ -352,8 +388,10 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   return (
     <>
       {Content}
+      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
       <Debug
         it={{
+          recoveringTx,
           releaseAmount,
           releaseAssetDecimals,
           gatewayInSubmitter,

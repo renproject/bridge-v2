@@ -297,19 +297,22 @@ export const useChainTransactionSubmitter = ({
 };
 
 //TODO: take useGateway transactions into consideration
-export const useGatewayFirstTransaction = (gateway: Gateway) => {
+export const useGatewayFirstTransaction = (gateway: Gateway | null) => {
   const [transaction, setTransaction] = useState<GatewayTransaction | null>(
     null
   );
   useEffect(() => {
-    const getFirstTx = async () => {
-      const tx = await gateway.transactions.first();
-      if (tx) {
-        setTransaction(tx);
-      }
-    };
-    getFirstTx().finally();
-  }, [gateway.transactions]);
+    console.log("tx detected");
+    if (gateway !== null) {
+      const getFirstTx = async () => {
+        const tx = await gateway.transactions.first();
+        if (tx) {
+          setTransaction(tx);
+        }
+      };
+      getFirstTx().finally();
+    }
+  }, [gateway, gateway?.transactions]);
 
   return transaction;
 };

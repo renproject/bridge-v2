@@ -264,7 +264,8 @@ const ReleaseStandardProcessor: FunctionComponent<
 
   useEffect(() => {
     console.log("persist", transaction);
-    if (transaction !== null && transaction.hash) {
+    if (account && transaction !== null && transaction.hash) {
+      //tx hash is not needed probably
       persistLocalTx(account, transaction);
       const params = new URLSearchParams(history.location.search);
       const renVMHashTx = transaction.hash;

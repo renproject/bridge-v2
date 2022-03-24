@@ -65,11 +65,9 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   location,
   ...rest
 }) => {
-  const {
-    gatewayParams,
-    additionalParams,
-    error: parseError, // TODO: handle parsing error
-  } = parseGatewayQueryString(location.search);
+  const { gatewayParams, additionalParams } = parseGatewayQueryString(
+    location.search
+  );
   const { from, to, toAddress } = gatewayParams;
   const { renVMHash } = additionalParams;
   const [fromAccount, setFromAccount] = useState<string>("");
@@ -84,7 +82,6 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
     []
   );
 
-  console.log(fromAccount, toAccount, parseError);
   const accountsResolved = fromAccount && toAccount;
 
   // resolve accounts for new transactions
@@ -122,8 +119,9 @@ export const MintH2HGatewayProcess: FunctionComponent<
   const {
     gatewayParams,
     additionalParams,
-    // error: parseError, // TODO: handle parsing error
+    error: parseError,
   } = parseGatewayQueryString(location.search);
+  // TODO: getting toAddress from url may lead to problems, better decode it from renVM
   const { asset, from, to, amount, toAddress: toAddressParam } = gatewayParams;
   const [gatewayChains, setGatewayChains] = useState(
     pickChains(allChains, from, to)
@@ -191,7 +189,7 @@ export const MintH2HGatewayProcess: FunctionComponent<
   (window as any).transaction = transaction;
 
   useEffect(() => {
-    if (transaction !== null && fromAccount) {
+    if (fromAccount && transaction !== null) {
       persistLocalTx(fromAccount, transaction);
     }
   }, [persistLocalTx, fromAccount, transaction]);
@@ -201,10 +199,18 @@ export const MintH2HGatewayProcess: FunctionComponent<
   return (
     <>
       <GatewayPaperHeader title="Mint" />
+      {Boolean(parseError) && (
+        <GeneralErrorDialog
+          open={true}
+          reason={parseError}
+          alternativeActionText={t("navigation.back-to-start-label")}
+          onAlternativeAction={() => history.push({ pathname: paths.MINT })}
+        />
+      )}
       {gateway === null && (
-        <PaperContent bottomPadding>
+        <PCW>
           <GatewayLoaderStatus />
-        </PaperContent>
+        </PCW>
       )}
       {gateway !== null && (
         <MintH2HProcessor
@@ -384,15 +390,14 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     </GatewayFees>
   );
 
-  const { account: fromAddress, connected: fromConnected } = useWallet(from);
-  // TODO: provider alteration here?
+  const { connected: fromConnected } = useWallet(from);
 
   let Content = null;
   if (approvalStatus !== ChainTransactionStatus.Done && !recoveringTx) {
     if (!fromConnected) {
       Content = (
         <PCW>
-          <ConnectWalletPaperSection chain={from} account={fromAddress} />
+          <ConnectWalletPaperSection chain={from} />
         </PCW>
       );
     } else {
