@@ -198,14 +198,15 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
               <ProgressWithContent
                 confirmations={undefinedForNull(lockConfirmations)}
                 targetConfirmations={undefinedForNull(lockTargetConfirmations)}
+                color={fromChainConfig.color}
               >
                 <Icon fontSize="inherit" />
               </ProgressWithContent>
             </ProgressWrapper>
 
             <TransactionProgressInfo
-              confirmations={undefinedForNull(lockConfirmations)}
-              target={undefinedForNull(lockTargetConfirmations)}
+              confirmations={lockConfirmations}
+              target={lockTargetConfirmations}
               averageConfirmationTime={fromAverageConfirmationTime}
             />
           </>
@@ -306,7 +307,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   const { handlePickerOpen, pickerOpened } = useWalletPicker();
 
   const { RenIcon } = assetConfig;
-  const Icon = mintChainConfig.Icon;
+  const { Icon: ChainIcon } = mintChainConfig;
   return (
     <>
       <PaperContent bottomPadding>
@@ -320,7 +321,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
               confirmations={undefinedForNull(mintConfirmations)}
               targetConfirmations={undefinedForNull(mintTargetConfirmations)}
             >
-              <Icon fontSize="inherit" />
+              <ChainIcon fontSize="inherit" />
             </ProgressWithContent>
           )}
         </ProgressWrapper>

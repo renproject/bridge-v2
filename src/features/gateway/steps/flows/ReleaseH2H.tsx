@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
-import { PaperContent } from "../../../../components/layout/Paper";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
@@ -38,7 +37,6 @@ import {
   isTxSubmittable,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
-  useGatewayFirstTransaction,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
@@ -48,8 +46,9 @@ import {
   SwitchWalletDialog,
 } from "../shared/WalletSwitchHelpers";
 import {
-  ReleaseH2HBurnProgressStatus,
-  ReleaseH2HBurnStatus,
+  ReleaseH2HBurnTransactionStatus,
+  ReleaseH2HCompletedStatus,
+  ReleaseH2HReleaseTransactionStatus,
 } from "./ReleaseH2HStatuses";
 
 export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
@@ -285,9 +284,9 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     status: burnStatus,
     confirmations: burnConfirmations,
     target: burnTargetConfirmations,
+    txUrl: burnTxUrl,
+    amount: burnAmount,
   } = gatewayInTxMeta;
-
-  console.log("xyz", transaction?.renVM);
 
   const renVmSubmitter = useChainTransactionSubmitter({
     tx: transaction?.renVM,
@@ -324,21 +323,40 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     gateway.params.asset
   );
 
+  const { decimals: burnAssetDecimals } = useChainInstanceAssetDecimals(
+    gateway.fromChain,
+    gateway.params.asset
+  );
+
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
     debugLabel: "out",
   });
+  const {
+    handleSubmit: handleSubmitRelease,
+    submitting: submittingRelease,
+    waiting: waitingRelease,
+    done: doneRelease,
+    errorSubmitting: errorSubmittingRelease,
+    handleReset: handleResetRelease,
+  } = outSubmitter;
+
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
     startTrigger: outSubmitter.submittingDone || recoveringTx,
     debugLabel: "out",
   });
-  const { txUrl: releaseTxUrl } = outTxMeta;
+  const {
+    status: releaseStatus,
+    confirmations: releaseConfirmations,
+    target: releaseTargetConfirmations,
+    txUrl: releaseTxUrl,
+  } = outTxMeta;
 
   const { connected: fromConnected } = useWallet(from);
 
   let Content = null;
-  if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {
+  if (renVMStatus === null) {
     if (!fromConnected) {
       Content = (
         <PCW>
@@ -347,10 +365,12 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
       );
     } else {
       Content = (
-        <ReleaseH2HBurnStatus
+        <ReleaseH2HBurnTransactionStatus
           gateway={gateway}
           Fees={Fees}
           burnStatus={burnStatus}
+          burnConfirmations={burnConfirmations}
+          burnTargetConfirmations={burnTargetConfirmations}
           outputAmount={outputAmount}
           outputAmountUsd={outputAmountUsd}
           onSubmit={handleSubmitBurn}
@@ -362,25 +382,35 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
         />
       );
     }
-  } else if (
-    burnStatus === ChainTransactionStatus.Confirming ||
-    releaseTxUrl === null
-  ) {
+  } else if (releaseTxUrl === null) {
     Content = (
-      <ReleaseH2HBurnProgressStatus
+      <ReleaseH2HReleaseTransactionStatus
         gateway={gateway}
         Fees={Fees}
-        burnStatus={burnStatus}
+        renVMStatus={renVMStatus}
+        releaseStatus={releaseStatus}
         outputAmount={outputAmount}
         outputAmountUsd={outputAmountUsd}
-        burnConfirmations={burnConfirmations}
-        burnTargetConfirmations={burnTargetConfirmations}
-        renVMStatus={renVMStatus}
-        onReset={() => {}}
-        onSubmit={() => {}}
-        submitting
-        waiting
-        done
+        releaseConfirmations={releaseConfirmations}
+        releaseTargetConfirmations={releaseTargetConfirmations}
+        onReset={handleResetRelease}
+        onSubmit={handleSubmitRelease}
+        submitting={submittingRelease}
+        waiting={waitingRelease}
+        done={doneRelease}
+        errorSubmitting={errorSubmittingRelease}
+      />
+    );
+  } else {
+    Content = (
+      <ReleaseH2HCompletedStatus
+        gateway={gateway}
+        burnTxUrl={burnTxUrl}
+        burnAmount={burnAmount}
+        releaseAssetDecimals={releaseAssetDecimals}
+        burnAssetDecimals={burnAssetDecimals}
+        releaseAmount={releaseAmount}
+        releaseTxUrl={releaseTxUrl}
       />
     );
   }

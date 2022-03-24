@@ -216,8 +216,8 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
               </ProgressWithContent>
             </ProgressWrapper>
             <TransactionProgressInfo
-              confirmations={undefinedForNull(burnConfirmations)}
-              target={undefinedForNull(burnTargetConfirmations)}
+              confirmations={burnConfirmations}
+              target={burnTargetConfirmations}
               averageConfirmationTime={fromAverageConfirmationTime}
             />
           </>

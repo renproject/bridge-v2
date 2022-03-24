@@ -1,4 +1,5 @@
 import {
+  alpha,
   CircularProgress,
   CircularProgressProps,
   styled,
@@ -44,7 +45,7 @@ export type ProgressWithContentProps = {
   value?: number;
   size?: number;
   confirmations?: number;
-  targetConfirmations?: number;
+  targetConfirmations?: number | null;
 };
 
 const getSectionMargin = (sections: number) => {
@@ -155,56 +156,66 @@ export const ProgressWithContent: FunctionComponent<
   value = 100,
   processing,
   confirmations,
-  targetConfirmations = 6,
+  targetConfirmations,
   size = defaultProgressWithContentSize,
   fontSize = Math.floor(0.75 * size),
   children,
 }) => {
-  if (targetConfirmations > 360) {
-    targetConfirmations = 360;
-  }
   const theme = useTheme();
+  let resolvedTargetConfirmations = 1;
+  if (
+    typeof targetConfirmations === "number" ||
+    targetConfirmations === undefined
+  ) {
+    resolvedTargetConfirmations = targetConfirmations || 6;
+  } else if (targetConfirmations === null) {
+    color = alpha(color || theme.palette.primary.main, 0.2);
+  } else if (targetConfirmations > 360) {
+    resolvedTargetConfirmations = 360;
+  }
   const styles = useProgressWithContentStyles({
     color: color || theme.palette.primary.main,
     fontSize,
     size,
   });
-  const sectionsStyles = useSectionStyles(targetConfirmations);
+  const sectionsStyles = useSectionStyles(resolvedTargetConfirmations);
   const rootClassName = classNames(styles.root, {
     [styles.rootBig]: fontSize === "big",
     [styles.rootMedium]: fontSize === "medium",
   });
 
-  const margin = getSectionMargin(targetConfirmations);
+  const margin = getSectionMargin(resolvedTargetConfirmations);
   return (
     <div className={rootClassName}>
       {typeof confirmations !== "undefined" && (
         <div className={styles.sections}>
-          {new Array(targetConfirmations || 0).fill(true).map((_, index) => {
-            const value = 100 / targetConfirmations - margin;
-            const completed = index < confirmations;
-            const processing = index === confirmations;
-            const sectionClassName = classNames(
-              styles.section,
-              sectionsStyles.dynamicSection,
-              styles.sectionAnimated,
-              {
-                [styles.sectionCompleted]: completed,
-                [styles.sectionProcessing]: processing,
-              }
-            );
-            return (
-              <CircularProgress
-                key={index}
-                className={sectionClassName}
-                variant="determinate"
-                value={value}
-                color="inherit"
-                size={size}
-                thickness={3}
-              />
-            );
-          })}
+          {new Array(resolvedTargetConfirmations || 0)
+            .fill(true)
+            .map((_, index) => {
+              const value = 100 / resolvedTargetConfirmations - margin;
+              const completed = index < confirmations;
+              const processing = index === confirmations;
+              const sectionClassName = classNames(
+                styles.section,
+                sectionsStyles.dynamicSection,
+                styles.sectionAnimated,
+                {
+                  [styles.sectionCompleted]: completed,
+                  [styles.sectionProcessing]: processing,
+                }
+              );
+              return (
+                <CircularProgress
+                  key={index}
+                  className={sectionClassName}
+                  variant="determinate"
+                  value={value}
+                  color="inherit"
+                  size={size}
+                  thickness={3}
+                />
+              );
+            })}
         </div>
       )}
       <CircularProgress

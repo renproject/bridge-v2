@@ -23,17 +23,23 @@ export const TransactionProgressInfo: FunctionComponent<
       (target - Math.min(confirmations || 0, target)) * averageConfirmationTime;
     minutesRemaining = Math.ceil(secondsRemaining / 60);
   }
+  const showConfirmations = target !== null;
+
   return (
     <Box mb={2} textAlign="center">
-      {hasConfirmations ? (
-        <Typography variant="body1">
-          {t("tx.confirmations-target-counter-message", {
-            confirmations: maxConfirmations(confirmations, target),
-            target,
-          })}
-        </Typography>
-      ) : (
-        <Skeleton variant="text" width={120} height={14} />
+      {showConfirmations && (
+        <>
+          {hasConfirmations ? (
+            <Typography variant="body1">
+              {t("tx.confirmations-target-counter-message", {
+                confirmations: maxConfirmations(confirmations, target),
+                target,
+              })}
+            </Typography>
+          ) : (
+            <Skeleton variant="text" width={120} height={14} />
+          )}
+        </>
       )}
       <Fade in={Boolean(minutesRemaining)}>
         <Typography variant="body2" color="textSecondary">
