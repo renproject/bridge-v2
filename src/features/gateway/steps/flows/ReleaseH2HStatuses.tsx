@@ -25,7 +25,6 @@ import {
   LabelWithValue,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
-import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
@@ -36,14 +35,8 @@ import {
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
-import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
-import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
-import {
-  useCurrentChainWallet,
-  useWalletAssetHelpers,
-} from "../../../wallet/walletHooks";
 import {
   BalanceInfo,
   UsdNumberFormatText,
@@ -51,7 +44,6 @@ import {
 import { FeesToggler } from "../../components/FeeHelpers";
 import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
 import {
-  RenVMReleasingInfo,
   RenVMSubmittingInfo,
   TransactionProgressInfo,
 } from "../../components/TransactionProgressHelpers";
@@ -365,6 +357,7 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
     showNotification,
     showBrowserNotification,
     releaseAmountFormatted,
+    releaseAssetConfig,
     releaseChainConfig,
     burnAssetConfig,
     releaseTxUrl,

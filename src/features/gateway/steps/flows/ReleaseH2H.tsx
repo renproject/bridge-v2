@@ -355,6 +355,13 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const { connected: fromConnected } = useWallet(from);
 
+  useEffect(() => {
+    console.log("persisting final tx", transaction, releaseTxUrl);
+    if (transaction !== null && releaseTxUrl !== null) {
+      persistLocalTx(fromAccount, transaction, true);
+    }
+  }, [persistLocalTx, fromAccount, releaseTxUrl, transaction]);
+
   let Content = null;
   if (renVMStatus === null) {
     if (!fromConnected) {
