@@ -58,7 +58,7 @@ import {
 } from "../gateway/components/DropdownHelpers";
 import { useAssetDecimals, useGatewayMeta } from "../gateway/gatewayHooks";
 import { createGatewayQueryString } from "../gateway/gatewayUtils";
-import { GatewayLocationState } from "../gateway/steps/gatewayRoutingUtils";
+import { GatewayLocationState } from "../gateway/gatewayRoutingUtils";
 import {
   useAddressExplorerLink,
   useRenVMExplorerLink,

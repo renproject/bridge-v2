@@ -30,7 +30,7 @@ export const greenDark = "#2C8A6F";
 
 export const textDark = "#3F3F48";
 export const textLight = "#6B6D70";
-export const textLighter = "#87888C";
+export const textLighter = "#737478";
 export const textDisabled = "#DCE0E3";
 
 export const grayDisabled = "#c1c2c4";

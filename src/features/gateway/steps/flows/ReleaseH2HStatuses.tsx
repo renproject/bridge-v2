@@ -1,10 +1,9 @@
-import { Box, Divider, Typography } from "@material-ui/core";
+import { Divider } from "@material-ui/core";
 import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import React, { FunctionComponent, ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
   ActionButton,
@@ -16,16 +15,13 @@ import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import {
-  BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
 import {
   AssetInfo,
-  LabelWithValue,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
-import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import {
@@ -52,6 +48,12 @@ import {
   useContractChainAssetBalance,
 } from "../../gatewayHooks";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
+import {
+  ChainProgressDone,
+  FromToTxLinks,
+  GoToHomeActionButton,
+  SentReceivedSection,
+} from "../shared/TransactionStatuses";
 
 type ReleaseH2HBurnTransactionStatusProps = SubmittingProps & {
   gateway: Gateway;
@@ -287,11 +289,11 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
 
 type ReleaseH2HCompletedStatusProps = {
   gateway: Gateway;
-  burnAssetDecimals: number | null;
   burnAmount: string | null;
+  burnAssetDecimals: number | null;
   burnTxUrl: string | null;
-  releaseAssetDecimals: number | null;
   releaseAmount: string | null;
+  releaseAssetDecimals: number | null;
   releaseTxUrl: string | null;
 };
 
@@ -300,28 +302,17 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
 > = ({
   gateway,
   burnTxUrl,
+  burnAmount,
   burnAssetDecimals,
   releaseTxUrl,
   releaseAmount,
   releaseAssetDecimals,
-  burnAmount,
 }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("release.completed-title"));
-  const history = useHistory();
-  const burnAssetConfig = getRenAssetConfig(gateway.params.asset);
+  const { from, to, asset } = getGatewayParams(gateway);
   const releaseAssetConfig = getAssetConfig(gateway.params.asset);
-  const burnChainConfig = getChainConfig(gateway.params.from.chain);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);
-
-  const handleGoToHome = useCallback(() => {
-    history.push({
-      pathname: paths.HOME,
-    });
-  }, [history]);
-
-  const { showNotification } = useNotifications();
-  const { showBrowserNotification } = useBrowserNotifications();
 
   const burnAmountFormatted =
     burnAmount !== null && burnAssetDecimals !== null
@@ -332,6 +323,9 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
     releaseAmount !== null && releaseAssetDecimals !== null
       ? new BigNumber(releaseAmount).shiftedBy(-releaseAssetDecimals).toString()
       : null;
+
+  const { showNotification } = useNotifications();
+  const { showBrowserNotification } = useBrowserNotifications();
 
   const showNotifications = useCallback(() => {
     if (releaseTxUrl !== null) {
@@ -365,58 +359,20 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
 
   return (
     <PaperContent bottomPadding>
-      <ProgressWrapper>
-        <ProgressWithContent>
-          <ProgressWithContent color={releaseChainConfig.color}>
-            <BigDoneIcon />
-          </ProgressWithContent>
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Box minHeight={80}>
-        <Typography variant="h5" align="center" gutterBottom>
-          <NumberFormatText
-            value={releaseAmountFormatted}
-            spacedSuffix={burnAssetConfig.shortName}
-          />{" "}
-          received!
-        </Typography>
-        <LabelWithValue
-          label="Initially sent"
-          labelTooltip="The amount you initially sent"
-          value={
-            <span>
-              {burnAmountFormatted} {burnAssetConfig.shortName}
-            </span>
-          }
-        />
-      </Box>
-      <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
-        {burnTxUrl !== null && (
-          <Link
-            external
-            color="primary"
-            variant="button"
-            underline="hover"
-            href={burnTxUrl}
-          >
-            {burnChainConfig.shortName} {t("common.transaction")}
-          </Link>
-        )}
-        {releaseTxUrl !== null && (
-          <Link
-            external
-            color="primary"
-            variant="button"
-            underline="hover"
-            href={releaseTxUrl}
-          >
-            {releaseChainConfig.shortName} {t("common.transaction")}
-          </Link>
-        )}
-      </Box>
-      <ActionButton onClick={handleGoToHome}>
-        {t("navigation.back-to-home-label")}
-      </ActionButton>
+      <ChainProgressDone chain={from} />
+      <SentReceivedSection
+        isRelease
+        receivedAmount={releaseAmountFormatted}
+        asset={asset}
+        sentAmount={burnAmountFormatted}
+      />
+      <FromToTxLinks
+        from={from}
+        to={to}
+        fromTxUrl={burnTxUrl}
+        toTxUrl={releaseTxUrl}
+      />
+      <GoToHomeActionButton />
     </PaperContent>
   );
 };

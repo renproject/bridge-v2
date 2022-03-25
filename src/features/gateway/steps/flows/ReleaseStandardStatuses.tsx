@@ -1,4 +1,4 @@
-import { Box, Divider, Typography } from "@material-ui/core";
+import { Divider, Typography } from "@material-ui/core";
 import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import BigNumber from "bignumber.js";
@@ -16,7 +16,6 @@ import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import {
-  BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
@@ -53,6 +52,11 @@ import {
   useContractChainAssetBalance,
 } from "../../gatewayHooks";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
+import {
+  ChainProgressDone,
+  FromToTxLinks,
+  SentReceivedSection,
+} from "../shared/TransactionStatuses";
 
 type ReleaseStandardBurnStatusProps = SubmittingProps & {
   gateway: Gateway;
@@ -265,9 +269,11 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
 
 type ReleaseStandardCompletedStatusProps = {
   gateway: Gateway;
+  burnAmount: string | null;
+  burnAssetDecimals: number | null;
   burnTxUrl: string | null;
-  releaseAssetDecimals: number | null;
   releaseAmount: string | null;
+  releaseAssetDecimals: number | null;
   releaseTxUrl: string | null;
   // releaseStatus: ChainTransactionStatus | null;
 };
@@ -277,6 +283,8 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
 > = ({
   gateway,
   burnTxUrl,
+  burnAmount,
+  burnAssetDecimals,
   releaseTxUrl,
   releaseAmount,
   releaseAssetDecimals,
@@ -285,8 +293,8 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
   const { t } = useTranslation();
   useSetPaperTitle(t("release.completed-title"));
   const history = useHistory();
+  const { from, to, asset } = getGatewayParams(gateway);
   const burnAssetConfig = getAssetConfig(gateway.params.asset);
-  const burnChainConfig = getChainConfig(gateway.params.from.chain);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);
 
   const handleGoToHome = useCallback(() => {
@@ -297,6 +305,11 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
 
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
+
+  const burnAmountFormatted =
+    burnAmount !== null && burnAssetDecimals !== null
+      ? new BigNumber(burnAmount).shiftedBy(-burnAssetDecimals).toString()
+      : null;
 
   const releaseAmountFormatted =
     releaseAmount !== null && releaseAssetDecimals !== null
@@ -335,56 +348,32 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
 
   return (
     <PaperContent bottomPadding>
-      <ProgressWrapper>
-        <ProgressWithContent>
-          {releaseTxUrl === null ? (
-            <ProgressWithContent processing>
-              <RenVMReleasingInfo />
-            </ProgressWithContent>
-          ) : (
-            <ProgressWithContent>
-              <BigDoneIcon />
-            </ProgressWithContent>
-          )}
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        {t("tx.you-received-message")}{" "}
-        <NumberFormatText
-          value={releaseAmountFormatted}
-          spacedSuffix={burnAssetConfig.shortName}
-        />
-        !
-      </Typography>
+      {releaseTxUrl === null ? (
+        <ProgressWrapper>
+          <ProgressWithContent processing>
+            <RenVMReleasingInfo />
+          </ProgressWithContent>
+        </ProgressWrapper>
+      ) : (
+        <ChainProgressDone chain={to} />
+      )}
+      <SentReceivedSection
+        isRelease
+        receivedAmount={releaseAmountFormatted}
+        asset={asset}
+        sentAmount={burnAmountFormatted}
+      />
+      <FromToTxLinks
+        from={from}
+        to={to}
+        fromTxUrl={burnTxUrl}
+        toTxUrl={releaseTxUrl}
+      />
       <MultipleActionButtonWrapper>
         <ActionButton onClick={handleGoToHome}>
           {t("navigation.back-to-home-label")}
         </ActionButton>
       </MultipleActionButtonWrapper>
-      <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
-        {burnTxUrl !== null && (
-          <Link
-            external
-            color="primary"
-            variant="button"
-            underline="hover"
-            href={burnTxUrl}
-          >
-            {burnChainConfig.fullName} {t("common.transaction")}
-          </Link>
-        )}
-        {releaseTxUrl !== null && (
-          <Link
-            external
-            color="primary"
-            variant="button"
-            underline="hover"
-            href={releaseTxUrl}
-          >
-            {releaseChainConfig.fullName} {t("common.transaction")}
-          </Link>
-        )}
-      </Box>
     </PaperContent>
   );
 };

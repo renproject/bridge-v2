@@ -16,7 +16,7 @@ import { GatewayFeesStep } from "./steps/GatewayFeesStep";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 import { MintH2HProcess } from "./steps/flows/MintH2H";
 import { MintStandardProcess } from "./steps/flows/MintStandard";
-import { useGatewayLocationState } from "./steps/gatewayRoutingUtils";
+import { useGatewayLocationState } from "./gatewayRoutingUtils";
 
 export enum GatewayConfigurationStep {
   INITIAL = "initial",

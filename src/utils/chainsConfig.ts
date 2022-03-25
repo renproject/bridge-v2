@@ -34,7 +34,7 @@ export type ChainIconsConfig = {
 
 export type ChainLabelsConfig = {
   fullName: string;
-  shortName?: string; // TODO: make obligatory
+  shortName: string;
 };
 
 export type ChainNetworksConfig = {
@@ -55,11 +55,13 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Arbitrum: {
     Icon: chainIcon(Arbitrum),
     fullName: "Arbitrum",
+    shortName: "Arbitrum",
     networks: createNetworksConfig(42161, 421611),
   },
   Avalanche: {
     Icon: chainIcon(Avalanche),
     fullName: "Avalanche",
+    shortName: "Avalanche",
     networks: createNetworksConfig(43114, 43113),
   },
   BinanceSmartChain: {
@@ -71,14 +73,17 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Bitcoin: {
     Icon: chainIconFromToken(Btc),
     fullName: "Bitcoin",
+    shortName: "Bitcoin",
   },
   BitcoinCash: {
     Icon: chainIconFromToken(Bch),
     fullName: "Bitcoin Cash",
+    shortName: "Bitcoin Cash",
   },
   Dogecoin: {
     Icon: chainIconFromToken(Doge),
     fullName: "Dogecoin",
+    shortName: "Dogecoin",
   },
   Ethereum: {
     Icon: chainIcon(Ethereum),
@@ -92,37 +97,45 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Fantom: {
     Icon: chainIcon(Fantom),
     fullName: "Fantom",
+    shortName: "Fantom",
     networks: createNetworksConfig(250, 4002),
   },
   Polygon: {
     Icon: chainIcon(Polygon),
     fullName: "Polygon",
+    shortName: "Polygon",
     networks: createNetworksConfig(137, 80001),
   },
   Zcash: {
     Icon: chainIconFromToken(Zec),
     fullName: "Zcash",
+    shortName: "Zcash",
   },
   DigiByte: {
     Icon: chainIconFromToken(Dgb),
     fullName: "DigiByte",
+    shortName: "DigiByte",
   },
   Filecoin: {
     Icon: chainIconFromToken(Fil),
     fullName: "Filecoin",
+    shortName: "Filecoin",
   },
   Goerli: {
     Icon: chainIcon(Ethereum),
     fullName: "Goerli Testnet",
+    shortName: "Goerli",
     networks: createNetworksConfig(1, 5),
   },
   Terra: {
     Icon: chainIcon(Luna),
     fullName: "Terra",
+    shortName: "Terra",
   },
   Solana: {
     Icon: chainIcon(Solana),
     fullName: "Solana",
+    shortName: "Solana",
   },
 };
 

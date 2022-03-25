@@ -736,7 +736,7 @@ export const ConnectWalletPaperSection: FunctionComponent<
     if (isRecoveringTx) {
       message +=
         " " +
-        "It must be the same wallet which was used to create transaction you want to resume.";
+        "It must be connected to te same account which was used to create transaction you want to resume.";
     }
   }
 
@@ -748,17 +748,15 @@ export const ConnectWalletPaperSection: FunctionComponent<
         </CenteringSpacedBox>
       </PaperSpacerWrapper>
       {Boolean(message) && (
-        <Box mb={2}>
+        <Box mb={4}>
           <Typography variant="body1" align="center">
             {message}
           </Typography>
         </Box>
       )}
-      <Box mb={2}>
-        <ActionButton onClick={handleWalletPickerOpen}>
-          {t("wallet.connect")}
-        </ActionButton>
-      </Box>
+      <ActionButton onClick={handleWalletPickerOpen}>
+        {t("wallet.connect")}
+      </ActionButton>
     </>
   );
 };

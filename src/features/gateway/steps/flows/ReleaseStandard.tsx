@@ -220,6 +220,12 @@ const ReleaseStandardProcessor: FunctionComponent<
   );
   const fees = useGatewayFeesWithRates(gateway, amount);
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
+
+  const { decimals: burnAssetDecimals } = useChainInstanceAssetDecimals(
+    gateway.fromChain,
+    gateway.params.asset
+  );
+
   const { decimals: releaseAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.toChain,
     gateway.params.asset
@@ -275,6 +281,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     confirmations: burnConfirmations,
     target: burnTargetConfirmations,
     txUrl: burnTxUrl,
+    amount: burnAmount,
   } = gatewayInTxMeta;
   const renVmSubmitter = useChainTransactionSubmitter({
     tx: transaction?.renVM,
@@ -359,6 +366,8 @@ const ReleaseStandardProcessor: FunctionComponent<
       <ReleaseStandardCompletedStatus
         gateway={gateway}
         burnTxUrl={burnTxUrl}
+        burnAmount={burnAmount}
+        burnAssetDecimals={burnAssetDecimals}
         // releaseStatus={releaseStatus}
         releaseTxUrl={releaseTxUrl}
         releaseAmount={releaseAmount}

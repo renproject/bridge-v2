@@ -491,6 +491,7 @@ export const MintH2HCompletedStatus: FunctionComponent<
           {t("navigation.back-to-home-label")}
         </ActionButton>
       </MultipleActionButtonWrapper>
+
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         {lockTxUrl !== null && (
           <Link

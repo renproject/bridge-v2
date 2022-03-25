@@ -4,6 +4,7 @@ const ABOUT = "/about";
 const HOME = "/";
 const MINT = "/mint";
 const RELEASE = "/release";
+const MOVE = "/move";
 
 const __GATEWAY = "/gateway";
 const __GATEWAY_H2H = "/gateway-h2h";
@@ -26,5 +27,6 @@ export const paths = {
   RELEASE,
   RELEASE__GATEWAY_STANDARD,
   RELEASE__GATEWAY_H2H,
+  MOVE,
   TEST,
 };
