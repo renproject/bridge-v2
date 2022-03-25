@@ -79,6 +79,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
   waiting,
   done,
   errorSubmitting,
+  submittingDisabled,
 }) => {
   const { t } = useTranslation();
   const { asset, amount, from, fromAverageConfirmationTime } =
@@ -153,7 +154,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
         <ActionButtonWrapper>
           <ActionButton
             onClick={onSubmit}
-            disabled={submitting || waiting || done}
+            disabled={submittingDisabled || submitting || waiting || done}
           >
             {submitting || waiting
               ? t("gateway.submitting-tx-label")

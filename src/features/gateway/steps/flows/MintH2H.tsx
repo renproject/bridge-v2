@@ -160,9 +160,12 @@ export const MintH2HGatewayProcess: FunctionComponent<
       } else {
         recoverLocalTx(renVMHash, localTx)
           .then(() => {
-            showNotification(`Transaction ${renVMHash} recovered.`, {
-              variant: "success",
-            });
+            showNotification(
+              `Transaction ${trimAddress(renVMHash)} recovered.`,
+              {
+                variant: "success",
+              }
+            );
           })
           .catch((error) => {
             console.error(`Recovering error`, error.message);

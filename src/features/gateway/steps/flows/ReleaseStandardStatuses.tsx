@@ -77,6 +77,7 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
   done,
   errorSubmitting,
   account,
+  submittingDisabled,
 }) => {
   const { t } = useTranslation();
   const { asset, amount, toAddress } = getGatewayParams(gateway);
@@ -134,7 +135,12 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
           <ActionButton
             onClick={onSubmit}
             disabled={
-              submitting || waiting || done || !hasBalance || showBalanceError
+              submittingDisabled ||
+              submitting ||
+              waiting ||
+              done ||
+              !hasBalance ||
+              showBalanceError
             }
           >
             {submitting || waiting

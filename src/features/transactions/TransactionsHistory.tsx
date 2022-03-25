@@ -551,7 +551,6 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     }
     console.log(isMint, isH2H);
     const state: GatewayLocationState = {
-      renVMHashReplaced: true,
       reload: true,
     };
     if (isMint && isH2H) {

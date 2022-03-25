@@ -13,9 +13,9 @@ import {
 } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
-  PartialChainInstanceMap,
   pickChains,
 } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
@@ -39,10 +39,6 @@ import {
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
-import {
-  GatewayLocationState,
-  useGatewayLocationState,
-} from "../gatewayRoutingUtils";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
   ReleaseStandardBurnProgressStatus,
@@ -69,57 +65,35 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const { connected, account, provider } = useWallet(from);
 
   const allChains = useCurrentNetworkChains();
-  const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
+  const [gatewayChains] = useState(pickChains(allChains, from, to));
+
   useEffect(() => {
     if (provider) {
       alterContractChainProviderSigner(allChains, from, provider);
-      const gatewayChains = pickChains(allChains, from, to);
-      setChains(gatewayChains);
     }
-  }, [from, to, allChains, provider]);
+  }, [from, allChains, provider]);
 
   const { gateway, transactions, recoverLocalTx } = useGateway(
     { asset, from, to, amount, toAddress },
-    { chains }
+    { chains: gatewayChains }
   );
 
-  const [recoveringTx, setRecoveringTx] = useState(false);
-  const [recoveringError, setRecoveringError] = useState<Error | null>(null);
-  const { renVMHashDetected, renVMHashReplaced } = useGatewayLocationState();
-  const [reloading, setReloading] = useState(false);
-  useEffect(() => {
-    if (renVMHash && (!renVMHashDetected || renVMHashReplaced)) {
-      setReloading(true);
-      setRecoveringTx(false);
-    }
-    const timeout = setTimeout(() => {
-      setReloading(false);
-    }, 1000);
-    return () => clearTimeout(timeout);
-  }, [renVMHash, renVMHashReplaced, renVMHashDetected]);
+  // TODO: DRY
   const { showNotification } = useNotifications();
-
-  useEffect(() => {
-    if (renVMHashDetected) {
-      showNotification(
-        `Please keep this page opened or bookmark it until transaction is finished.`,
-        { variant: "warning" }
-      );
-    }
-  }, [renVMHashDetected, showNotification]);
-
+  const [recoveryMode] = useState(Boolean(renVMHash));
+  const [recoveringStarted, setRecoveringStarted] = useState(false);
+  const [recoveringError, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
-
   useEffect(() => {
     if (
+      recoveryMode &&
       renVMHash &&
       account &&
       gateway !== null &&
-      !recoveringTx &&
-      !renVMHashDetected
+      !recoveringStarted
     ) {
-      setRecoveringTx(true);
-      console.log("recovering tx");
+      setRecoveringStarted(true);
+      console.log("recovering tx" + trimAddress(renVMHash));
       const localTx = findLocalTx(account, renVMHash);
       if (localTx === null) {
         console.error(`Unable to find tx for ${account}, ${renVMHash}`);
@@ -127,9 +101,12 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
       } else {
         recoverLocalTx(renVMHash, localTx)
           .then(() => {
-            showNotification(`Transaction recovered.`, {
-              variant: "success",
-            });
+            showNotification(
+              `Transaction ${trimAddress(renVMHash)}recovered.`,
+              {
+                variant: "success",
+              }
+            );
           })
           .catch((error) => {
             console.error(`Recovering error`, error.message);
@@ -141,11 +118,11 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
       }
     }
   }, [
+    recoveryMode,
     showNotification,
     account,
     renVMHash,
-    renVMHashDetected,
-    recoveringTx,
+    recoveringStarted,
     findLocalTx,
     gateway,
     recoverLocalTx,
@@ -171,19 +148,13 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
       )}
       {connected && gateway !== null && (
         <>
-          {reloading ? (
-            <PCW>
-              <GatewayLoaderStatus />
-            </PCW>
-          ) : (
-            <ReleaseStandardProcessor
-              gateway={gateway}
-              transaction={transaction}
-              account={account}
-              persistLocalTx={persistLocalTx}
-              recoveringTx={recoveringTx}
-            />
-          )}
+          <ReleaseStandardProcessor
+            gateway={gateway}
+            transaction={transaction}
+            account={account}
+            persistLocalTx={persistLocalTx}
+            recoveryMode={recoveringStarted}
+          />
         </>
       )}
       {Boolean(parseError) && (
@@ -205,10 +176,8 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
       <Debug
         it={{
           gatewayParams,
-          recoveringTx,
+          recoveryMode,
           renVMHash,
-          renVMHashDetected,
-          renVMHashReplaced,
         }}
       />
     </>
@@ -220,12 +189,12 @@ type ReleaseStandardProcessorProps = {
   transaction: GatewayTransaction | null;
   account: string;
   persistLocalTx: LocalTxPersistor;
-  recoveringTx?: boolean;
+  recoveryMode?: boolean;
 };
 
 const ReleaseStandardProcessor: FunctionComponent<
   ReleaseStandardProcessorProps
-> = ({ gateway, transaction, account, persistLocalTx, recoveringTx }) => {
+> = ({ gateway, transaction, account, persistLocalTx, recoveryMode }) => {
   console.log("ReleaseStandardProcessor");
   console.log(gateway);
   const history = useHistory();
@@ -262,10 +231,11 @@ const ReleaseStandardProcessor: FunctionComponent<
     handleReset,
   } = gatewayInSubmitter;
 
+  // TODO: DRY
   useEffect(() => {
     console.log("persist", transaction);
     if (account && transaction !== null && transaction.hash) {
-      //tx hash is not needed probably
+      // tx hash is not needed probably
       persistLocalTx(account, transaction);
       const params = new URLSearchParams(history.location.search);
       const renVMHashTx = transaction.hash;
@@ -280,9 +250,6 @@ const ReleaseStandardProcessor: FunctionComponent<
         params.set("renVMHash", renVMHashTx);
         history.replace({
           search: params.toString(),
-          state: {
-            renVMHashDetected: true,
-          } as GatewayLocationState,
         });
       }
     }
@@ -292,7 +259,7 @@ const ReleaseStandardProcessor: FunctionComponent<
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.in || gateway.in,
-    startTrigger: submittingDone || recoveringTx,
+    startTrigger: submittingDone || recoveryMode,
     debugLabel: "gatewayIn",
   });
   const {
@@ -310,7 +277,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   });
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
-    startTrigger: renVmSubmitter.submittingDone || recoveringTx,
+    startTrigger: renVmSubmitter.submittingDone || recoveryMode,
     debugLabel: "renVM",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
@@ -363,7 +330,7 @@ const ReleaseStandardProcessor: FunctionComponent<
         done={done}
         waiting={waiting}
         submitting={submitting}
-        submittingDisabled={!isTxSubmittable(transaction?.in)}
+        submittingDisabled={!isTxSubmittable(transaction?.in) || recoveryMode}
         errorSubmitting={errorSubmitting}
         account={account}
       />
