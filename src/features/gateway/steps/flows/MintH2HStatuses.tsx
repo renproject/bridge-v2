@@ -59,6 +59,12 @@ import {
   useContractChainAssetBalance,
 } from "../../gatewayHooks";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
+import {
+  ChainProgressDone,
+  FromToTxLinks,
+  GoToHomeActionButton,
+  SentReceivedSection,
+} from "../shared/TransactionStatuses";
 
 type MintH2HLockTransactionStatusProps = {
   gateway: Gateway;
@@ -394,16 +400,28 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
 type MintH2HCompletedStatusProps = {
   gateway: Gateway;
   lockTxUrl: string | null;
-  mintAssetDecimals: number | null;
-  mintAmount: string | null;
+  lockAmount: string | null;
+  lockAssetDecimals: number | null;
   mintTxUrl: string | null;
+  mintAmount: string | null;
+  mintAssetDecimals: number | null;
 };
 
 export const MintH2HCompletedStatus: FunctionComponent<
   MintH2HCompletedStatusProps
-> = ({ gateway, lockTxUrl, mintTxUrl, mintAmount, mintAssetDecimals }) => {
+> = ({
+  gateway,
+  lockTxUrl,
+  lockAmount,
+  lockAssetDecimals,
+  mintTxUrl,
+  mintAmount,
+  mintAssetDecimals,
+}) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.complete-title"));
+
+  const { from, to, asset } = getGatewayParams(gateway);
   const history = useHistory();
   const { wallet } = useCurrentChainWallet();
   const walletConfig = getWalletConfig(wallet);
@@ -411,19 +429,19 @@ export const MintH2HCompletedStatus: FunctionComponent<
   const lockChainConfig = getChainConfig(gateway.params.from.chain);
   const mintChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const handleGoToHome = useCallback(() => {
-    history.push({
-      pathname: paths.HOME,
-    });
-  }, [history]);
-
-  const { showNotification } = useNotifications();
-  const { showBrowserNotification } = useBrowserNotifications();
+  const lockAmountFormatted =
+    lockAmount !== null && lockAssetDecimals !== null
+      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
+      : null;
 
   const mintAmountFormatted =
     mintAmount !== null && mintAssetDecimals !== null
       ? new BigNumber(mintAmount).shiftedBy(-mintAssetDecimals).toString()
       : null;
+
+  //TODO: DRY
+  const { showNotification } = useNotifications();
+  const { showBrowserNotification } = useBrowserNotifications();
 
   const showNotifications = useCallback(() => {
     if (mintTxUrl !== null) {
@@ -464,58 +482,28 @@ export const MintH2HCompletedStatus: FunctionComponent<
 
   return (
     <PaperContent bottomPadding>
-      <ProgressWrapper>
-        <ProgressWithContent>
-          <BigDoneIcon />
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        {t("tx.you-received-message")}{" "}
-        <NumberFormatText
-          value={mintAmountFormatted}
-          spacedSuffix={lockAssetConfig.shortName}
-        />
-        !
-      </Typography>
-      <MultipleActionButtonWrapper>
-        {addToken !== null && (
-          <Box mb={1}>
-            <AddTokenButton
-              onAddToken={addToken}
-              wallet={walletConfig.shortName || walletConfig.fullName}
-              currency={lockAssetConfig.shortName}
-            />
-          </Box>
-        )}
-        <ActionButton onClick={handleGoToHome}>
-          {t("navigation.back-to-home-label")}
-        </ActionButton>
-      </MultipleActionButtonWrapper>
-
-      <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
-        {lockTxUrl !== null && (
-          <Link
-            external
-            color="primary"
-            variant="button"
-            underline="hover"
-            href={lockTxUrl}
-          >
-            {lockChainConfig.shortName} {t("common.transaction")}
-          </Link>
-        )}
-        {mintTxUrl !== null && (
-          <Link
-            external
-            color="primary"
-            variant="button"
-            underline="hover"
-            href={mintTxUrl}
-          >
-            {mintChainConfig.shortName} {t("common.transaction")}
-          </Link>
-        )}
-      </Box>
+      <ChainProgressDone chain={to} />
+      <SentReceivedSection
+        sentAmount={lockAmountFormatted}
+        receivedAmount={mintAmountFormatted}
+        asset={asset}
+      />
+      <FromToTxLinks
+        from={from}
+        to={to}
+        fromTxUrl={lockTxUrl}
+        toTxUrl={mintTxUrl}
+      />
+      {addToken !== null && (
+        <Box mb={1}>
+          <AddTokenButton
+            onAddToken={addToken}
+            wallet={walletConfig.shortName || walletConfig.fullName}
+            currency={lockAssetConfig.shortName}
+          />
+        </Box>
+      )}
+      <GoToHomeActionButton />
       <Debug it={{ walletTokenMeta }} />
     </PaperContent>
   );

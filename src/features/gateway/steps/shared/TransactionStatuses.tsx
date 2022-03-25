@@ -152,6 +152,7 @@ export const ChainProgressDone: FunctionComponent<ChainProgressDoneProps> = ({
 };
 
 export const GoToHomeActionButton: FunctionComponent = () => {
+  // TODO: return to home
   const { t } = useTranslation();
   const { handleGoToHome } = useBasicRouteHandlers();
   return (

@@ -362,9 +362,9 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
       <ChainProgressDone chain={from} />
       <SentReceivedSection
         isRelease
-        receivedAmount={releaseAmountFormatted}
         asset={asset}
         sentAmount={burnAmountFormatted}
+        receivedAmount={releaseAmountFormatted}
       />
       <FromToTxLinks
         from={from}

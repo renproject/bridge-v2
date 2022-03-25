@@ -313,6 +313,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   //TODO: DRY
   useEffect(() => {
     if (fromAccount && transaction !== null) {
+      console.log("persisting local tx");
       persistLocalTx(fromAccount, transaction);
       const params = new URLSearchParams(history.location.search);
       const renVMHashTx = transaction.hash;
@@ -345,6 +346,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     target: lockTargetConfirmations,
     status: lockStatus,
     txUrl: lockTxUrl,
+    amount: lockAmount,
   } = gatewayInTxMeta;
 
   const renVMSubmitter = useChainTransactionSubmitter({
@@ -404,26 +406,31 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     txUrl: mintTxUrl,
   } = outTxMeta;
 
+  const { decimals: lockAssetDecimals } = useChainInstanceAssetDecimals(
+    gateway.fromChain,
+    asset
+  );
+
   const { decimals: mintAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.toChain,
     asset
   );
 
-  const Fees = (
-    <GatewayFees asset={asset} from={from} to={to} {...fees}>
-      <LabelWithValue
-        label={t("fees.assets-contracts-label")}
-        value={
-          approvalUrl !== null ? (
-            <Link href={approvalUrl} color="primary" external>
-              {t("fees.assets-contracts-approved")}
-            </Link>
-          ) : (
-            t("fees.assets-contracts-need-approval")
-          )
-        }
-      />
-    </GatewayFees>
+  const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
+
+  const ApprovalTx = (
+    <LabelWithValue
+      label={t("fees.assets-contracts-label")}
+      value={
+        approvalUrl !== null ? (
+          <Link href={approvalUrl} color="primary" external>
+            {t("fees.assets-contracts-approved")}
+          </Link>
+        ) : (
+          t("fees.assets-contracts-need-approval")
+        )
+      }
+    />
   );
 
   const { connected: fromConnected } = useWallet(from);
@@ -431,8 +438,8 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   //TODO: DRY
   const isCompleted = mintTxUrl !== null;
   useEffect(() => {
-    console.log("persisting final tx", transaction);
     if (transaction !== null && isCompleted) {
+      console.log("persisting final tx", transaction);
       persistLocalTx(fromAccount, transaction, true);
     }
   }, [persistLocalTx, fromAccount, isCompleted, transaction]);
@@ -513,6 +520,8 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       <MintH2HCompletedStatus
         gateway={gateway}
         lockTxUrl={lockTxUrl}
+        lockAmount={lockAmount}
+        lockAssetDecimals={lockAssetDecimals}
         mintAmount={mintAmount}
         mintAssetDecimals={mintAssetDecimals}
         mintTxUrl={mintTxUrl}
