@@ -170,6 +170,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   submitting,
   waiting,
   done,
+  submittingDisabled,
   errorSubmitting,
 }) => {
   const { t } = useTranslation();
@@ -240,6 +241,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           <ActionButton
             onClick={onSubmit}
             disabled={
+              submittingDisabled ||
               submitting ||
               waiting ||
               lockStatus === ChainTransactionStatus.Confirming
@@ -319,7 +321,8 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
           ) : (
             <ProgressWithContent
               confirmations={undefinedForNull(mintConfirmations)}
-              targetConfirmations={undefinedForNull(mintTargetConfirmations)}
+              targetConfirmations={mintTargetConfirmations}
+              color={mintChainConfig.color}
             >
               <ChainIcon fontSize="inherit" />
             </ProgressWithContent>
@@ -497,7 +500,7 @@ export const MintH2HCompletedStatus: FunctionComponent<
             underline="hover"
             href={lockTxUrl}
           >
-            {lockChainConfig.fullName} {t("common.transaction")}
+            {lockChainConfig.shortName} {t("common.transaction")}
           </Link>
         )}
         {mintTxUrl !== null && (
@@ -508,7 +511,7 @@ export const MintH2HCompletedStatus: FunctionComponent<
             underline="hover"
             href={mintTxUrl}
           >
-            {mintChainConfig.fullName} {t("common.transaction")}
+            {mintChainConfig.shortName} {t("common.transaction")}
           </Link>
         )}
       </Box>

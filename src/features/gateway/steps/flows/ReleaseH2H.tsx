@@ -101,6 +101,7 @@ type ReleaseH2HGatewayProcessProps = RouteComponentProps & {
   fromAccount: string;
   toAccount: string;
 };
+
 const ReleaseH2HGatewayProcess: FunctionComponent<
   ReleaseH2HGatewayProcessProps
 > = ({ history, location, fromAccount, toAccount }) => {
@@ -112,14 +113,14 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
     additionalParams,
     error: parseError,
   } = parseGatewayQueryString(location.search);
-  // TODO: consider decoding from renVM
+  // TODO: toAddress from renVM
   const { asset, from, to, amount, toAddress: toAddressParam } = gatewayParams;
   const { renVMHash } = additionalParams;
   const [gatewayChains] = useState(pickChains(allChains, from, to));
 
   const { account: fromAccountWallet } = useWallet(from);
-  // TODO: warnings
-  const toAddress = toAccount || toAddressParam;
+  // TODO: warnings?
+  const toAddress = toAddressParam || toAccount;
   const fromAddress = fromAccount || fromAccountWallet;
 
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
@@ -185,17 +186,31 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
     recoverLocalTx,
   ]);
 
-  console.log("gateway", gateway);
+  const transaction = transactions[0] || null;
+
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
-
-  // const transaction = useGatewayFirstTransaction(gateway);
-  const transaction = transactions[0] || null;
   (window as any).transaction = transaction;
 
   return (
     <>
       <GatewayPaperHeader title="Release" />
+
+      {gateway === null && (
+        <PCW>
+          <GatewayLoaderStatus />
+        </PCW>
+      )}
+      {gateway !== null && (
+        <ReleaseH2HProcessor
+          persistLocalTx={persistLocalTx}
+          gateway={gateway}
+          transaction={transaction}
+          fromAccount={fromAddress}
+          toAccount={toAddress}
+          recoveryMode={recoveryMode}
+        />
+      )}
       {Boolean(parseError) && (
         <GeneralErrorDialog
           open={true}
@@ -204,19 +219,12 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
           onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
         />
       )}
-      {gateway === null && (
-        <PCW>
-          <GatewayLoaderStatus />
-        </PCW>
-      )}
-      {gateway !== null && (
-        <ReleaseH2HProcessor
-          gateway={gateway}
-          transaction={transaction}
-          fromAccount={fromAddress}
-          toAccount={toAddress}
-          persistLocalTx={persistLocalTx}
-          isRecoveringTx={recoveryMode}
+      {Boolean(recoveringError) && (
+        <GeneralErrorDialog
+          open={true}
+          error={recoveringError}
+          alternativeActionText={t("navigation.back-to-start-label")}
+          onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
         />
       )}
       {error !== null && (
@@ -226,14 +234,6 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
           error={error}
           actionText={t("navigation.back-to-home-label")}
           onAction={() => history.push({ pathname: paths.HOME })}
-        />
-      )}
-      {Boolean(recoveringError) && (
-        <GeneralErrorDialog
-          open={true}
-          error={recoveringError}
-          alternativeActionText={t("navigation.back-to-start-label")}
-          onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
         />
       )}
       <Debug
@@ -254,8 +254,8 @@ type ReleaseH2HProcessorProps = {
   transaction: GatewayTransaction | null;
   persistLocalTx: LocalTxPersistor;
   fromAccount: string;
-  toAccount?: string;
-  isRecoveringTx?: boolean;
+  toAccount: string;
+  recoveryMode?: boolean;
 };
 
 const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
@@ -263,7 +263,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   fromAccount,
   toAccount,
   persistLocalTx,
-  isRecoveringTx,
+  recoveryMode,
   transaction,
 }) => {
   const history = useHistory();
@@ -307,7 +307,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
       console.log("renVMHash param", renVMHashTx, params);
       if (renVMHashTx !== renVMHashParam) {
         params.set("renVMHash", renVMHashTx);
-        params.set("toAddress", toAccount || "");
+        params.set("toAddress", toAccount);
         history.replace({
           search: params.toString(),
         });
@@ -324,7 +324,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.in || gateway.in,
-    startTrigger: submittingBurnDone || isRecoveringTx,
+    startTrigger: submittingBurnDone || recoveryMode,
     debugLabel: "gatewayIn",
   });
   const {
@@ -339,13 +339,13 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     tx: transaction?.renVM,
     autoSubmit:
       burnStatus === ChainTransactionStatus.Done &&
-      isTxSubmittable(transaction?.renVM),
+      isTxSubmittable(transaction?.renVM), // this may not be truthy when recovering
     debugLabel: "renVM",
   });
 
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
-    startTrigger: renVmSubmitter.submittingDone || isRecoveringTx,
+    startTrigger: renVmSubmitter.submittingDone || recoveryMode,
     debugLabel: "renVM",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
@@ -390,7 +390,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
-    startTrigger: outSubmitter.submittingDone || isRecoveringTx,
+    startTrigger: outSubmitter.submittingDone || recoveryMode,
     debugLabel: "out",
   });
   const {
@@ -402,8 +402,8 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   const { connected: fromConnected } = useWallet(from);
 
+  //TODO: DRY
   const isCompleted = releaseTxUrl !== null;
-
   useEffect(() => {
     console.log("persisting final tx", transaction);
     if (transaction !== null && isCompleted) {
@@ -418,7 +418,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
         <PCW>
           <ConnectWalletPaperSection
             chain={from}
-            isRecoveringTx={isRecoveringTx}
+            isRecoveringTx={recoveryMode}
           />
         </PCW>
       );
@@ -438,7 +438,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
           waiting={waitingBurn}
           submitting={submittingBurn}
           errorSubmitting={errorSubmittingBurn}
-          submittingDisabled={isRecoveringTx} // transaction from recovery should have this step finished
+          submittingDisabled={recoveryMode} // transaction from recovery should have this step finished
         />
       );
     }
@@ -485,7 +485,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
       <Debug
         it={{
           fromConnected,
-          isRecoveringTx: isRecoveringTx,
+          isRecoveringTx: recoveryMode,
           releaseAmount,
           releaseAssetDecimals,
           gatewayInSubmitter,

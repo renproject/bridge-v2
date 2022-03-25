@@ -12,6 +12,7 @@ export const featureFlags = {
   enableWalletConnect:
     env.WALLETCONNECT_ENABLED ||
     queryString.parse(window.location.search).walletConnectEnabled,
+  godMode: Boolean(queryString.parse(window.location.search).godMode),
 };
 
 console.log(featureFlags);

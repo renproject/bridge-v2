@@ -196,15 +196,17 @@ export const AddressInfo: FunctionComponent<AddressInfoProps> = ({
 }) => {
   const styles = useAddressInfoStyles();
   return (
-    <BluePadder>
-      <FullWidthWrapper className={styles.wrapper}>
-        <Typography variant="body2">{label}</Typography>
-        <AddressOnChainLink
-          address={address}
-          addressUrl={addressUrl}
-          Icon={Icon}
-        />
-      </FullWidthWrapper>
-    </BluePadder>
+    <Typography gutterBottom component="div">
+      <BluePadder>
+        <FullWidthWrapper className={styles.wrapper}>
+          <Typography variant="body2">{label}</Typography>
+          <AddressOnChainLink
+            address={address}
+            addressUrl={addressUrl}
+            Icon={Icon}
+          />
+        </FullWidthWrapper>
+      </BluePadder>
+    </Typography>
   );
 };

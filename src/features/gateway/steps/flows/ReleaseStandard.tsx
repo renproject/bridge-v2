@@ -73,7 +73,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     }
   }, [from, allChains, provider]);
 
-  const { gateway, transactions, recoverLocalTx } = useGateway(
+  const { gateway, transactions, recoverLocalTx, error } = useGateway(
     { asset, from, to, amount, toAddress },
     { chains: gatewayChains }
   );
@@ -132,6 +132,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
 
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
+  (window as any).transaction = transaction;
 
   return (
     <>
@@ -171,6 +172,15 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
           error={recoveringError}
           alternativeActionText={t("navigation.back-to-start-label")}
           onAlternativeAction={() => history.push({ pathname: paths.RELEASE })}
+        />
+      )}
+      {error !== null && (
+        <GeneralErrorDialog
+          open={true}
+          reason={"Failed to load gateway"}
+          error={error}
+          actionText={t("navigation.back-to-home-label")}
+          onAction={() => history.push({ pathname: paths.HOME })}
         />
       )}
       <Debug
@@ -255,8 +265,6 @@ const ReleaseStandardProcessor: FunctionComponent<
     }
   }, [history, persistLocalTx, account, transaction, transaction?.hash]);
 
-  (window as any).transaction = transaction;
-
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.in || gateway.in,
     startTrigger: submittingDone || recoveryMode,
@@ -301,20 +309,14 @@ const ReleaseStandardProcessor: FunctionComponent<
     txUrl: releaseTxUrl,
   } = outTxMeta;
 
+  //TODO: DRY
+  const isCompleted = releaseTxUrl !== null;
   useEffect(() => {
-    console.log("persisting final tx", transaction, releaseTxUrl);
-    if (transaction !== null && releaseTxUrl !== null) {
+    console.log("persisting final tx", transaction);
+    if (transaction !== null && isCompleted) {
       persistLocalTx(account, transaction, true);
     }
-  }, [persistLocalTx, account, releaseTxUrl, transaction]);
-
-  // useEffect(() => {
-  //   console.log("tx: persist changed", persistLocalTx);
-  // }, [persistLocalTx]);
-
-  // useEffect(() => {
-  //   console.log("tx: tx changed", tx);
-  // }, [tx]);
+  }, [transaction, persistLocalTx, account, isCompleted]);
 
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {

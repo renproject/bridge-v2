@@ -9,6 +9,7 @@ import React, {
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -22,15 +23,15 @@ import { useNotifications } from "../../../../providers/Notifications";
 import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
-  PartialChainInstanceMap,
   pickChains,
 } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
-import { useTxsStorage } from "../../../storage/storageHooks";
+import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import {
   GeneralErrorDialog,
   SubmitErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
+import { AddressInfo } from "../../../transactions/components/TransactionsHistoryHelpers";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
@@ -72,8 +73,9 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   const { renVMHash } = additionalParams;
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>(toAddress || "");
-  const [shouldResolveAccounts] = useState(Boolean(!renVMHash));
 
+  // if initial renVMHash is not present, that means new transaction
+  const [shouldResolveAccounts] = useState(Boolean(!renVMHash));
   const handleAccountsResolved = useCallback(
     (resolvedFromAccount: string, resolvedToAccount: string) => {
       setFromAccount(resolvedFromAccount);
@@ -121,15 +123,14 @@ export const MintH2HGatewayProcess: FunctionComponent<
     additionalParams,
     error: parseError,
   } = parseGatewayQueryString(location.search);
-  // TODO: getting toAddress from url may lead to problems, better decode it from renVM
+  // TODO: toAddress from renVM
   const { asset, from, to, amount, toAddress: toAddressParam } = gatewayParams;
-  const [gatewayChains, setGatewayChains] = useState(
-    pickChains(allChains, from, to)
-  );
+  const { renVMHash } = additionalParams;
+  const [gatewayChains] = useState(pickChains(allChains, from, to));
 
   const { account: fromAccountWallet } = useWallet(from);
-  // TODO: warnings
-  const toAddress = toAccount || toAddressParam;
+  // TODO: warnings?
+  const toAddress = toAddressParam || toAccount;
   const fromAddress = fromAccount || fromAccountWallet;
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
@@ -137,21 +138,29 @@ export const MintH2HGatewayProcess: FunctionComponent<
       from,
       to,
       amount,
-      toAddress: toAccount || toAddress,
+      toAddress: toAddress,
     },
     {
       chains: gatewayChains,
     }
   );
 
-  const { renVMHash } = additionalParams;
-  const [recovering, setRecovering] = useState(false);
-  const [, setRecoveringError] = useState<Error | null>(null);
-  const { persistLocalTx, findLocalTx } = useTxsStorage();
+  // TODO: DRY
   const { showNotification } = useNotifications();
+  const [recoveryMode] = useState(Boolean(renVMHash));
+  const [recoveringStarted, setRecoveringStarted] = useState(false);
+  const [recoveringError, setRecoveringError] = useState<Error | null>(null);
+  const { persistLocalTx, findLocalTx } = useTxsStorage();
+
   useEffect(() => {
-    if (renVMHash && fromAddress && gateway !== null && !recovering) {
-      setRecovering(true);
+    if (
+      recoveryMode &&
+      renVMHash &&
+      fromAddress &&
+      gateway !== null &&
+      !recoveringStarted
+    ) {
+      setRecoveringStarted(true);
       console.log("recovering tx: " + trimAddress(renVMHash));
       const localTx = findLocalTx(fromAddress, renVMHash);
       if (localTx === null) {
@@ -177,11 +186,12 @@ export const MintH2HGatewayProcess: FunctionComponent<
       }
     }
   }, [
+    recoveryMode,
     showNotification,
     fromAddress,
     toAddress,
     renVMHash,
-    recovering,
+    recoveringStarted,
     findLocalTx,
     gateway,
     recoverLocalTx,
@@ -189,27 +199,14 @@ export const MintH2HGatewayProcess: FunctionComponent<
 
   const transaction = transactions[0] || null;
   (window as any).gateway = gateway;
+  (window as any).transactions = transactions;
   (window as any).transaction = transaction;
-
-  useEffect(() => {
-    if (fromAccount && transaction !== null) {
-      persistLocalTx(fromAccount, transaction);
-    }
-  }, [persistLocalTx, fromAccount, transaction]);
 
   // gateway.inSetup is accepted;
   console.log("gateway", gateway);
   return (
     <>
       <GatewayPaperHeader title="Mint" />
-      {Boolean(parseError) && (
-        <GeneralErrorDialog
-          open={true}
-          reason={parseError}
-          alternativeActionText={t("navigation.back-to-start-label")}
-          onAlternativeAction={() => history.push({ pathname: paths.MINT })}
-        />
-      )}
       {gateway === null && (
         <PCW>
           <GatewayLoaderStatus />
@@ -219,8 +216,26 @@ export const MintH2HGatewayProcess: FunctionComponent<
         <MintH2HProcessor
           gateway={gateway}
           transaction={transaction}
-          recoveringTx={recovering}
-          updateChains={setGatewayChains}
+          persistLocalTx={persistLocalTx}
+          fromAccount={fromAddress}
+          toAccount={toAddress}
+          recoveryMode={recoveryMode}
+        />
+      )}
+      {Boolean(parseError) && (
+        <GeneralErrorDialog
+          open={true}
+          reason={parseError}
+          alternativeActionText={t("navigation.back-to-start-label")}
+          onAlternativeAction={() => history.push({ pathname: paths.MINT })}
+        />
+      )}
+      {Boolean(recoveringError) && (
+        <GeneralErrorDialog
+          open={true}
+          error={recoveringError}
+          alternativeActionText={t("navigation.back-to-start-label")}
+          onAlternativeAction={() => history.push({ pathname: paths.MINT })}
         />
       )}
       {error !== null && (
@@ -240,16 +255,21 @@ export const MintH2HGatewayProcess: FunctionComponent<
 type MintH2HProcessorProps = {
   gateway: Gateway;
   transaction: GatewayTransaction | null;
-  recoveringTx?: boolean;
-  updateChains?: (chains: PartialChainInstanceMap) => void;
+  persistLocalTx: LocalTxPersistor;
+  fromAccount: string;
+  toAccount: string;
+  recoveryMode?: boolean;
 };
 
 const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   gateway,
   transaction,
-  recoveringTx,
-  updateChains,
+  persistLocalTx,
+  fromAccount,
+  toAccount,
+  recoveryMode,
 }) => {
+  const history = useHistory();
   const allChains = useCurrentNetworkChains();
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
@@ -270,7 +290,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const inSetupApprovalTxMeta = useChainTransactionStatusUpdater({
     tx: gateway.inSetup.approval,
     debugLabel: "inSetup.approval",
-    startTrigger: submittingApprovalDone || recoveringTx,
+    startTrigger: submittingApprovalDone || recoveryMode,
   });
 
   const { status: approvalStatus, txUrl: approvalUrl } = inSetupApprovalTxMeta;
@@ -290,9 +310,34 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     handleReset: handleResetLock,
   } = gatewayInSubmitter;
 
+  //TODO: DRY
+  useEffect(() => {
+    if (fromAccount && transaction !== null) {
+      persistLocalTx(fromAccount, transaction);
+      const params = new URLSearchParams(history.location.search);
+      const renVMHashTx = transaction.hash;
+      const renVMHashParam = (params as any).renVMHash;
+      console.log("renVMHash param", renVMHashTx, params);
+      if (renVMHashTx !== renVMHashParam) {
+        params.set("renVMHash", renVMHashTx);
+        params.set("toAddress", toAccount);
+        history.replace({
+          search: params.toString(),
+        });
+      }
+    }
+  }, [
+    history,
+    persistLocalTx,
+    fromAccount,
+    submittingLockDone,
+    transaction,
+    toAccount,
+  ]);
+
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
-    tx: gateway.in, // keep attached to transaction
-    startTrigger: submittingLockDone || recoveringTx,
+    tx: transaction?.in || gateway.in,
+    startTrigger: submittingLockDone || recoveryMode,
     debugLabel: "in",
   });
   const {
@@ -311,7 +356,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   });
   const renVMTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
-    startTrigger: renVMSubmitter.submittingDone,
+    startTrigger: renVMSubmitter.submittingDone || recoveryMode,
     debugLabel: "renVM",
   });
   const { status: renVMStatus, amount: mintAmount } = renVMTxMeta;
@@ -321,32 +366,20 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   useSyncWalletChain(activeChain);
   const { connected, provider } = useWallet(activeChain);
   useEffect(() => {
-    console.log("chains changed from", activeChain);
+    console.log("activeChain changed", activeChain);
     if (provider && connected) {
       alterContractChainProviderSigner(allChains, activeChain, provider);
-      if (updateChains) {
-        updateChains(pickChains(allChains, from, to));
-      }
     }
-  }, [allChains, activeChain, provider, connected, from, to, updateChains]);
+  }, [allChains, activeChain, provider, connected]);
 
   const { chain } = useSelector($wallet);
   const { connected: toConnected } = useWallet(to);
   const showSwitchWalletDialog =
     renVMStatus !== null && !toConnected && chain !== to;
 
-  // const chains = useCurrentNetworkChains();
-  // useEffect(() => {
-  //   if (toProvider && chain === to) {
-  //     alterEthereumBaseChainProviderSigner(chains, toProvider, true, chain);
-  //   }
-  // }, [chains, toProvider, chain, to]);
-  // wallet provider end
-
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
     debugLabel: "out",
-    autoSubmit: recoveringTx,
   });
 
   const {
@@ -362,7 +395,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
     debugLabel: "out",
-    startTrigger: outSubmitter.submittingDone,
+    startTrigger: outSubmitter.submittingDone || recoveryMode,
   });
   const {
     status: mintStatus,
@@ -395,31 +428,44 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   const { connected: fromConnected } = useWallet(from);
 
-  let Content = null;
-  if (approvalStatus !== ChainTransactionStatus.Done && !recoveringTx) {
-    if (!fromConnected) {
-      Content = (
-        <PCW>
-          <ConnectWalletPaperSection chain={from} />
-        </PCW>
-      );
-    } else {
-      Content = (
-        <PaperContent bottomPadding>
-          <span>from/to accounts should be here from created gateway</span>
-          <ActionButtonWrapper>
-            <ActionButton
-              onClick={handleSubmitApproval}
-              disabled={submittingApproval}
-            >
-              {submittingApproval
-                ? "Approving Accounts & Contracts..."
-                : "Approve Accounts & Contracts"}
-            </ActionButton>
-          </ActionButtonWrapper>
-        </PaperContent>
-      );
+  //TODO: DRY
+  const isCompleted = mintTxUrl !== null;
+  useEffect(() => {
+    console.log("persisting final tx", transaction);
+    if (transaction !== null && isCompleted) {
+      persistLocalTx(fromAccount, transaction, true);
     }
+  }, [persistLocalTx, fromAccount, isCompleted, transaction]);
+
+  let Content = null;
+  if (!fromConnected) {
+    Content = (
+      <PCW>
+        <ConnectWalletPaperSection chain={from} isRecoveringTx={recoveryMode} />
+      </PCW>
+    );
+  } else if (
+    approvalStatus !== ChainTransactionStatus.Done &&
+    lockStatus === null
+  ) {
+    Content = (
+      <PaperContent bottomPadding>
+        <div>
+          <AddressInfo address={fromAccount} label="Sender Address" />
+          <AddressInfo address={toAccount} label="Recipient Address" />
+        </div>
+        <ActionButtonWrapper>
+          <ActionButton
+            onClick={handleSubmitApproval}
+            disabled={submittingApproval || recoveryMode}
+          >
+            {submittingApproval
+              ? "Approving Accounts & Contracts..."
+              : "Approve Accounts & Contracts"}
+          </ActionButton>
+        </ActionButtonWrapper>
+      </PaperContent>
+    );
   } else if (renVMStatus === null) {
     //in case of failing, submit helpers must be here
     Content = (
@@ -438,6 +484,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         done={doneLock}
         errorSubmitting={errorSubmittingLock}
         onReset={handleResetLock}
+        submittingDisabled={recoveryMode}
       />
     );
   } else if (mintTxUrl === null) {
@@ -485,7 +532,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       )}
       <Debug
         it={{
-          recoveringTx,
+          recoveryMode,
           count: gateway.transactions.count(),
           inSetupApprovalSubmitter,
           inSetupApprovalTxMeta,

@@ -266,6 +266,7 @@ export const useContractChainAssetBalance = (
       console.log(`gateway balance: ${balanceBn}`);
     };
     getBalance().catch((error) => {
+      console.error(error);
       setError(error);
     });
   }, [instance, decimals, asset, address]);

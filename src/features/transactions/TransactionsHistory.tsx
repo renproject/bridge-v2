@@ -39,6 +39,7 @@ import { CustomLink } from "../../components/links/Links";
 import { SimplePagination } from "../../components/pagination/SimplePagination";
 import { InlineSkeleton } from "../../components/progress/ProgressHelpers";
 import { Debug } from "../../components/utils/Debug";
+import { featureFlags } from "../../constants/featureFlags";
 import { paths } from "../../pages/routes";
 import {
   getAssetConfig,
@@ -167,7 +168,7 @@ export const TransactionsHistory: FunctionComponent = () => {
   }, []);
 
   const handleRemoveFiltered = useCallback(() => {
-    //do
+    //TODO: finish
   }, []);
 
   return (
@@ -646,7 +647,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           )}
         </InfoChips>
         <div>
-          {done && (
+          {(done || featureFlags.godMode) && (
             <CustomChip
               size="small"
               color="advanced"
