@@ -1,9 +1,14 @@
-import React, { FunctionComponent, useCallback, useState } from "react";
-import { Route } from "react-router-dom";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { Route, useHistory, useLocation } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
+import { GatewayPaperLoader } from "./components/GatewayHelpers";
 import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
-import { SharedGatewayProvider } from "./gatewaySlice";
 import { ReleaseH2HProcess } from "./steps/flows/ReleaseH2H";
 import { ReleaseStandardProcess } from "./steps/flows/ReleaseStandard";
 import { TestProcess } from "./steps/flows/Test";
@@ -11,6 +16,7 @@ import { GatewayFeesStep } from "./steps/GatewayFeesStep";
 import { GatewayInitialStep } from "./steps/GatewayInitialStep";
 import { MintH2HProcess } from "./steps/flows/MintH2H";
 import { MintStandardProcess } from "./steps/flows/MintStandard";
+import { useGatewayLocationState } from "./steps/gatewayRoutingUtils";
 
 export enum GatewayConfigurationStep {
   INITIAL = "initial",
@@ -51,11 +57,37 @@ const GatewayConfigurationSteps: FunctionComponent<
   );
 };
 
+const GatewayLifecycleGuard: FunctionComponent = ({ children }) => {
+  const history = useHistory();
+  const location = useLocation();
+  const { reload } = useGatewayLocationState();
+
+  useEffect(() => {
+    let timeout: any;
+    if (reload) {
+      timeout = setTimeout(() => {
+        history.replace({ ...location, state: {} });
+      }, 1500);
+    }
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [history, location, reload]);
+
+  if (reload) {
+    return <GatewayPaperLoader reason="Loading gateway..." />;
+  }
+
+  return <>{children}</>;
+};
+
 export const GatewayRoutes: FunctionComponent = () => {
   usePageTitle("Gateway");
 
   return (
-    <SharedGatewayProvider>
+    <GatewayLifecycleGuard>
       <Route
         exact
         path={[paths.MINT, paths.RELEASE]}
@@ -78,6 +110,6 @@ export const GatewayRoutes: FunctionComponent = () => {
         component={ReleaseH2HProcess}
       />
       <Route exact path={paths.TEST} component={TestProcess} />
-    </SharedGatewayProvider>
+    </GatewayLifecycleGuard>
   );
 };

@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 export type GatewayLocationState = {
   renVMHashReplaced?: boolean;
   renVMHashDetected?: boolean;
+  reload?: boolean;
 };
 
 export const useGatewayLocationState = () => {
@@ -11,5 +12,6 @@ export const useGatewayLocationState = () => {
   return {
     renVMHashDetected: state?.renVMHashDetected || false,
     renVMHashReplaced: state?.renVMHashReplaced || false,
+    reload: state?.reload || false,
   } as GatewayLocationState;
 };

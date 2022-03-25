@@ -62,8 +62,38 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   const { renVMHash } = additionalParams;
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>(toAddress || "");
-  const [shouldResolveAccounts] = useState(Boolean(!renVMHash));
+  // const [currentHash, setCurrentHash] = useState(renVMHash);
+  // const [reloading, setReloading] = useState(false);
 
+  // useEffect(() => {
+  //   console.log("recovering: reloading");
+  //   if (!reloading) {
+  //     return;
+  //   }
+  //   const timeout = setTimeout(() => {
+  //     setReloading(false);
+  //   }, 1000);
+  //
+  //   return () => clearTimeout(timeout);
+  // }, [reloading]);
+  //
+  // useEffect(() => {
+  //   if (!renVMHash) {
+  //     // do nothing if hash not present
+  //     return;
+  //   }
+  //   if (!currentHash) {
+  //     // hash occured from empty
+  //     console.log("recovering: hash occured");
+  //     setCurrentHash(renVMHash);
+  //   } else {
+  //     console.log("recovering: hash changed, reloading");
+  //     setReloading(true);
+  //   }
+  // }, [currentHash, renVMHash]);
+
+  // if initial renVMHash is not present, that means new transaction
+  const [shouldResolveAccounts] = useState(!Boolean(renVMHash));
   const handleAccountsResolved = useCallback(
     (resolvedFromAccount: string, resolvedToAccount: string) => {
       setFromAccount(resolvedFromAccount);
@@ -132,13 +162,14 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
     { chains: gatewayChains }
   );
 
-  const [recoveringTx, setRecoveringTx] = useState(false);
+  const [isRecoveringTx, setIsRecoveringTx] = useState(false);
   const [, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
   const { showNotification } = useNotifications();
   useEffect(() => {
-    if (renVMHash && fromAddress && gateway !== null && !recoveringTx) {
-      setRecoveringTx(true);
+    if (renVMHash && fromAddress && gateway !== null && !isRecoveringTx) {
+      // this will happen only once per gateway lifecycle
+      setIsRecoveringTx(true);
       console.log("recovering tx: " + trimAddress(renVMHash));
       const localTx = findLocalTx(fromAddress, renVMHash);
       if (localTx === null) {
@@ -164,7 +195,7 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
     showNotification,
     fromAddress,
     renVMHash,
-    recoveringTx,
+    isRecoveringTx,
     findLocalTx,
     gateway,
     recoverLocalTx,
@@ -200,7 +231,7 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
           transaction={transaction}
           fromAccount={fromAddress}
           persistLocalTx={persistLocalTx}
-          recoveringTx={recoveringTx}
+          isRecoveringTx={isRecoveringTx}
         />
       )}
       {error !== null && (
@@ -229,14 +260,14 @@ type ReleaseStandardProcessorProps = {
   transaction: GatewayTransaction | null;
   persistLocalTx: LocalTxPersistor;
   fromAccount: string;
-  recoveringTx?: boolean;
+  isRecoveringTx?: boolean;
 };
 
 const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   gateway,
   fromAccount,
   persistLocalTx,
-  recoveringTx,
+  isRecoveringTx,
   transaction,
 }) => {
   const { t } = useTranslation();
@@ -277,7 +308,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.in || gateway.in,
-    startTrigger: submittingBurnDone || recoveringTx,
+    startTrigger: submittingBurnDone || isRecoveringTx,
     debugLabel: "gatewayIn",
   });
   const {
@@ -298,7 +329,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
-    startTrigger: renVmSubmitter.submittingDone || recoveringTx,
+    startTrigger: renVmSubmitter.submittingDone || isRecoveringTx,
     debugLabel: "renVM",
   });
   const { status: renVMStatus, amount: releaseAmount } = renVmTxMeta;
@@ -343,7 +374,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
 
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
-    startTrigger: outSubmitter.submittingDone || recoveringTx,
+    startTrigger: outSubmitter.submittingDone || isRecoveringTx,
     debugLabel: "out",
   });
   const {
@@ -358,7 +389,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
   const isCompleted = releaseTxUrl !== null;
 
   useEffect(() => {
-    console.log("persisting final tx", transaction, releaseTxUrl);
+    console.log("persisting final tx", transaction);
     if (transaction !== null && isCompleted) {
       persistLocalTx(fromAccount, transaction, true);
     }
@@ -369,7 +400,10 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
     if (!fromConnected) {
       Content = (
         <PCW>
-          <ConnectWalletPaperSection chain={from} />
+          <ConnectWalletPaperSection
+            chain={from}
+            isRecoveringTx={isRecoveringTx}
+          />
         </PCW>
       );
     } else {
@@ -433,7 +467,8 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseStandardProcessorProps> = ({
       />
       <Debug
         it={{
-          recoveringTx,
+          fromConnected,
+          isRecoveringTx: isRecoveringTx,
           releaseAmount,
           releaseAssetDecimals,
           gatewayInSubmitter,

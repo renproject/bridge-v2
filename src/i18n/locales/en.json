@@ -56,7 +56,7 @@
   "gateway.submit-tx-label": "Submit Transaction",
   "gateway.submitting-tx-label": "Submitting Transaction...",
   "h2h.network-switching-message": "to complete this process, you will need to change networks after the first transaction",
-  "h2h.network-switching-tooltip": "todo: tooltip",
+  "h2h.network-switching-tooltip": "This operation requires submitting transactions on two chains. You will be required to switch wallet or network after the first transaction.",
   "languages.choose-language": "Choose Language",
   "mint.address-validity-message-1": "Complete this transaction within",
   "mint.address-validity-message-2": "Do not send to it after it has expired",

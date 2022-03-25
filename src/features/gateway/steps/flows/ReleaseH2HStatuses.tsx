@@ -88,7 +88,9 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
   const renAssetConfig = getRenAssetConfig(asset);
   const { balance } = useContractChainAssetBalance(gateway.fromChain, asset);
 
-  const Icon = fromChainConfig.Icon;
+  const { Icon: ChainIcon } = fromChainConfig;
+  const { Icon: AssetIcon } = assetConfig;
+
   const showProgress =
     burnConfirmations !== null && burnTargetConfirmations !== null;
 
@@ -110,7 +112,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
                 targetConfirmations={undefinedForNull(burnTargetConfirmations)}
                 color={fromChainConfig.color}
               >
-                <Icon fontSize="inherit" />
+                <ChainIcon fontSize="inherit" />
               </ProgressWithContent>
             </ProgressWrapper>
             <TransactionProgressInfo
@@ -138,7 +140,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
             valueEquivalent={
               <UsdNumberFormatText amountUsd={outputAmountUsd} />
             }
-            Icon={<Icon fontSize="inherit" />}
+            Icon={<AssetIcon fontSize="inherit" />}
           />
         </MediumTopWrapper>
         <WalletNetworkSwitchMessage />
@@ -151,12 +153,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
         <ActionButtonWrapper>
           <ActionButton
             onClick={onSubmit}
-            disabled={
-              submitting ||
-              waiting ||
-              done ||
-              burnStatus !== ChainTransactionStatus.Ready
-            }
+            disabled={submitting || waiting || done}
           >
             {submitting || waiting
               ? t("gateway.submitting-tx-label")

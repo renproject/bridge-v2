@@ -1,10 +1,12 @@
 import { Box } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import { FunctionComponent } from "react";
+import React, { FunctionComponent } from "react";
 import {
   ProgressStatus,
   ProgressStatusProps,
 } from "../../transactions/components/TransactionsHelpers";
+import { GatewayPaperHeader } from "../steps/shared/GatewayNavigationHelpers";
+import { PCW } from "./PaperHelpers";
 
 export const GatewayLoaderStatus: FunctionComponent<ProgressStatusProps> = ({
   reason = "Loading gateway...",
@@ -23,6 +25,19 @@ export const GatewayLoaderStatus: FunctionComponent<ProgressStatusProps> = ({
         <Skeleton width={70} height={17} />
         <Skeleton width={70} height={17} />
       </Box>
+    </>
+  );
+};
+
+export const GatewayPaperLoader: FunctionComponent<ProgressStatusProps> = ({
+  reason = "Loading gateway...",
+}) => {
+  return (
+    <>
+      <GatewayPaperHeader title={reason} />
+      <PCW>
+        <GatewayLoaderStatus reason={reason} />
+      </PCW>
     </>
   );
 };

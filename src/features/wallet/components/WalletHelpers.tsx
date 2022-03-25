@@ -712,11 +712,12 @@ type ConnectWalletPaperSectionProps = {
   account?: string;
   wallet?: Wallet;
   asset?: Asset;
+  isRecoveringTx?: boolean;
 };
 
 export const ConnectWalletPaperSection: FunctionComponent<
   ConnectWalletPaperSectionProps
-> = ({ chain, account }) => {
+> = ({ chain, account, isRecoveringTx }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const handleWalletPickerOpen = useCallback(() => {
@@ -731,6 +732,12 @@ export const ConnectWalletPaperSection: FunctionComponent<
     }
     const chainConfig = getChainConfig(chain);
     message = `Please connect ${chainConfig.fullName} compatible wallet${accountMessage}.`;
+
+    if (isRecoveringTx) {
+      message +=
+        " " +
+        "It must be the same wallet which was used to create transaction you want to resume.";
+    }
   }
 
   return (
