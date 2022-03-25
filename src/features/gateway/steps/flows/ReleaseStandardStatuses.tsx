@@ -55,6 +55,7 @@ import { SubmittingProps } from "../shared/SubmissionHelpers";
 import {
   ChainProgressDone,
   FromToTxLinks,
+  GoToHomeActionButton,
   SentReceivedSection,
 } from "../shared/TransactionStatuses";
 
@@ -297,12 +298,6 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
   const burnAssetConfig = getAssetConfig(gateway.params.asset);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const handleGoToHome = useCallback(() => {
-    history.push({
-      pathname: paths.HOME,
-    });
-  }, [history]);
-
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
 
@@ -369,11 +364,7 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
         fromTxUrl={burnTxUrl}
         toTxUrl={releaseTxUrl}
       />
-      <MultipleActionButtonWrapper>
-        <ActionButton onClick={handleGoToHome}>
-          {t("navigation.back-to-home-label")}
-        </ActionButton>
-      </MultipleActionButtonWrapper>
+      <GoToHomeActionButton />
     </PaperContent>
   );
 };
