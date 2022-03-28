@@ -391,7 +391,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
     .filter(([localAddress]) => localAddress === address)
     .map(([localAddress, txHashMap]) => txHashMap);
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const handleChangePage = useCallback((event: unknown, newPage: number) => {
     setPage(newPage);
   }, []);

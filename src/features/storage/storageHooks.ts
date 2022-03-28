@@ -85,13 +85,33 @@ export const useTxsStorage = () => {
   // const [localTxsLoaded, setLocalTxsLoaded] = useState(false);
   // const [loadingLocalTxs, setLoadingLocalTxs] = useState(false);
 
+  const findLocalTx = useCallback(
+    (address: string, renVMHash: string) => {
+      const renVMHashTxsMap = localTxs[address];
+      if (!renVMHashTxsMap) {
+        return null;
+      }
+      const resultEntry = Object.entries(renVMHashTxsMap).find(
+        ([hash]) => hash === renVMHash
+      );
+      return resultEntry ? resultEntry[1] : null;
+    },
+    [localTxs]
+  );
+
   const persistLocalTx: LocalTxPersistor = useCallback(
     (web3Address: string, tx: GatewayTransaction, done = false) => {
       console.log("tx: persisting local tx", tx, done);
       if (!tx.hash) {
-        console.warn("Unable to persist tx", tx);
+        console.warn("Unable to persist tx, no tx.hash", tx);
         return;
       }
+      const actual = findLocalTx(web3Address, tx.hash);
+      // prevent overwriting done transactions
+      if (actual !== null && actual.done) {
+        return;
+      }
+
       setLocalTxs((txs) => ({
         ...txs,
         [web3Address]: {
@@ -157,20 +177,6 @@ export const useTxsStorage = () => {
         );
       }
       return Object.fromEntries(resultEntries);
-    },
-    [localTxs]
-  );
-
-  const findLocalTx = useCallback(
-    (address: string, renVMHash: string) => {
-      const renVMHashTxsMap = localTxs[address];
-      if (!renVMHashTxsMap) {
-        return null;
-      }
-      const resultEntry = Object.entries(renVMHashTxsMap).find(
-        ([hash]) => hash === renVMHash
-      );
-      return resultEntry ? resultEntry[1] : null;
     },
     [localTxs]
   );
