@@ -1,10 +1,9 @@
-import { Box, Divider, Typography } from "@material-ui/core";
+import { Box, Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import React, { FunctionComponent, ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
   ActionButton,
@@ -15,7 +14,6 @@ import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import {
-  BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
@@ -24,16 +22,15 @@ import {
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
-import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
-import { getChainConfig } from "../../../../utils/chainsConfig";
-import { feesDecimalImpact } from "../../../../utils/numbers";
-import { undefinedForNull } from "../../../../utils/propsUtils";
 import {
   getAssetConfig,
   getRenAssetName,
 } from "../../../../utils/assetsConfig";
+import { getChainConfig } from "../../../../utils/chainsConfig";
+import { feesDecimalImpact } from "../../../../utils/numbers";
+import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
@@ -422,11 +419,9 @@ export const MintH2HCompletedStatus: FunctionComponent<
   useSetPaperTitle(t("mint.complete-title"));
 
   const { from, to, asset } = getGatewayParams(gateway);
-  const history = useHistory();
   const { wallet } = useCurrentChainWallet();
   const walletConfig = getWalletConfig(wallet);
   const lockAssetConfig = getAssetConfig(gateway.params.asset);
-  const lockChainConfig = getChainConfig(gateway.params.from.chain);
   const mintChainConfig = getChainConfig(gateway.params.to.chain);
 
   const lockAmountFormatted =

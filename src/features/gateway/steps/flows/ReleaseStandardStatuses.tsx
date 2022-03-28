@@ -4,7 +4,6 @@ import { ChainTransactionStatus } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import React, { FunctionComponent, ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
   ActionButton,
@@ -23,7 +22,6 @@ import {
   AssetInfo,
   SimpleAssetInfo,
 } from "../../../../components/typography/TypographyHelpers";
-import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import {
@@ -293,7 +291,6 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
 }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("release.completed-title"));
-  const history = useHistory();
   const { from, to, asset } = getGatewayParams(gateway);
   const burnAssetConfig = getAssetConfig(gateway.params.asset);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);

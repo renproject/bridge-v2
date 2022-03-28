@@ -1,7 +1,7 @@
 // Source: https://usehooks.com/useLocalStorage/
 import { Asset, Chain } from "@renproject/chains";
 import { GatewayTransaction } from "@renproject/ren";
-import { TransactionParams } from "@renproject/ren/build/main/gatewayTransaction";
+import { TransactionParams } from "@renproject/ren/build/module/params";
 import { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { $network } from "../network/networkSlice";
@@ -61,7 +61,6 @@ export type AddressTxsMap = {
 };
 
 type GetLocalTxsForAddressFilterParams = {
-  unfinished?: boolean; // depreceted
   done?: boolean;
   asset?: Asset | string;
   from?: Chain | string;
@@ -125,7 +124,7 @@ export const useTxsStorage = () => {
         },
       }));
     },
-    [setLocalTxs]
+    [setLocalTxs, findLocalTx] //TODO: rerender warn
   );
 
   const removeLocalTx: LocalTxRemover = useCallback(
@@ -142,22 +141,13 @@ export const useTxsStorage = () => {
   const getLocalTxsForAddress = useCallback(
     (
       address: string,
-      {
-        unfinished = false,
-        done,
-        asset,
-        to,
-        from,
-      }: GetLocalTxsForAddressFilterParams
+      { done, asset, to, from }: GetLocalTxsForAddressFilterParams
     ) => {
       const renVMHashTxsMap = localTxs[address];
       if (!renVMHashTxsMap) {
         return {};
       }
       let resultEntries = Object.entries(renVMHashTxsMap);
-      if (unfinished) {
-        resultEntries = resultEntries.filter(([hash, tx]) => !tx.done);
-      }
       if (done !== undefined) {
         resultEntries = resultEntries.filter(([hash, tx]) => tx.done === done);
       }

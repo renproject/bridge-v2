@@ -15,8 +15,6 @@ import {
   ActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
 import { PaperContent } from "../../../../components/layout/Paper";
-import { Link } from "../../../../components/links/Links";
-import { LabelWithValue } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
@@ -271,7 +269,6 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 }) => {
   const history = useHistory();
   const allChains = useCurrentNetworkChains();
-  const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
   const fees = useGatewayFeesWithRates(gateway, amount || 0);
 
@@ -293,7 +290,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     startTrigger: submittingApprovalDone || recoveryMode,
   });
 
-  const { status: approvalStatus, txUrl: approvalUrl } = inSetupApprovalTxMeta;
+  const { status: approvalStatus } = inSetupApprovalTxMeta;
   // TODO: solana
 
   const gatewayInSubmitter = useChainTransactionSubmitter({
@@ -417,21 +414,21 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   );
 
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
-
-  const ApprovalTx = (
-    <LabelWithValue
-      label={t("fees.assets-contracts-label")}
-      value={
-        approvalUrl !== null ? (
-          <Link href={approvalUrl} color="primary" external>
-            {t("fees.assets-contracts-approved")}
-          </Link>
-        ) : (
-          t("fees.assets-contracts-need-approval")
-        )
-      }
-    />
-  );
+  //
+  // const ApprovalTx = (
+  //   <LabelWithValue
+  //     label={t("fees.assets-contracts-label")}
+  //     value={
+  //       approvalUrl !== null ? (
+  //         <Link href={approvalUrl} color="primary" external>
+  //           {t("fees.assets-contracts-approved")}
+  //         </Link>
+  //       ) : (
+  //         t("fees.assets-contracts-need-approval")
+  //       )
+  //     }
+  //   />
+  // );
 
   const { connected: fromConnected } = useWallet(from);
 
