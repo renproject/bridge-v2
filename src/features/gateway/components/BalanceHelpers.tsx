@@ -1,5 +1,5 @@
 import { Fade } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, styled } from "@material-ui/core/styles";
 import { Asset, Chain } from "@renproject/chains";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,6 +21,10 @@ const useBalanceInfoStyles = makeStyles((theme) => ({
   },
 }));
 
+export const BalanceInfoPlaceholder = styled("div")({
+  height: 20,
+});
+
 export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
   balance,
   asset,
@@ -33,8 +37,8 @@ export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
       <LabelWithValue
         label={
           <>
-            {t("common.balance")}
-            {chain ? ` (${getChainConfig(chain).shortName})` : null}
+            {t("common.balance")} {t("common.on")}{" "}
+            {chain ? getChainConfig(chain).shortName : null}
             {":"}
           </>
         }

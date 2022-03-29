@@ -126,7 +126,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
         <WalletNetworkSwitchMessage />
       </PaperContent>
       <Divider />
-      <PaperContent topPadding darker>
+      <PaperContent topPadding bottomPadding darker>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
           <ActionButton
@@ -223,7 +223,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
         />
       </PaperContent>
       <Divider />
-      <PaperContent topPadding darker>
+      <PaperContent topPadding bottomPadding darker>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
           {connected && (
