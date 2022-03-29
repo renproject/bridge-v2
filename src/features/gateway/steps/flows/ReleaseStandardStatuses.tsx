@@ -83,9 +83,11 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
     account
   );
 
-  const hasBalance = balance !== null;
-  const showBalanceError =
-    hasBalance && new BigNumber(amount).isGreaterThan(balance);
+  const showBalanceError = false;
+  // TODO: finishe when solana stuff done
+  // const hasBalance = balance !== null;
+  // const showBalanceError = hasBalance && new BigNumber(amount).isGreaterThan(balance);
+
   return (
     <>
       <PaperContent bottomPadding>
@@ -118,7 +120,6 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
               submitting ||
               waiting ||
               done ||
-              !hasBalance ||
               showBalanceError
             }
           >

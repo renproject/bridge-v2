@@ -59,12 +59,12 @@ export const createGateway = async (
   } else if (supportedSolanaChains.includes(gatewayParams.from)) {
     const solana = fromChainInstance.chain as Solana;
     // const decimals = await solana.assetDecimals(asset);
-    // TODO: crit finish
+    // const adjustedAmount = new BigNumber(gatewayParams.amount || "")
+    //   .shiftedBy(decimals)
+    //   .toString();
     // const tokenAddress = await solana.getAssociatedTokenAccount(asset);
     fromChain = solana.Account({
-      // amount: new BigNumber(gatewayParams.amount || "")
-      //   .shiftedBy(decimals)
-      //   .toString(),
+      // amount: adjustedAmount,
       amount: gatewayParams.amount,
     });
   } else if (supportedBitcoinChains.includes(gatewayParams.from)) {

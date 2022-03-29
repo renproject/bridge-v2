@@ -10,7 +10,6 @@ import {
   ActionButtonWrapper,
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
 import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
@@ -18,10 +17,6 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
-import {
-  AssetInfo,
-  SimpleAssetInfo,
-} from "../../../../components/typography/TypographyHelpers";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import {
@@ -29,14 +24,10 @@ import {
   getRenAssetConfig,
 } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
-import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
-import {
-  BalanceInfo,
-  UsdNumberFormatText,
-} from "../../components/BalanceHelpers";
+import { BalanceInfo } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
 import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
 import {
@@ -52,6 +43,7 @@ import {
   ChainProgressDone,
   FromToTxLinks,
   GoToHomeActionButton,
+  SendingReceivingSection,
   SentReceivedSection,
 } from "../shared/TransactionStatuses";
 
@@ -87,12 +79,10 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
   const { asset, amount, from, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const fromChainConfig = getChainConfig(from);
-  const assetConfig = getAssetConfig(asset);
   const renAssetConfig = getRenAssetConfig(asset);
   const { balance } = useContractChainAssetBalance(gateway.fromChain, asset);
 
   const { Icon: ChainIcon } = fromChainConfig;
-  const { Icon: AssetIcon } = assetConfig;
 
   const showProgress =
     burnConfirmations !== null && burnTargetConfirmations !== null;
@@ -125,27 +115,13 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
             />
           </>
         )}
-        <SimpleAssetInfo
-          label={t("release.releasing-label")}
-          value={amount}
-          asset={renAssetConfig.shortName}
+        <SendingReceivingSection
+          isRelease
+          asset={asset}
+          sendingAmount={amount}
+          receivingAmount={outputAmount}
+          receivingAmountUsd={outputAmountUsd}
         />
-        <MediumTopWrapper>
-          <AssetInfo
-            label={t("common.receiving-label")}
-            value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={assetConfig.shortName}
-                decimalScale={feesDecimalImpact(amount)}
-              />
-            }
-            valueEquivalent={
-              <UsdNumberFormatText amountUsd={outputAmountUsd} />
-            }
-            Icon={<AssetIcon fontSize="inherit" />}
-          />
-        </MediumTopWrapper>
         <WalletNetworkSwitchMessage />
       </PaperContent>
       <Divider />
@@ -200,6 +176,7 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
   onSubmit,
   onReset,
   submitting,
+  submittingDisabled,
   waiting,
   done,
   errorSubmitting,
@@ -208,10 +185,7 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
   const { asset, to, amount, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const releaseChainConfig = getChainConfig(to);
-  const assetConfig = getAssetConfig(asset);
-  const renAssetConfig = getRenAssetConfig(asset);
   const { Icon: ChainIcon } = releaseChainConfig;
-  const { Icon: AssetIcon } = assetConfig;
 
   return (
     <>
@@ -240,27 +214,13 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
             />
           </>
         )}
-        <SimpleAssetInfo
-          label={t("release.releasing-label")}
-          value={amount}
-          asset={renAssetConfig.shortName}
+        <SendingReceivingSection
+          isRelease
+          asset={asset}
+          sendingAmount={amount}
+          receivingAmount={outputAmount}
+          receivingAmountUsd={outputAmountUsd}
         />
-        <MediumTopWrapper>
-          <AssetInfo
-            label={t("common.receiving-label")}
-            value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={assetConfig.shortName}
-                decimalScale={feesDecimalImpact(amount)}
-              />
-            }
-            valueEquivalent={
-              <UsdNumberFormatText amountUsd={outputAmountUsd} />
-            }
-            Icon={<AssetIcon fontSize="inherit" />}
-          />
-        </MediumTopWrapper>
       </PaperContent>
       <Divider />
       <PaperContent topPadding darker>
@@ -268,7 +228,7 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
         <MultipleActionButtonWrapper>
           <ActionButton
             onClick={onSubmit}
-            disabled={submitting || waiting || done}
+            disabled={submittingDisabled || submitting || waiting || done}
           >
             {submitting || waiting
               ? t("gateway.submitting-tx-label")

@@ -400,6 +400,10 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     txUrl: releaseTxUrl,
   } = outTxMeta;
 
+  const submittingReleaseDisabled =
+    renVMStatus !== ChainTransactionStatus.Done ||
+    !isTxSubmittable(transaction?.out);
+
   const { connected: fromConnected } = useWallet(from);
 
   //TODO: DRY
@@ -456,6 +460,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
         onReset={handleResetRelease}
         onSubmit={handleSubmitRelease}
         submitting={submittingRelease}
+        submittingDisabled={submittingReleaseDisabled}
         waiting={waitingRelease}
         done={doneRelease}
         errorSubmitting={errorSubmittingRelease}

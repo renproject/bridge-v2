@@ -33,6 +33,7 @@ import {
 } from "../../../wallet/walletHooks";
 import { BalanceInfo } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
+import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
 import {
   RenVMSubmittingInfo,
   TransactionProgressInfo,
@@ -122,6 +123,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           receivingAmount={outputAmount}
           receivingAmountUsd={outputAmountUsd}
         />
+        <WalletNetworkSwitchMessage />
       </PaperContent>
       <Divider />
       <PaperContent topPadding darker>

@@ -183,6 +183,7 @@ type AssetChainsData = AssetChainsConfig & {
 };
 
 export const supportedBitcoinChains: Array<Chain> = [
+  // TODO: supported deposit chains ?
   Chain.Bitcoin,
   Chain.BitcoinCash,
   Chain.Dogecoin,
