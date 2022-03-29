@@ -9,27 +9,17 @@ import {
   ActionButton,
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
-import {
-  AssetInfo,
-  SimpleAssetInfo,
-} from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
-import {
-  getAssetConfig,
-  getRenAssetName,
-} from "../../../../utils/assetsConfig";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
-import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
@@ -41,12 +31,8 @@ import {
   useWalletAssetHelpers,
   useWalletPicker,
 } from "../../../wallet/walletHooks";
-import {
-  BalanceInfo,
-  UsdNumberFormatText,
-} from "../../components/BalanceHelpers";
+import { BalanceInfo } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
-import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
 import {
   RenVMSubmittingInfo,
   TransactionProgressInfo,
@@ -60,91 +46,9 @@ import {
   ChainProgressDone,
   FromToTxLinks,
   GoToHomeActionButton,
+  SendingReceivingSection,
   SentReceivedSection,
 } from "../shared/TransactionStatuses";
-
-type MintH2HLockTransactionStatusProps = {
-  gateway: Gateway;
-  Fees: ReactNode | null;
-  outputAmount: string | null;
-  outputAmountUsd: string | null;
-  onSubmit: () => void;
-  onReload?: () => void;
-  onRetry?: () => void;
-  submitting: boolean;
-  submittingError?: Error | string;
-};
-
-export const MintH2HLockTransactionStatus: FunctionComponent<
-  MintH2HLockTransactionStatusProps
-> = ({
-  gateway,
-  Fees,
-  outputAmount,
-  outputAmountUsd,
-  onSubmit,
-  submitting,
-  onRetry,
-  submittingError,
-}) => {
-  const { t } = useTranslation();
-  const { asset, amount } = getGatewayParams(gateway);
-  const assetConfig = getAssetConfig(asset);
-  const renAsset = getRenAssetName(asset);
-  const { balance } = useContractChainAssetBalance(
-    gateway.fromChain as ContractChain,
-    asset
-  );
-  const { RenIcon } = assetConfig;
-
-  return (
-    <>
-      <PaperContent bottomPadding>
-        <BalanceInfo balance={balance} asset={asset} />
-        <SimpleAssetInfo
-          label={t("mint.minting-label")}
-          value={amount}
-          asset={asset}
-        />
-        <MediumTopWrapper>
-          <AssetInfo
-            label={t("common.receiving-label")}
-            value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={renAsset}
-                decimalScale={feesDecimalImpact(amount)}
-              />
-            }
-            valueEquivalent={
-              <UsdNumberFormatText amountUsd={outputAmountUsd} />
-            }
-            Icon={<RenIcon fontSize="inherit" />}
-          />
-        </MediumTopWrapper>
-      </PaperContent>
-      <Divider />
-      <PaperContent topPadding darker>
-        {Fees}
-        <WalletNetworkSwitchMessage />
-        <MultipleActionButtonWrapper>
-          <ActionButton onClick={onSubmit} disabled={submitting}>
-            {submitting
-              ? t("gateway.submitting-tx-label")
-              : t("gateway.submit-tx-label")}
-          </ActionButton>
-          {submittingError && (
-            <SubmitErrorDialog
-              open={true}
-              error={submittingError}
-              onAction={onRetry}
-            />
-          )}
-        </MultipleActionButtonWrapper>
-      </PaperContent>
-    </>
-  );
-};
 
 type MintH2HLockTransactionProgressStatusProps = SubmittingProps & {
   gateway: Gateway;
@@ -176,13 +80,9 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   submittingDisabled,
   errorSubmitting,
 }) => {
-  const { t } = useTranslation();
   const { asset, from, amount, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const fromChainConfig = getChainConfig(from);
-  const assetConfig = getAssetConfig(asset);
-  const renAsset = getRenAssetName(asset);
-  const { RenIcon } = assetConfig;
   const { balance } = useContractChainAssetBalance(
     gateway.fromChain as ContractChain,
     asset
@@ -195,7 +95,9 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   return (
     <>
       <PaperContent bottomPadding>
-        {!showProgress && <BalanceInfo balance={balance} asset={asset} />}
+        {!showProgress && (
+          <BalanceInfo chain={from} balance={balance} asset={asset} />
+        )}
         {showProgress && (
           <>
             <ProgressWrapper>
@@ -207,7 +109,6 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
                 <Icon fontSize="inherit" />
               </ProgressWithContent>
             </ProgressWrapper>
-
             <TransactionProgressInfo
               confirmations={lockConfirmations}
               target={lockTargetConfirmations}
@@ -215,27 +116,12 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
             />
           </>
         )}
-        <SimpleAssetInfo
-          label={t("mint.minting-label")}
-          value={amount}
+        <SendingReceivingSection
           asset={asset}
+          sendingAmount={amount}
+          receivingAmount={outputAmount}
+          receivingAmountUsd={outputAmountUsd}
         />
-        <MediumTopWrapper>
-          <AssetInfo
-            label={t("common.receiving-label")}
-            value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={renAsset}
-                decimalScale={feesDecimalImpact(amount)}
-              />
-            }
-            valueEquivalent={
-              <UsdNumberFormatText amountUsd={outputAmountUsd} />
-            }
-            Icon={<RenIcon fontSize="inherit" />}
-          />
-        </MediumTopWrapper>
       </PaperContent>
       <Divider />
       <PaperContent topPadding darker>
@@ -302,16 +188,12 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   done,
   errorSubmitting,
 }) => {
-  const { t } = useTranslation();
   const { asset, to, amount } = getGatewayParams(gateway);
   const mintChainConfig = getChainConfig(to);
-  const assetConfig = getAssetConfig(asset);
-  const renAsset = getRenAssetName(asset);
 
   const { connected } = useWallet(to);
   const { handlePickerOpen, pickerOpened } = useWalletPicker();
 
-  const { RenIcon } = assetConfig;
   const { Icon: ChainIcon } = mintChainConfig;
   return (
     <>
@@ -331,36 +213,12 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
             </ProgressWithContent>
           )}
         </ProgressWrapper>
-
-        <SimpleAssetInfo
-          label={t("mint.minting-label")} // TODO: locking
-          value={amount}
+        <SendingReceivingSection
           asset={asset}
+          sendingAmount={amount}
+          receivingAmount={outputAmount}
+          receivingAmountUsd={outputAmountUsd}
         />
-        <MediumTopWrapper>
-          <AssetInfo
-            label={t("common.receiving-label")}
-            value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={renAsset}
-                decimalScale={3} // TODO: make dynamic decimal scale based on input decimals
-              />
-            }
-            valueEquivalent={
-              outputAmountUsd !== null ? (
-                <NumberFormatText
-                  prefix=" = $"
-                  value={outputAmountUsd}
-                  spacedSuffix="USD"
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              ) : null
-            }
-            Icon={<RenIcon fontSize="inherit" />}
-          />
-        </MediumTopWrapper>
       </PaperContent>
       <Divider />
       <PaperContent topPadding darker>

@@ -31,8 +31,8 @@ import { BackArrowIcon } from "../../../components/icons/RenIcons";
 import { OutlinedTextField } from "../../../components/inputs/OutlinedTextField";
 import {
   HorizontalPadder,
-  MediumTopWrapper,
   SmallHorizontalUnpadder,
+  SmallTopWrapper,
 } from "../../../components/layout/LayoutHelpers";
 import {
   PaperActions,
@@ -268,7 +268,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             asset={renAsset}
           />
         )}
-        <MediumTopWrapper>
+        <SmallTopWrapper>
           <AssetInfo
             label={t("common.receiving-label")}
             value={
@@ -291,7 +291,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             }
             Icon={<AssetIcon fontSize="inherit" />}
           />
-        </MediumTopWrapper>
+        </SmallTopWrapper>
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding>

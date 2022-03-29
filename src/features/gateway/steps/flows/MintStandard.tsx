@@ -287,6 +287,7 @@ export const GatewayDepositProcessor: FunctionComponent<
   const { submitting: renVMSubmitting } = renVmSubmitter;
   const renVMTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction.renVM,
+    debugLabel: "renVM",
     // startTrigger: renVMSubmittingDone, //this blocks resolving from url
   });
   const {
@@ -383,8 +384,7 @@ export const GatewayDepositProcessor: FunctionComponent<
         lockTxId={lockTxIdFormatted}
         lockTxUrl={lockTxUrl}
         onSubmit={handleSubmit}
-        onRetry={handleSubmit}
-        onReload={handleResetMint}
+        onReset={handleResetMint}
         submitting={submittingMint || submittingOutSetup}
         submittingError={submittingMintError}
         submittingDisabled={
@@ -392,7 +392,10 @@ export const GatewayDepositProcessor: FunctionComponent<
           renVMSubmitting ||
           renVMStatus !== ChainTransactionStatus.Done
         }
+        renVMStatus={renVMStatus}
         renVMSubmitting={renVMSubmitting}
+        onReload={handleResetMint}
+        waiting={false}
       />
     );
   } else {
@@ -611,6 +614,7 @@ export const DepositNavigationButton: FunctionComponent<
     tx: transaction.in,
     debugLabel: "in p",
   });
+
   const {
     amount: lockAmount,
     status: lockStatus,
@@ -618,6 +622,14 @@ export const DepositNavigationButton: FunctionComponent<
     target: lockTargetConfirmations,
     error: lockError,
   } = lockTxMeta;
+
+  const renVMTxMeta = useRenVMChainTransactionStatusUpdater({
+    tx: transaction.renVM,
+    debugLabel: "renVM p",
+  });
+
+  const { status: renVMStatus } = renVMTxMeta;
+
   const mintTxMeta = useChainTransactionStatusUpdater({
     tx: transaction.out,
     startTrigger: lockStatus === ChainTransactionStatus.Done,
@@ -692,12 +704,13 @@ export const DepositNavigationButton: FunctionComponent<
     lockStatus === ChainTransactionStatus.Done
   ) {
     const Icon = lockAssetConfig.Icon;
+    const renProcessing = renVMStatus === ChainTransactionStatus.Confirming;
     Progress = (
       <CircledProgressWithContent
         color={lockAssetConfig.color}
         confirmations={undefinedForNull(lockConfirmations)}
         targetConfirmations={undefinedForNull(lockTargetConfirmations)}
-        indicator={true}
+        indicator={!renProcessing}
       >
         <Icon fontSize="large" />
       </CircledProgressWithContent>
@@ -712,9 +725,15 @@ export const DepositNavigationButton: FunctionComponent<
           )}{" "}
           {lockAssetConfig.shortName}
         </Typography>
-        <Typography variant="body2" color="primary">
-          {t("mint.deposit-navigation-ready-to-mint-label")}
-        </Typography>
+        {renProcessing ? (
+          <Typography variant="body2" color="textSecondary">
+            submitting to RenVM...
+          </Typography>
+        ) : (
+          <Typography variant="body2" color="primary">
+            {t("mint.deposit-navigation-ready-to-mint-label")}
+          </Typography>
+        )}
       </div>
     );
   } else if (mintTxUrl !== null || mintStatus === ChainTransactionStatus.Done) {

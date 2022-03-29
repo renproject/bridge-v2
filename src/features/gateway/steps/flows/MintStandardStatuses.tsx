@@ -61,6 +61,7 @@ import {
 import { getGatewayParams } from "../../gatewayHooks";
 import { maxConfirmations } from "../../gatewayTransactionUtils";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
+import { SubmittingProps } from "../shared/SubmissionHelpers";
 
 type MintDepositConfirmationStatusProps = {
   gateway: Gateway;
@@ -152,7 +153,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<
   );
 };
 
-type MintDepositAcceptedStatusProps = {
+type MintDepositAcceptedStatusProps = SubmittingProps & {
   gateway: Gateway;
   transaction: GatewayTransaction;
   expiryTime: number;
@@ -163,12 +164,7 @@ type MintDepositAcceptedStatusProps = {
   lockTxId: string | null;
   lockTxUrl: string | null;
   onReload: () => void;
-  //TODO: use submittable interface
-  onSubmit: () => void;
-  onRetry: () => void;
-  submitting: boolean;
-  submittingDisabled: boolean;
-  submittingError?: Error | string;
+  renVMStatus: ChainTransactionStatus | null;
   renVMSubmitting: boolean;
 };
 
@@ -189,13 +185,12 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   submitting,
   submittingDisabled,
   onReload,
-  onRetry,
+  renVMStatus,
   renVMSubmitting,
 }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.deposit-accepted-submit-title"));
   useSetActionRequired(true);
-  const theme = useTheme();
   const lockAssetConfig = getAssetConfig(gateway.params.asset);
   const lockChainConfig = getChainConfig(gateway.params.from.chain);
   const mintChainConfig = getChainConfig(gateway.params.to.chain);
@@ -262,26 +257,32 @@ export const MintDepositAcceptedStatus: FunctionComponent<
     };
   }, [showNotification, closeNotification, mintTimeRemained]);
 
-  const { Icon } = lockChainConfig;
+  const { Icon: LockChainIcon } = lockChainConfig;
 
+  const renVMProcessing =
+    renVMSubmitting || renVMStatus !== ChainTransactionStatus.Done;
   return (
     <>
       <ProgressWrapper>
-        {submitting || renVMSubmitting ? (
-          <ProgressWithContent color={theme.customColors.skyBlue} processing>
-            {renVMSubmitting ? (
-              <RenVMSubmittingInfo />
+        {submitting || renVMProcessing ? (
+          <>
+            {renVMProcessing ? (
+              <ProgressWithContent processing>
+                <RenVMSubmittingInfo />
+              </ProgressWithContent>
             ) : (
-              <Icon fontSize="inherit" color="inherit" />
+              <ProgressWithContent color={lockChainConfig.color} processing>
+                <LockChainIcon fontSize="inherit" color="inherit" />
+              </ProgressWithContent>
             )}
-          </ProgressWithContent>
+          </>
         ) : (
           <ProgressWithContent
-            color={lockAssetConfig.color || theme.customColors.skyBlue}
+            color={lockChainConfig.color}
             confirmations={undefinedForNull(lockConfirmations)}
             targetConfirmations={undefinedForNull(lockTargetConfirmations)}
           >
-            <Icon fontSize="inherit" color="inherit" />
+            <LockChainIcon fontSize="inherit" color="inherit" />
           </ProgressWithContent>
         )}
       </ProgressWrapper>
@@ -315,7 +316,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<
       <SubmitErrorDialog
         open={Boolean(submittingError)}
         onAction={onReload}
-        onAlternativeAction={onRetry}
+        onAlternativeAction={onSubmit}
         error={submittingError}
       />
     </>

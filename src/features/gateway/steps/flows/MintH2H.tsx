@@ -14,6 +14,7 @@ import {
   ActionButton,
   ActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
+import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
@@ -33,6 +34,7 @@ import { AddressInfo } from "../../../transactions/components/TransactionsHistor
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
+import { FeesToggler } from "../../components/FeeHelpers";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
@@ -50,6 +52,7 @@ import {
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
 import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
+import { SendingReceivingSection } from "../shared/TransactionStatuses";
 import {
   H2HAccountsResolver,
   SwitchWalletDialog,
@@ -454,10 +457,19 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   ) {
     Content = (
       <PaperContent bottomPadding>
-        <div>
+        <SendingReceivingSection
+          asset={asset}
+          sendingAmount={amount}
+          receivingAmount={outputAmount}
+          receivingAmountUsd={outputAmountUsd}
+        />
+        <MediumTopWrapper>
           <AddressInfo address={fromAccount} label="Sender Address" />
           <AddressInfo address={toAccount} label="Recipient Address" />
-        </div>
+        </MediumTopWrapper>
+        <MediumTopWrapper>
+          <FeesToggler>{Fees}</FeesToggler>
+        </MediumTopWrapper>
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleSubmitApproval}

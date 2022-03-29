@@ -3,7 +3,7 @@ export type SubmittingProps = {
   onReset: () => void;
   submitting: boolean;
   waiting: boolean;
-  done: boolean; //TODO make not required
+  done?: boolean;
   submittingDisabled?: boolean;
   submittingError?: any;
   //TODO: deprecated, remove

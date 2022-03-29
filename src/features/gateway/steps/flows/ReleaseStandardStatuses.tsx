@@ -10,7 +10,6 @@ import {
   ActionButtonWrapper,
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
-import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
 import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
@@ -18,10 +17,6 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
-import {
-  AssetInfo,
-  SimpleAssetInfo,
-} from "../../../../components/typography/TypographyHelpers";
 import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import {
@@ -29,16 +24,12 @@ import {
   getRenAssetConfig,
 } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
-import { feesDecimalImpact } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { AddressInfo } from "../../../transactions/components/TransactionsHistoryHelpers";
-import {
-  BalanceInfo,
-  UsdNumberFormatText,
-} from "../../components/BalanceHelpers";
+import { BalanceInfo } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
 import {
   RenVMReleasingInfo,
@@ -54,6 +45,7 @@ import {
   ChainProgressDone,
   FromToTxLinks,
   GoToHomeActionButton,
+  SendingReceivingSection,
   SentReceivedSection,
 } from "../shared/TransactionStatuses";
 
@@ -84,9 +76,7 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
 }) => {
   const { t } = useTranslation();
   const { asset, amount, toAddress } = getGatewayParams(gateway);
-  const assetConfig = getAssetConfig(asset);
   const renAssetConfig = getRenAssetConfig(asset);
-  const { Icon } = assetConfig;
   const { balance } = useContractChainAssetBalance(
     gateway.fromChain,
     asset,
@@ -100,27 +90,13 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
     <>
       <PaperContent bottomPadding>
         <BalanceInfo balance={balance} asset={renAssetConfig.shortName} />
-        <SimpleAssetInfo
-          label={t("release.releasing-label")}
-          value={amount}
-          asset={renAssetConfig.shortName}
+        <SendingReceivingSection
+          isRelease
+          asset={asset}
+          sendingAmount={amount}
+          receivingAmount={outputAmount}
+          receivingAmountUsd={outputAmountUsd}
         />
-        <MediumTopWrapper>
-          <AssetInfo
-            label={t("common.receiving-label")}
-            value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={assetConfig.shortName}
-                decimalScale={feesDecimalImpact(amount)}
-              />
-            }
-            valueEquivalent={
-              <UsdNumberFormatText amountUsd={outputAmountUsd} />
-            }
-            Icon={<Icon fontSize="inherit" />}
-          />
-        </MediumTopWrapper>
         <MediumTopWrapper>
           <AddressInfo
             address={toAddress}
@@ -199,16 +175,13 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
   const { asset, from, amount, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const burnChainConfig = getChainConfig(from);
-  const assetConfig = getAssetConfig(asset);
-  const renAssetConfig = getRenAssetConfig(asset);
-  const { RenIcon } = assetConfig;
 
   const BurnChainIcon = burnChainConfig.Icon;
 
   return (
     <>
       <PaperContent bottomPadding>
-        {renVMStatus !== null ? (
+        {renVMStatus !== null ? ( //TODO: why null?? confirming
           <ProgressWrapper>
             <ProgressWithContent processing>
               <RenVMSubmittingInfo />
@@ -231,27 +204,13 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
             />
           </>
         )}
-        <SimpleAssetInfo
-          label={t("release.releasing-label")}
-          value={amount}
+        <SendingReceivingSection
+          isRelease
           asset={asset}
+          sendingAmount={amount}
+          receivingAmount={outputAmount}
+          receivingAmountUsd={outputAmountUsd}
         />
-        <MediumTopWrapper>
-          <AssetInfo
-            label={t("common.receiving-label")}
-            value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={renAssetConfig.shortName}
-                decimalScale={feesDecimalImpact(amount)}
-              />
-            }
-            valueEquivalent={
-              <UsdNumberFormatText amountUsd={outputAmountUsd} />
-            }
-            Icon={<RenIcon fontSize="inherit" />}
-          />
-        </MediumTopWrapper>
       </PaperContent>
       <Divider />
       <PaperContent topPadding darker bottomPadding>

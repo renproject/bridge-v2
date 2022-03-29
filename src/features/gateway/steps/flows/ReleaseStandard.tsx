@@ -325,6 +325,10 @@ const ReleaseStandardProcessor: FunctionComponent<
     }
   }, [transaction, persistLocalTx, account, isCompleted]);
 
+  const submittingDisabled = recoveryMode
+    ? !isTxSubmittable(transaction?.in) || recoveryMode
+    : !isTxSubmittable(transaction?.in || gateway.in);
+
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {
     Content = (
@@ -339,7 +343,7 @@ const ReleaseStandardProcessor: FunctionComponent<
         done={done}
         waiting={waiting}
         submitting={submitting}
-        submittingDisabled={!isTxSubmittable(transaction?.in) || recoveryMode}
+        submittingDisabled={submittingDisabled}
         errorSubmitting={errorSubmitting}
         account={account}
       />

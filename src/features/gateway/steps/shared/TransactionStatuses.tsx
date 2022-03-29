@@ -5,18 +5,25 @@ import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { ActionButton } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
+import { SmallTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { Link } from "../../../../components/links/Links";
 import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
-import { LabelWithValue } from "../../../../components/typography/TypographyHelpers";
+import {
+  AssetInfo,
+  LabelWithValue,
+  SimpleAssetInfo,
+} from "../../../../components/typography/TypographyHelpers";
 import {
   getAssetConfig,
   getRenAssetConfig,
 } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { feesDecimalImpact } from "../../../../utils/numbers";
+import { UsdNumberFormatText } from "../../components/BalanceHelpers";
 import { useBasicRouteHandlers } from "../../gatewayRoutingUtils";
 
 type FromToTxLinksProps = {
@@ -64,6 +71,72 @@ export const FromToTxLinks: FunctionComponent<FromToTxLinksProps> = ({
   );
 };
 
+const useSendingReceivingSectionStyles = makeStyles({
+  root: {},
+});
+
+type SendingReceivingSectionProps = {
+  asset: string;
+  sendingAmount: string | number;
+  receivingAmount: string | null;
+  receivingAmountUsd: string | null;
+  isRelease?: boolean;
+};
+
+export const SendingReceivingSection: FunctionComponent<
+  SendingReceivingSectionProps
+> = ({
+  receivingAmount,
+  sendingAmount,
+  asset,
+  receivingAmountUsd,
+  isRelease,
+}) => {
+  const { t } = useTranslation();
+  const styles = useSendingReceivingSectionStyles();
+  const assetConfig = getAssetConfig(asset);
+  const renAssetConfig = getRenAssetConfig(asset);
+  const sendingAsset = isRelease
+    ? renAssetConfig.shortName
+    : assetConfig.shortName;
+
+  const receivingAsset = isRelease
+    ? assetConfig.shortName
+    : renAssetConfig.shortName;
+
+  const ReceivingAssetIcon = isRelease ? assetConfig.Icon : assetConfig.RenIcon;
+
+  const sendingLabel = isRelease
+    ? t("release.releasing-label")
+    : t("mint.minting-label");
+
+  return (
+    <div className={styles.root}>
+      <SimpleAssetInfo
+        label={sendingLabel}
+        value={sendingAmount}
+        asset={sendingAsset}
+      />
+      <SmallTopWrapper>
+        <AssetInfo
+          label={t("common.receiving-label")}
+          value={
+            <NumberFormatText
+              value={receivingAmount}
+              spacedSuffix={receivingAsset}
+              decimalScale={feesDecimalImpact(sendingAmount)}
+            />
+          }
+          valueEquivalent={
+            <UsdNumberFormatText amountUsd={receivingAmountUsd} />
+          }
+          Icon={<ReceivingAssetIcon fontSize="inherit" />}
+        />
+      </SmallTopWrapper>
+    </div>
+  );
+};
+
 const useSentReceivedSectionStyles = makeStyles({
   root: {
     marginTop: 60,
@@ -77,8 +150,8 @@ const useSentReceivedSectionStyles = makeStyles({
 
 type SentReceivedSectionProps = {
   asset: string;
-  receivedAmount: string | null;
   sentAmount: string | null;
+  receivedAmount: string | null;
   isRelease?: boolean;
 };
 

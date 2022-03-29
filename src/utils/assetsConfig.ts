@@ -235,10 +235,12 @@ export const getAssetConfig = (asset: Asset | string) => {
 
 export const getRenAssetConfig = (asset: Asset | string) => {
   const assetConfig = getAssetConfig(asset);
-  const { shortName, fullName, ...rest } = assetConfig;
+  const { shortName, fullName, Icon, RenIcon, ...rest } = assetConfig;
   return {
     shortName: getRenAssetName(shortName),
     fullName: getRenAssetFullName(fullName),
+    Icon: RenIcon,
+    RenIcon,
     ...rest,
   };
 };

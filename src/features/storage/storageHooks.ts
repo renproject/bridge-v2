@@ -105,11 +105,11 @@ export const useTxsStorage = () => {
         console.warn("Unable to persist tx, no tx.hash", tx);
         return;
       }
-      const actual = findLocalTx(web3Address, tx.hash);
+      // const actual = findLocalTx(web3Address, tx.hash);
       // prevent overwriting done transactions
-      if (actual !== null && actual.done) {
-        return;
-      }
+      // if (actual !== null && actual.done) {
+      //   return;
+      // }
 
       setLocalTxs((txs) => ({
         ...txs,
@@ -124,7 +124,7 @@ export const useTxsStorage = () => {
         },
       }));
     },
-    [setLocalTxs, findLocalTx] //TODO: rerender warn
+    [setLocalTxs] //TODO: rerender warn
   );
 
   const removeLocalTx: LocalTxRemover = useCallback(
