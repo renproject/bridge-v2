@@ -132,7 +132,6 @@ const useAddressOnChainLinkStyles = makeStyles(() => ({
     alignItems: "center",
     fontSize: 14,
   },
-  link: {},
   separator: {
     marginLeft: 8,
     marginRight: 8,
@@ -154,16 +153,19 @@ export const AddressOnChainLink: FunctionComponent<AddressOnChainLinkProps> = ({
   const { t } = useTranslation();
   return (
     <div className={styles.root}>
-      <CustomLink
-        className={styles.link}
-        color="primary"
-        underline="hover"
-        external
-        externalPointer={false}
-        href={addressUrl}
-      >
-        {trimAddress(address)}
-      </CustomLink>
+      {addressUrl ? (
+        <CustomLink
+          color="primary"
+          underline="hover"
+          external
+          externalPointer={false}
+          href={addressUrl}
+        >
+          {trimAddress(address)}
+        </CustomLink>
+      ) : (
+        <span>{trimAddress(address)}</span>
+      )}
       {Icon !== undefined && (
         <>
           {" "}

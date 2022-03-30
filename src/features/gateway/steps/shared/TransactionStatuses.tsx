@@ -1,5 +1,6 @@
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Skeleton } from "@material-ui/lab";
 import { Chain } from "@renproject/chains";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,6 +10,7 @@ import { SmallTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { Link } from "../../../../components/links/Links";
 import {
   BigDoneIcon,
+  InlineSkeleton,
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
@@ -121,14 +123,26 @@ export const SendingReceivingSection: FunctionComponent<
         <AssetInfo
           label={t("common.receiving-label")}
           value={
-            <NumberFormatText
-              value={receivingAmount}
-              spacedSuffix={receivingAsset}
-              decimalScale={feesDecimalImpact(sendingAmount)}
-            />
+            <>
+              {receivingAmount !== null ? (
+                <NumberFormatText
+                  value={receivingAmount}
+                  spacedSuffix={receivingAsset}
+                  decimalScale={feesDecimalImpact(sendingAmount)}
+                />
+              ) : (
+                <Skeleton variant="text" height={18} width={66} />
+              )}
+            </>
           }
           valueEquivalent={
-            <UsdNumberFormatText amountUsd={receivingAmountUsd} />
+            <>
+              {receivingAmountUsd !== null ? (
+                <UsdNumberFormatText amountUsd={receivingAmountUsd} />
+              ) : (
+                <Skeleton variant="text" height={17} width={80} />
+              )}
+            </>
           }
           Icon={<ReceivingAssetIcon fontSize="inherit" />}
         />
@@ -183,7 +197,6 @@ export const SentReceivedSection: FunctionComponent<
       <Typography color="textSecondary" component="div">
         <LabelWithValue
           label="Initially sent"
-          labelTooltip="The amount you initially sent"
           colorVariant="inherit"
           fontSizeVariant="bigger"
           value={

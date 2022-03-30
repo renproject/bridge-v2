@@ -10,7 +10,6 @@ import {
   ActionButtonWrapper,
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
-import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import {
@@ -80,7 +79,10 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
     getGatewayParams(gateway);
   const fromChainConfig = getChainConfig(from);
   const renAssetConfig = getRenAssetConfig(asset);
-  const { balance } = useContractChainAssetBalance(gateway.fromChain, asset);
+  const { balance, error } = useContractChainAssetBalance(
+    gateway.fromChain,
+    asset
+  );
 
   const { Icon: ChainIcon } = fromChainConfig;
 
@@ -95,6 +97,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
             balance={balance}
             asset={renAssetConfig.shortName}
             chain={from}
+            error={error}
           />
         )}
         {showProgress && (
@@ -125,10 +128,8 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
         <WalletNetworkSwitchMessage />
       </PaperContent>
       <Divider />
-      <PaperContent darker>
-        <MediumTopWrapper>
-          <FeesToggler>{Fees}</FeesToggler>
-        </MediumTopWrapper>
+      <PaperContent darker bottomPadding topPadding>
+        <FeesToggler>{Fees}</FeesToggler>
         <ActionButtonWrapper>
           <ActionButton
             onClick={onSubmit}
@@ -223,7 +224,7 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
         />
       </PaperContent>
       <Divider />
-      <PaperContent topPadding darker>
+      <PaperContent topPadding darker bottomPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
           <ActionButton

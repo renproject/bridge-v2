@@ -249,6 +249,7 @@ export const useContractChainAssetBalance = (
   const [balance, setBalance] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
+    setError(null);
     if (
       !instance ||
       decimals === null ||

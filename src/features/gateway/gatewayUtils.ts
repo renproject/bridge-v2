@@ -23,6 +23,8 @@ export interface CreateGatewayParams {
   fromAddress?: string;
 }
 
+const convertUnit = true;
+
 export const createGateway = async (
   renJS: RenJS,
   gatewayParams: CreateGatewayParams,
@@ -48,24 +50,23 @@ export const createGateway = async (
       fromChain = ethereumChain.Address({
         address: gatewayParams.fromAddress,
         amount: gatewayParams.amount,
-        convertToWei: true,
+        convertToWei: convertUnit,
+        convertUnit,
       });
     } else {
       fromChain = ethereumChain.Account({
         amount: gatewayParams.amount,
-        convertToWei: true,
+        convertToWei: convertUnit,
+        convertUnit,
       });
     }
   } else if (supportedSolanaChains.includes(gatewayParams.from)) {
     const solana = fromChainInstance.chain as Solana;
-    // const decimals = await solana.assetDecimals(asset);
-    // const adjustedAmount = new BigNumber(gatewayParams.amount || "")
-    //   .shiftedBy(decimals)
-    //   .toString();
-    // const tokenAddress = await solana.getAssociatedTokenAccount(asset);
+    //TODO: crit: finish .Address / Account when fromAddress
     fromChain = solana.Account({
       // amount: adjustedAmount,
       amount: gatewayParams.amount,
+      convertUnit,
     });
   } else if (supportedBitcoinChains.includes(gatewayParams.from)) {
     fromChain = (fromChainInstance.chain as BitcoinBaseChain).GatewayAddress();
