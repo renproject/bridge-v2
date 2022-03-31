@@ -3552,7 +3552,7 @@
     events "^3.3.0"
     immutable "^4.0.0"
 
-"@renproject/utils@3.0.0-alpha.23", "@renproject/utils@^3.0.0-alpha.22":
+"@renproject/utils@3.0.0-alpha.22", "@renproject/utils@^3.0.0-alpha.22":
   version "3.0.0-alpha.22"
   resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-3.0.0-alpha.22.tgz#aafdd4945fc41b544b05535f690afd67586f78d9"
   integrity sha512-IjXMIO30PK9/McfCjLlCB8cjpO45Q2X3YzffO2lHYoSRFIeA5gj7RoUJYCwN14+jDkcepFeV3yGfgflSlGSdUQ==

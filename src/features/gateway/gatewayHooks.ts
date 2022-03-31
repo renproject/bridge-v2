@@ -169,8 +169,9 @@ export const useGateway = (
 };
 
 export const useAssetDecimals = (chain: Chain, asset: string | Asset) => {
+  console.log("useAssetDecimals", chain, asset);
   const chains = useCurrentNetworkChains();
-  const instance = chains[chain].chain;
+  const instance = chains[chain]?.chain;
   return useChainInstanceAssetDecimals(instance, asset);
 };
 
@@ -579,13 +580,13 @@ export const useGatewayMeta = (
     if (asset === null || from === null || to === null) {
       return;
     }
-    setIsToContractChain(Boolean(chains[to].connectionRequired));
-    setIsFromContractChain(Boolean(chains[from].connectionRequired));
+    setIsToContractChain(Boolean(chains[to]?.connectionRequired));
+    setIsFromContractChain(Boolean(chains[from]?.connectionRequired));
 
     getInputAndOutputTypes({
       asset,
-      fromChain: chains[from].chain,
-      toChain: chains[to].chain,
+      fromChain: chains[from]?.chain,
+      toChain: chains[to]?.chain,
     })
       .then(({ inputType, outputType, selector }) => {
         console.log(inputType, outputType);

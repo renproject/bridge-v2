@@ -214,7 +214,7 @@ export const TransactionsHistory: FunctionComponent = () => {
           <TxHistoryMenu
             onRemoveFiltered={handleRemoveFiltered}
             onRemoveAll={handleRemoveAll}
-            disabled={!connected}
+            disabled={!connected || !featureFlags.godMode}
           />
         </div>
       </div>
@@ -360,23 +360,13 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   const styles = useTransactionHistoryStyles();
   const { localTxs, removeLocalTx, getLocalTxsForAddress } = useTxsStorage();
 
-  const pendingTxsMap = getLocalTxsForAddress(address, {
-    done: false,
-    from,
+  const allTxsMap = getLocalTxsForAddress(address, {
     asset,
   });
-  const pendingTxs = Object.entries(pendingTxsMap);
-  const pendingCount = Object.entries(pendingTxs).length;
+  const allTxsUnsorted = Object.entries(allTxsMap);
+  const allCount = allTxsUnsorted.length;
 
-  const completedTxsMap = getLocalTxsForAddress(address, {
-    done: true,
-    from,
-    asset,
-  });
-  const completedTxs = Object.entries(completedTxsMap);
-  const completedCount = completedTxs.length;
-
-  const allTxs = [...pendingTxs, ...completedTxs].sort((a, b) => {
+  const allTxs = [...allTxsUnsorted].sort((a, b) => {
     return b[1].timestamp - a[1].timestamp;
   });
 
@@ -400,7 +390,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   }, [address, from]);
 
   const rowsPerPage = 3;
-  const totalCount = pendingCount + completedCount;
+  const totalCount = allCount;
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
   return (
@@ -502,6 +492,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const styles = useRenVMTransactionEntryStyles();
   const { params, timestamp, done } = localTxData;
   const { asset, from, to } = decomposeLocalTxParams(localTxData);
+  console.log("decomposing", localTxData);
   const { isMint, isRelease, isH2H } = useGatewayMeta(asset, from, to);
   const { date, time } = getFormattedDateTime(timestamp);
   const { getRenVmExplorerLink } = useRenVMExplorerLink();
@@ -521,7 +512,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const renVMUrl = getRenVmExplorerLink(renVMHash);
   const fromAddressUrl = getFromAddressLink(address);
   const toAddressUrl = getToAddressLink(address);
-  const toAddress = (params.to as any).params.address || ""; //TODO consider adding to decomposeLocalTxparams
+  const toAddress = (params.to as any).params?.address || "";
   const amount =
     fromAssetDecimals !== null
       ? new BigNumber(params.fromTx.amount)

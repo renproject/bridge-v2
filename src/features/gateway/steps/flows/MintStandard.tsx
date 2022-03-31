@@ -50,6 +50,7 @@ import {
   pickChains,
 } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
+import { useTxsStorage } from "../../../storage/storageHooks";
 import {
   GeneralErrorDialog,
   HMSCountdown,
@@ -115,7 +116,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const expiryTime = additionalParams.expiryTime || getGatewayExpiryTime();
 
   useSyncWalletChain(to);
-  const { connected, provider } = useWallet(to);
+  const { connected, account, provider } = useWallet(to);
   const allChains = useCurrentNetworkChains();
   const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
   useEffect(() => {
@@ -157,6 +158,15 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const [transaction, setTransaction] = useState<GatewayTransaction | null>(
     null
   );
+
+  const { persistLocalTx } = useTxsStorage();
+
+  useEffect(() => {
+    transactions.forEach((tx) => {
+      persistLocalTx(account, tx);
+    });
+  }, [account, transactions, persistLocalTx]);
+
   useEffect(() => {
     const found = transactions.find((tx) => tx.hash === currentDeposit);
     if (found) {

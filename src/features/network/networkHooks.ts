@@ -55,7 +55,7 @@ export const useAddressExplorerLink = (chain: Chain | string) => {
   const chains = useCurrentNetworkChains();
   const getAddressExplorerLink = useCallback(
     (address: string) => {
-      return chains[chain as Chain].chain.addressExplorerLink(address);
+      return chains[chain as Chain]?.chain.addressExplorerLink(address);
     },
     [chains, chain]
   );

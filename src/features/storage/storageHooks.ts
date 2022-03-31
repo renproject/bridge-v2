@@ -98,9 +98,24 @@ export const useTxsStorage = () => {
     [localTxs]
   );
 
+  const isLocalTxDone = useCallback(
+    (address: string, renVMHash: string) => {
+      const actual = findLocalTx(address, renVMHash);
+      if (actual !== null && actual.done) {
+        return true;
+      }
+      return false;
+    },
+    [findLocalTx]
+  );
+
   const persistLocalTx: LocalTxPersistor = useCallback(
     (web3Address: string, tx: GatewayTransaction, done = false) => {
       console.log("tx: persisting local tx", tx, done);
+      if (!web3Address) {
+        console.warn("Unable to persist tx, no address", web3Address);
+        return;
+      }
       if (!tx.hash) {
         console.warn("Unable to persist tx, no tx.hash", tx);
         return;
@@ -111,20 +126,24 @@ export const useTxsStorage = () => {
       //   return;
       // }
 
-      setLocalTxs((txs) => ({
-        ...txs,
-        [web3Address]: {
-          ...txs[web3Address],
-          [tx.hash]: {
-            params: tx.params,
-            done,
-            timestamp:
-              ((txs[web3Address] || {})[tx.hash] || {}).timestamp || Date.now(),
+      setLocalTxs((txs) => {
+        // TODO: add .done check here
+        return {
+          ...txs,
+          [web3Address]: {
+            ...txs[web3Address],
+            [tx.hash]: {
+              params: tx.params,
+              done,
+              timestamp:
+                ((txs[web3Address] || {})[tx.hash] || {}).timestamp ||
+                Date.now(),
+            },
           },
-        },
-      }));
+        };
+      });
     },
-    [setLocalTxs] //TODO: rerender warn
+    [setLocalTxs]
   );
 
   const removeLocalTx: LocalTxRemover = useCallback(
@@ -148,6 +167,11 @@ export const useTxsStorage = () => {
         return {};
       }
       let resultEntries = Object.entries(renVMHashTxsMap);
+
+      resultEntries = resultEntries.filter(
+        ([hash, tx]) => hash !== "undefined" && tx.params !== undefined
+      );
+
       if (done !== undefined) {
         resultEntries = resultEntries.filter(([hash, tx]) => tx.done === done);
       }
@@ -178,6 +202,7 @@ export const useTxsStorage = () => {
     removeLocalTx,
     getLocalTxsForAddress,
     findLocalTx,
+    isLocalTxDone,
     // localTxsLoaded,
     // setLocalTxsLoaded,
     // loadingLocalTxs,
