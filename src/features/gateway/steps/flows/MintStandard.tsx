@@ -159,14 +159,6 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
     null
   );
 
-  const { persistLocalTx } = useTxsStorage();
-
-  useEffect(() => {
-    transactions.forEach((tx) => {
-      persistLocalTx(account, tx);
-    });
-  }, [account, transactions, persistLocalTx]);
-
   useEffect(() => {
     const found = transactions.find((tx) => tx.hash === currentDeposit);
     if (found) {
@@ -215,6 +207,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
                   <DepositLoaderStatus />
                 ) : (
                   <GatewayDepositProcessor
+                    account={account}
                     gateway={gateway}
                     transaction={transaction}
                     onGoToGateway={handleGoToGateway}
@@ -247,13 +240,14 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
 export type GatewayDepositProcessorProps = {
   gateway: Gateway;
   transaction: GatewayTransaction;
+  account: string;
   onGoToGateway: () => void;
   expiryTime: number;
 };
 
 export const GatewayDepositProcessor: FunctionComponent<
   GatewayDepositProcessorProps
-> = ({ gateway, transaction, onGoToGateway, expiryTime }) => {
+> = ({ gateway, transaction, account, expiryTime, onGoToGateway }) => {
   // const lockStatus = ChainTransactionStatus.Done;
   // TODO: crit use dedicated updaters
   useEffect(() => {
@@ -348,6 +342,18 @@ export const GatewayDepositProcessor: FunctionComponent<
     // txIndex: mintTxIndex,
     txUrl: mintTxUrl,
   } = outTxMeta;
+
+  const { persistLocalTx } = useTxsStorage();
+
+  useEffect(() => {
+    persistLocalTx(account, transaction, false, { expiryTime });
+  }, [account, transaction, persistLocalTx, expiryTime]);
+
+  useEffect(() => {
+    if (mintTxUrl) {
+      persistLocalTx(account, transaction, true, { expiryTime });
+    }
+  }, [account, transaction, persistLocalTx, expiryTime, mintTxUrl]);
 
   //TODO: fix types, create general error helpers;
   const isRevertedError =

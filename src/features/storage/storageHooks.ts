@@ -75,7 +75,8 @@ type GetLocalTxsForAddressFilterParams = {
 export type LocalTxPersistor = (
   address: string,
   tx: GatewayTransaction,
-  done?: boolean
+  done?: boolean,
+  meta?: LocalTxMeta
 ) => void;
 
 export type LocalTxRemover = (address: string, renVMTxHash: string) => void;
@@ -115,7 +116,7 @@ export const useTxsStorage = () => {
   );
 
   const persistLocalTx: LocalTxPersistor = useCallback(
-    (web3Address: string, tx: GatewayTransaction, done = false) => {
+    (web3Address, tx, done = false, meta) => {
       console.log("tx: persisting local tx", tx, done);
       if (!web3Address) {
         console.warn("Unable to persist tx, no address", web3Address);
@@ -125,14 +126,14 @@ export const useTxsStorage = () => {
         console.warn("Unable to persist tx, no tx.hash", tx);
         return;
       }
-      // const actual = findLocalTx(web3Address, tx.hash);
-      // prevent overwriting done transactions
-      // if (actual !== null && actual.done) {
-      //   return;
-      // }
 
       setLocalTxs((txs) => {
-        // TODO: add .done check here
+        const current = (txs[web3Address] || {})[tx.hash] || {};
+        // don't overwrite done transactions;
+        if (current.done) {
+          return txs;
+        }
+
         return {
           ...txs,
           [web3Address]: {
@@ -140,9 +141,8 @@ export const useTxsStorage = () => {
             [tx.hash]: {
               params: tx.params,
               done,
-              timestamp:
-                ((txs[web3Address] || {})[tx.hash] || {}).timestamp ||
-                Date.now(),
+              meta, // add spreading when more params occur in meta
+              timestamp: current.timestamp || Date.now(),
             },
           },
         };
