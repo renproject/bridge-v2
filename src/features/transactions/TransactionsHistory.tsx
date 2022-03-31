@@ -57,7 +57,10 @@ import {
   getChainOptionData,
 } from "../gateway/components/DropdownHelpers";
 import { useAssetDecimals, useGatewayMeta } from "../gateway/gatewayHooks";
-import { createGatewayQueryString } from "../gateway/gatewayUtils";
+import {
+  createGatewayQueryString,
+  getBridgeNonce,
+} from "../gateway/gatewayUtils";
 import { GatewayLocationState } from "../gateway/gatewayRoutingUtils";
 import {
   useAddressExplorerLink,
@@ -67,7 +70,10 @@ import { LocalTxData, useTxsStorage } from "../storage/storageHooks";
 import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { useCurrentChainWallet } from "../wallet/walletHooks";
 import { $wallet, setChain, setPickerOpened } from "../wallet/walletSlice";
-import { WithConfirmDialog } from "./components/TransactionsHelpers";
+import {
+  HMSCountdownTo,
+  WithConfirmDialog,
+} from "./components/TransactionsHelpers";
 import {
   AddressOnChainLink,
   BluePadder,
@@ -490,7 +496,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const history = useHistory();
   const dispatch = useDispatch();
   const styles = useRenVMTransactionEntryStyles();
-  const { params, timestamp, done } = localTxData;
+  const { params, timestamp, done, meta } = localTxData;
   const { asset, from, to } = decomposeLocalTxParams(localTxData);
   console.log("decomposing", localTxData);
   const { isMint, isRelease, isH2H } = useGatewayMeta(asset, from, to);
@@ -512,7 +518,14 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const renVMUrl = getRenVmExplorerLink(renVMHash);
   const fromAddressUrl = getFromAddressLink(address);
   const toAddressUrl = getToAddressLink(address);
-  const toAddress = (params.to as any).params?.address || "";
+
+  // special case for standard deposit mints;
+  const isDepositMint = isMint && !isH2H;
+  const toAddress = isDepositMint
+    ? address
+    : (params.to as any).params?.address || "";
+  const nonce = params.nonce || "";
+  const expiryTime = meta?.expiryTime || 0;
   const amount =
     fromAssetDecimals !== null
       ? new BigNumber(params.fromTx.amount)
@@ -537,6 +550,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const handleResume = useCallback(() => {
     console.log("resuming tx", renVMHash);
     setResuming(true);
+
     if (amount === null) {
       setResuming(false);
       return;
@@ -603,6 +617,25 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           }
         ),
       });
+    } else {
+      console.log("standard mint");
+      const bridgeNonce = getBridgeNonce(nonce.toString());
+      history.push({
+        state,
+        pathname: paths.MINT__GATEWAY_STANDARD,
+        search: createGatewayQueryString(
+          {
+            asset,
+            from,
+            to,
+            amount,
+            nonce: bridgeNonce,
+          },
+          {
+            renVMHash,
+          }
+        ),
+      });
     }
     dispatch(setTxHistoryOpened(false));
     setResuming(false);
@@ -618,6 +651,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     from,
     to,
     toAddress,
+    nonce,
   ]);
 
   return (
@@ -653,16 +687,27 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       </div>
       <Grid container spacing={3}>
         <Grid item sm={12} md={6} className={styles.fromWrapper}>
-          <BluePadder>
-            <FullWidthWrapper>
-              <Typography variant="body2">Sender Address</Typography>
-              <AddressOnChainLink
-                address={address}
-                addressUrl={fromAddressUrl}
-                Icon={FromChainIcon}
-              />
-            </FullWidthWrapper>
-          </BluePadder>
+          {isDepositMint ? (
+            <SmallHorizontalPadder>
+              <FullWidthWrapper>
+                <Typography variant="body2">Time Remaining</Typography>
+                <Typography variant="body2">
+                  <HMSCountdownTo timestamp={expiryTime} />
+                </Typography>
+              </FullWidthWrapper>
+            </SmallHorizontalPadder>
+          ) : (
+            <BluePadder>
+              <FullWidthWrapper>
+                <Typography variant="body2">Sender Address</Typography>
+                <AddressOnChainLink
+                  address={address}
+                  addressUrl={fromAddressUrl}
+                  Icon={FromChainIcon}
+                />
+              </FullWidthWrapper>
+            </BluePadder>
+          )}
           <div className={styles.arrow}>
             <ArrowRightIcon fontSize="inherit" />
           </div>
@@ -736,7 +781,11 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
               disabled={resuming || resumeDisabled}
               onClick={handleResume}
             >
-              {done ? "View details" : "Resume Transaction"}
+              {done
+                ? "View details"
+                : isDepositMint
+                ? "Revisit Gateway"
+                : "Resume Transaction"}
             </Button>
           </Box>
         </Grid>

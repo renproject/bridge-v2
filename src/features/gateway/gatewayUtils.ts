@@ -162,7 +162,14 @@ export const getGatewayExpiryTime = (pastDayOffset = 0) => {
   return getSessionDay(pastDayOffset) * DAY_MS + GATEWAY_EXPIRY_OFFSET_MS;
 };
 
-// export const getRenJSBase64Nonce = (pastDayOffset = 0) => {
-//   return toURLBase64(Buffer.from([getSessionDay(pastDayOffset)]));
-// };
-// console.log("gst", getRenJSNonce(), getRenJSBase64Nonce());
+export const getBridgeNonce = (renJSNonce: string) => {
+  // TODO: Noah - is there a better way?
+  // "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASoo" => 19082;
+  let result = 0;
+  try {
+    result = Buffer.from(renJSNonce, "base64").readIntBE(0, 32);
+  } catch (ex) {
+    console.error("Unable to decode renJSNonce", renJSNonce);
+  }
+  return result;
+};

@@ -226,7 +226,9 @@ export const useDirtySolanaWalletDetector = () => {
   const [found, setFound] = useState(Boolean((window as any).solana));
   const [isRunning, setIsRunning] = useState(!Boolean((window as any).solana));
   if (count > 5) {
-    setIsRunning(false);
+    if (isRunning) {
+      setIsRunning(false);
+    }
   }
   useEffect(() => {
     const interval = setInterval(() => {

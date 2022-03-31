@@ -46,10 +46,15 @@ const useLocalStorage = <T>(
   return [storedValue, setValue];
 };
 
+export type LocalTxMeta = {
+  expiryTime?: number;
+};
+
 export type LocalTxData = {
   params: TransactionParams;
   done: boolean;
   timestamp: number;
+  meta?: LocalTxMeta;
 };
 
 export type RenVMHashTxsMap = {
