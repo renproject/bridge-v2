@@ -10,7 +10,6 @@ import { SmallTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { Link } from "../../../../components/links/Links";
 import {
   BigDoneIcon,
-  InlineSkeleton,
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
