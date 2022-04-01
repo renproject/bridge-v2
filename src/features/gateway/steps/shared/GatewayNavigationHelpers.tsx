@@ -1,4 +1,4 @@
-import { Box, Dialog, Popper, Typography } from "@material-ui/core";
+import { Box, Dialog, Typography } from "@material-ui/core";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import {
   ActionButton,

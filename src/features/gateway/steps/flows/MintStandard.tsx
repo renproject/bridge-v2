@@ -185,7 +185,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   return (
     <>
       <GatewayPaperHeader title={paperTitle} />
-      <PaperContent>
+      <PaperContent bottomPadding>
         {Boolean(parseError) && (
           <GeneralErrorDialog
             open={true}
