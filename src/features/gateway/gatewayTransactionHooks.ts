@@ -1,5 +1,4 @@
 import { Chain } from "@renproject/chains";
-import { Gateway, GatewayTransaction } from "@renproject/ren";
 import {
   ChainTransactionStatus,
   InputChainTransaction,
@@ -8,6 +7,7 @@ import {
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { RouteComponentProps } from "react-router";
 import { isDefined } from "../../utils/objects";
 import { useCurrentNetworkChains } from "../network/networkHooks";
 
@@ -296,23 +296,26 @@ export const useChainTransactionSubmitter = ({
   };
 };
 
-//TODO: take useGateway transactions into consideration
-export const useGatewayFirstTransaction = (gateway: Gateway | null) => {
-  const [transaction, setTransaction] = useState<GatewayTransaction | null>(
-    null
-  );
-  useEffect(() => {
-    console.log("tx detected");
-    if (gateway !== null) {
-      const getFirstTx = async () => {
-        const tx = await gateway.transactions.first();
-        if (tx) {
-          setTransaction(tx);
-        }
-      };
-      getFirstTx().finally();
+export const updateRenVMHashParam = (
+  history: RouteComponentProps["history"],
+  renVMHash: string | null
+) => {
+  const params = new URLSearchParams(history.location.search);
+  const renVMHashParam = (params as any).renVMHash;
+  console.log("renVMHash param", renVMHash, params);
+  if (renVMHash !== renVMHashParam) {
+    console.log(
+      "renVMHash param replacing",
+      history.location.search,
+      renVMHash
+    );
+    if (renVMHash === null) {
+      params.delete("renVMHash");
+    } else {
+      params.set("renVMHash", renVMHash);
     }
-  }, [gateway, gateway?.transactions]);
-
-  return transaction;
+    history.replace({
+      search: params.toString(),
+    });
+  }
 };

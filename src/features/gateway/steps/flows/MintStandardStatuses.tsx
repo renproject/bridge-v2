@@ -11,7 +11,6 @@ import {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { useEffectOnce } from "react-use";
 import {
   ActionButton,
@@ -20,7 +19,10 @@ import {
   TransactionDetailsButton,
 } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import { MediumWrapper } from "../../../../components/layout/LayoutHelpers";
+import {
+  MediumWrapper,
+  SmallTopWrapper,
+} from "../../../../components/layout/LayoutHelpers";
 import { Link } from "../../../../components/links/Links";
 import {
   BigDoneIcon,
@@ -30,7 +32,6 @@ import {
 } from "../../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
-import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import {
   usePaperTitle,
@@ -59,9 +60,11 @@ import {
   TransactionProgressInfo,
 } from "../../components/TransactionProgressHelpers";
 import { getGatewayParams } from "../../gatewayHooks";
+import { useBasicRouteHandlers } from "../../gatewayRoutingUtils";
 import { maxConfirmations } from "../../gatewayTransactionUtils";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
+import { FromToTxLinks } from "../shared/TransactionStatuses";
 
 type MintDepositConfirmationStatusProps = {
   gateway: Gateway;
@@ -421,19 +424,14 @@ export const MintCompletedStatus: FunctionComponent<
   MintCompletedStatusProps
 > = ({ gateway, lockTxUrl, mintTxUrl, mintAmount, mintAssetDecimals }) => {
   const { t } = useTranslation();
+  const { from, to, asset } = getGatewayParams(gateway);
   useSetPaperTitle(t("mint.complete-title"));
-  const history = useHistory();
   const { wallet } = useCurrentChainWallet();
   const walletConfig = getWalletConfig(wallet);
-  const lockAssetConfig = getAssetConfig(gateway.params.asset);
-  const lockChainConfig = getChainConfig(gateway.params.from.chain);
-  const mintChainConfig = getChainConfig(gateway.params.to.chain);
+  const lockAssetConfig = getAssetConfig(asset);
+  const mintChainConfig = getChainConfig(to);
 
-  const handleGoToHome = useCallback(() => {
-    history.push({
-      pathname: paths.HOME,
-    });
-  }, [history]);
+  const { handleGoToHome } = useBasicRouteHandlers();
 
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
@@ -509,30 +507,14 @@ export const MintCompletedStatus: FunctionComponent<
           {t("navigation.back-to-home-label")}
         </ActionButton>
       </MultipleActionButtonWrapper>
-      <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
-        {lockTxUrl !== null && (
-          <Link
-            external
-            color="primary"
-            variant="button"
-            underline="hover"
-            href={lockTxUrl}
-          >
-            {lockChainConfig.fullName} {t("common.transaction")}
-          </Link>
-        )}
-        {mintTxUrl !== null && (
-          <Link
-            external
-            color="primary"
-            variant="button"
-            underline="hover"
-            href={mintTxUrl}
-          >
-            {mintChainConfig.fullName} {t("common.transaction")}
-          </Link>
-        )}
-      </Box>
+      <SmallTopWrapper>
+        <FromToTxLinks
+          from={from}
+          to={to}
+          fromTxUrl={lockTxUrl}
+          toTxUrl={mintTxUrl}
+        />
+      </SmallTopWrapper>
       <Debug it={{ walletTokenMeta }} />
     </>
   );

@@ -291,3 +291,15 @@ export const pickChains = (
   console.log("chains picked", pickedChains);
   return pickedChains;
 };
+
+export const chainsWithSignerOrNull = (
+  chains: PartialChainInstanceMap,
+  chain: Chain
+) => {
+  const present = Boolean((chains[chain]?.chain as any)?.signer);
+  console.log("signer", chains, chain, present);
+  if (present) {
+    return chains;
+  }
+  return null;
+};

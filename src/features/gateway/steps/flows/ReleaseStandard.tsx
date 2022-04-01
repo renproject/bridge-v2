@@ -34,12 +34,16 @@ import {
 } from "../../gatewayHooks";
 import {
   isTxSubmittable,
+  updateRenVMHashParam,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
-import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
+import {
+  GatewayPaperHeader,
+  TransactionRecoveryModal,
+} from "../shared/GatewayNavigationHelpers";
 import {
   ReleaseStandardBurnProgressStatus,
   ReleaseStandardBurnStatus,
@@ -251,23 +255,8 @@ const ReleaseStandardProcessor: FunctionComponent<
   useEffect(() => {
     console.log("persist", transaction);
     if (account && transaction !== null && transaction.hash) {
-      // tx hash is not needed probably
       persistLocalTx(account, transaction);
-      const params = new URLSearchParams(history.location.search);
-      const renVMHashTx = transaction.hash;
-      const renVMHashParam = (params as any).renVMHash;
-      console.log("renVMHash param", renVMHashTx, params);
-      if (renVMHashTx !== renVMHashParam) {
-        console.log(
-          "renVMHash param replacing",
-          history.location.search,
-          renVMHashTx
-        );
-        params.set("renVMHash", renVMHashTx);
-        history.replace({
-          search: params.toString(),
-        });
-      }
+      updateRenVMHashParam(history, transaction.hash);
     }
   }, [history, persistLocalTx, account, transaction, transaction?.hash]);
 
@@ -276,6 +265,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     startTrigger: submittingDone || recoveryMode,
     debugLabel: "gatewayIn",
   });
+
   const {
     status: burnStatus,
     confirmations: burnConfirmations,
@@ -283,6 +273,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     txUrl: burnTxUrl,
     amount: burnAmount,
   } = gatewayInTxMeta;
+
   const renVmSubmitter = useChainTransactionSubmitter({
     tx: transaction?.renVM,
     autoSubmit:
@@ -290,6 +281,7 @@ const ReleaseStandardProcessor: FunctionComponent<
       isTxSubmittable(transaction?.renVM),
     debugLabel: "renVM",
   });
+
   const renVmTxMeta = useRenVMChainTransactionStatusUpdater({
     tx: transaction?.renVM,
     startTrigger: renVmSubmitter.submittingDone || recoveryMode,
@@ -383,8 +375,10 @@ const ReleaseStandardProcessor: FunctionComponent<
   return (
     <>
       {Content}
+      <TransactionRecoveryModal recoveryMode={recoveryMode} />
       <Debug
         it={{
+          recoveryMode,
           releaseAmount,
           releaseAssetDecimals,
           gatewayInSubmitter,

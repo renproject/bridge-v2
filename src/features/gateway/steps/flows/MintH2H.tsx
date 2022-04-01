@@ -51,7 +51,10 @@ import {
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
-import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
+import {
+  GatewayPaperHeader,
+  TransactionRecoveryModal,
+} from "../shared/GatewayNavigationHelpers";
 import { SendingReceivingSection } from "../shared/TransactionStatuses";
 import {
   H2HAccountsResolver,
@@ -540,6 +543,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   return (
     <>
       {Content}
+      <TransactionRecoveryModal recoveryMode={recoveryMode} />
       <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
       {renVMSubmitter.errorSubmitting && (
         <SubmitErrorDialog

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  DialogContent,
   DialogTitle,
   Grid,
   IconButton,
@@ -13,6 +14,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { Asset, Chain } from "@renproject/chains";
 import BigNumber from "bignumber.js";
+import classNames from "classnames";
 import React, {
   FunctionComponent,
   useCallback,
@@ -123,7 +125,8 @@ const useTransactionHistoryStyles = makeStyles((theme) => ({
     marginRight: 10,
   },
   transactions: {
-    // minHeight: 300,
+    minHeight: 430,
+    padding: 0,
   },
   noTransactions: {
     height: 200,
@@ -132,6 +135,7 @@ const useTransactionHistoryStyles = makeStyles((theme) => ({
     alignItems: "center",
   },
   pagination: {
+    borderTop: `1px solid ${theme.palette.divider}`,
     paddingTop: 10,
     paddingBottom: 10,
     paddingLeft: 30,
@@ -180,7 +184,7 @@ export const TransactionsHistory: FunctionComponent = () => {
   return (
     <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
       <DialogTitle>
-        <Typography variant="h6" align="center" component="span">
+        <Typography variant="h6" align="center" component="div">
           Transaction History
         </Typography>
         <IconButton
@@ -401,7 +405,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   const endIndex = startIndex + rowsPerPage;
   return (
     <>
-      <div className={styles.transactions}>
+      <DialogContent className={styles.transactions}>
         {allTxs.map(([renVMHash, localTxData], index) => {
           const isInRange = index >= startIndex && index < endIndex;
           if (isInRange) {
@@ -412,6 +416,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
                 renVMHash={renVMHash}
                 localTxData={localTxData}
                 onRemoveTx={handleRemoveTx}
+                isLast={(index + 1) % 3 === 0}
               />
             );
           }
@@ -424,7 +429,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
             </Typography>
           </div>
         )}
-      </div>
+      </DialogContent>
       <div className={styles.pagination}>
         <SimplePagination
           count={totalCount}
@@ -462,6 +467,9 @@ const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
     paddingLeft: 30,
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
+  last: {
+    borderBottom: "none",
+  },
   topBar: {
     display: "flex",
     justifyContent: "space-between",
@@ -485,6 +493,7 @@ type RenVMTransactionEntryProps = {
   renVMHash: string;
   localTxData: LocalTxData;
   onRemoveTx: (renVMHash: string) => void;
+  isLast?: boolean;
 };
 
 const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
@@ -492,6 +501,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   renVMHash,
   localTxData,
   onRemoveTx,
+  isLast,
 }) => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -654,8 +664,10 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     nonce,
   ]);
 
+  const resolvedClassName = classNames(styles.root, { [styles.last]: isLast });
+
   return (
-    <div className={styles.root}>
+    <div className={resolvedClassName}>
       <div className={styles.topBar}>
         <InfoChips>
           <CustomChip label={date} />

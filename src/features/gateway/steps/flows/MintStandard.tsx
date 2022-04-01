@@ -13,6 +13,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { RouteComponentProps } from "react-router";
+import { useHistory } from "react-router-dom";
 import {
   BigQrCode,
   CopyContentButton,
@@ -39,14 +40,13 @@ import {
   usePaperTitle,
   useSetPaperTitle,
 } from "../../../../providers/TitleProviders";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
-import { getAssetConfig } from "../../../../utils/assetsConfig";
 import {
   alterContractChainProviderSigner,
-  PartialChainInstanceMap,
   pickChains,
 } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
@@ -82,6 +82,7 @@ import {
 } from "../../gatewayHooks";
 import {
   isTxSubmittable,
+  updateRenVMHashParam,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
   useRenVMChainTransactionStatusUpdater,
@@ -114,22 +115,22 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   } = parseGatewayQueryString(location.search, true);
   const { asset, from, to, nonce } = gatewayParams;
   const expiryTime = additionalParams.expiryTime || getGatewayExpiryTime();
+  const renVMHash = additionalParams.renVMHash;
 
   useSyncWalletChain(to);
   const { connected, account, provider } = useWallet(to);
   const allChains = useCurrentNetworkChains();
-  const [chains, setChains] = useState<PartialChainInstanceMap | null>(null);
+  const [gatewayChains] = useState(pickChains(allChains, from, to));
+
   useEffect(() => {
     if (provider) {
-      alterContractChainProviderSigner(allChains, to, provider, true);
-      const gatewayChains = pickChains(allChains, from, to);
-      setChains(gatewayChains);
+      alterContractChainProviderSigner(allChains, to, provider);
     }
-  }, [from, to, allChains, provider]);
+  }, [to, allChains, provider]);
 
   const { gateway, transactions } = useGateway(
     { asset, from, to, nonce },
-    { chains }
+    { chains: gatewayChains }
   );
 
   const fees = useGatewayFees(gateway);
@@ -141,16 +142,19 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
 
   const { orderedHashes, total } = useTransactionsPagination(transactions);
 
-  const [currentDeposit, setCurrentDeposit] = useState(
-    "gateway" // TODO: add url based depositHash
-  );
+  const [currentDeposit, setCurrentDeposit] = useState(renVMHash || "gateway");
 
-  const handleCurrentDepositChange = useCallback((_, newDeposit) => {
-    console.log("newDepositHash", newDeposit);
-    if (newDeposit !== null) {
-      setCurrentDeposit(newDeposit);
-    }
-  }, []);
+  const handleCurrentDepositChange = useCallback(
+    (_, newDeposit) => {
+      console.log("newDepositHash", newDeposit);
+      if (newDeposit !== null) {
+        setCurrentDeposit(newDeposit);
+        const depositHashParam = newDeposit === "gateway" ? null : newDeposit;
+        updateRenVMHashParam(history, depositHashParam); //this will mimic url-based navigation
+      }
+    },
+    [history]
+  );
   const handleGoToGateway = useCallback(() => {
     setCurrentDeposit("gateway");
   }, []);
@@ -248,11 +252,7 @@ export type GatewayDepositProcessorProps = {
 export const GatewayDepositProcessor: FunctionComponent<
   GatewayDepositProcessorProps
 > = ({ gateway, transaction, account, expiryTime, onGoToGateway }) => {
-  // const lockStatus = ChainTransactionStatus.Done;
-  // TODO: crit use dedicated updaters
-  useEffect(() => {
-    console.log("tx: changed", transaction);
-  }, [transaction]);
+  const history = useHistory();
 
   const { decimals: lockAssetDecimals } = useChainInstanceAssetDecimals(
     gateway.fromChain,
@@ -346,8 +346,12 @@ export const GatewayDepositProcessor: FunctionComponent<
   const { persistLocalTx } = useTxsStorage();
 
   useEffect(() => {
-    persistLocalTx(account, transaction, false, { expiryTime });
-  }, [account, transaction, persistLocalTx, expiryTime]);
+    console.log("persist", transaction);
+    if (account && transaction !== null && transaction.hash) {
+      persistLocalTx(account, transaction);
+      updateRenVMHashParam(history, transaction.hash);
+    }
+  }, [history, persistLocalTx, account, transaction, transaction?.hash]);
 
   useEffect(() => {
     if (mintTxUrl) {
