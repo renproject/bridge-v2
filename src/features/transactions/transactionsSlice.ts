@@ -5,12 +5,7 @@ type TransactionsState = {
   txHistory: {
     dialogOpened: boolean;
   };
-  currentTxId: string;
-  currentSession: {
-    txId: string;
-    depositHash: string;
-    data: any;
-  };
+  currentTxHash: string;
   issueResolver: {
     dialogOpened: boolean;
   };
@@ -18,12 +13,7 @@ type TransactionsState = {
 
 let initialState: TransactionsState = {
   txHistory: { dialogOpened: false },
-  currentTxId: "",
-  currentSession: {
-    txId: "",
-    depositHash: "",
-    data: undefined,
-  },
+  currentTxHash: "",
   issueResolver: {
     dialogOpened: false,
   },
@@ -36,12 +26,12 @@ const slice = createSlice({
     setTxHistoryOpened(state, action: PayloadAction<boolean>) {
       state.txHistory.dialogOpened = action.payload;
     },
+    setCurrentTxHash(state, action: PayloadAction<string>) {
+      state.currentTxHash = action.payload;
+    },
     setIssueResolverOpened(state, action: PayloadAction<boolean>) {
       state.issueResolver.dialogOpened = action.payload;
     },
-    // setCurrentTxId(state, action: PayloadAction<string>) {
-    //   state.currentTxId = action.payload;
-    // },
     // setCurrentSessionTxId(state, action: PayloadAction<string>) {
     //   state.currentSession.txId = action.payload;
     // },
@@ -57,7 +47,8 @@ const slice = createSlice({
 export const {
   setTxHistoryOpened,
   // setCurrentTxId,
-  // setIssueResolverOpened,
+  setIssueResolverOpened,
+  setCurrentTxHash,
   // setCurrentSessionData,
   // setCurrentSessionDepositHash,
   // setCurrentSessionTxId,

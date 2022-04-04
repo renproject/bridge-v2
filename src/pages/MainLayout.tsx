@@ -40,6 +40,10 @@ import { env } from "../constants/environmentVariables";
 import { LanguageSelector } from "../features/i18n/components/I18nHelpers";
 import { useSetNetworkFromParam } from "../features/network/networkHooks";
 import { $network } from "../features/network/networkSlice";
+import {
+  IssuesResolver,
+  IssuesResolverButton,
+} from "../features/transactions/IssuesResolver";
 import { TransactionsHistory } from "../features/transactions/TransactionsHistory";
 import {
   $txHistory,
@@ -263,8 +267,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     >
       {children}
       <TransactionsHistory />
-      {/*<IssuesResolver />*/}
-      {/*<IssuesResolverButton mode="fab" />*/}
+      <IssuesResolver />
+      <IssuesResolverButton mode="fab" />
       <Debug
         it={{
           // debugNetworkName,

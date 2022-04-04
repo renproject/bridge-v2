@@ -57,7 +57,6 @@ import {
 } from "../../utils/chainsConfig";
 import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
-import { getRemainingTime } from "../../utils/time";
 import {
   getAssetOptionData,
   getChainOptionData,

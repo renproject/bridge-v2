@@ -1,5 +1,6 @@
 import { Box, Dialog, Typography } from "@material-ui/core";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   ActionButton,
   ToggleIconButton,
@@ -11,11 +12,16 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../../components/layout/Paper";
-import { BrowserNotificationButton } from "../../../notifications/components/NotificationsHelpers";
+import {
+  BrowserNotificationButton,
+  BrowserNotificationsDrawer,
+} from "../../../notifications/components/NotificationsHelpers";
 import {
   useBrowserNotifications,
   useBrowserNotificationsConfirmation,
 } from "../../../notifications/notificationsUtils";
+import { TransactionMenu } from "../../../transactions/components/TransactionMenu";
+import { $transactions } from "../../../transactions/transactionsSlice";
 import { useGatewayMenuControl } from "../gatewayUiHooks";
 
 type GatewayPaperHeaderProps = {
@@ -26,35 +32,49 @@ export const GatewayPaperHeader: FunctionComponent<GatewayPaperHeaderProps> = ({
   title,
   children,
 }) => {
+  const { currentTxHash } = useSelector($transactions);
   const {
-    // modalOpened,
+    modalOpened,
     handleModalOpen,
     handleModalClose,
     tooltipOpened,
     handleTooltipClose,
   } = useBrowserNotificationsConfirmation();
-  const { enabled } = useBrowserNotifications(handleModalClose);
-  const { menuOpened, handleMenuOpen } = useGatewayMenuControl();
+  const { enabled, handleEnable } = useBrowserNotifications(handleModalClose);
+  const { menuOpened, handleMenuOpen, handleMenuClose } =
+    useGatewayMenuControl();
 
   return (
-    <PaperHeader>
-      <PaperNav>{children}</PaperNav>
-      <PaperTitle>{title}</PaperTitle>
-      <PaperActions>
-        <BrowserNotificationButton
-          pressed={enabled}
-          onClick={handleModalOpen}
-          tooltipOpened={tooltipOpened}
-          onTooltipClose={handleTooltipClose}
-        />
-        <ToggleIconButton
-          variant="settings"
-          disabled={true}
-          onClick={handleMenuOpen}
-          pressed={menuOpened}
-        />
-      </PaperActions>
-    </PaperHeader>
+    <>
+      <PaperHeader>
+        <PaperNav>{children}</PaperNav>
+        <PaperTitle>{title}</PaperTitle>
+        <PaperActions>
+          <BrowserNotificationButton
+            pressed={enabled}
+            onClick={handleModalOpen}
+            tooltipOpened={tooltipOpened}
+            onTooltipClose={handleTooltipClose}
+          />
+          <ToggleIconButton
+            variant="settings"
+            disabled={!currentTxHash}
+            onClick={handleMenuOpen}
+            pressed={menuOpened}
+          />
+        </PaperActions>
+      </PaperHeader>
+      <TransactionMenu
+        txHash={currentTxHash}
+        open={menuOpened}
+        onClose={handleMenuClose}
+      />
+      <BrowserNotificationsDrawer
+        open={modalOpened}
+        onClose={handleModalClose}
+        onEnable={handleEnable}
+      />
+    </>
   );
 };
 

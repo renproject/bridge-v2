@@ -31,6 +31,7 @@ import {
   SubmitErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
 import { AddressInfo } from "../../../transactions/components/TransactionsHistoryHelpers";
+import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
@@ -421,25 +422,9 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   );
 
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
-  //
-  // const ApprovalTx = (
-  //   <LabelWithValue
-  //     label={t("fees.assets-contracts-label")}
-  //     value={
-  //       approvalUrl !== null ? (
-  //         <Link href={approvalUrl} color="primary" external>
-  //           {t("fees.assets-contracts-approved")}
-  //         </Link>
-  //       ) : (
-  //         t("fees.assets-contracts-need-approval")
-  //       )
-  //     }
-  //   />
-  // );
 
   const { connected: fromConnected } = useWallet(from);
 
-  //TODO: DRY
   const isCompleted = mintTxUrl !== null;
   useEffect(() => {
     if (transaction !== null && isCompleted) {
@@ -447,6 +432,8 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       persistLocalTx(fromAccount, transaction, true);
     }
   }, [persistLocalTx, fromAccount, isCompleted, transaction]);
+
+  useSetCurrentTxHash(transaction?.hash);
 
   let Content = null;
   if (!fromConnected) {
