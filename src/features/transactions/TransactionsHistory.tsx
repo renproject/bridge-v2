@@ -1,8 +1,11 @@
 import {
   Box,
   Button,
+  Checkbox,
   DialogContent,
   DialogTitle,
+  Fade,
+  FormControlLabel,
   Grid,
   IconButton,
   Menu,
@@ -173,13 +176,17 @@ export const TransactionsHistory: FunctionComponent = () => {
     [dispatch]
   );
 
+  const [showWalletTxs, setShowWalletTxs] = useState(true);
+
+  const handleCheckboxChange = useCallback(() => {
+    setShowWalletTxs((show) => !show);
+  }, []);
+
   const handleRemoveAll = useCallback(() => {
     //dp
   }, []);
 
-  const handleRemoveFiltered = useCallback(() => {
-    //TODO: finish
-  }, []);
+  const handleRemoveFiltered = useCallback(() => {}, []);
 
   return (
     <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
@@ -200,16 +207,6 @@ export const TransactionsHistory: FunctionComponent = () => {
           <RichDropdown
             className={styles.spacer}
             condensed
-            label={t("common.from-label")}
-            supplementalLabel={t("common.blockchain-label")}
-            getOptionData={getChainOptionData}
-            options={supportedEthereumChains}
-            value={chain}
-            onChange={handleChainChange}
-            nameVariant="full"
-          />
-          <RichDropdown
-            condensed
             label={t("common.asset-label")}
             getOptionData={getAssetOptionData}
             options={supportedAssets}
@@ -219,6 +216,36 @@ export const TransactionsHistory: FunctionComponent = () => {
             showNone
             noneLabel="All Assets"
           />
+          <FormControlLabel
+            className={styles.spacer}
+            control={
+              <Checkbox
+                checked={showWalletTxs}
+                onChange={handleCheckboxChange}
+                name="walletTxs"
+                color="primary"
+              />
+            }
+            label={
+              <Typography variant="caption">
+                Show connected wallet transactions
+              </Typography>
+            }
+          />
+          <Fade in={showWalletTxs}>
+            <div>
+              <RichDropdown
+                condensed
+                label={t("common.from-label")}
+                supplementalLabel={t("common.blockchain-label")}
+                getOptionData={getChainOptionData}
+                options={supportedEthereumChains}
+                value={chain}
+                onChange={handleChainChange}
+                nameVariant="full"
+              />
+            </div>
+          </Fade>
         </div>
         <div className={styles.filtersActions}>
           <TxHistoryMenu
@@ -228,31 +255,44 @@ export const TransactionsHistory: FunctionComponent = () => {
           />
         </div>
       </div>
-      {!connected && (
-        <BigTopWrapper>
-          <MediumWrapper>
-            <Typography variant="body1" align="center">
-              {t("history.please-connect-wallet", {
-                chain: chainConfig.fullName,
-              })}
-            </Typography>
-          </MediumWrapper>
-          <BigWrapper>
-            <MediumWrapper>
-              <CenteringSpacedBox>
-                <WalletConnectionProgress />
-              </CenteringSpacedBox>
-            </MediumWrapper>
-            <ActionButtonWrapper>
-              <ActionButton onClick={handleWalletPickerOpen}>
-                {t("wallet.connect")}
-              </ActionButton>
-            </ActionButtonWrapper>
-          </BigWrapper>
-        </BigTopWrapper>
-      )}
-      {connected && (
-        <AddressTransactions address={account} from={chain} asset={asset} />
+      {showWalletTxs ? (
+        <>
+          {connected ? (
+            <AddressTransactions
+              address={account}
+              chain={chain}
+              asset={asset}
+            />
+          ) : (
+            <BigTopWrapper>
+              <MediumWrapper>
+                <Typography variant="body1" align="center">
+                  {t("history.please-connect-wallet", {
+                    chain: chainConfig.fullName,
+                  })}
+                </Typography>
+              </MediumWrapper>
+              <BigWrapper>
+                <MediumWrapper>
+                  <CenteringSpacedBox>
+                    <WalletConnectionProgress />
+                  </CenteringSpacedBox>
+                </MediumWrapper>
+                <ActionButtonWrapper>
+                  <ActionButton onClick={handleWalletPickerOpen}>
+                    {t("wallet.connect")}
+                  </ActionButton>
+                </ActionButtonWrapper>
+              </BigWrapper>
+            </BigTopWrapper>
+          )}
+        </>
+      ) : (
+        <AddressTransactions
+          address={undefined}
+          chain={undefined}
+          asset={asset}
+        />
       )}
     </WideDialog>
   );
@@ -357,22 +397,20 @@ export const decomposeLocalTxParams = (localTx: LocalTxData) => {
 };
 
 type AddressTransactionsProps = {
-  address: string;
-  from?: Chain | string;
+  address?: string;
+  chain?: Chain | string;
   asset?: Asset | string;
 };
 
 const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   address,
-  from,
+  chain,
   asset,
 }) => {
   const styles = useTransactionHistoryStyles();
-  const { localTxs, removeLocalTx, getLocalTxsForAddress } = useTxsStorage();
+  const { localTxs, removeLocalTx, getAllLocalTxs } = useTxsStorage();
 
-  const allTxsMap = getLocalTxsForAddress(address, {
-    asset,
-  });
+  const allTxsMap = getAllLocalTxs({ asset, address, chain });
   const allTxsUnsorted = Object.entries(allTxsMap);
   const allCount = allTxsUnsorted.length;
 
@@ -382,14 +420,12 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
 
   const handleRemoveTx = useCallback(
     (renVmHash: string) => {
-      removeLocalTx(address, renVmHash);
+      if (address) {
+        removeLocalTx(address, renVmHash);
+      }
     },
     [address, removeLocalTx]
   );
-
-  const renVMTxMap = Object.entries(localTxs)
-    .filter(([localAddress]) => localAddress === address)
-    .map(([localAddress, txHashMap]) => txHashMap);
 
   const [page, setPage] = useState(0);
   const handleChangePage = useCallback((event: unknown, newPage: number) => {
@@ -397,7 +433,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
   }, []);
   useEffect(() => {
     setPage(0);
-  }, [address, from]);
+  }, [address, chain]);
 
   const rowsPerPage = 3;
   const totalCount = allCount;
@@ -412,7 +448,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
             return (
               <RenVMTransactionEntry
                 key={renVMHash}
-                address={address}
+                address={address || localTxData.address}
                 renVMHash={renVMHash}
                 localTxData={localTxData}
                 onRemoveTx={handleRemoveTx}
@@ -438,7 +474,7 @@ const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
           onPageChange={handleChangePage}
         />
       </div>
-      <Debug it={{ page, renVMTxMap, localTxs }} />
+      <Debug it={{ page, localTxs }} />
     </>
   );
 };

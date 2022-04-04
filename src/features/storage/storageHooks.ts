@@ -54,6 +54,7 @@ export type LocalTxData = {
   params: TransactionParams;
   done: boolean;
   timestamp: number;
+  address: string;
   meta?: LocalTxMeta;
 };
 
@@ -68,6 +69,8 @@ export type AddressTxsMap = {
 type GetLocalTxsForAddressFilterParams = {
   done?: boolean;
   asset?: Asset | string;
+  address?: string;
+  chain?: Chain | string;
   from?: Chain | string;
   to?: Chain | string;
 };
@@ -142,6 +145,7 @@ export const useTxsStorage = () => {
               params: tx.params,
               done,
               meta, // add spreading when more params occur in meta
+              address: current.address || web3Address,
               timestamp: current.timestamp || Date.now(),
             },
           },
@@ -162,16 +166,24 @@ export const useTxsStorage = () => {
     [setLocalTxs]
   );
 
-  const getLocalTxsForAddress = useCallback(
-    (
-      address: string,
-      { done, asset, to, from }: GetLocalTxsForAddressFilterParams
-    ) => {
-      const renVMHashTxsMap = localTxs[address];
-      if (!renVMHashTxsMap) {
-        return {};
-      }
-      let resultEntries = Object.entries(renVMHashTxsMap);
+  const getAllLocalTxs = useCallback(
+    ({
+      done,
+      asset,
+      chain,
+      address,
+      to,
+      from,
+    }: GetLocalTxsForAddressFilterParams) => {
+      const allTxs: Record<string, LocalTxData> = {};
+
+      Object.entries(localTxs).forEach(([addressKey, entry]) => {
+        Object.entries(entry).forEach(([renVMHash, tx]) => {
+          allTxs[renVMHash] = { ...tx, address: addressKey };
+        });
+      });
+
+      let resultEntries = Object.entries(allTxs);
 
       resultEntries = resultEntries.filter(
         ([hash, tx]) => hash !== "undefined" && tx.params !== undefined
@@ -185,6 +197,25 @@ export const useTxsStorage = () => {
           ([hash, tx]) => tx.params?.asset === asset
         );
       }
+
+      // specific address
+      if (address) {
+        resultEntries = resultEntries.filter(
+          ([hash, tx]) =>
+            tx.address === address ||
+            (tx.params?.to as any)?.params?.address === address
+        );
+      }
+
+      // any chain
+      if (chain) {
+        resultEntries = resultEntries.filter(
+          ([hash, tx]) =>
+            tx.params?.fromTx?.chain === chain || tx.params?.to?.chain === chain
+        );
+      }
+
+      //specific chains
       if (from) {
         resultEntries = resultEntries.filter(
           ([hash, tx]) => tx.params?.fromTx?.chain === from
@@ -205,7 +236,7 @@ export const useTxsStorage = () => {
     // setLocalTxs,
     persistLocalTx,
     removeLocalTx,
-    getLocalTxsForAddress,
+    getAllLocalTxs,
     findLocalTx,
     isLocalTxDone,
     // localTxsLoaded,

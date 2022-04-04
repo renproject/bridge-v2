@@ -34,6 +34,7 @@ import { AddressInfo } from "../../../transactions/components/TransactionsHistor
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
+import { BalanceInfoPlaceholder } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
@@ -460,6 +461,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   ) {
     Content = (
       <PaperContent bottomPadding>
+        <BalanceInfoPlaceholder />
         <SendingReceivingSection
           asset={asset}
           sendingAmount={amount}

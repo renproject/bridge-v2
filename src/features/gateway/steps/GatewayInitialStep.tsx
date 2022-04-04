@@ -173,6 +173,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const toChainConfig = getChainConfig(to);
   // TODO: fix
   const renAssetConfig = getRenAssetConfig(asset);
+  const assetConfig = getAssetConfig(asset);
   const { connected } = useCurrentChainWallet();
 
   const handleConnect = useCallback(() => {
@@ -193,6 +194,13 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     asset,
     account
   );
+  // const balanceAsset = isH2H ? assetConfig.shortName : renAssetConfig.shortName;
+  const balanceAsset = isRelease
+    ? renAssetConfig.shortName
+    : isH2H
+    ? assetConfig.shortName
+    : renAssetConfig.shortName;
+  const balanceChain = isRelease ? from : isH2H ? from : to;
 
   const requiresInitialAmount = isFromContractChain;
   const hasInitialAmount = amount !== "";
@@ -264,8 +272,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {connected && isFromContractChain ? (
           <BalanceInfo
             balance={balance}
-            asset={renAssetConfig.shortName}
-            chain={isH2H ? from : undefined}
+            asset={balanceAsset}
+            chain={balanceChain}
           />
         ) : null}
         <RichDropdownWrapper>

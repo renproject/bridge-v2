@@ -69,9 +69,9 @@ export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
     throw new Error(`No configuration for ${ChainClass.name} on ${network}.`);
   }
 
-  let rpcUrl = config.network.rpcUrls[0];
+  let rpcUrl = config.config.rpcUrls[0];
   if (process.env.REACT_APP_INFURA_KEY) {
-    for (const url of config.network.rpcUrls) {
+    for (const url of config.config.rpcUrls) {
       if (url.match(/^https:\/\/.*\$\{INFURA_API_KEY\}/)) {
         rpcUrl = url.replace(
           /\$\{INFURA_API_KEY\}/,

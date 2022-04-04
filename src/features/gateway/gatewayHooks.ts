@@ -176,6 +176,7 @@ export const useAssetDecimals = (chain: Chain, asset: string | Asset) => {
 };
 
 const decimalsCache = new Map();
+(window as any).decimalsCache = decimalsCache;
 
 // TODO: rename to useChainInstanceAssetDecimals, reuse in useGatewayFees
 export const useChainInstanceAssetDecimals = (
@@ -190,8 +191,8 @@ export const useChainInstanceAssetDecimals = (
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!chainInstance || !asset) {
-      setDecimals(null);
+    setDecimals(null);
+    if (!chainInstance || !asset || cachedDecimals !== undefined) {
       return;
     }
     const getDecimals = async () => {
@@ -205,9 +206,9 @@ export const useChainInstanceAssetDecimals = (
       .catch((err) => {
         setError(err);
       });
-  }, [chainInstance, asset, cacheKey]);
+  }, [chainInstance, asset, cacheKey, cachedDecimals]);
 
-  return { decimals, error };
+  return { decimals: cachedDecimals || decimals, error };
 };
 
 export const useChainAssetAddress = (
@@ -251,6 +252,7 @@ export const useContractChainAssetBalance = (
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     setError(null);
+    setBalance(null);
     if (
       !instance ||
       decimals === null ||

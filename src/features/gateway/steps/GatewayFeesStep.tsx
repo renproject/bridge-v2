@@ -7,6 +7,7 @@ import {
   IconButton,
   Typography,
 } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import {
   ChainTransactionStatus,
   ContractChain,
@@ -272,11 +273,17 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           <AssetInfo
             label={t("common.receiving-label")}
             value={
-              <NumberFormatText
-                value={outputAmount}
-                spacedSuffix={assetLabel}
-                decimalScale={feesDecimalImpact(amount)}
-              />
+              <>
+                {outputAmount !== null ? (
+                  <NumberFormatText
+                    value={outputAmount}
+                    spacedSuffix={assetLabel}
+                    decimalScale={feesDecimalImpact(amount)}
+                  />
+                ) : (
+                  <Skeleton variant="text" height={18} width={66} />
+                )}
+              </>
             }
             valueEquivalent={
               outputAmountUsd !== null ? (
@@ -287,7 +294,9 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                   decimalScale={2}
                   fixedDecimalScale
                 />
-              ) : null
+              ) : (
+                <Skeleton variant="text" height={17} width={80} />
+              )
             }
             Icon={<AssetIcon fontSize="inherit" />}
           />
