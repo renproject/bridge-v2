@@ -57,6 +57,7 @@ import {
 } from "../../utils/chainsConfig";
 import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
+import { getRemainingTime } from "../../utils/time";
 import {
   getAssetOptionData,
   getChainOptionData,
@@ -76,6 +77,7 @@ import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { useCurrentChainWallet } from "../wallet/walletHooks";
 import { $wallet, setChain, setPickerOpened } from "../wallet/walletSlice";
 import {
+  GatewayStatusChip,
   HMSCountdownTo,
   WithConfirmDialog,
 } from "./components/TransactionsHelpers";
@@ -714,15 +716,15 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
             <CustomChip label={typeLabel} />
           )}
           {done ? (
-            <CustomChip size="small" color="done" label="Finished" />
+            <CustomChip color="done" label="Finished" />
           ) : (
-            <CustomChip size="small" color="pending" label="Pending" />
+            <CustomChip color="pending" label="Pending" />
           )}
+          {isDepositMint && <GatewayStatusChip timestamp={expiryTime} />}
         </InfoChips>
         <div>
           {(done || featureFlags.godMode) && (
             <CustomChip
-              size="small"
               color="advanced"
               clickable
               label="Remove from Local Storage"
@@ -740,7 +742,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
               <FullWidthWrapper>
                 <Typography variant="body2">Time Remaining</Typography>
                 <Typography variant="body2">
-                  <HMSCountdownTo timestamp={expiryTime} />
+                  <HMSCountdownTo timestamp={expiryTime} stopNegative />
                 </Typography>
               </FullWidthWrapper>
             </SmallHorizontalPadder>

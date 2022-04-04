@@ -59,7 +59,7 @@ const useInfoChipStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.warning.light,
   },
   info: {
-    backgroundColor: theme.palette.success.light,
+    backgroundColor: theme.palette.info.light,
   },
   pending: {
     backgroundColor: theme.customColors.chipPending,

@@ -58,6 +58,7 @@ import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 import { getRemainingTime } from "../../../utils/time";
+import { CustomChip } from "./TransactionsHistoryHelpers";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -275,19 +276,43 @@ export const HMSCountdown: FunctionComponent<HMSCountdownProps> = ({
 
 // alternative version with recalculating remaining time every rerender
 // may be more accurate than HMSCountdown
-type HMSCountdownToProps = { timestamp: number };
+type HMSCountdownToProps = { timestamp: number; stopNegative?: boolean };
 
 export const HMSCountdownTo: FunctionComponent<HMSCountdownToProps> = ({
   timestamp,
+  stopNegative,
 }) => {
-  const [time, setTime] = useState(
-    getFormattedHMS(getRemainingTime(timestamp))
-  );
+  const [time, setTime] = useState(getRemainingTime(timestamp));
   useInterval(() => {
-    setTime(getFormattedHMS(getRemainingTime(timestamp)));
+    setTime(getRemainingTime(timestamp));
   }, 1000);
 
-  return <span>{time}</span>;
+  if (stopNegative) {
+    return <span>{getFormattedHMS(time > 0 ? time : 0)}</span>;
+  } else {
+    return <span>{getFormattedHMS(time)}</span>;
+  }
+};
+
+const GATEWAY_OPEN_MS = 5 * 3600 * 1000;
+const GATEWAY_EXPIRING_MS = 3600 * 1000;
+
+type GatewayStatusChipProps = { timestamp: number };
+
+export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
+  timestamp,
+}) => {
+  const [time, setTime] = useState(getRemainingTime(timestamp));
+  useInterval(() => {
+    setTime(getRemainingTime(timestamp));
+  }, 1000);
+
+  if (time > GATEWAY_OPEN_MS) {
+    return <CustomChip color="done" label="Gateway Open" />;
+  } else if (time > GATEWAY_EXPIRING_MS) {
+    return <CustomChip color="pending" label="Gateway Expiring" />;
+  }
+  return <CustomChip color="pending" label="Gateway Closed" />;
 };
 
 export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
