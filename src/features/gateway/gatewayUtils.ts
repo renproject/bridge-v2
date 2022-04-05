@@ -47,7 +47,11 @@ export const createGateway = async (
       fromChainInstance.chain as unknown as EthereumBaseChain;
     console.log("resolving fromAddress", gatewayParams);
     if (gatewayParams.fromAddress) {
-      fromChain = ethereumChain.Address(gatewayParams.fromAddress);
+      fromChain = fromChain = ethereumChain.Account({
+        account: gatewayParams.fromAddress,
+        amount: gatewayParams.amount,
+        convertUnit,
+      });
     } else {
       fromChain = ethereumChain.Account({
         amount: gatewayParams.amount,
@@ -77,8 +81,13 @@ export const createGateway = async (
       toChain = ethereumChain.Account({ convertUnit });
     }
   } else if (supportedSolanaChains.includes(gatewayParams.to)) {
-    // TODO: crit finish
-    toChain = (toChainInstance.chain as Solana).Account();
+    if (gatewayParams.toAddress) {
+      toChain = (toChainInstance.chain as Solana).Address({
+        address: gatewayParams.toAddress,
+      });
+    } else {
+      toChain = (toChainInstance.chain as Solana).Account();
+    }
   } else if (supportedBitcoinChains.includes(gatewayParams.to)) {
     if (!gatewayParams.toAddress) {
       throw new Error(`No recipient address provided.`);

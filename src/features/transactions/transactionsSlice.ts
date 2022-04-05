@@ -4,6 +4,7 @@ import { RootState } from "../../store/rootReducer";
 type TransactionsState = {
   txHistory: {
     dialogOpened: boolean;
+    showConnectedTxs: boolean;
   };
   currentTxHash: string;
   issueResolver: {
@@ -12,7 +13,10 @@ type TransactionsState = {
 };
 
 let initialState: TransactionsState = {
-  txHistory: { dialogOpened: false },
+  txHistory: {
+    dialogOpened: false,
+    showConnectedTxs: false,
+  },
   currentTxHash: "",
   issueResolver: {
     dialogOpened: false,
@@ -25,6 +29,9 @@ const slice = createSlice({
   reducers: {
     setTxHistoryOpened(state, action: PayloadAction<boolean>) {
       state.txHistory.dialogOpened = action.payload;
+    },
+    setShowConnectedTxs(state, action: PayloadAction<boolean>) {
+      state.txHistory.showConnectedTxs = action.payload;
     },
     setCurrentTxHash(state, action: PayloadAction<string>) {
       state.currentTxHash = action.payload;
@@ -46,7 +53,7 @@ const slice = createSlice({
 
 export const {
   setTxHistoryOpened,
-  // setCurrentTxId,
+  setShowConnectedTxs,
   setIssueResolverOpened,
   setCurrentTxHash,
   // setCurrentSessionData,

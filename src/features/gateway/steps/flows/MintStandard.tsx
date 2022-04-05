@@ -3,7 +3,6 @@ import { Skeleton, ToggleButtonProps } from "@material-ui/lab";
 import { Asset, Chain } from "@renproject/chains";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import BigNumber from "bignumber.js";
 import QRCode from "qrcode.react";
 import React, {
   FunctionComponent,

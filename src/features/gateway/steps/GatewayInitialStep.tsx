@@ -38,7 +38,10 @@ import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { useCurrentChainWallet, useWallet } from "../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../wallet/walletSlice";
-import { BalanceInfo } from "../components/BalanceHelpers";
+import {
+  BalanceInfo,
+  BalanceInfoPlaceholder,
+} from "../components/BalanceHelpers";
 import {
   getAssetOptionData,
   getChainOptionData,
@@ -188,11 +191,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       : "";
 
   const chains = useCurrentNetworkChains();
-  const { account, targetNetwork } = useWallet(from);
+  const { account, targetNetwork, connected: fromConnected } = useWallet(from);
   const { balance } = useContractChainAssetBalance(
     chains[from].chain as any,
     asset,
-    account
+    account,
+    isFromContractChain ? fromConnected : undefined
   );
   // const balanceAsset = isH2H ? assetConfig.shortName : renAssetConfig.shortName;
   const balanceAsset = isRelease
@@ -269,13 +273,15 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             />
           </BigCurrencyInputWrapper>
         )}
-        {connected && isFromContractChain ? (
+        {fromConnected && isFromContractChain ? (
           <BalanceInfo
             balance={balance}
             asset={balanceAsset}
             chain={balanceChain}
           />
-        ) : null}
+        ) : (
+          <BalanceInfoPlaceholder />
+        )}
         <RichDropdownWrapper>
           <RichDropdown
             label={isMint ? t("mint.mint-label") : t("release.release-label")}

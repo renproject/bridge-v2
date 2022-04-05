@@ -88,7 +88,11 @@ import {
   InfoChips,
   WideDialog,
 } from "./components/TransactionsHistoryHelpers";
-import { $txHistory, setTxHistoryOpened } from "./transactionsSlice";
+import {
+  $txHistory,
+  setShowConnectedTxs,
+  setTxHistoryOpened,
+} from "./transactionsSlice";
 
 const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
 
@@ -151,7 +155,7 @@ export const TransactionsHistory: FunctionComponent = () => {
   const styles = useTransactionHistoryStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { dialogOpened } = useSelector($txHistory);
+  const { dialogOpened, showConnectedTxs } = useSelector($txHistory);
 
   const { chain } = useSelector($wallet);
   const { connected, account } = useCurrentChainWallet();
@@ -177,11 +181,9 @@ export const TransactionsHistory: FunctionComponent = () => {
     [dispatch]
   );
 
-  const [showWalletTxs, setShowWalletTxs] = useState(true);
-
   const handleCheckboxChange = useCallback(() => {
-    setShowWalletTxs((show) => !show);
-  }, []);
+    dispatch(setShowConnectedTxs(!showConnectedTxs));
+  }, [dispatch, showConnectedTxs]);
 
   const handleRemoveAll = useCallback(() => {
     //dp
@@ -221,7 +223,7 @@ export const TransactionsHistory: FunctionComponent = () => {
             className={styles.spacer}
             control={
               <Checkbox
-                checked={showWalletTxs}
+                checked={showConnectedTxs}
                 onChange={handleCheckboxChange}
                 name="walletTxs"
                 color="primary"
@@ -233,7 +235,7 @@ export const TransactionsHistory: FunctionComponent = () => {
               </Typography>
             }
           />
-          <Fade in={showWalletTxs}>
+          <Fade in={showConnectedTxs}>
             <div>
               <RichDropdown
                 condensed
@@ -256,7 +258,7 @@ export const TransactionsHistory: FunctionComponent = () => {
           />
         </div>
       </div>
-      {showWalletTxs ? (
+      {showConnectedTxs ? (
         <>
           {connected ? (
             <LocalTransactions address={account} chain={chain} asset={asset} />
@@ -512,6 +514,11 @@ const useRenVMTransactionEntryStyles = makeStyles((theme) => ({
   fromWrapper: {
     position: "relative",
   },
+  expiryTime: {
+    alignItems: "center",
+    height: 26,
+    display: "flex",
+  },
   arrow: {
     position: "absolute",
     top: 12,
@@ -731,9 +738,15 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
         </div>
       </div>
       <Grid container spacing={3}>
-        <Grid item sm={12} md={6} className={styles.fromWrapper}>
+        <Grid
+          item
+          sm={12}
+          md={6}
+          className={styles.fromWrapper}
+          alignItems="center"
+        >
           {isDepositMint ? (
-            <SmallHorizontalPadder>
+            <SmallHorizontalPadder className={styles.expiryTime}>
               <FullWidthWrapper>
                 <Typography variant="body2">Time Remaining</Typography>
                 <Typography variant="body2">
@@ -742,20 +755,22 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
               </FullWidthWrapper>
             </SmallHorizontalPadder>
           ) : (
-            <BluePadder>
-              <FullWidthWrapper>
-                <Typography variant="body2">Sender Address</Typography>
-                <AddressOnChainLink
-                  address={address}
-                  addressUrl={fromAddressUrl}
-                  Icon={FromChainIcon}
-                />
-              </FullWidthWrapper>
-            </BluePadder>
+            <>
+              <BluePadder>
+                <FullWidthWrapper>
+                  <Typography variant="body2">Sender Address</Typography>
+                  <AddressOnChainLink
+                    address={address}
+                    addressUrl={fromAddressUrl}
+                    Icon={FromChainIcon}
+                  />
+                </FullWidthWrapper>
+              </BluePadder>
+              <div className={styles.arrow}>
+                <ArrowRightIcon fontSize="inherit" />
+              </div>
+            </>
           )}
-          <div className={styles.arrow}>
-            <ArrowRightIcon fontSize="inherit" />
-          </div>
         </Grid>
         <Grid item sm={12} md={6}>
           <BluePadder>

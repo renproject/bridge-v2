@@ -94,7 +94,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     }
   }, [width, theme.breakpoints]);
 
-  const { dialogOpened: txHistoryOpened } = useSelector($txHistory);
+  const { dialogOpened: txHistoryOpened, showConnectedTxs } =
+    useSelector($txHistory);
   const handleTxHistoryToggle = useCallback(() => {
     dispatch(setTxHistoryOpened(!txHistoryOpened));
   }, [dispatch, txHistoryOpened]);
@@ -164,7 +165,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
         />
         <WalletConnectionStatusButton
           onClick={handleWalletButtonClick}
-          hoisted={txHistoryOpened}
+          hoisted={txHistoryOpened && showConnectedTxs}
           status={status}
           account={account}
           wallet={wallet}

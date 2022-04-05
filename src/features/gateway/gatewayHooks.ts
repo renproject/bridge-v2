@@ -244,20 +244,24 @@ export const useChainAssetAddress = (
 export const useContractChainAssetBalance = (
   chainInstance: Chain | DepositChain | ContractChain | null | undefined,
   asset: string,
-  address?: string
+  address?: string,
+  connected?: boolean
 ) => {
   const instance = chainInstance as ContractChain;
   const { decimals } = useChainInstanceAssetDecimals(instance, asset);
   const [balance, setBalance] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  console.log("instance", instance, connected, decimals);
   useEffect(() => {
     setError(null);
-    setBalance(null);
     if (
       !instance ||
       decimals === null ||
-      !supportedContractChains.includes(instance.chain as Chain)
+      !supportedContractChains.includes(instance.chain as Chain) ||
+      !(connected !== undefined && connected)
     ) {
+      console.log("not ready");
+      setBalance(null);
       return;
     }
     const getBalance = async () => {
@@ -273,7 +277,7 @@ export const useContractChainAssetBalance = (
       console.error(error);
       setError(error);
     });
-  }, [instance, decimals, asset, address]);
+  }, [instance, connected, decimals, asset, address]);
 
   return { balance, error };
 };

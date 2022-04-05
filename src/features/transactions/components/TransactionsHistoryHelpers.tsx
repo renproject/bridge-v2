@@ -124,6 +124,7 @@ export const FullWidthWrapper = styled("div")({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  width: "100%",
 });
 
 const useAddressOnChainLinkStyles = makeStyles(() => ({
