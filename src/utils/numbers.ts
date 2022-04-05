@@ -14,7 +14,7 @@ export const feesDecimalImpact = (
   return decimalImpact;
 };
 
-export const amountWithDecimals = (
+export const decimalsAmount = (
   amount: string | number | null,
   decimals: string | number | null
 ) => {

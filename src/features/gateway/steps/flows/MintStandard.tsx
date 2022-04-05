@@ -43,6 +43,7 @@ import {
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
+import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
 import {
@@ -665,10 +666,7 @@ export const DepositNavigationButton: FunctionComponent<
     debugLabel: "out p",
   });
 
-  const lockTxAmount =
-    lockAssetDecimals !== null && lockAmount !== null
-      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
-      : null;
+  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
   const { status: mintStatus, txUrl: mintTxUrl } = mintTxMeta;
   const Icon = lockAssetConfig.Icon;
@@ -710,7 +708,7 @@ export const DepositNavigationButton: FunctionComponent<
       Content = (
         <div>
           <Typography variant="body1" color="textPrimary">
-            {lockTxAmount} {lockAssetConfig.shortName}
+            {lockAmountFormatted} {lockAssetConfig.shortName}
           </Typography>
           {lockTargetConfirmations !== 0 ? (
             <Typography variant="body2" color="textSecondary">
@@ -747,8 +745,8 @@ export const DepositNavigationButton: FunctionComponent<
     Content = (
       <div>
         <Typography variant="body1" color="textPrimary">
-          {lockTxAmount !== null ? (
-            lockTxAmount
+          {lockAmountFormatted !== null ? (
+            lockAmountFormatted
           ) : (
             <Skeleton variant="text" width={70} height={14} />
           )}{" "}
@@ -774,7 +772,7 @@ export const DepositNavigationButton: FunctionComponent<
     Content = (
       <div>
         <Typography variant="body1" color="textPrimary">
-          {lockTxAmount} {lockAssetConfig.shortName}
+          {lockAmountFormatted} {lockAssetConfig.shortName}
         </Typography>
         <Typography variant="body2" color="primary">
           {t("mint.deposit-navigation-completed-label")}

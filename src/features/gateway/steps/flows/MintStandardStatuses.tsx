@@ -44,7 +44,7 @@ import {
 } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
-import { amountWithDecimals } from "../../../../utils/numbers";
+import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getRemainingTime } from "../../../../utils/time";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
@@ -106,7 +106,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<
   const { Icon } = lockAssetConfig;
 
   const confirmed = lockStatus === ChainTransactionStatus.Done;
-  const lockAmountFormatted = amountWithDecimals(lockAmount, lockAssetDecimals);
+  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
   useEffect(() => {
     setTitle(
@@ -199,10 +199,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   const lockChainConfig = getChainConfig(gateway.params.from.chain);
   const mintChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const lockAmountFormatted =
-    lockAmount !== null && lockAssetDecimals !== null
-      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
-      : null;
+  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
   const { showNotification, closeNotification } = useNotifications();
   const [notification, setNotification] = useState<ReactText>();
@@ -358,10 +355,7 @@ export const MintCompletingStatus: FunctionComponent<
   const lockAssetConfig = getAssetConfig(gateway.params.asset);
   const lockChainConfig = getChainConfig(gateway.params.from.chain);
   const mintChainConfig = getChainConfig(gateway.params.to.chain);
-  const mintAmountFormatted =
-    mintAmount !== null && mintAssetDecimals !== null
-      ? new BigNumber(mintAmount).shiftedBy(-mintAssetDecimals).toString()
-      : null;
+  const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
   return (
     <>
       <ProgressWrapper>
@@ -447,15 +441,8 @@ export const MintCompletedStatus: FunctionComponent<
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
 
-  const mintAmountFormatted =
-    mintAmount !== null && mintAssetDecimals !== null
-      ? new BigNumber(mintAmount).shiftedBy(-mintAssetDecimals).toString()
-      : null;
-
-  const lockAmountFormatted =
-    lockAmount !== null && lockAssetDecimals !== null
-      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
-      : null;
+  const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
+  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
   const showNotifications = useCallback(() => {
     if (mintTxUrl !== null) {

@@ -24,6 +24,7 @@ import {
   getRenAssetConfig,
 } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
@@ -255,19 +256,14 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
   const burnAssetConfig = getAssetConfig(gateway.params.asset);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);
 
+  const burnAmountFormatted = decimalsAmount(burnAmount, burnAssetDecimals);
+  const releaseAmountFormatted = decimalsAmount(
+    releaseAmount,
+    releaseAssetDecimals
+  );
+
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
-
-  const burnAmountFormatted =
-    burnAmount !== null && burnAssetDecimals !== null
-      ? new BigNumber(burnAmount).shiftedBy(-burnAssetDecimals).toString()
-      : null;
-
-  const releaseAmountFormatted =
-    releaseAmount !== null && releaseAssetDecimals !== null
-      ? new BigNumber(releaseAmount).shiftedBy(-releaseAssetDecimals).toString()
-      : null;
-
   const showNotifications = useCallback(() => {
     if (releaseTxUrl !== null) {
       const notificationMessage = t("release.success-notification-message", {

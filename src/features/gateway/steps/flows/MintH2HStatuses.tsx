@@ -20,6 +20,7 @@ import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
@@ -284,15 +285,8 @@ export const MintH2HCompletedStatus: FunctionComponent<
   const lockAssetConfig = getAssetConfig(gateway.params.asset);
   const mintChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const lockAmountFormatted =
-    lockAmount !== null && lockAssetDecimals !== null
-      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
-      : null;
-
-  const mintAmountFormatted =
-    mintAmount !== null && mintAssetDecimals !== null
-      ? new BigNumber(mintAmount).shiftedBy(-mintAssetDecimals).toString()
-      : null;
+  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
+  const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
 
   //TODO: DRY
   const { showNotification } = useNotifications();
