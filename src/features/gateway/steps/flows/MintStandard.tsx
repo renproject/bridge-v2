@@ -348,10 +348,17 @@ export const GatewayDepositProcessor: FunctionComponent<
   useEffect(() => {
     console.log("persist", transaction);
     if (account && transaction !== null && transaction.hash) {
-      persistLocalTx(account, transaction);
+      persistLocalTx(account, transaction, false, { expiryTime });
       updateRenVMHashParam(history, transaction.hash);
     }
-  }, [history, persistLocalTx, account, transaction, transaction?.hash]);
+  }, [
+    history,
+    persistLocalTx,
+    account,
+    transaction,
+    transaction?.hash,
+    expiryTime,
+  ]);
 
   useEffect(() => {
     if (mintTxUrl) {
@@ -425,6 +432,8 @@ export const GatewayDepositProcessor: FunctionComponent<
           gateway={gateway}
           mintAmount={mintAmount}
           lockTxUrl={lockTxUrl}
+          lockAmount={lockAmount}
+          lockAssetDecimals={lockAssetDecimals}
           mintTxUrl={mintTxUrl}
           mintAssetDecimals={mintAssetDecimals}
         />

@@ -53,7 +53,7 @@ import {
 } from "../../utils/assetsConfig";
 import {
   getChainConfig,
-  supportedEthereumChains,
+  supportedContractChains,
 } from "../../utils/chainsConfig";
 import { getFormattedDateTime } from "../../utils/dates";
 import { trimAddress } from "../../utils/strings";
@@ -240,7 +240,7 @@ export const TransactionsHistory: FunctionComponent = () => {
                 label={t("common.from-label")}
                 supplementalLabel={t("common.blockchain-label")}
                 getOptionData={getChainOptionData}
-                options={supportedEthereumChains}
+                options={supportedContractChains}
                 value={chain}
                 onChange={handleChainChange}
                 nameVariant="full"
@@ -259,11 +259,7 @@ export const TransactionsHistory: FunctionComponent = () => {
       {showWalletTxs ? (
         <>
           {connected ? (
-            <AddressTransactions
-              address={account}
-              chain={chain}
-              asset={asset}
-            />
+            <LocalTransactions address={account} chain={chain} asset={asset} />
           ) : (
             <BigTopWrapper>
               <MediumWrapper>
@@ -289,7 +285,7 @@ export const TransactionsHistory: FunctionComponent = () => {
           )}
         </>
       ) : (
-        <AddressTransactions
+        <LocalTransactions
           address={undefined}
           chain={undefined}
           asset={asset}
@@ -397,13 +393,13 @@ export const decomposeLocalTxParams = (localTx: LocalTxData) => {
   return { asset, from, to };
 };
 
-type AddressTransactionsProps = {
+type LocalTransactionsProps = {
   address?: string;
   chain?: Chain | string;
   asset?: Asset | string;
 };
 
-const AddressTransactions: FunctionComponent<AddressTransactionsProps> = ({
+const LocalTransactions: FunctionComponent<LocalTransactionsProps> = ({
   address,
   chain,
   asset,

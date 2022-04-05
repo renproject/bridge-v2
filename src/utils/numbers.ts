@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 export const feesDecimalImpact = (
   value: string | number,
   decimalImpact = 2
@@ -10,4 +12,13 @@ export const feesDecimalImpact = (
     return decimalDigits + decimalImpact;
   }
   return decimalImpact;
+};
+
+export const amountWithDecimals = (
+  amount: string | number | null,
+  decimals: string | number | null
+) => {
+  return amount !== null && decimals !== null
+    ? new BigNumber(amount).shiftedBy(-decimals).toString()
+    : null;
 };

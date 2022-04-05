@@ -44,6 +44,7 @@ import {
 } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { getHours } from "../../../../utils/dates";
+import { amountWithDecimals } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getRemainingTime } from "../../../../utils/time";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
@@ -64,7 +65,10 @@ import { useBasicRouteHandlers } from "../../gatewayRoutingUtils";
 import { maxConfirmations } from "../../gatewayTransactionUtils";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
-import { FromToTxLinks } from "../shared/TransactionStatuses";
+import {
+  FromToTxLinks,
+  SentReceivedSection,
+} from "../shared/TransactionStatuses";
 
 type MintDepositConfirmationStatusProps = {
   gateway: Gateway;
@@ -102,10 +106,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<
   const { Icon } = lockAssetConfig;
 
   const confirmed = lockStatus === ChainTransactionStatus.Done;
-  const lockAmountFormatted =
-    lockAmount !== null && lockAssetDecimals !== null
-      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
-      : null;
+  const lockAmountFormatted = amountWithDecimals(lockAmount, lockAssetDecimals);
 
   useEffect(() => {
     setTitle(
@@ -415,14 +416,24 @@ export const MintCompletingStatus: FunctionComponent<
 type MintCompletedStatusProps = {
   gateway: Gateway;
   lockTxUrl: string | null;
-  mintAssetDecimals: number | null;
+  lockAmount: string | null;
+  lockAssetDecimals: string | null;
   mintAmount: string | null;
+  mintAssetDecimals: number | null;
   mintTxUrl: string | null;
 };
 
 export const MintCompletedStatus: FunctionComponent<
   MintCompletedStatusProps
-> = ({ gateway, lockTxUrl, mintTxUrl, mintAmount, mintAssetDecimals }) => {
+> = ({
+  gateway,
+  lockAmount,
+  lockAssetDecimals,
+  lockTxUrl,
+  mintTxUrl,
+  mintAmount,
+  mintAssetDecimals,
+}) => {
   const { t } = useTranslation();
   const { from, to, asset } = getGatewayParams(gateway);
   useSetPaperTitle(t("mint.complete-title"));
@@ -439,6 +450,11 @@ export const MintCompletedStatus: FunctionComponent<
   const mintAmountFormatted =
     mintAmount !== null && mintAssetDecimals !== null
       ? new BigNumber(mintAmount).shiftedBy(-mintAssetDecimals).toString()
+      : null;
+
+  const lockAmountFormatted =
+    lockAmount !== null && lockAssetDecimals !== null
+      ? new BigNumber(lockAmount).shiftedBy(-lockAssetDecimals).toString()
       : null;
 
   const showNotifications = useCallback(() => {
@@ -485,14 +501,11 @@ export const MintCompletedStatus: FunctionComponent<
           <BigDoneIcon />
         </ProgressWithContent>
       </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        {t("tx.you-received-message")}{" "}
-        <NumberFormatText
-          value={mintAmountFormatted}
-          spacedSuffix={lockAssetConfig.shortName}
-        />
-        !
-      </Typography>
+      <SentReceivedSection
+        asset={asset}
+        sentAmount={lockAmountFormatted}
+        receivedAmount={mintAmountFormatted}
+      />
       <MultipleActionButtonWrapper>
         {addToken !== null && (
           <Box mb={1}>

@@ -19,6 +19,7 @@ import {
   AddIcon,
   CustomSvgIconComponent,
   TxSettingsIcon,
+  WarningIcon,
 } from "../../../components/icons/RenIcons";
 import {
   OutlinedTextField,
@@ -146,8 +147,11 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
                   {t("tx.menu-insert-update-label")}
                 </TransactionMenuItem>
               )}
-              <TransactionMenuItem Icon={AddIcon} onClick={handleResolveIssues}>
-                Resolve issues
+              <TransactionMenuItem
+                Icon={WarningIcon}
+                onClick={handleResolveIssues}
+              >
+                Resolve issue
               </TransactionMenuItem>
             </div>
           </NestedDrawerContent>

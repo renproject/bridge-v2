@@ -61,8 +61,9 @@ export const IssuesResolver: FunctionComponent = () => {
   return (
     <WideDialog
       open={dialogOpened}
-      onEscapeKeyDown={handleClose}
-      onBackdropClick={handleClose}
+      onClose={handleClose}
+      // onEscapeKeyDown={handleClose}
+      // onBackdropClick={handleClose}
     >
       <BridgeModalTitle onClose={handleClose}>
         {t("tx.issue-resolver-title")}

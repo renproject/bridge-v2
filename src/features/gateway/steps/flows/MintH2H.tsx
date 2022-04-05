@@ -532,7 +532,10 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   return (
     <>
       {Content}
-      <TransactionRecoveryModal recoveryMode={recoveryMode} />
+      <TransactionRecoveryModal
+        gateway={gateway}
+        recoveryMode={fromConnected && recoveryMode}
+      />
       <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
       {renVMSubmitter.errorSubmitting && (
         <SubmitErrorDialog

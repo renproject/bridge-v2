@@ -375,7 +375,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   return (
     <>
       {Content}
-      <TransactionRecoveryModal recoveryMode={recoveryMode} />
+      <TransactionRecoveryModal gateway={gateway} recoveryMode={recoveryMode} />
       <Debug
         it={{
           recoveryMode,

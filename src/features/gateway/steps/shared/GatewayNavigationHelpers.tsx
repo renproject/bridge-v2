@@ -1,4 +1,5 @@
 import { Box, Dialog, Typography } from "@material-ui/core";
+import { Gateway } from "@renproject/ren";
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -12,6 +13,7 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../../components/layout/Paper";
+import { env } from "../../../../constants/environmentVariables";
 import {
   BrowserNotificationButton,
   BrowserNotificationsDrawer,
@@ -79,27 +81,31 @@ export const GatewayPaperHeader: FunctionComponent<GatewayPaperHeaderProps> = ({
 };
 
 type TransactionRecoveringModalProps = {
+  gateway: Gateway | null;
   recoveryMode?: boolean;
 };
 
+const RECOVERY_TIMEOUT = env.DEV ? 3000 : 12000;
+
 export const TransactionRecoveryModal: FunctionComponent<
   TransactionRecoveringModalProps
-> = ({ recoveryMode }) => {
+> = ({ gateway, recoveryMode }) => {
   const [show, setShow] = useState(false);
 
   const [countDone, setCountDone] = useState(false);
 
   useEffect(() => {
-    if (recoveryMode) {
+    if (gateway !== null && recoveryMode) {
       setShow(true);
     }
     const timeout = setTimeout(() => {
       setCountDone(true);
-    }, 7000);
+    }, RECOVERY_TIMEOUT);
     return () => clearTimeout(timeout);
-  }, [recoveryMode]);
+  }, [gateway, recoveryMode]);
 
   const handleResume = useCallback(() => {
+    setCountDone(false);
     setShow(false);
   }, []);
 

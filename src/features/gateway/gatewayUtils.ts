@@ -23,8 +23,7 @@ export interface CreateGatewayParams {
   fromAddress?: string;
 }
 
-const convertUnit = undefined;
-const convertToWei = true;
+const convertUnit = true;
 
 export const createGateway = async (
   renJS: RenJS,
@@ -52,7 +51,6 @@ export const createGateway = async (
     } else {
       fromChain = ethereumChain.Account({
         amount: gatewayParams.amount,
-        convertToWei,
         convertUnit,
       });
     }
@@ -77,7 +75,7 @@ export const createGateway = async (
     if (gatewayParams.toAddress) {
       toChain = ethereumChain.Address(gatewayParams.toAddress || "");
     } else {
-      toChain = ethereumChain.Account({ convertUnit, convertToWei });
+      toChain = ethereumChain.Account({ convertUnit });
     }
   } else if (supportedSolanaChains.includes(gatewayParams.to)) {
     // TODO: crit finish
