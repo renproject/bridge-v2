@@ -2,7 +2,6 @@ import { Box, Typography, useTheme } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import BigNumber from "bignumber.js";
 import {
   FunctionComponent,
   ReactText,

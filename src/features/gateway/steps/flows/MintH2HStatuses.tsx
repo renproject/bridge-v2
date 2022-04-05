@@ -1,7 +1,6 @@
 import { Box, Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
-import BigNumber from "bignumber.js";
 import React, { FunctionComponent, ReactNode, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useEffectOnce } from "react-use";
