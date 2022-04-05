@@ -24,7 +24,7 @@ export const nativeLanguageNames: Record<string, string> = {
   ru: "русский",
   fe: "Française",
   pl: "Polski",
-  zh: "中国人",
+  zh: "简体中文",
 };
 
 export default bundles as Record<string, any>;
