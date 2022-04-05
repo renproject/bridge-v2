@@ -56,9 +56,8 @@ export const createGateway = async (
     }
   } else if (supportedSolanaChains.includes(gatewayParams.from)) {
     const solana = fromChainInstance.chain as Solana;
-    //TODO: crit: finish .Address / Account when fromAddress
+    //TODO: finish .Address / Account when fromAddress with Solana H2H
     fromChain = solana.Account({
-      // amount: adjustedAmount,
       amount: gatewayParams.amount,
       convertUnit,
     });
