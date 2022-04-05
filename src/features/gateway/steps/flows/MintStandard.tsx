@@ -57,6 +57,7 @@ import {
   HMSCountdown,
   TransactionRevertedErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
+import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
@@ -371,6 +372,8 @@ export const GatewayDepositProcessor: FunctionComponent<
   const isRevertedError =
     renVMError !== null &&
     (renVMError as any).code === "RENVM_TRANSACTION_REVERTED";
+
+  useSetCurrentTxHash(transaction?.hash);
 
   let Content = null;
   if (lockStatus !== ChainTransactionStatus.Done) {

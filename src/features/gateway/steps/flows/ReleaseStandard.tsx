@@ -21,6 +21,7 @@ import {
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { GatewayFees } from "../../components/GatewayFees";
@@ -320,6 +321,8 @@ const ReleaseStandardProcessor: FunctionComponent<
   const submittingDisabled = recoveryMode
     ? !isTxSubmittable(transaction?.in) || recoveryMode
     : !isTxSubmittable(transaction?.in || gateway.in);
+
+  useSetCurrentTxHash(transaction?.hash);
 
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {

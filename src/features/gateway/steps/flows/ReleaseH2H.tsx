@@ -23,6 +23,7 @@ import {
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { GatewayFees } from "../../components/GatewayFees";
@@ -191,6 +192,8 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
   (window as any).gateway = gateway;
   (window as any).transactions = transactions;
   (window as any).transaction = transaction;
+
+  useSetCurrentTxHash(transaction?.hash);
 
   return (
     <>
