@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
+import { Chain } from "@renproject/chains";
 import {
   ChainTransactionStatus,
   ContractChain,
@@ -74,6 +75,14 @@ import {
 } from "../gatewayUtils";
 import { GatewayStepProps } from "./stepUtils";
 
+const getExampleAccount = (chain: Chain) => {
+  if (chain === Chain.Solana) {
+    return "0";
+  } else {
+    return "0x0000000000000000000000000000000000000000";
+  }
+};
+
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   onPrev,
 }) => {
@@ -118,7 +127,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       from,
       to,
       amount: activeAmount,
-      toAddress,
+      // TODO: temporary hack until renJS.getFees() is used here
+      toAddress: toAddress || getExampleAccount(from),
     },
     { chains: allChains }
   );
