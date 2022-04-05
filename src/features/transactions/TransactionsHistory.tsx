@@ -132,6 +132,9 @@ const useTransactionHistoryStyles = makeStyles((theme) => ({
   spacer: {
     marginRight: 10,
   },
+  checkboxLabel: {
+    padding: `0px 16px`,
+  },
   transactions: {
     minHeight: 430,
     padding: 0,
@@ -219,22 +222,6 @@ export const TransactionsHistory: FunctionComponent = () => {
             showNone
             noneLabel="All Assets"
           />
-          <FormControlLabel
-            className={styles.spacer}
-            control={
-              <Checkbox
-                checked={showConnectedTxs}
-                onChange={handleCheckboxChange}
-                name="walletTxs"
-                color="primary"
-              />
-            }
-            label={
-              <Typography variant="caption">
-                Show connected wallet transactions
-              </Typography>
-            }
-          />
           <Fade in={showConnectedTxs}>
             <div>
               <RichDropdown
@@ -254,8 +241,24 @@ export const TransactionsHistory: FunctionComponent = () => {
           <TxHistoryMenu
             onRemoveFiltered={handleRemoveFiltered}
             onRemoveAll={handleRemoveAll}
-            disabled={!connected || !featureFlags.godMode}
-          />
+          >
+            <FormControlLabel
+              className={styles.checkboxLabel}
+              control={
+                <Checkbox
+                  checked={showConnectedTxs}
+                  onChange={handleCheckboxChange}
+                  name="walletTxs"
+                  color="primary"
+                />
+              }
+              label={
+                <Typography variant="body1">
+                  Show connected wallet Txs
+                </Typography>
+              }
+            />
+          </TxHistoryMenu>
         </div>
       </div>
       {showConnectedTxs ? (
@@ -297,6 +300,12 @@ export const TransactionsHistory: FunctionComponent = () => {
   );
 };
 
+const useTxHistoryMenuStyles = makeStyles(() => ({
+  menuItem: {
+    padding: `6px 44px`,
+  },
+}));
+
 type TxHistoryMenuProps = {
   onRemoveFiltered: () => void;
   onRemoveAll: () => void;
@@ -307,7 +316,9 @@ const TxHistoryMenu: FunctionComponent<TxHistoryMenuProps> = ({
   onRemoveFiltered,
   onRemoveAll,
   disabled,
+  children,
 }) => {
+  const styles = useTxHistoryMenuStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -337,6 +348,7 @@ const TxHistoryMenu: FunctionComponent<TxHistoryMenuProps> = ({
 
   const handleRemoveAll = useCallback(() => {
     onRemoveAll();
+
     handleClose();
   }, [onRemoveAll, handleClose]);
 
@@ -362,26 +374,36 @@ const TxHistoryMenu: FunctionComponent<TxHistoryMenuProps> = ({
         open={open}
         onClose={handleClose}
       >
-        <div>
-          <WithConfirmDialog
-            reason={warningReason}
-            actionText={warningActionText}
-            onAction={handleRemoveFiltered}
-            renderComponent={(onConfirm) => (
-              <MenuItem onClick={onConfirm}>Remove Filtered Txs</MenuItem>
-            )}
-          />
-          <WithConfirmDialog
-            reason={warningReason}
-            actionText={warningActionText}
-            onAction={handleRemoveAll}
-            renderComponent={(onConfirm, innerRef) => (
-              <MenuItem ref={innerRef} onClick={onConfirm} disabled={true}>
-                Remove All Txs
-              </MenuItem>
-            )}
-          />
-        </div>
+        <div>{children}</div>
+        {featureFlags.godMode && (
+          <div>
+            <WithConfirmDialog
+              reason={warningReason}
+              actionText={warningActionText}
+              onAction={handleRemoveFiltered}
+              renderComponent={(onConfirm) => (
+                <MenuItem className={styles.menuItem} onClick={onConfirm}>
+                  Remove Filtered Txs
+                </MenuItem>
+              )}
+            />
+            <WithConfirmDialog
+              reason={warningReason}
+              actionText={warningActionText}
+              onAction={handleRemoveAll}
+              renderComponent={(onConfirm, innerRef) => (
+                <MenuItem
+                  className={styles.menuItem}
+                  ref={innerRef}
+                  onClick={onConfirm}
+                  disabled={true}
+                >
+                  Remove All Txs
+                </MenuItem>
+              )}
+            />
+          </div>
+        )}
       </Menu>
     </div>
   );
