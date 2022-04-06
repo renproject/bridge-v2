@@ -342,7 +342,8 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   ]);
 
   const gatewayInTxMeta = useChainTransactionStatusUpdater({
-    tx: transaction?.in || gateway.in,
+    tx: transaction?.in || gateway.in, // not the case
+    // tx: gateway.in, // not the case
     startTrigger: submittingLockDone || recoveryMode,
     debugLabel: "in",
   });

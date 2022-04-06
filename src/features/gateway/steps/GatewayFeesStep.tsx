@@ -109,6 +109,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const activeChain = isFromContractChain ? from : to;
   // useSyncWalletChain(activeChain);
   const { connected, provider, account } = useWallet(activeChain);
+  const { account: fromAccount } = useWallet(from);
+  const { account: toAccount } = useWallet(to);
 
   //why gateway is initialized without amount?
   console.log("amount", activeAmount, activeChain);
@@ -127,8 +129,9 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       from,
       to,
       amount: activeAmount,
-      // TODO: temporary hack until renJS.getFees() is used here
-      toAddress: toAddress || getExampleAccount(from),
+      // TODO: temporary hack until renJS.getFees() is used here instead of useGateway - @Longfei
+      toAddress: toAddress || toAccount || getExampleAccount(to),
+      fromAddress: fromAccount || getExampleAccount(from),
     },
     { chains: allChains }
   );

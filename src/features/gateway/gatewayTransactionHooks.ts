@@ -74,10 +74,12 @@ export const useRenVMChainTransactionStatusUpdater = ({
       return;
     }
     console.log(l`tx: attaching listener`);
-    tx.wait(waitTarget)
+    tx.wait()
       .on("progress", trackProgress)
-      .catch((reason) => {
-        setError(reason);
+      .then(trackProgress)
+      .catch((error) => {
+        console.log(l`tx: error`, error.message);
+        setError(error);
       });
 
     return () => {
@@ -160,8 +162,9 @@ export const useChainTransactionStatusUpdater = ({
       return;
     }
     console.log(l`tx: attaching listener`);
-    tx.wait(waitTarget)
+    tx.wait()
       .on("progress", trackProgress)
+      .then(trackProgress)
       .catch((error) => {
         console.log(l`tx: error`, error.message);
         // TODO: typical error message

@@ -36,6 +36,7 @@ type UseGatewayCreateParams = {
   to: Chain;
   amount?: string;
   toAddress?: string;
+  fromAddress?: string;
   nonce?: string | number;
 };
 
@@ -52,7 +53,15 @@ export type TxRecoverer = (
 ) => Promise<void>;
 
 export const useGateway = (
-  { asset, from, to, nonce, toAddress, amount }: UseGatewayCreateParams,
+  {
+    asset,
+    from,
+    to,
+    nonce,
+    toAddress,
+    fromAddress,
+    amount,
+  }: UseGatewayCreateParams,
   {
     autoTeardown = true,
     initialGateway = null,
@@ -106,9 +115,17 @@ export const useGateway = (
     let newGateway: Gateway | null = null;
     if (renJs && chains !== null) {
       const initializeGateway = async () => {
+        console.log("gateway params", {
+          asset,
+          from,
+          to,
+          nonce,
+          toAddress,
+          amount,
+        });
         newGateway = await createGateway(
           renJs,
-          { asset, from, to, nonce, toAddress, amount },
+          { asset, from, to, nonce, toAddress, fromAddress, amount },
           chains
         );
         console.log("gateway created", newGateway);
@@ -141,6 +158,7 @@ export const useGateway = (
     to,
     nonce,
     toAddress,
+    fromAddress,
     amount,
     autoTeardown,
   ]);
@@ -257,12 +275,15 @@ export const useContractChainAssetBalance = (
     if (
       !instance ||
       decimals === null ||
-      !supportedContractChains.includes(instance.chain as Chain) ||
-      !(connected !== undefined && connected)
+      !supportedContractChains.includes(instance.chain as Chain)
     ) {
       console.log("not ready");
       setBalance(null);
       return;
+    }
+    if (connected !== undefined && !connected) {
+      console.log("!connected mode");
+      // return;
     }
     const getBalance = async () => {
       console.log(`asset balance ${instance?.chain}/${asset}: ${decimals}`);

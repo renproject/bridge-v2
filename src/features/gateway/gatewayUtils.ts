@@ -60,7 +60,7 @@ export const createGateway = async (
     }
   } else if (supportedSolanaChains.includes(gatewayParams.from)) {
     const solana = fromChainInstance.chain as Solana;
-    //TODO: finish .Address / Account when fromAddress with Solana H2H
+    //TODO: finish .Address / Account when fromAddress with Solana DAI
     fromChain = solana.Account({
       amount: gatewayParams.amount,
       convertUnit,
@@ -76,11 +76,15 @@ export const createGateway = async (
     const ethereumChain = toChainInstance.chain as unknown as Ethereum;
     console.log("resolving toAddress", gatewayParams);
     if (gatewayParams.toAddress) {
-      toChain = ethereumChain.Address(gatewayParams.toAddress || "");
+      toChain = ethereumChain.Account({
+        account: gatewayParams.toAddress,
+        convertUnit,
+      });
     } else {
       toChain = ethereumChain.Account({ convertUnit });
     }
   } else if (supportedSolanaChains.includes(gatewayParams.to)) {
+    // TODO: crit finish
     if (gatewayParams.toAddress) {
       toChain = (toChainInstance.chain as Solana).Address({
         address: gatewayParams.toAddress,
