@@ -118,7 +118,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     RenIcon: wrappedTokenIcon(RenDgb),
     shortName: "DGB",
     fullName: "DigiByte",
-    // rateService: AssetRateService.Coingecko,
+    rateService: AssetRateService.Coingecko,
     rateSymbol: "digibyte",
   },
   DOGE: {
@@ -126,7 +126,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     RenIcon: wrappedTokenIcon(RenDoge),
     shortName: "DOGE",
     fullName: "Dogecoin",
-    // rateService: AssetRateService.Coingecko,
+    rateService: AssetRateService.Coingecko,
     rateSymbol: "dogecoin",
   },
   ETH: {

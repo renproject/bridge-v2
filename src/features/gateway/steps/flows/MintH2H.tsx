@@ -436,7 +436,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   useSetCurrentTxHash(transaction?.hash);
 
   let Content = null;
-  // TODO: do we need it?
+  // TODO: consider making similar to Relase H2H
   // if (!fromConnected) {
   //   Content = (
   //     <PCW>

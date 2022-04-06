@@ -190,6 +190,7 @@ export const supportedBitcoinChains: Array<Chain> = [
   Chain.Zcash,
   Chain.DigiByte,
   Chain.Terra,
+  Chain.Filecoin,
 ];
 
 export const supportedEthereumChains: Array<Chain> = [
