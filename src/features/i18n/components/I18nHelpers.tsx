@@ -138,7 +138,7 @@ export const LanguageSelector: FunctionComponent<LanguageSelectorProps> = ({
           title={t("languages.choose-language")}
           onClose={handleClose}
         >
-          <SpacedPaperContent topPadding bottomPadding fixedHeight>
+          <SpacedPaperContent topPadding bottomPadding>
             {resolvedAvailableLocales.map((languageKey) => (
               <LanguageButtonWrapper key={languageKey}>
                 <LanguageButton
