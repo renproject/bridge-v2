@@ -32,7 +32,6 @@ import {
 } from "../../../transactions/components/TransactionsHelpers";
 import { AddressInfo } from "../../../transactions/components/TransactionsHistoryHelpers";
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
-import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
 import { BalanceInfoPlaceholder } from "../../components/BalanceHelpers";
@@ -437,16 +436,15 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   useSetCurrentTxHash(transaction?.hash);
 
   let Content = null;
-  if (!fromConnected) {
-    Content = (
-      <PCW>
-        <ConnectWalletPaperSection chain={from} isRecoveringTx={recoveryMode} />
-      </PCW>
-    );
-  } else if (
-    approvalStatus !== ChainTransactionStatus.Done &&
-    lockStatus === null
-  ) {
+  // TODO: do we need it?
+  // if (!fromConnected) {
+  //   Content = (
+  //     <PCW>
+  //       <ConnectWalletPaperSection chain={from} isRecoveringTx={recoveryMode} />
+  //     </PCW>
+  //   );
+  // } else
+  if (approvalStatus !== ChainTransactionStatus.Done && lockStatus === null) {
     Content = (
       <PaperContent bottomPadding>
         <BalanceInfoPlaceholder />
