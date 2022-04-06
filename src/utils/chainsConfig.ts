@@ -121,12 +121,6 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     fullName: "Filecoin",
     shortName: "Filecoin",
   },
-  Goerli: {
-    Icon: chainIcon(Ethereum),
-    fullName: "Goerli Testnet",
-    shortName: "Goerli",
-    networks: createNetworksConfig(1, 5),
-  },
   Terra: {
     Icon: chainIcon(Luna),
     fullName: "Terra",
@@ -136,6 +130,12 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     Icon: chainIcon(Solana),
     fullName: "Solana",
     shortName: "Solana",
+  },
+  Goerli: {
+    Icon: chainIcon(Ethereum),
+    fullName: "Goerli Testnet",
+    shortName: "Goerli",
+    networks: createNetworksConfig(1, 5),
   },
 };
 

@@ -1,4 +1,4 @@
-import { Chain } from "@renproject/chains";
+import { Chain, Filecoin } from "@renproject/chains";
 import {
   Bitcoin,
   BitcoinBaseChain,
@@ -167,8 +167,8 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
   };
 
   const depositBaseChains = {
-    // @ts-ignore
     [Chain.Terra]: getDepositBaseChain(new Terra({ network })),
+    [Chain.Filecoin]: getDepositBaseChain(new Filecoin({ network })),
   };
   return {
     ...ethereumBaseChains,
