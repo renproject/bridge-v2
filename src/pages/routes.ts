@@ -29,5 +29,6 @@ export const paths = {
   RELEASE__GATEWAY_STANDARD,
   RELEASE__GATEWAY_H2H,
   MOVE,
+  MOVE__GATEWAY,
   TEST,
 };
