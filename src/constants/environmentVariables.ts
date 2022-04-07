@@ -1,5 +1,6 @@
 const NETWORK = process.env.REACT_APP_NETWORK || "testnet";
-const INFURA_ID = process.env.REACT_APP_INFURA_ID || "";
+const INFURA_ID =
+  process.env.REACT_APP_INFURA_ID || process.env.REACT_APP_INFURA_KEY || "";
 const DEV = Boolean(process.env.NODE_ENV === "development");
 
 const XSTATE_DEVTOOLS = Boolean(process.env.REACT_APP_XSTATE_DEVTOOLS || DEV);

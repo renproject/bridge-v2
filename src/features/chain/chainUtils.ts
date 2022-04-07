@@ -29,6 +29,7 @@ import {
 } from "@renproject/utils";
 import { clusterApiUrl, Connection } from "@solana/web3.js";
 import { ethers, providers } from "ethers";
+import { env } from "../../constants/environmentVariables";
 import {
   contractChains,
   supportedEthereumChains,
@@ -70,13 +71,10 @@ export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
   }
 
   let rpcUrl = config.config.rpcUrls[0];
-  if (process.env.REACT_APP_INFURA_KEY) {
+  if (env.INFURA_ID) {
     for (const url of config.config.rpcUrls) {
       if (url.match(/^https:\/\/.*\$\{INFURA_API_KEY\}/)) {
-        rpcUrl = url.replace(
-          /\$\{INFURA_API_KEY\}/,
-          process.env.REACT_APP_INFURA_KEY
-        );
+        rpcUrl = url.replace(/\$\{INFURA_API_KEY\}/, env.INFURA_ID);
         break;
       }
     }
