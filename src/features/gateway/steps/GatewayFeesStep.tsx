@@ -291,7 +291,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                   <NumberFormatText
                     value={outputAmount}
                     spacedSuffix={assetLabel}
-                    decimalScale={feesDecimalImpact(amount)}
+                    decimalScale={feesDecimalImpact(amount, 3)}
                   />
                 ) : (
                   <Skeleton variant="text" height={18} width={66} />
