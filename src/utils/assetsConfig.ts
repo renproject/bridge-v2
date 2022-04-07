@@ -20,8 +20,10 @@ import {
   RenFil,
   RenLuna,
   RenSol,
+  RenUsdc,
   RenZec,
   Sol,
+  Usdc,
   Zec,
 } from "@renproject/icons";
 import {
@@ -180,7 +182,14 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateSymbol: "solana",
   },
   UNI: unsetAssetConfig,
-  USDC: unsetAssetConfig,
+  USDC: {
+    Icon: nativeTokenIcon(Usdc),
+    RenIcon: wrappedTokenIcon(RenUsdc),
+    shortName: "USDC",
+    fullName: "USD Coin",
+    rateService: AssetRateService.Coingecko,
+    rateSymbol: "usd-coin",
+  },
   USDT: unsetAssetConfig,
   ZEC: {
     Icon: nativeTokenIcon(Zec),
@@ -276,6 +285,7 @@ export const supportedAssets =
         Asset.LUNA,
         Asset.ZEC,
         Asset.DAI,
+        Asset.USDC,
       ]
     : env.ENABLED_ASSETS.filter((x) => {
         const included = Object.keys(assetsConfig).includes(x);

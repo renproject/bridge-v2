@@ -30,4 +30,4 @@ export const env = {
   WALLETCONNECT_ENABLED,
 };
 
-if (DEV) console.debug("env", env, process);
+console.debug("env", env, process);
