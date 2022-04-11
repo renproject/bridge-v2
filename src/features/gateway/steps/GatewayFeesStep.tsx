@@ -90,7 +90,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const history = useHistory();
 
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
-  const { Icon, RenIcon, shortName } = getAssetConfig(asset);
+  const assetConfig = getAssetConfig(asset);
+  const { Icon, RenIcon } = assetConfig;
   const renAsset = getRenAssetName(asset);
 
   const [activeAmount, setActiveAmount] = useState(amount);
@@ -161,7 +162,20 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const nextEnabled = ackChecked;
 
   const handleProceed = useCallback(() => {
-    if (isMint && isH2H) {
+    console.log("move (h2h)");
+    if (isMove) {
+      history.push({
+        pathname: paths.MOVE__GATEWAY,
+        search:
+          "?" +
+          createGatewayQueryString({
+            asset,
+            from,
+            to,
+            amount,
+          }),
+      });
+    } else if (isMint && isH2H) {
       console.log("h2h mint");
       history.push({
         pathname: paths.MINT__GATEWAY_H2H,
@@ -223,6 +237,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     isH2H,
     isMint,
     isRelease,
+    isMove,
     asset,
     from,
     to,
@@ -264,21 +279,22 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
         {showBalance && (
           <BalanceInfo balance={balance} asset={renAsset} chain={activeChain} />
         )}
-        {isMint && (
+        {isMint && !isMove && (
           <OutlinedTextField
             value={activeAmount}
             onChange={handleAmountChange}
             label="How much will you send?"
-            InputProps={{ endAdornment: shortName }}
+            InputProps={{ endAdornment: assetConfig.shortName }}
           />
         )}
-        {isRelease && (
-          <SimpleAssetInfo
-            label={t("release.releasing-label")}
-            value={amount}
-            asset={renAsset}
-          />
-        )}
+        {isRelease ||
+          (isMove && (
+            <SimpleAssetInfo
+              label={isMove ? "Moving" : t("release.releasing-label")}
+              value={amount}
+              asset={renAsset}
+            />
+          ))}
         <SmallTopWrapper>
           <AssetInfo
             label={t("common.receiving-label")}
