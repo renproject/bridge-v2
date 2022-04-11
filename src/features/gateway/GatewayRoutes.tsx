@@ -109,6 +109,7 @@ export const GatewayRoutes: FunctionComponent = () => {
         path={paths.RELEASE__GATEWAY_H2H}
         component={ReleaseH2HProcess}
       />
+      <Route exact path={paths.MOVE__GATEWAY} component={ReleaseH2HProcess} />
       <Route exact path={paths.TEST} component={TestProcess} />
     </GatewayLifecycleGuard>
   );

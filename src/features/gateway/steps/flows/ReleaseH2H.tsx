@@ -55,8 +55,11 @@ import {
 
 export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   location,
+  match,
   ...rest
 }) => {
+  console.log(match);
+  const isMoveRoute = match.path === paths.MOVE__GATEWAY;
   const { gatewayParams, additionalParams } = parseGatewayQueryString(
     location.search
   );
@@ -92,7 +95,9 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
     <ReleaseH2HGatewayProcess
       fromAccount={fromAccount}
       toAccount={toAccount}
+      isMoveRoute={isMoveRoute}
       location={location}
+      match={match}
       {...rest}
     />
   );
@@ -101,6 +106,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
 type ReleaseH2HGatewayProcessProps = RouteComponentProps & {
   fromAccount: string;
   toAccount: string;
+  isMoveRoute?: boolean;
 };
 
 const ReleaseH2HGatewayProcess: FunctionComponent<
