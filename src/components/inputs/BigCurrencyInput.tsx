@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
   equivalent: {
     marginTop: 0,
+    marginBottom: 16,
     color: "#3F3F48",
   },
 }));
@@ -123,11 +124,16 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
           color="error"
           gutterBottom
           className={styles.errorText}
+          component="div"
         >
           {errorText}
         </Typography>
       )}
-      {<p className={styles.equivalent}>= {toUsdFormat(usdValue)}</p>}
+      {
+        <Typography component="div" className={styles.equivalent}>
+          = {toUsdFormat(usdValue)}
+        </Typography>
+      }
     </div>
   );
 };
