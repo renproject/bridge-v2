@@ -101,11 +101,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, []);
 
-  const { isMint, isRelease, isFromContractChain, isH2H } = useGatewayMeta(
-    asset,
-    from,
-    to
-  );
+  const { isMint, isMove, isRelease, isFromContractChain, isH2H } =
+    useGatewayMeta(asset, from, to);
   const activeChain = isFromContractChain ? from : to;
   // useSyncWalletChain(activeChain);
   const { connected, provider, account } = useWallet(activeChain);
@@ -373,7 +370,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           </ActionButton>
         </MultipleActionButtonWrapper>
       </PaperContent>
-      <Debug it={{ fees, isH2H, isMint, isRelease }} />
+      <Debug it={{ fees, isH2H, isMint, isMove, isRelease }} />
     </>
   );
 };

@@ -186,8 +186,11 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     } else if (isRelease) {
       console.log("setting wallet chain", from);
       dispatch(setChain(from));
+    } else if (isMove) {
+      console.log("setting wallet chain", from);
+      dispatch(setChain(from));
     }
-  }, [dispatch, reset, isMint, isRelease, asset, from, to]);
+  }, [dispatch, reset, isMint, isRelease, isMove, asset, from, to]);
 
   const hideFrom = isMint && fromChains.length === 1;
   const hideTo = isRelease && toChains.length === 1;
