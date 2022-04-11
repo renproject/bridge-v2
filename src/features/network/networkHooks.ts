@@ -24,6 +24,7 @@ export const useSetNetworkFromParam = () => {
 };
 
 const chainsCache: Partial<Record<RenNetwork, ChainInstanceMap>> = {};
+(window as any).chainsCache = chainsCache;
 
 export const useChains = (network: RenNetwork) => {
   if (!chainsCache[network]) {

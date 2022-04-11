@@ -14,7 +14,7 @@ let initialState: GatewayState = {
   asset: Asset.BTC,
   from: Chain.Ethereum,
   to: Chain.BinanceSmartChain,
-  amount: "0.1", //TODO: crit
+  amount: "",
   toAddress: "",
 };
 

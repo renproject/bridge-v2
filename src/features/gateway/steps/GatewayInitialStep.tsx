@@ -96,10 +96,31 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         setToChains([lockChain]);
         dispatch(setFromTo({ from: mintChains[0], to: lockChain }));
       } else if (isMove) {
+        // move is allowed to all contract chains except assets lockChain (originChain)
+        const nonOriginChains = mintChains.filter(
+          (chain) => chain !== lockChain
+        );
+        setFromChains(nonOriginChains);
+        dispatch(setFrom(nonOriginChains[0]));
+        // toChains are handled in useEffect
       }
     },
     [dispatch, isMint, isRelease, isMove]
   );
+  useEffect(() => {
+    if (isMove) {
+      const { lockChain, mintChains } = getAssetConfig(asset);
+      const nonOriginNotFromChains = mintChains.filter(
+        (chain) => chain !== lockChain && chain !== from
+      );
+      setToChains(nonOriginNotFromChains);
+      dispatch(setTo(nonOriginNotFromChains[0]));
+    }
+  }, [dispatch, asset, isMove, asset, from]);
+
+  useEffect(() => {
+    filterChains(asset);
+  }, [asset, filterChains]);
 
   const [amountTouched, setAmountTouched] = useState(false);
   const [addressTouched, setAddressTouched] = useState(false);
@@ -107,10 +128,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     setAmountTouched(false);
     setAddressTouched(false);
   }, []);
-
-  useEffect(() => {
-    filterChains(asset);
-  }, [asset, filterChains]);
 
   const handleAssetChange = useCallback(
     (event) => {
@@ -210,12 +227,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   const requiresInitialAmount = isFromContractChain;
   const hasInitialAmount = amount !== "";
-  const hasMinimalAmountBalanceError =
+  const hasAmountBalanceError =
     requiresInitialAmount &&
     balance !== null &&
     (Number(amount) > Number(balance) || !hasInitialAmount);
 
-  const showAmountError = amountTouched && hasMinimalAmountBalanceError;
+  const showAmountError = amountTouched && hasAmountBalanceError;
 
   // console.log(
   //   balance,
@@ -231,7 +248,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         setAddressTouched(true);
         ok = false;
       }
-      if (requiresInitialAmount && hasMinimalAmountBalanceError) {
+      if (requiresInitialAmount && hasAmountBalanceError) {
         setAmountTouched(true);
         ok = false;
       }
@@ -244,7 +261,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     requiresValidAddress,
     isAddressValid,
     requiresInitialAmount,
-    hasMinimalAmountBalanceError,
+    hasAmountBalanceError,
   ]);
 
   return (
@@ -259,12 +276,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               usdValue={amountUsd}
               value={amount}
               errorText={
-                showAmountError && hasMinimalAmountBalanceError ? (
+                showAmountError && hasAmountBalanceError ? (
                   <span>
-                    {t("release.amount-too-low-error")}{" "}
+                    {t("gateway.amount-too-big-error")}{" "}
                     <TooltipWithIcon
                       title={
-                        <span>{t("release.amount-too-low-error-tooltip")}</span>
+                        <span>{t("gateway.amount-too-big-error-tooltip")}</span>
                       }
                     />
                   </span>
@@ -290,7 +307,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             supplementalLabel={t("common.asset-label")}
             options={assets}
             getOptionData={getAssetOptionData}
-            optionMode={isRelease}
+            optionMode={isRelease || isMove}
             value={asset}
             onChange={handleAssetChange}
           />
@@ -343,7 +360,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {connected ? (
           <ActionButton
             onClick={handleNext}
-            disabled={hasAddressError || hasMinimalAmountBalanceError}
+            disabled={hasAddressError || hasAmountBalanceError}
           >
             {t("common.next-label")}
           </ActionButton>

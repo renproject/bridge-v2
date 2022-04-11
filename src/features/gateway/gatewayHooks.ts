@@ -631,6 +631,7 @@ export const useGatewayMeta = (
           setIsRelease(true);
           setIsMint(false);
         }
+        // burn and mint
       })
       .catch((error) => {
         console.log(asset, from, to);
@@ -649,6 +650,7 @@ export const useGatewayMeta = (
     isRelease,
     isLock,
     isBurn,
+    isMove: isBurn && isMint,
     // handle nulls
     isFromContractChain,
     isToContractChain,
