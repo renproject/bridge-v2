@@ -75,6 +75,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const { path } = useRouteMatch();
   const isMint = path === paths.MINT;
   const isRelease = path === paths.RELEASE;
+  const isMove = path === paths.MOVE;
   const { t } = useTranslation();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const meta = useGatewayMeta(asset, from, to);
@@ -94,9 +95,10 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         setFromChains(mintChains);
         setToChains([lockChain]);
         dispatch(setFromTo({ from: mintChains[0], to: lockChain }));
+      } else if (isMove) {
       }
     },
-    [dispatch, isMint, isRelease]
+    [dispatch, isMint, isRelease, isMove]
   );
 
   const [amountTouched, setAmountTouched] = useState(false);
