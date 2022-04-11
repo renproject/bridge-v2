@@ -47,10 +47,11 @@ import {
 } from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
 import { getWalletConfig, Wallet } from "../../../utils/walletsConfig";
-import { useSwitchChainHelpers, useWallet } from "../walletHooks";
+import { useEns, useSwitchChainHelpers, useWallet } from "../walletHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import { setPickerOpened } from "../walletSlice";
 import { WalletStatus } from "../walletUtils";
+import Davatar from "@davatar/react";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
@@ -416,7 +417,12 @@ const useWalletConnectionStatusButtonStyles = makeStyles<Theme>((theme) => ({
     marginLeft: 16,
     marginRight: 30,
   },
-  account: { marginLeft: 20 },
+  account: {
+    marginLeft: 10,
+    marginRight: 10,
+    paddingLeft: 10,
+    borderLeft: '1px solid #DBE0E8'
+  },
 }));
 
 type WalletConnectionStatusButtonProps = ButtonProps & {
@@ -430,6 +436,7 @@ type WalletConnectionStatusButtonProps = ButtonProps & {
 export const WalletConnectionStatusButton: FunctionComponent<
   WalletConnectionStatusButtonProps
 > = ({ status, account, wallet, hoisted, className, mobile, ...rest }) => {
+  const { Icon } = getWalletConfig(wallet as Wallet);
   const { t } = useTranslation();
   const {
     indicator: indicatorClassName,
@@ -438,11 +445,8 @@ export const WalletConnectionStatusButton: FunctionComponent<
     hoisted: hoistedClassName,
     ...classes
   } = useWalletConnectionStatusButtonStyles();
+  const { ensName } = useEns(account);
 
-  const label =
-    status === WalletStatus.Connected
-      ? getWalletConfig(wallet).shortName
-      : getWalletConnectionLabel(status, t);
   const trimmedAddress = trimAddress(account);
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: hoisted,
@@ -460,9 +464,19 @@ export const WalletConnectionStatusButton: FunctionComponent<
         status={status}
         className={mobile ? indicatorMobileClassName : indicatorClassName}
       />
-      <span>{label}</span>
-      {trimmedAddress && (
-        <span className={accountClassName}>{trimmedAddress}</span>
+      {status === WalletStatus.Connected && <Icon />}
+      {status !== WalletStatus.Connected && (
+        <span>{getWalletConnectionLabel(status, t)}</span>
+      )}
+      {account && (
+        <>
+          <span className={accountClassName}>{ensName || trimmedAddress}</span>
+          <Davatar
+            size={24}
+            address={account as string}
+            generatedAvatarType="jazzicon"
+          />
+        </>
       )}
     </Button>
   );

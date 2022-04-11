@@ -1,10 +1,11 @@
+import { ethers } from "ethers";
 import { Asset, Chain } from "@renproject/chains";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { ContractChain, RenNetwork } from "@renproject/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getRenAssetName } from "../../utils/assetsConfig";
-
+import { env } from "../../constants/environmentVariables";
 import { Wallet } from "../../utils/walletsConfig";
 import {
   useChainAssetAddress,
@@ -246,3 +247,30 @@ export const useDirtySolanaWalletDetector = () => {
 
   return found;
 };
+
+export const useEns = (address: string | undefined) => {
+  const [ensName, setEnsName] = useState<string | null>();
+
+  useEffect(() => {
+    async function resolveENS() {
+      if (address && ethers.utils.isAddress(address)) {
+        let provider;
+        if (env.INFURA_ID) {
+          provider = new ethers.providers.StaticJsonRpcProvider(
+            `https://mainnet.infura.io/v3/${env.INFURA_ID}`
+          );
+        }
+        else {
+          provider = ethers.getDefaultProvider(env.NETWORK);
+        }
+        const ensName = await provider.lookupAddress(address);
+        setEnsName(ensName);
+      }
+    }
+    resolveENS().catch((error) => {
+      console.error(error);
+    });
+  }, [address]);
+
+  return { ensName };
+}
