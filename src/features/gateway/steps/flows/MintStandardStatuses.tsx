@@ -31,7 +31,10 @@ import {
 } from "../../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
-import { useNotifications } from "../../../../providers/Notifications";
+import {
+  useNotifications,
+  useTxSuccessNotification,
+} from "../../../../providers/Notifications";
 import {
   usePaperTitle,
   useSetActionRequired,
@@ -437,42 +440,24 @@ export const MintCompletedStatus: FunctionComponent<
 
   const { handleGoToHome } = useBasicRouteHandlers();
 
-  const { showNotification } = useNotifications();
-  const { showBrowserNotification } = useBrowserNotifications();
-
   const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
   const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
-  const showNotifications = useCallback(() => {
-    if (mintTxUrl !== null) {
-      const notificationMessage = t("mint.success-notification-message", {
-        total: mintAmountFormatted,
-        currency: lockAssetConfig.shortName,
-        chain: mintChainConfig.fullName,
-      });
-      showNotification(
-        <span>
-          {notificationMessage}{" "}
-          <Link external href={mintTxUrl}>
-            {t("tx.view-chain-transaction-link-text", {
-              chain: mintChainConfig.fullName,
-            })}
-          </Link>
-        </span>
-      );
-      showBrowserNotification(notificationMessage);
-    }
-  }, [
-    showNotification,
-    showBrowserNotification,
-    mintAmountFormatted,
-    mintChainConfig,
-    lockAssetConfig,
+  const notificationMessage = t("mint.success-notification-message", {
+    total: mintAmountFormatted,
+    currency: lockAssetConfig.shortName,
+    chain: mintChainConfig.fullName,
+  });
+  const viewChainTxLinkMessage = t("tx.view-chain-transaction-link-text", {
+    chain: mintChainConfig.fullName,
+  });
+  const { txSuccessNotification } = useTxSuccessNotification(
     mintTxUrl,
-    t,
-  ]);
+    notificationMessage,
+    viewChainTxLinkMessage
+  );
 
-  useEffectOnce(showNotifications);
+  useEffectOnce(txSuccessNotification);
 
   const walletTokenMeta = useWalletAssetHelpers(
     gateway.params.to.chain,

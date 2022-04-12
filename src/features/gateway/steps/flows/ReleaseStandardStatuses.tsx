@@ -16,7 +16,7 @@ import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
-import { useNotifications } from "../../../../providers/Notifications";
+import { useNotifications, useTxSuccessNotification } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import {
   getAssetConfig,
@@ -262,37 +262,20 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
     releaseAssetDecimals
   );
 
-  const { showNotification } = useNotifications();
-  const { showBrowserNotification } = useBrowserNotifications();
-  const showNotifications = useCallback(() => {
-    if (releaseTxUrl !== null) {
-      const notificationMessage = t("release.success-notification-message", {
-        amount: releaseAmountFormatted,
-        currency: burnAssetConfig.shortName,
-      });
-      showNotification(
-        <span>
-          {notificationMessage}{" "}
-          <Link external href={releaseTxUrl}>
-            {t("tx.view-chain-transaction-link-text", {
-              chain: releaseChainConfig.fullName,
-            })}
-          </Link>
-        </span>
-      );
-      showBrowserNotification(notificationMessage);
-    }
-  }, [
-    showNotification,
-    showBrowserNotification,
-    releaseAmountFormatted,
-    releaseChainConfig,
-    burnAssetConfig,
+  const notificationMessage = t("release.success-notification-message", {
+    amount: releaseAmountFormatted,
+    currency: burnAssetConfig.shortName,
+  });
+  const viewChainTxLinkMessage = t("tx.view-chain-transaction-link-text", {
+    chain: releaseChainConfig.fullName,
+  })
+  const { txSuccessNotification } = useTxSuccessNotification(
     releaseTxUrl,
-    t,
-  ]);
+    notificationMessage,
+    viewChainTxLinkMessage
+  );
 
-  useEffectOnce(showNotifications);
+  useEffectOnce(txSuccessNotification);
 
   return (
     <PaperContent bottomPadding>
