@@ -660,8 +660,7 @@ export const useGatewayMeta = (
         }
       })
       .catch((error) => {
-        console.log(asset, from, to);
-        console.error(error);
+        console.warn(error);
         reset();
       });
   }, [reset, chains, asset, from, to]);

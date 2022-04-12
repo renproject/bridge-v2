@@ -58,6 +58,7 @@ const useRichDropdownStyles = makeStyles((theme) => ({
     fontSize: 12,
   },
   listSubheader: {
+    background: theme.palette.background.paper,
     pointerEvents: "none",
     fontSize: 10,
     lineHeight: 1,
@@ -144,7 +145,7 @@ export const RichDropdown: FunctionComponent<RichDropdownProps> = ({
       return (
         <Box display="flex" alignItems="center" width="100%">
           {!condensed && (
-            <Box width="37%">
+            <Box width="34%">
               <Typography variant="body2" className={styles.supplementalText}>
                 {label}
               </Typography>

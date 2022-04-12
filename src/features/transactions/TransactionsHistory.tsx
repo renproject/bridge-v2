@@ -747,6 +747,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     isMint,
     isRelease,
     isH2H,
+    ioType,
     amount,
     asset,
     from,

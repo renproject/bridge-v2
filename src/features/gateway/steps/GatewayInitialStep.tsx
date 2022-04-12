@@ -65,7 +65,7 @@ import {
 import { getSendLabel } from "./shared/TransactionStatuses";
 import { GatewayStepProps } from "./stepUtils";
 
-const assets = supportedAssets;
+const allAssets = supportedAssets;
 const allChains = Object.keys(chainsConfig);
 
 const forceShowDropdowns = false;
@@ -96,6 +96,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const meta = useGatewayMeta(asset, from, to);
   const { isFromContractChain, isH2H } = meta;
+  const [assets, setAssets] = useState(allAssets);
   const [fromChains, setFromChains] = useState(allChains);
   const [toChains, setToChains] = useState(allChains);
 
@@ -131,6 +132,15 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       );
       setToChains(nonOriginNotFromChains);
       dispatch(setTo(nonOriginNotFromChains[0]));
+
+      const filteredAssets = allAssets.filter(
+        (asset) => getAssetConfig(asset).lockChainConnectionRequired === true
+      );
+      setAssets(filteredAssets);
+      dispatch(setAsset(filteredAssets[0]));
+    } else {
+      setAssets(allAssets);
+      // dispatch(setAsset(allAssets[0]));
     }
   }, [dispatch, asset, isMove, from]);
 
@@ -237,11 +247,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     isFromContractChain ? fromConnected : undefined
   );
   // const balanceAsset = isH2H ? assetConfig.shortName : renAssetConfig.shortName;
-  const balanceAsset = isRelease
-    ? renAssetConfig.shortName
-    : isH2H
-    ? assetConfig.shortName
-    : renAssetConfig.shortName;
+  const balanceAsset =
+    isRelease || isMove
+      ? renAssetConfig.shortName
+      : isH2H
+      ? assetConfig.shortName
+      : renAssetConfig.shortName;
   const balanceChain = isRelease ? from : isH2H ? from : to;
 
   const requiresInitialAmount = isFromContractChain;
