@@ -102,7 +102,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, []);
 
-  const { isMint, isMove, isRelease, isFromContractChain, isH2H } =
+  const { isMint, isBurnAndMint, isRelease, isFromContractChain, isH2H } =
     useGatewayMeta(asset, from, to);
   const activeChain = isFromContractChain ? from : to;
   // useSyncWalletChain(activeChain);
@@ -163,7 +163,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const handleProceed = useCallback(() => {
     console.log("move (h2h)");
-    if (isMove) {
+    if (isBurnAndMint) {
       history.push({
         pathname: paths.MOVE__GATEWAY,
         search:
@@ -237,7 +237,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     isH2H,
     isMint,
     isRelease,
-    isMove,
+    isBurnAndMint,
     asset,
     from,
     to,
@@ -279,7 +279,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
         {showBalance && (
           <BalanceInfo balance={balance} asset={renAsset} chain={activeChain} />
         )}
-        {isMint && !isMove && (
+        {isMint && !isBurnAndMint && (
           <OutlinedTextField
             value={activeAmount}
             onChange={handleAmountChange}
@@ -288,9 +288,9 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           />
         )}
         {isRelease ||
-          (isMove && (
+          (isBurnAndMint && (
             <SimpleAssetInfo
-              label={isMove ? "Moving" : t("release.releasing-label")}
+              label={isBurnAndMint ? "Moving" : t("release.releasing-label")}
               value={amount}
               asset={renAsset}
             />
@@ -386,7 +386,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           </ActionButton>
         </MultipleActionButtonWrapper>
       </PaperContent>
-      <Debug it={{ fees, isH2H, isMint, isMove, isRelease }} />
+      <Debug it={{ fees, isH2H, isMint, isBurnAndMint, isRelease }} />
     </>
   );
 };

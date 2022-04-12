@@ -39,6 +39,7 @@ import {
   TransactionProgressInfo,
 } from "../../components/TransactionProgressHelpers";
 import {
+  GatewayIOType,
   getGatewayParams,
   useContractChainAssetBalance,
 } from "../../gatewayHooks";
@@ -118,6 +119,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           </>
         )}
         <SendingReceivingSection
+          ioType={GatewayIOType.lockAndMint}
           asset={asset}
           sendingAmount={amount}
           receivingAmount={outputAmount}
@@ -216,6 +218,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
           )}
         </ProgressWrapper>
         <SendingReceivingSection
+          ioType={GatewayIOType.lockAndMint}
           asset={asset}
           sendingAmount={amount}
           receivingAmount={outputAmount}
@@ -332,6 +335,7 @@ export const MintH2HCompletedStatus: FunctionComponent<
     <PaperContent bottomPadding>
       <ChainProgressDone chain={to} />
       <SentReceivedSection
+        ioType={GatewayIOType.lockAndMint}
         sentAmount={lockAmountFormatted}
         receivedAmount={mintAmountFormatted}
         asset={asset}

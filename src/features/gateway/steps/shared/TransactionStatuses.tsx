@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Skeleton } from "@material-ui/lab";
 import { Chain } from "@renproject/chains";
 import React, { FunctionComponent } from "react";
-import { useTranslation } from "react-i18next";
+import { TFunction, useTranslation } from "react-i18next";
 import { ActionButton } from "../../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
 import { SmallTopWrapper } from "../../../../components/layout/LayoutHelpers";
@@ -25,6 +25,7 @@ import {
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { feesDecimalImpact } from "../../../../utils/numbers";
 import { UsdNumberFormatText } from "../../components/BalanceHelpers";
+import { GatewayIOType } from "../../gatewayHooks";
 import { useBasicRouteHandlers } from "../../gatewayRoutingUtils";
 
 type FromToTxLinksProps = {
@@ -76,40 +77,96 @@ const useSendingReceivingSectionStyles = makeStyles({
   root: {},
 });
 
+const getSendAssetName = (asset: string, ioType: GatewayIOType) => {
+  const assetConfig = getAssetConfig(asset);
+  const renAssetConfig = getRenAssetConfig(asset);
+  let name = "";
+  if (ioType === GatewayIOType.lockAndMint) {
+    name = assetConfig.shortName;
+  } else if (ioType === GatewayIOType.burnAndMint) {
+    name = renAssetConfig.shortName;
+  } else if (ioType === GatewayIOType.burnAndRelease) {
+    name = renAssetConfig.shortName;
+  }
+  return name;
+};
+
+const getSendingLabel = (
+  asset: string,
+  ioType: GatewayIOType,
+  t: TFunction
+) => {
+  let name = "";
+  if (ioType === GatewayIOType.lockAndMint) {
+    name = t("mint.minting-label");
+  } else if (ioType === GatewayIOType.burnAndMint) {
+    name = "Moving";
+  } else if (ioType === GatewayIOType.burnAndRelease) {
+    name = t("release.releasing-label");
+  }
+  return name;
+};
+
+export const getSendLabel = (
+  asset: string,
+  ioType: GatewayIOType,
+  t: TFunction
+) => {
+  let name = "";
+  if (ioType === GatewayIOType.lockAndMint) {
+    name = t("mint.mint-label");
+  } else if (ioType === GatewayIOType.burnAndMint) {
+    name = "Move";
+  } else if (ioType === GatewayIOType.burnAndRelease) {
+    name = t("release.release-label");
+  }
+  return name;
+};
+
+const getReceiveAssetName = (asset: string, ioType: GatewayIOType) => {
+  const assetConfig = getAssetConfig(asset);
+  const renAssetConfig = getRenAssetConfig(asset);
+  let name = "";
+  if (ioType === GatewayIOType.lockAndMint) {
+    name = renAssetConfig.shortName;
+  } else if (ioType === GatewayIOType.burnAndMint) {
+    name = renAssetConfig.shortName;
+  } else if (ioType === GatewayIOType.burnAndRelease) {
+    name = assetConfig.shortName;
+  }
+  return name;
+};
+
+const getReceivingAssetIcon = (asset: string, ioType: GatewayIOType) => {
+  const { Icon, RenIcon } = getAssetConfig(asset);
+  let name = Icon;
+  if (ioType === GatewayIOType.lockAndMint) {
+    name = RenIcon;
+  } else if (ioType === GatewayIOType.burnAndMint) {
+    name = RenIcon;
+  } else if (ioType === GatewayIOType.burnAndRelease) {
+    name = Icon;
+  }
+  return name;
+};
+
 type SendingReceivingSectionProps = {
   asset: string;
   sendingAmount: string | number;
   receivingAmount: string | null;
   receivingAmountUsd: string | null;
-  isRelease?: boolean;
+  ioType: GatewayIOType;
 };
 
 export const SendingReceivingSection: FunctionComponent<
   SendingReceivingSectionProps
-> = ({
-  receivingAmount,
-  sendingAmount,
-  asset,
-  receivingAmountUsd,
-  isRelease,
-}) => {
+> = ({ receivingAmount, sendingAmount, asset, receivingAmountUsd, ioType }) => {
   const { t } = useTranslation();
   const styles = useSendingReceivingSectionStyles();
-  const assetConfig = getAssetConfig(asset);
-  const renAssetConfig = getRenAssetConfig(asset);
-  const sendingAsset = isRelease
-    ? renAssetConfig.shortName
-    : assetConfig.shortName;
-
-  const receivingAsset = isRelease
-    ? assetConfig.shortName
-    : renAssetConfig.shortName;
-
-  const ReceivingAssetIcon = isRelease ? assetConfig.Icon : assetConfig.RenIcon;
-
-  const sendingLabel = isRelease
-    ? t("release.releasing-label")
-    : t("mint.minting-label");
+  const sendingAsset = getSendAssetName(asset, ioType);
+  const receivingAsset = getReceiveAssetName(asset, ioType);
+  const ReceivingAssetIcon = getReceivingAssetIcon(asset, ioType);
+  const sendingLabel = getSendingLabel(asset, ioType, t);
 
   return (
     <div className={styles.root}>
@@ -165,22 +222,16 @@ type SentReceivedSectionProps = {
   asset: string;
   sentAmount: string | null;
   receivedAmount: string | null;
+  ioType: GatewayIOType;
   isRelease?: boolean;
 };
 
 export const SentReceivedSection: FunctionComponent<
   SentReceivedSectionProps
-> = ({ receivedAmount, sentAmount, asset, isRelease }) => {
+> = ({ receivedAmount, sentAmount, asset, ioType, isRelease }) => {
   const styles = useSentReceivedSectionStyles();
-  const assetConfig = getAssetConfig(asset);
-  const renAssetConfig = getRenAssetConfig(asset);
-  const sentAsset = isRelease
-    ? renAssetConfig.shortName
-    : assetConfig.shortName;
-
-  const receivedAsset = isRelease
-    ? assetConfig.shortName
-    : renAssetConfig.shortName;
+  const sentAsset = getSendAssetName(asset, ioType);
+  const receivedAsset = getReceiveAssetName(asset, ioType);
 
   return (
     <div className={styles.root}>

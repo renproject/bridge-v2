@@ -127,7 +127,7 @@
   "notifications.browser-off-tooltip": "Desactivar las notificaciones del navegador en la configuración de su navegador.",
   "gateway.amount-too-low-error": "Cantidad demasiado baja",
   "gateway.amount-too-low-error-tooltip": "Una vez que se hayan aplicado tasas, la cantidad que recibirás es muy pequeña.",
-  "release.completed-title": "Completado",
+  "common.completed-title": "Completado",
   "release.confirm-label": "Confirmar",
   "release.confirming-label": "Confirmando...",
   "release.currency-balance-label": "Saldo {{currency}}",

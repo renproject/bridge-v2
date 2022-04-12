@@ -37,6 +37,7 @@ import {
   TransactionProgressInfo,
 } from "../../components/TransactionProgressHelpers";
 import {
+  GatewayIOType,
   getGatewayParams,
   useContractChainAssetBalance,
 } from "../../gatewayHooks";
@@ -93,7 +94,7 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
       <PaperContent bottomPadding>
         <BalanceInfo balance={balance} asset={renAssetConfig.shortName} />
         <SendingReceivingSection
-          isRelease
+          ioType={GatewayIOType.burnAndRelease}
           asset={asset}
           sendingAmount={amount}
           receivingAmount={outputAmount}
@@ -206,7 +207,7 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
           </>
         )}
         <SendingReceivingSection
-          isRelease
+          ioType={GatewayIOType.burnAndRelease}
           asset={asset}
           sendingAmount={amount}
           receivingAmount={outputAmount}
@@ -250,7 +251,7 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
   // releaseStatus,
 }) => {
   const { t } = useTranslation();
-  useSetPaperTitle(t("release.completed-title"));
+  useSetPaperTitle(t("common.completed-title"));
   const { from, to, asset } = getGatewayParams(gateway);
   const burnAssetConfig = getAssetConfig(gateway.params.asset);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);
@@ -305,7 +306,7 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
         <ChainProgressDone chain={to} />
       )}
       <SentReceivedSection
-        isRelease
+        ioType={GatewayIOType.burnAndRelease}
         receivedAmount={releaseAmountFormatted}
         asset={asset}
         sentAmount={burnAmountFormatted}

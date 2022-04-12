@@ -34,6 +34,7 @@ import {
   TransactionProgressInfo,
 } from "../../components/TransactionProgressHelpers";
 import {
+  GatewayIOType,
   getGatewayParams,
   useContractChainAssetBalance,
 } from "../../gatewayHooks";
@@ -54,6 +55,7 @@ type ReleaseH2HBurnTransactionStatusProps = SubmittingProps & {
   burnStatus: ChainTransactionStatus | null;
   burnConfirmations: number | null;
   burnTargetConfirmations: number | null;
+  ioType: GatewayIOType;
 };
 
 export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
@@ -73,6 +75,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
   done,
   errorSubmitting,
   submittingDisabled,
+  ioType,
 }) => {
   const { t } = useTranslation();
   const { asset, amount, from, fromAverageConfirmationTime } =
@@ -119,7 +122,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
           </>
         )}
         <SendingReceivingSection
-          isRelease
+          ioType={ioType}
           asset={asset}
           sendingAmount={amount}
           receivingAmount={outputAmount}
@@ -161,6 +164,7 @@ type ReleaseH2HReleaseTransactionStatusProps = SubmittingProps & {
   releaseStatus: ChainTransactionStatus | null;
   releaseConfirmations: number | null;
   releaseTargetConfirmations: number | null;
+  ioType: GatewayIOType;
 };
 
 export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
@@ -181,6 +185,7 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
   waiting,
   done,
   errorSubmitting,
+  ioType,
 }) => {
   const { t } = useTranslation();
   const { asset, to, amount, fromAverageConfirmationTime } =
@@ -216,7 +221,7 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
           </>
         )}
         <SendingReceivingSection
-          isRelease
+          ioType={ioType}
           asset={asset}
           sendingAmount={amount}
           receivingAmount={outputAmount}
@@ -256,6 +261,7 @@ type ReleaseH2HCompletedStatusProps = {
   releaseAmount: string | null;
   releaseAssetDecimals: number | null;
   releaseTxUrl: string | null;
+  ioType: GatewayIOType;
 };
 
 export const ReleaseH2HCompletedStatus: FunctionComponent<
@@ -268,9 +274,10 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
   releaseTxUrl,
   releaseAmount,
   releaseAssetDecimals,
+  ioType,
 }) => {
   const { t } = useTranslation();
-  useSetPaperTitle(t("release.completed-title"));
+  useSetPaperTitle(t("common.completed-title"));
   const { from, to, asset } = getGatewayParams(gateway);
   const releaseAssetConfig = getAssetConfig(gateway.params.asset);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);
@@ -286,7 +293,7 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
 
   const showNotifications = useCallback(() => {
     if (releaseTxUrl !== null) {
-      const notificationMessage = t("release.success-notification-message", {
+      const notificationMessage = t("move.success-notification-message", {
         amount: releaseAmountFormatted,
         currency: releaseAssetConfig.shortName,
       });
@@ -318,7 +325,7 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
     <PaperContent bottomPadding>
       <ChainProgressDone chain={from} />
       <SentReceivedSection
-        isRelease
+        ioType={ioType}
         asset={asset}
         sentAmount={burnAmountFormatted}
         receivedAmount={releaseAmountFormatted}

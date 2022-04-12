@@ -2,7 +2,7 @@ import { Box, Typography, useTheme } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import {
+import React, {
   FunctionComponent,
   ReactText,
   useCallback,
@@ -59,7 +59,7 @@ import {
   RenVMSubmittingInfo,
   TransactionProgressInfo,
 } from "../../components/TransactionProgressHelpers";
-import { getGatewayParams } from "../../gatewayHooks";
+import { GatewayIOType, getGatewayParams } from "../../gatewayHooks";
 import { useBasicRouteHandlers } from "../../gatewayRoutingUtils";
 import { maxConfirmations } from "../../gatewayTransactionUtils";
 import { GATEWAY_EXPIRY_OFFSET_MS } from "../../gatewayUtils";
@@ -488,6 +488,7 @@ export const MintCompletedStatus: FunctionComponent<
         </ProgressWithContent>
       </ProgressWrapper>
       <SentReceivedSection
+        ioType={GatewayIOType.lockAndMint}
         asset={asset}
         sentAmount={lockAmountFormatted}
         receivedAmount={mintAmountFormatted}

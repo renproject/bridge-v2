@@ -574,6 +574,12 @@ export const useDecomposedGatewayMeta = (gateway: Gateway | null) => {
   return useGatewayMeta(asset, from, to);
 };
 
+export enum GatewayIOType {
+  lockAndMint = "lockAndMint",
+  burnAndMint = "burnAndMint",
+  burnAndRelease = "burnAndRelease",
+}
+
 // TODO: memoize?
 //will become useGatewayParamsMeta
 export const useGatewayMeta = (
@@ -584,15 +590,20 @@ export const useGatewayMeta = (
   const { network } = useSelector($network);
   const chains = useChains(network);
 
+  const [ioType, setIoType] = useState<GatewayIOType | null>(null);
+
+  // deprecated
   const [isMint, setIsMint] = useState<boolean | null>(null);
   const [isRelease, setIsRelease] = useState<boolean | null>(null);
   const [isLock, setIsLock] = useState<boolean | null>(null);
   const [isBurn, setIsBurn] = useState<boolean | null>(null);
+  // end of deprecatated
   const [isFromContractChain, setIsFromContractChain] =
     useState<boolean>(false);
   const [isToContractChain, setIsToContractChain] = useState<boolean>(false);
 
   const reset = useCallback(() => {
+    setIoType(null);
     setIsMint(null);
     setIsRelease(null);
     setIsLock(null);
@@ -617,6 +628,7 @@ export const useGatewayMeta = (
     })
       .then(({ inputType, outputType, selector }) => {
         console.log(inputType, outputType);
+        // deprecated, keep until cleaned
         if (inputType === InputType.Burn) {
           setIsBurn(true);
           setIsLock(false);
@@ -631,7 +643,21 @@ export const useGatewayMeta = (
           setIsRelease(true);
           setIsMint(false);
         }
-        // burn and mint
+
+        // proper version
+        if (inputType === InputType.Lock && outputType === OutputType.Mint) {
+          setIoType(GatewayIOType.lockAndMint);
+        } else if (
+          inputType === InputType.Burn &&
+          outputType === OutputType.Release
+        ) {
+          setIoType(GatewayIOType.burnAndRelease);
+        } else if (
+          inputType === InputType.Burn &&
+          outputType === OutputType.Mint
+        ) {
+          setIoType(GatewayIOType.burnAndMint);
+        }
       })
       .catch((error) => {
         console.log(asset, from, to);
@@ -651,6 +677,11 @@ export const useGatewayMeta = (
     isLock,
     isBurn,
     isMove: isBurn && isMint,
+    // proper params
+    ioType,
+    isLockAndMint: ioType === GatewayIOType.lockAndMint,
+    isBurnAndMint: ioType === GatewayIOType.burnAndMint,
+    isBurnAndRelease: ioType === GatewayIOType.burnAndRelease,
     // handle nulls
     isFromContractChain,
     isToContractChain,

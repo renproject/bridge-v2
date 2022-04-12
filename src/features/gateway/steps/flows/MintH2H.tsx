@@ -40,6 +40,7 @@ import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
 import {
+  GatewayIOType,
   getGatewayParams,
   useChainInstanceAssetDecimals,
   useGateway,
@@ -449,6 +450,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       <PaperContent bottomPadding>
         <BalanceInfoPlaceholder />
         <SendingReceivingSection
+          ioType={GatewayIOType.lockAndMint}
           asset={asset}
           sendingAmount={amount}
           receivingAmount={outputAmount}

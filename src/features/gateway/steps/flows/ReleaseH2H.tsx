@@ -30,6 +30,7 @@ import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
 import {
+  GatewayIOType,
   getGatewayParams,
   useChainInstanceAssetDecimals,
   useGateway,
@@ -95,7 +96,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
     <ReleaseH2HGatewayProcess
       fromAccount={fromAccount}
       toAccount={toAccount}
-      isMoveRoute={isMoveRoute}
+      moveMode={isMoveRoute}
       location={location}
       match={match}
       {...rest}
@@ -106,12 +107,12 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
 type ReleaseH2HGatewayProcessProps = RouteComponentProps & {
   fromAccount: string;
   toAccount: string;
-  isMoveRoute?: boolean;
+  moveMode?: boolean;
 };
 
 const ReleaseH2HGatewayProcess: FunctionComponent<
   ReleaseH2HGatewayProcessProps
-> = ({ history, location, fromAccount, toAccount }) => {
+> = ({ history, location, fromAccount, toAccount, moveMode }) => {
   const { t } = useTranslation();
   const allChains = useCurrentNetworkChains();
 
@@ -218,6 +219,7 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
           fromAccount={fromAddress}
           toAccount={toAddress}
           recoveryMode={recoveryMode}
+          moveMode={moveMode}
         />
       )}
       {Boolean(parseError) && (
@@ -265,27 +267,39 @@ type ReleaseH2HProcessorProps = {
   fromAccount: string;
   toAccount: string;
   recoveryMode?: boolean;
+  moveMode?: boolean;
 };
 
 const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   gateway,
+  transaction,
   fromAccount,
   toAccount,
   persistLocalTx,
   recoveryMode,
-  transaction,
+  moveMode,
 }) => {
+  const ioType = moveMode
+    ? GatewayIOType.burnAndMint
+    : GatewayIOType.burnAndRelease;
   const history = useHistory();
   const { t } = useTranslation();
   const allChains = useCurrentNetworkChains();
   const { asset, from, to, amount } = getGatewayParams(gateway);
   const assetConfig = getAssetConfig(asset);
   const burnChainConfig = getChainConfig(from);
+  const releaseChainConfig = getChainConfig(to);
   useSetPaperTitle(
-    t("release.release-asset-from-title", {
-      asset: assetConfig.shortName,
-      chain: burnChainConfig.shortName,
-    })
+    moveMode
+      ? t("move.move-asset-from-to-title", {
+          asset: assetConfig.shortName,
+          from: burnChainConfig.shortName,
+          to: releaseChainConfig.shortName,
+        })
+      : t("release.release-asset-from-title", {
+          asset: assetConfig.shortName,
+          chain: burnChainConfig.shortName,
+        })
   );
   const fees = useGatewayFeesWithRates(gateway, amount);
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
@@ -452,6 +466,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
           submitting={submittingBurn}
           errorSubmitting={errorSubmittingBurn}
           submittingDisabled={recoveryMode} // transaction from recovery should have this step finished
+          ioType={ioType}
         />
       );
     }
@@ -473,6 +488,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
         waiting={waitingRelease}
         done={doneRelease}
         errorSubmitting={errorSubmittingRelease}
+        ioType={ioType}
       />
     );
   } else {
@@ -485,6 +501,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
         burnAssetDecimals={burnAssetDecimals}
         releaseAmount={releaseAmount}
         releaseTxUrl={releaseTxUrl}
+        ioType={ioType}
       />
     );
   }

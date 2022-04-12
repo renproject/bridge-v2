@@ -127,7 +127,7 @@
   "notifications.browser-off-tooltip": "Выключите уведомления в настройках браузера.",
   "gateway.amount-too-low-error": "Слишком маленькая сумма",
   "gateway.amount-too-low-error-tooltip": "После применения комиссии сумма, которую вы получите, будет слишком мала.",
-  "release.completed-title": "Выполнено",
+  "common.completed-title": "Выполнено",
   "release.confirm-label": "Подтвердить",
   "release.confirming-label": "Подтверждение...",
   "release.currency-balance-label": "Баланс {{currency}}",

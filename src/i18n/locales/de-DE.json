@@ -104,7 +104,7 @@
   "notifications.browser-off-tooltip": "Browserbenachrichtigungen in den Browsereinstellungen ausschalten.",
   "gateway.amount-too-low-error": "Betrag zu niedrig",
   "gateway.amount-too-low-error-tooltip": "Nachdem Gebühren erhoben wurden, ist der Betrag, den Sie erhalten werden, zu gering.",
-  "release.completed-title": "Abgeschlossen",
+  "common.completed-title": "Abgeschlossen",
   "release.confirm-label": "Bestätigen",
   "release.confirming-label": "Bestätigen...",
   "release.currency-balance-label": "{{currency}} Guthaben",

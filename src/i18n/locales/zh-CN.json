@@ -104,7 +104,7 @@
   "notifications.browser-off-tooltip": "在您的浏览器设置中关闭浏览器通知。",
   "gateway.amount-too-low-error": "金额太低",
   "gateway.amount-too-low-error-tooltip": "在收费被应用后，您将收到的金额太少。",
-  "release.completed-title": "已完成",
+  "common.completed-title": "已完成",
   "release.confirm-label": "确认",
   "release.confirming-label": "确认...",
   "release.currency-balance-label": "{{currency}} 余额",

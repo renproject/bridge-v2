@@ -61,12 +61,16 @@ import {
   getAssetOptionData,
   getChainOptionData,
 } from "../gateway/components/DropdownHelpers";
-import { useAssetDecimals, useGatewayMeta } from "../gateway/gatewayHooks";
+import {
+  GatewayIOType,
+  useAssetDecimals,
+  useGatewayMeta,
+} from "../gateway/gatewayHooks";
+import { GatewayLocationState } from "../gateway/gatewayRoutingUtils";
 import {
   createGatewayQueryString,
   getBridgeNonce,
 } from "../gateway/gatewayUtils";
-import { GatewayLocationState } from "../gateway/gatewayRoutingUtils";
 import {
   useAddressExplorerLink,
   useRenVMExplorerLink,
@@ -501,14 +505,19 @@ const LocalTransactions: FunctionComponent<LocalTransactionsProps> = ({
 };
 
 const resolveTxTypeLabels = (
-  isMint: boolean | null,
-  isRelease: boolean | null,
+  ioType: GatewayIOType | null,
   isH2H: boolean | null
 ) => {
   let fullTypeLabel = null;
   let typeLabel = null;
-  if (isMint !== null && isRelease !== null && isH2H !== null) {
-    typeLabel = isMint ? "Mint" : "Release";
+  if (ioType !== null && isH2H !== null) {
+    if (ioType === GatewayIOType.lockAndMint) {
+      typeLabel = "Mint";
+    } else if (ioType === GatewayIOType.burnAndMint) {
+      typeLabel = "Move";
+    } else if (ioType === GatewayIOType.burnAndRelease) {
+      typeLabel = "Release";
+    }
     const h2hLabel = isH2H ? "H2H " : "";
     fullTypeLabel = h2hLabel + " " + typeLabel;
   }
@@ -571,10 +580,10 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const { params, timestamp, done, meta } = localTxData;
   const { asset, from, to } = decomposeLocalTxParams(localTxData);
   console.log("decomposing", localTxData);
-  const { isMint, isRelease, isH2H } = useGatewayMeta(asset, from, to);
+  const { isMint, isRelease, isH2H, ioType } = useGatewayMeta(asset, from, to);
   const { date, time } = getFormattedDateTime(timestamp);
   const { getRenVmExplorerLink } = useRenVMExplorerLink();
-  const { typeLabel } = resolveTxTypeLabels(isMint, isRelease, isH2H);
+  const { typeLabel } = resolveTxTypeLabels(ioType, isH2H);
 
   const { getAddressExplorerLink: getFromAddressLink } =
     useAddressExplorerLink(from);
@@ -631,7 +640,27 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     const state: GatewayLocationState = {
       reload: true,
     };
-    if (isMint && isH2H) {
+    if (ioType === GatewayIOType.burnAndMint) {
+      console.log("move");
+      history.push({
+        state,
+        pathname: paths.MOVE__GATEWAY,
+        search:
+          "?" +
+          createGatewayQueryString(
+            {
+              asset,
+              from,
+              to,
+              amount,
+              toAddress,
+            },
+            {
+              renVMHash,
+            }
+          ),
+      });
+    } else if (isMint && isH2H) {
       console.log("h2h: mint");
       history.push({
         state,

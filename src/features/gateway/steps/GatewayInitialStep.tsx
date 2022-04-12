@@ -48,6 +48,7 @@ import {
 } from "../components/DropdownHelpers";
 import { MintIntro } from "../components/MintHelpers";
 import {
+  GatewayIOType,
   useAddressValidator,
   useContractChainAssetBalance,
   useGatewayMeta,
@@ -61,12 +62,24 @@ import {
   setTo,
   setToAddress,
 } from "../gatewaySlice";
+import { getSendLabel } from "./shared/TransactionStatuses";
 import { GatewayStepProps } from "./stepUtils";
 
 const assets = supportedAssets;
 const allChains = Object.keys(chainsConfig);
 
 const forceShowDropdowns = false;
+
+const getIoTypeFromPath = (path: string) => {
+  if (path === paths.MINT) {
+    return GatewayIOType.lockAndMint;
+  } else if (path === paths.MOVE) {
+    return GatewayIOType.burnAndMint;
+  } else if (path === paths.RELEASE) {
+    return GatewayIOType.burnAndRelease;
+  }
+  return GatewayIOType.burnAndMint;
+};
 
 export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   onNext,
@@ -76,6 +89,9 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const isMint = path === paths.MINT;
   const isRelease = path === paths.RELEASE;
   const isMove = path === paths.MOVE;
+
+  const ioType = getIoTypeFromPath(path);
+
   const { t } = useTranslation();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const meta = useGatewayMeta(asset, from, to);
@@ -116,7 +132,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       setToChains(nonOriginNotFromChains);
       dispatch(setTo(nonOriginNotFromChains[0]));
     }
-  }, [dispatch, asset, isMove, asset, from]);
+  }, [dispatch, asset, isMove, from]);
 
   useEffect(() => {
     filterChains(asset);
@@ -306,7 +322,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         )}
         <RichDropdownWrapper>
           <RichDropdown
-            label={isMint ? t("mint.mint-label") : t("release.release-label")}
+            label={getSendLabel(asset, ioType, t)}
             supplementalLabel={t("common.asset-label")}
             options={assets}
             getOptionData={getAssetOptionData}
