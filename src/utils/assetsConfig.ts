@@ -1,6 +1,7 @@
 import { Asset, Chain } from "@renproject/chains";
 import {
   assetsColors,
+  Avax,
   Bch,
   Bnb,
   Btc,
@@ -9,8 +10,10 @@ import {
   Doge,
   Eth,
   Fil,
+  Ftm,
   Luna,
   Matic,
+  RenAvax,
   RenBch,
   RenBnb,
   RenBtc,
@@ -19,6 +22,7 @@ import {
   RenDoge,
   RenEth,
   RenFil,
+  RenFtm,
   RenLuna,
   RenMatic,
   RenSol,
@@ -73,7 +77,10 @@ const unsetAssetConfig: AssetBaseConfig = {
 
 const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
   AVAX: {
-    ...unsetAssetConfig,
+    Icon: nativeTokenIcon(Avax),
+    RenIcon: wrappedTokenIcon(RenAvax),
+    shortName: "AVAX",
+    fullName: "Avalanche",
     rateService: AssetRateService.Coingecko,
     rateSymbol: "avalanche-2",
   },
@@ -154,7 +161,10 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateSymbol: "filecoin",
   },
   FTM: {
-    ...unsetAssetConfig,
+    Icon: nativeTokenIcon(Ftm),
+    RenIcon: wrappedTokenIcon(RenFtm),
+    shortName: "FTM",
+    fullName: "Fantom",
     rateService: AssetRateService.Coingecko,
     rateSymbol: "fantom",
   },
