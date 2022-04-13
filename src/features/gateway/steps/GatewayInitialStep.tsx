@@ -297,8 +297,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   return (
     <>
       <PaperContent bottomPadding>
-        {isMint && !isFromContractChain && <MintIntro />}
-        {requiresInitialAmount && (
+        {isMint && <MintIntro />}
+        {!isMint && (
           <BigCurrencyInputWrapper>
             <BigCurrencyInput
               onChange={handleAmountChange}

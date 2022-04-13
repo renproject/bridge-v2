@@ -287,14 +287,13 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
             InputProps={{ endAdornment: assetConfig.shortName }}
           />
         )}
-        {isRelease ||
-          (isBurnAndMint && (
-            <SimpleAssetInfo
-              label={isBurnAndMint ? "Moving" : t("release.releasing-label")}
-              value={amount}
-              asset={renAsset}
-            />
-          ))}
+        {(isRelease || isBurnAndMint) && (
+          <SimpleAssetInfo
+            label={isBurnAndMint ? "Moving" : t("release.releasing-label")}
+            value={amount}
+            asset={renAsset}
+          />
+        )}
         <SmallTopWrapper>
           <AssetInfo
             label={t("common.receiving-label")}

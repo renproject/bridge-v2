@@ -148,8 +148,8 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     [Chain.Polygon]: getEthereumBaseChain(Polygon, network),
     // [Chain.Goerli]: getEthereumBaseChain(Goerli, network),
     [Chain.Avalanche]: getEthereumBaseChain(Avalanche, network),
-    [Chain.Arbitrum]: getEthereumBaseChain(Fantom, network),
-    [Chain.Fantom]: getEthereumBaseChain(Arbitrum, network),
+    [Chain.Arbitrum]: getEthereumBaseChain(Arbitrum, network),
+    [Chain.Fantom]: getEthereumBaseChain(Fantom, network),
   };
 
   const bitcoinBaseChains = {
