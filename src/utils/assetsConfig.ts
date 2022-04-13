@@ -276,7 +276,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     shortName: "REN",
     fullName: "REN",
     rateService: AssetRateService.Coingecko,
-    rateSymbol: "ren",
+    rateSymbol: "republic-protocol",
   },
   ROOK: {
     Icon: nativeTokenIcon(Rook),
@@ -284,7 +284,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     shortName: "ROOK",
     fullName: "KeeperDAO",
     rateService: AssetRateService.Coingecko,
-    rateSymbol: "keeperdao",
+    rateSymbol: "rook",
   },
   SUSHI: {
     Icon: nativeTokenIcon(Sushi),
