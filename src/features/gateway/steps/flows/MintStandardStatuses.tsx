@@ -5,7 +5,6 @@ import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
   FunctionComponent,
   ReactText,
-  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -31,7 +30,9 @@ import {
 } from "../../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
-import { useNotifications } from "../../../../providers/Notifications";
+import {
+  useNotifications
+} from "../../../../providers/Notifications";
 import {
   usePaperTitle,
   useSetActionRequired,
@@ -47,8 +48,8 @@ import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getRemainingTime } from "../../../../utils/time";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
-import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import { useTxSuccessNotification } from "../../../transactions/transactionsHooks";
 import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
@@ -437,42 +438,24 @@ export const MintCompletedStatus: FunctionComponent<
 
   const { handleGoToHome } = useBasicRouteHandlers();
 
-  const { showNotification } = useNotifications();
-  const { showBrowserNotification } = useBrowserNotifications();
-
   const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
   const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
-  const showNotifications = useCallback(() => {
-    if (mintTxUrl !== null) {
-      const notificationMessage = t("mint.success-notification-message", {
-        total: mintAmountFormatted,
-        currency: lockAssetConfig.shortName,
-        chain: mintChainConfig.fullName,
-      });
-      showNotification(
-        <span>
-          {notificationMessage}{" "}
-          <Link external href={mintTxUrl}>
-            {t("tx.view-chain-transaction-link-text", {
-              chain: mintChainConfig.fullName,
-            })}
-          </Link>
-        </span>
-      );
-      showBrowserNotification(notificationMessage);
-    }
-  }, [
-    showNotification,
-    showBrowserNotification,
-    mintAmountFormatted,
-    mintChainConfig,
-    lockAssetConfig,
+  const notificationMessage = t("mint.success-notification-message", {
+    total: mintAmountFormatted,
+    currency: lockAssetConfig.shortName,
+    chain: mintChainConfig.fullName,
+  });
+  const viewChainTxLinkMessage = t("tx.view-chain-transaction-link-text", {
+    chain: mintChainConfig.fullName,
+  });
+  const { txSuccessNotification } = useTxSuccessNotification(
     mintTxUrl,
-    t,
-  ]);
+    notificationMessage,
+    viewChainTxLinkMessage
+  );
 
-  useEffectOnce(showNotifications);
+  useEffectOnce(txSuccessNotification);
 
   const walletTokenMeta = useWalletAssetHelpers(
     gateway.params.to.chain,
