@@ -297,8 +297,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   return (
     <>
       <PaperContent bottomPadding>
-        {isMint && <MintIntro />}
-        {!isMint && (
+        {isMint && !requiresInitialAmount && <MintIntro />}
+        {requiresInitialAmount && (
           <BigCurrencyInputWrapper>
             <BigCurrencyInput
               onChange={handleAmountChange}
@@ -406,6 +406,9 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           meta,
           amountTouched,
           addressTouched,
+          hasAmountBalanceError,
+          hasInitialAmount,
+          requiresInitialAmount,
           addressError: hasAddressError,
         }}
       />
