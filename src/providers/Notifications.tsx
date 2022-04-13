@@ -10,11 +10,8 @@ import React, {
   ReactElement,
   useEffect,
   useMemo,
-  useCallback,
 } from "react";
-import { Link } from "../components/links/Links";
 import { NotificationMessage } from "../components/notifications/NotificationMessage";
-import { useBrowserNotifications } from "../features/notifications/notificationsUtils";
 
 type ExtendedVariantType = VariantType | "specialInfo";
 
@@ -48,37 +45,6 @@ export const useNotifications = () => {
   );
 
   return { showNotification, enqueueDefaultSnackbar, closeNotification };
-};
-
-export const useTxSuccessNotification = (
-  txUrl: string | null,
-  notificationMessage: string,
-  viewChainTxLinkMessage: string
-) => {
-  const { showNotification } = useNotifications();
-  const { showBrowserNotification } = useBrowserNotifications();
-
-  const txSuccessNotification = useCallback(() => {
-    if (txUrl !== null) {
-      showNotification(
-        <span>
-          {notificationMessage}{" "}
-          <Link external href={txUrl}>
-            {viewChainTxLinkMessage}
-          </Link>
-        </span>
-      );
-      showBrowserNotification(notificationMessage);
-    }
-  }, [
-    showNotification,
-    showBrowserNotification,
-    notificationMessage,
-    viewChainTxLinkMessage,
-    txUrl,
-  ]);
-
-  return { txSuccessNotification };
 };
 
 const useNotificationProviderStyles = makeStyles({

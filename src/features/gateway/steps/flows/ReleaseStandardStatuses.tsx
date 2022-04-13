@@ -1,7 +1,7 @@
 import { Divider, Typography } from "@material-ui/core";
 import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
-import React, { FunctionComponent, ReactNode, useCallback } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useEffectOnce } from "react-use";
 import {
@@ -11,12 +11,10 @@ import {
 } from "../../../../components/buttons/Buttons";
 import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
-import { Link } from "../../../../components/links/Links";
 import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
-import { useNotifications, useTxSuccessNotification } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import {
   getAssetConfig,
@@ -26,9 +24,9 @@ import { getChainConfig } from "../../../../utils/chainsConfig";
 import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
-import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { AddressInfo } from "../../../transactions/components/TransactionsHistoryHelpers";
+import { useTxSuccessNotification } from "../../../transactions/transactionsHooks";
 import { BalanceInfo } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
 import {

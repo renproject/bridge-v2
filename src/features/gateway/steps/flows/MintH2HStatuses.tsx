@@ -1,7 +1,7 @@
 import { Box, Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
-import React, { FunctionComponent, ReactNode, useCallback } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useEffectOnce } from "react-use";
 import {
@@ -9,21 +9,19 @@ import {
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
 import { PaperContent } from "../../../../components/layout/Paper";
-import { Link } from "../../../../components/links/Links";
 import {
   ProgressWithContent,
   ProgressWrapper,
 } from "../../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../../components/utils/Debug";
-import { useNotifications, useTxSuccessNotification } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
-import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import { useTxSuccessNotification } from "../../../transactions/transactionsHooks";
 import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,

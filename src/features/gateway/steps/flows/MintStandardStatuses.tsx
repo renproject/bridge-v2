@@ -5,7 +5,6 @@ import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
   FunctionComponent,
   ReactText,
-  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -32,8 +31,7 @@ import {
 import { BigAssetAmount } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
 import {
-  useNotifications,
-  useTxSuccessNotification,
+  useNotifications
 } from "../../../../providers/Notifications";
 import {
   usePaperTitle,
@@ -50,8 +48,8 @@ import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { getRemainingTime } from "../../../../utils/time";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
-import { useBrowserNotifications } from "../../../notifications/notificationsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import { useTxSuccessNotification } from "../../../transactions/transactionsHooks";
 import { AddTokenButton } from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
