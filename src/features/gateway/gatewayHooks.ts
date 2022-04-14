@@ -1,5 +1,5 @@
 import { Asset, Chain } from "@renproject/chains";
-import RenJS, { Gateway, GatewayTransaction } from "@renproject/ren";
+import RenJS, { Gateway, GatewayTransaction, GatewayFees } from "@renproject/ren";
 import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
 import {
   ChainCommon,
@@ -186,6 +186,71 @@ export const useGateway = (
   return { renJs, gateway, transactions, error, recoverLocalTx };
 };
 
+export const useGatewayFeesObject = (
+  {
+    asset,
+    from,
+    to,
+  }: UseGatewayCreateParams,
+  {
+    chains = null,
+  }: UseGatewayAdditionalParams
+) => {
+  const { network } = useSelector($network);
+  const [renJs, setRenJs] = useState<RenJS | null>(null);
+  const [gatewayFeesObject, setGatewayFeesObject] = useState<GatewayFees | null>();
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    if (!chains) {
+      return;
+    }
+    const initProvider = async () => {
+      const chainsArray = Object.values(chains).map((chain) => chain.chain);
+      (window as any).chainsArray = chainsArray;
+      const renJs = new RenJS(network, {
+        logLevel: LogLevel.Debug,
+      }).withChains(...chainsArray);
+      (window as any).renJs = renJs;
+      return renJs;
+    };
+    initProvider()
+      .then((renJs) => setRenJs(renJs))
+      .catch((error) => {
+        console.error("create renJs error", error);
+        setError(error);
+      });
+  }, [network, chains]);
+
+  useEffect(() => {
+    let gatewayFeesObject: GatewayFees | null = null;
+    if (renJs && chains !== null) {
+      const initializeGatewayFees = async () => {
+        gatewayFeesObject = await renJs.getFees({
+          asset,
+          from,
+          to
+        });
+        return gatewayFeesObject;
+      };
+      console.log("gateway initializing", chains);
+      initializeGatewayFees()
+        .then((gatewayFeesObject) => setGatewayFeesObject(gatewayFeesObject))
+        .catch((error) => {
+          console.error(error);
+          setError(error);
+        });
+    }
+  }, [
+    chains,
+    renJs,
+    asset,
+    from,
+    to,
+  ]);
+
+  return { renJs, gatewayFeesObject, error };
+};
+
 export const useAssetDecimals = (chain: Chain, asset: string | Asset) => {
   console.log("useAssetDecimals", chain, asset);
   const chains = useCurrentNetworkChains();
@@ -340,7 +405,7 @@ export const useGatewayFees = (
 
   useEffect(() => {
     console.log(`gateway amounts effect`, gateway, activeAmount);
-    if (!gateway || !fromChainDecimals || !toChainDecimals) {
+    if (!gateway || !gateway.fees || !fromChainDecimals || !toChainDecimals) {
       return;
     }
     // const isLock = gateway.inputType === InputType.Lock;
@@ -500,8 +565,8 @@ export const useGatewayFeesWithRates = (
     setRenVMFeeAmountUsd(
       fees.renVMFeeAmount !== null
         ? new BigNumber(fees.renVMFeeAmount)
-            .multipliedBy(assetUsdRate)
-            .toFixed()
+          .multipliedBy(assetUsdRate)
+          .toFixed()
         : null
     );
 
@@ -513,8 +578,8 @@ export const useGatewayFeesWithRates = (
       setFromChainFeeAmountUsd(
         fees.fromChainFeeAmount !== null && fromChainAssetUsdRate !== null
           ? new BigNumber(fees.fromChainFeeAmount)
-              .multipliedBy(fromChainAssetUsdRate)
-              .toFixed()
+            .multipliedBy(fromChainAssetUsdRate)
+            .toFixed()
           : null
       );
     }
@@ -526,8 +591,8 @@ export const useGatewayFeesWithRates = (
       setToChainFeeAmountUsd(
         fees.toChainFeeAmount !== null && toChainAssetUsdRate !== null
           ? new BigNumber(fees.toChainFeeAmount)
-              .multipliedBy(toChainAssetUsdRate)
-              .toFixed()
+            .multipliedBy(toChainAssetUsdRate)
+            .toFixed()
           : null
       );
     }

@@ -63,7 +63,7 @@ import { BalanceInfo } from "../components/BalanceHelpers";
 import { GatewayFees } from "../components/GatewayFees";
 import {
   useContractChainAssetBalance,
-  useGateway,
+  useGatewayFeesObject,
   useGatewayFeesWithRates,
   useGatewayMeta,
 } from "../gatewayHooks";
@@ -107,8 +107,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const activeChain = isFromContractChain ? from : to;
   // useSyncWalletChain(activeChain);
   const { connected, provider, account } = useWallet(activeChain);
-  const { account: fromAccount } = useWallet(from);
-  const { account: toAccount } = useWallet(to);
 
   //why gateway is initialized without amount?
   console.log("amount", activeAmount, activeChain);
@@ -121,19 +119,33 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, [allChains, activeChain, provider]);
 
-  const { gateway } = useGateway(
+  const { gatewayFeesObject } = useGatewayFeesObject(
     {
       asset,
       from,
       to,
-      amount: activeAmount,
-      // TODO: temporary hack until renJS.getFees() is used here instead of useGateway - @Longfei
-      toAddress: toAddress || toAccount || getExampleAccount(to),
-      fromAddress: fromAccount || getExampleAccount(from),
     },
     { chains: allChains }
   );
-  const fees = useGatewayFeesWithRates(gateway, activeAmount);
+  // console.log("gatewayFeesObject", gatewayFeesObject);
+
+  const gateway = {
+    fees: gatewayFeesObject,
+    params: {
+      asset,
+      from: {
+        chain: from
+      },
+      to: {
+        chain: to
+      },
+    },
+    fromChain: allChains[from].chain,
+    toChain: allChains[to].chain
+  }
+  // console.log("gateway", gateway);
+
+  const fees = useGatewayFeesWithRates(gateway as any, activeAmount);
 
   const activeChainInstance = isFromContractChain
     ? (gateway?.fromChain as ContractChain)
@@ -156,8 +168,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const feeAssets = isH2H
     ? [fromChainFeeAsset, toChainFeeAsset]
     : isMint
-    ? [toChainFeeAsset]
-    : [fromChainFeeAsset];
+      ? [toChainFeeAsset]
+      : [fromChainFeeAsset];
 
   const nextEnabled = ackChecked;
 
@@ -362,11 +374,11 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                       <span>
                         {feeAssets.length > 1
                           ? t("fees.native-assets-ack-plural-tooltip", {
-                              assets: feeAssets.join(" & "),
-                            })
+                            assets: feeAssets.join(" & "),
+                          })
                           : t("fees.native-assets-ack-singular-tooltip", {
-                              asset: feeAssets[0],
-                            })}
+                            asset: feeAssets[0],
+                          })}
                         <span>
                           {" "}
                           {t("fees.native-assets-ack-supplement-tooltip")}
