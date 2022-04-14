@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import { Chain } from "@renproject/chains";
 import {
   ChainTransactionStatus,
   ContractChain,
@@ -75,14 +74,6 @@ import {
 } from "../gatewayUtils";
 import { GatewayStepProps } from "./stepUtils";
 
-const getExampleAccount = (chain: Chain) => {
-  if (chain === Chain.Solana) {
-    return "0";
-  } else {
-    return "0x0000000000000000000000000000000000000000";
-  }
-};
-
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   onPrev,
 }) => {
@@ -134,15 +125,15 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     params: {
       asset,
       from: {
-        chain: from
+        chain: from,
       },
       to: {
-        chain: to
+        chain: to,
       },
     },
     fromChain: allChains[from].chain,
-    toChain: allChains[to].chain
-  }
+    toChain: allChains[to].chain,
+  };
   // console.log("gateway", gateway);
 
   const fees = useGatewayFeesWithRates(gateway as any, activeAmount);
@@ -168,8 +159,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const feeAssets = isH2H
     ? [fromChainFeeAsset, toChainFeeAsset]
     : isMint
-      ? [toChainFeeAsset]
-      : [fromChainFeeAsset];
+    ? [toChainFeeAsset]
+    : [fromChainFeeAsset];
 
   const nextEnabled = ackChecked;
 
@@ -374,11 +365,11 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                       <span>
                         {feeAssets.length > 1
                           ? t("fees.native-assets-ack-plural-tooltip", {
-                            assets: feeAssets.join(" & "),
-                          })
+                              assets: feeAssets.join(" & "),
+                            })
                           : t("fees.native-assets-ack-singular-tooltip", {
-                            asset: feeAssets[0],
-                          })}
+                              asset: feeAssets[0],
+                            })}
                         <span>
                           {" "}
                           {t("fees.native-assets-ack-supplement-tooltip")}

@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouteMatch } from "react-router-dom";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { ActionButton } from "../../../components/buttons/Buttons";
 import {
   RichDropdown,
@@ -85,6 +85,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   onNext,
 }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
+  const location = useLocation();
   const { path } = useRouteMatch();
   const isMint = path === paths.MINT;
   const isRelease = path === paths.RELEASE;
@@ -99,6 +101,17 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const [assets, setAssets] = useState(allAssets);
   const [fromChains, setFromChains] = useState(allChains);
   const [toChains, setToChains] = useState(allChains);
+
+  // clean state when creating new page
+  useEffect(() => {
+    console.log("init", location.state);
+    if (
+      location.state !== undefined &&
+      JSON.stringify(location.state) !== "{}"
+    ) {
+      history.replace({ ...location, state: {} });
+    }
+  }, [history, location]);
 
   const filterChains = useCallback(
     (asset: Asset) => {
