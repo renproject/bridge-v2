@@ -4,6 +4,7 @@ import { GatewayTransaction } from "@renproject/ren";
 import { TransactionParams } from "@renproject/ren/build/module/params";
 import { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNotifications } from "../../providers/Notifications";
 import { $network } from "../network/networkSlice";
 
 const useLocalStorage = <T>(
@@ -118,6 +119,7 @@ export const useTxsStorage = () => {
     [findLocalTx]
   );
 
+  const { showNotification } = useNotifications();
   const persistLocalTx: LocalTxPersistor = useCallback(
     (web3Address, tx, done = false, meta) => {
       console.log("tx: persisting local tx", web3Address, tx, done);
@@ -131,7 +133,14 @@ export const useTxsStorage = () => {
       }
 
       setLocalTxs((txs) => {
-        const current = (txs[web3Address] || {})[tx.hash] || {};
+        const empty = {};
+        const current = (txs[web3Address] || {})[tx.hash] || empty;
+        if (current !== empty) {
+          showNotification(
+            "Bookmark this page to ensure you don’t lose track of your transaction.",
+            { variant: "info" }
+          );
+        }
         // don't overwrite done transactions;
         if (current.done) {
           return txs;
@@ -152,7 +161,7 @@ export const useTxsStorage = () => {
         };
       });
     },
-    [setLocalTxs]
+    [setLocalTxs, showNotification]
   );
 
   const removeLocalTx: LocalTxRemover = useCallback(
