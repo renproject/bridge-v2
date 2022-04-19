@@ -137,7 +137,7 @@ export const useTxsStorage = () => {
         const current = (txs[web3Address] || {})[tx.hash] || empty;
         if (current !== empty) {
           showNotification(
-            "Bookmark this page to ensure you don’t lose track of your transaction.",
+            "Bookmark this page to ensure you don't lose track of your transaction. Doing so will help keep your funds save.",
             { variant: "info" }
           );
         }
