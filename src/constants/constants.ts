@@ -2,6 +2,7 @@ export const appName = "RenBridge V2";
 
 export enum storageKeys {
   TERMS_AGREED = "termsAgreed",
+  SAFETY_ACK = "safetyAck",
 }
 
 export const links = {

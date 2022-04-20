@@ -1,12 +1,26 @@
-import { Chip, ChipProps, darken, Dialog, Typography } from "@material-ui/core";
+import {
+  Box,
+  Chip,
+  ChipProps,
+  darken,
+  Dialog,
+  Typography,
+} from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import classNames from "classnames";
-import React, { FunctionComponent } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
+import { ActionButton } from "../../../components/buttons/Buttons";
 import { CustomSvgIconComponent } from "../../../components/icons/RenIcons";
 import { SmallHorizontalPadder } from "../../../components/layout/LayoutHelpers";
 import { CustomLink } from "../../../components/links/Links";
+import { storageKeys } from "../../../constants/constants";
 import { trimAddress } from "../../../utils/strings";
 
 const useWideDialogStyles = makeStyles((theme) => ({
@@ -211,5 +225,54 @@ export const AddressInfo: FunctionComponent<AddressInfoProps> = ({
         </FullWidthWrapper>
       </BluePadder>
     </Typography>
+  );
+};
+
+const ACK_RENEWAL_HRS = 12;
+
+export const TransactionSafetyWarning: FunctionComponent = () => {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const lastAck = localStorage.getItem(storageKeys.SAFETY_ACK);
+    if (lastAck === null) {
+      setOpen(true);
+    } else {
+      const lastTs = Number(lastAck);
+      if (Date.now() - lastTs > ACK_RENEWAL_HRS * 3600) {
+        setOpen(true);
+      }
+    }
+  }, []);
+
+  const handleAccept = useCallback(() => {
+    localStorage.setItem(storageKeys.SAFETY_ACK, Date.now().toString());
+  }, []);
+
+  return (
+    <WideDialog open={open}>
+      <Box p={6} textAlign="center">
+        <Typography variant="body1" paragraph>
+          Ren is new technology, and security audits don't completely eliminate
+          risks. Please don’t bridge assets you can’t afford to lose.
+        </Typography>
+        <Typography variant="body1">
+          RenBridge uses local browser storage to keep its orders while in
+          transit. Do not clear your history, cache, or use incognito mode and
+          then close your window,
+        </Typography>
+        <Typography variant="body1">
+          <strong>your funds will be lost.</strong>
+        </Typography>{" "}
+        <Typography variant="body1">
+          By proceeding you understand this and are responsible for any lost
+          funds. You can avoid this issue by bookmarking the bridge URL once
+          initiated.
+        </Typography>
+        <Box mt={6}>
+          <ActionButton onClick={handleAccept}>Accept Terms</ActionButton>
+        </Box>
+      </Box>
+    </WideDialog>
   );
 };

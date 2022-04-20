@@ -36,6 +36,7 @@ import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
+import { TransactionSafetyWarning } from "../../transactions/components/TransactionsHistoryHelpers";
 import { useCurrentChainWallet, useWallet } from "../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../wallet/walletSlice";
 import {
@@ -309,6 +310,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   return (
     <>
+      <TransactionSafetyWarning />
       <PaperContent bottomPadding>
         {isMint && !requiresInitialAmount && <MintIntro />}
         {requiresInitialAmount && (
