@@ -228,7 +228,7 @@ export const AddressInfo: FunctionComponent<AddressInfoProps> = ({
   );
 };
 
-const ACK_RENEWAL_HRS = 1; //TODO: crit set to 12 before release
+const ACK_RENEWAL_HRS = 1; //TODO: crit set to 24 before release
 
 export const TransactionSafetyWarning: FunctionComponent = () => {
   const [open, setOpen] = useState(false);
@@ -239,7 +239,7 @@ export const TransactionSafetyWarning: FunctionComponent = () => {
       setOpen(true);
     } else {
       const lastTs = Number(lastAck);
-      if (Date.now() - lastTs > ACK_RENEWAL_HRS * 3600) {
+      if (Date.now() - lastTs > ACK_RENEWAL_HRS * 3600 * 1000) {
         setOpen(true);
       }
     }
