@@ -228,7 +228,7 @@ export const AddressInfo: FunctionComponent<AddressInfoProps> = ({
   );
 };
 
-const ACK_RENEWAL_HRS = 12;
+const ACK_RENEWAL_HRS = 1; //TODO: crit set to 12 before release
 
 export const TransactionSafetyWarning: FunctionComponent = () => {
   const [open, setOpen] = useState(false);
@@ -247,6 +247,7 @@ export const TransactionSafetyWarning: FunctionComponent = () => {
 
   const handleAccept = useCallback(() => {
     localStorage.setItem(storageKeys.SAFETY_ACK, Date.now().toString());
+    setOpen(false);
   }, []);
 
   return (
