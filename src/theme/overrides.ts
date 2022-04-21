@@ -14,7 +14,6 @@ import {
   black,
   popoverBackground,
   popoverTextColor,
-  textDark,
   textDisabled,
   textLighter,
 } from "./colors";
