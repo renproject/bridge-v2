@@ -278,7 +278,7 @@ export const H2HAccountsResolver: FunctionComponent<
     <>
       <GatewayPaperHeader title={"Choose Accounts"} />
       <PaperContent topPadding bottomPadding>
-        <Box display="flex" justifyContent="center">
+        {/* <Box display="flex" justifyContent="center">
           <ProgressWithContent color={alpha("#627EEA", 0.25)}>
             <CircledIconContainer
               className={styles.accounts}
@@ -294,7 +294,7 @@ export const H2HAccountsResolver: FunctionComponent<
           <Typography variant="h6" align="center">
             Choose accounts used for this transaction.
           </Typography>
-        </Box>
+        </Box> */}
         <Box display="flex" alignItems="center" justifyContent="center">
           <FormControlLabel
             control={
@@ -308,10 +308,7 @@ export const H2HAccountsResolver: FunctionComponent<
             disabled={disabled}
             label={
               <Typography variant="caption">
-                I want to transfer to a different account{" "}
-                <TooltipWithIcon
-                  title={`I will use different accounts for ${fromChainConfig.fullName} and ${toChainConfig.fullName} wallets.`}
-                />
+                I want to transfer to a different account
               </Typography>
             }
           />

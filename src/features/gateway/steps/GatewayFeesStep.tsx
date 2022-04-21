@@ -280,7 +280,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       {Header}
       <PaperContent bottomPadding>
         {showBalance && (
-          <BalanceInfo balance={balance} asset={renAsset} chain={activeChain} />
+          <BalanceInfo balance={balance} asset={isMint ? asset : renAsset} chain={activeChain} />
         )}
         {isMint && !isBurnAndMint && (
           <OutlinedTextField
