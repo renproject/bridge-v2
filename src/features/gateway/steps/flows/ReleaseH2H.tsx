@@ -60,7 +60,7 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   ...rest
 }) => {
   console.log(match);
-  const isMoveRoute = match.path === paths.MOVE__GATEWAY;
+  const isMoveRoute = match.path === paths.BRIDGE_GATEWAY;
   const { gatewayParams, additionalParams } = parseGatewayQueryString(
     location.search
   );

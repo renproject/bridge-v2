@@ -168,7 +168,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     console.log("move (h2h)");
     if (isBurnAndMint) {
       history.push({
-        pathname: paths.MOVE__GATEWAY,
+        pathname: paths.BRIDGE_GATEWAY,
         search:
           "?" +
           createGatewayQueryString({

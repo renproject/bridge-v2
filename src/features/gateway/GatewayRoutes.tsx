@@ -90,7 +90,7 @@ export const GatewayRoutes: FunctionComponent = () => {
     <GatewayLifecycleGuard>
       <Route
         exact
-        path={[paths.MINT, paths.RELEASE, paths.MOVE]}
+        path={[paths.MINT, paths.RELEASE, paths.BRIDGE]}
         component={GatewayConfigurationSteps}
       />
       <Route exact path={paths.MINT__GATEWAY_H2H} component={MintH2HProcess} />
@@ -109,7 +109,7 @@ export const GatewayRoutes: FunctionComponent = () => {
         path={paths.RELEASE__GATEWAY_H2H}
         component={ReleaseH2HProcess}
       />
-      <Route exact path={paths.MOVE__GATEWAY} component={ReleaseH2HProcess} />
+      <Route exact path={paths.BRIDGE_GATEWAY} component={ReleaseH2HProcess} />
       <Route exact path={paths.TEST} component={TestProcess} />
     </GatewayLifecycleGuard>
   );

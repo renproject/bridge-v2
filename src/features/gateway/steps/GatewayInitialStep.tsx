@@ -74,7 +74,7 @@ const forceShowDropdowns = false;
 const getIoTypeFromPath = (path: string) => {
   if (path === paths.MINT) {
     return GatewayIOType.lockAndMint;
-  } else if (path === paths.MOVE) {
+  } else if (path === paths.BRIDGE) {
     return GatewayIOType.burnAndMint;
   } else if (path === paths.RELEASE) {
     return GatewayIOType.burnAndRelease;
@@ -91,7 +91,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const { path } = useRouteMatch();
   const isMint = path === paths.MINT;
   const isRelease = path === paths.RELEASE;
-  const isMove = path === paths.MOVE;
+  const isMove = path === paths.BRIDGE;
 
   const ioType = getIoTypeFromPath(path);
 

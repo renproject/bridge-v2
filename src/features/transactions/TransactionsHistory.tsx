@@ -644,7 +644,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       console.log("move");
       history.push({
         state,
-        pathname: paths.MOVE__GATEWAY,
+        pathname: paths.BRIDGE_GATEWAY,
         search:
           "?" +
           createGatewayQueryString(

@@ -11,6 +11,7 @@ import {
   alertSuccessBackground,
   alertWarning,
   alertWarningBackground,
+  black,
   popoverBackground,
   popoverTextColor,
   textDark,
@@ -222,8 +223,8 @@ export const overrides = (palette: Palette): Overrides => {
         color: textLighter,
         opacity: 1,
         "&$selected": {
-          color: textDark,
-          fontWeight: 500,
+          color: black,
+          fontWeight: 600,
         },
         "&$disabled": {
           color: textDisabled,

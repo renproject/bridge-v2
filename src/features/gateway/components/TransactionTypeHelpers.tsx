@@ -33,25 +33,13 @@ export const TransactionTypeTabs: FunctionComponent<TabsProps> = () => {
       >
         <Tab
           className={styles.tab}
-          label={
-            path === paths.MINT
-              ? t("mint.tab-current-name")
-              : t("mint.tab-name")
-          }
+          label={t("mint.tab-name")}
           value={paths.MINT}
         />
+        <Tab className={styles.tab} label="Bridge" value={paths.BRIDGE} />
         <Tab
           className={styles.tab}
-          label={path === paths.MOVE ? "Moving" : "Move"}
-          value={paths.MOVE}
-        />
-        <Tab
-          className={styles.tab}
-          label={
-            path === paths.RELEASE
-              ? t("release.tab-current-name")
-              : t("release.tab-name")
-          }
+          label={t("release.tab-name")}
           value={paths.RELEASE}
         />
       </Tabs>
