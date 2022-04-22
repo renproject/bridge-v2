@@ -3,8 +3,10 @@ import {
   Box,
   Button,
   Checkbox,
+  Divider,
   FormControlLabel,
   IconButton,
+  Tooltip,
   Typography,
   useTheme,
 } from "@material-ui/core";
@@ -25,6 +27,7 @@ import {
 } from "../../../../components/buttons/Buttons";
 import {
   AccountIcon,
+  CustomSvgIconComponent,
   DeleteIcon,
   WalletIcon,
 } from "../../../../components/icons/RenIcons";
@@ -50,6 +53,9 @@ import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
 import { CircledIconContainer } from "../../components/MultipleDepositsHelpers";
 import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
+import { $gateway } from "../../gatewaySlice";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
+import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
 
 const useSwitchWalletDialogStyles = makeStyles((theme) => ({
   top: {
@@ -171,14 +177,14 @@ const useAccountWrapperStyles = makeStyles((theme) => ({
     alignItems: "center",
     marginBottom: 10,
   },
-  iconWithLabel: {
-    display: "flex",
-    alignItems: "center",
-  },
   icon: {
     height: 32,
     fontSize: 32,
-    marginRight: 8,
+  },
+  container: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
   },
 }));
 
@@ -186,28 +192,50 @@ type AccountWrapperProps = {
   chain: Chain;
   label: string;
   onClick?: () => void;
+  amount?: string;
+  AssetIcon?: CustomSvgIconComponent;
+  assetIconTooltip?: string;
 };
 
 export const AccountWrapper: FunctionComponent<AccountWrapperProps> = ({
   chain,
   label,
   children,
+  amount = "",
+  AssetIcon = null,
+  assetIconTooltip = "",
 }) => {
   const styles = useAccountWrapperStyles();
   const { Icon } = getChainConfig(chain);
   return (
     <div className={styles.root}>
-      <div className={styles.iconWithLabel}>
-        <div className={styles.icon}>
-          <Icon fontSize="inherit" />
-        </div>
+      <div className={styles.container}>
+        <Tooltip title={chain}>
+          <div className={styles.icon}>
+            <Icon fontSize="inherit" />
+          </div>
+        </Tooltip>
         <Typography variant="caption" color="textPrimary" component="div">
           {label}
         </Typography>
       </div>
-      <Typography variant="caption" color="textSecondary">
-        {children}
-      </Typography>
+      {AssetIcon && (
+        <div className={styles.container}>
+          <NumberFormatText
+            value={amount}
+          />
+          <Tooltip title={assetIconTooltip}>
+            <div className={styles.icon}>
+              <AssetIcon fontSize="inherit" />
+            </div>
+          </Tooltip>
+        </div>
+      )}
+      {!AssetIcon && (
+        <Typography variant="caption" color="textSecondary">
+          {children}
+        </Typography>
+      )}
     </div>
   );
 };
@@ -215,6 +243,26 @@ export const AccountWrapper: FunctionComponent<AccountWrapperProps> = ({
 export const H2HAccountsResolver: FunctionComponent<
   H2HAccountsResolverProps
 > = ({ transactionType, from, to, disabled, onResolved }) => {
+  const { asset, amount, outputAmount } = useSelector($gateway);
+  console.log("transactionType: ", transactionType);
+  // console.log("gateway: ", useSelector($gateway));
+  // console.log("from: ", from);
+  // console.log("asset config: ", getAssetConfig(asset));
+  const { Icon, RenIcon } = getAssetConfig(asset);
+  let SendIcon, ReceiveIcon;
+  let sendIconTooltip, receiveIconTooltip;
+  if (transactionType == "mint") {
+    SendIcon = Icon;
+    ReceiveIcon = RenIcon;
+    sendIconTooltip = asset;
+    receiveIconTooltip = `ren${asset}`;
+  }
+  else {
+    SendIcon = RenIcon;
+    ReceiveIcon = Icon;
+    sendIconTooltip = `ren${asset}`;
+    receiveIconTooltip = asset;
+  }
   const styles = useH2HAccountsResolverStyles();
   const allChains = useCurrentNetworkChains();
   const fromChainConfig = getChainConfig(from);
@@ -277,7 +325,7 @@ export const H2HAccountsResolver: FunctionComponent<
   return (
     <>
       <GatewayPaperHeader title={"Choose Accounts"} />
-      <PaperContent topPadding bottomPadding>
+      <PaperContent >
         {/* <Box display="flex" justifyContent="center">
           <ProgressWithContent color={alpha("#627EEA", 0.25)}>
             <CircledIconContainer
@@ -295,23 +343,11 @@ export const H2HAccountsResolver: FunctionComponent<
             Choose accounts used for this transaction.
           </Typography>
         </Box> */}
-        <Box display="flex" alignItems="center" justifyContent="center">
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={differentAccounts}
-                onChange={handleAccountsModeChange}
-                name="primary"
-                color="primary"
-              />
-            }
-            disabled={disabled}
-            label={
-              <Typography variant="caption">
-                I want to transfer to a different account
-              </Typography>
-            }
-          />
+        <Box mb={5}>
+          <AccountWrapper chain={from} label="Sending" amount={amount} AssetIcon={SendIcon} assetIconTooltip={sendIconTooltip}>
+          </AccountWrapper>
+          <AccountWrapper chain={to} label="Receiving" amount={outputAmount} AssetIcon={ReceiveIcon} assetIconTooltip={receiveIconTooltip}>
+          </AccountWrapper>
         </Box>
         {cachedFromAccount ? (
           <AccountWrapper chain={from} label="Sender Address">
@@ -341,11 +377,33 @@ export const H2HAccountsResolver: FunctionComponent<
             </Link>
           )}
         </AccountWrapper>
+
+        <Box mb={1} display="flex" alignItems="center" justifyContent="center">
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={differentAccounts}
+                onChange={handleAccountsModeChange}
+                name="primary"
+                color="primary"
+              />
+            }
+            disabled={disabled}
+            label={
+              <Typography variant="caption">
+                I want to transfer to a different account
+              </Typography>
+            }
+          />
+        </Box>
         <SwitchWalletDialog
           open={toPickerOpened && differentAccounts}
           targetChain={to}
           disconnect={deactivateTo}
         />
+      </PaperContent>
+      <Divider />
+      <PaperContent bottomPadding>
         <BigTopWrapper>
           <ActionButtonWrapper>
             <ActionButton
