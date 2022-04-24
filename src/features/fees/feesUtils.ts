@@ -52,7 +52,7 @@ export const getTransactionFees = (params: GetTransactionsFeesArgs) => {
       currency === BridgeCurrency.LUNA ||
       currency === BridgeCurrency.RENLUNA
     ) {
-      feeData.networkFee = feeData.networkFee / 1e5;
+      feeData.networkFee = feeData.networkFee / 1e6;
     }
     feeData.renVMFee = Number(renTxTypeFee) / 10000; // percent value
     feeData.renVMFeeAmount = Number(amountNumber * feeData.renVMFee);
