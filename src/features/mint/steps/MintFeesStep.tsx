@@ -110,6 +110,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     fees,
     type: TxType.MINT,
     decimals,
+    currency,
   });
   const conversionFormatted = conversionTotal;
 

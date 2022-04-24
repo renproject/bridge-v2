@@ -70,7 +70,7 @@ export const getMintChainMap = (providers: any, timestamp = 0) => ({
     const { destAddress, network } = context.tx;
 
     return new Polygon(providers.polygon, network).Account({
-      address: destAddress,
+      address: destAddress
     }) as any;
   },
   [RenChain.avalanche]: (context: GatewayMachineContext<any>) => {

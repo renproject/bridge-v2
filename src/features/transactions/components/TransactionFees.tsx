@@ -76,6 +76,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     fees,
     type,
     decimals,
+    currency,
   });
   const renVMFeeAmountUsd = amountUsd * renVMFee;
   const networkFeeUsd = networkFee * currencyUsdRate;

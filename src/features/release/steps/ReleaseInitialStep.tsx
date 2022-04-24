@@ -97,6 +97,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     type: TxType.BURN,
     fees,
     decimals,
+    currency,
   });
   const conversionFormatted = conversionTotal;
 

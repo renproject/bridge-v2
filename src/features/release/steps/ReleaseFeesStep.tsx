@@ -100,6 +100,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     fees,
     type: TxType.BURN,
     decimals,
+    currency,
   });
 
   const chainConfig = getChainConfig(chain);

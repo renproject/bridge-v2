@@ -32,14 +32,11 @@ type GetTransactionsFeesArgs = {
   fees: SimpleFee | null;
   type: TxType;
   decimals: number;
+  currency?: string | BridgeCurrency;
 };
 
-export const getTransactionFees = ({
-  amount,
-  type,
-  fees,
-  decimals,
-}: GetTransactionsFeesArgs) => {
+export const getTransactionFees = (params: GetTransactionsFeesArgs) => {
+  const { amount, type, fees, decimals, currency } = params;
   const amountNumber = Number(amount);
   const feeData: CalculatedFee = {
     renVMFee: 0,
@@ -51,6 +48,12 @@ export const getTransactionFees = ({
     const renTxTypeFee = type === TxType.MINT ? fees.mint : fees.burn;
     const networkFee = type === TxType.MINT ? fees.lock : fees.release;
     feeData.networkFee = Number(networkFee) / 10 ** decimals;
+    if (
+      currency === BridgeCurrency.LUNA ||
+      currency === BridgeCurrency.RENLUNA
+    ) {
+      feeData.networkFee = feeData.networkFee / 1e5;
+    }
     feeData.renVMFee = Number(renTxTypeFee) / 10000; // percent value
     feeData.renVMFeeAmount = Number(amountNumber * feeData.renVMFee);
     const total = Number(
@@ -61,6 +64,7 @@ export const getTransactionFees = ({
     feeData.conversionTotal = total > 0 ? total : 0;
   }
 
+  console.log("feeData", params, feeData);
   return feeData;
 };
 

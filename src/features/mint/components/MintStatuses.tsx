@@ -538,6 +538,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     fees,
     type: TxType.MINT,
     decimals,
+    currency: lockCurrencyConfig.symbol,
   });
   const conversionFormatted = conversionTotal;
   const handleGoToHome = useCallback(() => {
