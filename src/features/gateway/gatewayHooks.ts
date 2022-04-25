@@ -16,7 +16,7 @@ import {
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   MINT_GAS_UNIT_COST,
   RELEASE_GAS_UNIT_COST,
@@ -34,6 +34,7 @@ import {
 import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
 import { LocalTxData } from "../storage/storageHooks";
+import { setAsset, setFrom, setTo } from "./gatewaySlice";
 import { createGateway } from "./gatewayUtils";
 
 type UseGatewayCreateParams = {
@@ -193,20 +194,27 @@ export const useGateway = (
 };
 
 export const useSetTransactionUpdater = (gateway: Gateway | null) => {
+  const dispatch = useDispatch();
   const [, setTransactionUpdater] = useTransactionUpdater();
   useEffect(() => {
     if (gateway !== null) {
       const updater = async (inputTx: InputChainTransaction) => {
+        const { from, to, asset } = getGatewayParams(gateway);
+        dispatch(setAsset(asset as Asset));
+        dispatch(setFrom(from));
+        dispatch(setTo(to));
         return gateway.processDeposit({
           ...inputTx,
-          asset: inputTx.asset || gateway.params.asset,
+          chain: inputTx.chain || from,
+          asset: inputTx.asset || asset,
+          toChain: inputTx.toChain || to,
         });
       };
       setTransactionUpdater(updater);
     } else {
       setTransactionUpdater(null);
     }
-  }, [gateway, setTransactionUpdater]);
+  }, [dispatch, gateway, setTransactionUpdater]);
 };
 
 export const useGatewayFeesObject = (

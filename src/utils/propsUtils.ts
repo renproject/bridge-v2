@@ -4,3 +4,10 @@ export const undefinedForNull = (prop: any) => {
   }
   return prop;
 };
+
+export const undefinedForEmptyString = (prop: string) => {
+  if (prop === "") {
+    return undefined;
+  }
+  return prop;
+};

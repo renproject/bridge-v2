@@ -6,11 +6,13 @@ import {
   MenuItemProps,
   Typography,
 } from "@material-ui/core";
+import { Chain } from "@renproject/chains";
+import { txidFormattedToTxid } from "@renproject/chains-bitcoin/build/main/utils/utils";
 import { InputChainTransaction } from "@renproject/utils";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -39,6 +41,9 @@ import {
   TransactionUpdater,
   UpdateTransactionFn,
 } from "../../../providers/TransactionProviders";
+import { undefinedForEmptyString } from "../../../utils/propsUtils";
+import { $gateway } from "../../gateway/gatewaySlice";
+import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { setIssueResolverOpened } from "../transactionsSlice";
 
 const useTransactionMenuItemStyles = makeStyles((theme) => ({
@@ -193,15 +198,68 @@ const isValidInteger = (amount: string) => {
   return Number.isInteger(Number(amount));
 };
 
+/*
+export interface ChainTransaction {
+    chain: string; // from gateway
+    txid: UrlBase64String;
+    txindex: NumericString;
+
+    txidFormatted: string;
+}
+
+export interface InputChainTransaction extends ChainTransaction {
+    asset: string; // from gateway
+    amount: string;
+    toRecipient?: string;
+    toChain?: string; // from gateway
+
+    nonce?: string; // urlBase64 encoded
+    toPayload?: string; // urlBase64 encoded
+}
+ */
+
 export const UpdateTransactionDrawer: FunctionComponent<
   UpdateTransactionDrawerProps
 > = ({ open, onClose, onUpdateTransaction }) => {
   const { t } = useTranslation();
+  const { from } = useSelector($gateway);
+  const chains = useCurrentNetworkChains();
+  const encodeTxId = useCallback(
+    (txIdFormatted) => {
+      const instance = chains[from].chain;
+      // TODO: crit renJS should expose it on chain class
+      if (instance && instance.chain === Chain.Bitcoin) {
+        return txidFormattedToTxid(txIdFormatted);
+      }
+      return txIdFormatted;
+      // chains[from].chain.txid()
+    },
+    [chains, from]
+  );
+
+  const [txId, setTxId] = useState("");
+  const handleTxIdChange = useCallback((event) => {
+    setTxId(event.target.value);
+  }, []);
+
+  const [txIndex, setTxIndex] = useState("");
+  const handleTxIndexChange = useCallback((event) => {
+    const newValue = event.target.value;
+    if (isValidInteger(newValue)) {
+      setTxIndex(newValue);
+    }
+  }, []);
 
   const [txIdFormatted, setTxIdFormatted] = useState("");
-  const handleTxFormattedChange = useCallback((event) => {
-    setTxIdFormatted(event.target.value);
-  }, []);
+  const handleTxIdFormattedChange = useCallback(
+    (event) => {
+      const newValue = event.target.value;
+      setTxIdFormatted(newValue);
+      setTxId(encodeTxId(newValue));
+    },
+    [encodeTxId]
+  );
+
   const [amount, setAmount] = useState("");
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value;
@@ -209,26 +267,47 @@ export const UpdateTransactionDrawer: FunctionComponent<
       setAmount(newValue);
     }
   }, []);
-  const handleVoutChange = useCallback((event) => {
-    const newValue = event.target.value;
-    if (isValidInteger(newValue)) {
-      setVout(newValue);
-    }
+
+  const [toRecipient, setToRecipient] = useState("");
+  const handleToRecipientChange = useCallback((event) => {
+    setToRecipient(event.target.value);
   }, []);
-  const [vout, setVout] = useState("");
-  const [hash, setHash] = useState("");
-  const handleHashChange = useCallback((event) => {
-    setHash(event.target.value);
+
+  const [nonce, setNonce] = useState("");
+  const handleNonceChange = useCallback((event) => {
+    setNonce(event.target.value);
+  }, []);
+
+  const [toPayload, setToPayload] = useState("");
+  const handleToPayloadChange = useCallback((event) => {
+    setToPayload(event.target.value);
   }, []);
 
   const [updating, setUpdating] = useState(false);
   const handleUpdateTx = useCallback(() => {
-    const inputTx = {} as InputChainTransaction;
+    const inputTx = {
+      txid: txId,
+      txindex: txIndex,
+      txidFormatted: txIdFormatted,
+      amount: amount,
+      toRecipient: undefinedForEmptyString(toRecipient),
+      nonce: undefinedForEmptyString(nonce),
+      toPayload: undefinedForEmptyString(toPayload),
+    } as InputChainTransaction;
     setUpdating(true);
     onUpdateTransaction(inputTx);
-  }, [onUpdateTransaction]);
+  }, [
+    onUpdateTransaction,
+    txId,
+    txIndex,
+    txIdFormatted,
+    amount,
+    toRecipient,
+    nonce,
+    toPayload,
+  ]);
 
-  const valid = amount && vout && hash;
+  const valid = true;
 
   const handleFetch = useCallback(() => {
     // TODO: finish when renJS functionality done
@@ -244,10 +323,10 @@ export const UpdateTransactionDrawer: FunctionComponent<
           <PaperContent topPadding>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label={"Transaction ID"}
-                value={txIdFormatted}
-                onChange={handleTxFormattedChange}
-                placeholder={"Formatted Transaction Id"}
+                label={"Transaction Id"}
+                value={txId}
+                onChange={handleTxIdChange}
+                placeholder={"Transaction Id"}
               />
             </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
@@ -258,8 +337,24 @@ export const UpdateTransactionDrawer: FunctionComponent<
                 disabled
                 onClick={handleFetch}
               >
-                Fetch data by tx id
+                Fetch data by Tx Id
               </Button>
+            </OutlinedTextFieldWrapper>
+            <OutlinedTextFieldWrapper>
+              <OutlinedTextField
+                label={"Formatted Transaction Id"}
+                value={txIdFormatted}
+                onChange={handleTxIdFormattedChange}
+                placeholder={"Formatted Transaction Id"}
+              />
+            </OutlinedTextFieldWrapper>
+            <OutlinedTextFieldWrapper>
+              <OutlinedTextField
+                label={"Tx Index / vOut"}
+                value={txIndex}
+                onChange={handleTxIndexChange}
+                placeholder={"Enter transaction index/vOut"}
+              />
             </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
@@ -271,18 +366,26 @@ export const UpdateTransactionDrawer: FunctionComponent<
             </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label={t("tx.menu-update-tx-hash-label")}
-                value={hash}
-                onChange={handleHashChange}
-                placeholder={t("tx.menu-update-tx-hash-placeholder")}
+                label={"To Recipient"}
+                value={toRecipient}
+                onChange={handleToRecipientChange}
+                placeholder={"Enter recipient address"}
               />
             </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label={t("tx.menu-update-tx-vout-label")}
-                value={vout}
-                onChange={handleVoutChange}
-                placeholder={t("tx.menu-update-tx-vout-placeholder")}
+                label={"Nonce"}
+                value={nonce}
+                onChange={handleNonceChange}
+                placeholder={"Enter urlBase64 encoded nonce"}
+              />
+            </OutlinedTextFieldWrapper>
+            <OutlinedTextFieldWrapper>
+              <OutlinedTextField
+                label={"To Payload"}
+                value={nonce}
+                onChange={handleToPayloadChange}
+                placeholder={"Enter urlBase64 encoded toPayload"}
               />
             </OutlinedTextFieldWrapper>
           </PaperContent>
