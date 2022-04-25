@@ -32,6 +32,7 @@ import {
   useChainInstanceAssetDecimals,
   useGateway,
   useGatewayFeesWithRates,
+  useSetTransactionUpdater,
 } from "../../gatewayHooks";
 import {
   isTxSubmittable,
@@ -323,6 +324,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     : !isTxSubmittable(transaction?.in || gateway.in);
 
   useSetCurrentTxHash(transaction?.hash);
+  useSetTransactionUpdater(gateway);
 
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {

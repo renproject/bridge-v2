@@ -14,6 +14,7 @@ import {
   PaperTitle,
 } from "../../../../components/layout/Paper";
 import { env } from "../../../../constants/environmentVariables";
+import { useTransactionUpdater } from "../../../../providers/TransactionProviders";
 import {
   BrowserNotificationButton,
   BrowserNotificationsDrawer,
@@ -35,6 +36,7 @@ export const GatewayPaperHeader: FunctionComponent<GatewayPaperHeaderProps> = ({
   children,
 }) => {
   const { currentTxHash } = useSelector($transactions);
+  const [updateTransaction] = useTransactionUpdater();
   const {
     modalOpened,
     handleModalOpen,
@@ -60,7 +62,7 @@ export const GatewayPaperHeader: FunctionComponent<GatewayPaperHeaderProps> = ({
           />
           <ToggleIconButton
             variant="settings"
-            disabled={!currentTxHash}
+            disabled={!currentTxHash && !updateTransaction}
             onClick={handleMenuOpen}
             pressed={menuOpened}
           />
@@ -70,6 +72,7 @@ export const GatewayPaperHeader: FunctionComponent<GatewayPaperHeaderProps> = ({
         txHash={currentTxHash}
         open={menuOpened}
         onClose={handleMenuClose}
+        onUpdateTransaction={updateTransaction}
       />
       <BrowserNotificationsDrawer
         open={modalOpened}

@@ -5,6 +5,7 @@ import {
   MenuItemProps,
   Typography,
 } from "@material-ui/core";
+import { InputChainTransaction } from "@renproject/utils";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,6 +34,11 @@ import {
   NestedDrawerContent,
   NestedDrawerWrapper,
 } from "../../../components/modals/BridgeModal";
+import {
+  TransactionUpdater,
+  UpdateTransactionFn,
+  useTransactionUpdater,
+} from "../../../providers/TransactionProviders";
 import { setIssueResolverOpened } from "../transactionsSlice";
 
 const useTransactionMenuItemStyles = makeStyles((theme) => ({
@@ -90,20 +96,18 @@ const useTransactionMenuStyles = makeStyles((theme) => ({
   },
 }));
 
-export type UpdateTxFn = (amount: number, vOut: number, txHash: string) => void;
-
 type TransactionMenuProps = {
   open: boolean;
-  onClose: () => void;
-  onUpdateTx?: UpdateTxFn;
   txHash: string;
+  onUpdateTransaction: TransactionUpdater;
+  onClose: () => void;
 };
 
 export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   open,
   onClose,
-  onUpdateTx,
   txHash,
+  onUpdateTransaction,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -142,7 +146,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
         <NestedDrawerWrapper>
           <NestedDrawerContent>
             <div className={styles.menuItems}>
-              {onUpdateTx && (
+              {onUpdateTransaction !== null && (
                 <TransactionMenuItem Icon={AddIcon} onClick={handleUpdateOpen}>
                   {t("tx.menu-insert-update-label")}
                 </TransactionMenuItem>
@@ -168,11 +172,11 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
           </NestedDrawerActions>
         </NestedDrawerWrapper>
       </NestedDrawer>
-      {onUpdateTx && (
+      {onUpdateTransaction !== null && (
         <UpdateTransactionDrawer
           open={updateOpen}
           onClose={handleUpdateClose}
-          onUpdateTx={onUpdateTx}
+          onUpdateTransaction={onUpdateTransaction}
         />
       )}
     </>
@@ -182,7 +186,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
 type UpdateTransactionDrawerProps = {
   open: boolean;
   onClose: () => void;
-  onUpdateTx: UpdateTxFn;
+  onUpdateTransaction: UpdateTransactionFn;
 };
 
 const isValidInteger = (amount: string) => {
@@ -191,7 +195,7 @@ const isValidInteger = (amount: string) => {
 
 export const UpdateTransactionDrawer: FunctionComponent<
   UpdateTransactionDrawerProps
-> = ({ open, onClose, onUpdateTx }) => {
+> = ({ open, onClose, onUpdateTransaction }) => {
   const { t } = useTranslation();
   const [amount, setAmount] = useState("");
   const [vout, setVout] = useState("");
@@ -215,9 +219,10 @@ export const UpdateTransactionDrawer: FunctionComponent<
   }, []);
 
   const handleUpdateTx = useCallback(() => {
+    const inputTx = {} as InputChainTransaction;
     setUpdating(true);
-    onUpdateTx(Number(amount), Number(vout), hash);
-  }, [onUpdateTx, hash, vout, amount]);
+    onUpdateTransaction(inputTx);
+  }, [onUpdateTransaction, hash, vout, amount]);
 
   return (
     <NestedDrawer

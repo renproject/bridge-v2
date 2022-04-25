@@ -1,10 +1,15 @@
 import { Asset, Chain } from "@renproject/chains";
-import RenJS, { Gateway, GatewayTransaction, GatewayFees } from "@renproject/ren";
+import RenJS, {
+  Gateway,
+  GatewayTransaction,
+  GatewayFees,
+} from "@renproject/ren";
 import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
 import {
   ChainCommon,
   ContractChain,
   DepositChain,
+  InputChainTransaction,
   InputType,
   LogLevel,
   OutputType,
@@ -16,6 +21,7 @@ import {
   MINT_GAS_UNIT_COST,
   RELEASE_GAS_UNIT_COST,
 } from "../../constants/constants";
+import { useTransactionUpdater } from "../../providers/TransactionProviders";
 import { supportedContractChains } from "../../utils/chainsConfig";
 import { fromGwei } from "../../utils/converters";
 import { isDefined } from "../../utils/objects";
@@ -186,19 +192,28 @@ export const useGateway = (
   return { renJs, gateway, transactions, error, recoverLocalTx };
 };
 
+export const useSetTransactionUpdater = (gateway: Gateway | null) => {
+  const [, setTransactionUpdater] = useTransactionUpdater();
+  useEffect(() => {
+    if (gateway !== null) {
+      const updater = async (inputTx: InputChainTransaction) => {
+        return gateway.processDeposit(inputTx);
+      };
+      setTransactionUpdater(updater);
+    } else {
+      setTransactionUpdater(null);
+    }
+  }, [gateway, setTransactionUpdater]);
+};
+
 export const useGatewayFeesObject = (
-  {
-    asset,
-    from,
-    to,
-  }: UseGatewayCreateParams,
-  {
-    chains = null,
-  }: UseGatewayAdditionalParams
+  { asset, from, to }: UseGatewayCreateParams,
+  { chains = null }: UseGatewayAdditionalParams
 ) => {
   const { network } = useSelector($network);
   const [renJs, setRenJs] = useState<RenJS | null>(null);
-  const [gatewayFeesObject, setGatewayFeesObject] = useState<GatewayFees | null>();
+  const [gatewayFeesObject, setGatewayFeesObject] =
+    useState<GatewayFees | null>();
   const [error, setError] = useState(null);
   useEffect(() => {
     if (!chains) {
@@ -228,7 +243,7 @@ export const useGatewayFeesObject = (
         gatewayFeesObject = await renJs.getFees({
           asset,
           from,
-          to
+          to,
         });
         return gatewayFeesObject;
       };
@@ -240,13 +255,7 @@ export const useGatewayFeesObject = (
           setError(error);
         });
     }
-  }, [
-    chains,
-    renJs,
-    asset,
-    from,
-    to,
-  ]);
+  }, [chains, renJs, asset, from, to]);
 
   return { renJs, gatewayFeesObject, error };
 };
@@ -261,7 +270,6 @@ export const useAssetDecimals = (chain: Chain, asset: string | Asset) => {
 const decimalsCache = new Map();
 (window as any).decimalsCache = decimalsCache;
 
-// TODO: rename to useChainInstanceAssetDecimals, reuse in useGatewayFees
 export const useChainInstanceAssetDecimals = (
   chainInstance: ChainCommon | null | undefined,
   asset: string | Asset | null | undefined
@@ -565,8 +573,8 @@ export const useGatewayFeesWithRates = (
     setRenVMFeeAmountUsd(
       fees.renVMFeeAmount !== null
         ? new BigNumber(fees.renVMFeeAmount)
-          .multipliedBy(assetUsdRate)
-          .toFixed()
+            .multipliedBy(assetUsdRate)
+            .toFixed()
         : null
     );
 
@@ -578,8 +586,8 @@ export const useGatewayFeesWithRates = (
       setFromChainFeeAmountUsd(
         fees.fromChainFeeAmount !== null && fromChainAssetUsdRate !== null
           ? new BigNumber(fees.fromChainFeeAmount)
-            .multipliedBy(fromChainAssetUsdRate)
-            .toFixed()
+              .multipliedBy(fromChainAssetUsdRate)
+              .toFixed()
           : null
       );
     }
@@ -591,8 +599,8 @@ export const useGatewayFeesWithRates = (
       setToChainFeeAmountUsd(
         fees.toChainFeeAmount !== null && toChainAssetUsdRate !== null
           ? new BigNumber(fees.toChainFeeAmount)
-            .multipliedBy(toChainAssetUsdRate)
-            .toFixed()
+              .multipliedBy(toChainAssetUsdRate)
+              .toFixed()
           : null
       );
     }
