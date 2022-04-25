@@ -197,7 +197,10 @@ export const useSetTransactionUpdater = (gateway: Gateway | null) => {
   useEffect(() => {
     if (gateway !== null) {
       const updater = async (inputTx: InputChainTransaction) => {
-        return gateway.processDeposit(inputTx);
+        return gateway.processDeposit({
+          ...inputTx,
+          asset: inputTx.asset || gateway.params.asset,
+        });
       };
       setTransactionUpdater(updater);
     } else {

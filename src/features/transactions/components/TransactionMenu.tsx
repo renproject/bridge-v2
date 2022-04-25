@@ -1,4 +1,5 @@
 import {
+  Button,
   ListItemIcon,
   makeStyles,
   MenuItem,
@@ -37,7 +38,6 @@ import {
 import {
   TransactionUpdater,
   UpdateTransactionFn,
-  useTransactionUpdater,
 } from "../../../providers/TransactionProviders";
 import { setIssueResolverOpened } from "../transactionsSlice";
 
@@ -197,11 +197,12 @@ export const UpdateTransactionDrawer: FunctionComponent<
   UpdateTransactionDrawerProps
 > = ({ open, onClose, onUpdateTransaction }) => {
   const { t } = useTranslation();
+
+  const [txIdFormatted, setTxIdFormatted] = useState("");
+  const handleTxFormattedChange = useCallback((event) => {
+    setTxIdFormatted(event.target.value);
+  }, []);
   const [amount, setAmount] = useState("");
-  const [vout, setVout] = useState("");
-  const [hash, setHash] = useState("");
-  const [updating, setUpdating] = useState(false);
-  const valid = amount && vout && hash;
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value;
     if (isValidInteger(newValue)) {
@@ -214,25 +215,52 @@ export const UpdateTransactionDrawer: FunctionComponent<
       setVout(newValue);
     }
   }, []);
+  const [vout, setVout] = useState("");
+  const [hash, setHash] = useState("");
   const handleHashChange = useCallback((event) => {
     setHash(event.target.value);
   }, []);
 
+  const [updating, setUpdating] = useState(false);
   const handleUpdateTx = useCallback(() => {
     const inputTx = {} as InputChainTransaction;
     setUpdating(true);
     onUpdateTransaction(inputTx);
-  }, [onUpdateTransaction, hash, vout, amount]);
+  }, [onUpdateTransaction]);
 
+  const valid = amount && vout && hash;
+
+  const handleFetch = useCallback(() => {
+    // TODO: finish when renJS functionality done
+  }, []);
   return (
     <NestedDrawer
-      title={t("tx.menu-update-tx-title")}
+      title={"Insert/Update transaction"}
       open={open}
       onClose={onClose}
     >
       <NestedDrawerWrapper>
         <NestedDrawerContent>
           <PaperContent topPadding>
+            <OutlinedTextFieldWrapper>
+              <OutlinedTextField
+                label={"Transaction ID"}
+                value={txIdFormatted}
+                onChange={handleTxFormattedChange}
+                placeholder={"Formatted Transaction Id"}
+              />
+            </OutlinedTextFieldWrapper>
+            <OutlinedTextFieldWrapper>
+              <Button
+                size="small"
+                color="primary"
+                variant="contained"
+                disabled
+                onClick={handleFetch}
+              >
+                Fetch data by tx id
+              </Button>
+            </OutlinedTextFieldWrapper>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
                 label={t("tx.menu-update-tx-amount-label")}

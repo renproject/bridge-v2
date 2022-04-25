@@ -43,7 +43,8 @@ export const OutlinedTextField: FunctionComponent<TextFieldProps> = ({
 };
 
 export const OutlinedTextFieldWrapper = styled("div")({
-  minHeight: 75,
+  marginTop: 8,
+  marginBottom: 8,
 });
 
 export const BigOutlinedTextFieldWrapper = styled("div")({

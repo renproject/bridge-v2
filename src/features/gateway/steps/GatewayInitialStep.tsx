@@ -99,7 +99,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const meta = useGatewayMeta(asset, from, to);
   const { isFromContractChain, isH2H } = meta;
-  const [assets, setAssets] = useState(allAssets);
+  const [assets] = useState(allAssets);
   const [fromChains, setFromChains] = useState(allChains);
   const [toChains, setToChains] = useState(allChains);
 
@@ -114,6 +114,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     }
   }, [history, location]);
 
+  // the main filtering flow when navigating through tabs
   const filterChains = useCallback(
     (asset: Asset) => {
       const { lockChain, mintChains } = getAssetConfig(asset);
@@ -132,12 +133,19 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           (chain) => chain !== lockChain
         );
         setFromChains(nonOriginChains);
-        dispatch(setFrom(nonOriginChains[0]));
+        const newFrom = nonOriginChains[0];
+        dispatch(setFrom(newFrom));
         // toChains are handled in useEffect
+        // const nonOriginNotFromChains = mintChains.filter(
+        //   (chain) => chain !== lockChain && chain !== newFrom
+        // );
+        // setToChains(nonOriginNotFromChains);
+        // dispatch(setTo(nonOriginNotFromChains[0]));
       }
     },
     [dispatch, isMint, isRelease, isMove]
   );
+
   useEffect(() => {
     if (isMove) {
       const { lockChain, mintChains } = getAssetConfig(asset);
@@ -147,13 +155,14 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       setToChains(nonOriginNotFromChains);
       dispatch(setTo(nonOriginNotFromChains[0]));
 
-      const filteredAssets = allAssets.filter(
-        (asset) => getAssetConfig(asset).lockChainConnectionRequired === true
-      );
-      setAssets(filteredAssets);
-      dispatch(setAsset(filteredAssets[0]));
+      // const filteredAssets = allAssets.filter(
+      //   (asset) => getAssetConfig(asset).lockChainConnectionRequired === true
+      // );
+      // setAssets(filteredAssets);
+      // console.log("setting asset", filteredAssets);
+      // dispatch(setAsset(filteredAssets[0]));
     } else {
-      setAssets(allAssets);
+      // setAssets(allAssets);
       // dispatch(setAsset(allAssets[0]));
     }
   }, [dispatch, asset, isMove, from]);
