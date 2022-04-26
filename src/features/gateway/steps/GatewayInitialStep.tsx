@@ -67,6 +67,9 @@ import { getSendLabel } from "./shared/TransactionStatuses";
 import { GatewayStepProps } from "./stepUtils";
 
 const allAssets = supportedAssets;
+const contractAssets = allAssets.filter(
+  (asset) => getAssetConfig(asset).lockChainConnectionRequired === true
+);
 const allChains = Object.keys(chainsConfig);
 
 const forceShowDropdowns = false;
@@ -99,7 +102,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const meta = useGatewayMeta(asset, from, to);
   const { isFromContractChain, isH2H } = meta;
-  const [assets] = useState(allAssets);
+  const [assets, setAssets] = useState(allAssets);
   const [fromChains, setFromChains] = useState(allChains);
   const [toChains, setToChains] = useState(allChains);
 
@@ -119,57 +122,48 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     (asset: Asset) => {
       const { lockChain, mintChains } = getAssetConfig(asset);
       console.log("mintChains", mintChains);
-      if (isMint) {
+      if (ioType === "lockAndMint") {
+        setAssets(allAssets);
+        // dispatch(setAsset(allAssets[0]));
         setFromChains([lockChain]);
         setToChains(mintChains);
         dispatch(setFromTo({ from: lockChain, to: mintChains[0] }));
-      } else if (isRelease) {
+      } else if (ioType === "burnAndRelease") {
+        setAssets(allAssets);
+        // dispatch(setAsset(allAssets[0]));
         setFromChains(mintChains);
         setToChains([lockChain]);
         dispatch(setFromTo({ from: mintChains[0], to: lockChain }));
-      } else if (isMove) {
+      } else if (ioType === "burnAndMint") {
         // move is allowed to all contract chains except assets lockChain (originChain)
+        setAssets(contractAssets);
         const nonOriginChains = mintChains.filter(
           (chain) => chain !== lockChain
         );
         setFromChains(nonOriginChains);
         const newFrom = nonOriginChains[0];
         dispatch(setFrom(newFrom));
-        // toChains are handled in useEffect
-        // const nonOriginNotFromChains = mintChains.filter(
-        //   (chain) => chain !== lockChain && chain !== newFrom
-        // );
-        // setToChains(nonOriginNotFromChains);
-        // dispatch(setTo(nonOriginNotFromChains[0]));
+        const nonOriginNotFromChains = mintChains.filter(
+          (chain) => chain !== lockChain && chain !== newFrom
+        );
+        setToChains(nonOriginNotFromChains);
+        dispatch(setTo(nonOriginNotFromChains[0]));
       }
     },
-    [dispatch, isMint, isRelease, isMove]
+    [dispatch, ioType]
   );
-
-  useEffect(() => {
-    if (isMove) {
-      const { lockChain, mintChains } = getAssetConfig(asset);
-      const nonOriginNotFromChains = mintChains.filter(
-        (chain) => chain !== lockChain && chain !== from
-      );
-      setToChains(nonOriginNotFromChains);
-      dispatch(setTo(nonOriginNotFromChains[0]));
-
-      // const filteredAssets = allAssets.filter(
-      //   (asset) => getAssetConfig(asset).lockChainConnectionRequired === true
-      // );
-      // setAssets(filteredAssets);
-      // console.log("setting asset", filteredAssets);
-      // dispatch(setAsset(filteredAssets[0]));
-    } else {
-      // setAssets(allAssets);
-      // dispatch(setAsset(allAssets[0]));
-    }
-  }, [dispatch, asset, isMove, from]);
 
   useEffect(() => {
     filterChains(asset);
   }, [asset, filterChains]);
+
+  useEffect(() => {
+    console.log("assets changed", assets);
+  }, [assets]);
+
+  useEffect(() => {
+    dispatch(setAsset(assets[0]));
+  }, [dispatch, assets]);
 
   const [amountTouched, setAmountTouched] = useState(false);
   const [addressTouched, setAddressTouched] = useState(false);

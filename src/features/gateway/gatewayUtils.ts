@@ -3,7 +3,7 @@ import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Ethereum } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
 import RenJS, { Gateway } from "@renproject/ren";
-import { ChainTransaction, InputChainTransaction } from "@renproject/utils";
+import { ChainTransaction } from "@renproject/utils";
 // import BigNumber from "bignumber.js";
 import queryString from "query-string";
 import {
@@ -146,12 +146,16 @@ export const createGatewayQueryString = (
 export const parseGatewayQueryString = (query: string, checkNonce = false) => {
   const parsed = queryString.parse(query) as unknown as CreateGatewayParams &
     AdditionalGatewayParams;
-  const { expiryTime, renVMHash, partialTx, ...gatewayParams } = parsed;
-  const parsedPartialTx = partialTx ? JSON.parse(partialTx) : null;
+  const {
+    expiryTime,
+    renVMHash,
+    partialTx: partialTxString,
+    ...gatewayParams
+  } = parsed;
   const additionalParams = {
     expiryTime,
     renVMHash,
-    partialTx: parsedPartialTx,
+    partialTxString,
   };
   let error;
   let nonce = undefined;

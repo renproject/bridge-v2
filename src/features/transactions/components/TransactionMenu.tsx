@@ -8,16 +8,11 @@ import {
 } from "@material-ui/core";
 import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Gateway } from "@renproject/ren";
-import {
-  ChainTransaction,
-  ContractChain,
-  InputChainTransaction,
-  isContractChain,
-} from "@renproject/utils";
+import { ChainTransaction, isContractChain } from "@renproject/utils";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   ActionButton,
@@ -45,9 +40,8 @@ import {
 } from "../../../components/modals/BridgeModal";
 import { Debug } from "../../../components/utils/Debug";
 import { EthereumBaseChain } from "../../../utils/missingTypes";
-import { undefinedForEmptyString } from "../../../utils/propsUtils";
 import { getGatewayParams } from "../../gateway/gatewayHooks";
-import { $gateway } from "../../gateway/gatewaySlice";
+import { reloadWithPartialTxParam } from "../../gateway/gatewayTransactionHooks";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { setIssueResolverOpened } from "../transactionsSlice";
 
@@ -228,7 +222,7 @@ export const UpdateTransactionDrawer: FunctionComponent<
 > = ({ open, onClose, gateway }) => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { from, asset } = getGatewayParams(gateway);
+  const { from } = getGatewayParams(gateway);
   const chains = useCurrentNetworkChains();
   const isCC = isContractChain(chains[from].chain);
   const isDC = !isCC;
@@ -253,7 +247,7 @@ export const UpdateTransactionDrawer: FunctionComponent<
     setTxIdFormatted(newValue);
   }, []);
 
-  const [amount, setAmount] = useState("50000000");
+  const [amount, setAmount] = useState("");
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value;
     if (isValidInteger(newValue)) {
@@ -266,7 +260,7 @@ export const UpdateTransactionDrawer: FunctionComponent<
     setToRecipient(event.target.value);
   }, []);
 
-  const [nonce, setNonce] = useState("Mjkx");
+  const [nonce, setNonce] = useState("");
   const handleNonceChange = useCallback((event) => {
     setNonce(event.target.value);
   }, []);
@@ -299,41 +293,46 @@ export const UpdateTransactionDrawer: FunctionComponent<
     }
     const payloadTxData = ((txPayload as any).params as any)
       .tx as ChainTransaction;
-    const finalTx: InputChainTransaction = {
-      txid: txId || payloadTxData.txid,
-      txidFormatted: txIdFormatted || payloadTxData.txidFormatted,
-      txindex: txIndex || payloadTxData.txindex,
-      chain: payloadTxData.chain,
-      asset: asset as string,
-      amount: amount,
-      toRecipient: undefinedForEmptyString(toRecipient),
-      nonce: undefinedForEmptyString(nonce),
-      toPayload: undefinedForEmptyString(toPayload),
-    };
+    // const finalTx: InputChainTransaction = {
+    //   txid: txId || payloadTxData.txid,
+    //   txidFormatted: txIdFormatted || payloadTxData.txidFormatted,
+    //   txindex: txIndex || payloadTxData.txindex,
+    //   chain: payloadTxData.chain,
+    //   asset: asset as string,
+    //   amount: amount,
+    //   toRecipient: undefinedForEmptyString(toRecipient),
+    //   nonce: undefinedForEmptyString(nonce),
+    //   toPayload: undefinedForEmptyString(toPayload),
+    // };
     setData(payloadTxData);
-    gateway
-      .processDeposit(finalTx)
-      .then(() => {})
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setUpdating(false);
-      });
+    setUpdating(true);
+    const partialTxParam = encodeURIComponent(JSON.stringify(payloadTxData));
+    reloadWithPartialTxParam(history, partialTxParam);
+
+    // gateway
+    //   .processDeposit(finalTx)
+    //   .then(() => {})
+    //   .catch((error) => {
+    //     console.error(error);
+    //   })
+    //   .finally(() => {
+    //     setUpdating(false);
+    //   });
 
     // onUpdateTransaction(payload);
   }, [
+    history,
     chains,
     isCC,
     from,
-    gateway,
-    txId,
+    // gateway,
+    // txId,
     txIndex,
     txIdFormatted,
-    amount,
-    toRecipient,
-    nonce,
-    toPayload,
+    // amount,
+    // toRecipient,
+    // nonce,
+    // toPayload,
   ]);
 
   const valid = true;
@@ -353,43 +352,55 @@ export const UpdateTransactionDrawer: FunctionComponent<
           <PaperContent topPadding>
             <OutlinedTextFieldWrapper>
               <OutlinedTextField
-                label={"Transaction Id"}
-                value={txId}
-                onChange={handleTxIdChange}
-                placeholder={"Transaction Id"}
-              />
-            </OutlinedTextFieldWrapper>
-            <OutlinedTextFieldWrapper>
-              <OutlinedTextField
                 label={"Formatted Transaction Id"}
                 value={txIdFormatted}
                 onChange={handleTxIdFormattedChange}
-                placeholder={"Formatted Transaction Id"}
+                placeholder={"Enter formatted transaction Id"}
               />
             </OutlinedTextFieldWrapper>
-            <Debug force it={data} />
             {isDC && (
               <OutlinedTextFieldWrapper>
                 <OutlinedTextField
-                  label={"Tx Index / vOut"}
+                  label={"Transaction Index / vOut"}
                   value={txIndex}
                   onChange={handleTxIndexChange}
-                  placeholder={"Enter Transaction index/vOut"}
+                  placeholder={"Enter transaction index/vOut"}
                 />
               </OutlinedTextFieldWrapper>
             )}
+            <ActionButtonWrapper>
+              <RedButton
+                variant="text"
+                color="inherit"
+                onClick={handleUpdateTx}
+                disabled={updating || !valid}
+              >
+                {updating
+                  ? t("tx.menu-update-tx-updating-dots")
+                  : t("tx.menu-update-tx-update")}{" "}
+                transaction
+              </RedButton>
+            </ActionButtonWrapper>
+            <Debug it={data} />
             <OutlinedTextFieldWrapper>
               <Button
                 size="small"
                 color="primary"
-                variant="contained"
                 onClick={handleToggleDetails}
               >
-                Show/hide details
+                Show/hide advanced mode
               </Button>
             </OutlinedTextFieldWrapper>
             {details && (
               <>
+                <OutlinedTextFieldWrapper>
+                  <OutlinedTextField
+                    label={"Transaction Id"}
+                    value={txId}
+                    onChange={handleTxIdChange}
+                    placeholder={"Enter transaction Id"}
+                  />
+                </OutlinedTextFieldWrapper>
                 <OutlinedTextFieldWrapper>
                   <OutlinedTextField
                     label={t("tx.menu-update-tx-amount-label")}
@@ -428,19 +439,6 @@ export const UpdateTransactionDrawer: FunctionComponent<
         </NestedDrawerContent>
         <NestedDrawerActions>
           <PaperContent bottomPadding>
-            <ActionButtonWrapper>
-              <RedButton
-                variant="text"
-                color="inherit"
-                onClick={handleUpdateTx}
-                disabled={updating || !valid}
-              >
-                {updating
-                  ? t("tx.menu-update-tx-updating-dots")
-                  : t("tx.menu-update-tx-update")}{" "}
-                transaction
-              </RedButton>
-            </ActionButtonWrapper>
             <ActionButtonWrapper>
               <ActionButton onClick={onClose} disabled={updating}>
                 {t("common.cancel-label")}

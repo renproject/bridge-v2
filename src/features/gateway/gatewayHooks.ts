@@ -1,16 +1,14 @@
 import { Asset, Chain } from "@renproject/chains";
 import RenJS, {
   Gateway,
-  GatewayTransaction,
   GatewayFees,
+  GatewayTransaction,
 } from "@renproject/ren";
 import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
 import {
   ChainCommon,
-  ChainTransaction,
   ContractChain,
   DepositChain,
-  InputChainTransaction,
   InputType,
   LogLevel,
   OutputType,
@@ -162,6 +160,7 @@ export const useGateway = (
   }, [
     chains,
     renJs,
+    partialTx,
     addTransaction,
     asset,
     from,
@@ -357,7 +356,7 @@ export const useContractChainAssetBalance = (
     }
     if (connected !== undefined && !connected) {
       console.log("!connected mode");
-      // return;
+      return;
     }
     const getBalance = async () => {
       console.log(`asset balance ${instance?.chain}/${asset}: ${decimals}`);

@@ -39,6 +39,7 @@ import {
   updateRenVMHashParam,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
+  usePartialTxMemo,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
@@ -66,7 +67,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     error: parseError,
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount, toAddress } = gatewayParams;
-  const { renVMHash, partialTx } = additionalParams;
+  const { renVMHash, partialTxString } = additionalParams;
   useSyncWalletChain(from);
   const { connected, account, provider } = useWallet(from);
 
@@ -79,6 +80,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     }
   }, [from, allChains, provider]);
 
+  const partialTx = usePartialTxMemo(partialTxString);
   const hasPartialTx = Boolean(partialTx);
 
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
@@ -193,6 +195,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
       )}
       <Debug
         it={{
+          partialTx,
           gatewayParams,
           recoveryMode,
           renVMHash,

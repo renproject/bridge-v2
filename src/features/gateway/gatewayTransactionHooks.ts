@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { RouteComponentProps } from "react-router";
 import { isDefined } from "../../utils/objects";
 import { useCurrentNetworkChains } from "../network/networkHooks";
+import { GatewayLocationState } from "./gatewayRoutingUtils";
 
 export const useLabeler = (label: string) => {
   return useMemo(() => {
@@ -321,4 +322,43 @@ export const updateRenVMHashParam = (
       search: params.toString(),
     });
   }
+};
+
+export const reloadWithPartialTxParam = (
+  history: RouteComponentProps["history"],
+  partialTx: string | null
+) => {
+  const params = new URLSearchParams(history.location.search);
+  const partialTxParam = (params as any).partialTx;
+  console.log("partialTx param", partialTx, params);
+  if (partialTx !== partialTxParam) {
+    console.log(
+      "partialTx param replacing",
+      history.location.search,
+      partialTx
+    );
+    if (partialTx === null) {
+      params.delete("partialTx");
+    } else {
+      params.set("partialTx", partialTx);
+    }
+    const state: GatewayLocationState = {
+      reload: true,
+    };
+    history.push(
+      {
+        search: params.toString(),
+      },
+      state
+    );
+  }
+};
+
+export const usePartialTxMemo = (partialTxString?: string | null) => {
+  return useMemo(() => {
+    if (partialTxString) {
+      return JSON.parse(decodeURIComponent(partialTxString));
+    }
+    return null;
+  }, [partialTxString]);
 };
