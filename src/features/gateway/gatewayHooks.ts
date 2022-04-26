@@ -21,7 +21,7 @@ import {
   MINT_GAS_UNIT_COST,
   RELEASE_GAS_UNIT_COST,
 } from "../../constants/constants";
-import { useTransactionUpdater } from "../../providers/TransactionProviders";
+import { useGatewayContext } from "../../providers/TransactionProviders";
 import { supportedContractChains } from "../../utils/chainsConfig";
 import { fromGwei } from "../../utils/converters";
 import { isDefined } from "../../utils/objects";
@@ -195,26 +195,13 @@ export const useGateway = (
 
 export const useSetTransactionUpdater = (gateway: Gateway | null) => {
   const dispatch = useDispatch();
-  const [, setTransactionUpdater] = useTransactionUpdater();
+  const [, setGateway] = useGatewayContext();
   useEffect(() => {
-    if (gateway !== null) {
-      const updater = async (inputTx: InputChainTransaction) => {
-        const { from, to, asset } = getGatewayParams(gateway);
-        dispatch(setAsset(asset as Asset));
-        dispatch(setFrom(from));
-        dispatch(setTo(to));
-        return gateway.processDeposit({
-          ...inputTx,
-          chain: inputTx.chain || from,
-          asset: inputTx.asset || asset,
-          toChain: inputTx.toChain || to,
-        });
-      };
-      setTransactionUpdater(updater);
-    } else {
-      setTransactionUpdater(null);
-    }
-  }, [dispatch, gateway, setTransactionUpdater]);
+    setGateway(gateway);
+    return () => {
+      setGateway(null);
+    };
+  }, [dispatch, gateway, setGateway]);
 };
 
 export const useGatewayFeesObject = (

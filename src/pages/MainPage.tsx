@@ -13,7 +13,7 @@ import {
 } from "../features/marketData/marketDataHooks";
 import { $ui } from "../features/ui/uiSlice";
 import { PaperTitleProvider } from "../providers/TitleProviders";
-import { TransactionUpdaterProvider } from "../providers/TransactionProviders";
+import { GatewayContextProvider } from "../providers/TransactionProviders";
 import { ConnectedMainLayout } from "./MainLayout";
 import { paths } from "./routes";
 
@@ -33,7 +33,7 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
   return (
     <>
       <ConnectedMainLayout>
-        <TransactionUpdaterProvider>
+        <GatewayContextProvider>
           <PaperTitleProvider>
             <BridgePaperWrapper>
               <BridgePurePaper shaking={paperShaking}>
@@ -41,7 +41,7 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
               </BridgePurePaper>
             </BridgePaperWrapper>
           </PaperTitleProvider>
-        </TransactionUpdaterProvider>
+        </GatewayContextProvider>
       </ConnectedMainLayout>
     </>
   );

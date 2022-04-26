@@ -444,9 +444,12 @@ const LocalTransactions: FunctionComponent<LocalTransactionsProps> = ({
   });
 
   const handleRemoveTx = useCallback(
-    (renVmHash: string) => {
-      if (address) {
-        removeLocalTx(address, renVmHash);
+    (renVmHash: string, localAddress: string) => {
+      console.log("removing", renVmHash, localAddress);
+      if (localAddress) {
+        removeLocalTx(localAddress, renVmHash);
+      } else {
+        console.error("No local address specified", address);
       }
     },
     [address, removeLocalTx]
@@ -563,7 +566,7 @@ type RenVMTransactionEntryProps = {
   address: string;
   renVMHash: string;
   localTxData: LocalTxData;
-  onRemoveTx: (renVMHash: string) => void;
+  onRemoveTx: (renVMHash: string, localAddress: string) => void;
   isLast?: boolean;
 };
 
@@ -621,9 +624,9 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const [removing, setRemoving] = useState(false);
   const handleRemove = useCallback(() => {
     setRemoving(true);
-    onRemoveTx(renVMHash);
+    onRemoveTx(renVMHash, address);
     setRemoving(false);
-  }, [renVMHash, onRemoveTx]);
+  }, [renVMHash, onRemoveTx, address]);
 
   const resumeDisabled =
     amount === null || isMint === null || isRelease === null || isH2H === null;

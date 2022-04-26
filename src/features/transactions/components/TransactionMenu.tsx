@@ -6,7 +6,14 @@ import {
   MenuItemProps,
   Typography,
 } from "@material-ui/core";
-import { InputChainTransaction, isContractChain } from "@renproject/utils";
+import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
+import { Gateway } from "@renproject/ren";
+import {
+  ChainTransaction,
+  ContractChain,
+  InputChainTransaction,
+  isContractChain,
+} from "@renproject/utils";
 import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -35,11 +42,10 @@ import {
   NestedDrawerContent,
   NestedDrawerWrapper,
 } from "../../../components/modals/BridgeModal";
-import {
-  TransactionUpdater,
-  UpdateTransactionFn,
-} from "../../../providers/TransactionProviders";
+import { Debug } from "../../../components/utils/Debug";
+import { EthereumBaseChain } from "../../../utils/missingTypes";
 import { undefinedForEmptyString } from "../../../utils/propsUtils";
+import { getGatewayParams } from "../../gateway/gatewayHooks";
 import { $gateway } from "../../gateway/gatewaySlice";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { setIssueResolverOpened } from "../transactionsSlice";
@@ -102,7 +108,7 @@ const useTransactionMenuStyles = makeStyles((theme) => ({
 type TransactionMenuProps = {
   open: boolean;
   txHash: string;
-  onUpdateTransaction: TransactionUpdater;
+  gateway: Gateway | null;
   onClose: () => void;
 };
 
@@ -110,7 +116,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
   open,
   onClose,
   txHash,
-  onUpdateTransaction,
+  gateway,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -149,7 +155,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
         <NestedDrawerWrapper>
           <NestedDrawerContent>
             <div className={styles.menuItems}>
-              {onUpdateTransaction !== null && (
+              {gateway !== null && (
                 <TransactionMenuItem Icon={AddIcon} onClick={handleUpdateOpen}>
                   {t("tx.menu-insert-update-label")}
                 </TransactionMenuItem>
@@ -175,11 +181,11 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
           </NestedDrawerActions>
         </NestedDrawerWrapper>
       </NestedDrawer>
-      {onUpdateTransaction !== null && (
+      {gateway !== null && (
         <UpdateTransactionDrawer
           open={updateOpen}
           onClose={handleUpdateClose}
-          onUpdateTransaction={onUpdateTransaction}
+          gateway={gateway}
         />
       )}
     </>
@@ -189,7 +195,7 @@ export const TransactionMenu: FunctionComponent<TransactionMenuProps> = ({
 type UpdateTransactionDrawerProps = {
   open: boolean;
   onClose: () => void;
-  onUpdateTransaction: UpdateTransactionFn;
+  gateway: Gateway;
 };
 
 const isValidInteger = (amount: string) => {
@@ -218,26 +224,14 @@ export interface InputChainTransaction extends ChainTransaction {
 
 export const UpdateTransactionDrawer: FunctionComponent<
   UpdateTransactionDrawerProps
-> = ({ open, onClose, onUpdateTransaction }) => {
+> = ({ open, onClose, gateway }) => {
   const { t } = useTranslation();
-  const { from } = useSelector($gateway);
-  const isCC = isContractChain(from);
-  const isDC = !isCC;
+  const { from, asset } = getGatewayParams(gateway);
   const chains = useCurrentNetworkChains();
+  const isCC = isContractChain(chains[from].chain);
+  const isDC = !isCC;
 
-  // const encodeTxId = useCallback(
-  //   (txIdFormatted) => {
-  //     const instance = chains[from].chain;
-  //     // TODO: crit renJS should expose it on chain class
-  //     if (instance && instance.chain === Chain.Bitcoin) {
-  //       return txidFormattedToTxid(txIdFormatted);
-  //     }
-  //     return txIdFormatted;
-  //     // chains[from].chain.txid()
-  //   },
-  //   [chains, from]
-  // );
-
+  const [data, setData] = useState({});
   const [txId, setTxId] = useState("");
   const handleTxIdChange = useCallback((event) => {
     setTxId(event.target.value);
@@ -257,7 +251,7 @@ export const UpdateTransactionDrawer: FunctionComponent<
     setTxIdFormatted(newValue);
   }, []);
 
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState("50000000");
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value;
     if (isValidInteger(newValue)) {
@@ -270,7 +264,7 @@ export const UpdateTransactionDrawer: FunctionComponent<
     setToRecipient(event.target.value);
   }, []);
 
-  const [nonce, setNonce] = useState("");
+  const [nonce, setNonce] = useState("Mjkx");
   const handleNonceChange = useCallback((event) => {
     setNonce(event.target.value);
   }, []);
@@ -282,33 +276,55 @@ export const UpdateTransactionDrawer: FunctionComponent<
 
   const [updating, setUpdating] = useState(false);
   const handleUpdateTx = useCallback(() => {
-    const inputTx = {
-      txid: undefinedForEmptyString(txId),
-      txidFormatted: undefinedForEmptyString(txIdFormatted),
-      txindex: undefinedForEmptyString(txIndex),
-      amount: undefinedForEmptyString(amount),
+    const instance = chains[from].chain;
+    if (!instance) {
+      return;
+    }
+    let txPayload;
+    if (isCC) {
+      txPayload = (instance as EthereumBaseChain).Transaction({
+        txidFormatted: txIdFormatted,
+      });
+    } else {
+      txPayload = (instance as BitcoinBaseChain).Transaction({
+        txidFormatted: txIdFormatted,
+        txindex: txIndex,
+      });
+    }
+    console.log("resolved payload", txPayload);
+    if (!txPayload) {
+      return;
+    }
+    const payloadTxData = ((txPayload as any).params as any)
+      .tx as ChainTransaction;
+    const finalTx: InputChainTransaction = {
+      txid: txId || payloadTxData.txid,
+      txidFormatted: txIdFormatted || payloadTxData.txidFormatted,
+      txindex: txIndex || payloadTxData.txindex,
+      chain: payloadTxData.chain,
+      asset: asset as string,
+      amount: amount,
       toRecipient: undefinedForEmptyString(toRecipient),
       nonce: undefinedForEmptyString(nonce),
       toPayload: undefinedForEmptyString(toPayload),
-    } as InputChainTransaction;
+    };
+    setData(payloadTxData);
+    gateway
+      .processDeposit(finalTx)
+      .then(() => {})
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setUpdating(false);
+      });
 
-    const instance = chains[from];
-    if (instance) {
-      setUpdating(true);
-      // TODO: finish
-      console.log(
-        "updating/inserting transaction",
-        from,
-        instance,
-        inputTx,
-        onUpdateTransaction
-      );
-    }
-    // onUpdateTransaction(inputTx);
+    // onUpdateTransaction(payload);
   }, [
     chains,
+    isCC,
     from,
-    onUpdateTransaction,
+    gateway,
     txId,
     txIndex,
     txIdFormatted,
@@ -349,6 +365,7 @@ export const UpdateTransactionDrawer: FunctionComponent<
                 placeholder={"Formatted Transaction Id"}
               />
             </OutlinedTextFieldWrapper>
+            <Debug force it={data} />
             {isDC && (
               <OutlinedTextFieldWrapper>
                 <OutlinedTextField
@@ -398,7 +415,7 @@ export const UpdateTransactionDrawer: FunctionComponent<
                 <OutlinedTextFieldWrapper>
                   <OutlinedTextField
                     label={"To Payload"}
-                    value={nonce}
+                    value={toPayload}
                     onChange={handleToPayloadChange}
                     placeholder={"Enter urlBase64 encoded toPayload"}
                   />

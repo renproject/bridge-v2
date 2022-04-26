@@ -1,11 +1,9 @@
-import { InputChainTransaction } from "@renproject/utils";
+import { Gateway } from "@renproject/ren";
 import { createStateContext } from "react-use";
 
-export type UpdateTransactionFn = (inputTx: InputChainTransaction) => void;
+export type GatewayContext = Gateway | null;
 
-export type TransactionUpdater = UpdateTransactionFn | null;
+const [useGatewayContext, GatewayContextProvider] =
+  createStateContext<GatewayContext>(null);
 
-const [useTransactionUpdater, TransactionUpdaterProvider] =
-  createStateContext<TransactionUpdater>(null);
-
-export { useTransactionUpdater, TransactionUpdaterProvider };
+export { useGatewayContext, GatewayContextProvider };

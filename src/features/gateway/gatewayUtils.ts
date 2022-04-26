@@ -86,9 +86,9 @@ export const createGateway = async (
   } else if (supportedSolanaChains.includes(gatewayParams.to)) {
     // TODO: crit finish
     if (gatewayParams.toAddress) {
-      toChain = (toChainInstance.chain as Solana).Address({
-        address: gatewayParams.toAddress,
-      });
+      toChain = (toChainInstance.chain as Solana).Address(
+        gatewayParams.toAddress
+      );
     } else {
       toChain = (toChainInstance.chain as Solana).Account();
     }

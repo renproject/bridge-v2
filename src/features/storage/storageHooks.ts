@@ -167,6 +167,7 @@ export const useTxsStorage = () => {
   const removeLocalTx: LocalTxRemover = useCallback(
     (web3Address: string, renVMHash: string) => {
       setLocalTxs((txs) => {
+        console.log(txs);
         const { [web3Address]: addressTxs, ...otherAddressEntries } = txs;
         const { [renVMHash]: toDelete, ...otherRenVMHashEntries } = addressTxs;
         return { ...otherAddressEntries, [web3Address]: otherRenVMHashEntries };
