@@ -18,6 +18,7 @@ import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -225,6 +226,7 @@ export interface InputChainTransaction extends ChainTransaction {
 export const UpdateTransactionDrawer: FunctionComponent<
   UpdateTransactionDrawerProps
 > = ({ open, onClose, gateway }) => {
+  const history = useHistory();
   const { t } = useTranslation();
   const { from, asset } = getGatewayParams(gateway);
   const chains = useCurrentNetworkChains();

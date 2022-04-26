@@ -3,6 +3,7 @@ import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Ethereum } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
 import RenJS, { Gateway } from "@renproject/ren";
+import { ChainTransaction, InputChainTransaction } from "@renproject/utils";
 // import BigNumber from "bignumber.js";
 import queryString from "query-string";
 import {
@@ -12,6 +13,16 @@ import {
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { PartialChainInstanceMap } from "../chain/chainUtils";
+
+export type PartialChainTransaction = Partial<ChainTransaction> &
+  (
+    | {
+        txid: string;
+      }
+    | {
+        txidFormatted: string;
+      }
+  );
 
 export interface CreateGatewayParams {
   asset: Asset;
@@ -28,7 +39,8 @@ const convertUnit = true;
 export const createGateway = async (
   renJS: RenJS,
   gatewayParams: CreateGatewayParams,
-  chains: PartialChainInstanceMap
+  chains: PartialChainInstanceMap,
+  partialTx?: PartialChainTransaction | null
 ): Promise<Gateway> => {
   if (!gatewayParams.from || !gatewayParams.to) {
     throw new Error(`Missing gateway field.`);
@@ -45,14 +57,19 @@ export const createGateway = async (
   if (supportedEthereumChains.includes(gatewayParams.from)) {
     const ethereumChain =
       fromChainInstance.chain as unknown as EthereumBaseChain;
-    console.log("resolving fromAddress", gatewayParams);
-    if (gatewayParams.fromAddress) {
+    console.log("resolving from chain", gatewayParams);
+    if (partialTx) {
+      console.log("resolved from paritalTx", gatewayParams);
+      fromChain = ethereumChain.Transaction(partialTx);
+    } else if (gatewayParams.fromAddress) {
+      console.log("resolved from fromAddress", gatewayParams);
       fromChain = fromChain = ethereumChain.Account({
         account: gatewayParams.fromAddress,
         amount: gatewayParams.amount,
         convertUnit,
       });
     } else {
+      console.log("resolved from account", gatewayParams);
       fromChain = ethereumChain.Account({
         amount: gatewayParams.amount,
         convertUnit,
@@ -116,6 +133,7 @@ export const createGateway = async (
 export type AdditionalGatewayParams = {
   expiryTime?: number;
   renVMHash?: string;
+  partialTx?: string;
 };
 
 export const createGatewayQueryString = (
@@ -128,8 +146,13 @@ export const createGatewayQueryString = (
 export const parseGatewayQueryString = (query: string, checkNonce = false) => {
   const parsed = queryString.parse(query) as unknown as CreateGatewayParams &
     AdditionalGatewayParams;
-  const { expiryTime, renVMHash, ...gatewayParams } = parsed;
-  const additionalParams = { expiryTime, renVMHash };
+  const { expiryTime, renVMHash, partialTx, ...gatewayParams } = parsed;
+  const parsedPartialTx = partialTx ? JSON.parse(partialTx) : null;
+  const additionalParams = {
+    expiryTime,
+    renVMHash,
+    partialTx: parsedPartialTx,
+  };
   let error;
   let nonce = undefined;
   if (checkNonce) {

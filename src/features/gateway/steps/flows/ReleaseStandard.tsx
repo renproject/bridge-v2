@@ -66,7 +66,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     error: parseError,
   } = parseGatewayQueryString(location.search);
   const { asset, from, to, amount, toAddress } = gatewayParams;
-  const { renVMHash } = additionalParams;
+  const { renVMHash, partialTx } = additionalParams;
   useSyncWalletChain(from);
   const { connected, account, provider } = useWallet(from);
 
@@ -79,9 +79,11 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     }
   }, [from, allChains, provider]);
 
+  const hasPartialTx = Boolean(partialTx);
+
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     { asset, from, to, amount, toAddress },
-    { chains: gatewayChains }
+    { chains: gatewayChains, partialTx }
   );
 
   // TODO: DRY
@@ -160,7 +162,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
             transaction={transaction}
             account={account}
             persistLocalTx={persistLocalTx}
-            recoveryMode={recoveringStarted}
+            recoveryMode={recoveringStarted || hasPartialTx}
           />
         </>
       )}

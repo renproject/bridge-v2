@@ -7,6 +7,7 @@ import RenJS, {
 import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
 import {
   ChainCommon,
+  ChainTransaction,
   ContractChain,
   DepositChain,
   InputChainTransaction,
@@ -34,8 +35,7 @@ import {
 import { useChains, useCurrentNetworkChains } from "../network/networkHooks";
 import { $network } from "../network/networkSlice";
 import { LocalTxData } from "../storage/storageHooks";
-import { setAsset, setFrom, setTo } from "./gatewaySlice";
-import { createGateway } from "./gatewayUtils";
+import { createGateway, PartialChainTransaction } from "./gatewayUtils";
 
 type UseGatewayCreateParams = {
   asset: Asset;
@@ -52,6 +52,7 @@ type UseGatewayAdditionalParams = {
   autoTeardown?: boolean;
   autoProviderAlteration?: boolean;
   initialGateway?: Gateway | null;
+  partialTx?: PartialChainTransaction | null;
 };
 
 export type TxRecoverer = (
@@ -73,6 +74,7 @@ export const useGateway = (
     autoTeardown = true,
     initialGateway = null,
     chains = null,
+    partialTx = null,
   }: UseGatewayAdditionalParams
 ) => {
   const { network } = useSelector($network);
@@ -133,7 +135,8 @@ export const useGateway = (
         newGateway = await createGateway(
           renJs,
           { asset, from, to, nonce, toAddress, fromAddress, amount },
-          chains
+          chains,
+          partialTx
         );
         console.log("gateway created", newGateway);
         newGateway.on("transaction", addTransaction);
