@@ -74,7 +74,7 @@
   "mint.deposit-navigation-gateway-address-label": "Gateway Address",
   "mint.deposit-navigation-ready-to-mint-label": "Ready to mint!",
   "mint.expired-label": "",
-  "mint.fees-title": "Fees & Confirm",
+  "mint.fees-title": "Amount & Fees",
   "mint.gateway-address-timeout-error-popup-description": "Temporary network issues are preventing a gateway address to be generated for you, please try refreshing.",
   "mint.gateway-address-timeout-error-popup-go-to-home-label": "Go To Home",
   "mint.gateway-address-timeout-error-popup-message": "Gateway address generation failed",

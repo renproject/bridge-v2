@@ -1,3 +1,4 @@
+import { Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -19,6 +20,7 @@ import { PaperContent } from "../../../../components/layout/Paper";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
@@ -59,7 +61,9 @@ import {
 } from "../shared/GatewayNavigationHelpers";
 import { SendingReceivingSection } from "../shared/TransactionStatuses";
 import {
+  AccountWrapper,
   H2HAccountsResolver,
+  SendingReceivingWrapper,
   SwitchWalletDialog,
 } from "../shared/WalletSwitchHelpers";
 import {
@@ -278,6 +282,9 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const history = useHistory();
   const allChains = useCurrentNetworkChains();
   const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { Icon: SendIcon, RenIcon: ReceiveIcon } = getAssetConfig(asset);
+  const sendIconTooltip = asset;
+  const receiveIconTooltip = `ren${asset}`;
   const fees = useGatewayFeesWithRates(gateway, amount || 0);
 
   const { outputAmount, outputAmountUsd } = fees;
@@ -447,33 +454,54 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   // } else
   if (approvalStatus !== ChainTransactionStatus.Done && lockStatus === null) {
     Content = (
-      <PaperContent bottomPadding>
-        <BalanceInfoPlaceholder />
-        <SendingReceivingSection
-          ioType={GatewayIOType.lockAndMint}
-          asset={asset}
-          sendingAmount={amount}
-          receivingAmount={outputAmount}
-          receivingAmountUsd={outputAmountUsd}
-        />
-        <MediumTopWrapper>
-          <AddressInfo address={fromAccount} label="Sender Address" />
-          <AddressInfo address={toAccount} label="Recipient Address" />
-        </MediumTopWrapper>
-        <MediumTopWrapper>
-          <FeesToggler>{Fees}</FeesToggler>
-        </MediumTopWrapper>
-        <ActionButtonWrapper>
-          <ActionButton
-            onClick={handleSubmitApproval}
-            disabled={submittingApproval || recoveryMode}
-          >
-            {submittingApproval
-              ? "Approving Accounts & Contracts..."
-              : "Approve Accounts & Contracts"}
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
+      <>
+        <PaperContent bottomPadding>
+          <BalanceInfoPlaceholder />
+          <SendingReceivingWrapper
+              from={from}
+              to={to}
+              amount={amount.toString()}
+              outputAmount={outputAmount || ""}
+              SendIcon={SendIcon}
+              ReceiveIcon={ReceiveIcon}
+              sendIconTooltip={sendIconTooltip}
+              receiveIconTooltip={receiveIconTooltip}
+            ></SendingReceivingWrapper>
+          {/* <SendingReceivingSection
+            ioType={GatewayIOType.lockAndMint}
+            asset={asset}
+            sendingAmount={amount}
+            receivingAmount={outputAmount}
+            receivingAmountUsd={outputAmountUsd}
+          /> */}
+          <MediumTopWrapper>
+            <AccountWrapper chain={from} label="Sender Address">
+              {trimAddress(fromAccount, 5)}
+            </AccountWrapper>
+            <AccountWrapper chain={to} label="Recipient Address">
+              {trimAddress(toAccount, 5)}
+            </AccountWrapper>
+            {/* <AddressInfo address={fromAccount} label="Sender Address" />
+            <AddressInfo address={toAccount} label="Recipient Address" /> */}
+          </MediumTopWrapper>
+        </PaperContent>
+          <Divider />
+        <PaperContent bottomPadding>
+          <MediumTopWrapper>
+            <FeesToggler>{Fees}</FeesToggler>
+          </MediumTopWrapper>
+          <ActionButtonWrapper>
+            <ActionButton
+              onClick={handleSubmitApproval}
+              disabled={submittingApproval || recoveryMode}
+            >
+              {submittingApproval
+                ? "Approving Accounts & Contracts..."
+                : "Confirm"}
+            </ActionButton>
+          </ActionButtonWrapper>
+        </PaperContent>
+      </>
     );
   } else if (renVMStatus === null) {
     //in case of failing, submit helpers must be here
@@ -537,7 +565,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         gateway={gateway}
         recoveryMode={fromConnected && recoveryMode}
       />
-      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
+      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to}/>
       {renVMSubmitter.errorSubmitting && (
         <SubmitErrorDialog
           open={true}

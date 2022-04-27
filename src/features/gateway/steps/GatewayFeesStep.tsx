@@ -21,7 +21,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   ActionButton,
@@ -66,7 +66,7 @@ import {
   useGatewayFeesWithRates,
   useGatewayMeta,
 } from "../gatewayHooks";
-import { $gateway } from "../gatewaySlice";
+import { setAmount, $gateway } from "../gatewaySlice";
 import {
   createGatewayQueryString,
   getGatewayExpiryTime,
@@ -79,7 +79,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
-
+  const dispatch = useDispatch();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const assetConfig = getAssetConfig(asset);
   const { Icon, RenIcon } = assetConfig;
@@ -89,6 +89,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const handleAmountChange = useCallback((event) => {
     const newValue = event.target.value.replace(",", ".");
     if (!isNaN(newValue)) {
+      dispatch(setAmount(newValue));
       setActiveAmount(newValue);
     }
   }, []);
@@ -159,8 +160,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const feeAssets = isH2H
     ? [fromChainFeeAsset, toChainFeeAsset]
     : isMint
-    ? [toChainFeeAsset]
-    : [fromChainFeeAsset];
+      ? [toChainFeeAsset]
+      : [fromChainFeeAsset];
 
   const nextEnabled = ackChecked;
 
@@ -280,7 +281,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       {Header}
       <PaperContent bottomPadding>
         {showBalance && (
-          <BalanceInfo balance={balance} asset={renAsset} chain={activeChain} />
+          <BalanceInfo balance={balance} asset={isMint ? asset : renAsset} chain={activeChain} />
         )}
         {isMint && !isBurnAndMint && (
           <OutlinedTextField
@@ -365,11 +366,11 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                       <span>
                         {feeAssets.length > 1
                           ? t("fees.native-assets-ack-plural-tooltip", {
-                              assets: feeAssets.join(" & "),
-                            })
+                            assets: feeAssets.join(" & "),
+                          })
                           : t("fees.native-assets-ack-singular-tooltip", {
-                              asset: feeAssets[0],
-                            })}
+                            asset: feeAssets[0],
+                          })}
                         <span>
                           {" "}
                           {t("fees.native-assets-ack-supplement-tooltip")}

@@ -617,6 +617,34 @@ export const useGatewayFeesWithRates = (
   };
 };
 
+export const useGatewayFeesWithoutGateway = (asset: Asset, from: Chain, to: Chain, amount: string) => {
+  const allChains = useCurrentNetworkChains();
+  const { gatewayFeesObject } = useGatewayFeesObject(
+    {
+      asset,
+      from,
+      to,
+    },
+    { chains: allChains }
+  );
+  const gateway = {
+    fees: gatewayFeesObject,
+    params: {
+      asset,
+      from: {
+        chain: from,
+      },
+      to: {
+        chain: to,
+      },
+    },
+    fromChain: allChains[from].chain,
+    toChain: allChains[to].chain,
+  };
+  const fees = useGatewayFeesWithRates(gateway as any, amount);
+  return fees;
+}
+
 export const getGatewayParams = (gateway: Gateway) => {
   const asset = gateway.params.asset as Asset;
   const from = gateway.params.from.chain as Chain;
