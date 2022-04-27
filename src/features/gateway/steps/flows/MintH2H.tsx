@@ -50,6 +50,7 @@ import {
   isTxSubmittable,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
+  usePartialTxMemo,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
@@ -77,12 +78,12 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
     location.search
   );
   const { from, to, toAddress } = gatewayParams;
-  const { renVMHash } = additionalParams;
+  const { renVMHash, partialTxString } = additionalParams;
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>(toAddress || "");
 
-  // if initial renVMHash is not present, that means new transaction
-  const [shouldResolveAccounts] = useState(Boolean(!renVMHash));
+  const recoveryMode = Boolean(renVMHash) || Boolean(partialTxString);
+  const [shouldResolveAccounts] = useState(!recoveryMode);
   const handleAccountsResolved = useCallback(
     (resolvedFromAccount: string, resolvedToAccount: string) => {
       setFromAccount(resolvedFromAccount);
@@ -132,13 +133,17 @@ export const MintH2HGatewayProcess: FunctionComponent<
   } = parseGatewayQueryString(location.search);
   // TODO: toAddress from renVM
   const { asset, from, to, amount, toAddress: toAddressParam } = gatewayParams;
-  const { renVMHash } = additionalParams;
+  const { renVMHash, partialTxString } = additionalParams;
   const [gatewayChains] = useState(pickChains(allChains, from, to));
 
   const { account: fromAccountWallet } = useWallet(from);
   // TODO: warnings?
   const toAddress = toAddressParam || toAccount;
   const fromAddress = fromAccount || fromAccountWallet;
+
+  const partialTx = usePartialTxMemo(partialTxString);
+  const hasPartialTx = Boolean(partialTx);
+
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
       asset,
@@ -149,12 +154,13 @@ export const MintH2HGatewayProcess: FunctionComponent<
     },
     {
       chains: gatewayChains,
+      partialTx,
     }
   );
 
   // TODO: DRY
   const { showNotification } = useNotifications();
-  const [recoveryMode] = useState(Boolean(renVMHash));
+  const [recoveryMode] = useState(Boolean(renVMHash) || hasPartialTx);
   const [recoveringStarted, setRecoveringStarted] = useState(false);
   const [recoveringError, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
