@@ -8,6 +8,7 @@ import {
   ActionButton,
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
+import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import {
   ProgressWithContent,
@@ -19,6 +20,7 @@ import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
+import { trimAddress } from "../../../../utils/strings";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { useTxSuccessNotification } from "../../../transactions/transactionsHooks";
@@ -49,6 +51,10 @@ import {
   SendingReceivingSection,
   SentReceivedSection,
 } from "../shared/TransactionStatuses";
+import {
+  AccountWrapper,
+  SendingReceivingWrapper,
+} from "../shared/WalletSwitchHelpers";
 
 type MintH2HLockTransactionProgressStatusProps = SubmittingProps & {
   gateway: Gateway;
@@ -80,8 +86,12 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   submittingDisabled,
   errorSubmitting,
 }) => {
-  const { asset, from, amount, fromAverageConfirmationTime } =
+  const { asset, from, to, toAddress, amount, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
+  const { Icon: SendIcon, RenIcon: ReceiveIcon } = getAssetConfig(asset);
+  const sendIconTooltip = asset;
+  const receiveIconTooltip = `ren${asset}`;
+  const { account: fromAccount } = useWallet(from);
   const fromChainConfig = getChainConfig(from);
   const { balance } = useContractChainAssetBalance(
     gateway.fromChain as ContractChain,
@@ -116,13 +126,33 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
             />
           </>
         )}
-        <SendingReceivingSection
+        {/* <SendingReceivingSection
           ioType={GatewayIOType.lockAndMint}
           asset={asset}
           sendingAmount={amount}
           receivingAmount={outputAmount}
           receivingAmountUsd={outputAmountUsd}
-        />
+        /> */}
+        <SendingReceivingWrapper
+          from={from}
+          to={to}
+          amount={amount.toString()}
+          outputAmount={outputAmount || ""}
+          SendIcon={SendIcon}
+          ReceiveIcon={ReceiveIcon}
+          sendIconTooltip={sendIconTooltip}
+          receiveIconTooltip={receiveIconTooltip}
+        ></SendingReceivingWrapper>
+        <MediumTopWrapper>
+          <AccountWrapper chain={from} label="Sender Address">
+            {trimAddress(fromAccount, 5)}
+          </AccountWrapper>
+          <AccountWrapper chain={to} label="Recipient Address">
+            {trimAddress(toAddress, 5)}
+          </AccountWrapper>
+          {/* <AddressInfo address={fromAccount} label="Sender Address" />
+            <AddressInfo address={toAccount} label="Recipient Address" /> */}
+        </MediumTopWrapper>
         <WalletNetworkSwitchMessage />
       </PaperContent>
       <Divider />
@@ -142,7 +172,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
             waiting ||
             lockStatus === ChainTransactionStatus.Confirming
               ? `Locking on ${fromChainConfig.shortName}...`
-              : `Lock on ${fromChainConfig.shortName}`}
+              : `Starting Bridging`}
           </ActionButton>
           {errorSubmitting && (
             <SubmitErrorDialog

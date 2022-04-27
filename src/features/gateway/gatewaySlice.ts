@@ -8,7 +8,6 @@ type GatewayState = {
   to: Chain;
   amount: string; //maybe string?
   toAddress: string;
-  outputAmount: string;
 };
 
 let initialState: GatewayState = {
@@ -17,7 +16,6 @@ let initialState: GatewayState = {
   to: Chain.BinanceSmartChain,
   amount: "",
   toAddress: "",
-  outputAmount: ""
 };
 
 const slice = createSlice({
@@ -58,9 +56,6 @@ const slice = createSlice({
         state.toAddress = initialState.toAddress;
       }
     },
-    setOutputAmount(state, action: PayloadAction<string>) {
-      state.outputAmount = action.payload;
-    },
   },
 });
 
@@ -71,7 +66,6 @@ export const {
   setFromTo,
   setAmount,
   setToAddress,
-  setOutputAmount,
   resetGateway,
 } = slice.actions;
 

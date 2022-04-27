@@ -66,7 +66,7 @@ import {
   useGatewayFeesWithRates,
   useGatewayMeta,
 } from "../gatewayHooks";
-import { setAmount, $gateway, setOutputAmount } from "../gatewaySlice";
+import { setAmount, $gateway } from "../gatewaySlice";
 import {
   createGatewayQueryString,
   getGatewayExpiryTime,
@@ -150,9 +150,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const { outputAmount, outputAmountUsd, fromChainFeeAsset, toChainFeeAsset } =
     fees;
-  if (outputAmount) {
-    dispatch(setOutputAmount(outputAmount));
-  }
   console.log("gateway", gateway);
 
   const [ackChecked, setAckChecked] = useState(false);
