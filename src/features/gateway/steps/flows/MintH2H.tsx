@@ -45,6 +45,7 @@ import {
   useChainInstanceAssetDecimals,
   useGateway,
   useGatewayFeesWithRates,
+  useSetGatewayContext,
 } from "../../gatewayHooks";
 import {
   isTxSubmittable,
@@ -445,6 +446,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   }, [persistLocalTx, fromAccount, isCompleted, transaction]);
 
   useSetCurrentTxHash(transaction?.hash);
+  useSetGatewayContext(gateway);
 
   let Content = null;
   // TODO: consider making similar to Relase H2H
@@ -564,10 +566,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   return (
     <>
       {Content}
-      <TransactionRecoveryModal
-        gateway={gateway}
-        recoveryMode={fromConnected && recoveryMode}
-      />
+      <TransactionRecoveryModal gateway={gateway} recoveryMode={recoveryMode} />
       <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
       {renVMSubmitter.errorSubmitting && (
         <SubmitErrorDialog

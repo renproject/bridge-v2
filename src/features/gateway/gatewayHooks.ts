@@ -195,7 +195,7 @@ export const useGateway = (
   return { renJs, gateway, transactions, error, recoverLocalTx };
 };
 
-export const useSetTransactionUpdater = (gateway: Gateway | null) => {
+export const useSetGatewayContext = (gateway: Gateway | null) => {
   const dispatch = useDispatch();
   const [, setGateway] = useGatewayContext();
   useEffect(() => {
@@ -617,7 +617,12 @@ export const useGatewayFeesWithRates = (
   };
 };
 
-export const useGatewayFeesWithoutGateway = (asset: Asset, from: Chain, to: Chain, amount: string) => {
+export const useGatewayFeesWithoutGateway = (
+  asset: Asset,
+  from: Chain,
+  to: Chain,
+  amount: string
+) => {
   const allChains = useCurrentNetworkChains();
   const { gatewayFeesObject } = useGatewayFeesObject(
     {
@@ -643,7 +648,7 @@ export const useGatewayFeesWithoutGateway = (asset: Asset, from: Chain, to: Chai
   };
   const fees = useGatewayFeesWithRates(gateway as any, amount);
   return fees;
-}
+};
 
 export const getGatewayParams = (gateway: Gateway) => {
   const asset = gateway.params.asset as Asset;

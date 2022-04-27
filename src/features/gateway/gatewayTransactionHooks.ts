@@ -340,6 +340,8 @@ export const reloadWithPartialTxParam = (
     if (partialTx === null) {
       params.delete("partialTx");
     } else {
+      // renVMHash should be deleted when retrieving with partialTx
+      params.delete("renVMHash");
       params.set("partialTx", partialTx);
     }
     const state: GatewayLocationState = {
