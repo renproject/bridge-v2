@@ -112,7 +112,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
         recoverLocalTx(renVMHash, localTx)
           .then(() => {
             showNotification(
-              `Transaction ${trimAddress(renVMHash)}recovered.`,
+              `Transaction ${trimAddress(renVMHash)} recovered.`,
               {
                 variant: "success",
               }

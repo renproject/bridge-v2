@@ -1,5 +1,4 @@
 import {
-  alpha,
   Box,
   Button,
   Checkbox,
@@ -8,7 +7,6 @@ import {
   IconButton,
   Tooltip,
   Typography,
-  useTheme,
 } from "@material-ui/core";
 import { DialogProps } from "@material-ui/core/Dialog";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,12 +19,13 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
+import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
 import {
-  AccountIcon,
   CustomSvgIconComponent,
   DeleteIcon,
   WalletIcon,
@@ -41,9 +40,8 @@ import {
 } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import { BridgeModal } from "../../../../components/modals/BridgeModal";
-import { ProgressWithContent } from "../../../../components/progress/ProgressHelpers";
-import { TooltipWithIcon } from "../../../../components/tooltips/TooltipWithIcon";
 import { Debug } from "../../../../components/utils/Debug";
+import { getAssetConfig } from "../../../../utils/assetsConfig";
 import {
   getChainConfig,
   getChainNetworkConfig,
@@ -54,13 +52,8 @@ import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
-import { CircledIconContainer } from "../../components/MultipleDepositsHelpers";
-import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
-import { $gateway } from "../../gatewaySlice";
-import { getAssetConfig } from "../../../../utils/assetsConfig";
-import { NumberFormatText } from "../../../../components/formatting/NumberFormatText";
-import { useHistory } from "react-router-dom";
 import { useGatewayFeesWithoutGateway } from "../../gatewayHooks";
+import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
 
 const useSwitchWalletDialogStyles = makeStyles((theme) => ({
   top: {
@@ -155,12 +148,6 @@ export const SwitchWalletDialog: FunctionComponent<SwitchWalletDialogProps> = ({
     </BridgeModal>
   );
 };
-
-const useH2HAccountsResolverStyles = makeStyles(() => ({
-  accounts: {
-    fontSize: 86,
-  },
-}));
 
 type H2HTransactionType = "mint" | "release";
 

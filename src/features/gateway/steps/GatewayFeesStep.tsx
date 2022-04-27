@@ -86,13 +86,16 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const renAsset = getRenAssetName(asset);
 
   const [activeAmount, setActiveAmount] = useState(amount);
-  const handleAmountChange = useCallback((event) => {
-    const newValue = event.target.value.replace(",", ".");
-    if (!isNaN(newValue)) {
-      dispatch(setAmount(newValue));
-      setActiveAmount(newValue);
-    }
-  }, []);
+  const handleAmountChange = useCallback(
+    (event) => {
+      const newValue = event.target.value.replace(",", ".");
+      if (!isNaN(newValue)) {
+        dispatch(setAmount(newValue));
+        setActiveAmount(newValue);
+      }
+    },
+    [dispatch]
+  );
 
   const { isMint, isBurnAndMint, isRelease, isFromContractChain, isH2H } =
     useGatewayMeta(asset, from, to);
@@ -160,8 +163,8 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   const feeAssets = isH2H
     ? [fromChainFeeAsset, toChainFeeAsset]
     : isMint
-      ? [toChainFeeAsset]
-      : [fromChainFeeAsset];
+    ? [toChainFeeAsset]
+    : [fromChainFeeAsset];
 
   const nextEnabled = ackChecked;
 
@@ -281,7 +284,11 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       {Header}
       <PaperContent bottomPadding>
         {showBalance && (
-          <BalanceInfo balance={balance} asset={isMint ? asset : renAsset} chain={activeChain} />
+          <BalanceInfo
+            balance={balance}
+            asset={isMint ? asset : renAsset}
+            chain={activeChain}
+          />
         )}
         {isMint && !isBurnAndMint && (
           <OutlinedTextField
@@ -366,11 +373,11 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                       <span>
                         {feeAssets.length > 1
                           ? t("fees.native-assets-ack-plural-tooltip", {
-                            assets: feeAssets.join(" & "),
-                          })
+                              assets: feeAssets.join(" & "),
+                            })
                           : t("fees.native-assets-ack-singular-tooltip", {
-                            asset: feeAssets[0],
-                          })}
+                              asset: feeAssets[0],
+                            })}
                         <span>
                           {" "}
                           {t("fees.native-assets-ack-supplement-tooltip")}

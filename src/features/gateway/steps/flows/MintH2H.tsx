@@ -32,7 +32,6 @@ import {
   GeneralErrorDialog,
   SubmitErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
-import { AddressInfo } from "../../../transactions/components/TransactionsHistoryHelpers";
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
 import { $wallet } from "../../../wallet/walletSlice";
@@ -42,7 +41,6 @@ import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
 import {
-  GatewayIOType,
   getGatewayParams,
   useChainInstanceAssetDecimals,
   useGateway,
@@ -59,7 +57,6 @@ import {
   GatewayPaperHeader,
   TransactionRecoveryModal,
 } from "../shared/GatewayNavigationHelpers";
-import { SendingReceivingSection } from "../shared/TransactionStatuses";
 import {
   AccountWrapper,
   H2HAccountsResolver,
@@ -458,15 +455,15 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         <PaperContent bottomPadding>
           <BalanceInfoPlaceholder />
           <SendingReceivingWrapper
-              from={from}
-              to={to}
-              amount={amount.toString()}
-              outputAmount={outputAmount || ""}
-              SendIcon={SendIcon}
-              ReceiveIcon={ReceiveIcon}
-              sendIconTooltip={sendIconTooltip}
-              receiveIconTooltip={receiveIconTooltip}
-            ></SendingReceivingWrapper>
+            from={from}
+            to={to}
+            amount={amount.toString()}
+            outputAmount={outputAmount || ""}
+            SendIcon={SendIcon}
+            ReceiveIcon={ReceiveIcon}
+            sendIconTooltip={sendIconTooltip}
+            receiveIconTooltip={receiveIconTooltip}
+          ></SendingReceivingWrapper>
           {/* <SendingReceivingSection
             ioType={GatewayIOType.lockAndMint}
             asset={asset}
@@ -485,7 +482,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
             <AddressInfo address={toAccount} label="Recipient Address" /> */}
           </MediumTopWrapper>
         </PaperContent>
-          <Divider />
+        <Divider />
         <PaperContent bottomPadding>
           <MediumTopWrapper>
             <FeesToggler>{Fees}</FeesToggler>
@@ -565,7 +562,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         gateway={gateway}
         recoveryMode={fromConnected && recoveryMode}
       />
-      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to}/>
+      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
       {renVMSubmitter.errorSubmitting && (
         <SubmitErrorDialog
           open={true}
