@@ -440,7 +440,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
 
-  const { connected: fromConnected } = useWallet(from);
+  // const { connected: fromConnected } = useWallet(from);
 
   const isCompleted = mintTxUrl !== null;
   useEffect(() => {

@@ -650,6 +650,16 @@ export const useGatewayFeesWithoutGateway = (
   return fees;
 };
 
+export const getTransactionParams = (
+  transaction: GatewayTransaction | null
+) => {
+  const from = transaction?.params.fromTx.chain || null;
+  const to = transaction?.params.to.chain || null;
+  const amount = transaction?.params.fromTx.amount || null;
+
+  return { from, to, amount };
+};
+
 export const getGatewayParams = (gateway: Gateway) => {
   const asset = gateway.params.asset as Asset;
   const from = gateway.params.from.chain as Chain;

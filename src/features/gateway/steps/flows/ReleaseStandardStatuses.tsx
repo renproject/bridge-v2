@@ -21,7 +21,6 @@ import {
   getRenAssetConfig,
 } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
-import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
@@ -150,11 +149,12 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
 type ReleaseStandardBurnProgressStatusProps = {
   gateway: Gateway;
   Fees: ReactNode | null;
-  outputAmount: string | null;
-  outputAmountUsd: string | null;
+  burnAmount: string | number | null;
   burnStatus: ChainTransactionStatus | null;
   burnConfirmations: number | null;
   burnTargetConfirmations: number | null;
+  releaseAmount: string | null;
+  releaseAmountUsd: string | null;
   renVMStatus: ChainTransactionStatus | null;
   // releaseStatus: ChainTransactionStatus | null;
 };
@@ -164,15 +164,16 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
 > = ({
   gateway,
   Fees,
-  outputAmount,
-  outputAmountUsd,
+  burnAmount,
   burnConfirmations,
   burnTargetConfirmations,
+  releaseAmount,
+  releaseAmountUsd,
   renVMStatus,
   // releaseStatus
 }) => {
   const { t } = useTranslation();
-  const { asset, from, amount, fromAverageConfirmationTime } =
+  const { asset, from, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const burnChainConfig = getChainConfig(from);
 
@@ -207,9 +208,9 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
         <SendingReceivingSection
           ioType={GatewayIOType.burnAndRelease}
           asset={asset}
-          sendingAmount={amount}
-          receivingAmount={outputAmount}
-          receivingAmountUsd={outputAmountUsd}
+          sendingAmount={burnAmount}
+          receivingAmount={releaseAmount}
+          receivingAmountUsd={releaseAmountUsd}
         />
       </PaperContent>
       <Divider />
@@ -228,10 +229,8 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
 type ReleaseStandardCompletedStatusProps = {
   gateway: Gateway;
   burnAmount: string | null;
-  burnAssetDecimals: number | null;
   burnTxUrl: string | null;
   releaseAmount: string | null;
-  releaseAssetDecimals: number | null;
   releaseTxUrl: string | null;
   // releaseStatus: ChainTransactionStatus | null;
 };
@@ -242,10 +241,8 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
   gateway,
   burnTxUrl,
   burnAmount,
-  burnAssetDecimals,
   releaseTxUrl,
   releaseAmount,
-  releaseAssetDecimals,
   // releaseStatus,
 }) => {
   const { t } = useTranslation();
@@ -254,19 +251,13 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
   const burnAssetConfig = getAssetConfig(gateway.params.asset);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const burnAmountFormatted = decimalsAmount(burnAmount, burnAssetDecimals);
-  const releaseAmountFormatted = decimalsAmount(
-    releaseAmount,
-    releaseAssetDecimals
-  );
-
   const notificationMessage = t("release.success-notification-message", {
-    amount: releaseAmountFormatted,
+    amount: releaseAmount,
     currency: burnAssetConfig.shortName,
   });
   const viewChainTxLinkMessage = t("tx.view-chain-transaction-link-text", {
     chain: releaseChainConfig.fullName,
-  })
+  });
   const { txSuccessNotification } = useTxSuccessNotification(
     releaseTxUrl,
     notificationMessage,
@@ -288,9 +279,9 @@ export const ReleaseStandardCompletedStatus: FunctionComponent<
       )}
       <SentReceivedSection
         ioType={GatewayIOType.burnAndRelease}
-        receivedAmount={releaseAmountFormatted}
+        receivedAmount={releaseAmount}
         asset={asset}
-        sentAmount={burnAmountFormatted}
+        sentAmount={burnAmount}
       />
       <FromToTxLinks
         from={from}

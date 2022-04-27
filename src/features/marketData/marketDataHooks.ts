@@ -1,13 +1,19 @@
-import { Chain } from "@renproject/chains";
+import { Asset, Chain } from "@renproject/chains";
+import BigNumber from "bignumber.js";
 import { useCallback, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useInterval } from "react-use";
 import { useReportSystemStatus } from "../ui/uiHooks";
 import { SystemStatus, SystemType } from "../ui/uiSlice";
-import { setExchangeRates, setGasPrices } from "./marketDataSlice";
+import {
+  $exchangeRates,
+  setExchangeRates,
+  setGasPrices,
+} from "./marketDataSlice";
 import {
   CoingeckoReferenceData,
   coingeckoSymbols,
+  findAssetExchangeRate,
   GasPrice,
   mapCoingeckoToExchangeRate,
 } from "./marketDataUtils";
@@ -128,4 +134,20 @@ export const useGasPrices = () => {
   useEffect(() => {
     fetchData().finally();
   }, [fetchData]);
+};
+
+export const useGetAssetUsdRate = (asset: Asset) => {
+  const rates = useSelector($exchangeRates);
+  const usdRate = findAssetExchangeRate(rates, asset);
+  const getUsdRate = useCallback(
+    (amount) => {
+      if (usdRate === null) {
+        return null;
+      }
+      return new BigNumber(amount).multipliedBy(usdRate).toString();
+    },
+    [usdRate]
+  );
+
+  return { getUsdRate, usdRate };
 };

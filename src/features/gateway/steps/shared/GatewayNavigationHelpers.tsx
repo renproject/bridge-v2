@@ -112,8 +112,9 @@ export const TransactionRecoveryModal: FunctionComponent<
     setShow(false);
   }, []);
 
+  // TODO: crit finish
   return (
-    <Dialog open={show} fullWidth maxWidth="sm">
+    <Dialog open={false && show} fullWidth maxWidth="sm">
       <PaperContent topPadding bottomPadding>
         <Box display="flex" justifyContent="center">
           <Box mb={5} maxWidth={400}>

@@ -13,11 +13,13 @@ import {
 } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { decimalsAmount } from "../../../../utils/numbers";
 import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
   pickChains,
 } from "../../../chain/chainUtils";
+import { useGetAssetUsdRate } from "../../../marketData/marketDataHooks";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
@@ -222,6 +224,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   const history = useHistory();
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { getUsdRate } = useGetAssetUsdRate(asset);
   const assetConfig = getAssetConfig(asset);
   const burnChainConfig = getChainConfig(from);
   useSetPaperTitle(
@@ -244,6 +247,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   );
 
   const { outputAmount, outputAmountUsd } = fees;
+  // const { amount: burnNativeAmount } = getTransactionParams(transaction);
   const gatewayInSubmitter = useChainTransactionSubmitter({
     tx: transaction?.in || gateway.in,
     debugLabel: "gatewayIn",
@@ -281,6 +285,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     txUrl: burnTxUrl,
     amount: burnAmount,
   } = gatewayInTxMeta;
+  // const burnAmount = decimalsAmount(burnTxAmount, burnAssetDecimals);
 
   const renVmSubmitter = useChainTransactionSubmitter({
     tx: transaction?.renVM,
@@ -354,15 +359,20 @@ const ReleaseStandardProcessor: FunctionComponent<
     burnStatus === ChainTransactionStatus.Confirming ||
     releaseStatus === null
   ) {
+    console.log(releaseAmount, releaseAssetDecimals, outputAmount);
+    const releaseAmountFormatted =
+      decimalsAmount(releaseAmount, releaseAssetDecimals) || outputAmount;
+    const releaseAmountUsd = getUsdRate(releaseAmountFormatted);
     Content = (
       <ReleaseStandardBurnProgressStatus
         gateway={gateway}
         Fees={Fees}
         burnStatus={burnStatus}
-        outputAmount={outputAmount}
-        outputAmountUsd={outputAmountUsd}
+        burnAmount={decimalsAmount(burnAmount, burnAssetDecimals)}
         burnConfirmations={burnConfirmations}
         burnTargetConfirmations={burnTargetConfirmations}
+        releaseAmount={releaseAmountFormatted}
+        releaseAmountUsd={releaseAmountUsd}
         renVMStatus={renVMStatus}
         // releaseStatus={releaseStatus}
       />
@@ -372,12 +382,10 @@ const ReleaseStandardProcessor: FunctionComponent<
       <ReleaseStandardCompletedStatus
         gateway={gateway}
         burnTxUrl={burnTxUrl}
-        burnAmount={burnAmount}
-        burnAssetDecimals={burnAssetDecimals}
-        // releaseStatus={releaseStatus}
+        burnAmount={decimalsAmount(burnAmount, burnAssetDecimals)}
         releaseTxUrl={releaseTxUrl}
-        releaseAmount={releaseAmount}
-        releaseAssetDecimals={releaseAssetDecimals}
+        releaseAmount={decimalsAmount(releaseAmount, releaseAssetDecimals)}
+        // releaseStatus={releaseStatus}
       />
     );
   }

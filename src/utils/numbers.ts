@@ -1,9 +1,12 @@
 import BigNumber from "bignumber.js";
 
 export const feesDecimalImpact = (
-  value: string | number,
+  value: string | number | null,
   decimalImpact = 2
 ) => {
+  if (value === null) {
+    return decimalImpact;
+  }
   const num = value.toString();
   const decimalPosition = num.indexOf(".");
   if (decimalPosition > -1) {

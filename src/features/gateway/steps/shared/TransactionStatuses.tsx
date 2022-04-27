@@ -152,7 +152,7 @@ const getReceivingAssetIcon = (asset: string, ioType: GatewayIOType) => {
 
 type SendingReceivingSectionProps = {
   asset: string;
-  sendingAmount: string | number;
+  sendingAmount: string | number | null;
   receivingAmount: string | null;
   receivingAmountUsd: string | null;
   ioType: GatewayIOType;
