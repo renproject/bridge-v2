@@ -83,7 +83,9 @@ export const MintH2HProcess: FunctionComponent<RouteComponentProps> = ({
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>(toAddress || "");
 
-  const recoveryMode = Boolean(renVMHash) || Boolean(partialTxString);
+  const hasRenVMHash = Boolean(renVMHash);
+  const hasPartialTx = Boolean(partialTxString);
+  const recoveryMode = hasRenVMHash || hasPartialTx;
   const [shouldResolveAccounts] = useState(!recoveryMode);
   const handleAccountsResolved = useCallback(
     (resolvedFromAccount: string, resolvedToAccount: string) => {
@@ -142,8 +144,9 @@ export const MintH2HGatewayProcess: FunctionComponent<
   const toAddress = toAddressParam || toAccount;
   const fromAddress = fromAccount || fromAccountWallet;
 
+  const hasRenVMHash = Boolean(renVMHash);
+  const hasPartialTx = Boolean(partialTxString);
   const partialTx = usePartialTxMemo(partialTxString);
-  const hasPartialTx = Boolean(partialTx);
 
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
@@ -158,15 +161,17 @@ export const MintH2HGatewayProcess: FunctionComponent<
       partialTx,
     }
   );
+  useSetGatewayContext(gateway);
 
   // TODO: DRY
   const { showNotification } = useNotifications();
-  const [recoveryMode] = useState(Boolean(renVMHash) || hasPartialTx);
+  const [recoveryMode] = useState(hasRenVMHash || hasPartialTx);
   const [recoveringStarted, setRecoveringStarted] = useState(false);
   const [recoveringError, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
 
   useEffect(() => {
+    // TODO: add partialTx recovery notification
     if (
       recoveryMode &&
       renVMHash &&
@@ -446,7 +451,6 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   }, [persistLocalTx, fromAccount, isCompleted, transaction]);
 
   useSetCurrentTxHash(transaction?.hash);
-  useSetGatewayContext(gateway);
 
   let Content = null;
   // TODO: consider making similar to Relase H2H

@@ -87,6 +87,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     { asset, from, to, amount, toAddress },
     { chains: gatewayChains, partialTx }
   );
+  useSetGatewayContext(gateway);
 
   // TODO: DRY
   const { showNotification } = useNotifications();
@@ -329,7 +330,6 @@ const ReleaseStandardProcessor: FunctionComponent<
     : !isTxSubmittable(transaction?.in || gateway.in);
 
   useSetCurrentTxHash(transaction?.hash);
-  useSetGatewayContext(gateway);
 
   let Content = null;
   if (burnStatus === null || burnStatus === ChainTransactionStatus.Ready) {

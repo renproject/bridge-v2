@@ -35,11 +35,13 @@ import {
   useChainInstanceAssetDecimals,
   useGateway,
   useGatewayFeesWithRates,
+  useSetGatewayContext,
 } from "../../gatewayHooks";
 import {
   isTxSubmittable,
   useChainTransactionStatusUpdater,
   useChainTransactionSubmitter,
+  usePartialTxMemo,
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
@@ -65,12 +67,14 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
     location.search
   );
   const { from, to, toAddress } = gatewayParams;
-  const { renVMHash } = additionalParams;
+  const { renVMHash, partialTxString } = additionalParams;
   const [fromAccount, setFromAccount] = useState<string>("");
   const [toAccount, setToAccount] = useState<string>(toAddress || "");
 
-  // if initial renVMHash is not present, that means new transaction
-  const [shouldResolveAccounts] = useState(!Boolean(renVMHash));
+  const hasRenVMHash = Boolean(renVMHash);
+  const hasPartialTx = Boolean(partialTxString);
+  const recoveryMode = hasRenVMHash || hasPartialTx;
+  const [shouldResolveAccounts] = useState(!recoveryMode);
   const handleAccountsResolved = useCallback(
     (resolvedFromAccount: string, resolvedToAccount: string) => {
       setFromAccount(resolvedFromAccount);
@@ -123,13 +127,17 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
   } = parseGatewayQueryString(location.search);
   // TODO: toAddress from renVM
   const { asset, from, to, amount, toAddress: toAddressParam } = gatewayParams;
-  const { renVMHash } = additionalParams;
+  const { renVMHash, partialTxString } = additionalParams;
   const [gatewayChains] = useState(pickChains(allChains, from, to));
 
   const { account: fromAccountWallet } = useWallet(from);
   // TODO: warnings?
   const toAddress = toAddressParam || toAccount;
   const fromAddress = fromAccount || fromAccountWallet;
+
+  const hasRenVMHash = Boolean(renVMHash);
+  const hasPartialTx = Boolean(partialTxString);
+  const partialTx = usePartialTxMemo(partialTxString);
 
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     {
@@ -139,17 +147,19 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
       amount,
       toAddress: toAddress,
     },
-    { chains: gatewayChains }
+    { chains: gatewayChains, partialTx }
   );
+  useSetGatewayContext(gateway);
 
   // TODO: DRY
   const { showNotification } = useNotifications();
-  const [recoveryMode] = useState(Boolean(renVMHash));
+  const [recoveryMode] = useState(hasRenVMHash || hasPartialTx);
   const [recoveringStarted, setRecoveringStarted] = useState(false);
   const [recoveringError, setRecoveringError] = useState<Error | null>(null);
   const { persistLocalTx, findLocalTx } = useTxsStorage();
 
   useEffect(() => {
+    // TODO: add partialTx recovery notification
     if (
       recoveryMode &&
       renVMHash &&
