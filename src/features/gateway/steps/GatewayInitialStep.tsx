@@ -277,7 +277,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const hasAmountBalanceError =
     requiresInitialAmount &&
     balance !== null &&
-    (Number(amount) > Number(balance) || !hasInitialAmount);
+    (Number(amount) > Number(balance));
 
   const showAmountError = amountTouched && hasAmountBalanceError;
 
@@ -408,7 +408,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {connected ? (
           <ActionButton
             onClick={handleNext}
-            disabled={hasAddressError || hasAmountBalanceError}
+            disabled={hasAddressError || hasAmountBalanceError || (requiresInitialAmount && !Number(amount))}
           >
             {t("common.next-label")}
           </ActionButton>

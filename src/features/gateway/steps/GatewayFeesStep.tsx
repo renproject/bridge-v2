@@ -166,7 +166,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     ? [toChainFeeAsset]
     : [fromChainFeeAsset];
 
-  const nextEnabled = ackChecked;
+  const nextEnabled = ackChecked && (!!Number(activeAmount));
 
   const handleProceed = useCallback(() => {
     console.log("move (h2h)");
