@@ -33,6 +33,7 @@ import {
 import {
   BigTopWrapper,
   MediumTopWrapper,
+  SmallTopWrapper,
 } from "../../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
@@ -52,6 +53,8 @@ import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
+import { FeesToggler } from "../../components/FeeHelpers";
+import { GatewayFees } from "../../components/GatewayFees";
 import { useGatewayFeesWithoutGateway } from "../../gatewayHooks";
 import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
 
@@ -280,12 +283,8 @@ export const H2HAccountsResolver: FunctionComponent<
   const params = new URLSearchParams(history.location.search);
   const amount = params.get("amount") || "";
   const asset = params.get("asset") || "";
-  const { outputAmount } = useGatewayFeesWithoutGateway(
-    asset as Asset,
-    from,
-    to,
-    amount
-  );
+  const fees = useGatewayFeesWithoutGateway(asset as Asset, from, to, amount);
+  const { outputAmount } = fees;
   const { Icon, RenIcon } = getAssetConfig(asset);
   let SendIcon, ReceiveIcon;
   let sendIconTooltip, receiveIconTooltip;
@@ -476,7 +475,12 @@ export const H2HAccountsResolver: FunctionComponent<
       </PaperContent>
       <Divider />
       <PaperContent bottomPadding>
-        <BigTopWrapper>
+        <SmallTopWrapper>
+          <FeesToggler>
+            <GatewayFees asset={asset as Asset} from={from} to={to} {...fees} />
+          </FeesToggler>
+        </SmallTopWrapper>
+        <SmallTopWrapper>
           <ActionButtonWrapper>
             <ActionButton
               onClick={handleResolved}
@@ -485,7 +489,7 @@ export const H2HAccountsResolver: FunctionComponent<
               {cachedFromAccount ? "Accept Accounts" : "Connect a Wallet"}
             </ActionButton>
           </ActionButtonWrapper>
-        </BigTopWrapper>
+        </SmallTopWrapper>
         <Debug
           it={{ fromAccount, cachedFromAccount, toAccount, cachedToAccount }}
         />
