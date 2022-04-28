@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import { Debug } from "../../../../components/utils/Debug";
@@ -26,6 +27,7 @@ import { GeneralErrorDialog } from "../../../transactions/components/Transaction
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
+import { $wallet } from "../../../wallet/walletSlice";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
@@ -299,6 +301,17 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   const assetConfig = getAssetConfig(asset);
   const burnChainConfig = getChainConfig(from);
   const releaseChainConfig = getChainConfig(to);
+
+  const { decimals: releaseAssetDecimals } = useChainInstanceAssetDecimals(
+    gateway.toChain,
+    gateway.params.asset
+  );
+
+  const { decimals: burnAssetDecimals } = useChainInstanceAssetDecimals(
+    gateway.fromChain,
+    gateway.params.asset
+  );
+
   useSetPaperTitle(
     moveMode
       ? t("move.move-asset-from-to-title", {
@@ -387,10 +400,6 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   const activeChain = renVMStatus !== null ? to : from;
   useSyncWalletChain(activeChain);
   const { connected, provider } = useWallet(activeChain);
-  const { connected: toConnected } = useWallet(to);
-  const showSwitchWalletDialog =
-    renVMStatus !== null && !toConnected && activeChain === to;
-
   useEffect(() => {
     console.log("activeChain changed", activeChain);
     if (provider && connected) {
@@ -398,15 +407,10 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     }
   }, [allChains, activeChain, provider, connected]);
 
-  const { decimals: releaseAssetDecimals } = useChainInstanceAssetDecimals(
-    gateway.toChain,
-    gateway.params.asset
-  );
-
-  const { decimals: burnAssetDecimals } = useChainInstanceAssetDecimals(
-    gateway.fromChain,
-    gateway.params.asset
-  );
+  const { chain } = useSelector($wallet);
+  const { connected: toConnected } = useWallet(to);
+  const showSwitchWalletDialog =
+    renVMStatus !== null && !toConnected && chain !== to;
 
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
