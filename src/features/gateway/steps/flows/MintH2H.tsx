@@ -1,4 +1,4 @@
-import { Divider } from "@material-ui/core";
+import { Box, Checkbox, Divider, FormControlLabel, Typography } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -493,6 +493,22 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
             {/* <AddressInfo address={fromAccount} label="Sender Address" />
             <AddressInfo address={toAccount} label="Recipient Address" /> */}
           </MediumTopWrapper>
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  name="primary"
+                  color="primary"
+                />
+              }
+              disabled={true}
+              label={
+                <Typography variant="caption">
+                  I want to transfer to a different account
+                </Typography>
+              }
+            />
+          </Box>
         </PaperContent>
         <Divider />
         <PaperContent bottomPadding>

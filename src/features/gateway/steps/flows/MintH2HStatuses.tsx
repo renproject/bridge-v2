@@ -104,10 +104,10 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
 
   return (
     <>
-      <PaperContent bottomPadding>
-        {!showProgress && (
+      <PaperContent bottomPadding topPadding>
+        {/* {!showProgress && (
           <BalanceInfo chain={from} balance={balance} asset={asset} />
-        )}
+        )} */}
         {showProgress && (
           <>
             <ProgressWrapper>
@@ -153,11 +153,13 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           {/* <AddressInfo address={fromAccount} label="Sender Address" />
             <AddressInfo address={toAccount} label="Recipient Address" /> */}
         </MediumTopWrapper>
-        <WalletNetworkSwitchMessage />
+        {/* <WalletNetworkSwitchMessage /> */}
       </PaperContent>
       <Divider />
-      <PaperContent topPadding bottomPadding darker>
-        <FeesToggler>{Fees}</FeesToggler>
+      <PaperContent bottomPadding>
+        <MediumTopWrapper>
+          <FeesToggler>{Fees}</FeesToggler>
+        </MediumTopWrapper>
         <MultipleActionButtonWrapper>
           <ActionButton
             onClick={onSubmit}

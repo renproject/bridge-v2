@@ -475,21 +475,19 @@ export const H2HAccountsResolver: FunctionComponent<
       </PaperContent>
       <Divider />
       <PaperContent bottomPadding>
-        <SmallTopWrapper>
+        <MediumTopWrapper>
           <FeesToggler>
             <GatewayFees asset={asset as Asset} from={from} to={to} {...fees} />
           </FeesToggler>
-        </SmallTopWrapper>
-        <SmallTopWrapper>
-          <ActionButtonWrapper>
-            <ActionButton
-              onClick={handleResolved}
-              disabled={!cachedToAccount || !cachedFromAccount}
-            >
-              {cachedFromAccount ? "Accept Accounts" : "Connect a Wallet"}
-            </ActionButton>
-          </ActionButtonWrapper>
-        </SmallTopWrapper>
+        </MediumTopWrapper>
+        <ActionButtonWrapper>
+          <ActionButton
+            onClick={handleResolved}
+            disabled={!cachedToAccount || !cachedFromAccount}
+          >
+            {cachedFromAccount ? "Accept Accounts" : "Connect a Wallet"}
+          </ActionButton>
+        </ActionButtonWrapper>
         <Debug
           it={{ fromAccount, cachedFromAccount, toAccount, cachedToAccount }}
         />
