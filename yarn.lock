@@ -3362,10 +3362,10 @@
     qs "^6.10.3"
     wallet-address-validator "^0.2.4"
 
-"@renproject/chains-ethereum@3.0.0-alpha.26", "@renproject/chains-ethereum@^3.0.0-alpha.26":
-  version "3.0.0-alpha.26"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-3.0.0-alpha.26.tgz#b29c581df120e080072d7bb53c922884389714bb"
-  integrity sha512-zay0AHstwtc5UMeoKgoieQMpNhqcR9wft63cOe+NbO+bV1fZlWbsch/QJxPgZ/RyzbfiT6pDHK1RBnG2Uz6Dpw==
+"@renproject/chains-ethereum@3.0.0-alpha.27", "@renproject/chains-ethereum@^3.0.0-alpha.27":
+  version "3.0.0-alpha.27"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-ethereum/-/chains-ethereum-3.0.0-alpha.27.tgz#f81ee77a3aaabf319ed686ddb074cdeb7e9f218d"
+  integrity sha512-NliHGvV+egxU05+Rryo4NkkGo/fj7jnSqy1y+LPbqu1Vtxv5IkQ3JuPh026ZgxP8kfL78t4Q94KvsrV2VbvlhA==
   dependencies:
     "@ethersproject/abi" "^5.6.0"
     "@ethersproject/bytes" "^5.6.0"
@@ -3433,13 +3433,13 @@
     bignumber.js "^9.0.2"
     elliptic "^6.5.4"
 
-"@renproject/chains@3.0.0-alpha.26":
-  version "3.0.0-alpha.26"
-  resolved "https://registry.yarnpkg.com/@renproject/chains/-/chains-3.0.0-alpha.26.tgz#869b777c891442251796ec064c3102ba532ab0d7"
-  integrity sha512-E/35IYU0wlYYc1KlmD/x3SatYwAmQfanm2D8lZLY5Viere+4E/if/7r6usp3OhFJO/Jj+XalhkR9QiNSj7+JrA==
+"@renproject/chains@3.0.0-alpha.27":
+  version "3.0.0-alpha.27"
+  resolved "https://registry.yarnpkg.com/@renproject/chains/-/chains-3.0.0-alpha.27.tgz#daac761ad27845b32e12504bf4e0713d4337b422"
+  integrity sha512-sy60pkQo9e1Una5ET01ZDqx1icJqbBp0UxegtKpnd3PsYv3laGRcC3l3w3SBlUr+XjBEbIaL87ZAlneBbT9rDw==
   dependencies:
     "@renproject/chains-bitcoin" "^3.0.0-alpha.26"
-    "@renproject/chains-ethereum" "^3.0.0-alpha.26"
+    "@renproject/chains-ethereum" "^3.0.0-alpha.27"
     "@renproject/chains-filecoin" "^3.0.0-alpha.26"
     "@renproject/chains-solana" "^3.0.0-alpha.26"
     "@renproject/chains-terra" "^3.0.0-alpha.26"
@@ -3579,10 +3579,10 @@
     axios "^0.26.1"
     bignumber.js "^9.0.2"
 
-"@renproject/ren@3.0.0-alpha.26":
-  version "3.0.0-alpha.26"
-  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-3.0.0-alpha.26.tgz#0fd28902f7cb70c897c5d7cca3de62d8e95f3b0b"
-  integrity sha512-2zF4coRtt/V4oY0v4kMEcpbLFkiC7TzuxRJ9Oe9wtG6UjrT2wVWuVZZLSl6UIXDFHGUo6N9T/kGJUEjkgGvi2g==
+"@renproject/ren@3.0.0-alpha.27":
+  version "3.0.0-alpha.27"
+  resolved "https://registry.yarnpkg.com/@renproject/ren/-/ren-3.0.0-alpha.27.tgz#e5c00940c8a45d0c85635d63bb29dab758f47c9b"
+  integrity sha512-xOxZpaocVnQsDBkxlUSnnLBqdD5Wy6pfnzu+gZKB1GbvJGKWzb0xvSCRdC3Ztkfjk4b66Q0Fmj3tdgoBpK51kw==
   dependencies:
     "@renproject/provider" "^3.0.0-alpha.26"
     "@renproject/utils" "^3.0.0-alpha.26"
