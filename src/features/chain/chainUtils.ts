@@ -50,7 +50,7 @@ interface EVMConstructor<EVM> {
     [network in RenNetwork]?: EvmNetworkConfig;
   };
 
-  new ({
+  new({
     network,
     provider,
   }: {
@@ -98,7 +98,7 @@ export const getSolanaChain = (
   chain: Solana;
 } => {
   const solanaNetwork =
-    network === RenNetwork.Mainnet ? "mainnet-beta" : "testnet";
+    network === RenNetwork.Mainnet ? "mainnet-beta" : "devnet";
   const rpcUrl = clusterApiUrl(solanaNetwork);
   const provider = new Connection(rpcUrl);
   console.log(rpcUrl);
