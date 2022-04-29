@@ -32,8 +32,6 @@ import {
 } from "../../../../components/icons/RenIcons";
 import {
   BigTopWrapper,
-  MediumTopWrapper,
-  SmallTopWrapper,
 } from "../../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
@@ -256,25 +254,25 @@ export const SendingReceivingWrapper: FunctionComponent<
   ReceiveIcon,
   receiveIconTooltip,
 }) => {
-  return (
-    <>
-      <AccountWrapper
-        chain={from}
-        label="Sending"
-        amount={amount}
-        AssetIcon={SendIcon}
-        assetIconTooltip={sendIconTooltip}
-      ></AccountWrapper>
-      <AccountWrapper
-        chain={to}
-        label="Receiving"
-        amount={outputAmount}
-        AssetIcon={ReceiveIcon}
-        assetIconTooltip={receiveIconTooltip}
-      ></AccountWrapper>
-    </>
-  );
-};
+    return (
+      <>
+        <AccountWrapper
+          chain={from}
+          label="Sending"
+          amount={amount}
+          AssetIcon={SendIcon}
+          assetIconTooltip={sendIconTooltip}
+        ></AccountWrapper>
+        <AccountWrapper
+          chain={to}
+          label="Receiving"
+          amount={outputAmount}
+          AssetIcon={ReceiveIcon}
+          assetIconTooltip={receiveIconTooltip}
+        ></AccountWrapper>
+      </>
+    );
+  };
 
 export const H2HAccountsResolver: FunctionComponent<
   H2HAccountsResolverProps
@@ -407,7 +405,7 @@ export const H2HAccountsResolver: FunctionComponent<
             AssetIcon={ReceiveIcon}
             assetIconTooltip={receiveIconTooltip}
           ></AccountWrapper> */}
-        <MediumTopWrapper>
+        <BigTopWrapper>
           {cachedFromAccount ? (
             <>
               <AccountWrapper chain={from} label="Sender Address">
@@ -462,7 +460,7 @@ export const H2HAccountsResolver: FunctionComponent<
               }}
             />
           )}
-        </MediumTopWrapper>
+        </BigTopWrapper>
 
         <SwitchWalletDialog
           open={toPickerOpened && differentAccounts}
@@ -474,12 +472,10 @@ export const H2HAccountsResolver: FunctionComponent<
         />
       </PaperContent>
       <Divider />
-      <PaperContent bottomPadding>
-        <MediumTopWrapper>
-          <FeesToggler>
-            <GatewayFees asset={asset as Asset} from={from} to={to} {...fees} />
-          </FeesToggler>
-        </MediumTopWrapper>
+      <PaperContent darker topPadding bottomPadding>
+        <FeesToggler>
+          <GatewayFees asset={asset as Asset} from={from} to={to} {...fees} />
+        </FeesToggler>
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleResolved}
