@@ -30,9 +30,7 @@ import {
   DeleteIcon,
   WalletIcon,
 } from "../../../../components/icons/RenIcons";
-import {
-  BigTopWrapper,
-} from "../../../../components/layout/LayoutHelpers";
+import { BigTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
@@ -254,25 +252,25 @@ export const SendingReceivingWrapper: FunctionComponent<
   ReceiveIcon,
   receiveIconTooltip,
 }) => {
-    return (
-      <>
-        <AccountWrapper
-          chain={from}
-          label="Sending"
-          amount={amount}
-          AssetIcon={SendIcon}
-          assetIconTooltip={sendIconTooltip}
-        ></AccountWrapper>
-        <AccountWrapper
-          chain={to}
-          label="Receiving"
-          amount={outputAmount}
-          AssetIcon={ReceiveIcon}
-          assetIconTooltip={receiveIconTooltip}
-        ></AccountWrapper>
-      </>
-    );
-  };
+  return (
+    <>
+      <AccountWrapper
+        chain={from}
+        label="Sending"
+        amount={amount}
+        AssetIcon={SendIcon}
+        assetIconTooltip={sendIconTooltip}
+      ></AccountWrapper>
+      <AccountWrapper
+        chain={to}
+        label="Receiving"
+        amount={outputAmount}
+        AssetIcon={ReceiveIcon}
+        assetIconTooltip={receiveIconTooltip}
+      ></AccountWrapper>
+    </>
+  );
+};
 
 export const H2HAccountsResolver: FunctionComponent<
   H2HAccountsResolverProps
