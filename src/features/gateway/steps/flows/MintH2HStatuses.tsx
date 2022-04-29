@@ -1,6 +1,6 @@
 import { Box, Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
-import { ChainTransactionStatus, ContractChain } from "@renproject/utils";
+import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useEffectOnce } from "react-use";
@@ -8,7 +8,7 @@ import {
   ActionButton,
   MultipleActionButtonWrapper,
 } from "../../../../components/buttons/Buttons";
-import { MediumTopWrapper } from "../../../../components/layout/LayoutHelpers";
+import { BigTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../../components/layout/Paper";
 import {
   ProgressWithContent,
@@ -31,24 +31,17 @@ import {
   useWalletAssetHelpers,
   useWalletPicker,
 } from "../../../wallet/walletHooks";
-import { BalanceInfo } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
-import { WalletNetworkSwitchMessage } from "../../components/HostToHostHelpers";
 import {
   RenVMSubmittingInfo,
   TransactionProgressInfo,
 } from "../../components/TransactionProgressHelpers";
-import {
-  GatewayIOType,
-  getGatewayParams,
-  useContractChainAssetBalance,
-} from "../../gatewayHooks";
+import { GatewayIOType, getGatewayParams } from "../../gatewayHooks";
 import { SubmittingProps } from "../shared/SubmissionHelpers";
 import {
   ChainProgressDone,
   FromToTxLinks,
   GoToHomeActionButton,
-  SendingReceivingSection,
   SentReceivedSection,
 } from "../shared/TransactionStatuses";
 import {
@@ -93,10 +86,6 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   const receiveIconTooltip = `ren${asset}`;
   const { account: fromAccount } = useWallet(from);
   const fromChainConfig = getChainConfig(from);
-  const { balance } = useContractChainAssetBalance(
-    gateway.fromChain as ContractChain,
-    asset
-  );
 
   const Icon = fromChainConfig.Icon;
   const showProgress =
@@ -104,10 +93,10 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
 
   return (
     <>
-      <PaperContent bottomPadding>
-        {!showProgress && (
+      <PaperContent bottomPadding topPadding>
+        {/* {!showProgress && (
           <BalanceInfo chain={from} balance={balance} asset={asset} />
-        )}
+        )} */}
         {showProgress && (
           <>
             <ProgressWrapper>
@@ -143,7 +132,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           sendIconTooltip={sendIconTooltip}
           receiveIconTooltip={receiveIconTooltip}
         ></SendingReceivingWrapper>
-        <MediumTopWrapper>
+        <BigTopWrapper>
           <AccountWrapper chain={from} label="Sender Address">
             {trimAddress(fromAccount, 5)}
           </AccountWrapper>
@@ -152,11 +141,11 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           </AccountWrapper>
           {/* <AddressInfo address={fromAccount} label="Sender Address" />
             <AddressInfo address={toAccount} label="Recipient Address" /> */}
-        </MediumTopWrapper>
-        <WalletNetworkSwitchMessage />
+        </BigTopWrapper>
+        {/* <WalletNetworkSwitchMessage /> */}
       </PaperContent>
       <Divider />
-      <PaperContent topPadding bottomPadding darker>
+      <PaperContent darker topPadding bottomPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
           <ActionButton
@@ -220,7 +209,10 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   done,
   errorSubmitting,
 }) => {
-  const { asset, to, amount } = getGatewayParams(gateway);
+  const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { Icon: SendIcon, RenIcon: ReceiveIcon } = getAssetConfig(asset);
+  const sendIconTooltip = asset;
+  const receiveIconTooltip = `ren${asset}`;
   const mintChainConfig = getChainConfig(to);
 
   const { connected } = useWallet(to);
@@ -245,13 +237,23 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
             </ProgressWithContent>
           )}
         </ProgressWrapper>
-        <SendingReceivingSection
-          ioType={GatewayIOType.lockAndMint}
-          asset={asset}
-          sendingAmount={amount}
-          receivingAmount={outputAmount}
-          receivingAmountUsd={outputAmountUsd}
-        />
+        <SendingReceivingWrapper
+          from={from}
+          to={to}
+          amount={amount.toString()}
+          outputAmount={outputAmount || ""}
+          SendIcon={SendIcon}
+          ReceiveIcon={ReceiveIcon}
+          sendIconTooltip={sendIconTooltip}
+          receiveIconTooltip={receiveIconTooltip}
+        ></SendingReceivingWrapper>
+        {/* <SendingReceivingSection
+            ioType={GatewayIOType.lockAndMint}
+            asset={asset}
+            sendingAmount={amount}
+            receivingAmount={outputAmount}
+            receivingAmountUsd={outputAmountUsd}
+          /> */}
       </PaperContent>
       <Divider />
       <PaperContent topPadding bottomPadding darker>

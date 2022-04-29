@@ -106,10 +106,8 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
         </MediumTopWrapper>
       </PaperContent>
       <Divider />
-      <PaperContent darker bottomPadding>
-        <MediumTopWrapper>
-          <FeesToggler>{Fees}</FeesToggler>
-        </MediumTopWrapper>
+      <PaperContent darker bottomPadding topPadding>
+        <FeesToggler>{Fees}</FeesToggler>
         <ActionButtonWrapper>
           <ActionButton
             onClick={onSubmit}
@@ -214,7 +212,7 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
         />
       </PaperContent>
       <Divider />
-      <PaperContent topPadding darker bottomPadding>
+      <PaperContent darker bottomPadding topPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
           <ActionButton disabled>

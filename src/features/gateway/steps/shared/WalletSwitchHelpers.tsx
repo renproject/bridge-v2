@@ -30,10 +30,7 @@ import {
   DeleteIcon,
   WalletIcon,
 } from "../../../../components/icons/RenIcons";
-import {
-  BigTopWrapper,
-  MediumTopWrapper,
-} from "../../../../components/layout/LayoutHelpers";
+import { BigTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
@@ -52,6 +49,8 @@ import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
+import { FeesToggler } from "../../components/FeeHelpers";
+import { GatewayFees } from "../../components/GatewayFees";
 import { useGatewayFeesWithoutGateway } from "../../gatewayHooks";
 import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
 
@@ -280,12 +279,8 @@ export const H2HAccountsResolver: FunctionComponent<
   const params = new URLSearchParams(history.location.search);
   const amount = params.get("amount") || "";
   const asset = params.get("asset") || "";
-  const { outputAmount } = useGatewayFeesWithoutGateway(
-    asset as Asset,
-    from,
-    to,
-    amount
-  );
+  const fees = useGatewayFeesWithoutGateway(asset as Asset, from, to, amount);
+  const { outputAmount } = fees;
   const { Icon, RenIcon } = getAssetConfig(asset);
   let SendIcon, ReceiveIcon;
   let sendIconTooltip, receiveIconTooltip;
@@ -408,7 +403,7 @@ export const H2HAccountsResolver: FunctionComponent<
             AssetIcon={ReceiveIcon}
             assetIconTooltip={receiveIconTooltip}
           ></AccountWrapper> */}
-        <MediumTopWrapper>
+        <BigTopWrapper>
           {cachedFromAccount ? (
             <>
               <AccountWrapper chain={from} label="Sender Address">
@@ -463,7 +458,7 @@ export const H2HAccountsResolver: FunctionComponent<
               }}
             />
           )}
-        </MediumTopWrapper>
+        </BigTopWrapper>
 
         <SwitchWalletDialog
           open={toPickerOpened && differentAccounts}
@@ -475,17 +470,18 @@ export const H2HAccountsResolver: FunctionComponent<
         />
       </PaperContent>
       <Divider />
-      <PaperContent bottomPadding>
-        <BigTopWrapper>
-          <ActionButtonWrapper>
-            <ActionButton
-              onClick={handleResolved}
-              disabled={!cachedToAccount || !cachedFromAccount}
-            >
-              {cachedFromAccount ? "Accept Accounts" : "Connect a Wallet"}
-            </ActionButton>
-          </ActionButtonWrapper>
-        </BigTopWrapper>
+      <PaperContent darker topPadding bottomPadding>
+        <FeesToggler>
+          <GatewayFees asset={asset as Asset} from={from} to={to} {...fees} />
+        </FeesToggler>
+        <ActionButtonWrapper>
+          <ActionButton
+            onClick={handleResolved}
+            disabled={!cachedToAccount || !cachedFromAccount}
+          >
+            {cachedFromAccount ? "Accept Accounts" : "Connect a Wallet"}
+          </ActionButton>
+        </ActionButtonWrapper>
         <Debug
           it={{ fromAccount, cachedFromAccount, toAccount, cachedToAccount }}
         />
