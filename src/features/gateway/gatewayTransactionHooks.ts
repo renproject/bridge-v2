@@ -326,7 +326,8 @@ export const updateRenVMHashParam = (
 
 export const reloadWithPartialTxParam = (
   history: RouteComponentProps["history"],
-  partialTx: string | null
+  partialTx: string | null,
+  toAddress?: string
 ) => {
   const params = new URLSearchParams(history.location.search);
   const partialTxParam = (params as any).partialTx;
@@ -343,6 +344,9 @@ export const reloadWithPartialTxParam = (
       // renVMHash should be deleted when retrieving with partialTx
       params.delete("renVMHash");
       params.set("partialTx", partialTx);
+      if (toAddress) {
+        params.set("toAddress", toAddress);
+      }
     }
     const state: GatewayLocationState = {
       reload: true,

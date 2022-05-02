@@ -40,6 +40,7 @@ import {
   MediumWrapper,
   SmallHorizontalPadder,
 } from "../../components/layout/LayoutHelpers";
+import { SpacedPaperContent } from "../../components/layout/Paper";
 import { CustomLink } from "../../components/links/Links";
 import { SimplePagination } from "../../components/pagination/SimplePagination";
 import { InlineSkeleton } from "../../components/progress/ProgressHelpers";
@@ -67,6 +68,7 @@ import {
   useGatewayMeta,
 } from "../gateway/gatewayHooks";
 import { GatewayLocationState } from "../gateway/gatewayRoutingUtils";
+import { $gateway } from "../gateway/gatewaySlice";
 import {
   createGatewayQueryString,
   getBridgeNonce,
@@ -79,6 +81,7 @@ import { LocalTxData, useTxsStorage } from "../storage/storageHooks";
 import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { useCurrentChainWallet } from "../wallet/walletHooks";
 import { $wallet, setChain, setPickerOpened } from "../wallet/walletSlice";
+import { UpdateTransactionForm } from "./components/TransactionMenu";
 import {
   GatewayStatusChip,
   HMSCountdownTo,
@@ -198,6 +201,12 @@ export const TransactionsHistory: FunctionComponent = () => {
 
   const handleRemoveFiltered = useCallback(() => {}, []);
 
+  const [txRecovery, setTxRecovery] = useState(false);
+  const handleToggleTxRecovery = useCallback(() => {
+    setTxRecovery(!txRecovery);
+  }, [txRecovery]);
+
+  const { asset: gatewayAsset, from, to } = useSelector($gateway);
   return (
     <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
       <DialogTitle>
@@ -214,32 +223,42 @@ export const TransactionsHistory: FunctionComponent = () => {
       </DialogTitle>
       <div className={styles.filters}>
         <div className={styles.filtersControls}>
-          <RichDropdown
-            className={styles.spacer}
-            condensed
-            label={t("common.asset-label")}
-            getOptionData={getAssetOptionData}
-            options={supportedAssets}
-            value={asset}
-            onChange={handleAssetChange}
-            nameVariant="short"
-            showNone
-            noneLabel="All Assets"
-          />
-          <Fade in={showConnectedTxs}>
-            <div>
+          {!txRecovery ? (
+            <>
               <RichDropdown
+                className={styles.spacer}
                 condensed
-                label={t("common.from-label")}
-                supplementalLabel={t("common.blockchain-label")}
-                getOptionData={getChainOptionData}
-                options={supportedContractChains}
-                value={chain}
-                onChange={handleChainChange}
-                nameVariant="full"
+                label={t("common.asset-label")}
+                getOptionData={getAssetOptionData}
+                options={supportedAssets}
+                value={asset}
+                onChange={handleAssetChange}
+                nameVariant="short"
+                showNone
+                noneLabel="All Assets"
               />
-            </div>
-          </Fade>
+              <Fade in={showConnectedTxs}>
+                <div>
+                  <RichDropdown
+                    condensed
+                    label={t("common.from-label")}
+                    supplementalLabel={t("common.blockchain-label")}
+                    getOptionData={getChainOptionData}
+                    options={supportedContractChains}
+                    value={chain}
+                    onChange={handleChainChange}
+                    nameVariant="full"
+                  />
+                </div>
+              </Fade>
+            </>
+          ) : (
+            <>
+              <Typography>
+                Recover transaction for {gatewayAsset} from {from} to {to}
+              </Typography>
+            </>
+          )}
         </div>
         <div className={styles.filtersActions}>
           <TxHistoryMenu
@@ -250,12 +269,22 @@ export const TransactionsHistory: FunctionComponent = () => {
               className={styles.checkboxLabel}
               control={
                 <Checkbox
-                  checked={showConnectedTxs}
-                  onChange={handleCheckboxChange}
-                  name="walletTxs"
+                  checked={txRecovery}
+                  onChange={handleToggleTxRecovery}
+                  name="recovery"
                   color="primary"
                 />
               }
+              label={
+                <Typography variant="body1">Recover Tx by hash/id</Typography>
+              }
+            />
+            <FormControlLabel
+              className={styles.checkboxLabel}
+              disabled={txRecovery}
+              checked={showConnectedTxs}
+              onChange={handleCheckboxChange}
+              control={<Checkbox name="walletTxs" color="primary" />}
               label={
                 <Typography variant="body1">
                   Show connected wallet Txs
@@ -265,7 +294,21 @@ export const TransactionsHistory: FunctionComponent = () => {
           </TxHistoryMenu>
         </div>
       </div>
-      {showConnectedTxs ? (
+      {txRecovery ? (
+        <>
+          {gatewayAsset && from && to ? (
+            <UpdateTransactionForm asset={gatewayAsset} from={from} to={to} />
+          ) : (
+            <SpacedPaperContent>
+              <BigTopWrapper>
+                <Typography>
+                  Select asset and origin chain to begin tx recovery
+                </Typography>
+              </BigTopWrapper>
+            </SpacedPaperContent>
+          )}
+        </>
+      ) : showConnectedTxs ? (
         <>
           {connected ? (
             <LocalTransactions address={account} chain={chain} asset={asset} />
@@ -793,13 +836,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
         </div>
       </div>
       <Grid container spacing={3}>
-        <Grid
-          item
-          sm={12}
-          md={6}
-          className={styles.fromWrapper}
-          alignItems="center"
-        >
+        <Grid item sm={12} md={6} className={styles.fromWrapper}>
           {isDepositMint ? (
             <SmallHorizontalPadder className={styles.expiryTime}>
               <FullWidthWrapper>

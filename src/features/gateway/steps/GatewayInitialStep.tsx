@@ -143,23 +143,25 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         setFromChains(nonOriginChains);
         const newFrom = nonOriginChains[0];
         dispatch(setFrom(newFrom));
-        const nonOriginNotFromChains = mintChains.filter(
-          (chain) => chain !== lockChain && chain !== newFrom
-        );
-        setToChains(nonOriginNotFromChains);
-        dispatch(setTo(nonOriginNotFromChains[0]));
       }
     },
     [dispatch, ioType]
   );
 
   useEffect(() => {
-    filterChains(asset);
-  }, [asset, filterChains]);
+    if (ioType === "burnAndMint") {
+      const { lockChain, mintChains } = getAssetConfig(asset);
+      const nonOriginNotFromChains = mintChains.filter(
+        (chain) => chain !== lockChain && chain !== from
+      );
+      setToChains(nonOriginNotFromChains);
+      dispatch(setTo(nonOriginNotFromChains[0]));
+    }
+  }, [dispatch, ioType, asset, from]);
 
   useEffect(() => {
-    console.log("assets changed", assets);
-  }, [assets]);
+    filterChains(asset);
+  }, [asset, filterChains]);
 
   useEffect(() => {
     dispatch(setAsset(assets[0]));
@@ -277,7 +279,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const hasAmountBalanceError =
     requiresInitialAmount &&
     balance !== null &&
-    (Number(amount) > Number(balance));
+    Number(amount) > Number(balance);
 
   const showAmountError = amountTouched && hasAmountBalanceError;
 
@@ -363,7 +365,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         <Collapse in={!hideFrom || forceShowDropdowns}>
           <RichDropdownWrapper>
             <RichDropdown
-              label={t("release.from-label")}
+              label={t("common.from-label")}
               supplementalLabel={t("common.blockchain-label")}
               getOptionData={getChainOptionData}
               options={fromChains}
@@ -408,7 +410,11 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {connected ? (
           <ActionButton
             onClick={handleNext}
-            disabled={hasAddressError || hasAmountBalanceError || (requiresInitialAmount && !Number(amount))}
+            disabled={
+              hasAddressError ||
+              hasAmountBalanceError ||
+              (requiresInitialAmount && !Number(amount))
+            }
           >
             {t("common.next-label")}
           </ActionButton>

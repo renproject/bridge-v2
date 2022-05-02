@@ -110,7 +110,7 @@
   "release.currency-balance-label": "{{currency}} Guthaben",
   "release.details-label": "Details",
   "release.fees-title": "Gebühren & Bestätigen",
-  "release.from-label": "Von",
+  "common.from-label": "Von",
   "release.from-tooltip": "Die Blockchain von der das Asset freigegeben wird.",
   "release.pending-confirmations-message": "Ausstehende {{confirmations}}/{{targetConfirmations}}",
   "release.receiving-label": "Empfangen",

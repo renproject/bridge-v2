@@ -133,7 +133,7 @@
   "release.currency-balance-label": "Баланс {{currency}}",
   "release.details-label": "Подробнее",
   "release.fees-title": "Комиссии и подтверждение",
-  "release.from-label": "От",
+  "common.from-label": "От",
   "release.from-tooltip": "Блокчейн, с которого вы высвобождаете актив.",
   "release.memo-ack-message": "Я подтверждаю, что эта транзакция не требует мемо",
   "release.memo-ack-tooltip": "Некоторые транзакции требуют дополнительного параметра для перевода. Примером является перевод на биржу (Coinbase, Binance и т. д...). В настоящее время {{bridge}} не поддерживает это.",
