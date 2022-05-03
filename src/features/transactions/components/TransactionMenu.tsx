@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ListItemIcon,
   makeStyles,
@@ -30,6 +31,7 @@ import {
   OutlinedTextFieldWrapper,
 } from "../../../components/inputs/OutlinedTextField";
 import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
 import {
   BridgeModalTitle,
   NestedDrawer,
@@ -39,10 +41,18 @@ import {
 } from "../../../components/modals/BridgeModal";
 import { Debug } from "../../../components/utils/Debug";
 import { EthereumBaseChain } from "../../../utils/missingTypes";
+import { trimAddress } from "../../../utils/strings";
 import { getGatewayParams } from "../../gateway/gatewayHooks";
 import { useRedirectToGatewayFlow } from "../../gateway/gatewayRoutingUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
-import { setIssueResolverOpened } from "../transactionsSlice";
+import {
+  useCurrentChain,
+  useCurrentChainWallet,
+} from "../../wallet/walletHooks";
+import {
+  setIssueResolverOpened,
+  setTxRecoveryOpened,
+} from "../transactionsSlice";
 
 const useTransactionMenuItemStyles = makeStyles((theme) => ({
   root: {
@@ -255,6 +265,7 @@ type UpdateTransactionFormProps = {
 export const UpdateTransactionForm: FunctionComponent<
   UpdateTransactionFormProps
 > = ({ asset, from, to }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const chains = useCurrentNetworkChains();
   const isFromCC = isContractChain(chains[from].chain);
@@ -304,6 +315,10 @@ export const UpdateTransactionForm: FunctionComponent<
     setToPayload(event.target.value);
   }, []);
 
+  const handleTxRecoveryClose = useCallback(() => {
+    dispatch(setTxRecoveryOpened(false));
+  }, [dispatch]);
+
   const [updating, setUpdating] = useState(false);
 
   const navigateToGateway = useRedirectToGatewayFlow({
@@ -312,6 +327,7 @@ export const UpdateTransactionForm: FunctionComponent<
     to,
     toAddress: toRecipient,
   });
+
   const handleUpdateTx = useCallback(() => {
     const instance = chains[from].chain;
     if (!instance) {
@@ -348,6 +364,7 @@ export const UpdateTransactionForm: FunctionComponent<
     setUpdating(true);
     const partialTxParam = encodeURIComponent(JSON.stringify(payloadTxData));
     navigateToGateway({ partialTx: partialTxParam });
+    handleTxRecoveryClose();
     // reloadWithPartialTxParam(history, partialTxParam);
 
     // gateway
@@ -370,6 +387,7 @@ export const UpdateTransactionForm: FunctionComponent<
     txIndex,
     txIdFormatted,
     navigateToGateway,
+    handleTxRecoveryClose,
     // amount,
     // toRecipient,
     // nonce,
@@ -382,6 +400,15 @@ export const UpdateTransactionForm: FunctionComponent<
   const handleToggleDetails = useCallback(() => {
     setDetails((details) => !details);
   }, []);
+
+  const chain = useCurrentChain();
+  const { connected, account } = useCurrentChainWallet();
+  const handleImportAccount = useCallback(() => {
+    if (connected && account) {
+      setToRecipient(account);
+    }
+  }, [connected, account]);
+
   return (
     <PaperContent topPadding bottomPadding>
       <OutlinedTextFieldWrapper>
@@ -410,6 +437,19 @@ export const UpdateTransactionForm: FunctionComponent<
             onChange={handleToRecipientChange}
             placeholder={"Enter recipient address"}
           />
+          <Box display="flex" justifyContent="flex-end">
+            <Button
+              variant="text"
+              size="small"
+              color="primary"
+              onClick={handleImportAccount}
+              disabled={!connected}
+            >
+              {connected
+                ? `Set current ${chain} account (${trimAddress(account)})`
+                : `Connect wallet to import account )`}
+            </Button>
+          </Box>
         </OutlinedTextFieldWrapper>
       )}
       <Debug it={data} />
@@ -461,10 +501,7 @@ export const UpdateTransactionForm: FunctionComponent<
           onClick={handleUpdateTx}
           disabled={updating || !valid}
         >
-          {updating
-            ? t("tx.menu-update-tx-updating-dots")
-            : t("tx.menu-update-tx-update")}{" "}
-          transaction
+          {updating ? "Recovering transaction..." : "Recover transaction"}
         </Button>
       </ActionButtonWrapper>
     </PaperContent>
