@@ -161,13 +161,17 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const nextEnabled = ackChecked && !!Number(activeAmount);
 
-  const handleProceed = useRedirectToGatewayFlow({
+  const redirectToGateway = useRedirectToGatewayFlow({
     asset,
     from,
     to,
     amount,
     toAddress,
   });
+
+  const handleRedirectToGateway = useCallback(() => {
+    redirectToGateway();
+  }, [redirectToGateway]);
 
   const showBalance = isFromContractChain;
 
@@ -307,7 +311,10 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           )}
         </HorizontalPadder>
         <MultipleActionButtonWrapper>
-          <ActionButton disabled={!nextEnabled} onClick={handleProceed}>
+          <ActionButton
+            disabled={!nextEnabled}
+            onClick={handleRedirectToGateway}
+          >
             {t("common.next-label")}
           </ActionButton>
         </MultipleActionButtonWrapper>
