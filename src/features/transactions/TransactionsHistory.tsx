@@ -67,7 +67,6 @@ import {
   useGatewayMeta,
 } from "../gateway/gatewayHooks";
 import { GatewayLocationState } from "../gateway/gatewayRoutingUtils";
-import { $gateway } from "../gateway/gatewaySlice";
 import {
   createGatewayQueryString,
   getBridgeNonce,
@@ -80,7 +79,6 @@ import { LocalTxData, useTxsStorage } from "../storage/storageHooks";
 import { WalletConnectionProgress } from "../wallet/components/WalletHelpers";
 import { useCurrentChainWallet } from "../wallet/walletHooks";
 import { $wallet, setChain, setPickerOpened } from "../wallet/walletSlice";
-import { UpdateTransactionForm } from "./components/TransactionMenu";
 import {
   GatewayStatusChip,
   HMSCountdownTo,
@@ -96,15 +94,13 @@ import {
 } from "./components/TransactionsHistoryHelpers";
 import {
   $txHistory,
-  $txRecovery,
   setShowConnectedTxs,
   setTxHistoryOpened,
-  setTxRecoveryOpened,
 } from "./transactionsSlice";
 
 const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
 
-const useTransactionHistoryStyles = makeStyles((theme) => ({
+export const useTransactionModalStyles = makeStyles((theme) => ({
   title: {
     margin: 0,
     padding: theme.spacing(2),
@@ -163,7 +159,7 @@ const useTransactionHistoryStyles = makeStyles((theme) => ({
 }));
 
 export const TransactionsHistory: FunctionComponent = () => {
-  const styles = useTransactionHistoryStyles();
+  const styles = useTransactionModalStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { dialogOpened, showConnectedTxs } = useSelector($txHistory);
@@ -431,7 +427,7 @@ const LocalTransactions: FunctionComponent<LocalTransactionsProps> = ({
   chain,
   asset,
 }) => {
-  const styles = useTransactionHistoryStyles();
+  const styles = useTransactionModalStyles();
   const { localTxs, removeLocalTx, getAllLocalTxs } = useTxsStorage();
 
   const allTxsMap = getAllLocalTxs({ asset, address, chain });
@@ -900,51 +896,5 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       </Grid>
       <Debug disable it={localTxData} />
     </div>
-  );
-};
-
-export const TransactionRecovery: FunctionComponent = () => {
-  const styles = useTransactionHistoryStyles();
-  const dispatch = useDispatch();
-  const { dialogOpened } = useSelector($txRecovery);
-
-  // const { chain } = useSelector($wallet);
-  // const { connected, account } = useCurrentChainWallet();
-  // const chainConfig = getChainConfig(chain);
-
-  const handleTxRecoveryClose = useCallback(() => {
-    dispatch(setTxRecoveryOpened(false));
-  }, [dispatch]);
-
-  // const handleWalletPickerOpen = useCallback(() => {
-  //   dispatch(setPickerOpened(true));
-  // }, [dispatch]);
-
-  const { asset, from, to } = useSelector($gateway);
-  return (
-    <WideDialog open={dialogOpened} onClose={handleTxRecoveryClose}>
-      <DialogTitle>
-        <Typography variant="h6" align="center" component="div">
-          Transaction Recovery
-        </Typography>
-        <IconButton
-          aria-label="close"
-          className={styles.closeButton}
-          onClick={handleTxRecoveryClose}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <div className={styles.filters}>
-        <div className={styles.filtersControls}>
-          <>
-            <Typography>
-              Recover transaction for {asset} from {from} to {to}
-            </Typography>
-          </>
-        </div>
-      </div>
-      <UpdateTransactionForm asset={asset} from={from} to={to} />
-    </WideDialog>
   );
 };

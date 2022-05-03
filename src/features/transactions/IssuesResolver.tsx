@@ -15,7 +15,7 @@ import {
   ActionButtonWrapper,
   ClosableMenuIconButton,
 } from "../../components/buttons/Buttons";
-import { SyncProblemIcon } from "../../components/icons/RenIcons";
+import { IssueResolverIcon } from "../../components/icons/RenIcons";
 import { externalLinkAttributes, Link } from "../../components/links/Links";
 import { BridgeModalTitle } from "../../components/modals/BridgeModal";
 import { Debug } from "../../components/utils/Debug";
@@ -183,7 +183,7 @@ export const IssuesResolverButton: FunctionComponent<
       <ClosableMenuIconButton
         title={buttonTitle}
         className={className}
-        Icon={SyncProblemIcon}
+        Icon={IssueResolverIcon}
         opened={issueResolverOpened}
         onClick={handleIssueResolverToggle}
       />

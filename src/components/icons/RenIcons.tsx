@@ -96,7 +96,8 @@ import HomeIcon from "@material-ui/icons/Home";
 import WarningIcon from "@material-ui/icons/Warning";
 import LanguageIcon from "@material-ui/icons/Language";
 import CheckedIcon from "@material-ui/icons/Check";
-import SyncProblemIcon from "@material-ui/icons/SyncProblem";
+import IssueResolverIcon from "@material-ui/icons/SyncProblem";
+import TxRecoveryIcon from "@material-ui/icons/Receipt";
 
 export {
   AccountIcon,
@@ -110,7 +111,8 @@ export {
   HomeIcon,
   LanguageIcon,
   CheckedIcon,
-  SyncProblemIcon,
+  IssueResolverIcon,
+  TxRecoveryIcon,
 };
 
 export type CustomSvgIconComponent =

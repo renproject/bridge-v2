@@ -44,6 +44,10 @@ import {
   IssuesResolver,
   IssuesResolverButton,
 } from "../features/transactions/IssuesResolver";
+import {
+  TransactionRecovery,
+  TransactionRecoveryButton,
+} from "../features/transactions/TransactionRecovery";
 import { TransactionsHistory } from "../features/transactions/TransactionsHistory";
 import {
   $txHistory,
@@ -270,6 +274,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       <TransactionsHistory />
       <IssuesResolver />
       <IssuesResolverButton mode="fab" />
+      <TransactionRecoveryButton />
+      <TransactionRecovery />
       <Debug
         it={{
           // debugNetworkName,
