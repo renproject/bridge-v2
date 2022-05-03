@@ -14,6 +14,10 @@ export type GatewayLocationState = {
   reload?: boolean;
 };
 
+const reloadState: GatewayLocationState = {
+  reload: true,
+};
+
 export const useGatewayLocationState = () => {
   const location = useLocation<GatewayLocationState>();
   const state = location.state;
@@ -61,9 +65,6 @@ export const useRedirectToGatewayFlow = (
   gatewayParams: CreateGatewayParams,
   additionalParams?: AdditionalGatewayParams
 ) => {
-  const state: GatewayLocationState = {
-    reload: true,
-  };
   const history = useHistory();
   const { asset, from, to, amount, nonce, toAddress } = gatewayParams;
   const { isBurnAndMint, isMint, isH2H, isRelease } = useGatewayMeta(
@@ -78,7 +79,7 @@ export const useRedirectToGatewayFlow = (
       if (isBurnAndMint) {
         console.log("bridge (h2h)");
         history.push({
-          state,
+          state: reloadState,
           pathname: paths.BRIDGE_GATEWAY,
           search:
             "?" +
@@ -96,7 +97,7 @@ export const useRedirectToGatewayFlow = (
       } else if (isMint && isH2H) {
         console.log("h2h mint");
         history.push({
-          state,
+          state: reloadState,
           pathname: paths.MINT__GATEWAY_H2H,
           search:
             "?" +
@@ -114,7 +115,7 @@ export const useRedirectToGatewayFlow = (
       } else if (isMint) {
         console.log("standard mint");
         history.push({
-          state,
+          state: reloadState,
           pathname: paths.MINT__GATEWAY_STANDARD,
           search:
             "?" +
@@ -131,7 +132,7 @@ export const useRedirectToGatewayFlow = (
       } else if (isRelease && isH2H) {
         console.log("h2h release");
         history.push({
-          state,
+          state: reloadState,
           pathname: paths.RELEASE__GATEWAY_H2H,
           search:
             "?" +
@@ -149,7 +150,7 @@ export const useRedirectToGatewayFlow = (
       } else {
         console.log("standard release");
         history.push({
-          state,
+          state: reloadState,
           pathname: paths.RELEASE__GATEWAY_STANDARD,
           search:
             "?" +
@@ -177,6 +178,7 @@ export const useRedirectToGatewayFlow = (
       to,
       toAddress,
       amount,
+      nonce,
       additionalParams,
     ]
   );
