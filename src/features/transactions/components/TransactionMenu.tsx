@@ -438,17 +438,11 @@ export const UpdateTransactionForm: FunctionComponent<
             placeholder={"Enter recipient address"}
           />
           <Box display="flex" justifyContent="flex-end">
-            <Button
-              variant="text"
-              size="small"
-              color="primary"
-              onClick={handleImportAccount}
-              disabled={!connected}
-            >
-              {connected
-                ? `Set current ${chain} account (${trimAddress(account)})`
-                : `Connect wallet to import account )`}
-            </Button>
+            {connected && (
+              <Link onClick={handleImportAccount}>
+                Set current ${chain} account ({trimAddress(account)})
+              </Link>
+            )}
           </Box>
         </OutlinedTextFieldWrapper>
       )}

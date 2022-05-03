@@ -203,6 +203,13 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     [dispatch]
   );
 
+  const handleSetMaxAmount = useCallback(
+    (newAmount: string) => {
+      handleAmountChange(newAmount);
+    },
+    [handleAmountChange]
+  );
+
   const requiresValidAddress = isRelease && !isH2H;
   const handleAddressChange = useCallback(
     (event) => {
@@ -347,6 +354,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             balance={balance}
             asset={balanceAsset}
             chain={balanceChain}
+            onSetMaxAmount={handleSetMaxAmount}
           />
         ) : (
           <BalanceInfoPlaceholder />
