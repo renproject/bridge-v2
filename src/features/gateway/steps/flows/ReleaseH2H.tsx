@@ -16,11 +16,13 @@ import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { decimalsAmount } from "../../../../utils/numbers";
 import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
   pickChains,
 } from "../../../chain/chainUtils";
+import { useGetAssetUsdRate } from "../../../marketData/marketDataHooks";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
@@ -298,6 +300,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   const { t } = useTranslation();
   const allChains = useCurrentNetworkChains();
   const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { getUsdRate } = useGetAssetUsdRate(asset);
   const assetConfig = getAssetConfig(asset);
   const burnChainConfig = getChainConfig(from);
   const releaseChainConfig = getChainConfig(to);
@@ -452,6 +455,12 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     }
   }, [persistLocalTx, fromAccount, isCompleted, transaction]);
 
+  const burnAmountFormatted =
+    decimalsAmount(burnAmount, burnAssetDecimals) || amount.toString();
+  const releaseAmountFormatted =
+    decimalsAmount(releaseAmount, releaseAssetDecimals) || outputAmount;
+  const releaseAmountUsd = getUsdRate(releaseAmountFormatted);
+
   let Content = null;
   if (renVMStatus === null) {
     if (!fromConnected) {
@@ -468,11 +477,12 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
         <ReleaseH2HBurnTransactionStatus
           gateway={gateway}
           Fees={Fees}
+          burnAmount={burnAmountFormatted}
           burnStatus={burnStatus}
           burnConfirmations={burnConfirmations}
           burnTargetConfirmations={burnTargetConfirmations}
-          outputAmount={outputAmount}
-          outputAmountUsd={outputAmountUsd}
+          releaseAmount={releaseAmountFormatted}
+          releaseAmountUsd={outputAmountUsd}
           onSubmit={handleSubmitBurn}
           onReset={handleResetBurn}
           done={doneBurn}
@@ -489,10 +499,11 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
       <ReleaseH2HReleaseTransactionStatus
         gateway={gateway}
         Fees={Fees}
+        burnAmount={burnAmountFormatted}
         renVMStatus={renVMStatus}
         releaseStatus={releaseStatus}
-        outputAmount={outputAmount}
-        outputAmountUsd={outputAmountUsd}
+        releaseAmount={releaseAmountFormatted}
+        releaseAmountUsd={releaseAmountUsd}
         releaseConfirmations={releaseConfirmations}
         releaseTargetConfirmations={releaseTargetConfirmations}
         onReset={handleResetRelease}
@@ -510,10 +521,8 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
       <ReleaseH2HCompletedStatus
         gateway={gateway}
         burnTxUrl={burnTxUrl}
-        burnAmount={burnAmount}
-        releaseAssetDecimals={releaseAssetDecimals}
-        burnAssetDecimals={burnAssetDecimals}
-        releaseAmount={releaseAmount}
+        burnAmount={decimalsAmount(burnAmount, burnAssetDecimals)}
+        releaseAmount={decimalsAmount(releaseAmount, releaseAssetDecimals)}
         releaseTxUrl={releaseTxUrl}
         ioType={ioType}
       />
