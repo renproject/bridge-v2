@@ -439,9 +439,15 @@ export const UpdateTransactionForm: FunctionComponent<
           />
           <Box display="flex" justifyContent="flex-end">
             {connected && (
-              <Link onClick={handleImportAccount}>
-                Set current ${chain} account ({trimAddress(account)})
-              </Link>
+              <Typography variant="body2">
+                <Link
+                  color="primary"
+                  underline="hover"
+                  onClick={handleImportAccount}
+                >
+                  Set current {chain} account ({trimAddress(account)})
+                </Link>
+              </Typography>
             )}
           </Box>
         </OutlinedTextFieldWrapper>
