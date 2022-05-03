@@ -1,4 +1,10 @@
-import { DialogContent, Fab, Fade, Typography } from "@material-ui/core";
+import {
+  Button,
+  DialogContent,
+  Fab,
+  Fade,
+  Typography,
+} from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import { Feedback } from "@material-ui/icons";
 import React, { FunctionComponent, useCallback } from "react";
@@ -20,6 +26,7 @@ import {
   $issueResolver,
   $transactions,
   setIssueResolverOpened,
+  setTxRecoveryOpened,
 } from "./transactionsSlice";
 
 export const FundsChip = styled("p")(({ theme }) => ({
@@ -55,6 +62,10 @@ export const IssuesResolver: FunctionComponent = () => {
 
   const handleClose = useCallback(() => {
     dispatch(setIssueResolverOpened(false));
+  }, [dispatch]);
+
+  const handleOpenTxRecovery = useCallback(() => {
+    dispatch(setTxRecoveryOpened(true));
   }, [dispatch]);
 
   const explorer = getRenVmExplorerLink(currentTxHash);
@@ -110,6 +121,7 @@ export const IssuesResolver: FunctionComponent = () => {
             {t("tx.issue-resolver-go-to-explorer-label")}
           </ActionButton>
         </ActionButtonWrapper>
+        <Button onClick={handleOpenTxRecovery}>Recover Tx</Button>
         <ActionButtonWrapper>
           <Typography color="textSecondary" variant="body2">
             {t("tx.issue-resolver-unresolved-text")}{" "}

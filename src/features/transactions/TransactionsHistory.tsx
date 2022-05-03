@@ -40,7 +40,6 @@ import {
   MediumWrapper,
   SmallHorizontalPadder,
 } from "../../components/layout/LayoutHelpers";
-import { SpacedPaperContent } from "../../components/layout/Paper";
 import { CustomLink } from "../../components/links/Links";
 import { SimplePagination } from "../../components/pagination/SimplePagination";
 import { InlineSkeleton } from "../../components/progress/ProgressHelpers";
@@ -97,8 +96,10 @@ import {
 } from "./components/TransactionsHistoryHelpers";
 import {
   $txHistory,
+  $txRecovery,
   setShowConnectedTxs,
   setTxHistoryOpened,
+  setTxRecoveryOpened,
 } from "./transactionsSlice";
 
 const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
@@ -201,12 +202,6 @@ export const TransactionsHistory: FunctionComponent = () => {
 
   const handleRemoveFiltered = useCallback(() => {}, []);
 
-  const [txRecovery, setTxRecovery] = useState(false);
-  const handleToggleTxRecovery = useCallback(() => {
-    setTxRecovery(!txRecovery);
-  }, [txRecovery]);
-
-  const { asset: gatewayAsset, from, to } = useSelector($gateway);
   return (
     <WideDialog open={dialogOpened} onClose={handleTxHistoryClose}>
       <DialogTitle>
@@ -223,42 +218,32 @@ export const TransactionsHistory: FunctionComponent = () => {
       </DialogTitle>
       <div className={styles.filters}>
         <div className={styles.filtersControls}>
-          {!txRecovery ? (
-            <>
+          <RichDropdown
+            className={styles.spacer}
+            condensed
+            label={t("common.asset-label")}
+            getOptionData={getAssetOptionData}
+            options={supportedAssets}
+            value={asset}
+            onChange={handleAssetChange}
+            nameVariant="short"
+            showNone
+            noneLabel="All Assets"
+          />
+          <Fade in={showConnectedTxs}>
+            <div>
               <RichDropdown
-                className={styles.spacer}
                 condensed
-                label={t("common.asset-label")}
-                getOptionData={getAssetOptionData}
-                options={supportedAssets}
-                value={asset}
-                onChange={handleAssetChange}
-                nameVariant="short"
-                showNone
-                noneLabel="All Assets"
+                label={t("common.from-label")}
+                supplementalLabel={t("common.blockchain-label")}
+                getOptionData={getChainOptionData}
+                options={supportedContractChains}
+                value={chain}
+                onChange={handleChainChange}
+                nameVariant="full"
               />
-              <Fade in={showConnectedTxs}>
-                <div>
-                  <RichDropdown
-                    condensed
-                    label={t("common.from-label")}
-                    supplementalLabel={t("common.blockchain-label")}
-                    getOptionData={getChainOptionData}
-                    options={supportedContractChains}
-                    value={chain}
-                    onChange={handleChainChange}
-                    nameVariant="full"
-                  />
-                </div>
-              </Fade>
-            </>
-          ) : (
-            <>
-              <Typography>
-                Recover transaction for {gatewayAsset} from {from} to {to}
-              </Typography>
-            </>
-          )}
+            </div>
+          </Fade>
         </div>
         <div className={styles.filtersActions}>
           <TxHistoryMenu
@@ -267,21 +252,6 @@ export const TransactionsHistory: FunctionComponent = () => {
           >
             <FormControlLabel
               className={styles.checkboxLabel}
-              control={
-                <Checkbox
-                  checked={txRecovery}
-                  onChange={handleToggleTxRecovery}
-                  name="recovery"
-                  color="primary"
-                />
-              }
-              label={
-                <Typography variant="body1">Recover Tx by hash/id</Typography>
-              }
-            />
-            <FormControlLabel
-              className={styles.checkboxLabel}
-              disabled={txRecovery}
               checked={showConnectedTxs}
               onChange={handleCheckboxChange}
               control={<Checkbox name="walletTxs" color="primary" />}
@@ -294,21 +264,7 @@ export const TransactionsHistory: FunctionComponent = () => {
           </TxHistoryMenu>
         </div>
       </div>
-      {txRecovery ? (
-        <>
-          {gatewayAsset && from && to ? (
-            <UpdateTransactionForm asset={gatewayAsset} from={from} to={to} />
-          ) : (
-            <SpacedPaperContent>
-              <BigTopWrapper>
-                <Typography>
-                  Select asset and origin chain to begin tx recovery
-                </Typography>
-              </BigTopWrapper>
-            </SpacedPaperContent>
-          )}
-        </>
-      ) : showConnectedTxs ? (
+      {showConnectedTxs ? (
         <>
           {connected ? (
             <LocalTransactions address={account} chain={chain} asset={asset} />
@@ -944,5 +900,51 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       </Grid>
       <Debug disable it={localTxData} />
     </div>
+  );
+};
+
+export const TransactionRecovery: FunctionComponent = () => {
+  const styles = useTransactionHistoryStyles();
+  const dispatch = useDispatch();
+  const { dialogOpened } = useSelector($txRecovery);
+
+  // const { chain } = useSelector($wallet);
+  // const { connected, account } = useCurrentChainWallet();
+  // const chainConfig = getChainConfig(chain);
+
+  const handleTxRecoveryClose = useCallback(() => {
+    dispatch(setTxRecoveryOpened(false));
+  }, [dispatch]);
+
+  // const handleWalletPickerOpen = useCallback(() => {
+  //   dispatch(setPickerOpened(true));
+  // }, [dispatch]);
+
+  const { asset, from, to } = useSelector($gateway);
+  return (
+    <WideDialog open={dialogOpened} onClose={handleTxRecoveryClose}>
+      <DialogTitle>
+        <Typography variant="h6" align="center" component="div">
+          Transaction Recovery
+        </Typography>
+        <IconButton
+          aria-label="close"
+          className={styles.closeButton}
+          onClick={handleTxRecoveryClose}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <div className={styles.filters}>
+        <div className={styles.filtersControls}>
+          <>
+            <Typography>
+              Recover transaction for {asset} from {from} to {to}
+            </Typography>
+          </>
+        </div>
+      </div>
+      <UpdateTransactionForm asset={asset} from={from} to={to} />
+    </WideDialog>
   );
 };
