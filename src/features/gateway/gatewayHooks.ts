@@ -696,6 +696,8 @@ export enum GatewayIOType {
   burnAndRelease = "burnAndRelease",
 }
 
+(window as any).getInputAndOutputTypes = getInputAndOutputTypes;
+
 // TODO: memoize?
 //will become useGatewayParamsMeta
 export const useGatewayMeta = (
@@ -737,13 +739,15 @@ export const useGatewayMeta = (
     setIsToContractChain(Boolean(chains[to]?.connectionRequired));
     setIsFromContractChain(Boolean(chains[from]?.connectionRequired));
 
+    console.log("getInputAndOutputTypes", asset, from, to);
+
     getInputAndOutputTypes({
       asset,
       fromChain: chains[from]?.chain,
       toChain: chains[to]?.chain,
     })
       .then(({ inputType, outputType, selector }) => {
-        console.log(inputType, outputType);
+        console.log("getInputAndOutputTypes", inputType, outputType, selector);
         // deprecated, keep until cleaned
         if (inputType === InputType.Burn) {
           setIsBurn(true);
@@ -776,7 +780,7 @@ export const useGatewayMeta = (
         }
       })
       .catch((error) => {
-        console.warn(error);
+        console.error(error);
         reset();
       });
   }, [reset, chains, asset, from, to]);

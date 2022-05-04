@@ -18,7 +18,6 @@ import { Debug } from "../../../../components/utils/Debug";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
-import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
@@ -53,8 +52,8 @@ type MintH2HLockTransactionProgressStatusProps = SubmittingProps & {
   gateway: Gateway;
   transaction: GatewayTransaction | null;
   Fees: ReactNode | null;
-  outputAmount: string | null;
-  outputAmountUsd: string | null;
+  lockAmount: string | null;
+  mintAmount: string | null;
   lockStatus: ChainTransactionStatus | null;
   lockConfirmations: number | null;
   lockTargetConfirmations: number | null;
@@ -66,9 +65,9 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   gateway,
   transaction,
   Fees,
-  outputAmount,
-  outputAmountUsd,
   lockConfirmations,
+  lockAmount,
+  mintAmount,
   lockTargetConfirmations,
   lockStatus,
   onSubmit,
@@ -79,7 +78,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   submittingDisabled,
   errorSubmitting,
 }) => {
-  const { asset, from, to, toAddress, amount, fromAverageConfirmationTime } =
+  const { asset, from, to, toAddress, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const { Icon: SendIcon, RenIcon: ReceiveIcon } = getAssetConfig(asset);
   const sendIconTooltip = asset;
@@ -115,23 +114,16 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
             />
           </>
         )}
-        {/* <SendingReceivingSection
-          ioType={GatewayIOType.lockAndMint}
-          asset={asset}
-          sendingAmount={amount}
-          receivingAmount={outputAmount}
-          receivingAmountUsd={outputAmountUsd}
-        /> */}
         <SendingReceivingWrapper
           from={from}
           to={to}
-          amount={amount.toString()}
-          outputAmount={outputAmount || ""}
+          amount={lockAmount}
+          outputAmount={mintAmount}
           SendIcon={SendIcon}
           ReceiveIcon={ReceiveIcon}
           sendIconTooltip={sendIconTooltip}
           receiveIconTooltip={receiveIconTooltip}
-        ></SendingReceivingWrapper>
+        />
         <BigTopWrapper>
           <AccountWrapper chain={from} label="Sender Address">
             {trimAddress(fromAccount, 5)}
@@ -181,12 +173,11 @@ type MintH2HMintTransactionProgressStatusProps = SubmittingProps & {
   Fees: ReactNode | null;
   transaction: GatewayTransaction | null;
   renVMStatus: ChainTransactionStatus | null;
+  lockAmount: string | null;
   mintAmount: string | null;
   mintStatus: ChainTransactionStatus | null;
   mintConfirmations: number | null;
   mintTargetConfirmations: number | null;
-  outputAmount: string | null;
-  outputAmountUsd: string | null;
 };
 
 export const MintH2HMintTransactionProgressStatus: FunctionComponent<
@@ -196,12 +187,11 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   Fees,
   transaction,
   renVMStatus,
+  lockAmount,
   mintAmount,
   mintConfirmations,
   mintTargetConfirmations,
   mintStatus,
-  outputAmount,
-  outputAmountUsd,
   onSubmit,
   onReset,
   submitting,
@@ -209,7 +199,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   done,
   errorSubmitting,
 }) => {
-  const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { asset, from, to } = getGatewayParams(gateway);
   const { Icon: SendIcon, RenIcon: ReceiveIcon } = getAssetConfig(asset);
   const sendIconTooltip = asset;
   const receiveIconTooltip = `ren${asset}`;
@@ -240,8 +230,8 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
         <SendingReceivingWrapper
           from={from}
           to={to}
-          amount={amount.toString()}
-          outputAmount={outputAmount || ""}
+          amount={lockAmount}
+          outputAmount={mintAmount}
           SendIcon={SendIcon}
           ReceiveIcon={ReceiveIcon}
           sendIconTooltip={sendIconTooltip}
@@ -291,23 +281,13 @@ type MintH2HCompletedStatusProps = {
   gateway: Gateway;
   lockTxUrl: string | null;
   lockAmount: string | null;
-  lockAssetDecimals: number | null;
   mintTxUrl: string | null;
   mintAmount: string | null;
-  mintAssetDecimals: number | null;
 };
 
 export const MintH2HCompletedStatus: FunctionComponent<
   MintH2HCompletedStatusProps
-> = ({
-  gateway,
-  lockTxUrl,
-  lockAmount,
-  lockAssetDecimals,
-  mintTxUrl,
-  mintAmount,
-  mintAssetDecimals,
-}) => {
+> = ({ gateway, lockTxUrl, lockAmount, mintTxUrl, mintAmount }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.complete-title"));
 
@@ -317,11 +297,8 @@ export const MintH2HCompletedStatus: FunctionComponent<
   const lockAssetConfig = getAssetConfig(gateway.params.asset);
   const mintChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
-  const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
-
   const notificationMessage = t("mint.success-notification-message", {
-    total: mintAmountFormatted,
+    total: mintAmount,
     currency: lockAssetConfig.shortName,
     chain: mintChainConfig.fullName,
   });
@@ -347,8 +324,8 @@ export const MintH2HCompletedStatus: FunctionComponent<
       <ChainProgressDone chain={to} />
       <SentReceivedSection
         ioType={GatewayIOType.lockAndMint}
-        sentAmount={lockAmountFormatted}
-        receivedAmount={mintAmountFormatted}
+        sentAmount={lockAmount}
+        receivedAmount={mintAmount}
         asset={asset}
       />
       <FromToTxLinks

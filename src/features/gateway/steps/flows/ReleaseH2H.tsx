@@ -49,7 +49,10 @@ import {
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
-import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
+import {
+  GatewayPaperHeader,
+  TransactionRecoveryModal,
+} from "../shared/GatewayNavigationHelpers";
 import {
   H2HAccountsResolver,
   SwitchWalletDialog,
@@ -532,6 +535,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   return (
     <>
       {Content}
+      <TransactionRecoveryModal gateway={gateway} recoveryMode={recoveryMode} />
       <SwitchWalletDialog
         open={!isCompleted && showSwitchWalletDialog}
         targetChain={to}

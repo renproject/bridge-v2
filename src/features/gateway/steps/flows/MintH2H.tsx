@@ -1,4 +1,4 @@
-import { Box, Checkbox, Divider, FormControlLabel, Typography } from "@material-ui/core";
+import { Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, {
@@ -21,6 +21,7 @@ import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
 import { useNotifications } from "../../../../providers/Notifications";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
+import { decimalsAmount } from "../../../../utils/numbers";
 import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
@@ -296,7 +297,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const receiveIconTooltip = `ren${asset}`;
   const fees = useGatewayFeesWithRates(gateway, amount || 0);
 
-  const { outputAmount, outputAmountUsd } = fees;
+  const { outputAmount } = fees;
 
   const inSetupApprovalSubmitter = useChainTransactionSubmitter({
     tx: gateway.inSetup.approval,
@@ -440,8 +441,6 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
 
-  // const { connected: fromConnected } = useWallet(from);
-
   const isCompleted = mintTxUrl !== null;
   useEffect(() => {
     if (transaction !== null && isCompleted) {
@@ -452,8 +451,14 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   useSetCurrentTxHash(transaction?.hash);
 
+  const lockAmountFormatted =
+    decimalsAmount(lockAmount, lockAssetDecimals) || amount.toString();
+  const mintAmountFormatted =
+    decimalsAmount(mintAmount, mintAssetDecimals) || outputAmount;
+
   let Content = null;
   // TODO: consider making similar to Relase H2H
+  // const { connected: fromConnected } = useWallet(from);
   // if (!fromConnected) {
   //   Content = (
   //     <PCW>
@@ -493,22 +498,6 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
             {/* <AddressInfo address={fromAccount} label="Sender Address" />
             <AddressInfo address={toAccount} label="Recipient Address" /> */}
           </BigTopWrapper>
-          <Box display="flex" alignItems="center" justifyContent="center">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="primary"
-                  color="primary"
-                />
-              }
-              disabled={true}
-              label={
-                <Typography variant="caption">
-                  I want to transfer to a different account
-                </Typography>
-              }
-            />
-          </Box>
         </PaperContent>
         <Divider />
         <PaperContent darker topPadding bottomPadding>
@@ -533,8 +522,8 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         gateway={gateway}
         transaction={transaction}
         Fees={Fees}
-        outputAmount={outputAmount}
-        outputAmountUsd={outputAmountUsd}
+        lockAmount={lockAmountFormatted}
+        mintAmount={mintAmountFormatted}
         lockConfirmations={lockConfirmations}
         lockTargetConfirmations={lockTargetConfirmations}
         lockStatus={lockStatus}
@@ -553,10 +542,9 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         gateway={gateway}
         transaction={transaction}
         Fees={Fees}
-        outputAmount={outputAmount}
-        outputAmountUsd={outputAmountUsd}
         renVMStatus={renVMStatus}
-        mintAmount={mintAmount} // clean this up
+        lockAmount={lockAmountFormatted}
+        mintAmount={mintAmountFormatted}
         mintConfirmations={mintConfirmations}
         mintTargetConfirmations={mintTargetConfirmations}
         mintStatus={mintStatus}
@@ -573,10 +561,8 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       <MintH2HCompletedStatus
         gateway={gateway}
         lockTxUrl={lockTxUrl}
-        lockAmount={lockAmount}
-        lockAssetDecimals={lockAssetDecimals}
-        mintAmount={mintAmount}
-        mintAssetDecimals={mintAssetDecimals}
+        lockAmount={lockAmountFormatted}
+        mintAmount={mintAmountFormatted}
         mintTxUrl={mintTxUrl}
       />
     );
