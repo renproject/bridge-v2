@@ -29,7 +29,7 @@ import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import {
   getAssetConfig,
-  getRenAssetConfig,
+  getUIAsset,
   supportedAssets,
 } from "../../../utils/assetsConfig";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
@@ -248,9 +248,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const hideTo = isRelease && toChains.length === 1;
 
   const toChainConfig = getChainConfig(to);
-  // TODO: fix
-  const renAssetConfig = getRenAssetConfig(asset);
-  const assetConfig = getAssetConfig(asset);
+
   const { connected } = useCurrentChainWallet();
 
   const handleConnect = useCallback(() => {
@@ -272,14 +270,9 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     account,
     isFromContractChain ? fromConnected : undefined
   );
-  // const balanceAsset = isH2H ? assetConfig.shortName : renAssetConfig.shortName;
-  const balanceAsset =
-    isRelease || isMove
-      ? renAssetConfig.shortName
-      : isH2H
-      ? assetConfig.shortName
-      : renAssetConfig.shortName;
-  const balanceChain = isRelease ? from : isH2H ? from : to;
+
+  const uiAsset = getUIAsset(asset, from);
+  // const balanceChain = isRelease ? from : isH2H ? from : to;
 
   const requiresInitialAmount = isFromContractChain;
   const hasInitialAmount = amount !== "";
@@ -329,7 +322,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           <BigCurrencyInputWrapper>
             <BigCurrencyInput
               onChange={handleAmountChange}
-              symbol={renAssetConfig.shortName}
+              symbol={uiAsset.shortName}
               usdValue={amountUsd}
               value={amount}
               errorText={
@@ -352,8 +345,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {fromConnected && isFromContractChain ? (
           <BalanceInfo
             balance={balance}
-            asset={balanceAsset}
-            chain={balanceChain}
+            asset={uiAsset.shortName}
+            chain={from}
             onSetMaxAmount={handleSetMaxAmount}
           />
         ) : (

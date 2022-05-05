@@ -413,6 +413,20 @@ export const getOriginAssetName = (renAsset: string) => {
   return renAsset.substr(3);
 };
 
+export const isChainNativeAsset = (chain: Chain, asset: Asset) => {
+  return getAssetConfig(asset).lockChain === chain;
+};
+
+export const getUIAsset = (asset: Asset, chain: Chain) => {
+  const assetConfig = getAssetConfig(asset);
+  const isNative = isChainNativeAsset(chain, asset);
+  const renAssetConfig = getRenAssetConfig(asset);
+  const shortName = isNative ? assetConfig.shortName : renAssetConfig.shortName;
+  const fullName = isNative ? assetConfig.fullName : renAssetConfig.fullName;
+  const Icon = isNative ? assetConfig.Icon : renAssetConfig.Icon;
+  return { shortName, fullName, Icon };
+};
+
 export const supportedAssets =
   env.ENABLED_ASSETS[0] === "*"
     ? [
