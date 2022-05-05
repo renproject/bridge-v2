@@ -160,6 +160,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   }, [dispatch, ioType, asset, from]);
 
   useEffect(() => {
+    dispatch(setToAddress(""));
     filterChains(asset);
   }, [asset, filterChains]);
 
