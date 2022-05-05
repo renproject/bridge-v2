@@ -8,7 +8,6 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import {
@@ -35,7 +34,6 @@ import {
 } from "../../../transactions/components/TransactionsHelpers";
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
-import { $wallet } from "../../../wallet/walletSlice";
 import { BalanceInfoPlaceholder } from "../../components/BalanceHelpers";
 import { FeesToggler } from "../../components/FeeHelpers";
 import { GatewayFees } from "../../components/GatewayFees";
@@ -64,7 +62,7 @@ import {
   AccountWrapper,
   H2HAccountsResolver,
   SendingReceivingWrapper,
-  SwitchWalletDialog,
+  WalletConnectionActionButtonGuard,
 } from "../shared/WalletSwitchHelpers";
 import {
   MintH2HCompletedStatus,
@@ -401,11 +399,6 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     }
   }, [allChains, activeChain, provider, connected]);
 
-  const { chain } = useSelector($wallet);
-  const { connected: toConnected } = useWallet(to);
-  const showSwitchWalletDialog =
-    renVMStatus !== null && !toConnected && chain !== to;
-
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
     debugLabel: "out",
@@ -507,14 +500,16 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         <PaperContent darker topPadding bottomPadding>
           <FeesToggler>{Fees}</FeesToggler>
           <ActionButtonWrapper>
-            <ActionButton
-              onClick={handleSubmitApproval}
-              disabled={submittingApproval || recoveryMode}
-            >
-              {submittingApproval
-                ? "Approving Accounts & Contracts..."
-                : "Confirm"}
-            </ActionButton>
+            <WalletConnectionActionButtonGuard chain={from}>
+              <ActionButton
+                onClick={handleSubmitApproval}
+                disabled={submittingApproval || recoveryMode}
+              >
+                {submittingApproval
+                  ? "Approving Accounts & Contracts..."
+                  : "Confirm"}
+              </ActionButton>
+            </WalletConnectionActionButtonGuard>
           </ActionButtonWrapper>
         </PaperContent>
       </>
@@ -575,7 +570,6 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     <>
       {Content}
       <TransactionRecoveryModal gateway={gateway} recoveryMode={recoveryMode} />
-      <SwitchWalletDialog open={showSwitchWalletDialog} targetChain={to} />
       {renVMSubmitter.errorSubmitting && (
         <SubmitErrorDialog
           open={true}

@@ -300,8 +300,11 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
                           t("wallet.operation-safely-rejected-message")}
                         {error.code === -32002 &&
                           t("wallet.operation-not-finished-message")}
+                        {error.code === -32601 &&
+                          t("wallet.switching-network-not-supported-message")}
                       </CenteredFormHelperText>
                     )}
+                    <Debug it={{ error }} />
                   </Box>
                 </Fade>
               </Box>
@@ -421,7 +424,7 @@ const useWalletConnectionStatusButtonStyles = makeStyles<Theme>((theme) => ({
     marginLeft: 10,
     marginRight: 10,
     paddingLeft: 10,
-    borderLeft: '1px solid #DBE0E8'
+    borderLeft: "1px solid #DBE0E8",
   },
 }));
 

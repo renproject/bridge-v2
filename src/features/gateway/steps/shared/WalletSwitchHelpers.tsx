@@ -55,6 +55,32 @@ import { GatewayFees } from "../../components/GatewayFees";
 import { useGatewayFeesWithoutGateway } from "../../gatewayHooks";
 import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
 
+type WalletConnectionActionButtonGuardProps = {
+  chain: Chain;
+};
+
+export const WalletConnectionActionButtonGuard: FunctionComponent<
+  WalletConnectionActionButtonGuardProps
+> = ({ chain, children }) => {
+  const dispatch = useDispatch();
+  const { connected } = useWallet(chain);
+
+  const handleConnect = useCallback(() => {
+    dispatch(setPickerOpened(true));
+  }, [dispatch]);
+
+  if (connected) {
+    return <>{children}</>;
+  }
+  const chainConfig = getChainConfig(chain);
+
+  return (
+    <ActionButton onClick={handleConnect}>
+      Connect {chainConfig.fullName} Wallet
+    </ActionButton>
+  );
+};
+
 const useSwitchWalletDialogStyles = makeStyles((theme) => ({
   top: {
     marginBottom: 20,

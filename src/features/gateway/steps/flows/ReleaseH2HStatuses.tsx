@@ -43,6 +43,7 @@ import {
   SendingReceivingSection,
   SentReceivedSection,
 } from "../shared/TransactionStatuses";
+import { WalletConnectionActionButtonGuard } from "../shared/WalletSwitchHelpers";
 
 type ReleaseH2HBurnTransactionStatusProps = SubmittingProps & {
   gateway: Gateway;
@@ -133,14 +134,16 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
       <PaperContent darker bottomPadding topPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <ActionButtonWrapper>
-          <ActionButton
-            onClick={onSubmit}
-            disabled={submittingDisabled || submitting || waiting || done}
-          >
-            {submitting || waiting
-              ? t("gateway.submitting-tx-label")
-              : t("gateway.submit-tx-label")}
-          </ActionButton>
+          <WalletConnectionActionButtonGuard chain={from}>
+            <ActionButton
+              onClick={onSubmit}
+              disabled={submittingDisabled || submitting || waiting || done}
+            >
+              {submitting || waiting
+                ? t("gateway.submitting-tx-label")
+                : t("gateway.submit-tx-label")}
+            </ActionButton>
+          </WalletConnectionActionButtonGuard>
         </ActionButtonWrapper>
       </PaperContent>
       {errorSubmitting && (
@@ -232,14 +235,16 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
       <PaperContent topPadding darker bottomPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
-          <ActionButton
-            onClick={onSubmit}
-            disabled={submittingDisabled || submitting || waiting || done}
-          >
-            {submitting || waiting
-              ? t("gateway.submitting-tx-label")
-              : t("gateway.submit-tx-label")}
-          </ActionButton>
+          <WalletConnectionActionButtonGuard chain={to}>
+            <ActionButton
+              onClick={onSubmit}
+              disabled={submittingDisabled || submitting || waiting || done}
+            >
+              {submitting || waiting
+                ? t("gateway.submitting-tx-label")
+                : t("gateway.submit-tx-label")}
+            </ActionButton>
+          </WalletConnectionActionButtonGuard>
         </MultipleActionButtonWrapper>
       </PaperContent>
       {errorSubmitting && (

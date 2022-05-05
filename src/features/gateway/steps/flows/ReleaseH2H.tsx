@@ -7,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import { Debug } from "../../../../components/utils/Debug";
@@ -27,9 +26,7 @@ import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
-import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
-import { $wallet } from "../../../wallet/walletSlice";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
@@ -53,10 +50,7 @@ import {
   GatewayPaperHeader,
   TransactionRecoveryModal,
 } from "../shared/GatewayNavigationHelpers";
-import {
-  H2HAccountsResolver,
-  SwitchWalletDialog,
-} from "../shared/WalletSwitchHelpers";
+import { H2HAccountsResolver } from "../shared/WalletSwitchHelpers";
 import {
   ReleaseH2HBurnTransactionStatus,
   ReleaseH2HCompletedStatus,
@@ -413,11 +407,6 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     }
   }, [allChains, activeChain, provider, connected]);
 
-  const { chain } = useSelector($wallet);
-  const { connected: toConnected } = useWallet(to);
-  const showSwitchWalletDialog =
-    renVMStatus !== null && !toConnected && chain !== to;
-
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
     debugLabel: "out",
@@ -466,37 +455,26 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   let Content = null;
   if (renVMStatus === null) {
-    if (!fromConnected) {
-      Content = (
-        <PCW>
-          <ConnectWalletPaperSection
-            chain={from}
-            isRecoveringTx={recoveryMode}
-          />
-        </PCW>
-      );
-    } else {
-      Content = (
-        <ReleaseH2HBurnTransactionStatus
-          gateway={gateway}
-          Fees={Fees}
-          burnAmount={burnAmountFormatted}
-          burnStatus={burnStatus}
-          burnConfirmations={burnConfirmations}
-          burnTargetConfirmations={burnTargetConfirmations}
-          releaseAmount={releaseAmountFormatted}
-          releaseAmountUsd={outputAmountUsd}
-          onSubmit={handleSubmitBurn}
-          onReset={handleResetBurn}
-          done={doneBurn}
-          waiting={waitingBurn}
-          submitting={submittingBurn}
-          errorSubmitting={errorSubmittingBurn}
-          submittingDisabled={recoveryMode} // transaction from recovery should have this step finished
-          ioType={ioType}
-        />
-      );
-    }
+    Content = (
+      <ReleaseH2HBurnTransactionStatus
+        gateway={gateway}
+        Fees={Fees}
+        burnAmount={burnAmountFormatted}
+        burnStatus={burnStatus}
+        burnConfirmations={burnConfirmations}
+        burnTargetConfirmations={burnTargetConfirmations}
+        releaseAmount={releaseAmountFormatted}
+        releaseAmountUsd={outputAmountUsd}
+        onSubmit={handleSubmitBurn}
+        onReset={handleResetBurn}
+        done={doneBurn}
+        waiting={waitingBurn}
+        submitting={submittingBurn}
+        errorSubmitting={errorSubmittingBurn}
+        submittingDisabled={recoveryMode} // transaction from recovery should have this step finished
+        ioType={ioType}
+      />
+    );
   } else if (releaseTxUrl === null) {
     Content = (
       <ReleaseH2HReleaseTransactionStatus
@@ -536,10 +514,6 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     <>
       {Content}
       <TransactionRecoveryModal gateway={gateway} recoveryMode={recoveryMode} />
-      <SwitchWalletDialog
-        open={!isCompleted && showSwitchWalletDialog}
-        targetChain={to}
-      />
       <Debug
         it={{
           fromConnected,

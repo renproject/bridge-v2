@@ -426,7 +426,7 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
 ) => {
   const { t } = useTranslation();
   let message = t("tx.submitting-error-popup-message");
-  if (props.error?.code === 4001) {
+  if (props.error?.code === 4001 || props.error?.error === "Rejected by user") {
     message = t("tx.submitting-error-popup-message-signature-rejected-text");
   }
   return (

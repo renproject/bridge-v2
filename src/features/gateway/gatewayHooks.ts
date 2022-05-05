@@ -371,6 +371,9 @@ export const useContractChainAssetBalance = (
       console.error(error);
       setError(error);
     });
+    return () => {
+      // cancel the promise
+    };
   }, [instance, connected, decimals, asset, address]);
 
   return { balance, error };

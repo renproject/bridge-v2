@@ -28,7 +28,6 @@ import {
   useCurrentChainWallet,
   useWallet,
   useWalletAssetHelpers,
-  useWalletPicker,
 } from "../../../wallet/walletHooks";
 import { FeesToggler } from "../../components/FeeHelpers";
 import {
@@ -46,6 +45,7 @@ import {
 import {
   AccountWrapper,
   SendingReceivingWrapper,
+  WalletConnectionActionButtonGuard,
 } from "../shared/WalletSwitchHelpers";
 
 type MintH2HLockTransactionProgressStatusProps = SubmittingProps & {
@@ -140,21 +140,23 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
       <PaperContent darker topPadding bottomPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
-          <ActionButton
-            onClick={onSubmit}
-            disabled={
-              submittingDisabled ||
-              submitting ||
+          <WalletConnectionActionButtonGuard chain={from}>
+            <ActionButton
+              onClick={onSubmit}
+              disabled={
+                submittingDisabled ||
+                submitting ||
+                waiting ||
+                lockStatus === ChainTransactionStatus.Confirming
+              }
+            >
+              {submitting ||
               waiting ||
               lockStatus === ChainTransactionStatus.Confirming
-            }
-          >
-            {submitting ||
-            waiting ||
-            lockStatus === ChainTransactionStatus.Confirming
-              ? `Locking on ${fromChainConfig.shortName}...`
-              : `Starting Bridging`}
-          </ActionButton>
+                ? `Locking on ${fromChainConfig.shortName}...`
+                : `Starting Bridging`}
+            </ActionButton>
+          </WalletConnectionActionButtonGuard>
           {errorSubmitting && (
             <SubmitErrorDialog
               open={true}
@@ -205,9 +207,6 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   const receiveIconTooltip = `ren${asset}`;
   const mintChainConfig = getChainConfig(to);
 
-  const { connected } = useWallet(to);
-  const { handlePickerOpen, pickerOpened } = useWalletPicker();
-
   const { Icon: ChainIcon } = mintChainConfig;
   return (
     <>
@@ -249,7 +248,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
       <PaperContent topPadding bottomPadding darker>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
-          {connected && (
+          <WalletConnectionActionButtonGuard chain={to}>
             <ActionButton
               onClick={onSubmit}
               disabled={submitting || waiting || !mintAmount}
@@ -258,12 +257,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
                 ? `Minting on ${mintChainConfig.shortName}...`
                 : `Mint on ${mintChainConfig.shortName}`}
             </ActionButton>
-          )}
-          {!connected && (
-            <ActionButton onClick={handlePickerOpen} disabled={pickerOpened}>
-              Connect {mintChainConfig.shortName} Wallet
-            </ActionButton>
-          )}
+          </WalletConnectionActionButtonGuard>
           {errorSubmitting && (
             <SubmitErrorDialog
               open={true}
