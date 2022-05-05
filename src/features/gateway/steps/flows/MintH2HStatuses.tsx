@@ -1,4 +1,10 @@
-import { Box, Divider } from "@material-ui/core";
+import {
+  Box,
+  Checkbox,
+  Divider,
+  FormControlLabel,
+  Typography,
+} from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent, ReactNode } from "react";
@@ -132,16 +138,29 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           sendIconTooltip={sendIconTooltip}
           receiveIconTooltip={receiveIconTooltip}
         ></SendingReceivingWrapper>
-        <BigTopWrapper>
-          <AccountWrapper chain={from} label="Sender Address">
-            {trimAddress(fromAccount, 5)}
-          </AccountWrapper>
-          <AccountWrapper chain={to} label="Recipient Address">
-            {trimAddress(toAddress, 5)}
-          </AccountWrapper>
-          {/* <AddressInfo address={fromAccount} label="Sender Address" />
+        {!showProgress && (
+          <BigTopWrapper>
+            <AccountWrapper chain={from} label="Sender Address">
+              {trimAddress(fromAccount, 5)}
+            </AccountWrapper>
+            <AccountWrapper chain={to} label="Recipient Address">
+              {trimAddress(toAddress, 5)}
+            </AccountWrapper>
+            {/* <AddressInfo address={fromAccount} label="Sender Address" />
             <AddressInfo address={toAccount} label="Recipient Address" /> */}
-        </BigTopWrapper>
+          </BigTopWrapper>
+        )}
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <FormControlLabel
+            control={<Checkbox name="primary" color="primary" />}
+            disabled={true}
+            label={
+              <Typography variant="caption">
+                I want to transfer to a different account
+              </Typography>
+            }
+          />
+        </Box>
         {/* <WalletNetworkSwitchMessage /> */}
       </PaperContent>
       <Divider />
