@@ -315,7 +315,11 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     startTrigger: submittingApprovalDone || recoveryMode,
   });
 
-  const { status: approvalStatus } = inSetupApprovalTxMeta;
+  const { status: inSetupApprovalStatus } = inSetupApprovalTxMeta;
+  // for native currencies approval is not required
+  const approvalStatus = gateway.inSetup.approval
+    ? inSetupApprovalStatus
+    : ChainTransactionStatus.Done;
   // TODO: solana
 
   const gatewayInSubmitter = useChainTransactionSubmitter({

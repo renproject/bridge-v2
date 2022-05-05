@@ -423,6 +423,13 @@ export const supportedAssets =
         Asset.FIL,
         Asset.LUNA,
         Asset.ZEC,
+        Asset.ETH,
+        Asset.BNB,
+        Asset.AVAX,
+        Asset.FTM,
+        Asset.ArbETH,
+        Asset.MATIC,
+        // Asset.SOL, // not sure about that
         Asset.REN,
         Asset.DAI,
         Asset.USDC,
