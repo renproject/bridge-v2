@@ -80,8 +80,10 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   useSyncWalletNetwork();
   const { network } = useSelector($network);
   const { chain, pickerOpened } = useSelector($wallet);
+  const multiwallet = useWallet(chain);
+  (window as any).multiwallet = multiwallet;
   const { status, account, connected, deactivateConnector, wallet } =
-    useWallet(chain);
+    multiwallet;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {

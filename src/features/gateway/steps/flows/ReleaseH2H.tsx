@@ -409,7 +409,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
-    debugLabel: "out",
+    debugLabel: "out"
   });
   const {
     handleSubmit: handleSubmitRelease,

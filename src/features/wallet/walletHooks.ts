@@ -259,8 +259,7 @@ export const useEns = (address: string | undefined) => {
           provider = new ethers.providers.StaticJsonRpcProvider(
             `https://mainnet.infura.io/v3/${env.INFURA_ID}`
           );
-        }
-        else {
+        } else {
           provider = ethers.getDefaultProvider(env.NETWORK);
         }
         const ensName = await provider.lookupAddress(address);
@@ -273,4 +272,4 @@ export const useEns = (address: string | undefined) => {
   }, [address]);
 
   return { ensName };
-}
+};
