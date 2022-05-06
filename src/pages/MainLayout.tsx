@@ -187,6 +187,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           status={status}
           account={account}
           wallet={wallet}
+          chain={chain}
         />
         <WalletPickerModal open={pickerOpened} options={walletPickerOptions} />
       </div>
@@ -235,6 +236,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           status={status}
           account={account}
           wallet={wallet}
+          chain={chain}
         />
       </ListItem>
       <ListItem

@@ -44,6 +44,7 @@ import { defaultShadow } from "../../../theme/other";
 import {
   getChainConfig,
   getChainNetworkConfig,
+  supportedEthereumChains,
 } from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
 import { getWalletConfig, Wallet } from "../../../utils/walletsConfig";
@@ -431,6 +432,7 @@ const useWalletConnectionStatusButtonStyles = makeStyles<Theme>((theme) => ({
 type WalletConnectionStatusButtonProps = ButtonProps & {
   status: WalletStatus;
   wallet: Wallet;
+  chain: Chain;
   hoisted?: boolean;
   account?: string;
   mobile?: boolean;
@@ -438,7 +440,16 @@ type WalletConnectionStatusButtonProps = ButtonProps & {
 
 export const WalletConnectionStatusButton: FunctionComponent<
   WalletConnectionStatusButtonProps
-> = ({ status, account, wallet, hoisted, className, mobile, ...rest }) => {
+> = ({
+  status,
+  account,
+  wallet,
+  chain,
+  hoisted,
+  className,
+  mobile,
+  ...rest
+}) => {
   const { Icon } = getWalletConfig(wallet as Wallet);
   const { t } = useTranslation();
   const {
@@ -450,6 +461,7 @@ export const WalletConnectionStatusButton: FunctionComponent<
   } = useWalletConnectionStatusButtonStyles();
   const { ensName } = useEns(account);
 
+  const chainConfig = getChainConfig(chain);
   const trimmedAddress = trimAddress(account);
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: hoisted,
@@ -462,7 +474,12 @@ export const WalletConnectionStatusButton: FunctionComponent<
         classes,
       };
   return (
-    <Button className={resolvedClassName} {...buttonProps} {...rest}>
+    <Button
+      className={resolvedClassName}
+      {...buttonProps}
+      {...rest}
+      title={chainConfig.fullName}
+    >
       <WalletConnectionIndicator
         status={status}
         className={mobile ? indicatorMobileClassName : indicatorClassName}
@@ -474,11 +491,13 @@ export const WalletConnectionStatusButton: FunctionComponent<
       {account && (
         <>
           <span className={accountClassName}>{ensName || trimmedAddress}</span>
-          <Davatar
-            size={24}
-            address={account as string}
-            generatedAvatarType="jazzicon"
-          />
+          {supportedEthereumChains.includes(chain) && (
+            <Davatar
+              size={24}
+              address={account as string}
+              generatedAvatarType="jazzicon"
+            />
+          )}
         </>
       )}
     </Button>
