@@ -68,6 +68,7 @@ import {
 } from "../features/wallet/walletHooks";
 import { $wallet, setPickerOpened } from "../features/wallet/walletSlice";
 import { getMultiwalletConfig } from "../providers/multiwallet/multiwalletConfig";
+import { Wallet } from "../utils/walletsConfig";
 
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
@@ -82,8 +83,14 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const { chain, pickerOpened } = useSelector($wallet);
   const multiwallet = useWallet(chain);
   (window as any).multiwallet = multiwallet;
-  const { status, account, connected, deactivateConnector, wallet } =
-    multiwallet;
+  const {
+    status,
+    account,
+    connected,
+    deactivateConnector,
+    refreshConnector,
+    wallet,
+  } = multiwallet;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {
@@ -131,6 +138,11 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     deactivateConnector();
     handleWalletMenuClose();
   }, [deactivateConnector, handleWalletMenuClose]);
+
+  const handleRefreshAccounts = useCallback(() => {
+    refreshConnector();
+    handleWalletMenuClose();
+  }, [refreshConnector, handleWalletMenuClose]);
 
   const found = useDirtySolanaWalletDetector();
   const walletPickerOptions = useMemo(() => {
@@ -264,6 +276,11 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       <MenuItem onClick={handleDisconnectWallet}>
         <Typography color="error">{t("wallet.disconnect")}</Typography>
       </MenuItem>
+      {wallet === Wallet.Phantom && (
+        <MenuItem onClick={handleRefreshAccounts}>
+          <Typography>Refresh accounts</Typography>
+        </MenuItem>
+      )}
     </Menu>
   );
   return (

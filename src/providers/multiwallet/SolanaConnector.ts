@@ -37,6 +37,8 @@ export class SolanaConnector
   wallet: Wallet;
   providerURL: string | { postMessage: Function };
   clusterURL: string;
+  interval: any;
+
   constructor({
     debug = false,
     network,
@@ -50,15 +52,24 @@ export class SolanaConnector
     this.emitter = new ConnectorEmitter<SolanaProvider, string>(debug);
     this.wallet = new Wallet(this.providerURL, this.clusterURL);
 
+    // this.interval = setInterval(() => {
+    //   this.handleUpdate();
+    // }, 3000);
+
     (window as any).solanaConnector = this;
   }
 
   handleUpdate = () => {
+    console.log("phantom handleUpdate");
     this.getStatus()
       .then((...args) => {
+        console.log("phantom getStatus success", args);
         this.emitter.emitUpdate(...args);
       })
-      .catch(() => this.deactivate());
+      .catch(() => {
+        console.log("phantom getStatus Error");
+        this.deactivate();
+      });
   };
 
   async activate() {
@@ -75,7 +86,7 @@ export class SolanaConnector
     await this.wallet.connect();
     console.log("phantom activate", this);
     // // console.log(await this.wallet.connect());
-    const [publicKey, _] = await Promise.all([
+    const [publicKey] = await Promise.all([
       new Promise((resolve, reject) => {
         solana.on("connect", (pk: PublicKey) => {
           console.log("phantom connect", pk.toString());
@@ -137,7 +148,14 @@ export class SolanaConnector
 
   // Get default wallet pubkey
   getAccount() {
-    const account = this.getProvider().wallet.publicKey?.toBase58();
+    let account = this.getProvider().wallet.publicKey?.toBase58();
+    if (this.providerURL !== "string") {
+      const providerKey = (this.providerURL as any).publicKey;
+      if (providerKey) {
+        account = providerKey.toBase58();
+      }
+    }
+
     if (!account) {
       this.deactivate();
       console.error("missing account");

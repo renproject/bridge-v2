@@ -23,6 +23,7 @@ type WalletData = ReturnType<typeof useMultiwallet> & {
   provider: any;
   wallet: Wallet;
   deactivateConnector: () => void;
+  refreshConnector: () => void;
 };
 
 const resolveWalletByProvider = (provider: any) => {
@@ -62,9 +63,16 @@ export const useWallet: UseWallet = (chain) => {
   const provider = enabledChains?.[chain]?.provider;
   // TODO: crit this is faulty FIX this
   const wallet = resolveWalletByProvider(provider);
-  const emptyFn = () => {};
-  const deactivateConnector =
-    enabledChains[chain]?.connector.deactivate || emptyFn;
+  const deactivateConnector = useCallback(() => {
+    enabledChains[chain]?.connector.deactivate();
+  }, [enabledChains, chain]);
+
+  const refreshConnector = useCallback(() => {
+    deactivateConnector();
+    setTimeout(() => {
+      enabledChains[chain]?.connector.activate();
+    }, 2000);
+  }, [enabledChains, chain, deactivateConnector]);
 
   (window as any).p = provider;
   return {
@@ -78,6 +86,7 @@ export const useWallet: UseWallet = (chain) => {
     activateConnector,
     setTargetNetwork,
     deactivateConnector,
+    refreshConnector,
   } as WalletData;
 };
 

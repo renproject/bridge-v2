@@ -192,18 +192,18 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
             network,
           }),
         },
-        // {
-        //   name: Wallet.Sollet,
-        //   logo: "",
-        //   connector: new SolanaConnector({
-        //     providerURL: "https://www.sollet.io",
-        //     clusterURL:
-        //       network === RenNetwork.Mainnet
-        //         ? "https://ren.rpcpool.com/"
-        //         : undefined,
-        //     network,
-        //   }),
-        // },
+        {
+          name: Wallet.Sollet,
+          logo: "",
+          connector: new SolanaConnector({
+            providerURL: "https://www.sollet.io",
+            clusterURL:
+              network === RenNetwork.Mainnet
+                ? "https://ren.rpcpool.com/"
+                : undefined,
+            network,
+          }),
+        },
       ],
       [Chain.Arbitrum]: [
         {
