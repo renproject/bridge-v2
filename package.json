@@ -84,6 +84,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "cross-env GENERATE_SOURCEMAP=false react-app-rewired start",
     "build": "react-app-rewired --max-old-space-size=8192 build",
+    "postbuild": "echo $COMMIT_REF > build/build.txt",
     "test": "react-app-rewired test",
     "lint": "eslint --ext js,ts,tsx src",
     "eject": "react-app-rewired eject",
