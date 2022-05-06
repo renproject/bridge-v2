@@ -453,7 +453,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     decimalsAmount(releaseAmount, releaseAssetDecimals) || outputAmount;
   const releaseAmountUsd = getUsdRate(releaseAmountFormatted);
 
-  let Content = null;
+  let Content;
   if (renVMStatus === null) {
     Content = (
       <ReleaseH2HBurnTransactionStatus
