@@ -422,7 +422,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
-    startTrigger: outSubmitter.submittingDone || recoveryMode,
+    startTrigger: outSubmitter.submittingDone || recoveryMode || !transaction?.out?.submit,
     debugLabel: "out",
   });
   const {
@@ -489,7 +489,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
         releaseTargetConfirmations={releaseTargetConfirmations}
         onReset={handleResetRelease}
         onSubmit={handleSubmitRelease}
-        submitting={submittingRelease}
+        submitting={submittingRelease || !transaction?.out?.submit}
         submittingDisabled={submittingReleaseDisabled}
         waiting={waitingRelease}
         done={doneRelease}
