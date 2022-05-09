@@ -424,10 +424,14 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
 export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   props
 ) => {
+  console.log("submit error", props.error?.code);
   const { t } = useTranslation();
   let message = t("tx.submitting-error-popup-message");
-  if (props.error?.code === 4001) {
+  if (props.error?.code === 4001 || props.error?.error === "Rejected by user") {
     message = t("tx.submitting-error-popup-message-signature-rejected-text");
+  }
+  if (props.error?.code === 1984) {
+    message = `Submitting failed. If you haven't rejected the transaction, make sure you are connected to the right account and have gas. If you release, make sure you still have appropriate token amount.`;
   }
   return (
     <ErrorDialog

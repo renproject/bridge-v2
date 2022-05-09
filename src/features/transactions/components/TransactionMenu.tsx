@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ListItemIcon,
   makeStyles,
@@ -6,6 +7,7 @@ import {
   MenuItemProps,
   Typography,
 } from "@material-ui/core";
+import { Asset, Chain } from "@renproject/chains";
 import { BitcoinBaseChain } from "@renproject/chains-bitcoin";
 import { Gateway } from "@renproject/ren";
 import { ChainTransaction, isContractChain } from "@renproject/utils";
@@ -13,11 +15,9 @@ import classNames from "classnames";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
-  RedButton,
 } from "../../../components/buttons/Buttons";
 import { CircleIcon } from "../../../components/icons/IconHelpers";
 import {
@@ -31,6 +31,7 @@ import {
   OutlinedTextFieldWrapper,
 } from "../../../components/inputs/OutlinedTextField";
 import { PaperContent } from "../../../components/layout/Paper";
+import { Link } from "../../../components/links/Links";
 import {
   BridgeModalTitle,
   NestedDrawer,
@@ -40,10 +41,18 @@ import {
 } from "../../../components/modals/BridgeModal";
 import { Debug } from "../../../components/utils/Debug";
 import { EthereumBaseChain } from "../../../utils/missingTypes";
+import { trimAddress } from "../../../utils/strings";
 import { getGatewayParams } from "../../gateway/gatewayHooks";
-import { reloadWithPartialTxParam } from "../../gateway/gatewayTransactionHooks";
+import { useRedirectToGatewayFlow } from "../../gateway/gatewayRoutingUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
-import { setIssueResolverOpened } from "../transactionsSlice";
+import {
+  useCurrentChain,
+  useCurrentChainWallet,
+} from "../../wallet/walletHooks";
+import {
+  setIssueResolverOpened,
+  setTxRecoveryOpened,
+} from "../transactionsSlice";
 
 const useTransactionMenuItemStyles = makeStyles((theme) => ({
   root: {
@@ -220,12 +229,48 @@ export interface InputChainTransaction extends ChainTransaction {
 export const UpdateTransactionDrawer: FunctionComponent<
   UpdateTransactionDrawerProps
 > = ({ open, onClose, gateway }) => {
-  const history = useHistory();
   const { t } = useTranslation();
-  const { from } = getGatewayParams(gateway);
+  const { asset, from, to } = getGatewayParams(gateway);
+
+  return (
+    <NestedDrawer
+      title={"Insert/Update transaction"}
+      open={open}
+      onClose={onClose}
+    >
+      <NestedDrawerWrapper>
+        <NestedDrawerContent>
+          <UpdateTransactionForm asset={asset} from={from} to={to} />
+        </NestedDrawerContent>
+      </NestedDrawerWrapper>
+      <NestedDrawerActions>
+        <PaperContent bottomPadding>
+          <ActionButtonWrapper>
+            <ActionButton onClick={onClose}>
+              {t("common.cancel-label")}
+            </ActionButton>
+          </ActionButtonWrapper>
+        </PaperContent>
+      </NestedDrawerActions>
+    </NestedDrawer>
+  );
+};
+
+type UpdateTransactionFormProps = {
+  asset: Asset;
+  from: Chain;
+  to: Chain;
+};
+
+export const UpdateTransactionForm: FunctionComponent<
+  UpdateTransactionFormProps
+> = ({ asset, from, to }) => {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
   const chains = useCurrentNetworkChains();
-  const isCC = isContractChain(chains[from].chain);
-  const isDC = !isCC;
+  const isFromCC = isContractChain(chains[from].chain);
+  const isFromDC = !isFromCC;
+  const isToCC = isContractChain(chains[to].chain);
 
   const [data, setData] = useState({});
   const [txId, setTxId] = useState("");
@@ -270,14 +315,26 @@ export const UpdateTransactionDrawer: FunctionComponent<
     setToPayload(event.target.value);
   }, []);
 
+  const handleTxRecoveryClose = useCallback(() => {
+    dispatch(setTxRecoveryOpened(false));
+  }, [dispatch]);
+
   const [updating, setUpdating] = useState(false);
+
+  const navigateToGateway = useRedirectToGatewayFlow({
+    asset,
+    from,
+    to,
+    toAddress: toRecipient,
+  });
+
   const handleUpdateTx = useCallback(() => {
     const instance = chains[from].chain;
     if (!instance) {
       return;
     }
     let txPayload;
-    if (isCC) {
+    if (isFromCC) {
       txPayload = (instance as EthereumBaseChain).Transaction({
         txidFormatted: txIdFormatted,
       });
@@ -287,7 +344,6 @@ export const UpdateTransactionDrawer: FunctionComponent<
         txindex: txIndex,
       });
     }
-    console.log("resolved payload", txPayload);
     if (!txPayload) {
       return;
     }
@@ -307,7 +363,9 @@ export const UpdateTransactionDrawer: FunctionComponent<
     setData(payloadTxData);
     setUpdating(true);
     const partialTxParam = encodeURIComponent(JSON.stringify(payloadTxData));
-    reloadWithPartialTxParam(history, partialTxParam);
+    navigateToGateway({ partialTx: partialTxParam });
+    handleTxRecoveryClose();
+    // reloadWithPartialTxParam(history, partialTxParam);
 
     // gateway
     //   .processDeposit(finalTx)
@@ -321,14 +379,15 @@ export const UpdateTransactionDrawer: FunctionComponent<
 
     // onUpdateTransaction(payload);
   }, [
-    history,
     chains,
-    isCC,
+    isFromCC,
     from,
     // gateway,
     // txId,
     txIndex,
     txIdFormatted,
+    navigateToGateway,
+    handleTxRecoveryClose,
     // amount,
     // toRecipient,
     // nonce,
@@ -341,112 +400,110 @@ export const UpdateTransactionDrawer: FunctionComponent<
   const handleToggleDetails = useCallback(() => {
     setDetails((details) => !details);
   }, []);
+
+  const chain = useCurrentChain();
+  const { connected, account } = useCurrentChainWallet();
+  const handleImportAccount = useCallback(() => {
+    if (connected && account) {
+      setToRecipient(account);
+    }
+  }, [connected, account]);
+
   return (
-    <NestedDrawer
-      title={"Insert/Update transaction"}
-      open={open}
-      onClose={onClose}
-    >
-      <NestedDrawerWrapper>
-        <NestedDrawerContent>
-          <PaperContent topPadding>
-            <OutlinedTextFieldWrapper>
-              <OutlinedTextField
-                label={"Formatted Transaction Id"}
-                value={txIdFormatted}
-                onChange={handleTxIdFormattedChange}
-                placeholder={"Enter formatted transaction Id"}
-              />
-            </OutlinedTextFieldWrapper>
-            {isDC && (
-              <OutlinedTextFieldWrapper>
-                <OutlinedTextField
-                  label={"Transaction Index / vOut"}
-                  value={txIndex}
-                  onChange={handleTxIndexChange}
-                  placeholder={"Enter transaction index/vOut"}
-                />
-              </OutlinedTextFieldWrapper>
+    <PaperContent topPadding bottomPadding>
+      <OutlinedTextFieldWrapper>
+        <OutlinedTextField
+          label={"Formatted Transaction Hash (Id)"}
+          value={txIdFormatted}
+          onChange={handleTxIdFormattedChange}
+          placeholder={"Enter formatted transaction hash (id)"}
+        />
+      </OutlinedTextFieldWrapper>
+      {isFromDC && (
+        <OutlinedTextFieldWrapper>
+          <OutlinedTextField
+            label={"Transaction Index / vOut"}
+            value={txIndex}
+            onChange={handleTxIndexChange}
+            placeholder={"Enter transaction index/vOut"}
+          />
+        </OutlinedTextFieldWrapper>
+      )}
+      {isToCC && (
+        <OutlinedTextFieldWrapper>
+          <OutlinedTextField
+            label={"To Recipient"}
+            value={toRecipient}
+            onChange={handleToRecipientChange}
+            placeholder={"Enter recipient address"}
+          />
+          <Box display="flex" justifyContent="flex-end">
+            {connected && (
+              <Typography variant="body2">
+                <Link
+                  color="primary"
+                  underline="hover"
+                  onClick={handleImportAccount}
+                >
+                  Set current {chain} account ({trimAddress(account)})
+                </Link>
+              </Typography>
             )}
-            <ActionButtonWrapper>
-              <RedButton
-                variant="text"
-                color="inherit"
-                onClick={handleUpdateTx}
-                disabled={updating || !valid}
-              >
-                {updating
-                  ? t("tx.menu-update-tx-updating-dots")
-                  : t("tx.menu-update-tx-update")}{" "}
-                transaction
-              </RedButton>
-            </ActionButtonWrapper>
-            <Debug it={data} />
-            <OutlinedTextFieldWrapper>
-              <Button
-                size="small"
-                color="primary"
-                onClick={handleToggleDetails}
-              >
-                Show/hide advanced mode
-              </Button>
-            </OutlinedTextFieldWrapper>
-            {details && (
-              <>
-                <OutlinedTextFieldWrapper>
-                  <OutlinedTextField
-                    label={"Transaction Id"}
-                    value={txId}
-                    onChange={handleTxIdChange}
-                    placeholder={"Enter transaction Id"}
-                  />
-                </OutlinedTextFieldWrapper>
-                <OutlinedTextFieldWrapper>
-                  <OutlinedTextField
-                    label={t("tx.menu-update-tx-amount-label")}
-                    value={amount}
-                    onChange={handleAmountChange}
-                    placeholder={t("tx.menu-update-tx-amount-placeholder")}
-                  />
-                </OutlinedTextFieldWrapper>
-                <OutlinedTextFieldWrapper>
-                  <OutlinedTextField
-                    label={"To Recipient"}
-                    value={toRecipient}
-                    onChange={handleToRecipientChange}
-                    placeholder={"Enter recipient address"}
-                  />
-                </OutlinedTextFieldWrapper>
-                <OutlinedTextFieldWrapper>
-                  <OutlinedTextField
-                    label={"Nonce"}
-                    value={nonce}
-                    onChange={handleNonceChange}
-                    placeholder={"Enter urlBase64 encoded nonce"}
-                  />
-                </OutlinedTextFieldWrapper>
-                <OutlinedTextFieldWrapper>
-                  <OutlinedTextField
-                    label={"To Payload"}
-                    value={toPayload}
-                    onChange={handleToPayloadChange}
-                    placeholder={"Enter urlBase64 encoded toPayload"}
-                  />
-                </OutlinedTextFieldWrapper>
-              </>
-            )}
-          </PaperContent>
-        </NestedDrawerContent>
-        <NestedDrawerActions>
-          <PaperContent bottomPadding>
-            <ActionButtonWrapper>
-              <ActionButton onClick={onClose} disabled={updating}>
-                {t("common.cancel-label")}
-              </ActionButton>
-            </ActionButtonWrapper>
-          </PaperContent>
-        </NestedDrawerActions>
-      </NestedDrawerWrapper>
-    </NestedDrawer>
+          </Box>
+        </OutlinedTextFieldWrapper>
+      )}
+      <Debug it={data} />
+      {details && (
+        <>
+          <OutlinedTextFieldWrapper>
+            <Button size="small" color="primary" onClick={handleToggleDetails}>
+              Show/hide advanced mode
+            </Button>
+          </OutlinedTextFieldWrapper>
+          <OutlinedTextFieldWrapper>
+            <OutlinedTextField
+              label={"Transaction Id"}
+              value={txId}
+              onChange={handleTxIdChange}
+              placeholder={"Enter transaction Id"}
+            />
+          </OutlinedTextFieldWrapper>
+          <OutlinedTextFieldWrapper>
+            <OutlinedTextField
+              label={t("tx.menu-update-tx-amount-label")}
+              value={amount}
+              onChange={handleAmountChange}
+              placeholder={t("tx.menu-update-tx-amount-placeholder")}
+            />
+          </OutlinedTextFieldWrapper>
+          <OutlinedTextFieldWrapper>
+            <OutlinedTextField
+              label={"Nonce"}
+              value={nonce}
+              onChange={handleNonceChange}
+              placeholder={"Enter urlBase64 encoded nonce"}
+            />
+          </OutlinedTextFieldWrapper>
+          <OutlinedTextFieldWrapper>
+            <OutlinedTextField
+              label={"To Payload"}
+              value={toPayload}
+              onChange={handleToPayloadChange}
+              placeholder={"Enter urlBase64 encoded toPayload"}
+            />
+          </OutlinedTextFieldWrapper>
+        </>
+      )}
+      <ActionButtonWrapper>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleUpdateTx}
+          disabled={updating || !valid}
+        >
+          {updating ? "Recovering transaction..." : "Recover transaction"}
+        </Button>
+      </ActionButtonWrapper>
+    </PaperContent>
   );
 };

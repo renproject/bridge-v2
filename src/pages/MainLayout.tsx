@@ -44,6 +44,10 @@ import {
   IssuesResolver,
   IssuesResolverButton,
 } from "../features/transactions/IssuesResolver";
+import {
+  TransactionRecovery,
+  TransactionRecoveryButton,
+} from "../features/transactions/TransactionRecovery";
 import { TransactionsHistory } from "../features/transactions/TransactionsHistory";
 import {
   $txHistory,
@@ -64,6 +68,7 @@ import {
 } from "../features/wallet/walletHooks";
 import { $wallet, setPickerOpened } from "../features/wallet/walletSlice";
 import { getMultiwalletConfig } from "../providers/multiwallet/multiwalletConfig";
+import { Wallet } from "../utils/walletsConfig";
 
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
@@ -76,8 +81,16 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   useSyncWalletNetwork();
   const { network } = useSelector($network);
   const { chain, pickerOpened } = useSelector($wallet);
-  const { status, account, connected, deactivateConnector, wallet } =
-    useWallet(chain);
+  const multiwallet = useWallet(chain);
+  (window as any).multiwallet = multiwallet;
+  const {
+    status,
+    account,
+    connected,
+    deactivateConnector,
+    refreshConnector,
+    wallet,
+  } = multiwallet;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const handleMobileMenuClose = useCallback(() => {
@@ -126,6 +139,11 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     handleWalletMenuClose();
   }, [deactivateConnector, handleWalletMenuClose]);
 
+  const handleRefreshAccounts = useCallback(() => {
+    refreshConnector();
+    handleWalletMenuClose();
+  }, [refreshConnector, handleWalletMenuClose]);
+
   const found = useDirtySolanaWalletDetector();
   const walletPickerOptions = useMemo(() => {
     const options: WalletPickerProps<any, any> = {
@@ -169,6 +187,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           status={status}
           account={account}
           wallet={wallet}
+          chain={chain}
         />
         <WalletPickerModal open={pickerOpened} options={walletPickerOptions} />
       </div>
@@ -217,6 +236,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           status={status}
           account={account}
           wallet={wallet}
+          chain={chain}
         />
       </ListItem>
       <ListItem
@@ -258,6 +278,11 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       <MenuItem onClick={handleDisconnectWallet}>
         <Typography color="error">{t("wallet.disconnect")}</Typography>
       </MenuItem>
+      {wallet === Wallet.Phantom && (
+        <MenuItem onClick={handleRefreshAccounts}>
+          <Typography>Refresh accounts</Typography>
+        </MenuItem>
+      )}
     </Menu>
   );
   return (
@@ -270,6 +295,8 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       <TransactionsHistory />
       <IssuesResolver />
       <IssuesResolverButton mode="fab" />
+      <TransactionRecoveryButton />
+      <TransactionRecovery />
       <Debug
         it={{
           // debugNetworkName,

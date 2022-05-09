@@ -110,7 +110,7 @@
   "release.currency-balance-label": "Saldo de {{currency}}",
   "release.details-label": "detalhes",
   "release.fees-title": "Taxas e Confirmar",
-  "release.from-label": "De",
+  "common.from-label": "De",
   "release.from-tooltip": "A blockchain da qual você está liberando o ativo.",
   "release.pending-confirmations-message": "Pendente {{confirmations}}/{{targetConfirmations}}",
   "release.receiving-label": "Recebimento",

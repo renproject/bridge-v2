@@ -29,7 +29,7 @@ import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import {
   getAssetConfig,
-  getRenAssetConfig,
+  getUIAsset,
   supportedAssets,
 } from "../../../utils/assetsConfig";
 import { chainsConfig, getChainConfig } from "../../../utils/chainsConfig";
@@ -143,23 +143,26 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         setFromChains(nonOriginChains);
         const newFrom = nonOriginChains[0];
         dispatch(setFrom(newFrom));
-        const nonOriginNotFromChains = mintChains.filter(
-          (chain) => chain !== lockChain && chain !== newFrom
-        );
-        setToChains(nonOriginNotFromChains);
-        dispatch(setTo(nonOriginNotFromChains[0]));
       }
     },
     [dispatch, ioType]
   );
 
   useEffect(() => {
-    filterChains(asset);
-  }, [asset, filterChains]);
+    if (ioType === "burnAndMint") {
+      const { lockChain, mintChains } = getAssetConfig(asset);
+      const nonOriginNotFromChains = mintChains.filter(
+        (chain) => chain !== lockChain && chain !== from
+      );
+      setToChains(nonOriginNotFromChains);
+      dispatch(setTo(nonOriginNotFromChains[0]));
+    }
+  }, [dispatch, ioType, asset, from]);
 
   useEffect(() => {
-    console.log("assets changed", assets);
-  }, [assets]);
+    dispatch(setToAddress(""));
+    filterChains(asset);
+  }, [dispatch, asset, filterChains]);
 
   useEffect(() => {
     dispatch(setAsset(assets[0]));
@@ -201,6 +204,13 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     [dispatch]
   );
 
+  const handleSetMaxAmount = useCallback(
+    (newAmount: string) => {
+      handleAmountChange(newAmount);
+    },
+    [handleAmountChange]
+  );
+
   const requiresValidAddress = isRelease && !isH2H;
   const handleAddressChange = useCallback(
     (event) => {
@@ -239,9 +249,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const hideTo = isRelease && toChains.length === 1;
 
   const toChainConfig = getChainConfig(to);
-  // TODO: fix
-  const renAssetConfig = getRenAssetConfig(asset);
-  const assetConfig = getAssetConfig(asset);
+
   const { connected } = useCurrentChainWallet();
 
   const handleConnect = useCallback(() => {
@@ -263,21 +271,16 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     account,
     isFromContractChain ? fromConnected : undefined
   );
-  // const balanceAsset = isH2H ? assetConfig.shortName : renAssetConfig.shortName;
-  const balanceAsset =
-    isRelease || isMove
-      ? renAssetConfig.shortName
-      : isH2H
-      ? assetConfig.shortName
-      : renAssetConfig.shortName;
-  const balanceChain = isRelease ? from : isH2H ? from : to;
+
+  const uiAsset = getUIAsset(asset, from);
+  // const balanceChain = isRelease ? from : isH2H ? from : to;
 
   const requiresInitialAmount = isFromContractChain;
   const hasInitialAmount = amount !== "";
   const hasAmountBalanceError =
     requiresInitialAmount &&
     balance !== null &&
-    (Number(amount) > Number(balance) || !hasInitialAmount);
+    Number(amount) > Number(balance);
 
   const showAmountError = amountTouched && hasAmountBalanceError;
 
@@ -320,7 +323,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           <BigCurrencyInputWrapper>
             <BigCurrencyInput
               onChange={handleAmountChange}
-              symbol={renAssetConfig.shortName}
+              symbol={uiAsset.shortName}
               usdValue={amountUsd}
               value={amount}
               errorText={
@@ -343,8 +346,9 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {fromConnected && isFromContractChain ? (
           <BalanceInfo
             balance={balance}
-            asset={balanceAsset}
-            chain={balanceChain}
+            asset={uiAsset.shortName}
+            chain={from}
+            onSetMaxAmount={handleSetMaxAmount}
           />
         ) : (
           <BalanceInfoPlaceholder />
@@ -363,7 +367,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         <Collapse in={!hideFrom || forceShowDropdowns}>
           <RichDropdownWrapper>
             <RichDropdown
-              label={t("release.from-label")}
+              label={t("common.from-label")}
               supplementalLabel={t("common.blockchain-label")}
               getOptionData={getChainOptionData}
               options={fromChains}
@@ -408,7 +412,11 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
         {connected ? (
           <ActionButton
             onClick={handleNext}
-            disabled={hasAddressError || hasAmountBalanceError}
+            disabled={
+              hasAddressError ||
+              hasAmountBalanceError ||
+              (requiresInitialAmount && !Number(amount))
+            }
           >
             {t("common.next-label")}
           </ActionButton>

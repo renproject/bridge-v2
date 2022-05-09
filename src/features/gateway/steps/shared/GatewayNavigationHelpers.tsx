@@ -88,7 +88,7 @@ type TransactionRecoveringModalProps = {
   recoveryMode?: boolean;
 };
 
-const RECOVERY_TIMEOUT = env.DEV ? 3000 : 12000;
+const RECOVERY_TIMEOUT = env.DEV ? 1500 : 12000;
 
 export const TransactionRecoveryModal: FunctionComponent<
   TransactionRecoveringModalProps
@@ -112,9 +112,8 @@ export const TransactionRecoveryModal: FunctionComponent<
     setShow(false);
   }, []);
 
-  // TODO: crit finish
   return (
-    <Dialog open={false && show} fullWidth maxWidth="sm">
+    <Dialog open={show} fullWidth maxWidth="sm">
       <PaperContent topPadding bottomPadding>
         <Box display="flex" justifyContent="center">
           <Box mb={5} maxWidth={400}>

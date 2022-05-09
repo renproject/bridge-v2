@@ -37,6 +37,7 @@ import {
 } from "../../../../components/layout/Paper";
 import { Link } from "../../../../components/links/Links";
 import { BridgeModal } from "../../../../components/modals/BridgeModal";
+import { InlineSkeleton } from "../../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../../components/utils/Debug";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import {
@@ -53,6 +54,32 @@ import { FeesToggler } from "../../components/FeeHelpers";
 import { GatewayFees } from "../../components/GatewayFees";
 import { useGatewayFeesWithoutGateway } from "../../gatewayHooks";
 import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
+
+type WalletConnectionActionButtonGuardProps = {
+  chain: Chain;
+};
+
+export const WalletConnectionActionButtonGuard: FunctionComponent<
+  WalletConnectionActionButtonGuardProps
+> = ({ chain, children }) => {
+  const dispatch = useDispatch();
+  const { connected } = useWallet(chain);
+
+  const handleConnect = useCallback(() => {
+    dispatch(setPickerOpened(true));
+  }, [dispatch]);
+
+  if (connected) {
+    return <>{children}</>;
+  }
+  const chainConfig = getChainConfig(chain);
+
+  return (
+    <ActionButton onClick={handleConnect}>
+      Connect {chainConfig.fullName} Wallet
+    </ActionButton>
+  );
+};
 
 const useSwitchWalletDialogStyles = makeStyles((theme) => ({
   top: {
@@ -183,7 +210,7 @@ type AccountWrapperProps = {
   chain: Chain;
   label: string;
   onClick?: () => void;
-  amount?: string;
+  amount?: string | null;
   AssetIcon?: CustomSvgIconComponent;
   assetIconTooltip?: string;
 };
@@ -212,7 +239,11 @@ export const AccountWrapper: FunctionComponent<AccountWrapperProps> = ({
       </div>
       {AssetIcon && (
         <div className={styles.container}>
-          <NumberFormatText value={amount} />
+          {amount === null ? (
+            <InlineSkeleton width={40} />
+          ) : (
+            <NumberFormatText value={amount} />
+          )}
           <Tooltip title={assetIconTooltip}>
             <div className={styles.icon}>
               <AssetIcon fontSize="inherit" />
@@ -231,11 +262,11 @@ export const AccountWrapper: FunctionComponent<AccountWrapperProps> = ({
 
 type SendingReceivingWrapperProps = {
   from: Chain;
-  amount: string;
+  amount: string | null;
   SendIcon: CustomSvgIconComponent;
   sendIconTooltip: string;
   to: Chain;
-  outputAmount: string;
+  outputAmount: string | null;
   ReceiveIcon: CustomSvgIconComponent;
   receiveIconTooltip: string;
 };
@@ -260,14 +291,14 @@ export const SendingReceivingWrapper: FunctionComponent<
         amount={amount}
         AssetIcon={SendIcon}
         assetIconTooltip={sendIconTooltip}
-      ></AccountWrapper>
+      />
       <AccountWrapper
         chain={to}
         label="Receiving"
         amount={outputAmount}
         AssetIcon={ReceiveIcon}
         assetIconTooltip={receiveIconTooltip}
-      ></AccountWrapper>
+      />
     </>
   );
 };

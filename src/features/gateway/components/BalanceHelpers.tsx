@@ -1,10 +1,11 @@
 import { Fade } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import { Asset, Chain } from "@renproject/chains";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
+import { Link } from "../../../components/links/Links";
 import { InlineSkeleton } from "../../../components/progress/ProgressHelpers";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { getChainConfig } from "../../../utils/chainsConfig";
@@ -25,6 +26,7 @@ type BalanceInfoProps = {
   asset: Asset | string;
   chain?: Chain | string;
   error?: any;
+  onSetMaxAmount?: (amount: string) => void;
 };
 
 export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
@@ -32,12 +34,21 @@ export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
   asset,
   chain,
   error,
+  onSetMaxAmount,
 }) => {
   const styles = useBalanceInfoStyles();
   const { t } = useTranslation();
+
+  const handleSetMaxAmount = useCallback(() => {
+    if (onSetMaxAmount && balance) {
+      onSetMaxAmount(Number(balance).toString());
+    }
+  }, [balance, onSetMaxAmount]);
+
   if (error) {
     return <BalanceInfoPlaceholder />;
   }
+
   return (
     <HorizontalPadder>
       <LabelWithValue
@@ -59,7 +70,20 @@ export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
               />
             ) : (
               <Fade in={true}>
-                <span>{Number(balance).toString()}</span>
+                <span>
+                  {Boolean(onSetMaxAmount) && Number(balance) > 0 ? (
+                    <Link
+                      color="primary"
+                      underline="hover"
+                      onClick={handleSetMaxAmount}
+                      title="Click to set max amount"
+                    >
+                      {balance}
+                    </Link>
+                  ) : (
+                    <span>{Number(balance).toString()}</span>
+                  )}
+                </span>
               </Fade>
             )}
             <span> {asset}</span>

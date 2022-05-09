@@ -243,3 +243,8 @@ export const getAssetChainsConfig = (asset: Asset) => {
 };
 
 export const supportedContractChains = contractChains;
+
+export const supportedAllChains = [
+  ...supportedContractChains,
+  ...supportedBitcoinChains,
+];

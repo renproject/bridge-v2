@@ -6,6 +6,9 @@ type TransactionsState = {
     dialogOpened: boolean;
     showConnectedTxs: boolean;
   };
+  txRecovery: {
+    dialogOpened: boolean;
+  };
   currentTxHash: string;
   issueResolver: {
     dialogOpened: boolean;
@@ -16,6 +19,9 @@ let initialState: TransactionsState = {
   txHistory: {
     dialogOpened: false,
     showConnectedTxs: false,
+  },
+  txRecovery: {
+    dialogOpened: false,
   },
   currentTxHash: "",
   issueResolver: {
@@ -32,6 +38,9 @@ const slice = createSlice({
     },
     setShowConnectedTxs(state, action: PayloadAction<boolean>) {
       state.txHistory.showConnectedTxs = action.payload;
+    },
+    setTxRecoveryOpened(state, action: PayloadAction<boolean>) {
+      state.txRecovery.dialogOpened = action.payload;
     },
     setCurrentTxHash(state, action: PayloadAction<string>) {
       state.currentTxHash = action.payload;
@@ -53,6 +62,7 @@ const slice = createSlice({
 
 export const {
   setTxHistoryOpened,
+  setTxRecoveryOpened,
   setShowConnectedTxs,
   setIssueResolverOpened,
   setCurrentTxHash,
@@ -68,6 +78,11 @@ export const $transactions = (state: RootState) => state.transactions;
 export const $txHistory = createSelector(
   $transactions,
   (transactions) => transactions.txHistory
+);
+
+export const $txRecovery = createSelector(
+  $transactions,
+  (transactions) => transactions.txRecovery
 );
 
 export const $issueResolver = createSelector(

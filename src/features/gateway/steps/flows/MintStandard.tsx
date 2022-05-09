@@ -124,10 +124,10 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const [gatewayChains] = useState(pickChains(allChains, from, to));
 
   useEffect(() => {
-    if (provider) {
+    if (provider && connected) {
       alterContractChainProviderSigner(allChains, to, provider);
     }
-  }, [to, allChains, provider]);
+  }, [connected, to, allChains, provider]);
 
   const { gateway, transactions } = useGateway(
     { asset, from, to, nonce },
@@ -314,16 +314,29 @@ export const GatewayDepositProcessor: FunctionComponent<
   } = outSubmitter;
 
   const [submittingOutSetup, setSubmittingOutSetup] = useState(false);
+  const [submittingOutError, setSubmittingOutError] = useState<any>();
+
+  const handleReset = useCallback(() => {
+    setSubmittingOutError(false);
+    setSubmittingOutSetup(false);
+    handleResetMint();
+  }, [handleResetMint]);
+
   const handleSubmit = useCallback(async () => {
     setSubmittingOutSetup(true);
-    for (const key of Object.keys(transaction.outSetup)) {
-      if (transaction.outSetup[key]) {
-        await transaction.outSetup[key].submit?.();
-        await transaction.outSetup[key].wait();
+    try {
+      for (const key of Object.keys(transaction.outSetup)) {
+        if (transaction.outSetup[key]) {
+          await transaction.outSetup[key].submit?.();
+          await transaction.outSetup[key].wait();
+        }
       }
+      setSubmittingOutSetup(false);
+      await handleSubmitMint();
+    } catch (error: any) {
+      setSubmittingOutError({ code: 1984, message: "outSetup error error" });
+      console.error(error);
     }
-    setSubmittingOutSetup(false);
-    await handleSubmitMint();
   }, [handleSubmitMint, transaction.outSetup]);
 
   const outTxMeta = useChainTransactionStatusUpdater({
@@ -414,9 +427,9 @@ export const GatewayDepositProcessor: FunctionComponent<
         lockTxId={lockTxIdFormatted}
         lockTxUrl={lockTxUrl}
         onSubmit={handleSubmit}
-        onReset={handleResetMint}
+        onReset={handleReset}
         submitting={submittingMint || submittingOutSetup}
-        submittingError={submittingMintError}
+        submittingError={submittingMintError || submittingOutError}
         submittingDisabled={
           submittingOutSetup ||
           renVMSubmitting ||
@@ -424,7 +437,7 @@ export const GatewayDepositProcessor: FunctionComponent<
         }
         renVMStatus={renVMStatus}
         renVMSubmitting={renVMSubmitting}
-        onReload={handleResetMint}
+        onReload={handleReset}
         waiting={false}
       />
     );

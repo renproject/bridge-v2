@@ -100,7 +100,7 @@ import {
 
 const standardShadow = `0px 0px 4px rgba(0, 27, 58, 0.1)`;
 
-const useTransactionHistoryStyles = makeStyles((theme) => ({
+export const useTransactionModalStyles = makeStyles((theme) => ({
   title: {
     margin: 0,
     padding: theme.spacing(2),
@@ -159,7 +159,7 @@ const useTransactionHistoryStyles = makeStyles((theme) => ({
 }));
 
 export const TransactionsHistory: FunctionComponent = () => {
-  const styles = useTransactionHistoryStyles();
+  const styles = useTransactionModalStyles();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { dialogOpened, showConnectedTxs } = useSelector($txHistory);
@@ -248,14 +248,9 @@ export const TransactionsHistory: FunctionComponent = () => {
           >
             <FormControlLabel
               className={styles.checkboxLabel}
-              control={
-                <Checkbox
-                  checked={showConnectedTxs}
-                  onChange={handleCheckboxChange}
-                  name="walletTxs"
-                  color="primary"
-                />
-              }
+              checked={showConnectedTxs}
+              onChange={handleCheckboxChange}
+              control={<Checkbox name="walletTxs" color="primary" />}
               label={
                 <Typography variant="body1">
                   Show connected wallet Txs
@@ -432,7 +427,7 @@ const LocalTransactions: FunctionComponent<LocalTransactionsProps> = ({
   chain,
   asset,
 }) => {
-  const styles = useTransactionHistoryStyles();
+  const styles = useTransactionModalStyles();
   const { localTxs, removeLocalTx, getAllLocalTxs } = useTxsStorage();
 
   const allTxsMap = getAllLocalTxs({ asset, address, chain });
@@ -793,13 +788,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
         </div>
       </div>
       <Grid container spacing={3}>
-        <Grid
-          item
-          sm={12}
-          md={6}
-          className={styles.fromWrapper}
-          alignItems="center"
-        >
+        <Grid item sm={12} md={6} className={styles.fromWrapper}>
           {isDepositMint ? (
             <SmallHorizontalPadder className={styles.expiryTime}>
               <FullWidthWrapper>

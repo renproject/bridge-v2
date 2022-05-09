@@ -7,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import { Debug } from "../../../../components/utils/Debug";
@@ -16,18 +15,18 @@ import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
+import { decimalsAmount } from "../../../../utils/numbers";
 import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
   pickChains,
 } from "../../../chain/chainUtils";
+import { useGetAssetUsdRate } from "../../../marketData/marketDataHooks";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
-import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
-import { $wallet } from "../../../wallet/walletSlice";
 import { GatewayFees } from "../../components/GatewayFees";
 import { GatewayLoaderStatus } from "../../components/GatewayHelpers";
 import { PCW } from "../../components/PaperHelpers";
@@ -47,11 +46,11 @@ import {
   useRenVMChainTransactionStatusUpdater,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
-import { GatewayPaperHeader } from "../shared/GatewayNavigationHelpers";
 import {
-  H2HAccountsResolver,
-  SwitchWalletDialog,
-} from "../shared/WalletSwitchHelpers";
+  GatewayPaperHeader,
+  TransactionRecoveryModal,
+} from "../shared/GatewayNavigationHelpers";
+import { H2HAccountsResolver } from "../shared/WalletSwitchHelpers";
 import {
   ReleaseH2HBurnTransactionStatus,
   ReleaseH2HCompletedStatus,
@@ -298,6 +297,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   const { t } = useTranslation();
   const allChains = useCurrentNetworkChains();
   const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { getUsdRate } = useGetAssetUsdRate(asset);
   const assetConfig = getAssetConfig(asset);
   const burnChainConfig = getChainConfig(from);
   const releaseChainConfig = getChainConfig(to);
@@ -407,14 +407,9 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     }
   }, [allChains, activeChain, provider, connected]);
 
-  const { chain } = useSelector($wallet);
-  const { connected: toConnected } = useWallet(to);
-  const showSwitchWalletDialog =
-    renVMStatus !== null && !toConnected && chain !== to;
-
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
-    debugLabel: "out",
+    debugLabel: "out"
   });
   const {
     handleSubmit: handleSubmitRelease,
@@ -452,47 +447,44 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     }
   }, [persistLocalTx, fromAccount, isCompleted, transaction]);
 
-  let Content = null;
+  const burnAmountFormatted =
+    decimalsAmount(burnAmount, burnAssetDecimals) || amount.toString();
+  const releaseAmountFormatted =
+    decimalsAmount(releaseAmount, releaseAssetDecimals) || outputAmount;
+  const releaseAmountUsd = getUsdRate(releaseAmountFormatted);
+
+  let Content;
   if (renVMStatus === null) {
-    if (!fromConnected) {
-      Content = (
-        <PCW>
-          <ConnectWalletPaperSection
-            chain={from}
-            isRecoveringTx={recoveryMode}
-          />
-        </PCW>
-      );
-    } else {
-      Content = (
-        <ReleaseH2HBurnTransactionStatus
-          gateway={gateway}
-          Fees={Fees}
-          burnStatus={burnStatus}
-          burnConfirmations={burnConfirmations}
-          burnTargetConfirmations={burnTargetConfirmations}
-          outputAmount={outputAmount}
-          outputAmountUsd={outputAmountUsd}
-          onSubmit={handleSubmitBurn}
-          onReset={handleResetBurn}
-          done={doneBurn}
-          waiting={waitingBurn}
-          submitting={submittingBurn}
-          errorSubmitting={errorSubmittingBurn}
-          submittingDisabled={recoveryMode} // transaction from recovery should have this step finished
-          ioType={ioType}
-        />
-      );
-    }
+    Content = (
+      <ReleaseH2HBurnTransactionStatus
+        gateway={gateway}
+        Fees={Fees}
+        burnAmount={burnAmountFormatted}
+        burnStatus={burnStatus}
+        burnConfirmations={burnConfirmations}
+        burnTargetConfirmations={burnTargetConfirmations}
+        releaseAmount={releaseAmountFormatted}
+        releaseAmountUsd={outputAmountUsd}
+        onSubmit={handleSubmitBurn}
+        onReset={handleResetBurn}
+        done={doneBurn}
+        waiting={waitingBurn}
+        submitting={submittingBurn}
+        errorSubmitting={errorSubmittingBurn}
+        submittingDisabled={recoveryMode} // transaction from recovery should have this step finished
+        ioType={ioType}
+      />
+    );
   } else if (releaseTxUrl === null) {
     Content = (
       <ReleaseH2HReleaseTransactionStatus
         gateway={gateway}
         Fees={Fees}
+        burnAmount={burnAmountFormatted}
         renVMStatus={renVMStatus}
         releaseStatus={releaseStatus}
-        outputAmount={outputAmount}
-        outputAmountUsd={outputAmountUsd}
+        releaseAmount={releaseAmountFormatted}
+        releaseAmountUsd={releaseAmountUsd}
         releaseConfirmations={releaseConfirmations}
         releaseTargetConfirmations={releaseTargetConfirmations}
         onReset={handleResetRelease}
@@ -510,10 +502,8 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
       <ReleaseH2HCompletedStatus
         gateway={gateway}
         burnTxUrl={burnTxUrl}
-        burnAmount={burnAmount}
-        releaseAssetDecimals={releaseAssetDecimals}
-        burnAssetDecimals={burnAssetDecimals}
-        releaseAmount={releaseAmount}
+        burnAmount={decimalsAmount(burnAmount, burnAssetDecimals)}
+        releaseAmount={decimalsAmount(releaseAmount, releaseAssetDecimals)}
         releaseTxUrl={releaseTxUrl}
         ioType={ioType}
       />
@@ -523,10 +513,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   return (
     <>
       {Content}
-      <SwitchWalletDialog
-        open={!isCompleted && showSwitchWalletDialog}
-        targetChain={to}
-      />
+      <TransactionRecoveryModal gateway={gateway} recoveryMode={recoveryMode} />
       <Debug
         it={{
           fromConnected,

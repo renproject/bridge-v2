@@ -20,7 +20,6 @@ import {
   getRenAssetConfig,
 } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
-import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { SubmitErrorDialog } from "../../../transactions/components/TransactionsHelpers";
 import { useTxSuccessNotification } from "../../../transactions/transactionsHooks";
@@ -44,12 +43,14 @@ import {
   SendingReceivingSection,
   SentReceivedSection,
 } from "../shared/TransactionStatuses";
+import { WalletConnectionActionButtonGuard } from "../shared/WalletSwitchHelpers";
 
 type ReleaseH2HBurnTransactionStatusProps = SubmittingProps & {
   gateway: Gateway;
   Fees: ReactNode | null;
-  outputAmount: string | null;
-  outputAmountUsd: string | null;
+  burnAmount: string | null;
+  releaseAmount: string | null;
+  releaseAmountUsd: string | null;
   burnStatus: ChainTransactionStatus | null;
   burnConfirmations: number | null;
   burnTargetConfirmations: number | null;
@@ -64,8 +65,9 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
   burnStatus,
   burnConfirmations,
   burnTargetConfirmations,
-  outputAmountUsd,
-  outputAmount,
+  burnAmount,
+  releaseAmountUsd,
+  releaseAmount,
   onSubmit,
   onReset,
   submitting,
@@ -76,7 +78,7 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
   ioType,
 }) => {
   const { t } = useTranslation();
-  const { asset, amount, from, fromAverageConfirmationTime } =
+  const { asset, from, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const fromChainConfig = getChainConfig(from);
   const renAssetConfig = getRenAssetConfig(asset);
@@ -122,9 +124,9 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
         <SendingReceivingSection
           ioType={ioType}
           asset={asset}
-          sendingAmount={amount}
-          receivingAmount={outputAmount}
-          receivingAmountUsd={outputAmountUsd}
+          sendingAmount={burnAmount}
+          receivingAmount={releaseAmount}
+          receivingAmountUsd={releaseAmountUsd}
         />
         <WalletNetworkSwitchMessage />
       </PaperContent>
@@ -132,14 +134,16 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
       <PaperContent darker bottomPadding topPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <ActionButtonWrapper>
-          <ActionButton
-            onClick={onSubmit}
-            disabled={submittingDisabled || submitting || waiting || done}
-          >
-            {submitting || waiting
-              ? t("gateway.submitting-tx-label")
-              : t("gateway.submit-tx-label")}
-          </ActionButton>
+          <WalletConnectionActionButtonGuard chain={from}>
+            <ActionButton
+              onClick={onSubmit}
+              disabled={submittingDisabled || submitting || waiting || done}
+            >
+              {submitting || waiting
+                ? t("gateway.submitting-tx-label")
+                : t("gateway.submit-tx-label")}
+            </ActionButton>
+          </WalletConnectionActionButtonGuard>
         </ActionButtonWrapper>
       </PaperContent>
       {errorSubmitting && (
@@ -156,9 +160,10 @@ export const ReleaseH2HBurnTransactionStatus: FunctionComponent<
 type ReleaseH2HReleaseTransactionStatusProps = SubmittingProps & {
   gateway: Gateway;
   Fees: ReactNode | null;
+  burnAmount: string | null;
   renVMStatus: ChainTransactionStatus | null;
-  outputAmount: string | null;
-  outputAmountUsd: string | null;
+  releaseAmount: string | null;
+  releaseAmountUsd: string | null;
   releaseStatus: ChainTransactionStatus | null;
   releaseConfirmations: number | null;
   releaseTargetConfirmations: number | null;
@@ -170,9 +175,10 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
 > = ({
   gateway,
   Fees,
+  burnAmount,
   renVMStatus,
-  outputAmount,
-  outputAmountUsd,
+  releaseAmount,
+  releaseAmountUsd,
   releaseConfirmations,
   releaseTargetConfirmations,
   releaseStatus,
@@ -186,8 +192,7 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
   ioType,
 }) => {
   const { t } = useTranslation();
-  const { asset, to, amount, fromAverageConfirmationTime } =
-    getGatewayParams(gateway);
+  const { asset, to, fromAverageConfirmationTime } = getGatewayParams(gateway);
   const releaseChainConfig = getChainConfig(to);
   const { Icon: ChainIcon } = releaseChainConfig;
 
@@ -221,23 +226,25 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
         <SendingReceivingSection
           ioType={ioType}
           asset={asset}
-          sendingAmount={amount}
-          receivingAmount={outputAmount}
-          receivingAmountUsd={outputAmountUsd}
+          sendingAmount={burnAmount}
+          receivingAmount={releaseAmount}
+          receivingAmountUsd={releaseAmountUsd}
         />
       </PaperContent>
       <Divider />
       <PaperContent topPadding darker bottomPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
-          <ActionButton
-            onClick={onSubmit}
-            disabled={submittingDisabled || submitting || waiting || done}
-          >
-            {submitting || waiting
-              ? t("gateway.submitting-tx-label")
-              : t("gateway.submit-tx-label")}
-          </ActionButton>
+          <WalletConnectionActionButtonGuard chain={to}>
+            <ActionButton
+              onClick={onSubmit}
+              disabled={submittingDisabled || submitting || waiting || done}
+            >
+              {submitting || waiting
+                ? t("gateway.submitting-tx-label")
+                : t("gateway.submit-tx-label")}
+            </ActionButton>
+          </WalletConnectionActionButtonGuard>
         </MultipleActionButtonWrapper>
       </PaperContent>
       {errorSubmitting && (
@@ -254,10 +261,8 @@ export const ReleaseH2HReleaseTransactionStatus: FunctionComponent<
 type ReleaseH2HCompletedStatusProps = {
   gateway: Gateway;
   burnAmount: string | null;
-  burnAssetDecimals: number | null;
   burnTxUrl: string | null;
   releaseAmount: string | null;
-  releaseAssetDecimals: number | null;
   releaseTxUrl: string | null;
   ioType: GatewayIOType;
 };
@@ -268,10 +273,8 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
   gateway,
   burnTxUrl,
   burnAmount,
-  burnAssetDecimals,
   releaseTxUrl,
   releaseAmount,
-  releaseAssetDecimals,
   ioType,
 }) => {
   const { t } = useTranslation();
@@ -280,19 +283,13 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
   const releaseAssetConfig = getAssetConfig(gateway.params.asset);
   const releaseChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const burnAmountFormatted = decimalsAmount(burnAmount, burnAssetDecimals);
-  const releaseAmountFormatted = decimalsAmount(
-    releaseAmount,
-    releaseAssetDecimals
-  );
-
   const notificationMessage = t("move.success-notification-message", {
-    amount: releaseAmountFormatted,
+    amount: burnAmount,
     currency: releaseAssetConfig.shortName,
   });
   const viewChainTxLinkMessage = t("tx.view-chain-transaction-link-text", {
     chain: releaseChainConfig.fullName,
-  })
+  });
   const { txSuccessNotification } = useTxSuccessNotification(
     releaseTxUrl,
     notificationMessage,
@@ -307,8 +304,8 @@ export const ReleaseH2HCompletedStatus: FunctionComponent<
       <SentReceivedSection
         ioType={ioType}
         asset={asset}
-        sentAmount={burnAmountFormatted}
-        receivedAmount={releaseAmountFormatted}
+        sentAmount={burnAmount}
+        receivedAmount={releaseAmount}
       />
       <FromToTxLinks
         from={from}

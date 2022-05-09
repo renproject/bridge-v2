@@ -110,7 +110,7 @@
   "release.currency-balance-label": "{{currency}} 余额",
   "release.details-label": "详细信息",
   "release.fees-title": "手续费和确认",
-  "release.from-label": "来自",
+  "common.from-label": "来自",
   "release.from-tooltip": "您正在释放资产的区块链。",
   "release.pending-confirmations-message": "待处理的 {{confirmations}}/{{targetConfirmations}}",
   "release.receiving-label": "接收中",

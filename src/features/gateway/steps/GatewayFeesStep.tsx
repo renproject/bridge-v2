@@ -22,7 +22,6 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
 import {
   ActionButton,
   MultipleActionButtonWrapper,
@@ -48,7 +47,6 @@ import {
   SimpleAssetInfo,
 } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import { paths } from "../../../pages/routes";
 import { getAssetConfig, getRenAssetName } from "../../../utils/assetsConfig";
 import { feesDecimalImpact } from "../../../utils/numbers";
 import {
@@ -66,19 +64,14 @@ import {
   useGatewayFeesWithRates,
   useGatewayMeta,
 } from "../gatewayHooks";
-import { setAmount, $gateway } from "../gatewaySlice";
-import {
-  createGatewayQueryString,
-  getGatewayExpiryTime,
-  getGatewayNonce,
-} from "../gatewayUtils";
+import { useRedirectToGatewayFlow } from "../gatewayRoutingUtils";
+import { $gateway, setAmount } from "../gatewaySlice";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   onPrev,
 }) => {
   const { t } = useTranslation();
-  const history = useHistory();
   const dispatch = useDispatch();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const assetConfig = getAssetConfig(asset);
@@ -166,92 +159,19 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     ? [toChainFeeAsset]
     : [fromChainFeeAsset];
 
-  const nextEnabled = ackChecked;
+  const nextEnabled = ackChecked && !!Number(activeAmount);
 
-  const handleProceed = useCallback(() => {
-    console.log("move (h2h)");
-    if (isBurnAndMint) {
-      history.push({
-        pathname: paths.BRIDGE_GATEWAY,
-        search:
-          "?" +
-          createGatewayQueryString({
-            asset,
-            from,
-            to,
-            amount,
-          }),
-      });
-    } else if (isMint && isH2H) {
-      console.log("h2h mint");
-      history.push({
-        pathname: paths.MINT__GATEWAY_H2H,
-        search:
-          "?" +
-          createGatewayQueryString({
-            asset,
-            from,
-            to,
-            amount,
-          }),
-      });
-    } else if (isMint) {
-      console.log("standard mint");
-      history.push({
-        pathname: paths.MINT__GATEWAY_STANDARD,
-        search:
-          "?" +
-          createGatewayQueryString(
-            {
-              asset,
-              from,
-              to,
-              nonce: getGatewayNonce(),
-            },
-            { expiryTime: getGatewayExpiryTime() }
-          ),
-      });
-    } else if (isRelease && isH2H) {
-      console.log("h2h release");
-      history.push({
-        pathname: paths.RELEASE__GATEWAY_H2H,
-        search:
-          "?" +
-          createGatewayQueryString({
-            asset,
-            from,
-            to,
-            amount,
-          }),
-      });
-    } else {
-      console.log("standard release");
-      history.push({
-        pathname: paths.RELEASE__GATEWAY_STANDARD,
-        search:
-          "?" +
-          createGatewayQueryString({
-            asset,
-            from,
-            to,
-            amount,
-            toAddress,
-          }),
-      });
-    }
-  }, [
-    history,
-    isH2H,
-    isMint,
-    isRelease,
-    isBurnAndMint,
+  const redirectToGateway = useRedirectToGatewayFlow({
     asset,
     from,
     to,
-    toAddress,
     amount,
-    // gateway,
-  ]);
+    toAddress,
+  });
+
+  const handleRedirectToGateway = useCallback(() => {
+    redirectToGateway();
+  }, [redirectToGateway]);
 
   const showBalance = isFromContractChain;
 
@@ -391,7 +311,10 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
           )}
         </HorizontalPadder>
         <MultipleActionButtonWrapper>
-          <ActionButton disabled={!nextEnabled} onClick={handleProceed}>
+          <ActionButton
+            disabled={!nextEnabled}
+            onClick={handleRedirectToGateway}
+          >
             {t("common.next-label")}
           </ActionButton>
         </MultipleActionButtonWrapper>

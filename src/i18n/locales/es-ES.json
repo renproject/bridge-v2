@@ -133,7 +133,7 @@
   "release.currency-balance-label": "Saldo {{currency}}",
   "release.details-label": "Detalles",
   "release.fees-title": "Tarifas y Confirmar",
-  "release.from-label": "De",
+  "common.from-label": "De",
   "release.from-tooltip": "La cadena de bloques desde la que está liberando el activo.",
   "release.memo-ack-message": "Confirmo que esta transacción no requiere un memo",
   "release.memo-ack-tooltip": "Algunas transacciones requieren un parámetro adicional para la transferencia. Un ejemplo es una transferencia a un intercambio (Coinbase, Binance, etc...). Actualmente {{bridge}} no lo soporta.",

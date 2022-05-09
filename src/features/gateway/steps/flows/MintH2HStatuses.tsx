@@ -24,7 +24,6 @@ import { Debug } from "../../../../components/utils/Debug";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
-import { decimalsAmount } from "../../../../utils/numbers";
 import { undefinedForNull } from "../../../../utils/propsUtils";
 import { trimAddress } from "../../../../utils/strings";
 import { getWalletConfig } from "../../../../utils/walletsConfig";
@@ -35,7 +34,6 @@ import {
   useCurrentChainWallet,
   useWallet,
   useWalletAssetHelpers,
-  useWalletPicker,
 } from "../../../wallet/walletHooks";
 import { FeesToggler } from "../../components/FeeHelpers";
 import {
@@ -53,14 +51,15 @@ import {
 import {
   AccountWrapper,
   SendingReceivingWrapper,
+  WalletConnectionActionButtonGuard,
 } from "../shared/WalletSwitchHelpers";
 
 type MintH2HLockTransactionProgressStatusProps = SubmittingProps & {
   gateway: Gateway;
   transaction: GatewayTransaction | null;
   Fees: ReactNode | null;
-  outputAmount: string | null;
-  outputAmountUsd: string | null;
+  lockAmount: string | null;
+  mintAmount: string | null;
   lockStatus: ChainTransactionStatus | null;
   lockConfirmations: number | null;
   lockTargetConfirmations: number | null;
@@ -72,9 +71,9 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   gateway,
   transaction,
   Fees,
-  outputAmount,
-  outputAmountUsd,
   lockConfirmations,
+  lockAmount,
+  mintAmount,
   lockTargetConfirmations,
   lockStatus,
   onSubmit,
@@ -85,7 +84,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
   submittingDisabled,
   errorSubmitting,
 }) => {
-  const { asset, from, to, toAddress, amount, fromAverageConfirmationTime } =
+  const { asset, from, to, toAddress, fromAverageConfirmationTime } =
     getGatewayParams(gateway);
   const { Icon: SendIcon, RenIcon: ReceiveIcon } = getAssetConfig(asset);
   const sendIconTooltip = asset;
@@ -121,32 +120,24 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
             />
           </>
         )}
-        {/* <SendingReceivingSection
-          ioType={GatewayIOType.lockAndMint}
-          asset={asset}
-          sendingAmount={amount}
-          receivingAmount={outputAmount}
-          receivingAmountUsd={outputAmountUsd}
-        /> */}
         <SendingReceivingWrapper
           from={from}
           to={to}
-          amount={amount.toString()}
-          outputAmount={outputAmount || ""}
+          amount={lockAmount}
+          outputAmount={mintAmount}
           SendIcon={SendIcon}
           ReceiveIcon={ReceiveIcon}
           sendIconTooltip={sendIconTooltip}
           receiveIconTooltip={receiveIconTooltip}
-        ></SendingReceivingWrapper>
-        {!showProgress && (
-          <BigTopWrapper>
-            <AccountWrapper chain={from} label="Sender Address">
-              {trimAddress(fromAccount, 5)}
-            </AccountWrapper>
-            <AccountWrapper chain={to} label="Recipient Address">
-              {trimAddress(toAddress, 5)}
-            </AccountWrapper>
-            {/* <AddressInfo address={fromAccount} label="Sender Address" />
+        />
+        <BigTopWrapper>
+          <AccountWrapper chain={from} label="Sender Address">
+            {trimAddress(fromAccount, 5)}
+          </AccountWrapper>
+          <AccountWrapper chain={to} label="Recipient Address">
+            {trimAddress(toAddress, 5)}
+          </AccountWrapper>
+          {/* <AddressInfo address={fromAccount} label="Sender Address" />
             <AddressInfo address={toAccount} label="Recipient Address" /> */}
           </BigTopWrapper>
         )}
@@ -167,21 +158,23 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
       <PaperContent darker topPadding bottomPadding>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
-          <ActionButton
-            onClick={onSubmit}
-            disabled={
-              submittingDisabled ||
-              submitting ||
+          <WalletConnectionActionButtonGuard chain={from}>
+            <ActionButton
+              onClick={onSubmit}
+              disabled={
+                submittingDisabled ||
+                submitting ||
+                waiting ||
+                lockStatus === ChainTransactionStatus.Confirming
+              }
+            >
+              {submitting ||
               waiting ||
               lockStatus === ChainTransactionStatus.Confirming
-            }
-          >
-            {submitting ||
-            waiting ||
-            lockStatus === ChainTransactionStatus.Confirming
-              ? `Locking on ${fromChainConfig.shortName}...`
-              : `Starting Bridging`}
-          </ActionButton>
+                ? `Locking on ${fromChainConfig.shortName}...`
+                : `Starting Bridging`}
+            </ActionButton>
+          </WalletConnectionActionButtonGuard>
           {errorSubmitting && (
             <SubmitErrorDialog
               open={true}
@@ -200,12 +193,11 @@ type MintH2HMintTransactionProgressStatusProps = SubmittingProps & {
   Fees: ReactNode | null;
   transaction: GatewayTransaction | null;
   renVMStatus: ChainTransactionStatus | null;
+  lockAmount: string | null;
   mintAmount: string | null;
   mintStatus: ChainTransactionStatus | null;
   mintConfirmations: number | null;
   mintTargetConfirmations: number | null;
-  outputAmount: string | null;
-  outputAmountUsd: string | null;
 };
 
 export const MintH2HMintTransactionProgressStatus: FunctionComponent<
@@ -215,12 +207,11 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   Fees,
   transaction,
   renVMStatus,
+  lockAmount,
   mintAmount,
   mintConfirmations,
   mintTargetConfirmations,
   mintStatus,
-  outputAmount,
-  outputAmountUsd,
   onSubmit,
   onReset,
   submitting,
@@ -228,14 +219,11 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   done,
   errorSubmitting,
 }) => {
-  const { asset, from, to, amount } = getGatewayParams(gateway);
+  const { asset, from, to } = getGatewayParams(gateway);
   const { Icon: SendIcon, RenIcon: ReceiveIcon } = getAssetConfig(asset);
   const sendIconTooltip = asset;
   const receiveIconTooltip = `ren${asset}`;
   const mintChainConfig = getChainConfig(to);
-
-  const { connected } = useWallet(to);
-  const { handlePickerOpen, pickerOpened } = useWalletPicker();
 
   const { Icon: ChainIcon } = mintChainConfig;
   return (
@@ -259,8 +247,8 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
         <SendingReceivingWrapper
           from={from}
           to={to}
-          amount={amount.toString()}
-          outputAmount={outputAmount || ""}
+          amount={lockAmount}
+          outputAmount={mintAmount}
           SendIcon={SendIcon}
           ReceiveIcon={ReceiveIcon}
           sendIconTooltip={sendIconTooltip}
@@ -278,7 +266,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
       <PaperContent topPadding bottomPadding darker>
         <FeesToggler>{Fees}</FeesToggler>
         <MultipleActionButtonWrapper>
-          {connected && (
+          <WalletConnectionActionButtonGuard chain={to}>
             <ActionButton
               onClick={onSubmit}
               disabled={submitting || waiting || !mintAmount}
@@ -287,12 +275,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
                 ? `Minting on ${mintChainConfig.shortName}...`
                 : `Mint on ${mintChainConfig.shortName}`}
             </ActionButton>
-          )}
-          {!connected && (
-            <ActionButton onClick={handlePickerOpen} disabled={pickerOpened}>
-              Connect {mintChainConfig.shortName} Wallet
-            </ActionButton>
-          )}
+          </WalletConnectionActionButtonGuard>
           {errorSubmitting && (
             <SubmitErrorDialog
               open={true}
@@ -310,23 +293,13 @@ type MintH2HCompletedStatusProps = {
   gateway: Gateway;
   lockTxUrl: string | null;
   lockAmount: string | null;
-  lockAssetDecimals: number | null;
   mintTxUrl: string | null;
   mintAmount: string | null;
-  mintAssetDecimals: number | null;
 };
 
 export const MintH2HCompletedStatus: FunctionComponent<
   MintH2HCompletedStatusProps
-> = ({
-  gateway,
-  lockTxUrl,
-  lockAmount,
-  lockAssetDecimals,
-  mintTxUrl,
-  mintAmount,
-  mintAssetDecimals,
-}) => {
+> = ({ gateway, lockTxUrl, lockAmount, mintTxUrl, mintAmount }) => {
   const { t } = useTranslation();
   useSetPaperTitle(t("mint.complete-title"));
 
@@ -336,11 +309,8 @@ export const MintH2HCompletedStatus: FunctionComponent<
   const lockAssetConfig = getAssetConfig(gateway.params.asset);
   const mintChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
-  const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
-
   const notificationMessage = t("mint.success-notification-message", {
-    total: mintAmountFormatted,
+    total: mintAmount,
     currency: lockAssetConfig.shortName,
     chain: mintChainConfig.fullName,
   });
@@ -366,8 +336,8 @@ export const MintH2HCompletedStatus: FunctionComponent<
       <ChainProgressDone chain={to} />
       <SentReceivedSection
         ioType={GatewayIOType.lockAndMint}
-        sentAmount={lockAmountFormatted}
-        receivedAmount={mintAmountFormatted}
+        sentAmount={lockAmount}
+        receivedAmount={mintAmount}
         asset={asset}
       />
       <FromToTxLinks

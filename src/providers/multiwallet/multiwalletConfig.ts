@@ -2,7 +2,7 @@ import { Chain } from "@renproject/chains";
 import { BinanceSmartChainInjectedConnector } from "@renproject/multiwallet-binancesmartchain-injected-connector";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 import { EthereumMEWConnectConnector } from "@renproject/multiwallet-ethereum-mewconnect-connector";
-import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
+// import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 import { RenNetwork } from "@renproject/utils";
 import { env } from "../../constants/environmentVariables";
 import {
@@ -14,6 +14,7 @@ import {
 } from "../../features/wallet/components/WalletHelpers";
 import { createNetworkIdMapper } from "../../utils/networksConfig";
 import { Wallet } from "../../utils/walletsConfig";
+import { SolanaConnector } from "./SolanaConnector";
 
 const isEnabled = (chain: Chain, wallet: Wallet) => {
   const entries = env.ENABLED_EXTRA_WALLETS;
