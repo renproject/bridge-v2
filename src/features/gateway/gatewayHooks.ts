@@ -663,13 +663,19 @@ export const getTransactionParams = (
   return { from, to, amount };
 };
 
+export const getGatewayBasicParams = (params: Gateway["params"]) => {
+  const asset = params.asset as Asset;
+  const from = params.from.chain as Chain;
+  const to = params.to.chain as Chain;
+  const fromAmount = params.from.params?.amount as string;
+  const toAddress = params.to.address || (params.to.params?.address as string);
+  return { asset, from, to, fromAmount, toAddress };
+};
+
 export const getGatewayParams = (gateway: Gateway) => {
-  const asset = gateway.params.asset as Asset;
-  const from = gateway.params.from.chain as Chain;
-  const to = gateway.params.to.chain as Chain;
-  const fromAmount = gateway.params.from.params?.amount as string;
-  const toAddress =
-    gateway.params.to.address || (gateway.params.to.params?.address as string);
+  const { asset, from, to, fromAmount, toAddress } = getGatewayBasicParams(
+    gateway.params
+  );
   const fromAverageConfirmationTime =
     gateway.fromChain.network.averageConfirmationTime;
   const toAverageConfirmationTime =
