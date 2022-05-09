@@ -251,7 +251,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
           <WalletConnectionActionButtonGuard chain={to}>
             <ActionButton
               onClick={onSubmit}
-              disabled={submitting || waiting || !mintAmount}
+              disabled={submitting || waiting || !mintAmount || renVMStatus !== ChainTransactionStatus.Done}
             >
               {submitting || waiting
                 ? `Minting on ${mintChainConfig.shortName}...`
