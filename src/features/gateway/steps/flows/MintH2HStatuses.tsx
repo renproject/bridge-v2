@@ -137,8 +137,6 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           <AccountWrapper chain={to} label="Recipient Address">
             {trimAddress(toAddress, 5)}
           </AccountWrapper>
-          {/* <AddressInfo address={fromAccount} label="Sender Address" />
-            <AddressInfo address={toAccount} label="Recipient Address" /> */}
         </BigTopWrapper>
         <Box display="flex" alignItems="center" justifyContent="center">
           <FormControlLabel
