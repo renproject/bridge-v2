@@ -139,8 +139,7 @@ export const MintH2HLockTransactionProgressStatus: FunctionComponent<
           </AccountWrapper>
           {/* <AddressInfo address={fromAccount} label="Sender Address" />
             <AddressInfo address={toAccount} label="Recipient Address" /> */}
-          </BigTopWrapper>
-        )}
+        </BigTopWrapper>
         <Box display="flex" alignItems="center" justifyContent="center">
           <FormControlLabel
             control={<Checkbox name="primary" color="primary" />}
@@ -269,7 +268,12 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
           <WalletConnectionActionButtonGuard chain={to}>
             <ActionButton
               onClick={onSubmit}
-              disabled={submitting || waiting || !mintAmount || renVMStatus !== ChainTransactionStatus.Done}
+              disabled={
+                submitting ||
+                waiting ||
+                !mintAmount ||
+                renVMStatus !== ChainTransactionStatus.Done
+              }
             >
               {submitting || waiting
                 ? `Minting on ${mintChainConfig.shortName}...`
