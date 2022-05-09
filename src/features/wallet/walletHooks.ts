@@ -216,7 +216,8 @@ export const useWalletAssetHelpers = (chain: Chain, asset: Asset | string) => {
         address,
         decimals,
         symbol: renAssetName,
-        image: `https://bridge.renproject.io/tokens/${renAssetName}.svg`, //TODO: change to ren-ui
+        // image: `https://bridge.renproject.io/tokens/${renAssetName}.svg`,
+        image: `https://ren-ui.netlify.app/assets/icons/tokens/wrapped/${renAssetName}.svg`,
       },
     };
     return () =>
