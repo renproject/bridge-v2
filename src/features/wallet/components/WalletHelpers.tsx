@@ -14,9 +14,14 @@ import { Asset, Chain } from "@renproject/chains";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
 import { RenNetwork } from "@renproject/utils";
 import classNames from "classnames";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { TFunction, Trans, useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTimeout } from "react-use";
 import {
   ActionButton,
@@ -33,7 +38,10 @@ import {
   SpacedPaperContent,
 } from "../../../components/layout/Paper";
 import { Link } from "../../../components/links/Links";
-import { BridgeModalTitle } from "../../../components/modals/BridgeModal";
+import {
+  BridgeModal,
+  BridgeModalTitle,
+} from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
@@ -48,9 +56,14 @@ import {
 } from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
 import { getWalletConfig, Wallet } from "../../../utils/walletsConfig";
+import { WarningDialog } from "../../transactions/components/TransactionsHelpers";
 import { useEns, useSwitchChainHelpers, useWallet } from "../walletHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
-import { setPickerOpened } from "../walletSlice";
+import {
+  $screening,
+  setPickerOpened,
+  setScreeningWarningOpened,
+} from "../walletSlice";
 import { WalletStatus } from "../walletUtils";
 import Davatar from "@davatar/react";
 
@@ -794,5 +807,49 @@ export const ConnectWalletPaperSection: FunctionComponent<
         {t("wallet.connect")}
       </ActionButton>
     </>
+  );
+};
+
+export const AddressScreeningWarningDialog: FunctionComponent = () => {
+  const dispatch = useDispatch();
+  const { dialogOpened, fromAddressSanctioned, toAddressSanctioned } =
+    useSelector($screening);
+  const handleClose = useCallback(() => {
+    dispatch(setScreeningWarningOpened(false));
+  }, [dispatch]);
+
+  let message;
+  if (fromAddressSanctioned && toAddressSanctioned) {
+    message = "Sender and recipient address are sanctioned";
+  } else if (fromAddressSanctioned) {
+    message = "Sender address is sanctioned";
+  } else if (toAddressSanctioned) {
+    message = "Recipient address is sanctioned";
+  }
+
+  const sanctioned = fromAddressSanctioned || toAddressSanctioned;
+  useEffect(() => {
+    if (sanctioned) {
+      dispatch(setScreeningWarningOpened(true));
+    } else {
+      dispatch(setScreeningWarningOpened(false));
+    }
+  }, [dispatch, sanctioned]);
+
+  return (
+    <WarningDialog
+      open={dialogOpened}
+      onClose={handleClose}
+      reason="Sanctioned Address"
+      mainActionText="Ok. Let me try..."
+      onMainAction={handleClose}
+    >
+      <Typography variant="h6" paragraph>
+        {message}
+      </Typography>
+      <Typography variant="body2">
+        Your transaction will fail during further processing.
+      </Typography>
+    </WarningDialog>
   );
 };

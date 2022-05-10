@@ -37,7 +37,11 @@ import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findAssetExchangeRate } from "../../marketData/marketDataUtils";
 import { useCurrentNetworkChains } from "../../network/networkHooks";
 import { TransactionSafetyWarning } from "../../transactions/components/TransactionsHistoryHelpers";
-import { useCurrentChainWallet, useWallet } from "../../wallet/walletHooks";
+import {
+  useCurrentChainWallet,
+  useSyncScreening,
+  useWallet,
+} from "../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../wallet/walletSlice";
 import {
   BalanceInfo,
@@ -284,6 +288,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   const showAmountError = amountTouched && hasAmountBalanceError;
 
+  useSyncScreening({
+    fromAddress: account,
+    fromStart: Boolean(account),
+    toAddress,
+    toStart: isAddressValid,
+  });
   // console.log(
   //   balance,
   //   amount,

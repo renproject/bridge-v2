@@ -63,7 +63,6 @@ import {
 } from "../gateway/components/DropdownHelpers";
 import {
   GatewayIOType,
-  getGatewayBasicParams,
   useAssetDecimals,
   useGatewayMeta,
 } from "../gateway/gatewayHooks";

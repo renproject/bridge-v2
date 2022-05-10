@@ -6715,6 +6715,11 @@ camelcase@^6.2.0, camelcase@^6.2.1:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-6.3.0.tgz#5685b95eb209ac9c0c177467778c9c84df58ba9a"
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
+cancelable-promise@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/cancelable-promise/-/cancelable-promise-4.3.0.tgz#13059151a52622ff282df3d07c4838ac8de93086"
+  integrity sha512-sh4IYH3YLhi1AlNIBeka4WqRIJ8m8msgc8Och0DFRY4rgf83UnhYD0hQ83to4M/lZ3TLzDIwQeQP6wcyA2JJow==
+
 caniuse-api@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/caniuse-api/-/caniuse-api-3.0.0.tgz"

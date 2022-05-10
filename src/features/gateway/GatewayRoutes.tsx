@@ -7,6 +7,7 @@ import React, {
 import { Route, useHistory, useLocation } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
+import { AddressScreeningWarningDialog } from "../wallet/components/WalletHelpers";
 import { GatewayPaperLoader } from "./components/GatewayHelpers";
 import { TransactionTypeTabs } from "./components/TransactionTypeHelpers";
 import { ReleaseH2HProcess } from "./steps/flows/ReleaseH2H";
@@ -53,6 +54,7 @@ const GatewayConfigurationSteps: FunctionComponent<
       {step === GatewayConfigurationStep.FEES && (
         <GatewayFeesStep onPrev={handleFeesPrev} />
       )}
+      <AddressScreeningWarningDialog />
     </>
   );
 };
