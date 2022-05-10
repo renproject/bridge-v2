@@ -6,7 +6,6 @@ import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
-import { useNotifications } from "../../../../providers/Notifications";
 import {
   usePaperTitle,
   useSetPaperTitle,
@@ -14,7 +13,6 @@ import {
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { decimalsAmount } from "../../../../utils/numbers";
-import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
   pickChains,
@@ -43,6 +41,7 @@ import {
   useChainTransactionSubmitter,
   usePartialTxMemo,
   useRenVMChainTransactionStatusUpdater,
+  useTxRecovery,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
 import {
@@ -82,8 +81,9 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
     }
   }, [from, allChains, provider]);
 
+  const hasRenVMHash = Boolean(renVMHash);
+  const hasPartialTx = Boolean(partialTxString);
   const partialTx = usePartialTxMemo(partialTxString);
-  const hasPartialTx = Boolean(partialTx);
 
   const { gateway, transactions, recoverLocalTx, error } = useGateway(
     { asset, from, to, amount, toAddress },
@@ -91,55 +91,16 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
   );
   useSetGatewayContext(gateway);
 
-  // TODO: DRY
-  const { showNotification } = useNotifications();
-  const [recoveryMode] = useState(Boolean(renVMHash));
-  const [recoveringStarted, setRecoveringStarted] = useState(false);
-  const [recoveringError, setRecoveringError] = useState<Error | null>(null);
-  const { persistLocalTx, findLocalTx } = useTxsStorage();
-  useEffect(() => {
-    if (
-      recoveryMode &&
-      renVMHash &&
-      account &&
-      gateway !== null &&
-      !recoveringStarted
-    ) {
-      setRecoveringStarted(true);
-      console.log("recovering tx" + trimAddress(renVMHash));
-      const localTx = findLocalTx(account, renVMHash);
-      if (localTx === null) {
-        console.error(`Unable to find tx for ${account}, ${renVMHash}`);
-        return;
-      } else {
-        recoverLocalTx(renVMHash, localTx)
-          .then(() => {
-            showNotification(
-              `Transaction ${trimAddress(renVMHash)} recovered.`,
-              {
-                variant: "success",
-              }
-            );
-          })
-          .catch((error) => {
-            console.error(`Recovering error`, error.message);
-            showNotification(`Failed to recover transaction`, {
-              variant: "error",
-            });
-            setRecoveringError(error);
-          });
-      }
-    }
-  }, [
-    recoveryMode,
-    showNotification,
-    account,
-    renVMHash,
-    recoveringStarted,
-    findLocalTx,
+  const [recoveryMode] = useState(hasRenVMHash || hasPartialTx);
+  const { persistLocalTx } = useTxsStorage();
+
+  const { recoveringError } = useTxRecovery({
     gateway,
+    renVMHash,
+    fromAddress: account,
+    recoveryMode,
     recoverLocalTx,
-  ]);
+  });
 
   const transaction = transactions[0] || null;
 
@@ -167,7 +128,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
             transaction={transaction}
             account={account}
             persistLocalTx={persistLocalTx}
-            recoveryMode={recoveringStarted || hasPartialTx}
+            recoveryMode={recoveryMode}
           />
         </>
       )}
