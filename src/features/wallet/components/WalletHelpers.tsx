@@ -1,3 +1,4 @@
+import Davatar from "@davatar/react";
 import {
   Box,
   Button,
@@ -38,10 +39,7 @@ import {
   SpacedPaperContent,
 } from "../../../components/layout/Paper";
 import { Link } from "../../../components/links/Links";
-import {
-  BridgeModal,
-  BridgeModalTitle,
-} from "../../../components/modals/BridgeModal";
+import { BridgeModalTitle } from "../../../components/modals/BridgeModal";
 import {
   ProgressWithContent,
   ProgressWrapper,
@@ -65,7 +63,6 @@ import {
   setScreeningWarningOpened,
 } from "../walletSlice";
 import { WalletStatus } from "../walletUtils";
-import Davatar from "@davatar/react";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
