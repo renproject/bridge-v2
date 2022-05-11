@@ -773,7 +773,7 @@ export const DepositNavigationButton: FunctionComponent<
           </Typography>
         ) : (
           <Typography variant="body2" color="primary">
-            {t("mint.deposit-navigation-ready-to-mint-label")}
+            {renVMStatus === ChainTransactionStatus.Reverted ? t("tx.reverted") : t("mint.deposit-navigation-ready-to-mint-label")}
           </Typography>
         )}
       </div>

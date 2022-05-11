@@ -294,5 +294,6 @@
   "mint.gateway-expired-label": "Expired",
   "navigation.report-an-issue-label": "Report an issue",
   "release.confirmed-label": "Confirmed",
-  "tx.address-error-popup-back-to-home": "Back to home"
+  "tx.address-error-popup-back-to-home": "Back to home",
+  "tx.reverted": "Reverted"
 }

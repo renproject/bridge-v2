@@ -30,9 +30,7 @@ import {
 } from "../../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../../components/utils/Debug";
-import {
-  useNotifications
-} from "../../../../providers/Notifications";
+import { useNotifications } from "../../../../providers/Notifications";
 import {
   usePaperTitle,
   useSetActionRequired,
@@ -265,19 +263,22 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   return (
     <>
       <ProgressWrapper>
-        {submitting || renVMProcessing ? (
-          <>
-            {renVMProcessing ? (
-              <ProgressWithContent processing>
-                <RenVMSubmittingInfo />
-              </ProgressWithContent>
-            ) : (
-              <ProgressWithContent color={lockChainConfig.color} processing>
-                <LockChainIcon fontSize="inherit" color="inherit" />
-              </ProgressWithContent>
-            )}
-          </>
-        ) : (
+        {renVMStatus === ChainTransactionStatus.Reverted && (
+          <Typography variant="h3" align="center">
+            RenVM {t("tx.reverted")}
+          </Typography>
+        )}
+        {renVMStatus !== ChainTransactionStatus.Reverted && renVMProcessing && (
+          <ProgressWithContent processing>
+            <RenVMSubmittingInfo />
+          </ProgressWithContent>
+        )}
+        {!renVMProcessing && submitting && (
+          <ProgressWithContent color={lockChainConfig.color} processing>
+            <LockChainIcon fontSize="inherit" color="inherit" />
+          </ProgressWithContent>
+        )}
+        {!renVMProcessing && !submitting && (
           <ProgressWithContent
             color={lockChainConfig.color}
             confirmations={undefinedForNull(lockConfirmations)}
