@@ -746,8 +746,8 @@ export const useGatewayMeta = (
   const promiseRef = useRef<CancelablePromise | null>(null);
 
   useEffect(() => {
-    if (promiseRef) {
-      promiseRef.current?.cancel();
+    if (promiseRef.current !== null) {
+      promiseRef.current.cancel();
     }
     reset();
     setError(undefined);
@@ -764,7 +764,8 @@ export const useGatewayMeta = (
       asset,
       fromChain: chains[from]?.chain,
       toChain: chains[to]?.chain,
-    })
+    });
+    const cancelablePromise = cancelable(promise)
       .then(({ inputType, outputType, selector }) => {
         console.log("getInputAndOutputTypes", inputType, outputType, selector);
         // deprecated, keep until cleaned
@@ -802,9 +803,11 @@ export const useGatewayMeta = (
         console.error(error);
         setError(error);
         reset();
+      })
+      .finally(() => {
+        promiseRef.current = null;
       });
-
-    promiseRef.current = cancelable(promise);
+    promiseRef.current = cancelablePromise;
     return () => {
       if (promiseRef.current) {
         promiseRef.current.cancel();
