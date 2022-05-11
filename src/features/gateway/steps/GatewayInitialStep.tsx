@@ -116,7 +116,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       const fromChainConfig = getChainConfig(from);
       const toChainConfig = getChainConfig(to);
       key = showNotification(
-        `We detected network instability for either ${fromChainConfig.shortName} or ${toChainConfig.shortName}, which prevents processing the transaction. Try again after some time.`,
+        `We detected network instability for either ${fromChainConfig.shortName} or ${toChainConfig.shortName}, which will prevent processing of deposits for the moment. Please revisit soon.`,
         {
           variant: "warning",
         }
