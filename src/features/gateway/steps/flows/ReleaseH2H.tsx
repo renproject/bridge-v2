@@ -11,12 +11,10 @@ import { RouteComponentProps } from "react-router";
 import { useHistory } from "react-router-dom";
 import { Debug } from "../../../../components/utils/Debug";
 import { paths } from "../../../../pages/routes";
-import { useNotifications } from "../../../../providers/Notifications";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import { getChainConfig } from "../../../../utils/chainsConfig";
 import { decimalsAmount } from "../../../../utils/numbers";
-import { trimAddress } from "../../../../utils/strings";
 import {
   alterContractChainProviderSigner,
   pickChains,
@@ -44,6 +42,7 @@ import {
   useChainTransactionSubmitter,
   usePartialTxMemo,
   useRenVMChainTransactionStatusUpdater,
+  useTxRecovery,
 } from "../../gatewayTransactionHooks";
 import { parseGatewayQueryString } from "../../gatewayUtils";
 import {
@@ -152,58 +151,16 @@ const ReleaseH2HGatewayProcess: FunctionComponent<
   );
   useSetGatewayContext(gateway);
 
-  // TODO: DRY
-  const { showNotification } = useNotifications();
   const [recoveryMode] = useState(hasRenVMHash || hasPartialTx);
-  const [recoveringStarted, setRecoveringStarted] = useState(false);
-  const [recoveringError, setRecoveringError] = useState<Error | null>(null);
-  const { persistLocalTx, findLocalTx } = useTxsStorage();
+  const { persistLocalTx } = useTxsStorage();
 
-  useEffect(() => {
-    // TODO: add partialTx recovery notification
-    if (
-      recoveryMode &&
-      renVMHash &&
-      fromAddress &&
-      gateway !== null &&
-      !recoveringStarted
-    ) {
-      // this will happen only once per gateway lifecycle
-      setRecoveringStarted(true);
-      console.log("recovering tx: " + trimAddress(renVMHash));
-      const localTx = findLocalTx(fromAddress, renVMHash);
-      if (localTx === null) {
-        console.error(`Unable to find tx for ${fromAddress}, ${renVMHash}`);
-        return;
-      } else {
-        recoverLocalTx(renVMHash, localTx)
-          .then(() => {
-            showNotification(
-              `Transaction ${trimAddress(renVMHash)} recovered.`,
-              {
-                variant: "success",
-              }
-            );
-          })
-          .catch((error) => {
-            console.error(`Recovering error`, error.message);
-            showNotification(`Failed to recover transaction`, {
-              variant: "error",
-            });
-            setRecoveringError(error);
-          });
-      }
-    }
-  }, [
-    recoveryMode,
-    showNotification,
-    fromAddress,
-    renVMHash,
-    recoveringStarted,
-    findLocalTx,
+  const { recoveringError } = useTxRecovery({
     gateway,
+    renVMHash,
+    fromAddress,
+    recoveryMode,
     recoverLocalTx,
-  ]);
+  });
 
   const transaction = transactions[0] || null;
 
@@ -409,7 +366,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   const outSubmitter = useChainTransactionSubmitter({
     tx: transaction?.out,
-    debugLabel: "out"
+    debugLabel: "out",
   });
   const {
     handleSubmit: handleSubmitRelease,
@@ -422,7 +379,8 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
-    startTrigger: outSubmitter.submittingDone || recoveryMode || !transaction?.out?.submit,
+    startTrigger:
+      outSubmitter.submittingDone || recoveryMode || !transaction?.out?.submit,
     debugLabel: "out",
   });
   const {

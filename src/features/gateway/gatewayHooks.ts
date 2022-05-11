@@ -14,7 +14,8 @@ import {
   OutputType,
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import CancelablePromise, { cancelable } from "cancelable-promise";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   MINT_GAS_UNIT_COST,
@@ -718,6 +719,7 @@ export const useGatewayMeta = (
   const { network } = useSelector($network);
   const chains = useChains(network);
 
+  const [error, setError] = useState();
   const [ioType, setIoType] = useState<GatewayIOType | null>(null);
 
   // deprecated
@@ -726,6 +728,7 @@ export const useGatewayMeta = (
   const [isLock, setIsLock] = useState<boolean | null>(null);
   const [isBurn, setIsBurn] = useState<boolean | null>(null);
   // end of deprecatated
+
   const [isFromContractChain, setIsFromContractChain] =
     useState<boolean>(false);
   const [isToContractChain, setIsToContractChain] = useState<boolean>(false);
@@ -740,8 +743,14 @@ export const useGatewayMeta = (
     setIsToContractChain(false);
   }, []);
 
+  const promiseRef = useRef<CancelablePromise | null>(null);
+
   useEffect(() => {
+    if (promiseRef.current !== null) {
+      promiseRef.current.cancel();
+    }
     reset();
+    setError(undefined);
     console.log(asset, from, to);
     if (asset === null || from === null || to === null) {
       return;
@@ -751,11 +760,12 @@ export const useGatewayMeta = (
 
     console.log("getInputAndOutputTypes", asset, from, to);
 
-    getInputAndOutputTypes({
+    const promise = getInputAndOutputTypes({
       asset,
       fromChain: chains[from]?.chain,
       toChain: chains[to]?.chain,
-    })
+    });
+    const cancelablePromise = cancelable(promise)
       .then(({ inputType, outputType, selector }) => {
         console.log("getInputAndOutputTypes", inputType, outputType, selector);
         // deprecated, keep until cleaned
@@ -791,8 +801,18 @@ export const useGatewayMeta = (
       })
       .catch((error) => {
         console.error(error);
+        setError(error);
         reset();
+      })
+      .finally(() => {
+        promiseRef.current = null;
       });
+    promiseRef.current = cancelablePromise;
+    return () => {
+      if (promiseRef.current) {
+        promiseRef.current.cancel();
+      }
+    };
   }, [reset, chains, asset, from, to]);
   // console.log("useGatewayMeta", asset, from, to, chains);
 
@@ -801,11 +821,14 @@ export const useGatewayMeta = (
   // const toConnectionRequired = Boolean(chains[to].connectionRequired);
 
   return {
+    error,
+    //deprecated start
     isMint,
     isRelease,
     isLock,
     isBurn,
     isMove: isBurn && isMint,
+    //deprecated end
     // proper params
     ioType,
     isLockAndMint: ioType === GatewayIOType.lockAndMint,

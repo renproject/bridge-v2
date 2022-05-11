@@ -1,4 +1,5 @@
 import { Chain } from "@renproject/chains";
+import { Gateway } from "@renproject/ren";
 import {
   ChainTransactionStatus,
   InputChainTransaction,
@@ -6,10 +7,15 @@ import {
   TxWaiter,
 } from "@renproject/utils";
 import BigNumber from "bignumber.js";
+import CancelablePromise, { cancelable } from "cancelable-promise";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RouteComponentProps } from "react-router";
+import { useNotifications } from "../../providers/Notifications";
 import { isDefined } from "../../utils/objects";
+import { trimAddress } from "../../utils/strings";
 import { useCurrentNetworkChains } from "../network/networkHooks";
+import { useTxsStorage } from "../storage/storageHooks";
+import { TxRecoverer } from "./gatewayHooks";
 import { GatewayLocationState } from "./gatewayRoutingUtils";
 
 export const useLabeler = (label: string) => {
@@ -367,4 +373,81 @@ export const usePartialTxMemo = (partialTxString?: string | null) => {
     }
     return null;
   }, [partialTxString]);
+};
+
+type UseTxRecoveryParams = {
+  gateway: Gateway | null;
+  recoveryMode: boolean;
+  renVMHash?: string;
+  fromAddress?: string;
+  recoverLocalTx: TxRecoverer;
+};
+
+export const useTxRecovery = ({
+  gateway,
+  renVMHash,
+  fromAddress,
+  recoveryMode,
+  recoverLocalTx,
+}: UseTxRecoveryParams) => {
+  const { showNotification } = useNotifications();
+  // const [recoveryMode] = useState(hasRenVMHash || hasPartialTx);
+  const [recoveringStarted, setRecoveringStarted] = useState(false);
+  const [recoveringError, setRecoveringError] = useState<Error | null>(null);
+  const { findLocalTx } = useTxsStorage();
+
+  useEffect(() => {
+    // TODO: add partialTx recovery notification
+    if (
+      recoveryMode &&
+      renVMHash &&
+      fromAddress &&
+      gateway !== null &&
+      !recoveringStarted
+    ) {
+      setRecoveringStarted(true);
+      console.log("recovering tx: " + trimAddress(renVMHash));
+      const localTx = findLocalTx(fromAddress, renVMHash);
+      let cancelablePromise: CancelablePromise | null = null;
+      if (localTx === null) {
+        console.error(`Unable to find tx for ${fromAddress}, ${renVMHash}`);
+        return;
+      } else {
+        const recoverPromise = recoverLocalTx(renVMHash, localTx)
+          .then(() => {
+            showNotification(
+              `Transaction ${trimAddress(renVMHash)} recovered.`,
+              {
+                variant: "success",
+              }
+            );
+          })
+          .catch((error) => {
+            console.error(`Recovering error`, error.message);
+            showNotification(`Failed to recover transaction`, {
+              variant: "error",
+            });
+            setRecoveringError(error);
+          });
+        cancelablePromise = cancelable(recoverPromise);
+      }
+      return () => {
+        if (cancelablePromise) {
+          cancelablePromise.cancel();
+        }
+      };
+    }
+  }, [
+    recoveryMode,
+    showNotification,
+    fromAddress,
+    // toAddress,
+    renVMHash,
+    recoveringStarted,
+    findLocalTx,
+    gateway,
+    recoverLocalTx,
+  ]);
+
+  return { recoveringError };
 };

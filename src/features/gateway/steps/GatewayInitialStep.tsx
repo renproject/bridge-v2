@@ -27,6 +27,7 @@ import { PaperContent } from "../../../components/layout/Paper";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
+import { useNotifications } from "../../../providers/Notifications";
 import {
   getAssetConfig,
   getUIAsset,
@@ -105,7 +106,28 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const { t } = useTranslation();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const meta = useGatewayMeta(asset, from, to);
-  const { isFromContractChain, isH2H } = meta;
+  const { isFromContractChain, isH2H, error } = meta;
+  const { showNotification, closeNotification } = useNotifications();
+  const hasNetworkError = Boolean(error);
+  useEffect(() => {
+    let key: any;
+    if (error) {
+      console.log("err", error);
+      const fromChainConfig = getChainConfig(from);
+      const toChainConfig = getChainConfig(to);
+      key = showNotification(
+        `We detected network instability for either ${fromChainConfig.shortName} or ${toChainConfig.shortName}, which prevents processing the transaction. Try again after some time.`,
+        {
+          variant: "warning",
+        }
+      );
+    }
+    return () => {
+      if (key) {
+        closeNotification(key);
+      }
+    };
+  }, [showNotification, closeNotification, error, from, to]);
   const [assets, setAssets] = useState(allAssets);
   const [fromChains, setFromChains] = useState(allChains);
   const [toChains, setToChains] = useState(allChains);
@@ -425,6 +447,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             disabled={
               hasAddressError ||
               hasAmountBalanceError ||
+              hasNetworkError ||
               (requiresInitialAmount && !Number(amount))
             }
           >
