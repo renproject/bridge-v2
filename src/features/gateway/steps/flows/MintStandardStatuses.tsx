@@ -96,66 +96,66 @@ export const MintDepositConfirmationStatus: FunctionComponent<
   lockTxId,
   lockTxUrl,
 }) => {
-  const { t } = useTranslation();
-  const [, setTitle] = usePaperTitle();
-  const { asset, from, fromAverageConfirmationTime } =
-    getGatewayParams(gateway);
-  const lockAssetConfig = getAssetConfig(asset);
-  const lockChainConfig = getChainConfig(from);
+    const { t } = useTranslation();
+    const [, setTitle] = usePaperTitle();
+    const { asset, from, fromAverageConfirmationTime } =
+      getGatewayParams(gateway);
+    const lockAssetConfig = getAssetConfig(asset);
+    const lockChainConfig = getChainConfig(from);
 
-  const { Icon } = lockAssetConfig;
+    const { Icon } = lockAssetConfig;
 
-  const confirmed = lockStatus === ChainTransactionStatus.Done;
-  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
+    const confirmed = lockStatus === ChainTransactionStatus.Done;
+    const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
-  useEffect(() => {
-    setTitle(
-      confirmed
-        ? t("mint.deposit-confirmed-label")
-        : t("mint.deposit-confirming-label")
-    );
-  }, [setTitle, confirmed, t]);
+    useEffect(() => {
+      setTitle(
+        confirmed
+          ? t("mint.deposit-confirmed-label")
+          : t("mint.deposit-confirming-label")
+      );
+    }, [setTitle, confirmed, t]);
 
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent
-          color={lockAssetConfig.color}
-          confirmations={undefinedForNull(lockConfirmations)}
-          targetConfirmations={undefinedForNull(lockTargetConfirmations)}
-        >
-          <Icon fontSize="inherit" color="inherit" />
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <TransactionProgressInfo
-        confirmations={lockConfirmations}
-        target={lockTargetConfirmations}
-        averageConfirmationTime={fromAverageConfirmationTime}
-      />
-      <MediumWrapper>
-        {lockAmountFormatted !== null ? (
-          <BigAssetAmount
-            value={
-              <NumberFormatText
-                value={lockAmountFormatted}
-                spacedSuffix={lockAssetConfig.shortName}
-              />
-            }
-          />
-        ) : (
-          <Skeleton width={120} height={32} />
-        )}
-      </MediumWrapper>
-      {lockTxId !== null && lockTxUrl !== null && (
-        <TransactionDetailsButton
-          label={lockChainConfig.fullName}
-          address={lockTxId}
-          link={lockTxUrl}
+    return (
+      <>
+        <ProgressWrapper>
+          <ProgressWithContent
+            color={lockAssetConfig.color}
+            confirmations={undefinedForNull(lockConfirmations)}
+            targetConfirmations={undefinedForNull(lockTargetConfirmations)}
+          >
+            <Icon fontSize="inherit" color="inherit" />
+          </ProgressWithContent>
+        </ProgressWrapper>
+        <TransactionProgressInfo
+          confirmations={lockConfirmations}
+          target={lockTargetConfirmations}
+          averageConfirmationTime={fromAverageConfirmationTime}
         />
-      )}
-    </>
-  );
-};
+        <MediumWrapper>
+          {lockAmountFormatted !== null ? (
+            <BigAssetAmount
+              value={
+                <NumberFormatText
+                  value={lockAmountFormatted}
+                  spacedSuffix={lockAssetConfig.shortName}
+                />
+              }
+            />
+          ) : (
+            <Skeleton width={120} height={32} />
+          )}
+        </MediumWrapper>
+        {lockTxId !== null && lockTxUrl !== null && (
+          <TransactionDetailsButton
+            label={lockChainConfig.fullName}
+            address={lockTxId}
+            link={lockTxUrl}
+          />
+        )}
+      </>
+    );
+  };
 
 type MintDepositAcceptedStatusProps = SubmittingProps & {
   gateway: Gateway;
@@ -192,137 +192,132 @@ export const MintDepositAcceptedStatus: FunctionComponent<
   renVMStatus,
   renVMSubmitting,
 }) => {
-  const { t } = useTranslation();
-  useSetPaperTitle(t("mint.deposit-accepted-submit-title"));
-  useSetActionRequired(true);
-  const lockAssetConfig = getAssetConfig(gateway.params.asset);
-  const lockChainConfig = getChainConfig(gateway.params.from.chain);
-  const mintChainConfig = getChainConfig(gateway.params.to.chain);
+    const { t } = useTranslation();
+    useSetPaperTitle(t("mint.deposit-accepted-submit-title"));
+    useSetActionRequired(true);
+    const lockAssetConfig = getAssetConfig(gateway.params.asset);
+    const lockChainConfig = getChainConfig(gateway.params.from.chain);
+    const mintChainConfig = getChainConfig(gateway.params.to.chain);
 
-  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
+    const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
-  const { showNotification, closeNotification } = useNotifications();
-  const [notification, setNotification] = useState<ReactText>();
-  useEffect(() => {
-    if (
-      lockConfirmations !== null &&
-      lockTargetConfirmations !== null &&
-      notification
-    ) {
-      const notificationMessage = t(
-        "mint.deposit-accepted-notification-message",
-        {
-          confirmations: maxConfirmations(
-            lockConfirmations,
-            lockTargetConfirmations
-          ),
-          targetConfirmations: lockTargetConfirmations,
-          currency: lockAssetConfig.shortName,
-          chain: mintChainConfig.fullName,
-        }
-      );
-      const key = showNotification(notificationMessage);
-      setNotification(key);
-    }
-    return () => {
-      closeNotification(notification);
-    };
-  }, [
-    t,
-    lockAssetConfig,
-    showNotification,
-    closeNotification,
-    mintChainConfig,
-    lockConfirmations,
-    lockTargetConfirmations,
-    notification,
-  ]);
-
-  const [mintTimeRemained] = useState(getRemainingTime(expiryTime));
-
-  useEffect(() => {
-    let key = 0;
-    if (mintTimeRemained < GATEWAY_EXPIRY_OFFSET_MS) {
-      key = showNotification(
-        <GatewayTransactionValidityMessage milliseconds={mintTimeRemained} />,
-        {
-          variant: getHours(mintTimeRemained) < 12 ? "error" : "warning",
-          persist: true,
-        }
-      ) as number;
-    }
-    return () => {
-      if (key) {
-        closeNotification(key);
+    const { showNotification, closeNotification } = useNotifications();
+    const [notification, setNotification] = useState<ReactText>();
+    useEffect(() => {
+      if (
+        lockConfirmations !== null &&
+        lockTargetConfirmations !== null &&
+        notification
+      ) {
+        const notificationMessage = t(
+          "mint.deposit-accepted-notification-message",
+          {
+            confirmations: maxConfirmations(
+              lockConfirmations,
+              lockTargetConfirmations
+            ),
+            targetConfirmations: lockTargetConfirmations,
+            currency: lockAssetConfig.shortName,
+            chain: mintChainConfig.fullName,
+          }
+        );
+        const key = showNotification(notificationMessage);
+        setNotification(key);
       }
-    };
-  }, [showNotification, closeNotification, mintTimeRemained]);
+      return () => {
+        closeNotification(notification);
+      };
+    }, [
+      t,
+      lockAssetConfig,
+      showNotification,
+      closeNotification,
+      mintChainConfig,
+      lockConfirmations,
+      lockTargetConfirmations,
+      notification,
+    ]);
 
-  const { Icon: LockChainIcon } = lockChainConfig;
+    const [mintTimeRemained] = useState(getRemainingTime(expiryTime));
 
-  const renVMProcessing =
-    renVMSubmitting || renVMStatus !== ChainTransactionStatus.Done;
-  return (
-    <>
-      <ProgressWrapper>
-        {submitting || renVMProcessing ? (
-          <>
-            {renVMProcessing ? (
-              <ProgressWithContent processing>
-                <RenVMSubmittingInfo />
-              </ProgressWithContent>
-            ) : (
-              <ProgressWithContent color={lockChainConfig.color} processing>
-                <LockChainIcon fontSize="inherit" color="inherit" />
-              </ProgressWithContent>
-            )}
-          </>
-        ) : (
-          <ProgressWithContent
+    useEffect(() => {
+      let key = 0;
+      if (mintTimeRemained < GATEWAY_EXPIRY_OFFSET_MS) {
+        key = showNotification(
+          <GatewayTransactionValidityMessage milliseconds={mintTimeRemained} />,
+          {
+            variant: getHours(mintTimeRemained) < 12 ? "error" : "warning",
+            persist: true,
+          }
+        ) as number;
+      }
+      return () => {
+        if (key) {
+          closeNotification(key);
+        }
+      };
+    }, [showNotification, closeNotification, mintTimeRemained]);
+
+    const { Icon: LockChainIcon } = lockChainConfig;
+
+    const renVMProcessing =
+      renVMSubmitting || renVMStatus !== ChainTransactionStatus.Done;
+    return (
+      <>
+        <ProgressWrapper>
+          {renVMStatus === ChainTransactionStatus.Reverted && <Typography variant="h3" align="center">
+            RenVM {t("tx.reverted")}
+          </Typography>}
+          {renVMStatus !== ChainTransactionStatus.Reverted && renVMProcessing && <ProgressWithContent processing>
+            <RenVMSubmittingInfo />
+          </ProgressWithContent>}
+          {!renVMProcessing && submitting && <ProgressWithContent color={lockChainConfig.color} processing>
+            <LockChainIcon fontSize="inherit" color="inherit" />
+          </ProgressWithContent>}
+          {!renVMProcessing && !submitting && <ProgressWithContent
             color={lockChainConfig.color}
             confirmations={undefinedForNull(lockConfirmations)}
             targetConfirmations={undefinedForNull(lockTargetConfirmations)}
           >
             <LockChainIcon fontSize="inherit" color="inherit" />
-          </ProgressWithContent>
-        )}
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        <NumberFormatText
-          value={lockAmountFormatted}
-          spacedSuffix={lockAssetConfig.fullName}
-        />{" "}
-        {t("mint.received-label")}
-      </Typography>
-      <ActionButtonWrapper>
-        <ActionButton
-          onClick={onSubmit}
-          disabled={submitting || submittingDisabled}
-        >
-          {submitting ? t("mint.minting-label") : t("mint.mint-label")}{" "}
-          {getRenAssetFullName(lockAssetConfig.fullName)}
-          {submitting && "..."}
-        </ActionButton>
-      </ActionButtonWrapper>
-      <ActionButtonWrapper>
-        {lockTxId !== null && lockTxUrl !== null && (
-          <TransactionDetailsButton
-            label={lockChainConfig.fullName}
-            address={lockTxId}
-            link={lockTxUrl}
-          />
-        )}
-      </ActionButtonWrapper>
-      <Debug it={{ submittingError }} />
-      <SubmitErrorDialog
-        open={Boolean(submittingError)}
-        onAction={onReload}
-        onAlternativeAction={onSubmit}
-        error={submittingError}
-      />
-    </>
-  );
-};
+          </ProgressWithContent>}
+        </ProgressWrapper>
+        <Typography variant="body1" align="center" gutterBottom>
+          <NumberFormatText
+            value={lockAmountFormatted}
+            spacedSuffix={lockAssetConfig.fullName}
+          />{" "}
+          {t("mint.received-label")}
+        </Typography>
+        <ActionButtonWrapper>
+          <ActionButton
+            onClick={onSubmit}
+            disabled={submitting || submittingDisabled}
+          >
+            {submitting ? t("mint.minting-label") : t("mint.mint-label")}{" "}
+            {getRenAssetFullName(lockAssetConfig.fullName)}
+            {submitting && "..."}
+          </ActionButton>
+        </ActionButtonWrapper>
+        <ActionButtonWrapper>
+          {lockTxId !== null && lockTxUrl !== null && (
+            <TransactionDetailsButton
+              label={lockChainConfig.fullName}
+              address={lockTxId}
+              link={lockTxUrl}
+            />
+          )}
+        </ActionButtonWrapper>
+        <Debug it={{ submittingError }} />
+        <SubmitErrorDialog
+          open={Boolean(submittingError)}
+          onAction={onReload}
+          onAlternativeAction={onSubmit}
+          error={submittingError}
+        />
+      </>
+    );
+  };
 
 type MintCompletingStatusProps = {
   gateway: Gateway;
@@ -350,62 +345,62 @@ export const MintCompletingStatus: FunctionComponent<
   lockTxUrl,
   mintAssetDecimals,
 }) => {
-  const { t } = useTranslation();
-  const theme = useTheme();
-  const lockAssetConfig = getAssetConfig(gateway.params.asset);
-  const lockChainConfig = getChainConfig(gateway.params.from.chain);
-  const mintChainConfig = getChainConfig(gateway.params.to.chain);
-  const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent
-          color={theme.customColors.skyBlue}
-          confirmations={
-            mintConfirmations !== null ? mintConfirmations : undefined
-          }
-          targetConfirmations={
-            mintTargetConfirmations !== null
-              ? mintTargetConfirmations
-              : undefined
-          }
-        >
-          {mintTxUrl !== null && (
-            <TransactionStatusInfo
-              status={t("mint.status-pending-label")}
-              chain={mintChainConfig.fullName}
-              address={
-                <Link
-                  color="primary"
-                  underline="hover"
-                  href={mintTxUrl}
-                  target="_blank"
-                >
-                  {mintTxHash}
-                </Link>
-              }
+    const { t } = useTranslation();
+    const theme = useTheme();
+    const lockAssetConfig = getAssetConfig(gateway.params.asset);
+    const lockChainConfig = getChainConfig(gateway.params.from.chain);
+    const mintChainConfig = getChainConfig(gateway.params.to.chain);
+    const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
+    return (
+      <>
+        <ProgressWrapper>
+          <ProgressWithContent
+            color={theme.customColors.skyBlue}
+            confirmations={
+              mintConfirmations !== null ? mintConfirmations : undefined
+            }
+            targetConfirmations={
+              mintTargetConfirmations !== null
+                ? mintTargetConfirmations
+                : undefined
+            }
+          >
+            {mintTxUrl !== null && (
+              <TransactionStatusInfo
+                status={t("mint.status-pending-label")}
+                chain={mintChainConfig.fullName}
+                address={
+                  <Link
+                    color="primary"
+                    underline="hover"
+                    href={mintTxUrl}
+                    target="_blank"
+                  >
+                    {mintTxHash}
+                  </Link>
+                }
+              />
+            )}
+          </ProgressWithContent>
+        </ProgressWrapper>
+        <Typography variant="body1" align="center" gutterBottom>
+          <NumberFormatText
+            value={mintAmountFormatted}
+            spacedSuffix={lockAssetConfig.fullName}
+          />
+        </Typography>
+        <ActionButtonWrapper>
+          {lockTxId !== null && lockTxUrl !== null && (
+            <TransactionDetailsButton
+              label={lockChainConfig.shortName || lockChainConfig.fullName}
+              address={lockTxId}
+              link={lockTxUrl}
             />
           )}
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        <NumberFormatText
-          value={mintAmountFormatted}
-          spacedSuffix={lockAssetConfig.fullName}
-        />
-      </Typography>
-      <ActionButtonWrapper>
-        {lockTxId !== null && lockTxUrl !== null && (
-          <TransactionDetailsButton
-            label={lockChainConfig.shortName || lockChainConfig.fullName}
-            address={lockTxId}
-            link={lockTxUrl}
-          />
-        )}
-      </ActionButtonWrapper>
-    </>
-  );
-};
+        </ActionButtonWrapper>
+      </>
+    );
+  };
 
 type MintCompletedStatusProps = {
   gateway: Gateway;
@@ -428,77 +423,77 @@ export const MintCompletedStatus: FunctionComponent<
   mintAmount,
   mintAssetDecimals,
 }) => {
-  const { t } = useTranslation();
-  const { from, to, asset } = getGatewayParams(gateway);
-  useSetPaperTitle(t("mint.complete-title"));
-  const { wallet } = useCurrentChainWallet();
-  const walletConfig = getWalletConfig(wallet);
-  const lockAssetConfig = getAssetConfig(asset);
-  const mintChainConfig = getChainConfig(to);
+    const { t } = useTranslation();
+    const { from, to, asset } = getGatewayParams(gateway);
+    useSetPaperTitle(t("mint.complete-title"));
+    const { wallet } = useCurrentChainWallet();
+    const walletConfig = getWalletConfig(wallet);
+    const lockAssetConfig = getAssetConfig(asset);
+    const mintChainConfig = getChainConfig(to);
 
-  const { handleGoToHome } = useBasicRouteHandlers();
+    const { handleGoToHome } = useBasicRouteHandlers();
 
-  const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
-  const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
+    const mintAmountFormatted = decimalsAmount(mintAmount, mintAssetDecimals);
+    const lockAmountFormatted = decimalsAmount(lockAmount, lockAssetDecimals);
 
-  const notificationMessage = t("mint.success-notification-message", {
-    total: mintAmountFormatted,
-    currency: lockAssetConfig.shortName,
-    chain: mintChainConfig.fullName,
-  });
-  const viewChainTxLinkMessage = t("tx.view-chain-transaction-link-text", {
-    chain: mintChainConfig.fullName,
-  });
-  const { txSuccessNotification } = useTxSuccessNotification(
-    mintTxUrl,
-    notificationMessage,
-    viewChainTxLinkMessage
-  );
+    const notificationMessage = t("mint.success-notification-message", {
+      total: mintAmountFormatted,
+      currency: lockAssetConfig.shortName,
+      chain: mintChainConfig.fullName,
+    });
+    const viewChainTxLinkMessage = t("tx.view-chain-transaction-link-text", {
+      chain: mintChainConfig.fullName,
+    });
+    const { txSuccessNotification } = useTxSuccessNotification(
+      mintTxUrl,
+      notificationMessage,
+      viewChainTxLinkMessage
+    );
 
-  useEffectOnce(txSuccessNotification);
+    useEffectOnce(txSuccessNotification);
 
-  const walletTokenMeta = useWalletAssetHelpers(
-    gateway.params.to.chain,
-    gateway.params.asset
-  );
-  const { addToken } = walletTokenMeta;
+    const walletTokenMeta = useWalletAssetHelpers(
+      gateway.params.to.chain,
+      gateway.params.asset
+    );
+    const { addToken } = walletTokenMeta;
 
-  return (
-    <>
-      <ProgressWrapper>
-        <ProgressWithContent>
-          <BigDoneIcon />
-        </ProgressWithContent>
-      </ProgressWrapper>
-      <SentReceivedSection
-        ioType={GatewayIOType.lockAndMint}
-        asset={asset}
-        sentAmount={lockAmountFormatted}
-        receivedAmount={mintAmountFormatted}
-      />
-      <MultipleActionButtonWrapper>
-        {addToken !== null && (
-          <Box mb={1}>
-            <AddTokenButton
-              onAddToken={addToken}
-              wallet={walletConfig.shortName || walletConfig.fullName}
-              currency={lockAssetConfig.shortName}
-            />
-          </Box>
-        )}
-        <ActionButton onClick={handleGoToHome}>
-          {t("navigation.back-to-home-label")}
-        </ActionButton>
-      </MultipleActionButtonWrapper>
-      <SmallTopWrapper>
-        <FromToTxLinks
-          from={from}
-          to={to}
-          fromTxUrl={lockTxUrl}
-          toTxUrl={mintTxUrl}
+    return (
+      <>
+        <ProgressWrapper>
+          <ProgressWithContent>
+            <BigDoneIcon />
+          </ProgressWithContent>
+        </ProgressWrapper>
+        <SentReceivedSection
+          ioType={GatewayIOType.lockAndMint}
+          asset={asset}
+          sentAmount={lockAmountFormatted}
+          receivedAmount={mintAmountFormatted}
         />
-      </SmallTopWrapper>
-      <Debug it={{ walletTokenMeta }} />
-    </>
-  );
-};
+        <MultipleActionButtonWrapper>
+          {addToken !== null && (
+            <Box mb={1}>
+              <AddTokenButton
+                onAddToken={addToken}
+                wallet={walletConfig.shortName || walletConfig.fullName}
+                currency={lockAssetConfig.shortName}
+              />
+            </Box>
+          )}
+          <ActionButton onClick={handleGoToHome}>
+            {t("navigation.back-to-home-label")}
+          </ActionButton>
+        </MultipleActionButtonWrapper>
+        <SmallTopWrapper>
+          <FromToTxLinks
+            from={from}
+            to={to}
+            fromTxUrl={lockTxUrl}
+            toTxUrl={mintTxUrl}
+          />
+        </SmallTopWrapper>
+        <Debug it={{ walletTokenMeta }} />
+      </>
+    );
+  };
