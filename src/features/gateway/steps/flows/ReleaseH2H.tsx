@@ -407,6 +407,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
 
   const burnAmountFormatted =
     decimalsAmount(burnAmount, burnAssetDecimals) || amount.toString();
+  // TODO: clarify with Noah
   const releaseAmountFormatted =
     decimalsAmount(releaseAmount, releaseAssetDecimals) || outputAmount;
   const releaseAmountUsd = getUsdRate(releaseAmountFormatted);

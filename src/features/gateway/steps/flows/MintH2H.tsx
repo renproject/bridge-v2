@@ -362,15 +362,44 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     debugLabel: "out",
   });
 
+  const [submittingOutSetup, setSubmittingOutSetup] = useState(false);
+  const [submittingOutError, setSubmittingOutError] = useState<any>();
+
   const {
     handleSubmit: handleSubmitMint,
     submitting: submittingMint,
     // submittingDone: submittingMintDone,
     waiting: waitingMint,
     done: doneMint,
-    errorSubmitting: errorSubmittingMint,
+    errorSubmitting: submittingMintError,
     handleReset: handleResetMint,
   } = outSubmitter;
+
+  const handleSubmitMintAndOut = useCallback(async () => {
+    setSubmittingOutSetup(true);
+    if (transaction === null) {
+      return;
+    }
+    try {
+      for (const key of Object.keys(transaction.outSetup)) {
+        if (transaction.outSetup[key]) {
+          await transaction.outSetup[key].submit?.();
+          await transaction.outSetup[key].wait();
+        }
+      }
+      setSubmittingOutSetup(false);
+      await handleSubmitMint();
+    } catch (error: any) {
+      setSubmittingOutError({ code: 1984, message: "outSetup error error" });
+      console.error(error);
+    }
+  }, [handleSubmitMint, transaction, transaction?.outSetup]);
+
+  const handleResetMintAndOut = useCallback(() => {
+    setSubmittingOutError(false);
+    setSubmittingOutSetup(false);
+    handleResetMint();
+  }, [handleResetMint]);
 
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
@@ -408,8 +437,9 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
 
   const lockAmountFormatted =
     decimalsAmount(lockAmount, lockAssetDecimals) || amount.toString();
+  // TODO: clarify with Noah
   const mintAmountFormatted =
-    decimalsAmount(mintAmount, mintAssetDecimals) || outputAmount;
+    decimalsAmount(mintAmount, lockAssetDecimals) || outputAmount;
 
   let Content = null;
   // TODO: consider making similar to Relase H2H
@@ -435,7 +465,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
             ReceiveIcon={ReceiveIcon}
             sendIconTooltip={sendIconTooltip}
             receiveIconTooltip={receiveIconTooltip}
-          ></SendingReceivingWrapper>
+          />
           {/* <SendingReceivingSection
             ioType={GatewayIOType.lockAndMint}
             asset={asset}
@@ -505,12 +535,13 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
         mintConfirmations={mintConfirmations}
         mintTargetConfirmations={mintTargetConfirmations}
         mintStatus={mintStatus}
-        onSubmit={handleSubmitMint}
-        submitting={submittingMint}
+        onSubmit={handleSubmitMintAndOut}
+        submitting={submittingMint || submittingOutSetup}
+        submittingError={submittingMintError || submittingOutError}
+        submittingDisabled={submittingMint || submittingOutSetup}
         waiting={waitingMint}
         done={doneMint}
-        errorSubmitting={errorSubmittingMint}
-        onReset={handleResetMint}
+        onReset={handleResetMintAndOut}
       />
     );
   } else {

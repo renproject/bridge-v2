@@ -43,9 +43,14 @@ import { getAssetConfig } from "../../../../utils/assetsConfig";
 import {
   getChainConfig,
   getChainNetworkConfig,
+  isEthereumBaseChain,
+  isSolanaBaseChain,
 } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
-import { alterEthereumBaseChainProviderSigner } from "../../../chain/chainUtils";
+import {
+  alterContractChainProviderSigner,
+  alterEthereumBaseChainProviderSigner,
+} from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
@@ -326,13 +331,26 @@ export const H2HAccountsResolver: FunctionComponent<
     sendIconTooltip = `ren${asset}`;
     receiveIconTooltip = asset;
   }
+
+  const isFromEthereumBaseChain = isEthereumBaseChain(from);
+  const isFromSolanaBaseChain = isSolanaBaseChain(from);
+  const isToEthereumBaseChain = isEthereumBaseChain(to);
+  const isToSolanaBaseChain = isSolanaBaseChain(to);
+
+  const isCrossContractBaseChain =
+    isFromEthereumBaseChain !== isToEthereumBaseChain ||
+    isFromSolanaBaseChain !== isToSolanaBaseChain;
+
   const [showSwitchWalletDialog, setShowSwitchWalletDialog] =
     useState<boolean>(false);
   // const styles = useH2HAccountsResolverStyles();
   const allChains = useCurrentNetworkChains();
   // const fromChainConfig = getChainConfig(from);
   // const toChainConfig = getChainConfig(to);
-  const [differentAccounts, setDifferentAccounts] = useState(false);
+  const showDifferentAccountSwitcher = !isCrossContractBaseChain;
+  const [differentAccounts, setDifferentAccounts] = useState(
+    isCrossContractBaseChain
+  );
 
   const handleAccountsModeChange = useCallback((event) => {
     setDifferentAccounts(event.target.checked);
@@ -347,6 +365,7 @@ export const H2HAccountsResolver: FunctionComponent<
   useEffect(() => {
     console.log("chains changed from", from);
     if (fromProvider) {
+      // TODO: solana?
       alterEthereumBaseChainProviderSigner(allChains, from, fromProvider);
     }
   }, [from, allChains, fromProvider]);
@@ -354,12 +373,13 @@ export const H2HAccountsResolver: FunctionComponent<
   useEffect(() => {
     console.log("chains changed to", to);
     if (toProvider) {
-      alterEthereumBaseChainProviderSigner(allChains, to, toProvider);
+      alterContractChainProviderSigner(allChains, to, toProvider);
+      // alterEthereumBaseChainProviderSigner(allChains, to, toProvider);
     }
   }, [to, allChains, toProvider]);
 
+  const [cachedFromAccount, setCachedFromAccount] = useState(fromAccount);
   const [cachedToAccount, setCachedToAccount] = useState(toAccount);
-  const [cachedFromAccount, setCachedFromAccount] = useState(toAccount);
 
   useEffect(() => {
     setCachedFromAccount(fromAccount);
@@ -461,24 +481,26 @@ export const H2HAccountsResolver: FunctionComponent<
                   </Link>
                 )}
               </AccountWrapper>
-              <Box display="flex" alignItems="center" justifyContent="center">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={differentAccounts}
-                      onChange={handleAccountsModeChange}
-                      name="primary"
-                      color="primary"
-                    />
-                  }
-                  disabled={disabled}
-                  label={
-                    <Typography variant="caption">
-                      I want to transfer to a different account
-                    </Typography>
-                  }
-                />
-              </Box>
+              {showDifferentAccountSwitcher && (
+                <Box display="flex" alignItems="center" justifyContent="center">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={differentAccounts}
+                        onChange={handleAccountsModeChange}
+                        name="primary"
+                        color="primary"
+                      />
+                    }
+                    disabled={disabled}
+                    label={
+                      <Typography variant="caption">
+                        I want to transfer to a different account
+                      </Typography>
+                    }
+                  />
+                </Box>
+              )}
             </>
           ) : (
             <SwitchWalletDialog
