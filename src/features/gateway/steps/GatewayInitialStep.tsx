@@ -57,6 +57,7 @@ import {
   GatewayIOType,
   useAddressValidator,
   useContractChainAssetBalance,
+  useGatewayFeesObject,
   useGatewayMeta,
 } from "../gatewayHooks";
 import {
@@ -322,7 +323,14 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   //   Number(amount) > Number(balance),
   //   hasMinimalAmountBalanceError
   // );
+  const allNetworkChains = useCurrentNetworkChains();
 
+  const { gatewayFeesObject } = useGatewayFeesObject(
+    { asset, from, to },
+    { chains: allNetworkChains }
+  );
+  console.log("fees", gatewayFeesObject);
+  (window as any).fees = gatewayFeesObject;
   const handleNext = useCallback(() => {
     if (onNext) {
       let ok = true;
@@ -461,6 +469,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
       </PaperContent>
       <Debug
         it={{
+          gatewayFeesObject,
           targetNetwork,
           meta,
           amountTouched,
