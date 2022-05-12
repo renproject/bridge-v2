@@ -20,13 +20,13 @@ import {
 import { RenNetwork } from "@renproject/utils";
 import { chainIcon, chainIconFromToken } from "../components/icons/IconHelpers";
 import { CustomSvgIconComponent } from "../components/icons/RenIcons";
+import { AssetChainsConfig } from "./assetsConfig";
 import {
   createNetworkConfig,
   createNetworksConfig,
   NetworkConfig,
   NetworksConfig,
 } from "./networksConfig";
-import { AssetChainsConfig } from "./assetsConfig";
 
 export type ChainIconsConfig = {
   Icon: CustomSvgIconComponent;
@@ -130,6 +130,7 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     Icon: chainIcon(Solana),
     fullName: "Solana",
     shortName: "Solana",
+    networks: createNetworksConfig(1, 2, RenNetwork.Mainnet, RenNetwork.Devnet),
   },
   Goerli: {
     Icon: chainIcon(Ethereum),
@@ -203,7 +204,13 @@ export const supportedEthereumChains: Array<Chain> = [
   Chain.Arbitrum,
 ];
 
+export const isEthereumBaseChain = (chain: Chain) =>
+  supportedEthereumChains.includes(chain);
+
 export const supportedSolanaChains: Array<Chain> = [Chain.Solana];
+
+export const isSolanaBaseChain = (chain: Chain) =>
+  supportedSolanaChains.includes(chain);
 
 export const contractChains = [
   ...supportedEthereumChains,

@@ -664,12 +664,20 @@ export const getTransactionParams = (
   return { from, to, amount };
 };
 
+export const getToAddressFromGatewayParams = (params: Gateway["params"]) => {
+  return (
+    params.to.address ||
+    (params.to.params?.address as string) ||
+    (params.to.params?.to as string)
+  );
+};
+
 export const getGatewayBasicParams = (params: Gateway["params"]) => {
   const asset = params.asset as Asset;
   const from = params.from.chain as Chain;
   const to = params.to.chain as Chain;
   const fromAmount = params.from.params?.amount as string;
-  const toAddress = params.to.address || (params.to.params?.address as string);
+  const toAddress = getToAddressFromGatewayParams(params);
   return { asset, from, to, fromAmount, toAddress };
 };
 

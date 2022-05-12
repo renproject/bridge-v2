@@ -16,6 +16,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { Asset, Chain } from "@renproject/chains";
+import { Gateway } from "@renproject/ren";
 import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import React, {
@@ -63,6 +64,7 @@ import {
 } from "../gateway/components/DropdownHelpers";
 import {
   GatewayIOType,
+  getToAddressFromGatewayParams,
   useAssetDecimals,
   useGatewayMeta,
 } from "../gateway/gatewayHooks";
@@ -602,7 +604,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const isDepositMint = isMint && !isH2H;
   const toAddress = isDepositMint
     ? address
-    : (params.to as any).address || (params.to as any).params?.address || "";
+    : getToAddressFromGatewayParams(params as any) || "";
   const nonce = params.nonce || "";
   const expiryTime = meta?.expiryTime || 0;
   const amount =
