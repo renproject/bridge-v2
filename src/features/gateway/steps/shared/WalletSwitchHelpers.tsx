@@ -47,10 +47,7 @@ import {
   isSolanaBaseChain,
 } from "../../../../utils/chainsConfig";
 import { trimAddress } from "../../../../utils/strings";
-import {
-  alterContractChainProviderSigner,
-  alterEthereumBaseChainProviderSigner,
-} from "../../../chain/chainUtils";
+import { alterContractChainProviderSigner } from "../../../chain/chainUtils";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { $network } from "../../../network/networkSlice";
 import { useWallet } from "../../../wallet/walletHooks";
@@ -365,8 +362,7 @@ export const H2HAccountsResolver: FunctionComponent<
   useEffect(() => {
     console.log("chains changed from", from);
     if (fromProvider) {
-      // TODO: solana?
-      alterEthereumBaseChainProviderSigner(allChains, from, fromProvider);
+      alterContractChainProviderSigner(allChains, from, fromProvider);
     }
   }, [from, allChains, fromProvider]);
 
