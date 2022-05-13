@@ -393,7 +393,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       setSubmittingOutError({ code: 1984, message: "outSetup error error" });
       console.error(error);
     }
-  }, [handleSubmitMint, transaction, transaction?.outSetup]);
+  }, [handleSubmitMint, transaction]);
 
   const handleResetMintAndOut = useCallback(() => {
     setSubmittingOutError(false);
@@ -418,10 +418,10 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     asset
   );
 
-  const { decimals: mintAssetDecimals } = useChainInstanceAssetDecimals(
-    gateway.toChain,
-    asset
-  );
+  // const { decimals: mintAssetDecimals } = useChainInstanceAssetDecimals(
+  //   gateway.toChain,
+  //   asset
+  // );
 
   const Fees = <GatewayFees asset={asset} from={from} to={to} {...fees} />;
 

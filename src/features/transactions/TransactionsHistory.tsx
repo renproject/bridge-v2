@@ -16,7 +16,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { Asset, Chain } from "@renproject/chains";
-import { Gateway } from "@renproject/ren";
 import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import React, {
