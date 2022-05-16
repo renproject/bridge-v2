@@ -441,7 +441,6 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     decimals,
   } = getLockAndMintBasicParams(current.context.tx);
 
-  console.log(mintCurrencyConfig);
   useEffect(() => {
     if (currentAmount) {
       onActiveAmountChange(Number(currentAmount) / 10 ** decimals);
