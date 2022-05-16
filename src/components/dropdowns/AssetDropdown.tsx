@@ -15,9 +15,9 @@ import {
   BridgeChain,
   BridgeChainConfig,
   BridgeCurrency,
+  BridgeCurrencyConfig,
   chainsConfig,
   currenciesConfig,
-  BridgeCurrencyConfig,
 } from "../../utils/assetConfigs";
 import { NumberFormatText } from "../formatting/NumberFormatText";
 import { EmptyCircleIcon } from "../icons/RenIcons";
@@ -207,7 +207,14 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
           .filter(availabilityFilter)
           .map(({ symbol, MainIcon, GreyIcon, full, short }) => {
             return (
-              <MenuItem key={symbol} value={symbol}>
+              <MenuItem
+                key={symbol}
+                value={symbol}
+                disabled={
+                  symbol === BridgeCurrency.LUNA ||
+                  symbol === BridgeCurrency.RENLUNA
+                }
+              >
                 <Box display="flex" alignItems="center" width="100%">
                   <Box width="45px" className={styles.iconWrapper}>
                     <MainIcon className={styles.listIcon} />
