@@ -40,7 +40,10 @@ import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import { getBurnChainMap } from "../../../services/rentx";
-import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
+import {
+  BridgeCurrency,
+  getChainConfigByRentxName,
+} from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import {
@@ -55,6 +58,7 @@ import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import {
   AnyBurnSession,
+  LunaWarningDialog,
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
 import { useTransactionMenuControl } from "../../transactions/transactionsHooks";
@@ -258,6 +262,14 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
         open={modalOpened}
         onClose={handleModalClose}
         onEnable={handleEnable}
+      />
+      <LunaWarningDialog
+        open={
+          releaseCurrencyConfig.symbol === BridgeCurrency.LUNA ||
+          releaseCurrencyConfig.symbol === BridgeCurrency.RENLUNA
+        }
+        onMainAction={handlePreviousStepClick}
+        mainActionText="Go to Home"
       />
       <TransactionMenu tx={tx} open={menuOpened} onClose={handleMenuClose} />
       <Debug it={{ tooltipOpened, parsedTx, txState: txState }} />

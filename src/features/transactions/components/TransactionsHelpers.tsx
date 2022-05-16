@@ -644,6 +644,34 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   );
 };
 
+export const LunaWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
+  ...props
+}) => {
+  const { t } = useTranslation();
+  return (
+    <WarningDialog
+      title={t("common.warning-label")}
+      reason="Luna is disabled"
+      {...props}
+    >
+      <span>
+        Due to safety reasons, support for LUNA is currently paused until the
+        Terra blockchain is stable. Please follow the official Ren Twitter
+        account for more updates:
+        <br />
+        <Link
+          external
+          href="https://twitter.com/renprotocol"
+          color="primary"
+          underline="hover"
+        >
+          https://twitter.com/renprotocol
+        </Link>
+      </span>
+    </WarningDialog>
+  );
+};
+
 // POC - keep
 export const PageLeaveWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   ...props
