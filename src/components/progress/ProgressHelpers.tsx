@@ -12,6 +12,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import { Skeleton } from "@material-ui/lab";
 import classNames from "classnames";
 import React, { FunctionComponent, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import {
   createPulseAnimation,
   createPulseOpacityAnimation,
@@ -400,3 +401,12 @@ export const TransactionStatusIndicator: FunctionComponent<
 export const InlineSkeleton = styled(Skeleton)({
   display: "inline-block",
 });
+
+export const RenvmRevertedIndicator: FunctionComponent<{}> = () => {
+  const { t } = useTranslation();
+  return (
+    <Typography variant="h3" align="center">
+      RenVM {t("tx.reverted")}
+    </Typography>
+  );
+};

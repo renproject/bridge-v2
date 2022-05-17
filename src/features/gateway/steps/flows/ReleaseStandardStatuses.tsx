@@ -14,6 +14,7 @@ import { PaperContent } from "../../../../components/layout/Paper";
 import {
   ProgressWithContent,
   ProgressWrapper,
+  RenvmRevertedIndicator,
 } from "../../../../components/progress/ProgressHelpers";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import {
@@ -199,9 +200,7 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
         )}
         {renVMStatus === ChainTransactionStatus.Reverted && (
           <Box mt={3} mb={3}>
-            <Typography variant="h3" align="center">
-              RenVM {t("tx.reverted")}
-            </Typography>
+            <RenvmRevertedIndicator></RenvmRevertedIndicator>
           </Box>
         )}
         {renVMStatus !== null &&

@@ -26,6 +26,7 @@ import {
   BigDoneIcon,
   ProgressWithContent,
   ProgressWrapper,
+  RenvmRevertedIndicator,
   TransactionStatusInfo,
 } from "../../../../components/progress/ProgressHelpers";
 import { BigAssetAmount } from "../../../../components/typography/TypographyHelpers";
@@ -264,9 +265,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<
     <>
       <ProgressWrapper>
         {renVMStatus === ChainTransactionStatus.Reverted && (
-          <Typography variant="h3" align="center">
-            RenVM {t("tx.reverted")}
-          </Typography>
+          <RenvmRevertedIndicator></RenvmRevertedIndicator>
         )}
         {renVMStatus !== ChainTransactionStatus.Reverted && renVMProcessing && (
           <ProgressWithContent processing>
