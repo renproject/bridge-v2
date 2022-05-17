@@ -39,7 +39,10 @@ import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
-import { getCurrencyConfigByRentxName } from "../../../utils/assetConfigs";
+import {
+  BridgeCurrency,
+  getCurrencyConfigByRentxName,
+} from "../../../utils/assetConfigs";
 import { useFetchFees } from "../../fees/feesHooks";
 import { $renNetwork } from "../../network/networkSlice";
 import {
@@ -59,6 +62,7 @@ import {
   ExpiredErrorDialog,
   FinishTransactionWarning,
   GatewayAddressTimeoutErrorDialog,
+  LunaWarningDialog,
   ProgressStatus,
   WrongAddressWarningDialog,
 } from "../../transactions/components/TransactionsHelpers";
@@ -530,6 +534,14 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         addressExplorerLink={accountExplorerLink}
         currency={mintCurrencyConfig.short}
         onAlternativeAction={handleCloseWrongAddressDialog}
+      />
+      <LunaWarningDialog
+        open={
+          mintCurrencyConfig.symbol === BridgeCurrency.LUNA ||
+          mintCurrencyConfig.symbol === BridgeCurrency.RENLUNA
+        }
+        onMainAction={onRestart}
+        mainActionText="Go to Home"
       />
       <Debug
         it={{
