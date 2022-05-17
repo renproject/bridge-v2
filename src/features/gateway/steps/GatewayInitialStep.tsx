@@ -28,7 +28,6 @@ import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../components/layout/Paper";
 import {
   MessageWithTooltip,
-  TooltipWithIcon,
 } from "../../../components/tooltips/TooltipWithIcon";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
