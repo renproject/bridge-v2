@@ -214,7 +214,7 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
   submitting,
   waiting,
   done,
-  errorSubmitting,
+  submittingError,
 }) => {
   const { asset, from, to } = getGatewayParams(gateway);
   const { Icon: SendIcon, RenIcon: ReceiveIcon } = getAssetConfig(asset);
@@ -278,10 +278,10 @@ export const MintH2HMintTransactionProgressStatus: FunctionComponent<
                 : `Mint on ${mintChainConfig.shortName}`}
             </ActionButton>
           </WalletConnectionActionButtonGuard>
-          {errorSubmitting && (
+          {submittingError && (
             <SubmitErrorDialog
               open={true}
-              error={errorSubmitting}
+              error={submittingError}
               onAction={onReset}
             />
           )}

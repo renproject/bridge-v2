@@ -63,6 +63,7 @@ import {
 } from "../gateway/components/DropdownHelpers";
 import {
   GatewayIOType,
+  getToAddressFromGatewayParams,
   useAssetDecimals,
   useGatewayMeta,
 } from "../gateway/gatewayHooks";
@@ -602,7 +603,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const isDepositMint = isMint && !isH2H;
   const toAddress = isDepositMint
     ? address
-    : (params.to as any).address || (params.to as any).params?.address || "";
+    : getToAddressFromGatewayParams(params as any) || "";
   const nonce = params.nonce || "";
   const expiryTime = meta?.expiryTime || 0;
   const amount =
