@@ -65,3 +65,19 @@ export const TooltipWithIcon: FunctionComponent<TooltipWithIconProps> = ({
     </ClickAwayListener>
   );
 };
+
+type MessageWithTooltipProps = {
+  message: string;
+  tooltip: string;
+};
+
+export const MessageWithTooltip: FunctionComponent<MessageWithTooltipProps> = ({
+  message = "",
+  tooltip = "",
+}) => {
+  return (
+    <span>
+      {message} <TooltipWithIcon title={<span>{tooltip}</span>} />
+    </span>
+  );
+};

@@ -1,4 +1,4 @@
-import { Divider, Typography } from "@material-ui/core";
+import { Box, Divider, Typography } from "@material-ui/core";
 import { Gateway } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent, ReactNode } from "react";
@@ -14,6 +14,7 @@ import { PaperContent } from "../../../../components/layout/Paper";
 import {
   ProgressWithContent,
   ProgressWrapper,
+  RenvmRevertedIndicator,
 } from "../../../../components/progress/ProgressHelpers";
 import { useSetPaperTitle } from "../../../../providers/TitleProviders";
 import {
@@ -180,13 +181,7 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
   return (
     <>
       <PaperContent bottomPadding>
-        {renVMStatus !== null ? ( //TODO: why null?? confirming
-          <ProgressWrapper>
-            <ProgressWithContent processing>
-              <RenVMSubmittingInfo />
-            </ProgressWithContent>
-          </ProgressWrapper>
-        ) : (
+        {renVMStatus === null && (
           <>
             <ProgressWrapper>
               <ProgressWithContent
@@ -203,6 +198,20 @@ export const ReleaseStandardBurnProgressStatus: FunctionComponent<
             />
           </>
         )}
+        {renVMStatus === ChainTransactionStatus.Reverted && (
+          <Box mt={3} mb={3}>
+            <RenvmRevertedIndicator></RenvmRevertedIndicator>
+          </Box>
+        )}
+        {renVMStatus !== null &&
+          renVMStatus !== ChainTransactionStatus.Reverted && (
+            <ProgressWrapper>
+              <ProgressWithContent processing>
+                <RenVMSubmittingInfo />
+              </ProgressWithContent>
+            </ProgressWrapper>
+          )}
+
         <SendingReceivingSection
           ioType={GatewayIOType.burnAndRelease}
           asset={asset}

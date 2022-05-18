@@ -15,6 +15,7 @@ import {
   RichDropdown,
   RichDropdownWrapper,
 } from "../../../components/dropdowns/RichDropdown";
+import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import {
   BigCurrencyInput,
   BigCurrencyInputWrapper,
@@ -23,8 +24,12 @@ import {
   BigOutlinedTextFieldWrapper,
   OutlinedTextField,
 } from "../../../components/inputs/OutlinedTextField";
+import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../components/layout/Paper";
-import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
+import {
+  MessageWithTooltip,
+} from "../../../components/tooltips/TooltipWithIcon";
+import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
@@ -57,6 +62,7 @@ import {
   GatewayIOType,
   useAddressValidator,
   useContractChainAssetBalance,
+  useGatewayFeesWithoutGateway,
   useGatewayMeta,
 } from "../gatewayHooks";
 import {
@@ -107,6 +113,12 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
   const meta = useGatewayMeta(asset, from, to);
   const { isFromContractChain, isH2H, error } = meta;
+  const { minimumAmount } = useGatewayFeesWithoutGateway(
+    asset as Asset,
+    from,
+    to,
+    amount
+  );
   const { showNotification, closeNotification } = useNotifications();
   const hasNetworkError = Boolean(error);
   useEffect(() => {
@@ -307,8 +319,25 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     requiresInitialAmount &&
     balance !== null &&
     Number(amount) > Number(balance);
-
+  const hasMinimumAmountError =
+    isRelease &&
+    requiresInitialAmount &&
+    !!minimumAmount &&
+    Number(amount) < Number(minimumAmount) &&
+    Number(amount) > 0;
   const showAmountError = amountTouched && hasAmountBalanceError;
+  const showMinimumAmountError = amountTouched && hasMinimumAmountError;
+  let errorMessage, errorTooltip;
+  if (showAmountError) {
+    errorMessage = t("gateway.amount-too-big-error");
+    errorTooltip = t("gateway.amount-too-big-error-tooltip");
+  } else if (showMinimumAmountError) {
+    errorMessage = t("gateway.amount-too-low-error");
+    errorTooltip = t("gateway.amount-too-low-error-tooltip");
+  } else {
+    errorMessage = "";
+    errorTooltip = "";
+  }
 
   useSyncScreening({
     fromAddress: account,
@@ -359,21 +388,31 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               usdValue={amountUsd}
               value={amount}
               errorText={
-                showAmountError && hasAmountBalanceError ? (
-                  <span>
-                    {t("gateway.amount-too-big-error")}{" "}
-                    <TooltipWithIcon
-                      title={
-                        <span>{t("gateway.amount-too-big-error-tooltip")}</span>
-                      }
-                    />
-                  </span>
+                showAmountError || showMinimumAmountError ? (
+                  <MessageWithTooltip
+                    message={errorMessage}
+                    tooltip={errorTooltip}
+                  ></MessageWithTooltip>
                 ) : (
                   ""
                 )
               }
             />
           </BigCurrencyInputWrapper>
+        )}
+
+        {isRelease && minimumAmount && (
+          <HorizontalPadder>
+            <LabelWithValue
+              label={<>{t("mint.gateway-minimum-amount-label")}: </>}
+              value={
+                <NumberFormatText
+                  value={minimumAmount}
+                  spacedSuffix={uiAsset.shortName}
+                />
+              }
+            />
+          </HorizontalPadder>
         )}
         {fromConnected && isFromContractChain ? (
           <BalanceInfo
@@ -447,6 +486,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             disabled={
               hasAddressError ||
               hasAmountBalanceError ||
+              hasMinimumAmountError ||
               hasNetworkError ||
               (requiresInitialAmount && !Number(amount))
             }
