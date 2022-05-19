@@ -74,7 +74,7 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
   submittingDisabled,
 }) => {
   const { t } = useTranslation();
-  const { asset, amount, toAddress } = getGatewayParams(gateway);
+  const { from, asset, amount, toAddress } = getGatewayParams(gateway);
   const renAssetConfig = getRenAssetConfig(asset);
   const { balance } = useContractChainAssetBalance(
     gateway.fromChain,
@@ -90,7 +90,11 @@ export const ReleaseStandardBurnStatus: FunctionComponent<
   return (
     <>
       <PaperContent bottomPadding>
-        <BalanceInfo balance={balance} asset={renAssetConfig.shortName} />
+        <BalanceInfo
+          balance={balance}
+          asset={renAssetConfig.shortName}
+          chain={from}
+        />
         <SendingReceivingSection
           ioType={GatewayIOType.burnAndRelease}
           asset={asset}

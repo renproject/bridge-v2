@@ -7,9 +7,9 @@ import { ChainTransaction } from "@renproject/utils";
 // import BigNumber from "bignumber.js";
 import queryString from "query-string";
 import {
+  isEthereumBaseChain,
+  isSolanaBaseChain,
   supportedBitcoinChains,
-  supportedEthereumChains,
-  supportedSolanaChains,
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { PartialChainInstanceMap } from "../chain/chainUtils";
@@ -54,34 +54,40 @@ export const createGateway = async (
   const { asset, nonce } = gatewayParams;
   console.log("gatewayParams", gatewayParams);
   let fromChain;
-  if (supportedEthereumChains.includes(gatewayParams.from)) {
-    const ethereumChain =
-      fromChainInstance.chain as unknown as EthereumBaseChain;
+  if (isEthereumBaseChain(gatewayParams.from)) {
+    const ethereum = fromChainInstance.chain as unknown as EthereumBaseChain;
     console.log("resolving from chain", gatewayParams);
     if (partialTx) {
       console.log("resolved from paritalTx", gatewayParams);
-      fromChain = ethereumChain.Transaction(partialTx);
+      fromChain = ethereum.Transaction(partialTx);
     } else if (gatewayParams.fromAddress) {
       console.log("resolved from fromAddress", gatewayParams);
-      fromChain = fromChain = ethereumChain.Account({
+      fromChain = fromChain = ethereum.Account({
         account: gatewayParams.fromAddress,
         amount: gatewayParams.amount,
         convertUnit,
       });
     } else {
       console.log("resolved from account", gatewayParams);
-      fromChain = ethereumChain.Account({
+      fromChain = ethereum.Account({
         amount: gatewayParams.amount,
         convertUnit,
       });
     }
-  } else if (supportedSolanaChains.includes(gatewayParams.from)) {
+  } else if (isSolanaBaseChain(gatewayParams.from)) {
     const solana = fromChainInstance.chain as Solana;
-    //TODO: finish .Address / Account when fromAddress with Solana DAI
-    fromChain = solana.Account({
-      amount: gatewayParams.amount,
-      convertUnit,
-    });
+    if (partialTx) {
+      fromChain = solana.Transaction(partialTx);
+      // }
+      // else if(gatewayParams.fromAddress){
+      // TODO: crit finish when Noah enables Solana .account
+      //   fromChain = solana.Address();
+    } else {
+      fromChain = solana.Account({
+        amount: gatewayParams.amount,
+        convertUnit,
+      });
+    }
   } else if (supportedBitcoinChains.includes(gatewayParams.from)) {
     fromChain = (fromChainInstance.chain as BitcoinBaseChain).GatewayAddress();
   } else {
@@ -89,7 +95,7 @@ export const createGateway = async (
   }
 
   let toChain;
-  if (supportedEthereumChains.includes(gatewayParams.to)) {
+  if (isEthereumBaseChain(gatewayParams.to)) {
     const ethereumChain = toChainInstance.chain as unknown as Ethereum;
     console.log("resolving toAddress", gatewayParams);
     if (gatewayParams.toAddress) {
@@ -100,14 +106,13 @@ export const createGateway = async (
     } else {
       toChain = ethereumChain.Account({ convertUnit });
     }
-  } else if (supportedSolanaChains.includes(gatewayParams.to)) {
-    // TODO: crit finish
+  } else if (isSolanaBaseChain(gatewayParams.to)) {
+    // TODO: add partialTx recovery
+    const solana = toChainInstance.chain as Solana;
     if (gatewayParams.toAddress) {
-      toChain = (toChainInstance.chain as Solana).Address(
-        gatewayParams.toAddress
-      );
+      toChain = solana.Address(gatewayParams.toAddress);
     } else {
-      toChain = (toChainInstance.chain as Solana).Account();
+      toChain = solana.Account();
     }
   } else if (supportedBitcoinChains.includes(gatewayParams.to)) {
     if (!gatewayParams.toAddress) {

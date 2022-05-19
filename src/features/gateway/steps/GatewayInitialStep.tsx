@@ -26,9 +26,7 @@ import {
 } from "../../../components/inputs/OutlinedTextField";
 import { HorizontalPadder } from "../../../components/layout/LayoutHelpers";
 import { PaperContent } from "../../../components/layout/Paper";
-import {
-  MessageWithTooltip,
-} from "../../../components/tooltips/TooltipWithIcon";
+import { MessageWithTooltip } from "../../../components/tooltips/TooltipWithIcon";
 import { LabelWithValue } from "../../../components/typography/TypographyHelpers";
 import { Debug } from "../../../components/utils/Debug";
 import { paths } from "../../../pages/routes";
@@ -392,7 +390,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
                   <MessageWithTooltip
                     message={errorMessage}
                     tooltip={errorTooltip}
-                  ></MessageWithTooltip>
+                  />
                 ) : (
                   ""
                 )
@@ -409,6 +407,8 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
                 <NumberFormatText
                   value={minimumAmount}
                   spacedSuffix={uiAsset.shortName}
+                  decimalScale={10}
+                  fixedDecimalScale={false}
                 />
               }
             />
