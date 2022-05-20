@@ -1,10 +1,4 @@
-import {
-  Box,
-  Checkbox,
-  Divider,
-  FormControlLabel,
-  Typography,
-} from "@material-ui/core";
+import { Box, Divider } from "@material-ui/core";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { ChainTransactionStatus } from "@renproject/utils";
 import React, { FunctionComponent, ReactNode } from "react";
