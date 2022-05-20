@@ -22,7 +22,7 @@ import {
   RELEASE_GAS_UNIT_COST,
 } from "../../constants/constants";
 import { useGatewayContext } from "../../providers/TransactionProviders";
-import { supportedContractChains } from "../../utils/chainsConfig";
+import { isContractBaseChain } from "../../utils/chainsConfig";
 import { fromGwei } from "../../utils/converters";
 import { isDefined } from "../../utils/objects";
 import { PartialChainInstanceMap } from "../chain/chainUtils";
@@ -349,7 +349,7 @@ export const useContractChainAssetBalance = (
     if (
       !instance ||
       decimals === null ||
-      !supportedContractChains.includes(instance.chain as Chain)
+      !isContractBaseChain(instance.chain as Chain)
     ) {
       console.log("not ready");
       setBalance(null);

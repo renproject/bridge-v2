@@ -1,3 +1,4 @@
+import SolanaWallet from "@project-serum/sol-wallet-adapter";
 import { Chain, Filecoin } from "@renproject/chains";
 import {
   Bitcoin,
@@ -17,7 +18,6 @@ import {
   Fantom,
   Polygon,
 } from "@renproject/chains-ethereum";
-import SolanaWallet from "@project-serum/sol-wallet-adapter";
 import { Solana } from "@renproject/chains-solana";
 import { Terra } from "@renproject/chains-terra";
 import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
@@ -31,7 +31,8 @@ import { clusterApiUrl, Connection } from "@solana/web3.js";
 import { ethers, providers } from "ethers";
 import { env } from "../../constants/environmentVariables";
 import {
-  contractChains,
+  isContractBaseChain,
+  isEthereumBaseChain,
   supportedEthereumChains,
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
@@ -50,7 +51,7 @@ interface EVMConstructor<EVM> {
     [network in RenNetwork]?: EvmNetworkConfig;
   };
 
-  new({
+  new ({
     network,
     provider,
   }: {
@@ -187,7 +188,7 @@ export const alterContractChainProviderSigner = (
     return;
   }
   console.log("ContractChainProviderSigner", alteredChain);
-  if (!contractChains.includes(alteredChain)) {
+  if (!isContractBaseChain(alteredChain)) {
     throw new Error(`Altering failed: Not a contract chain: ${alteredChain}.`);
   }
   if (alteredChain === Chain.Solana) {
@@ -198,7 +199,7 @@ export const alterContractChainProviderSigner = (
       provider as SolanaConnector,
       false
     );
-  } else if (supportedEthereumChains.includes(alteredChain)) {
+  } else if (isEthereumBaseChain(alteredChain)) {
     alterEthereumBaseChainProviderSigner(
       chains,
       alteredChain,

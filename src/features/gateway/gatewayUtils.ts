@@ -7,9 +7,9 @@ import { ChainTransaction } from "@renproject/utils";
 // import BigNumber from "bignumber.js";
 import queryString from "query-string";
 import {
+  isDepositBaseChain,
   isEthereumBaseChain,
   isSolanaBaseChain,
-  supportedBitcoinChains,
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 import { PartialChainInstanceMap } from "../chain/chainUtils";
@@ -88,7 +88,7 @@ export const createGateway = async (
         convertUnit,
       });
     }
-  } else if (supportedBitcoinChains.includes(gatewayParams.from)) {
+  } else if (isDepositBaseChain(gatewayParams.from)) {
     fromChain = (fromChainInstance.chain as BitcoinBaseChain).GatewayAddress();
   } else {
     throw new Error(`Unknown chain "from": ${gatewayParams.from}`);
@@ -107,14 +107,13 @@ export const createGateway = async (
       toChain = ethereumChain.Account({ convertUnit });
     }
   } else if (isSolanaBaseChain(gatewayParams.to)) {
-    // TODO: add partialTx recovery
     const solana = toChainInstance.chain as Solana;
     if (gatewayParams.toAddress) {
       toChain = solana.Address(gatewayParams.toAddress);
     } else {
       toChain = solana.Account();
     }
-  } else if (supportedBitcoinChains.includes(gatewayParams.to)) {
+  } else if (isDepositBaseChain(gatewayParams.to)) {
     if (!gatewayParams.toAddress) {
       throw new Error(`No recipient address provided.`);
     }

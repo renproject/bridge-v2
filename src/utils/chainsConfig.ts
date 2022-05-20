@@ -183,8 +183,7 @@ type AssetChainsData = AssetChainsConfig & {
   asset: Asset;
 };
 
-export const supportedBitcoinChains: Array<Chain> = [
-  // TODO: supported deposit chains ?
+export const supportedDepositChains: Array<Chain> = [
   Chain.Bitcoin,
   Chain.BitcoinCash,
   Chain.Dogecoin,
@@ -193,6 +192,9 @@ export const supportedBitcoinChains: Array<Chain> = [
   Chain.Terra,
   Chain.Filecoin,
 ];
+
+export const isDepositBaseChain = (chain: Chain) =>
+  supportedDepositChains.includes(chain);
 
 export const supportedEthereumChains: Array<Chain> = [
   Chain.Ethereum,
@@ -211,6 +213,10 @@ export const supportedSolanaChains: Array<Chain> = [Chain.Solana];
 
 export const isSolanaBaseChain = (chain: Chain) =>
   supportedSolanaChains.includes(chain);
+
+export const isContractBaseChain = (chain: Chain) => {
+  return isEthereumBaseChain(chain) || isSolanaBaseChain(chain);
+};
 
 export const contractChains = [
   ...supportedEthereumChains,
@@ -253,5 +259,5 @@ export const supportedContractChains = contractChains;
 
 export const supportedAllChains = [
   ...supportedContractChains,
-  ...supportedBitcoinChains,
+  ...supportedDepositChains,
 ];

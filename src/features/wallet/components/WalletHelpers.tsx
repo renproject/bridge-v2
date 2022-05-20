@@ -50,7 +50,7 @@ import { defaultShadow } from "../../../theme/other";
 import {
   getChainConfig,
   getChainNetworkConfig,
-  supportedEthereumChains,
+  isEthereumBaseChain,
 } from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
 import { getWalletConfig, Wallet } from "../../../utils/walletsConfig";
@@ -501,7 +501,7 @@ export const WalletConnectionStatusButton: FunctionComponent<
       {account && (
         <>
           <span className={accountClassName}>{ensName || trimmedAddress}</span>
-          {supportedEthereumChains.includes(chain) && (
+          {isEthereumBaseChain(chain) && (
             <Davatar
               size={24}
               address={account as string}
