@@ -334,7 +334,7 @@ export const GatewayDepositProcessor: FunctionComponent<
       setSubmittingOutSetup(false);
       await handleSubmitMint();
     } catch (error: any) {
-      setSubmittingOutError({ code: 1984, message: "outSetup error error" });
+      setSubmittingOutError({ code: 1984, message: "outSetup error" });
       console.error(error);
     }
   }, [handleSubmitMint, transaction.outSetup]);
@@ -773,7 +773,9 @@ export const DepositNavigationButton: FunctionComponent<
           </Typography>
         ) : (
           <Typography variant="body2" color="primary">
-            {renVMStatus === ChainTransactionStatus.Reverted ? t("tx.reverted") : t("mint.deposit-navigation-ready-to-mint-label")}
+            {renVMStatus === ChainTransactionStatus.Reverted
+              ? t("tx.reverted")
+              : t("mint.deposit-navigation-ready-to-mint-label")}
           </Typography>
         )}
       </div>

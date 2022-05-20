@@ -4,6 +4,7 @@ import { Feedback } from "@material-ui/icons";
 import React, { FunctionComponent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -14,6 +15,7 @@ import { externalLinkAttributes, Link } from "../../components/links/Links";
 import { BridgeModalTitle } from "../../components/modals/BridgeModal";
 import { Debug } from "../../components/utils/Debug";
 import { links } from "../../constants/constants";
+import { parseGatewayQueryString } from "../gateway/gatewayUtils";
 import { useRenVMExplorerLink } from "../network/networkHooks";
 import { WideDialog } from "./components/TransactionsHistoryHelpers";
 import {
@@ -47,17 +49,21 @@ const MaxBox = styled("div")({
 
 export const IssuesResolver: FunctionComponent = () => {
   const { t } = useTranslation();
+  const location = useLocation();
+  const { additionalParams } = parseGatewayQueryString(location.search);
+  const { renVMHash } = additionalParams;
   const dispatch = useDispatch();
   const styles = useIssueResolverStyles();
   const { getRenVmExplorerLink } = useRenVMExplorerLink();
   const { dialogOpened } = useSelector($issueResolver);
   const { currentTxHash } = useSelector($transactions);
 
+  const txHash = currentTxHash || (renVMHash as string);
   const handleClose = useCallback(() => {
     dispatch(setIssueResolverOpened(false));
   }, [dispatch]);
 
-  const explorer = getRenVmExplorerLink(currentTxHash);
+  const explorer = getRenVmExplorerLink(txHash);
   return (
     <WideDialog
       open={dialogOpened}
@@ -86,10 +92,10 @@ export const IssuesResolver: FunctionComponent = () => {
       {/*  </MaxBox>*/}
       {/*</DialogContent>*/}
       <DialogContent className={styles.content}>
-        {currentTxHash !== "" && (
+        {txHash !== "" && (
           <Typography variant="body1" gutterBottom>
             {t("tx.issue-resolver-viewing-deposit-header", {
-              depositHash: currentTxHash,
+              depositHash: txHash,
             })}
           </Typography>
         )}
@@ -119,7 +125,7 @@ export const IssuesResolver: FunctionComponent = () => {
           </Typography>
         </ActionButtonWrapper>
       </DialogContent>
-      <Debug it={{ currentTxHash }} />
+      <Debug it={{ txHash }} />
     </WideDialog>
   );
 };

@@ -20,7 +20,10 @@ import {
 import { useGetAssetUsdRate } from "../../../marketData/marketDataHooks";
 import { useCurrentNetworkChains } from "../../../network/networkHooks";
 import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
-import { GeneralErrorDialog } from "../../../transactions/components/TransactionsHelpers";
+import {
+  GeneralErrorDialog,
+  TxRecoveryErrorDialog,
+} from "../../../transactions/components/TransactionsHelpers";
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
@@ -141,7 +144,7 @@ export const ReleaseStandardProcess: FunctionComponent<RouteComponentProps> = ({
         />
       )}
       {Boolean(recoveringError) && (
-        <GeneralErrorDialog
+        <TxRecoveryErrorDialog
           open={true}
           error={recoveringError}
           alternativeActionText={t("navigation.back-to-start-label")}

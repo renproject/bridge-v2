@@ -411,7 +411,18 @@ export const useTxRecovery = ({
       let cancelablePromise: CancelablePromise | null = null;
       if (localTx === null) {
         console.error(`Unable to find tx for ${fromAddress}, ${renVMHash}`);
-        return;
+        const message = `Transaction ${trimAddress(
+          renVMHash
+        )} for address: ${trimAddress(
+          fromAddress
+        )} not found in local storage.`;
+        showNotification(message, {
+          variant: "error",
+        });
+        setRecoveringError({
+          code: 80404,
+          message,
+        } as any);
       } else {
         const recoverPromise = recoverLocalTx(renVMHash, localTx)
           .then(() => {

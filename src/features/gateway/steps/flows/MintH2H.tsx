@@ -30,6 +30,7 @@ import { LocalTxPersistor, useTxsStorage } from "../../../storage/storageHooks";
 import {
   GeneralErrorDialog,
   SubmitErrorDialog,
+  TxRecoveryErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
 import { useSyncWalletChain, useWallet } from "../../../wallet/walletHooks";
@@ -207,7 +208,7 @@ export const MintH2HGatewayProcess: FunctionComponent<
         />
       )}
       {Boolean(recoveringError) && (
-        <GeneralErrorDialog
+        <TxRecoveryErrorDialog
           open={true}
           error={recoveringError}
           alternativeActionText={t("navigation.back-to-start-label")}
@@ -390,7 +391,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
       setSubmittingOutSetup(false);
       await handleSubmitMint();
     } catch (error: any) {
-      setSubmittingOutError({ code: 1984, message: "outSetup error error" });
+      setSubmittingOutError({ code: 1984, message: "outSetup error" });
       console.error(error);
     }
   }, [handleSubmitMint, transaction]);

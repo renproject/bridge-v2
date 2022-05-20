@@ -17,6 +17,7 @@ import React, {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useInterval } from "react-use";
 import {
@@ -58,6 +59,7 @@ import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
 import { trimAddress } from "../../../utils/strings";
 import { getRemainingTime } from "../../../utils/time";
+import { setIssueResolverOpened } from "../transactionsSlice";
 import { CustomChip } from "./TransactionsHistoryHelpers";
 
 export const ProcessingTimeWrapper = styled("div")({
@@ -441,6 +443,32 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       alternativeActionText={t(
         "tx.submitting-error-popup-alternative-action-text"
       )}
+      {...props}
+    >
+      <span>{message}</span>
+    </ErrorDialog>
+  );
+};
+
+export const TxRecoveryErrorDialog: FunctionComponent<ErrorWithActionProps> = (
+  props
+) => {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const handleOpen = useCallback(() => {
+    dispatch(setIssueResolverOpened(true));
+  }, [dispatch]);
+
+  let message = "Transaction recovery failed. ";
+  if (props.error?.code === 80404) {
+    message += `Bridge hasn't found your tx in Local Storage. Open Issue Resolver and follow instructions.`;
+  }
+  return (
+    <ErrorDialog
+      title={t("common.error-label")}
+      reason={"Transaction recovery error"}
+      actionText={"Open Issue Resolver"}
+      onAction={handleOpen}
       {...props}
     >
       <span>{message}</span>
