@@ -6,6 +6,7 @@ import RenJS, { Gateway } from "@renproject/ren";
 import { ChainTransaction } from "@renproject/utils";
 // import BigNumber from "bignumber.js";
 import queryString from "query-string";
+import { featureFlags } from "../../constants/featureFlags";
 import {
   isDepositBaseChain,
   isEthereumBaseChain,
@@ -35,6 +36,7 @@ export interface CreateGatewayParams {
 }
 
 const convertUnit = true;
+const anyoneCanSubmit = featureFlags.godMode || false;
 
 export const createGateway = async (
   renJS: RenJS,
@@ -66,12 +68,14 @@ export const createGateway = async (
         account: gatewayParams.fromAddress,
         amount: gatewayParams.amount,
         convertUnit,
+        anyoneCanSubmit,
       });
     } else {
       console.log("resolved from account", gatewayParams);
       fromChain = ethereum.Account({
         amount: gatewayParams.amount,
         convertUnit,
+        anyoneCanSubmit,
       });
     }
   } else if (isSolanaBaseChain(gatewayParams.from)) {
@@ -102,9 +106,10 @@ export const createGateway = async (
       toChain = ethereumChain.Account({
         account: gatewayParams.toAddress,
         convertUnit,
+        anyoneCanSubmit,
       });
     } else {
-      toChain = ethereumChain.Account({ convertUnit });
+      toChain = ethereumChain.Account({ convertUnit, anyoneCanSubmit });
     }
   } else if (isSolanaBaseChain(gatewayParams.to)) {
     const solana = toChainInstance.chain as Solana;
