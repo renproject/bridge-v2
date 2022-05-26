@@ -13,6 +13,7 @@ import { RouteComponentProps } from "react-router";
 import { useNotifications } from "../../providers/Notifications";
 import { isDefined } from "../../utils/objects";
 import { trimAddress } from "../../utils/strings";
+import { sleep } from "../../utils/time";
 import { useCurrentNetworkChains } from "../network/networkHooks";
 import { useTxsStorage } from "../storage/storageHooks";
 import { TxRecoverer } from "./gatewayHooks";
@@ -208,6 +209,7 @@ type ChainTransactionSubmitterParams = {
   waitTarget?: number;
   autoSubmit?: boolean;
   debugLabel?: string;
+  attempts?: number;
 };
 
 export const useChainTransactionSubmitter = ({
@@ -215,6 +217,7 @@ export const useChainTransactionSubmitter = ({
   waitTarget = 1,
   autoSubmit = false,
   debugLabel = "",
+  attempts = 1,
 }: ChainTransactionSubmitterParams) => {
   const l = useLabeler(debugLabel);
   const [submitting, setSubmitting] = useState(false);
@@ -262,26 +265,33 @@ export const useChainTransactionSubmitter = ({
       tx.submit &&
       tx.progress.status === ChainTransactionStatus.Ready
     ) {
-      try {
-        setSubmitting(true);
-        await tx.submit({
-          txConfig: {
-            // gasLimit: 500000,
-          },
-        });
-        setSubmittingDone(true);
-        await wait();
-        setDone(true);
-      } catch (error: any) {
-        console.error(l`tx: submitting error`, error);
-        setErrorSubmitting(error);
+      for (let i = 0; i < attempts; i++) {
+        try {
+          setSubmitting(true);
+          await tx.submit({
+            txConfig: {
+              // gasLimit: 500000,
+            },
+          });
+          i = attempts;
+          setSubmittingDone(true);
+          await wait();
+          setDone(true);
+        } catch (error: any) {
+          console.error(l`tx: submitting error`, error);
+          setErrorSubmitting(error);
+          if (attempts > 1) {
+            await sleep(7000);
+          }
+        }
       }
+
       setSubmitting(false);
     } else {
       console.error(l`tx: submitting error, tx not ready`);
       setErrorSubmitting(new Error("Submitting not ready"));
     }
-  }, [l, wait, tx]);
+  }, [l, wait, tx, attempts]);
 
   useEffect(() => {
     if (Boolean(autoSubmit)) {

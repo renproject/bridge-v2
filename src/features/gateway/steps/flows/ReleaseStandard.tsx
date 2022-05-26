@@ -256,6 +256,7 @@ const ReleaseStandardProcessor: FunctionComponent<
     autoSubmit:
       burnStatus === ChainTransactionStatus.Done &&
       isTxSubmittable(transaction?.renVM),
+    attempts: 5,
     debugLabel: "renVM",
   });
 
