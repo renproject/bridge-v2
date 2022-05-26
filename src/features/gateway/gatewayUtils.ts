@@ -82,10 +82,12 @@ export const createGateway = async (
     const solana = fromChainInstance.chain as Solana;
     if (partialTx) {
       fromChain = solana.Transaction(partialTx);
-      // }
-      // else if(gatewayParams.fromAddress){
-      // TODO: crit finish when Noah enables Solana .account
-      //   fromChain = solana.Address();
+    } else if (gatewayParams.fromAddress) {
+      fromChain = solana.Account({
+        address: gatewayParams.fromAddress,
+        amount: gatewayParams.amount,
+        convertUnit,
+      });
     } else {
       fromChain = solana.Account({
         amount: gatewayParams.amount,
