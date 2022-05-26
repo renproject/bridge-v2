@@ -263,14 +263,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
         onClose={handleModalClose}
         onEnable={handleEnable}
       />
-      <LunaWarningDialog
-        open={
-          releaseCurrencyConfig.symbol === BridgeCurrency.LUNA ||
-          releaseCurrencyConfig.symbol === BridgeCurrency.RENLUNA
-        }
-        onMainAction={handlePreviousStepClick}
-        mainActionText="Go to Home"
-      />
       <TransactionMenu tx={tx} open={menuOpened} onClose={handleMenuClose} />
       <Debug it={{ tooltipOpened, parsedTx, txState: txState }} />
     </>
