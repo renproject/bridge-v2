@@ -101,6 +101,7 @@ type AssetDropdownProps = SelectProps & {
   label?: string;
   assetLabel?: string;
   blockchainLabel?: string;
+  disabledFilter?: (symbol: BridgeCurrency | string) => boolean;
 };
 
 const getAssetData = (
@@ -129,6 +130,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
   balances,
   assetLabel = "Asset",
   blockchainLabel = "Blockchain",
+  disabledFilter = () => false,
   ...rest
 }) => {
   const styles = useAssetDropdownStyles();
@@ -210,10 +212,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
               <MenuItem
                 key={symbol}
                 value={symbol}
-                disabled={
-                  symbol === BridgeCurrency.LUNA ||
-                  symbol === BridgeCurrency.RENLUNA
-                }
+                disabled={disabledFilter(symbol)}
               >
                 <Box display="flex" alignItems="center" width="100%">
                   <Box width="45px" className={styles.iconWrapper}>

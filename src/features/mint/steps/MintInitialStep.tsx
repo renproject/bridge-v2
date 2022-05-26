@@ -12,6 +12,7 @@ import {
 } from "../../../components/dropdowns/AssetDropdown";
 import { PaperContent } from "../../../components/layout/Paper";
 import {
+  BridgeCurrency,
   supportedLockCurrencies,
   supportedMintDestinationChains,
   toMintedCurrency,
@@ -27,6 +28,9 @@ import {
 import { MintIntro } from "../components/MintHelpers";
 import { $mint, setMintCurrency } from "../mintSlice";
 
+const mintDisabledFilter = (symbol: BridgeCurrency | string) => {
+  return symbol === BridgeCurrency.LUNA || symbol === BridgeCurrency.RENLUNA;
+};
 export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
 }) => {
@@ -75,6 +79,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             available={supportedLockCurrencies}
             value={currency}
             onChange={handleCurrencyChange}
+            disabledFilter={mintDisabledFilter}
           />
         </AssetDropdownWrapper>
         <AssetDropdownWrapper>
