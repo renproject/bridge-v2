@@ -338,6 +338,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
     autoSubmit:
       lockStatus === ChainTransactionStatus.Done &&
       isTxSubmittable(transaction?.renVM),
+    attempts: 3,
     debugLabel: "renVM",
   });
   const renVMTxMeta = useRenVMChainTransactionStatusUpdater({

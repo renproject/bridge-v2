@@ -287,6 +287,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     autoSubmit:
       lockStatus === ChainTransactionStatus.Done &&
       isTxSubmittable(transaction.renVM),
+    attempts: 3,
     debugLabel: "renVM",
   });
   const { submitting: renVMSubmitting } = renVmSubmitter;
