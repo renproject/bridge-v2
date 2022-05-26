@@ -40,10 +40,7 @@ import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import { getBurnChainMap } from "../../../services/rentx";
-import {
-  BridgeCurrency,
-  getChainConfigByRentxName,
-} from "../../../utils/assetConfigs";
+import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { $exchangeRates } from "../../marketData/marketDataSlice";
 import { findExchangeRate } from "../../marketData/marketDataUtils";
 import {
@@ -58,7 +55,6 @@ import { TransactionFees } from "../../transactions/components/TransactionFees";
 import { TransactionMenu } from "../../transactions/components/TransactionMenu";
 import {
   AnyBurnSession,
-  LunaWarningDialog,
   ProgressStatus,
 } from "../../transactions/components/TransactionsHelpers";
 import { useTransactionMenuControl } from "../../transactions/transactionsHooks";
