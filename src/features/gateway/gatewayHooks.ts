@@ -343,7 +343,7 @@ export const useContractChainAssetBalance = (
   const { decimals } = useChainInstanceAssetDecimals(instance, asset);
   const [balance, setBalance] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  console.log("instance", instance, connected, decimals);
+  // console.log("instance", instance, connected, decimals);
   useEffect(() => {
     setError(null);
     if (
@@ -416,13 +416,13 @@ export const useGatewayFees = (
   const [toChainFeeAsset, setToChainFeeAsset] = useState<Asset | null>(null);
 
   useEffect(() => {
-    console.log(`gateway amounts effect`, gateway, activeAmount);
+    // console.log(`gateway amounts effect`, gateway, activeAmount);
     if (!gateway || !gateway.fees || !fromChainDecimals || !toChainDecimals) {
       return;
     }
     // const isLock = gateway.inputType === InputType.Lock;
     // const isMint = gateway.outputType === OutputType.Mint;
-    console.log("amount", activeAmount, isNaN(Number(activeAmount)));
+    // console.log("amount", activeAmount, isNaN(Number(activeAmount)));
 
     const renVMFee = gateway.fees.variableFee;
     setVariableFeePercent(
