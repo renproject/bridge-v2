@@ -126,6 +126,6 @@ export const Debug: FunctionComponent<DebugProps> = ({
   ) : null;
 };
 
-export const DebugComponentProps: FunctionComponent<any> = (props) => (
+export const DebugProps: FunctionComponent<any> = (props) => (
   <Debug it={props} />
 );
