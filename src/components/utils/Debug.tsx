@@ -30,7 +30,15 @@ const useStyles = makeStyles({
   },
 });
 
-const off = false; // process.env.NODE_ENV === "production";
+const prodDomains = [
+  "bridge-staging.renproject.io",
+  "staging.bridge.renproject.io",
+  "bridge.renproject.io",
+];
+
+export const isProductionLike = prodDomains.includes(window.location.host);
+
+const off = isProductionLike && !localStorage.getItem("showDebugs");
 
 type DebugProps = {
   it: any;
