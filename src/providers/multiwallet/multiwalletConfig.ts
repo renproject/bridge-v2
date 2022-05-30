@@ -168,8 +168,12 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
                 logo: "",
                 info: BinanceMetamaskConnectorInfo,
                 connector: (() => {
+                  console.log("bsc mm connector");
                   const connector = new BinanceSmartChainInjectedConnector({
                     debug: true,
+                    networkIdMapper: createNetworkIdMapper(
+                      Chain.BinanceSmartChain
+                    ),
                   });
                   connector.getProvider = () => (window as any).ethereum;
                   return connector;
