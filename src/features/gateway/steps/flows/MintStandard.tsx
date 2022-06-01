@@ -114,7 +114,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
     additionalParams,
     error: parseError,
   } = parseGatewayQueryString(location.search, true);
-  const { asset, from, to, nonce } = gatewayParams;
+  const { asset, from, to, nonce, toAddress } = gatewayParams;
   const expiryTime = additionalParams.expiryTime || getGatewayExpiryTime();
   const renVMHash = additionalParams.renVMHash;
 
@@ -130,7 +130,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   }, [connected, to, allChains, provider]);
 
   const { gateway, transactions } = useGateway(
-    { asset, from, to, nonce },
+    { asset, from, to, nonce, toAddress },
     { chains: gatewayChains }
   );
 

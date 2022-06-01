@@ -124,6 +124,7 @@ export const useRedirectToGatewayFlow = (
                 asset,
                 from,
                 to,
+                toAddress,
                 nonce: nonce || getGatewayNonce(),
               },
               { expiryTime: expiryTime || getGatewayExpiryTime(), partialTx }

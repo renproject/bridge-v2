@@ -166,7 +166,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
     from,
     to,
     amount,
-    toAddress,
+    toAddress: isMint && !isH2H ? account : toAddress,
   });
 
   const handleRedirectToGateway = useCallback(() => {
