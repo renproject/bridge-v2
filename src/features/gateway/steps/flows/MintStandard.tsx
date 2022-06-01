@@ -57,7 +57,10 @@ import {
   TransactionRevertedErrorDialog,
 } from "../../../transactions/components/TransactionsHelpers";
 import { useSetCurrentTxHash } from "../../../transactions/transactionsHooks";
-import { ConnectWalletPaperSection } from "../../../wallet/components/WalletHelpers";
+import {
+  ConnectWalletPaperSection,
+  WrongAddressWarningDialog,
+} from "../../../wallet/components/WalletHelpers";
 import {
   useCurrentChainWallet,
   useSyncWalletChain,
@@ -196,6 +199,13 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
           />
         )}
         {!connected && <ConnectWalletPaperSection />}
+        {connected && (
+          <WrongAddressWarningDialog
+            actual={account}
+            expected={toAddress}
+            isGateway={true}
+          />
+        )}
         {connected && !gateway && <GatewayLoaderStatus />}
         {connected && gateway !== null && (
           <>

@@ -850,3 +850,52 @@ export const AddressScreeningWarningDialog: FunctionComponent = () => {
     </WarningDialog>
   );
 };
+
+type WrongAddressWarningDialogProps = {
+  expected?: string;
+  actual?: string;
+  isGateway?: boolean;
+};
+
+export const WrongAddressWarningDialog: FunctionComponent<
+  WrongAddressWarningDialogProps
+> = ({ expected, actual, isGateway = false }) => {
+  const { t } = useTranslation();
+  const [opened, setOpened] = useState(false);
+  const handleClose = useCallback(() => {
+    setOpened(false);
+  }, []);
+
+  const different = expected && actual && expected !== actual;
+
+  useEffect(() => {
+    if (different) {
+      setOpened(true);
+    } else {
+      setOpened(false);
+    }
+  }, [different]);
+
+  return (
+    <WarningDialog
+      open={opened}
+      onClose={handleClose}
+      title={t("common.warning-label")}
+      reason={t("tx.address-error-popup-header")}
+      onAlternativeAction={handleClose}
+      alternativeActionText={t("tx.address-error-popup-action-text")}
+    >
+      <Typography variant="body1" paragraph>
+        {t("tx.address-error-popup-message-1", {
+          mode: isGateway ? t("common.gateway") : t("common.transaction"),
+          actual: trimAddress(actual),
+          expected: trimAddress(expected),
+        })}
+        .
+      </Typography>
+      <Typography variant="body1">
+        {t("tx.address-error-popup-message-2")}
+      </Typography>
+    </WarningDialog>
+  );
+};

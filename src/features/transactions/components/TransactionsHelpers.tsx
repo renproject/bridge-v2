@@ -57,7 +57,6 @@ import { links } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
 import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
-import { trimAddress } from "../../../utils/strings";
 import { getRemainingTime } from "../../../utils/time";
 import { setIssueResolverOpened } from "../transactionsSlice";
 import { CustomChip } from "./TransactionsHistoryHelpers";
@@ -622,42 +621,6 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
         )}
       </PaperContent>
     </BridgeModal>
-  );
-};
-
-type WrongAddressWarningDialogProps = WarningWithActionsProps & {
-  address: string;
-  addressExplorerLink: string;
-  currency: string;
-};
-
-export const WrongAddressWarningDialog: FunctionComponent<
-  WrongAddressWarningDialogProps
-> = ({ address, addressExplorerLink, currency, ...props }) => {
-  const { t } = useTranslation();
-  return (
-    <WarningDialog
-      title={t("common.warning-label")}
-      reason={t("tx.address-error-popup-header")}
-      alternativeActionText={t("tx.address-error-popup-action-text")}
-      {...props}
-    >
-      <span>
-        {t("tx.address-error-popup-message-1")} (
-        <Link
-          external
-          href={addressExplorerLink}
-          color="primary"
-          underline="hover"
-        >
-          {trimAddress(address, 5)}
-        </Link>
-        ).{" "}
-        {t("tx.address-error-popup-message-2", {
-          currency,
-        })}
-      </span>
-    </WarningDialog>
   );
 };
 
