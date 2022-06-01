@@ -140,6 +140,7 @@
   "tx.address-error-popup-header": "Different account detected",
   "tx.address-error-popup-message-1": "This {{mode}} was created with a different account ({{expected}}) than the current account selected in your wallet ({{actual}})",
   "tx.address-error-popup-message-2": "If you do not have access to the account that generated this {{mode}}, you will not be able to access the funds deposited to it.",
+  "tx.address-error-popup-switch-wallet-account-message": "Please switch your wallet account.",
   "tx.general-error-popup-action-text": "Refresh page",
   "tx.general-error-popup-header": "An error has occured",
   "tx.general-error-popup-message-1": "Please ensure you have this page bookmarked before refreshing. If this error persists, please",

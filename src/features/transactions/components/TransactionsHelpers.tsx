@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonProps,
   Checkbox,
   DialogProps,
   FormControl,
@@ -565,6 +566,7 @@ type WarningWithActionsProps = DialogProps & {
   onMainAction?: () => void;
   mainActionText?: string;
   mainActionDisabled?: boolean;
+  mainActionVariant?: ButtonProps["variant"];
   onAlternativeAction?: () => void;
   alternativeActionText?: string;
   alternativeActionDisabled?: boolean;
@@ -577,6 +579,7 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   mainActionText = "",
   onMainAction,
   mainActionDisabled,
+  mainActionVariant = "contained",
   alternativeActionText = "",
   onAlternativeAction,
   alternativeActionDisabled,
@@ -614,7 +617,11 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
         </ActionButtonWrapper>
         {showMainAction && (
           <ActionButtonWrapper>
-            <ActionButton onClick={onMainAction} disabled={mainActionDisabled}>
+            <ActionButton
+              onClick={onMainAction}
+              disabled={mainActionDisabled}
+              variant={mainActionVariant}
+            >
               {mainActionText}
             </ActionButton>
           </ActionButtonWrapper>

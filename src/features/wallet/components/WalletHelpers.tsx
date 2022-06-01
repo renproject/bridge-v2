@@ -886,6 +886,7 @@ export const WrongAddressWarningDialog: FunctionComponent<
       reason={t("tx.address-error-popup-header")}
       onMainAction={handleClose}
       mainActionText={t("tx.address-error-popup-action-text")}
+      mainActionVariant="outlined"
     >
       <Typography variant="body1" paragraph>
         {t("tx.address-error-popup-message-1", {
@@ -895,10 +896,15 @@ export const WrongAddressWarningDialog: FunctionComponent<
         })}
         .
       </Typography>
-      <Typography variant="body1">
+      <Typography variant="body1" paragraph>
         {t("tx.address-error-popup-message-2", {
           mode: isGateway ? t("common.gateway") : t("common.transaction"),
         })}
+      </Typography>
+      <Typography variant="body1">
+        <strong>
+          {t("tx.address-error-popup-switch-wallet-account-message")}
+        </strong>
       </Typography>
     </WarningDialog>
   );
