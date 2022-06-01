@@ -18,6 +18,7 @@ export enum SystemStatus {
 
 type UiState = {
   paperShaking: boolean;
+  walletButtonHoisted: boolean;
   systemMonitor: {
     dialogOpened: boolean;
     systems: Record<SystemType, SystemStatus>;
@@ -26,6 +27,7 @@ type UiState = {
 
 let initialState: UiState = {
   paperShaking: false,
+  walletButtonHoisted: false,
   systemMonitor: {
     dialogOpened: false,
     systems: {
@@ -45,6 +47,9 @@ const slice = createSlice({
     setPaperShaking(state, action: PayloadAction<boolean>) {
       state.paperShaking = action.payload;
     },
+    setWalletButtonHoisted(state, action: PayloadAction<boolean>) {
+      state.walletButtonHoisted = action.payload;
+    },
     setSystemMonitorOpened(state, action: PayloadAction<boolean>) {
       state.systemMonitor.dialogOpened = action.payload;
     },
@@ -62,6 +67,7 @@ const slice = createSlice({
 
 export const {
   setPaperShaking,
+  setWalletButtonHoisted,
   setSystemMonitorOpened,
   setSystemMonitorStatus,
 } = slice.actions;

@@ -53,6 +53,7 @@ import {
   $txHistory,
   setTxHistoryOpened,
 } from "../features/transactions/transactionsSlice";
+import { $ui } from "../features/ui/uiSlice";
 import {
   useWalletPickerStyles,
   WalletChainLabel,
@@ -109,6 +110,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
 
   const { dialogOpened: txHistoryOpened, showConnectedTxs } =
     useSelector($txHistory);
+  const { walletButtonHoisted } = useSelector($ui);
   const handleTxHistoryToggle = useCallback(() => {
     dispatch(setTxHistoryOpened(!txHistoryOpened));
   }, [dispatch, txHistoryOpened]);
@@ -183,7 +185,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
         />
         <WalletConnectionStatusButton
           onClick={handleWalletButtonClick}
-          hoisted={txHistoryOpened && showConnectedTxs}
+          hoisted={(txHistoryOpened && showConnectedTxs) || walletButtonHoisted}
           status={status}
           account={account}
           wallet={wallet}

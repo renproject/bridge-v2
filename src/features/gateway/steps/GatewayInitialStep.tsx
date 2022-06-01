@@ -301,7 +301,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   const chains = useCurrentNetworkChains();
   const { account, targetNetwork, connected: fromConnected } = useWallet(from);
-  const { balance } = useContractChainAssetBalance(
+  const { balance, error: balanceError } = useContractChainAssetBalance(
     chains[from].chain as any,
     asset,
     account,
@@ -420,6 +420,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
             asset={uiAsset.shortName}
             chain={from}
             onSetMaxAmount={handleSetMaxAmount}
+            error={balanceError}
           />
         ) : (
           <BalanceInfoPlaceholder />

@@ -55,6 +55,7 @@ import {
 import { trimAddress } from "../../../utils/strings";
 import { getWalletConfig, Wallet } from "../../../utils/walletsConfig";
 import { WarningDialog } from "../../transactions/components/TransactionsHelpers";
+import { setWalletButtonHoisted } from "../../ui/uiSlice";
 import { useEns, useSwitchChainHelpers, useWallet } from "../walletHooks";
 // import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
 import {
@@ -860,6 +861,7 @@ type WrongAddressWarningDialogProps = {
 export const WrongAddressWarningDialog: FunctionComponent<
   WrongAddressWarningDialogProps
 > = ({ expected, actual, isGateway = false }) => {
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const [opened, setOpened] = useState(false);
   const handleClose = useCallback(() => {
@@ -869,12 +871,12 @@ export const WrongAddressWarningDialog: FunctionComponent<
   const different = expected && actual && expected !== actual;
 
   useEffect(() => {
-    if (different) {
-      setOpened(true);
-    } else {
-      setOpened(false);
-    }
-  }, [different]);
+    setOpened(Boolean(different));
+  }, [dispatch, different]);
+
+  useEffect(() => {
+    dispatch(setWalletButtonHoisted(opened));
+  }, [dispatch, opened]);
 
   return (
     <WarningDialog
@@ -882,8 +884,8 @@ export const WrongAddressWarningDialog: FunctionComponent<
       onClose={handleClose}
       title={t("common.warning-label")}
       reason={t("tx.address-error-popup-header")}
-      onAlternativeAction={handleClose}
-      alternativeActionText={t("tx.address-error-popup-action-text")}
+      onMainAction={handleClose}
+      mainActionText={t("tx.address-error-popup-action-text")}
     >
       <Typography variant="body1" paragraph>
         {t("tx.address-error-popup-message-1", {
@@ -894,7 +896,9 @@ export const WrongAddressWarningDialog: FunctionComponent<
         .
       </Typography>
       <Typography variant="body1">
-        {t("tx.address-error-popup-message-2")}
+        {t("tx.address-error-popup-message-2", {
+          mode: isGateway ? t("common.gateway") : t("common.transaction"),
+        })}
       </Typography>
     </WarningDialog>
   );
