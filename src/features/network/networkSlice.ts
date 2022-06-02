@@ -7,12 +7,7 @@ type NetworkState = {
   network: RenNetwork;
 };
 
-const cachedTargetNetwork = localStorage.getItem("renTargetNetwork");
-
-const initialNetwork =
-  // RenNetwork.Testnet || // TODO: crit remove when done
-  ((cachedTargetNetwork || env.NETWORK) as unknown as RenNetwork) ||
-  RenNetwork.Testnet;
+const initialNetwork = env.NETWORK;
 
 let initialState: NetworkState = {
   network: initialNetwork as unknown as RenNetwork,

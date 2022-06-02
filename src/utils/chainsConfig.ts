@@ -199,9 +199,9 @@ export const isDepositBaseChain = (chain: Chain) =>
 export const supportedEthereumChains: Array<Chain> = [
   Chain.Ethereum,
   Chain.BinanceSmartChain,
-  Chain.Polygon,
-  // Chain.Goerli,
   Chain.Fantom,
+  // Chain.Goerli,
+  Chain.Polygon,
   Chain.Avalanche,
   Chain.Arbitrum,
 ];
@@ -243,10 +243,14 @@ export const assetChainsArray = Object.values(chains).reduce(
   [] as Array<AssetChainsData>
 );
 
-export const getAssetChainsConfig = (asset: Asset) => {
+export const getAssetChainsConfig = (asset: Asset, nullForNotFound = false) => {
   const info = assetChainsArray.find((entry) => entry.asset === asset);
   if (!info) {
-    throw new Error(`Chain mapping for ${asset} not found.`);
+    if (nullForNotFound) {
+      return null;
+    } else {
+      throw new Error(`Chain mapping for ${asset} not found.`);
+    }
   }
   return {
     lockChain: info.lockChain,

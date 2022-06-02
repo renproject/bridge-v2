@@ -71,7 +71,11 @@ export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
     throw new Error(`No configuration for ${ChainClass.name} on ${network}.`);
   }
 
+  // console.log("ccc", config.config);
   let rpcUrl = config.config.rpcUrls[0];
+  // if (config.config.chainId === "0x13881") {
+  //   rpcUrl = config.config.rpcUrls[1];
+  // }
   if (env.INFURA_ID) {
     for (const url of config.config.rpcUrls) {
       if (url.match(/^https:\/\/.*\$\{INFURA_API_KEY\}/)) {
@@ -81,7 +85,19 @@ export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
     }
   }
 
-  const provider = new providers.JsonRpcProvider(rpcUrl);
+  let provider = new providers.JsonRpcProvider(rpcUrl);
+  // if (config.config.chainId === "0x13881XX") {
+  //   console.log("overwriting chain", config);
+  //   provider = new providers.JsonRpcProvider({
+  //     url: rpcUrl,
+  //     headers: {
+  //       "access-control-allow-origin": "http://localhost:3000",
+  //     },
+  //     skipFetchSetup: true,
+  //   });
+  // } else {
+  //   provider = new providers.JsonRpcProvider(rpcUrl);
+  // }
 
   return {
     chain: new ChainClass({

@@ -5,6 +5,7 @@ import React, {
   FunctionComponent,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -72,6 +73,7 @@ import {
   setTo,
   setToAddress,
 } from "../gatewaySlice";
+import { useWhitelist } from "../renJSHooks";
 import { getSendLabel } from "./shared/TransactionStatuses";
 import { GatewayStepProps } from "./stepUtils";
 
@@ -106,6 +108,9 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const isMove = path === paths.BRIDGE;
 
   const ioType = getIoTypeFromPath(path);
+
+  const { whitelistAssets, whitelistToChains, whitelistFromChains } =
+    useWhitelist();
 
   const { t } = useTranslation();
   const { asset, from, to, amount, toAddress } = useSelector($gateway);
@@ -373,6 +378,24 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
     hasAmountBalanceError,
   ]);
 
+  const filteredAssets = useMemo(() => {
+    return assets.filter((entry) => {
+      return whitelistAssets(entry, ioType);
+    });
+  }, [assets, ioType, whitelistAssets]);
+
+  const filteredFromChains = useMemo(() => {
+    return fromChains.filter((entry) => {
+      return whitelistFromChains(asset, ioType, entry as Chain);
+    });
+  }, [asset, fromChains, whitelistFromChains, ioType]);
+
+  const filteredToChains = useMemo(() => {
+    return toChains.filter((entry) => {
+      return whitelistToChains(asset, ioType, entry as Chain);
+    });
+  }, [asset, toChains, whitelistToChains, ioType]);
+
   return (
     <>
       <TransactionSafetyWarning />
@@ -429,7 +452,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
           <RichDropdown
             label={getSendLabel(asset, ioType, t)}
             supplementalLabel={t("common.asset-label")}
-            options={assets}
+            options={filteredAssets}
             getOptionData={getAssetOptionData}
             optionMode={isRelease || isMove}
             value={asset}
@@ -442,7 +465,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               label={t("common.from-label")}
               supplementalLabel={t("common.blockchain-label")}
               getOptionData={getChainOptionData}
-              options={fromChains}
+              options={filteredFromChains}
               value={from}
               onChange={handleFromChange}
             />
@@ -454,7 +477,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
               label={t("release.to-label")}
               supplementalLabel={t("common.blockchain-label")}
               getOptionData={getChainOptionData}
-              options={toChains}
+              options={filteredToChains}
               value={to}
               onChange={handleToChange}
             />

@@ -1,4 +1,11 @@
-const NETWORK = process.env.REACT_APP_NETWORK || "testnet";
+import { RenNetwork } from "@renproject/utils";
+
+const cachedTargetNetwork = localStorage.getItem("renTargetNetwork");
+const NETWORK =
+  ((cachedTargetNetwork ||
+    process.env.REACT_APP_NETWORK) as unknown as RenNetwork) ||
+  RenNetwork.Testnet;
+
 const INFURA_ID =
   process.env.REACT_APP_INFURA_ID || process.env.REACT_APP_INFURA_KEY || "";
 const DEV = Boolean(process.env.NODE_ENV === "development");
