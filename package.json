@@ -27,6 +27,7 @@
     "@renproject/ren": "3.1.0",
     "@renproject/utils": "3.1.0",
     "@sentry/react": "^6.5.1",
+    "@slack/web-api": "^6.7.1",
     "@solana/web3.js": "^1.36.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -85,6 +86,7 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "cross-env GENERATE_SOURCEMAP=false react-app-rewired start",
+    "start-functions": "netlify functions:serve",
     "build": "react-app-rewired --max-old-space-size=8192 build",
     "postbuild": "echo $COMMIT_REF > build/build.txt",
     "test": "react-app-rewired test",
@@ -110,7 +112,7 @@
     "@babel/helper-call-delegate": "^7.12.1",
     "@babel/plugin-transform-modules-commonjs": "^7.13.0",
     "@babel/preset-env": "^7.15.8",
-    "netlify-cli": "^2.71.0",
+    "netlify-cli": "^10",
     "prettier": "^2.5.1",
     "react-app-rewired": "^2.2.1"
   }
