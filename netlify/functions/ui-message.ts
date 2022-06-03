@@ -75,6 +75,7 @@ async function fetchLatestPublishableMessage(channelId: string) {
 
 const handler: Handler = async (event, context) => {
   // await findConversation(conversationName);
+  let status = 200;
   try {
     const { reload, forceClean } = event.queryStringParameters || {};
     if (forceClean) {
@@ -87,27 +88,26 @@ const handler: Handler = async (event, context) => {
         cacheUpdated = Date.now();
         console.log(message);
         console.log(message.blocks);
-        const { text, blocks } = message;
-        cachedMessage = { text, blocks };
+        const { text, client_msg_id: id, ts } = message;
+        let timestamp = Date.now();
+        if (ts) {
+          timestamp = Number(ts.split(".")[0]);
+        }
+        cachedMessage = { text, id, timestamp };
         if (isUnpublishable(message)) {
           cachedMessage = undefined;
         }
       }
     }
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: error,
-        message: cachedMessage,
-        created: new Date(cacheCreated).toISOString(),
-        updated: new Date(cacheUpdated).toISOString(),
-      }),
-    };
+    status = 500;
   }
 
   return {
-    statusCode: 200,
+    statusCode: status,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
     body: JSON.stringify(
       {
         message: cachedMessage,
