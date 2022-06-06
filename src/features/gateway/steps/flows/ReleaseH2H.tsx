@@ -346,7 +346,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     autoSubmit:
       burnStatus === ChainTransactionStatus.Done &&
       isTxSubmittable(transaction?.renVM), // this may not be truthy when recovering
-    attempts: 3,
+    attempts: 4,
     debugLabel: "renVM",
   });
 
