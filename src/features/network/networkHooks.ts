@@ -43,9 +43,13 @@ export const useRenVMExplorerLink = () => {
   const { network } = useSelector($network);
   const getRenVmExplorerLink = useCallback(
     (renVmHash: string) => {
-      return `https://explorer${
+      const base = `https://explorer${
         network !== "mainnet" ? `-${network}` : ""
-      }.renproject.io/#/tx/${renVmHash}`;
+      }.renproject.io/`;
+      if (renVmHash) {
+        return base + `#/tx/${renVmHash}`;
+      }
+      return base;
     },
     [network]
   );

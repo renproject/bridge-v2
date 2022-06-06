@@ -44,10 +44,7 @@ import {
   IssuesResolver,
   IssuesResolverButton,
 } from "../features/transactions/IssuesResolver";
-import {
-  TransactionRecovery,
-  TransactionRecoveryButton,
-} from "../features/transactions/TransactionRecovery";
+import { TransactionRecovery } from "../features/transactions/TransactionRecovery";
 import { TransactionsHistory } from "../features/transactions/TransactionsHistory";
 import {
   $txHistory,
@@ -182,6 +179,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           opened={txHistoryOpened}
           className={styles.desktopTxHistory}
           onClick={handleTxHistoryToggle}
+          title="Transaction History"
         />
         <WalletConnectionStatusButton
           onClick={handleWalletButtonClick}
@@ -297,7 +295,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       <TransactionsHistory />
       <IssuesResolver />
       <IssuesResolverButton mode="fab" />
-      <TransactionRecoveryButton />
+      {/*<TransactionRecoveryButton />*/}
       <TransactionRecovery />
       <Debug
         it={{

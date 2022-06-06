@@ -1,12 +1,12 @@
 import { Handler } from "@netlify/functions";
-import { WebClient, LogLevel } from "@slack/web-api";
+import { WebClient } from "@slack/web-api";
 import { Message } from "@slack/web-api/dist/response/ConversationsHistoryResponse";
 
 const token = process.env.SLACK_UI_MESSAGE_FETCHER_TOKEN;
 
 const client = new WebClient(token, {
   // LogLevel can be imported and used to make debugging simpler
-  logLevel: LogLevel.DEBUG,
+  // logLevel: LogLevel.DEBUG,
 });
 
 const cacheCreated = Date.now();
@@ -15,7 +15,7 @@ const uiMessagesChannelId = "C03J16MCD1C";
 
 let cachedMessage: any | string | undefined | null = null;
 let cacheUpdated = cacheCreated;
-const cacheExpiryMs = 1 * 60 * 1000;
+const cacheExpiryMs = 60 * 60 * 1000;
 
 function cacheExpired() {
   const now = Date.now();
@@ -86,8 +86,6 @@ const handler: Handler = async (event, context) => {
       const message = await fetchLatestPublishableMessage(uiMessagesChannelId);
       if (message !== null) {
         cacheUpdated = Date.now();
-        console.log(message);
-        console.log(message.blocks);
         const { text, client_msg_id: id, ts } = message;
         let timestamp = Date.now();
         if (ts) {

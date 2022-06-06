@@ -1,4 +1,4 @@
-import { DialogContent, Fab, Fade, Typography } from "@material-ui/core";
+import { Box, DialogContent, Fab, Fade, Typography } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import { Feedback } from "@material-ui/icons";
 import React, { FunctionComponent, useCallback } from "react";
@@ -9,6 +9,7 @@ import {
   ActionButton,
   ActionButtonWrapper,
   ClosableMenuIconButton,
+  CopyContentTypography,
 } from "../../components/buttons/Buttons";
 import { IssueResolverIcon } from "../../components/icons/RenIcons";
 import { externalLinkAttributes, Link } from "../../components/links/Links";
@@ -44,7 +45,7 @@ const useIssueResolverStyles = makeStyles((theme) => ({
 
 const MaxBox = styled("div")({
   maxWidth: 370,
-  margin: "0 auto",
+  margin: "16px auto",
 });
 
 export const IssuesResolver: FunctionComponent = () => {
@@ -92,22 +93,34 @@ export const IssuesResolver: FunctionComponent = () => {
       {/*  </MaxBox>*/}
       {/*</DialogContent>*/}
       <DialogContent className={styles.content}>
-        {txHash !== "" && (
-          <Typography variant="body1" gutterBottom>
-            {t("tx.issue-resolver-viewing-deposit-header", {
-              depositHash: txHash,
-            })}
-          </Typography>
-        )}
         <MaxBox>
-          <Typography variant="body2" color="textSecondary">
+          <Typography variant="body2" color="textSecondary" gutterBottom>
             {t("tx.issue-resolver-viewing-deposit-description")}
           </Typography>
         </MaxBox>
+        {Boolean(txHash) && (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography variant="body2" color="textSecondary">
+              {t("common.renvm-hash-label")}:&nbsp;
+            </Typography>
+            {/*<Typography variant="body1">*/}
+            {/*  <strong>{renVMHash}</strong>*/}
+            {/*</Typography>*/}
+            <CopyContentTypography
+              content={txHash || ""}
+              copiedMessage={t("common.copied-ex-message")}
+            />
+          </Box>
+        )}
         <ActionButtonWrapper>
           <Typography color="textPrimary">
-            <Link href={links.REN_EXPLORER_GUIDE} {...externalLinkAttributes}>
-              {t("tx.issue-resolver-explorer-guide-label")}
+            <Link
+              href={links.REN_EXPLORER_GUIDE}
+              {...externalLinkAttributes}
+              color="primary"
+              underline="hover"
+            >
+              {t("tx.issue-resolver-guide-label")}
             </Link>
           </Typography>
         </ActionButtonWrapper>
@@ -116,14 +129,14 @@ export const IssuesResolver: FunctionComponent = () => {
             {t("tx.issue-resolver-go-to-explorer-label")}
           </ActionButton>
         </ActionButtonWrapper>
-        <ActionButtonWrapper>
+        <Box mt={4}>
           <Typography color="textSecondary" variant="body2">
             {t("tx.issue-resolver-unresolved-text")}{" "}
             <Link href={links.BUGS_LOG} {...externalLinkAttributes}>
               {t("tx.issue-resolver-unresolved-link-text")}
             </Link>
           </Typography>
-        </ActionButtonWrapper>
+        </Box>
       </DialogContent>
       <Debug it={{ txHash }} />
     </WideDialog>

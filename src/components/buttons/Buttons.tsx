@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ButtonProps,
   Fade,
@@ -27,7 +28,10 @@ import {
   skyBlueLighter,
 } from "../../theme/colors";
 import { defaultShadow } from "../../theme/other";
-import { copyToClipboard } from "../../utils/copyToClipboard";
+import {
+  copyToClipboard,
+  copyToClipboardAsync,
+} from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
   CustomSvgIconComponent,
@@ -249,6 +253,42 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
         </IconButton>
       </div>
     </div>
+  );
+};
+
+export const CopyContentTypography: FunctionComponent<
+  CopyContentButtonProps
+> = ({ content, copiedMessage = "Copied!" }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleClick = useCallback(() => {
+    if (!copied) {
+      copyToClipboardAsync(content).then(() => {
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 4000);
+      });
+    }
+  }, [content, copied]);
+  return (
+    <Box display="flex" justifyContent="center" alignItems="center">
+      <span>
+        {copied && (
+          <Fade in={copied} timeout={1200}>
+            <span>{copiedMessage}</span>
+          </Fade>
+        )}
+        <Hide when={copied}>
+          <strong>
+            <MiddleEllipsisText hoverable>{content}</MiddleEllipsisText>
+          </strong>
+        </Hide>
+      </span>
+      <IconButton onClick={handleClick}>
+        <CopyIcon fontSize="inherit" />
+      </IconButton>
+    </Box>
   );
 };
 
