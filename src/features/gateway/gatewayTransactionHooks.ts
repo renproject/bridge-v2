@@ -281,7 +281,8 @@ export const useChainTransactionSubmitter = ({
           console.error(l`tx: submitting error`, error);
           setErrorSubmitting(error);
           if (attempts > 1) {
-            await sleep(7000);
+            // exponential backoff
+            await sleep((i + 1) * 7000);
           }
         }
       }
