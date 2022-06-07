@@ -43,7 +43,7 @@ export const ImportantInfoModal: FunctionComponent = () => {
       .then((content) => {
         let message = content.message as UIMessage;
         setMessage(message);
-        if (!localStorage.getItem(getAckKey(message.id))) {
+        if (message !== null && !localStorage.getItem(getAckKey(message.id))) {
           setOpen(true);
         }
       });
