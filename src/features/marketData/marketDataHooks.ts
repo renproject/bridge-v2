@@ -65,7 +65,7 @@ export const useGasPrices = () => {
 
   const fetchData = useCallback(async () => {
     const anyBlockEth = await fetchWithTimeout(
-      "https://api.anyblock.tools/ethereum/ethereum/mainnet"
+      "https://api.anyblock.tools/ethereum/ethereum/mainnet/gasprice"
     )
       .then((response) => {
         report(SystemType.Anyblock, SystemStatus.Operational);
@@ -78,6 +78,7 @@ export const useGasPrices = () => {
           fast: 50, // fallback
         };
       });
+    console.log("aab", anyBlockEth);
     const fast = anyBlockEth.fast;
     const ethPrice = {
       chain: Chain.Ethereum,
