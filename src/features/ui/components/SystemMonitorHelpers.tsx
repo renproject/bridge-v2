@@ -3,7 +3,7 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { createIndicatorClass } from "../../wallet/components/WalletHelpers";
-import { SystemStatus, SystemType } from "../uiSlice";
+import { SystemStatus } from "../uiSlice";
 
 export enum IndicatorStatus {
   Success = "success",

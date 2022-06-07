@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useInterval } from "react-use";
+import { fetchWithTimeout } from "../../utils/fetch";
 import { useReportSystemStatus } from "../ui/uiHooks";
 import { SystemStatus, SystemType } from "../ui/uiSlice";
 import {
@@ -63,15 +64,15 @@ export const useGasPrices = () => {
   const report = useReportSystemStatus();
 
   const fetchData = useCallback(async () => {
-    const anyBlockEth = await fetch(
-      "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty"
+    const anyBlockEth = await fetchWithTimeout(
+      "https://api.anyblock.tools/ethereum/ethereum/mainnet"
     )
       .then((response) => {
         report(SystemType.Anyblock, SystemStatus.Operational);
         return response.json();
       })
       .catch((error) => {
-        // console.error(error);
+        console.error(error);
         report(SystemType.Anyblock, SystemStatus.Failure);
         return {
           fast: 50, // fallback
@@ -82,7 +83,9 @@ export const useGasPrices = () => {
       chain: Chain.Ethereum,
       standard: fast < 20 ? 50 : fast,
     };
-    const matic = await fetch("https://gasstation-mainnet.matic.network")
+    const matic = await fetchWithTimeout(
+      "https://gasstation-mainnet.matic.network"
+    )
       .then((response) => {
         report(SystemType.MaticGasStation, SystemStatus.Operational);
         return response.json();

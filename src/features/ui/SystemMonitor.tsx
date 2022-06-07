@@ -12,7 +12,6 @@ import { $systemMonitor, setSystemMonitorOpened, SystemType } from "./uiSlice";
 const criticalSystems = [SystemType.Lightnode];
 const supplementalSystems = [
   SystemType.Coingecko,
-  SystemType.Bandchain,
   SystemType.Anyblock,
   SystemType.MaticGasStation,
 ];

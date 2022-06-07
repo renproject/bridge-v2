@@ -3,7 +3,6 @@ import { RootState } from "../../store/rootReducer";
 
 export enum SystemType {
   Lightnode = "Lightnode",
-  Bandchain = "Bandchain",
   Coingecko = "Coingecko",
   Anyblock = "Anyblock",
   MaticGasStation = "MaticGasStation",
@@ -32,7 +31,6 @@ let initialState: UiState = {
     dialogOpened: false,
     systems: {
       [SystemType.Lightnode]: SystemStatus.Unknown,
-      [SystemType.Bandchain]: SystemStatus.Pending,
       [SystemType.Coingecko]: SystemStatus.Pending,
       [SystemType.Anyblock]: SystemStatus.Pending,
       [SystemType.MaticGasStation]: SystemStatus.Pending,

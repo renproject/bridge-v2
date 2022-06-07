@@ -81,7 +81,6 @@ export type AssetLabelsConfig = {
 };
 
 export enum AssetRateService {
-  Bandchain = "Bandchain",
   Coingecko = "Coingecko",
 }
 

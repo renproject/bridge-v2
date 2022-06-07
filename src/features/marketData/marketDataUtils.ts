@@ -15,7 +15,7 @@ export const coingeckoSymbols = Object.entries(assetsConfig)
   )
   .map(([asset, entry]) => entry.rateSymbol || asset);
 
-console.log("coingeckoSymbols", coingeckoSymbols);
+console.info("coingeckoSymbols", coingeckoSymbols);
 
 export type CoingeckoReferenceData = {
   id: string;

@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { AppLoader } from "./components/progress/AppLoader";
 import { ImportantInfoModal } from "./features/ui/ImportantInfoModal";
+import { SystemMonitor } from "./features/ui/SystemMonitor";
 // import { SystemMonitor } from "./features/ui/SystemMonitor";
 import MainPage from "./pages/MainPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -34,7 +35,7 @@ function App() {
           <Route component={NotFoundPage} />
         </Switch>
         <ImportantInfoModal />
-        {/*<SystemMonitor />*/}
+        <SystemMonitor />
       </Suspense>
     </Router>
   );

@@ -1,4 +1,4 @@
-# `ren bridge v2`
+# `ren bridge v3`
 
 An easy way to bridge cross-chain assets between blockchains.
 
@@ -21,13 +21,13 @@ Available commands:
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
+The page will reload if you make edits.<br />
+You will also see any lint errors in the console.
+
 ### `yarn start-functions`
 
 Runs netlify functions in the development mode.<br />
 Open [http://localhost:9999](http://localhost:9999) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
 
 ### `yarn test`
 
@@ -60,9 +60,7 @@ The core RenVM libraries on which the application is built are as follows:
 
 [`@renproject/multiwallet-ui`](https://www.npmjs.com/package/@renproject/multiwallet-ui) - provides extensible wallet selection, connection and management features for React apps. It comes together with default UI, but can be adapted to any React UI framework.
 
-[`@renproject/rentx`](https://www.npmjs.com/package/@renproject/rentx) - RenTX is for managing transactions. Allows transactions state tracing and makes it easier to build UI for appropriate transaction stages.
-
-[`@renproject/ren`](https://www.npmjs.com/package/@renproject/ren) - RenJS is the core library for interacting with RenVM. RenTX uses it internally. Bridge uses it for things such as fees calculation.
+[`@renproject/ren`](https://www.npmjs.com/package/@renproject/ren) - RenJS is the core library for interacting with RenVM.
 
 ## Forking
 
