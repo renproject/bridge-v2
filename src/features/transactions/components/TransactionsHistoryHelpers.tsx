@@ -254,21 +254,21 @@ export const TransactionSafetyWarning: FunctionComponent = () => {
     <WideDialog open={open}>
       <Box p={6} textAlign="center">
         <Typography variant="body1" paragraph>
-          Ren is new technology, and security audits don't completely eliminate
-          risks. Please don’t bridge assets you can’t afford to lose.
+          RenBridge uses local browser storage to keep track of your ongoing
+          bridge transactions. While bridging transactions through Ren, please
+          do not remove your browser history and cache, and please do not use
+          incognito mode, as you risk losing track of your bridge transactions.
+          You can avoid this issue by bookmarking your unique bridge URL when
+          prompted by the UI.
         </Typography>
         <Typography variant="body1">
-          RenBridge uses local browser storage to keep its orders while in
-          transit. Do not clear your history, cache, or use incognito mode and
-          then close your window,
+          RenBridge uses the Ren protocol, which is new technology. While it has
+          undergone security audits, that does not completely eliminate risks.
+          Please be mindful when bridging large amounts of assets.
         </Typography>
         <Typography variant="body1">
-          <strong>your funds will be lost.</strong>
-        </Typography>{" "}
-        <Typography variant="body1">
-          By proceeding you understand this and are responsible for any lost
-          funds. You can avoid this issue by bookmarking the bridge URL once
-          initiated.
+          By proceeding, you understand the risks and are responsible for any
+          lost funds.
         </Typography>
         <Box mt={6}>
           <ActionButton onClick={handleAccept}>Accept Terms</ActionButton>
