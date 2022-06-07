@@ -76,25 +76,6 @@ git clone https://github.com/renproject/bridge-v2.git
 
 RenBridge requires an Infura key provided as an environment variable. You can create one by going to [infura.io](https://infura.io). If another Ethereum provider is being used, it can be changed in [Multiwallet.tsx](src/providers/multiwallet/Multiwallet.tsx).
 
-### Common cases
-
-Here are some common cases you can run into:
-
-#### Adding new asset
-
-If you want to add a new asset, follow these steps:
-
-- add asset source chain and appropriate mappings to [rentx.ts](src/services/rentx.ts)
-- add a new asset and its chain data in [assetConfigs.ts](src/utils/assetConfigs.ts). Ensure you covered following points:
-  - add a new asset symbol to `BridgeCurrency` enum
-  - add the newly installed chain to `RenChain` and `BridgeChain` enums
-  - add a new `BridgeCurrencyConfig` entry in `currenciesConfig`.
-    Should include labels, icons/coloring, source chain and network mappings.
-  - add a new `BridgeChainConfig` entry in `chainsConfig`.
-    Should include labels, icons, block time/confirmations data and native currency mapping
-  - extend `toMintedCurrency` and `toReleasedCurrency` functions with new asset mappings
-  - enable newly added asset in `supportedLockCurrencies`, `supportedReleaseCurrencies`
-
 #### Changing visual appearance
 
 Most of the visual - related configuration lies in a [theme](src/theme) folder. To find out how to style Material UI, check [this link](https://material-ui.com/customization/theming/). Icons, logos and other images can be found in [assets](src/assets) folder.
