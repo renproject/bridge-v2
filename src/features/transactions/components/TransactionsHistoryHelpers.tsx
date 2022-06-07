@@ -228,7 +228,7 @@ export const AddressInfo: FunctionComponent<AddressInfoProps> = ({
   );
 };
 
-const ACK_RENEWAL_HRS = 1; //TODO: crit set to 24 before release
+const ACK_RENEWAL_HRS = 24;
 
 export const TransactionSafetyWarning: FunctionComponent = () => {
   const [open, setOpen] = useState(false);
