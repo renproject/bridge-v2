@@ -434,7 +434,7 @@ export const supportedAssets =
         Asset.DGB,
         Asset.DOGE,
         Asset.FIL,
-        // Asset.LUNA,
+        Asset.LUNA,
         Asset.ZEC,
         Asset.ETH,
         Asset.BNB,
