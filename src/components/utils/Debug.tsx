@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
+import { prodDomains } from "../../constants/constants";
 import { ErrorBoundary } from "./Error";
 
 const useStyles = makeStyles({
@@ -30,15 +31,10 @@ const useStyles = makeStyles({
   },
 });
 
-const prodDomains = [
-  "bridge-staging.renproject.io",
-  "staging.bridge.renproject.io",
-  "bridge.renproject.io",
-];
-
 export const isProductionLike = prodDomains.includes(window.location.host);
 
-const off = isProductionLike && !localStorage.getItem("showDebugs");
+const off =
+  isProductionLike && !(localStorage.getItem("showDebugs") === "true");
 
 type DebugProps = {
   it: any;

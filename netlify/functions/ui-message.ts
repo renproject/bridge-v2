@@ -9,6 +9,8 @@ const client = new WebClient(token, {
   // logLevel: LogLevel.DEBUG,
 });
 
+const minimumApprovals = process.env.REACT_APP_NETWORK === "mainnet" ? 2 : 1;
+
 const cacheCreated = Date.now();
 // const conversationName = "bridge-ui-messages";
 const uiMessagesChannelId = "C03J16MCD1C";
@@ -32,7 +34,7 @@ function isPublishable(message: Message) {
   if (isUserMessage(message) && reactions) {
     for (const reaction of reactions) {
       const { name, count } = reaction;
-      if (name === "bell" && count) {
+      if (name === "bell" && count && count >= minimumApprovals) {
         // publishable
         // console.log("publishable message", message);
         return true;
@@ -98,6 +100,7 @@ const handler: Handler = async (event, context) => {
       }
     }
   } catch (error) {
+    // console.error(error);
     status = 500;
   }
 
