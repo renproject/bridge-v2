@@ -75,9 +75,8 @@ export const useRedirectToGatewayFlow = (
   return useCallback(
     (dynamicAdditionalParams = additionalParams) => {
       const { partialTx, expiryTime } = dynamicAdditionalParams || {};
-      console.log("dynamicAdditionalParams", dynamicAdditionalParams);
       if (isBurnAndMint) {
-        console.log("bridge (h2h)");
+        // console.log("bridge (h2h)");
         history.push({
           state: reloadState,
           pathname: paths.BRIDGE_GATEWAY,
@@ -95,7 +94,7 @@ export const useRedirectToGatewayFlow = (
             ),
         });
       } else if (isMint && isH2H) {
-        console.log("h2h mint");
+        // console.log("h2h mint");
         history.push({
           state: reloadState,
           pathname: paths.MINT__GATEWAY_H2H,
@@ -113,7 +112,7 @@ export const useRedirectToGatewayFlow = (
             ),
         });
       } else if (isMint) {
-        console.log("standard mint");
+        // console.log("standard mint");
         history.push({
           state: reloadState,
           pathname: paths.MINT__GATEWAY_STANDARD,
@@ -131,7 +130,7 @@ export const useRedirectToGatewayFlow = (
             ),
         });
       } else if (isRelease && isH2H) {
-        console.log("h2h release");
+        // console.log("h2h release");
         history.push({
           state: reloadState,
           pathname: paths.RELEASE__GATEWAY_H2H,
@@ -149,7 +148,7 @@ export const useRedirectToGatewayFlow = (
             ),
         });
       } else {
-        console.log("standard release");
+        // console.log("standard release");
         history.push({
           state: reloadState,
           pathname: paths.RELEASE__GATEWAY_STANDARD,

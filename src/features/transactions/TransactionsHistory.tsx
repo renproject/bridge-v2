@@ -441,7 +441,7 @@ const LocalTransactions: FunctionComponent<LocalTransactionsProps> = ({
 
   const handleRemoveTx = useCallback(
     (renVmHash: string, localAddress: string) => {
-      console.log("removing", renVmHash, localAddress);
+      // console.log("removing", renVmHash, localAddress);
       if (localAddress) {
         removeLocalTx(localAddress, renVmHash);
       } else {
@@ -578,7 +578,6 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
   const styles = useRenVMTransactionEntryStyles();
   const { params, timestamp, done, meta } = localTxData;
   const { asset, from, to } = decomposeLocalTxParams(localTxData);
-  console.log("decomposing", localTxData);
   const { isMint, isRelease, isH2H, ioType } = useGatewayMeta(asset, from, to);
   const { date, time } = getFormattedDateTime(timestamp);
   const { getRenVmExplorerLink } = useRenVMExplorerLink();
@@ -628,7 +627,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
     amount === null || isMint === null || isRelease === null || isH2H === null;
   const [resuming, setResuming] = useState(false);
   const handleResume = useCallback(() => {
-    console.log("resuming tx", renVMHash);
+    console.info("resuming tx", renVMHash);
     setResuming(true);
 
     if (amount === null) {
@@ -640,7 +639,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       reload: true,
     };
     if (ioType === GatewayIOType.burnAndMint) {
-      console.log("move");
+      // console.log("move");
       history.push({
         state,
         pathname: paths.BRIDGE_GATEWAY,
@@ -660,7 +659,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           ),
       });
     } else if (isMint && isH2H) {
-      console.log("h2h: mint");
+      // console.log("h2h: mint");
       history.push({
         state,
         pathname: paths.MINT__GATEWAY_H2H,
@@ -680,7 +679,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           ),
       });
     } else if (isRelease && isH2H) {
-      console.log("h2h release");
+      // console.log("h2h release");
       history.push({
         state,
         pathname: paths.RELEASE__GATEWAY_H2H,
@@ -700,7 +699,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
           ),
       });
     } else if (isRelease) {
-      console.log("standard release");
+      // console.log("standard release");
       history.push({
         state,
         pathname: paths.RELEASE__GATEWAY_STANDARD,
@@ -718,7 +717,7 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
         ),
       });
     } else {
-      console.log("standard mint");
+      // console.log("standard mint");
       const bridgeNonce = getBridgeNonce(nonce.toString());
       history.push({
         state,

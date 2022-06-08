@@ -54,7 +54,7 @@ export const useRenVMChainTransactionStatusUpdater = ({
   const trackProgress = useCallback(
     (progress) => {
       setError(null);
-      console.log(l`tx: newStatus`, progress);
+      console.info(l`tx: newStatus`, progress);
       setStatus(progress.status);
       setTarget(progress.target);
 
@@ -81,17 +81,17 @@ export const useRenVMChainTransactionStatusUpdater = ({
     if (!tx || !startTrigger) {
       return;
     }
-    console.log(l`tx: attaching listener`);
+    console.info(l`tx: attaching listener`);
     tx.wait()
       .on("progress", trackProgress)
       .then(trackProgress)
       .catch((error) => {
-        console.log(l`tx: error`, error.message);
+        console.info(l`tx: error`, error.message);
         setError(error);
       });
 
     return () => {
-      console.log(l`tx: detaching listener`);
+      console.info(l`tx: detaching listener`);
       tx.eventEmitter.removeListener("progress", trackProgress);
     };
   }, [l, trackProgress, waitTarget, tx, startTrigger, reset]);
@@ -140,7 +140,7 @@ export const useChainTransactionStatusUpdater = ({
   const trackProgress = useCallback(
     (progress) => {
       setError(null);
-      console.log(l`tx: newStatus`, progress);
+      console.info(l`tx: newStatus`, progress);
       setStatus(progress.status);
       setTarget(progress.target);
       if (isDefined(progress.confirmations)) {
@@ -169,12 +169,12 @@ export const useChainTransactionStatusUpdater = ({
     if (!tx || !startTrigger) {
       return;
     }
-    console.log(l`tx: attaching listener`);
+    console.info(l`tx: attaching listener`);
     tx.wait()
       .on("progress", trackProgress)
       .then(trackProgress)
       .catch((error) => {
-        console.log(l`tx: error`, error.message);
+        console.info(l`tx: error`, error.message);
         // TODO: typical error message
         if (!error.message.includes(".submit")) {
           console.error(error);
@@ -182,7 +182,7 @@ export const useChainTransactionStatusUpdater = ({
         }
       });
     return () => {
-      console.log(l`tx: detaching listener`);
+      console.info(l`tx: detaching listener`);
       tx.eventEmitter.removeListener("progress", trackProgress);
     };
   }, [l, trackProgress, tx, waitTarget, chains, reset, startTrigger]);
@@ -240,11 +240,11 @@ export const useChainTransactionSubmitter = ({
 
   const wait = useCallback(async () => {
     setErrorWaiting(undefined);
-    console.log(l`tx: waiting`);
+    console.info(l`tx: waiting`);
     try {
       setWaiting(true);
       if (tx) {
-        console.log(l`tx: waiting`);
+        console.info(l`tx: waiting`);
         await tx.wait(waitTarget);
       } else {
         console.error(l`tx: waiting error, tx not ready`);
@@ -259,7 +259,7 @@ export const useChainTransactionSubmitter = ({
 
   const handleSubmit = useCallback(async () => {
     setErrorSubmitting(undefined);
-    console.log(l`tx: submitting`);
+    console.info(l`tx: submitting`);
     if (
       tx &&
       tx.submit &&
@@ -296,9 +296,9 @@ export const useChainTransactionSubmitter = ({
 
   useEffect(() => {
     if (Boolean(autoSubmit)) {
-      console.log(l`tx: automatic submit`);
+      console.info(l`tx: automatic submit`);
       handleSubmit().catch((error) => {
-        console.log(l`tx: automatic submit failed`);
+        console.info(l`tx: automatic submit failed`);
         console.error(error);
       });
     }
@@ -323,13 +323,13 @@ export const updateRenVMHashParam = (
 ) => {
   const params = new URLSearchParams(history.location.search);
   const renVMHashParam = (params as any).renVMHash;
-  console.log("renVMHash param", renVMHash, params);
+  // console.log("renVMHash param", renVMHash, params);
   if (renVMHash !== renVMHashParam) {
-    console.log(
-      "renVMHash param replacing",
-      history.location.search,
-      renVMHash
-    );
+    // console.log(
+    //   "renVMHash param replacing",
+    //   history.location.search,
+    //   renVMHash
+    // );
     if (renVMHash === null) {
       params.delete("renVMHash");
     } else {
@@ -348,13 +348,13 @@ export const reloadWithPartialTxParam = (
 ) => {
   const params = new URLSearchParams(history.location.search);
   const partialTxParam = (params as any).partialTx;
-  console.log("partialTx param", partialTx, params);
+  // console.log("partialTx param", partialTx, params);
   if (partialTx !== partialTxParam) {
-    console.log(
-      "partialTx param replacing",
-      history.location.search,
-      partialTx
-    );
+    // console.log(
+    //   "partialTx param replacing",
+    //   history.location.search,
+    //   partialTx
+    // );
     if (partialTx === null) {
       params.delete("partialTx");
     } else {
@@ -417,7 +417,7 @@ export const useTxRecovery = ({
       !recoveringStarted
     ) {
       setRecoveringStarted(true);
-      console.log("recovering tx: " + trimAddress(renVMHash));
+      console.info("recovering tx: " + trimAddress(renVMHash));
       const localTx = findLocalTx(fromAddress, renVMHash);
       let cancelablePromise: CancelablePromise | null = null;
       if (localTx === null) {

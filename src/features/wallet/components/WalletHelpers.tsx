@@ -225,7 +225,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   any,
   any
 >["WrongNetworkInfo"] = ({ chain, targetNetwork, onClose }) => {
-  console.log(chain, targetNetwork);
+  console.info(chain, targetNetwork);
   const { t } = useTranslation();
   const theme = useTheme();
 

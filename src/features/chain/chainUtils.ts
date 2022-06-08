@@ -118,12 +118,12 @@ export const getSolanaChain = (
     network === RenNetwork.Mainnet ? "mainnet-beta" : "devnet";
   const rpcUrl = clusterApiUrl(solanaNetwork);
   const provider = new Connection(rpcUrl);
-  console.log(rpcUrl);
+  // console.log(rpcUrl);
   const signer =
     ((window as any).solana as SolanaWallet) ||
     new SolanaWallet(rpcUrl, network);
-  console.log("solana signer", (window as any).solana, signer);
-  console.log(signer);
+  console.info("solana signer", (window as any).solana, signer);
+  console.info(signer);
   return {
     chain: new Solana({
       network,
@@ -203,7 +203,7 @@ export const alterContractChainProviderSigner = (
     console.error(`Altering failed: No provider`);
     return;
   }
-  console.log("ContractChainProviderSigner", alteredChain);
+  console.info("ContractChainProviderSigner", alteredChain);
   if (!isContractBaseChain(alteredChain)) {
     throw new Error(`Altering failed: Not a contract chain: ${alteredChain}.`);
   }

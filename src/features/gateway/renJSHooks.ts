@@ -57,7 +57,6 @@ export const useWhitelist = () => {
   const [whitelist, setWhitelist] = useState<Array<string> | null>(null);
   useEffect(() => {
     globalRenJs.provider.queryConfig().then((response) => {
-      console.log("queryConfig", response);
       setWhitelist(response.whitelist);
     });
   }, []);
@@ -108,8 +107,8 @@ export const useWhitelist = () => {
         }
       }
     }
-    console.log("toChainMapping", toChainMapping);
-    console.log("fromChainMapping", toChainMapping);
+    // console.log("toChainMapping", toChainMapping);
+    // console.log("fromChainMapping", toChainMapping);
     return { assetsMapping, toChainMapping, fromChainMapping };
   }, [whitelist]);
 

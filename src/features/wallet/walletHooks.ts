@@ -329,7 +329,7 @@ export const useAddressScreening = (address: string, start: boolean) => {
       return;
     }
     const promise = fetchAddressData(address).then((data) => {
-      console.log("sanction", data);
+      // console.log("sanction", data);
       const addressData = data[0];
       setSanctioned(addressData.isSanctioned);
     });

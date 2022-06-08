@@ -127,7 +127,7 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   useEffect(() => {
     let key: any;
     if (error) {
-      console.log("err", error);
+      console.error("network error", error);
       const fromChainConfig = getChainConfig(from);
       const toChainConfig = getChainConfig(to);
       key = showNotification(

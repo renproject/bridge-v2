@@ -78,7 +78,6 @@ export const useGasPrices = () => {
           fast: 50, // fallback
         };
       });
-    console.log("aab", anyBlockEth);
     const fast = anyBlockEth.fast;
     const ethPrice = {
       chain: Chain.Ethereum,

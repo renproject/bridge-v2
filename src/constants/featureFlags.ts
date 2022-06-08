@@ -17,4 +17,4 @@ export const featureFlags = {
     Boolean(localStorage.getItem("godMode")),
 };
 
-console.log(featureFlags);
+console.info(featureFlags);

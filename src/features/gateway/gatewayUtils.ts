@@ -54,16 +54,16 @@ export const createGateway = async (
   }
 
   const { asset, nonce } = gatewayParams;
-  console.log("gatewayParams", gatewayParams);
+  console.info("gatewayParams", gatewayParams);
   let fromChain;
   if (isEthereumBaseChain(gatewayParams.from)) {
     const ethereum = fromChainInstance.chain as unknown as EthereumBaseChain;
-    console.log("resolving from chain", gatewayParams);
+    console.info("resolving from chain", gatewayParams);
     if (partialTx) {
-      console.log("resolved from paritalTx", gatewayParams);
+      console.info("resolved from paritalTx", gatewayParams);
       fromChain = ethereum.Transaction(partialTx);
     } else if (gatewayParams.fromAddress) {
-      console.log("resolved from fromAddress", gatewayParams);
+      console.info("resolved from fromAddress", gatewayParams);
       fromChain = fromChain = ethereum.Account({
         account: gatewayParams.fromAddress,
         amount: gatewayParams.amount,
@@ -71,7 +71,7 @@ export const createGateway = async (
         anyoneCanSubmit,
       });
     } else {
-      console.log("resolved from account", gatewayParams);
+      console.info("resolved from account", gatewayParams);
       fromChain = ethereum.Account({
         amount: gatewayParams.amount,
         convertUnit,
@@ -103,7 +103,7 @@ export const createGateway = async (
   let toChain;
   if (isEthereumBaseChain(gatewayParams.to)) {
     const ethereumChain = toChainInstance.chain as unknown as Ethereum;
-    console.log("resolving toAddress", gatewayParams);
+    console.info("resolving toAddress", gatewayParams);
     if (gatewayParams.toAddress) {
       toChain = ethereumChain.Account({
         account: gatewayParams.toAddress,
@@ -131,8 +131,8 @@ export const createGateway = async (
     throw new Error(`Unknown chain "to": ${gatewayParams.to}`);
   }
 
-  console.log("creating gateway with fromChain", fromChain);
-  console.log("creating gateway with toChain", toChain);
+  console.info("creating gateway with fromChain", fromChain);
+  console.info("creating gateway with toChain", toChain);
   return await renJS.gateway({
     asset,
     from: fromChain,

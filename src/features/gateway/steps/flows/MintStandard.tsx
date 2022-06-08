@@ -140,7 +140,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
   const fees = useGatewayFees(gateway);
   const { minimumAmount } = fees;
 
-  console.log("gateway", gateway);
+  console.info("gateway", gateway);
   (window as any).ga = gateway;
   (window as any).txs = transactions;
 
@@ -150,7 +150,7 @@ export const MintStandardProcess: FunctionComponent<RouteComponentProps> = ({
 
   const handleCurrentDepositChange = useCallback(
     (_, newDeposit) => {
-      console.log("newDepositHash", newDeposit);
+      console.info("newDepositHash", newDeposit);
       if (newDeposit !== null) {
         setCurrentDeposit(newDeposit);
         const depositHashParam = newDeposit === "gateway" ? null : newDeposit;
@@ -371,7 +371,7 @@ export const GatewayDepositProcessor: FunctionComponent<
   const { persistLocalTx } = useTxsStorage();
 
   useEffect(() => {
-    console.log("persist", transaction);
+    console.info("persist", transaction);
     if (account && transaction !== null && transaction.hash) {
       persistLocalTx(account, transaction, false, { expiryTime });
       updateRenVMHashParam(history, transaction.hash);

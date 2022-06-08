@@ -84,7 +84,7 @@ export const useGateway = (
     []
   );
   const addTransaction = useCallback((newTx: GatewayTransaction) => {
-    console.log("gateway detected tx:", newTx.hash, newTx);
+    console.info("gateway detected tx:", newTx.hash, newTx);
     setTransactions((txs) => {
       const index = txs.findIndex((tx) => tx.hash === newTx.hash);
       if (index >= 0) {
@@ -96,7 +96,7 @@ export const useGateway = (
 
   useEffect(() => {
     // setRenJs(null); // added
-    console.log("gateway useEffect renJs and provider");
+    console.info("gateway useEffect renJs and provider");
     if (!chains) {
       return;
     }
@@ -119,11 +119,11 @@ export const useGateway = (
 
   useEffect(() => {
     // setGateway(null); // added
-    console.log("gateway useEffect gateway init");
+    console.info("gateway useEffect gateway init");
     let newGateway: Gateway | null = null;
     if (renJs && chains !== null) {
       const initializeGateway = async () => {
-        console.log("gateway params", {
+        console.info("gateway params", {
           asset,
           from,
           to,
@@ -137,13 +137,13 @@ export const useGateway = (
           chains,
           partialTx
         );
-        console.log("gateway created", newGateway);
+        console.info("gateway created", newGateway);
         newGateway.on("transaction", addTransaction);
-        console.log("gateway transaction listener added");
+        console.info("gateway transaction listener added");
         (window as any).gateway = newGateway;
         return newGateway;
       };
-      console.log("gateway initializing", chains);
+      console.info("gateway initializing", chains);
       initializeGateway()
         .then((newGateway) => setGateway(newGateway))
         .catch((error) => {
@@ -154,7 +154,7 @@ export const useGateway = (
 
     return () => {
       if (newGateway && autoTeardown) {
-        console.log("gateway removing listeners");
+        console.info("gateway removing listeners");
         newGateway.eventEmitter.removeListener("transaction", addTransaction);
       }
     };
@@ -177,14 +177,12 @@ export const useGateway = (
     async (txHash, localTxEntry) => {
       // tx.done?
       if (renJs !== null && gateway !== null) {
-        console.log("tx: gateway transactions before", gateway.transactions);
-        console.log("tx: recovering", localTxEntry);
+        console.info("tx: recovering", localTxEntry);
 
         const tx = await renJs.gatewayTransaction(localTxEntry.params);
-        console.log("tx: created", tx);
+        console.info("tx: created", tx);
         // TODO: TBD: discuss with Noah
         gateway.transactions = gateway.transactions.set(txHash, tx);
-        console.log("tx: gateway transactions after", gateway.transactions);
         // addTransaction(tx); will be handled automatically, emitter is required
         gateway.eventEmitter.emit("transaction", tx);
       } else {
@@ -248,7 +246,7 @@ export const useGatewayFeesObject = (
         });
         return gatewayFeesObject;
       };
-      console.log("gateway initializing", chains);
+      console.info("gateway initializing", chains);
       initializeGatewayFees()
         .then((gatewayFeesObject) => setGatewayFeesObject(gatewayFeesObject))
         .catch((error) => {
@@ -262,7 +260,6 @@ export const useGatewayFeesObject = (
 };
 
 export const useAssetDecimals = (chain: Chain, asset: string | Asset) => {
-  console.log("useAssetDecimals", chain, asset);
   const chains = useCurrentNetworkChains();
   const instance = chains[chain]?.chain;
   return useChainInstanceAssetDecimals(instance, asset);
@@ -351,22 +348,19 @@ export const useContractChainAssetBalance = (
       decimals === null ||
       !isContractBaseChain(instance.chain as Chain)
     ) {
-      console.log("not ready");
       setBalance(null);
       return;
     }
     if (connected !== undefined && !connected) {
-      console.log("!connected mode");
       return;
     }
     const getBalance = async () => {
-      console.log(`asset balance ${instance?.chain}/${asset}: ${decimals}`);
+      console.info(`asset balance ${instance?.chain}/${asset}: ${decimals}`);
       setBalance(null);
       const balanceBn = (
         await (instance as ContractChain).getBalance(asset, address || "")
       ).shiftedBy(-decimals);
       setBalance(balanceBn.toFixed());
-      console.log(`gateway balance: ${balanceBn}`);
     };
     getBalance().catch((error) => {
       console.error(error);
@@ -494,7 +488,7 @@ export const useGatewayFees = (
       .estimateOutput(amountBn.shiftedBy(fromChainDecimals))
       .shiftedBy(-fromChainDecimals);
     setOutputAmount(estimatedOutputBn.toFixed());
-    console.log(`gateway amount estimated output: ${estimatedOutputBn}`);
+    console.info(`gateway amount estimated output: ${estimatedOutputBn}`);
 
     const renVMFeeAmountBn = renVMFeePercentBn.div(100).multipliedBy(amountBn);
     setRenVMFeeAmount(renVMFeeAmountBn.toFixed());
@@ -759,14 +753,13 @@ export const useGatewayMeta = (
     }
     reset();
     setError(undefined);
-    console.log(asset, from, to);
     if (asset === null || from === null || to === null) {
       return;
     }
     setIsToContractChain(Boolean(chains[to]?.connectionRequired));
     setIsFromContractChain(Boolean(chains[from]?.connectionRequired));
 
-    console.log("getInputAndOutputTypes", asset, from, to);
+    console.info("getInputAndOutputTypes", asset, from, to);
 
     const promise = getInputAndOutputTypes({
       asset,
@@ -775,7 +768,7 @@ export const useGatewayMeta = (
     });
     const cancelablePromise = cancelable(promise)
       .then(({ inputType, outputType, selector }) => {
-        console.log("getInputAndOutputTypes", inputType, outputType, selector);
+        console.info("getInputAndOutputTypes", inputType, outputType, selector);
         // deprecated, keep until cleaned
         if (inputType === InputType.Burn) {
           setIsBurn(true);
