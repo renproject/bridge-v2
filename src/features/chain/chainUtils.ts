@@ -208,7 +208,7 @@ export const alterContractChainProviderSigner = (
     throw new Error(`Altering failed: Not a contract chain: ${alteredChain}.`);
   }
   if (alteredChain === Chain.Solana) {
-    console.log("Solana", provider);
+    console.info("Solana", provider);
     (window as any).solanaProvider = provider;
     alterSolanaChainProviderSigner(
       chains[alteredChain] as ChainInstance<Solana>,
@@ -231,18 +231,18 @@ export const alterEthereumBaseChainProviderSigner = (
   provider: any,
   alterProvider?: boolean
 ) => {
-  console.log(
+  console.info(
     `altering provider signer`,
     provider,
     alteredChain ? alteredChain : "all chains"
   );
   const ethersProvider = new ethers.providers.Web3Provider(provider);
   const signer = ethersProvider.getSigner();
-  console.log("altering signer", signer, alteredChain);
+  console.info("altering signer", signer, alteredChain);
   alterEthereumBaseChainSigner(chains, alteredChain, signer);
 
   if (alterProvider) {
-    console.log("altering provider", provider, alteredChain);
+    console.info("altering provider", provider, alteredChain);
     alterEthereumBaseChainProvider(chains, alteredChain, provider);
   }
 };
@@ -258,8 +258,8 @@ export const alterEthereumBaseChainSigner = (
   alteredChains.forEach((chainName) => {
     if ((chains[chainName]?.chain as EthereumBaseChain).withSigner) {
       (chains[chainName]?.chain as EthereumBaseChain).withSigner!(signer);
-      console.log("altered signer for", alteredChains.join(", "), signer);
-      console.log(
+      console.info("altered signer for", alteredChains.join(", "), signer);
+      console.info(
         "new altered signer for",
         alteredChains.join(", "),
         (chains[chainName]?.chain as EthereumBaseChain).signer
@@ -285,7 +285,7 @@ export const alterEthereumBaseChainProvider = (
   alteredChains.forEach((chainName) => {
     if ((chains[chainName]?.chain as EthereumBaseChain).withProvider) {
       (chains[chainName]?.chain as EthereumBaseChain).withProvider!(provider);
-      console.log("altered provider for", alteredChains.join(", "));
+      console.info("altered provider for", alteredChains.join(", "));
     } else {
       throw new Error(
         `Altering provider failed. Unable to find chain ${chainName} in chains ${Object.keys(
@@ -303,7 +303,7 @@ export const pickChains = (
 ) => {
   const pickedChains = { [from]: chains[from], [to]: chains[to] };
   (window as any).pickedChains = pickedChains;
-  console.log("chains picked", pickedChains);
+  console.info("chains picked", pickedChains);
   return pickedChains;
 };
 
@@ -312,7 +312,7 @@ export const chainsWithSignerOrNull = (
   chain: Chain
 ) => {
   const present = Boolean((chains[chain]?.chain as any)?.signer);
-  console.log("signer", chains, chain, present);
+  console.info("signer", chains, chain, present);
   if (present) {
     return chains;
   }

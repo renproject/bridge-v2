@@ -149,7 +149,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
 
   // clean state when creating new page
   useEffect(() => {
-    console.log("init", location.state);
     if (
       location.state !== undefined &&
       JSON.stringify(location.state) !== "{}"
@@ -162,7 +161,6 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   const filterChains = useCallback(
     (asset: Asset) => {
       const { lockChain, mintChains } = getAssetConfig(asset);
-      console.log("mintChains", mintChains);
       if (ioType === "lockAndMint") {
         setAssets(allAssets);
         // dispatch(setAsset(allAssets[0]));
@@ -268,20 +266,19 @@ export const GatewayInitialStep: FunctionComponent<GatewayStepProps> = ({
   useEffect(() => {
     const assetConfig = getAssetConfig(asset);
     reset();
-    console.log(assetConfig, from, to);
     if (isMint) {
       if (assetConfig.lockChainConnectionRequired) {
-        console.log("setting wallet chain", assetConfig.lockChain);
+        console.info("setting wallet chain", assetConfig.lockChain);
         dispatch(setChain(assetConfig.lockChain));
       } else {
-        console.log("setting wallet chain", to);
+        console.info("setting wallet chain", to);
         dispatch(setChain(to));
       }
     } else if (isRelease) {
-      console.log("setting wallet chain", from);
+      console.info("setting wallet chain", from);
       dispatch(setChain(from));
     } else if (isMove) {
-      console.log("setting wallet chain", from);
+      console.info("setting wallet chain", from);
       dispatch(setChain(from));
     }
   }, [dispatch, reset, isMint, isRelease, isMove, asset, from, to]);

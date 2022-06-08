@@ -634,7 +634,6 @@ const RenVMTransactionEntry: FunctionComponent<RenVMTransactionEntryProps> = ({
       setResuming(false);
       return;
     }
-    console.log(isMint, isH2H);
     const state: GatewayLocationState = {
       reload: true,
     };

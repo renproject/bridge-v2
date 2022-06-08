@@ -180,7 +180,6 @@ export const MintH2HGatewayProcess: FunctionComponent<
   (window as any).transaction = transaction;
 
   // gateway.inSetup is accepted;
-  console.log("gateway", gateway);
   return (
     <>
       <GatewayPaperHeader title="Mint" />
@@ -296,12 +295,11 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   //TODO: DRY
   useEffect(() => {
     if (fromAccount && transaction !== null) {
-      console.log("persisting local tx");
+      console.info("persisting local tx");
       persistLocalTx(fromAccount, transaction);
       const params = new URLSearchParams(history.location.search);
       const renVMHashTx = transaction.hash;
       const renVMHashParam = (params as any).renVMHash;
-      console.log("renVMHash param", renVMHashTx, params);
       if (renVMHashTx !== renVMHashParam) {
         params.set("renVMHash", renVMHashTx);
         params.set("toAddress", toAccount);
@@ -353,7 +351,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   useSyncWalletChain(activeChain);
   const { connected, provider } = useWallet(activeChain);
   useEffect(() => {
-    console.log("activeChain changed", activeChain);
+    console.info("activeChain changed", activeChain);
     if (provider && connected) {
       alterContractChainProviderSigner(allChains, activeChain, provider);
     }
@@ -430,7 +428,7 @@ const MintH2HProcessor: FunctionComponent<MintH2HProcessorProps> = ({
   const isCompleted = mintTxUrl !== null;
   useEffect(() => {
     if (transaction !== null && isCompleted) {
-      console.log("persisting final tx", transaction);
+      console.info("persisting final tx", transaction);
       persistLocalTx(fromAccount, transaction, true);
     }
   }, [persistLocalTx, fromAccount, isCompleted, transaction]);

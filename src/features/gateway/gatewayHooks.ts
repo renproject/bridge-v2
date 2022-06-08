@@ -447,9 +447,15 @@ export const useGatewayFees = (
       } else if (isRelease) {
         feeInGwei = Math.ceil(RELEASE_GAS_UNIT_COST * gasPrice);
       }
-      if (feeInGwei !== null) {
-        setFromChainFeeAmount(fromGwei(feeInGwei).toString());
-      }
+      // if (feeInGwei !== null) {
+      //   setFromChainFeeAmount(fromGwei(feeInGwei).toString());
+      // }
+
+      let totalFromChainFee = fromChainFeeBn
+        .shiftedBy(-fromChainDecimals)
+        .plus(fromGwei(feeInGwei || 0))
+        .toString();
+      setFromChainFeeAmount(totalFromChainFee);
     } else {
       setFromChainFeeAmount(
         fromChainFeeBn.shiftedBy(-fromChainDecimals).toFixed()

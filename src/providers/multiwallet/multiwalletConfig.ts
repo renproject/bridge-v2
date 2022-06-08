@@ -22,7 +22,6 @@ const isEnabled = (chain: Chain, wallet: Wallet) => {
     return true;
   }
   for (const entry of entries) {
-    console.log(entry);
     const [chainSymbol, wallets] = entry.split("/");
     if (chainSymbol === chain) {
       if (wallets === "*") {
@@ -168,7 +167,6 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
                 logo: "",
                 info: BinanceMetamaskConnectorInfo,
                 connector: (() => {
-                  console.log("bsc mm connector");
                   const connector = new BinanceSmartChainInjectedConnector({
                     debug: true,
                     networkIdMapper: createNetworkIdMapper(

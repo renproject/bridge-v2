@@ -60,14 +60,14 @@ export class SolanaConnector
   }
 
   handleUpdate = () => {
-    console.log("phantom handleUpdate");
+    console.info("phantom handleUpdate");
     this.getStatus()
       .then((...args) => {
-        console.log("phantom getStatus success", args);
+        console.info("phantom getStatus success", args);
         this.emitter.emitUpdate(...args);
       })
       .catch(() => {
-        console.log("phantom getStatus Error");
+        console.info("phantom getStatus Error");
         this.deactivate();
       });
   };
@@ -84,16 +84,16 @@ export class SolanaConnector
     // you need to manually bind the function
     this.wallet.on("disconnect", this.deactivate.bind(this));
     await this.wallet.connect();
-    console.log("phantom activate", this);
+    console.info("phantom activate", this);
     // // console.log(await this.wallet.connect());
     const [publicKey] = await Promise.all([
       new Promise((resolve, reject) => {
         solana.on("connect", (pk: PublicKey) => {
-          console.log("phantom connect", pk.toString());
+          console.info("phantom connect", pk.toString());
           resolve(pk);
         });
         solana.on("disconnect", (d: unknown) => {
-          console.log("phantom disconnect", d);
+          console.info("phantom disconnect", d);
           this.deactivate.bind(this);
           reject(d);
         });
@@ -130,7 +130,7 @@ export class SolanaConnector
   }
 
   deactivate() {
-    console.log("phantom deactivate", this);
+    console.info("phantom deactivate", this);
     if (!this.emitter) return;
     this.emitter.emitDeactivate();
     // if this fails, we can't do much

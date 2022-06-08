@@ -360,14 +360,14 @@ export const H2HAccountsResolver: FunctionComponent<
   } = useWallet(to);
 
   useEffect(() => {
-    console.log("chains changed from", from);
+    console.info("chains changed from", from);
     if (fromProvider) {
       alterContractChainProviderSigner(allChains, from, fromProvider);
     }
   }, [from, allChains, fromProvider]);
 
   useEffect(() => {
-    console.log("chains changed to", to);
+    console.info("chains changed to", to);
     if (toProvider) {
       alterContractChainProviderSigner(allChains, to, toProvider);
       // alterEthereumBaseChainProviderSigner(allChains, to, toProvider);

@@ -122,7 +122,7 @@ export const useTxsStorage = () => {
   const { showNotification } = useNotifications();
   const persistLocalTx: LocalTxPersistor = useCallback(
     (web3Address, tx, done = false, meta) => {
-      console.log("tx: persisting local tx", web3Address, tx, done);
+      console.info("tx: persisting local tx", web3Address, tx, done);
       if (!web3Address) {
         console.warn("Unable to persist tx, no address", web3Address);
         return;

@@ -183,8 +183,6 @@ type ReleaseStandardProcessorProps = {
 const ReleaseStandardProcessor: FunctionComponent<
   ReleaseStandardProcessorProps
 > = ({ gateway, transaction, account, persistLocalTx, recoveryMode }) => {
-  console.log("ReleaseStandardProcessor");
-  console.log(gateway);
   const history = useHistory();
   const { t } = useTranslation();
   const { asset, from, to, amount } = getGatewayParams(gateway);
@@ -229,7 +227,7 @@ const ReleaseStandardProcessor: FunctionComponent<
 
   // TODO: DRY
   useEffect(() => {
-    console.log("persist", transaction);
+    console.info("persist", transaction);
     if (account && transaction !== null && transaction.hash) {
       persistLocalTx(account, transaction);
       updateRenVMHashParam(history, transaction.hash);
@@ -289,7 +287,7 @@ const ReleaseStandardProcessor: FunctionComponent<
   //TODO: DRY
   const isCompleted = releaseTxUrl !== null;
   useEffect(() => {
-    console.log("persisting final tx", transaction);
+    console.info("persisting final tx", transaction);
     if (transaction !== null && isCompleted) {
       persistLocalTx(account, transaction, true);
     }
@@ -324,7 +322,6 @@ const ReleaseStandardProcessor: FunctionComponent<
     burnStatus === ChainTransactionStatus.Confirming ||
     releaseStatus === null
   ) {
-    console.log(releaseAmount, releaseAssetDecimals, outputAmount);
     const releaseAmountFormatted =
       decimalsAmount(releaseAmount, releaseAssetDecimals) || outputAmount;
     const releaseAmountUsd = getUsdRate(releaseAmountFormatted);

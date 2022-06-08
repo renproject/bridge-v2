@@ -64,7 +64,6 @@ export const ReleaseH2HProcess: FunctionComponent<RouteComponentProps> = ({
   match,
   ...rest
 }) => {
-  console.log(match);
   const isMoveRoute = match.path === paths.BRIDGE_GATEWAY;
   const { gatewayParams, additionalParams } = parseGatewayQueryString(
     location.search
@@ -310,7 +309,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
       const params = new URLSearchParams(history.location.search);
       const renVMHashTx = transaction.hash;
       const renVMHashParam = (params as any).renVMHash;
-      console.log("renVMHash param", renVMHashTx, params);
+      console.info("renVMHash param", renVMHashTx, params);
       if (renVMHashTx !== renVMHashParam) {
         params.set("renVMHash", renVMHashTx);
         params.set("toAddress", toAccount);
@@ -362,7 +361,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   useSyncWalletChain(activeChain);
   const { connected, provider } = useWallet(activeChain);
   useEffect(() => {
-    console.log("activeChain changed", activeChain);
+    console.info("activeChain changed", activeChain);
     if (provider && connected) {
       alterContractChainProviderSigner(allChains, activeChain, provider);
     }
@@ -403,7 +402,7 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
   //TODO: DRY
   const isCompleted = releaseTxUrl !== null;
   useEffect(() => {
-    console.log("persisting final tx", transaction);
+    console.info("persisting final tx", transaction);
     if (transaction !== null && isCompleted) {
       persistLocalTx(fromAccount, transaction, true);
     }

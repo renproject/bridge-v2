@@ -96,8 +96,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
   // useSyncWalletChain(activeChain);
   const { connected, provider, account } = useWallet(activeChain);
 
-  //why gateway is initialized without amount?
-  console.log("amount", activeAmount, activeChain);
   const allChains = useCurrentNetworkChains();
   const [, setChains] = useState<PartialChainInstanceMap | null>(null);
   useEffect(() => {
@@ -146,7 +144,6 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
 
   const { outputAmount, outputAmountUsd, fromChainFeeAsset, toChainFeeAsset } =
     fees;
-  console.log("gateway", gateway);
 
   const [ackChecked, setAckChecked] = useState(false);
   const handleAckChange = useCallback(() => {
