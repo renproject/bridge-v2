@@ -1,4 +1,4 @@
-# `ren bridge v2`
+# `ren bridge v2 (legacy)`
 
 An easy way to bridge cross-chain assets between blockchains.
 
