@@ -73,6 +73,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "echo $COMMIT_REF > build/build.txt",
     "test": "react-scripts test",
     "lint": "eslint --ext js,ts,tsx src",
     "eject": "react-scripts eject",
