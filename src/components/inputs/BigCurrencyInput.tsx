@@ -1,10 +1,10 @@
-import { Typography } from '@material-ui/core'
-import { makeStyles, styled } from '@material-ui/core/styles'
-import classNames from 'classnames'
-import React, { FunctionComponent, ReactNode, useRef } from 'react'
-import NumberFormat, { NumberFormatValues } from 'react-number-format'
-import { generatePlaceholderStyles } from '../../theme/themeUtils'
-import { numberFormatOptions, toUsdFormat } from '../../utils/formatters'
+import { Typography } from "@material-ui/core";
+import { makeStyles, styled } from "@material-ui/core/styles";
+import classNames from "classnames";
+import React, { FunctionComponent, ReactNode, useRef } from "react";
+import NumberFormat, { NumberFormatValues } from "react-number-format";
+import { generatePlaceholderStyles } from "../../theme/themeUtils";
+import { numberFormatOptions, toUsdFormat } from "../../utils/formatters";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
   equivalent: {
     marginTop: 0,
+    marginBottom: 16,
     color: "#3F3F48",
   },
 }));
@@ -123,11 +124,16 @@ export const BigCurrencyInput: FunctionComponent<BigCurrencyInputProps> = ({
           color="error"
           gutterBottom
           className={styles.errorText}
+          component="div"
         >
           {errorText}
         </Typography>
       )}
-      {<p className={styles.equivalent}>= {toUsdFormat(usdValue)}</p>}
+      {
+        <Typography component="div" className={styles.equivalent}>
+          = {toUsdFormat(usdValue)}
+        </Typography>
+      }
     </div>
   );
 };

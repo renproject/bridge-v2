@@ -1,3 +1,4 @@
+import Davatar from "@davatar/react";
 import {
   Box,
   Button,
@@ -10,11 +11,18 @@ import {
 } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import { Asset, Chain } from "@renproject/chains";
 import { WalletPickerProps } from "@renproject/multiwallet-ui";
+import { RenNetwork } from "@renproject/utils";
 import classNames from "classnames";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { TFunction, Trans, useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTimeout } from "react-use";
 import {
   ActionButton,
@@ -22,6 +30,10 @@ import {
   SecondaryActionButton,
 } from "../../../components/buttons/Buttons";
 import { WalletIcon } from "../../../components/icons/RenIcons";
+import {
+  CenteringSpacedBox,
+  PaperSpacerWrapper,
+} from "../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
   SpacedPaperContent,
@@ -33,23 +45,25 @@ import {
   ProgressWrapper,
 } from "../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../components/utils/Debug";
-import {
-  WalletConnectionStatusType,
-  WalletStatus,
-} from "../../../components/utils/types";
 import { createPulseAnimation } from "../../../theme/animationUtils";
 import { defaultShadow } from "../../../theme/other";
 import {
-  BridgeWallet,
-  getChainConfigByRentxName,
-  getNetworkConfigByRentxName,
-  getWalletConfig,
-  getWalletConfigByRentxName,
-} from "../../../utils/assetConfigs";
+  getChainConfig,
+  getChainNetworkConfig,
+  isEthereumBaseChain,
+} from "../../../utils/chainsConfig";
 import { trimAddress } from "../../../utils/strings";
-import { useSubNetworkName } from "../../ui/uiHooks";
-import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
-import { setWalletPickerOpened } from "../walletSlice";
+import { getWalletConfig, Wallet } from "../../../utils/walletsConfig";
+import { WarningDialog } from "../../transactions/components/TransactionsHelpers";
+import { setWalletButtonHoisted } from "../../ui/uiSlice";
+import { useEns, useSwitchChainHelpers, useWallet } from "../walletHooks";
+// import { useSelectedChainWallet, useSwitchChainHelpers } from "../walletHooks";
+import {
+  $screening,
+  setPickerOpened,
+  setScreeningWarningOpened,
+} from "../walletSlice";
+import { WalletStatus } from "../walletUtils";
 
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
@@ -106,8 +120,8 @@ export const WalletEntryButton: WalletPickerProps<
   any
 >["WalletEntryButton"] = ({ onClick, name, logo }) => {
   const { icon: iconClassName, ...classes } = useWalletEntryButtonStyles();
-  const walletConfig = getWalletConfigByRentxName(name);
-  const { MainIcon } = walletConfig;
+  const walletConfig = getWalletConfig(name as Wallet);
+  const { Icon } = walletConfig;
   return (
     <Button
       classes={classes}
@@ -116,9 +130,9 @@ export const WalletEntryButton: WalletPickerProps<
       fullWidth
       onClick={onClick}
     >
-      <span>{walletConfig.full}</span>{" "}
+      <span>{walletConfig.fullName}</span>{" "}
       <span className={iconClassName}>
-        <MainIcon fontSize="inherit" />
+        <Icon fontSize="inherit" />
       </span>
     </Button>
   );
@@ -128,40 +142,21 @@ export const WalletChainLabel: WalletPickerProps<
   any,
   any
 >["WalletChainLabel"] = ({ chain }) => {
-  const chainConfig = getChainConfigByRentxName(chain);
-  return <span>{chainConfig.full}</span>;
+  const chainConfig = getChainConfig(chain as Chain);
+  return <span>{chainConfig.fullName}</span>;
 };
 
 export const WalletConnectingInfo: WalletPickerProps<
   any,
   any
->["ConnectingInfo"] = ({ chain, onClose }) => {
+>["ConnectingInfo"] = ({ chain, name, onClose }) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const chainConfig = getChainConfigByRentxName(chain);
+  const chainConfig = getChainConfig(chain as Chain);
 
-  // TODO: There should be better mapping.
-  const walletSymbol: BridgeWallet = {
-    ethereum: BridgeWallet.METAMASKW,
-    bsc: BridgeWallet.BINANCESMARTW,
-    fantom: BridgeWallet.METAMASKW,
-    polygon: BridgeWallet.METAMASKW,
-    avalanche: BridgeWallet.METAMASKW,
-    solana: BridgeWallet.SOLLETW,
-    arbitrum: BridgeWallet.METAMASKW,
-  }[
-    chain as
-      | "ethereum"
-      | "bsc"
-      | "fantom"
-      | "polygon"
-      | "avalanche"
-      | "solana"
-      | "arbitrum"
-  ];
-  const walletConfig = getWalletConfig(walletSymbol);
+  const walletConfig = getWalletConfig(name as Wallet);
 
-  const { MainIcon } = walletConfig;
+  const { Icon } = walletConfig;
   const [isPassed] = useTimeout(3000);
   const passed = isPassed();
   return (
@@ -171,7 +166,7 @@ export const WalletConnectingInfo: WalletPickerProps<
         title={
           passed
             ? t("wallet.action-required", {
-                wallet: walletConfig.short,
+                wallet: walletConfig.shortName,
               })
             : t("wallet.action-connecting")
         }
@@ -185,16 +180,16 @@ export const WalletConnectingInfo: WalletPickerProps<
             fontSize="big"
             processing
           >
-            <MainIcon fontSize="inherit" />
+            <Icon fontSize="inherit" />
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h6" align="center">
           {passed
             ? t("wallet.action-connect-message", {
-                wallet: walletConfig.full,
+                wallet: walletConfig.fullName,
               })
             : t("wallet.action-connecting-to", {
-                chain: chainConfig.full,
+                chain: chainConfig.fullName,
               })}
         </Typography>
       </PaperContent>
@@ -230,19 +225,28 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   any,
   any
 >["WrongNetworkInfo"] = ({ chain, targetNetwork, onClose }) => {
+  console.info(chain, targetNetwork);
   const { t } = useTranslation();
   const theme = useTheme();
-  const subNetworkName = useSubNetworkName();
-  const chainConfig = getChainConfigByRentxName(chain);
-  const networkName = getNetworkConfigByRentxName(targetNetwork).full;
 
-  const { provider } = useSelectedChainWallet();
+  const networkKindName =
+    (targetNetwork as RenNetwork) === RenNetwork.Mainnet
+      ? "Mainnet"
+      : "Testnet";
+  const networkConfig = getChainNetworkConfig(
+    chain as Chain,
+    targetNetwork as RenNetwork
+  );
+  const subNetworkName = networkConfig.fullName;
+  const chainConfig = getChainConfig(chain as Chain);
+
+  const { provider } = useWallet(chain as Chain);
 
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<any>(false);
   const { addOrSwitchChain } = useSwitchChainHelpers(
-    chainConfig.symbol,
-    targetNetwork,
+    chain as Chain,
+    targetNetwork as RenNetwork,
     provider
   );
   const [success, setSuccess] = useState(false);
@@ -255,7 +259,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           setError(false);
           setSuccess(true);
         })
-        .catch((error) => {
+        .catch((error: any) => {
           setError(error);
         })
         .finally(() => {
@@ -281,12 +285,13 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           </ProgressWithContent>
         </ProgressWrapper>
         <Typography variant="h5" align="center" gutterBottom>
-          {t("wallet.network-switch-label")} {chainConfig.full} {networkName}
+          {t("wallet.network-switch-label")} {chainConfig.fullName}{" "}
+          {networkKindName}
           {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
-          {t("wallet.network-switch-description")} {chainConfig.full}{" "}
-          {networkName} {subNetworkName}
+          {t("wallet.network-switch-description")} {chainConfig.fullName}{" "}
+          {networkKindName} ({subNetworkName})
         </Typography>
         <Box mt={2}>
           {addOrSwitchChain !== null && (
@@ -307,8 +312,11 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
                           t("wallet.operation-safely-rejected-message")}
                         {error.code === -32002 &&
                           t("wallet.operation-not-finished-message")}
+                        {error.code === -32601 &&
+                          t("wallet.switching-network-not-supported-message")}
                       </CenteredFormHelperText>
                     )}
+                    <Debug it={{ error }} />
                   </Box>
                 </Fade>
               </Box>
@@ -318,11 +326,11 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
               >
                 {pending || success
                   ? t("wallet.network-switching-label", {
-                      network: subNetworkName || networkName,
+                      network: subNetworkName || networkKindName,
                       wallet: "MetaMask",
                     })
                   : t("wallet.network-switch-label", {
-                      network: subNetworkName || networkName,
+                      network: subNetworkName || networkKindName,
                     })}
               </ActionButton>
             </div>
@@ -373,28 +381,25 @@ const useWalletConnectionIndicatorStyles = makeStyles((theme) => {
 });
 
 type WalletConnectionIndicatorProps = {
-  status?: WalletConnectionStatusType;
+  status?: WalletStatus;
   className?: string; // TODO: find a better way
 };
 
-export const WalletConnectionIndicator: FunctionComponent<WalletConnectionIndicatorProps> = ({
-  status,
-  className: classNameProp,
-}) => {
-  const styles = useWalletConnectionIndicatorStyles() as WalletConnectionIndicatorStyles;
+export const WalletConnectionIndicator: FunctionComponent<
+  WalletConnectionIndicatorProps
+> = ({ status, className: classNameProp }) => {
+  const styles =
+    useWalletConnectionIndicatorStyles() as WalletConnectionIndicatorStyles;
   const className = classNames(styles.root, classNameProp, {
-    [styles.connected]: status === WalletStatus.CONNECTED,
-    [styles.wrongNetwork]: status === WalletStatus.WRONG_NETWORK,
-    [styles.disconnected]: status === WalletStatus.DISCONNECTED,
-    [styles.connecting]: status === WalletStatus.CONNECTING,
+    [styles.connected]: status === WalletStatus.Connected,
+    [styles.wrongNetwork]: status === WalletStatus.WrongNetwork,
+    [styles.disconnected]: status === WalletStatus.Disconnected,
+    [styles.connecting]: status === WalletStatus.Connecting,
   });
   return <div className={className} />;
 };
 
-const getWalletConnectionLabel = (
-  status: WalletConnectionStatusType,
-  t: TFunction
-) => {
+const getWalletConnectionLabel = (status: WalletStatus, t: TFunction) => {
   switch (status) {
     case "disconnected":
       return t("wallet.connect-wallet");
@@ -427,26 +432,36 @@ const useWalletConnectionStatusButtonStyles = makeStyles<Theme>((theme) => ({
     marginLeft: 16,
     marginRight: 30,
   },
-  account: { marginLeft: 20 },
+  account: {
+    marginLeft: 10,
+    marginRight: 10,
+    paddingLeft: 10,
+    borderLeft: "1px solid #DBE0E8",
+  },
 }));
 
 type WalletConnectionStatusButtonProps = ButtonProps & {
-  status: WalletConnectionStatusType;
-  wallet: BridgeWallet;
+  status: WalletStatus;
+  wallet: Wallet;
+  chain: Chain;
   hoisted?: boolean;
   account?: string;
   mobile?: boolean;
 };
 
-export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionStatusButtonProps> = ({
+export const WalletConnectionStatusButton: FunctionComponent<
+  WalletConnectionStatusButtonProps
+> = ({
   status,
   account,
   wallet,
+  chain,
   hoisted,
   className,
   mobile,
   ...rest
 }) => {
+  const { Icon } = getWalletConfig(wallet as Wallet);
   const { t } = useTranslation();
   const {
     indicator: indicatorClassName,
@@ -455,11 +470,9 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
     hoisted: hoistedClassName,
     ...classes
   } = useWalletConnectionStatusButtonStyles();
+  const { ensName } = useEns(account);
 
-  const label =
-    status === WalletStatus.CONNECTED
-      ? getWalletConfig(wallet).short
-      : getWalletConnectionLabel(status, t);
+  const chainConfig = getChainConfig(chain);
   const trimmedAddress = trimAddress(account);
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: hoisted,
@@ -472,14 +485,31 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
         classes,
       };
   return (
-    <Button className={resolvedClassName} {...buttonProps} {...rest}>
+    <Button
+      className={resolvedClassName}
+      {...buttonProps}
+      {...rest}
+      title={chainConfig.fullName}
+    >
       <WalletConnectionIndicator
         status={status}
         className={mobile ? indicatorMobileClassName : indicatorClassName}
       />
-      <span>{label}</span>
-      {trimmedAddress && (
-        <span className={accountClassName}>{trimmedAddress}</span>
+      {status === WalletStatus.Connected && <Icon />}
+      {status !== WalletStatus.Connected && (
+        <span>{getWalletConnectionLabel(status, t)}</span>
+      )}
+      {account && (
+        <>
+          <span className={accountClassName}>{ensName || trimmedAddress}</span>
+          {isEthereumBaseChain(chain) && (
+            <Davatar
+              size={24}
+              address={account as string}
+              generatedAvatarType="jazzicon"
+            />
+          )}
+        </>
       )}
     </Button>
   );
@@ -487,13 +517,12 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
 
 const useBackToWalletPicker = (onClose: () => void) => {
   const dispatch = useDispatch();
-  const handleBackToWalletPicker = useCallback(() => {
+  return useCallback(() => {
     onClose();
     setTimeout(() => {
-      dispatch(setWalletPickerOpened(true));
+      dispatch(setPickerOpened(true));
     }, 1);
   }, [dispatch, onClose]);
-  return handleBackToWalletPicker;
 };
 
 type AbstractConnectorInfoProps = {
@@ -722,5 +751,161 @@ export const AddTokenButton: FunctionComponent<AddTokenButtonProps> = ({
           : t("wallet.add-token-button-label", params)}
       </SecondaryActionButton>
     </Fade>
+  );
+};
+
+type ConnectWalletPaperSectionProps = {
+  chain?: Chain;
+  account?: string;
+  wallet?: Wallet;
+  asset?: Asset;
+  isRecoveringTx?: boolean;
+};
+
+export const ConnectWalletPaperSection: FunctionComponent<
+  ConnectWalletPaperSectionProps
+> = ({ chain, account, isRecoveringTx }) => {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const handleWalletPickerOpen = useCallback(() => {
+    dispatch(setPickerOpened(true));
+  }, [dispatch]);
+
+  let message = "";
+  if (chain) {
+    let accountMessage = "";
+    if (account) {
+      accountMessage = `, associated with ${trimAddress(account)} account`;
+    }
+    const chainConfig = getChainConfig(chain);
+    message = `Please connect ${chainConfig.fullName} compatible wallet${accountMessage}.`;
+
+    if (isRecoveringTx) {
+      message +=
+        " " +
+        "It must be connected to te same account which was used to create transaction you want to resume.";
+    }
+  }
+
+  return (
+    <>
+      <PaperSpacerWrapper>
+        <CenteringSpacedBox>
+          <WalletConnectionProgress />
+        </CenteringSpacedBox>
+      </PaperSpacerWrapper>
+      {Boolean(message) && (
+        <Box mb={4}>
+          <Typography variant="body1" align="center">
+            {message}
+          </Typography>
+        </Box>
+      )}
+      <ActionButton onClick={handleWalletPickerOpen}>
+        {t("wallet.connect")}
+      </ActionButton>
+    </>
+  );
+};
+
+export const AddressScreeningWarningDialog: FunctionComponent = () => {
+  const dispatch = useDispatch();
+  const { dialogOpened, fromAddressSanctioned, toAddressSanctioned } =
+    useSelector($screening);
+  const handleClose = useCallback(() => {
+    dispatch(setScreeningWarningOpened(false));
+  }, [dispatch]);
+
+  let message;
+  if (fromAddressSanctioned && toAddressSanctioned) {
+    message = "Sender and recipient address are sanctioned";
+  } else if (fromAddressSanctioned) {
+    message = "Sender address is sanctioned";
+  } else if (toAddressSanctioned) {
+    message = "Recipient address is sanctioned";
+  }
+
+  const sanctioned = fromAddressSanctioned || toAddressSanctioned;
+  useEffect(() => {
+    if (sanctioned) {
+      dispatch(setScreeningWarningOpened(true));
+    } else {
+      dispatch(setScreeningWarningOpened(false));
+    }
+  }, [dispatch, sanctioned]);
+
+  return (
+    <WarningDialog
+      open={dialogOpened}
+      onClose={handleClose}
+      reason="Sanctioned Address"
+      mainActionText="Ok. Let me try..."
+      onMainAction={handleClose}
+    >
+      <Typography variant="h6" paragraph>
+        {message}
+      </Typography>
+      <Typography variant="body2">
+        Your transaction will fail during further processing.
+      </Typography>
+    </WarningDialog>
+  );
+};
+
+type WrongAddressWarningDialogProps = {
+  expected?: string;
+  actual?: string;
+  isGateway?: boolean;
+};
+
+export const WrongAddressWarningDialog: FunctionComponent<
+  WrongAddressWarningDialogProps
+> = ({ expected, actual, isGateway = false }) => {
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const [opened, setOpened] = useState(false);
+  const handleClose = useCallback(() => {
+    setOpened(false);
+  }, []);
+
+  const different = expected && actual && expected !== actual;
+
+  useEffect(() => {
+    setOpened(Boolean(different));
+  }, [dispatch, different]);
+
+  useEffect(() => {
+    dispatch(setWalletButtonHoisted(opened));
+  }, [dispatch, opened]);
+
+  return (
+    <WarningDialog
+      open={opened}
+      onClose={handleClose}
+      title={t("common.warning-label")}
+      reason={t("tx.address-error-popup-header")}
+      onMainAction={handleClose}
+      mainActionText={t("tx.address-error-popup-action-text")}
+      mainActionVariant="outlined"
+    >
+      <Typography variant="body1" paragraph>
+        {t("tx.address-error-popup-message-1", {
+          mode: isGateway ? t("common.gateway") : t("common.transaction"),
+          actual: trimAddress(actual),
+          expected: trimAddress(expected),
+        })}
+        .
+      </Typography>
+      <Typography variant="body1" paragraph>
+        {t("tx.address-error-popup-message-2", {
+          mode: isGateway ? t("common.gateway") : t("common.transaction"),
+        })}
+      </Typography>
+      <Typography variant="body1">
+        <strong>
+          {t("tx.address-error-popup-switch-wallet-account-message")}
+        </strong>
+      </Typography>
+    </WarningDialog>
   );
 };

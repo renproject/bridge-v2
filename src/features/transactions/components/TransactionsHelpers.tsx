@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonProps,
   Checkbox,
   DialogProps,
   FormControl,
@@ -10,18 +11,14 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import {
-  BurnSession,
-  ErroringBurnSession,
-  GatewaySession,
-} from "@renproject/ren-tx";
 import React, {
   FunctionComponent,
+  ReactNode,
   useCallback,
-  useEffect,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useInterval } from "react-use";
 import {
@@ -59,18 +56,11 @@ import {
 import { Debug } from "../../../components/utils/Debug";
 import { links } from "../../../constants/constants";
 import { paths } from "../../../pages/routes";
-import { usePaperTitle } from "../../../providers/TitleProviders";
+import { useSetPaperTitle } from "../../../providers/TitleProviders";
 import { getFormattedHMS, millisecondsToHMS } from "../../../utils/dates";
-import { trimAddress } from "../../../utils/strings";
-import {
-  GATEWAY_EXPIRY_OFFSET_MS,
-  getRemainingTime,
-} from "../../mint/mintUtils";
-import { createTxQueryString, parseTxQueryString } from "../transactionsUtils";
-
-export type AnyBurnSession =
-  | BurnSession<any, any>
-  | ErroringBurnSession<any, any>;
+import { getRemainingTime } from "../../../utils/time";
+import { setIssueResolverOpened } from "../transactionsSlice";
+import { CustomChip } from "./TransactionsHistoryHelpers";
 
 export const ProcessingTimeWrapper = styled("div")({
   marginTop: 5,
@@ -82,9 +72,9 @@ type BookmarkPageWarningProps = {
 };
 
 // currently unused
-export const BookmarkPageWarning: FunctionComponent<BookmarkPageWarningProps> = ({
-  onClosed,
-}) => {
+export const BookmarkPageWarning: FunctionComponent<
+  BookmarkPageWarningProps
+> = ({ onClosed }) => {
   const handleClose = useCallback(() => {
     if (onClosed) {
       onClosed();
@@ -126,7 +116,9 @@ type FinishTransactionWarningProps = {
   mintChainLabel: string;
 };
 
-export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarningProps> = ({
+export const FinishTransactionWarning: FunctionComponent<
+  FinishTransactionWarningProps
+> = ({
   onClosed,
   timeRemained,
   lockChainBlockTime,
@@ -245,7 +237,7 @@ export const FinishTransactionWarning: FunctionComponent<FinishTransactionWarnin
   );
 };
 
-type ProgressStatusProps = {
+export type ProgressStatusProps = {
   reason?: string;
   processing?: boolean;
 };
@@ -255,10 +247,7 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
   processing = true,
 }) => {
   const theme = useTheme();
-  const [, setTitle] = usePaperTitle();
-  useEffect(() => {
-    setTitle(reason);
-  }, [setTitle, reason]);
+  useSetPaperTitle(reason);
   return (
     <>
       <ProgressWrapper>
@@ -271,12 +260,6 @@ export const ProgressStatus: FunctionComponent<ProgressStatusProps> = ({
       </ProgressWrapper>
     </>
   );
-};
-
-export type TransactionItemProps = {
-  tx: GatewaySession<any>;
-  isActive?: boolean;
-  onContinue?: ((depositHash?: string) => void) | (() => void);
 };
 
 type HMSCountdownProps = { milliseconds: number };
@@ -295,19 +278,43 @@ export const HMSCountdown: FunctionComponent<HMSCountdownProps> = ({
 
 // alternative version with recalculating remaining time every rerender
 // may be more accurate than HMSCountdown
-type HMSCountdownToProps = { timestamp: number };
+type HMSCountdownToProps = { timestamp: number; stopNegative?: boolean };
 
 export const HMSCountdownTo: FunctionComponent<HMSCountdownToProps> = ({
   timestamp,
+  stopNegative,
 }) => {
-  const [time, setTime] = useState(
-    getFormattedHMS(getRemainingTime(timestamp))
-  );
+  const [time, setTime] = useState(getRemainingTime(timestamp));
   useInterval(() => {
-    setTime(getFormattedHMS(getRemainingTime(timestamp)));
+    setTime(getRemainingTime(timestamp));
   }, 1000);
 
-  return <span>{time}</span>;
+  if (stopNegative) {
+    return <span>{getFormattedHMS(time > 0 ? time : 0)}</span>;
+  } else {
+    return <span>{getFormattedHMS(time)}</span>;
+  }
+};
+
+const GATEWAY_OPEN_MS = 5 * 3600 * 1000;
+const GATEWAY_EXPIRING_MS = 3600 * 1000;
+
+type GatewayStatusChipProps = { timestamp: number };
+
+export const GatewayStatusChip: FunctionComponent<GatewayStatusChipProps> = ({
+  timestamp,
+}) => {
+  const [time, setTime] = useState(getRemainingTime(timestamp));
+  useInterval(() => {
+    setTime(getRemainingTime(timestamp));
+  }, 1000);
+
+  if (time > GATEWAY_OPEN_MS) {
+    return <CustomChip color="done" label="Gateway Open" />;
+  } else if (time > GATEWAY_EXPIRING_MS) {
+    return <CustomChip color="pending" label="Gateway Expiring" />;
+  }
+  return <CustomChip color="pending" label="Gateway Closed" />;
 };
 
 export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
@@ -328,7 +335,7 @@ export const HCountdown: FunctionComponent<HMSCountdownProps> = ({
   );
 };
 
-const ErrorIconWrapper = styled("div")(({ theme }) => ({
+export const DialogIconWrapper = styled("div")(({ theme }) => ({
   fontSize: 72,
   lineHeight: 1,
   marginTop: 8,
@@ -354,7 +361,7 @@ export const ErrorDetails: FunctionComponent<ErrorDetailsProps> = ({
         {visible ? t("common.show-less") : t("common.show-more")}
       </Button>
       <Hide when={!visible}>
-        <Debug force it={{ error }} />
+        <Debug force it={{ error, message: error?.message }} />
       </Hide>
     </div>
   );
@@ -384,9 +391,9 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   return (
     <BridgeModal open={open} title={title} maxWidth="xs">
       <SpacedPaperContent autoOverflow>
-        <ErrorIconWrapper>
+        <DialogIconWrapper>
           <WarningIcon fontSize="inherit" color="inherit" />
-        </ErrorIconWrapper>
+        </DialogIconWrapper>
         <Typography variant="h5" align="center" gutterBottom>
           {reason}
         </Typography>
@@ -419,10 +426,14 @@ export const ErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
 export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
   props
 ) => {
+  console.info("submit error code", props.error?.code);
   const { t } = useTranslation();
   let message = t("tx.submitting-error-popup-message");
-  if (props.error?.code === 4001) {
+  if (props.error?.code === 4001 || props.error?.error === "Rejected by user") {
     message = t("tx.submitting-error-popup-message-signature-rejected-text");
+  }
+  if (props.error?.code === 1984) {
+    message = `Submitting failed. If you haven't rejected the transaction, make sure you are connected to the right account and have gas. If you release, make sure you still have appropriate token amount.`;
   }
   return (
     <ErrorDialog
@@ -432,6 +443,32 @@ export const SubmitErrorDialog: FunctionComponent<ErrorWithActionProps> = (
       alternativeActionText={t(
         "tx.submitting-error-popup-alternative-action-text"
       )}
+      {...props}
+    >
+      <span>{message}</span>
+    </ErrorDialog>
+  );
+};
+
+export const TxRecoveryErrorDialog: FunctionComponent<ErrorWithActionProps> = (
+  props
+) => {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const handleOpen = useCallback(() => {
+    dispatch(setIssueResolverOpened(true));
+  }, [dispatch]);
+
+  let message = "Transaction recovery failed. ";
+  if (props.error?.code === 80404) {
+    message += `Bridge hasn't found your tx in Local Storage. Open Issue Resolver and follow instructions.`;
+  }
+  return (
+    <ErrorDialog
+      title={t("common.error-label")}
+      reason={"Transaction recovery error"}
+      actionText={"Open Issue Resolver"}
+      onAction={handleOpen}
       {...props}
     >
       <span>{message}</span>
@@ -462,53 +499,36 @@ export const GeneralErrorDialog: FunctionComponent<ErrorWithActionProps> = ({
   );
 };
 
-export const ExpiredErrorDialog: FunctionComponent<ErrorWithActionProps> = (
-  props
-) => {
+export const TransactionRevertedErrorDialog: FunctionComponent<
+  ErrorWithActionProps
+> = ({ ...props }) => {
   const { t } = useTranslation();
   const history = useHistory();
-
-  const ammendExpiry = useCallback(() => {
-    // history.location.search
-    const tx = parseTxQueryString(history.location.search);
-    if (!tx) return;
-    tx.expiryTime = Date.now() + GATEWAY_EXPIRY_OFFSET_MS;
+  const backToHome = useCallback(() => {
     history.push({
-      pathname: paths.MINT_TRANSACTION,
-      search: "?" + createTxQueryString(tx as any),
+      pathname: paths.HOME,
     });
-    window.location.reload();
-  }, [history]);
-
-  const goToHome = useCallback(() => {
-    history.push(paths.HOME);
   }, [history]);
 
   return (
     <ErrorDialog
-      title={t("tx.expired-error-popup-title")}
-      reason={t("tx.expired-error-popup-header")}
-      actionText={t("tx.expired-error-popup-action-text")}
+      title={t("common.error-label")}
+      reason={"Transaction Reverted"}
+      actionText={"Back to Home"}
+      onAction={backToHome}
       {...props}
     >
-      <span>{t("tx.expired-error-popup-message-1", { hours: 24 })}</span>
-      <ActionButtonWrapper>
-        <RedButton variant="text" color="secondary" onClick={ammendExpiry}>
-          {t("tx.expired-error-popup-continue-mint")}
-        </RedButton>
-      </ActionButtonWrapper>
-      <ActionButtonWrapper>
-        <Button variant="text" color="inherit" onClick={goToHome}>
-          {t("tx.expired-error-popup-back-to-home")}
-        </Button>
-      </ActionButtonWrapper>
+      <span>
+        Transaction can be reverted when amount after deducting fees is too low
+        to proceed.
+      </span>
     </ErrorDialog>
   );
 };
 
-export const GatewayAddressTimeoutErrorDialog: FunctionComponent<ErrorWithActionProps> = (
-  props
-) => {
+export const GatewayAddressTimeoutErrorDialog: FunctionComponent<
+  ErrorWithActionProps
+> = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -546,6 +566,7 @@ type WarningWithActionsProps = DialogProps & {
   onMainAction?: () => void;
   mainActionText?: string;
   mainActionDisabled?: boolean;
+  mainActionVariant?: ButtonProps["variant"];
   onAlternativeAction?: () => void;
   alternativeActionText?: string;
   alternativeActionDisabled?: boolean;
@@ -558,6 +579,7 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   mainActionText = "",
   onMainAction,
   mainActionDisabled,
+  mainActionVariant = "contained",
   alternativeActionText = "",
   onAlternativeAction,
   alternativeActionDisabled,
@@ -567,9 +589,9 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   return (
     <BridgeModal open={open} title={title} maxWidth="xs">
       <SpacedPaperContent>
-        <ErrorIconWrapper>
+        <DialogIconWrapper>
           <SpecialAlertIcon fontSize="inherit" color="inherit" />
-        </ErrorIconWrapper>
+        </DialogIconWrapper>
         <Typography variant="h5" align="center" gutterBottom>
           {reason}
         </Typography>
@@ -595,7 +617,11 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
         </ActionButtonWrapper>
         {showMainAction && (
           <ActionButtonWrapper>
-            <ActionButton onClick={onMainAction} disabled={mainActionDisabled}>
+            <ActionButton
+              onClick={onMainAction}
+              disabled={mainActionDisabled}
+              variant={mainActionVariant}
+            >
               {mainActionText}
             </ActionButton>
           </ActionButtonWrapper>
@@ -605,77 +631,10 @@ export const WarningDialog: FunctionComponent<WarningWithActionsProps> = ({
   );
 };
 
-type WrongAddressWarningDialogProps = WarningWithActionsProps & {
-  address: string;
-  addressExplorerLink: string;
-  currency: string;
-};
-
-export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDialogProps> = ({
-  address,
-  addressExplorerLink,
-  currency,
-  ...props
-}) => {
-  const { t } = useTranslation();
-  return (
-    <WarningDialog
-      title={t("common.warning-label")}
-      reason={t("tx.address-error-popup-header")}
-      alternativeActionText={t("tx.address-error-popup-action-text")}
-      {...props}
-    >
-      <span>
-        {t("tx.address-error-popup-message-1")} (
-        <Link
-          external
-          href={addressExplorerLink}
-          color="primary"
-          underline="hover"
-        >
-          {trimAddress(address, 5)}
-        </Link>
-        ).{" "}
-        {t("tx.address-error-popup-message-2", {
-          currency,
-        })}
-      </span>
-    </WarningDialog>
-  );
-};
-
-export const LunaWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
-  ...props
-}) => {
-  const { t } = useTranslation();
-  return (
-    <WarningDialog
-      title={t("common.warning-label")}
-      reason="Luna is disabled"
-      {...props}
-    >
-      <span>
-        Due to safety reasons, support for LUNA is currently paused until the
-        Terra blockchain is stable. Please follow the official Ren Twitter
-        account for more updates:
-        <br />
-        <Link
-          external
-          href="https://twitter.com/renprotocol"
-          color="primary"
-          underline="hover"
-        >
-          https://twitter.com/renprotocol
-        </Link>
-      </span>
-    </WarningDialog>
-  );
-};
-
 // POC - keep
-export const PageLeaveWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
-  ...props
-}) => {
+export const PageLeaveWarningDialog: FunctionComponent<
+  WarningWithActionsProps
+> = ({ ...props }) => {
   // const [warned, setWarned] = useState(false);
   // const [leaveWarningOpened, setLeaveWarningOpened] = useState(false);
   // const handleLeaveWarningClose = useCallback(() => {
@@ -701,5 +660,54 @@ export const PageLeaveWarningDialog: FunctionComponent<WarningWithActionsProps> 
         this page.
       </span>
     </WarningDialog>
+  );
+};
+
+type ConfirmDialogProps = Omit<WarningWithActionsProps, "open"> & {
+  onAction: () => void;
+  actionText?: string;
+  renderComponent: (
+    onConfirm: () => void,
+    innerRef?: React.Ref<any> | undefined
+  ) => ReactNode;
+};
+
+export const WithConfirmDialog: FunctionComponent<ConfirmDialogProps> = ({
+  onAction,
+  title = "Are you sure?",
+  renderComponent,
+  mainActionText = "Cancel",
+  actionText = "Confirm",
+  ...rest
+}) => {
+  const [open, setOpen] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const handleConfirm = useCallback(() => {
+    setOpen(true);
+  }, []);
+
+  const handleAction = useCallback(() => {
+    onAction();
+    setOpen(false);
+  }, [onAction]);
+
+  return (
+    <>
+      {renderComponent(handleConfirm)}
+      <WarningDialog
+        open={open}
+        maxWidth="xs"
+        title={title}
+        alternativeActionText={actionText}
+        onAlternativeAction={handleAction}
+        onMainAction={handleClose}
+        mainActionText={mainActionText}
+        {...rest}
+      />
+    </>
   );
 };

@@ -3,7 +3,7 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { TooltipWithIcon } from "../../../components/tooltips/TooltipWithIcon";
 import { createIndicatorClass } from "../../wallet/components/WalletHelpers";
-import { SystemStatus, SystemType } from "../uiSlice";
+import { SystemStatus } from "../uiSlice";
 
 export enum IndicatorStatus {
   Success = "success",
@@ -62,7 +62,6 @@ export const systemToIndicatorStatus = (status: SystemStatus) => {
 };
 
 type SystemInfoProps = {
-  type: SystemType;
   status: SystemStatus;
   name: string;
   description?: string;
@@ -81,7 +80,6 @@ const useSystemInfoStyles = makeStyles(() => ({
 }));
 
 export const SystemInfo: FunctionComponent<SystemInfoProps> = ({
-  type,
   status,
   name,
   description,

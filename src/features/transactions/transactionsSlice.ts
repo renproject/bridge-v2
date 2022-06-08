@@ -2,26 +2,28 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store/rootReducer";
 
 type TransactionsState = {
-  txHistoryOpened: boolean;
-  currentTxId: string; // TODO: crit: deprecated
-  currentSession: {
-    txId: string;
-    depositHash: string;
-    data: any;
+  txHistory: {
+    dialogOpened: boolean;
+    showConnectedTxs: boolean;
   };
+  txRecovery: {
+    dialogOpened: boolean;
+  };
+  currentTxHash: string;
   issueResolver: {
     dialogOpened: boolean;
   };
 };
 
 let initialState: TransactionsState = {
-  txHistoryOpened: false,
-  currentTxId: "",
-  currentSession: {
-    txId: "",
-    depositHash: "",
-    data: undefined,
+  txHistory: {
+    dialogOpened: false,
+    showConnectedTxs: false,
   },
+  txRecovery: {
+    dialogOpened: false,
+  },
+  currentTxHash: "",
   issueResolver: {
     dialogOpened: false,
   },
@@ -32,53 +34,58 @@ const slice = createSlice({
   initialState,
   reducers: {
     setTxHistoryOpened(state, action: PayloadAction<boolean>) {
-      state.txHistoryOpened = action.payload;
+      state.txHistory.dialogOpened = action.payload;
+    },
+    setShowConnectedTxs(state, action: PayloadAction<boolean>) {
+      state.txHistory.showConnectedTxs = action.payload;
+    },
+    setTxRecoveryOpened(state, action: PayloadAction<boolean>) {
+      state.txRecovery.dialogOpened = action.payload;
+    },
+    setCurrentTxHash(state, action: PayloadAction<string>) {
+      state.currentTxHash = action.payload;
     },
     setIssueResolverOpened(state, action: PayloadAction<boolean>) {
       state.issueResolver.dialogOpened = action.payload;
     },
-    setCurrentTxId(state, action: PayloadAction<string>) {
-      state.currentTxId = action.payload;
-    },
-    setCurrentSessionTxId(state, action: PayloadAction<string>) {
-      state.currentSession.txId = action.payload;
-    },
-    setCurrentSessionDepositHash(state, action: PayloadAction<string>) {
-      state.currentSession.depositHash = action.payload;
-    },
-    setCurrentSessionData(state, action: PayloadAction<any>) {
-      state.currentSession.data = action.payload;
-    },
+    // setCurrentSessionTxId(state, action: PayloadAction<string>) {
+    //   state.currentSession.txId = action.payload;
+    // },
+    // setCurrentSessionDepositHash(state, action: PayloadAction<string>) {
+    //   state.currentSession.depositHash = action.payload;
+    // },
+    // setCurrentSessionData(state, action: PayloadAction<any>) {
+    //   state.currentSession.data = action.payload;
+    // },
   },
 });
 
 export const {
   setTxHistoryOpened,
-  setCurrentTxId,
+  setTxRecoveryOpened,
+  setShowConnectedTxs,
   setIssueResolverOpened,
-  setCurrentSessionData,
-  setCurrentSessionDepositHash,
-  setCurrentSessionTxId,
+  setCurrentTxHash,
+  // setCurrentSessionData,
+  // setCurrentSessionDepositHash,
+  // setCurrentSessionTxId,
 } = slice.actions;
 
 export const transactionsReducer = slice.reducer;
 
-export const $transactionsData = (state: RootState) => state.transactions;
-export const $txHistoryOpened = createSelector(
-  $transactionsData,
-  (transactions) => transactions.txHistoryOpened
+export const $transactions = (state: RootState) => state.transactions;
+
+export const $txHistory = createSelector(
+  $transactions,
+  (transactions) => transactions.txHistory
 );
-export const $currentTxId = createSelector(
-  $transactionsData,
-  (transactions) => transactions.currentTxId
+
+export const $txRecovery = createSelector(
+  $transactions,
+  (transactions) => transactions.txRecovery
 );
 
 export const $issueResolver = createSelector(
-  $transactionsData,
+  $transactions,
   (transactions) => transactions.issueResolver
-);
-
-export const $currentSession = createSelector(
-  $transactionsData,
-  (transactions) => transactions.currentSession
 );

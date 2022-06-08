@@ -10,7 +10,11 @@ import { SystemInfo } from "./components/SystemMonitorHelpers";
 import { $systemMonitor, setSystemMonitorOpened, SystemType } from "./uiSlice";
 
 const criticalSystems = [SystemType.Lightnode];
-const supplementalSystems = [SystemType.Coingecko, SystemType.Bandchain];
+const supplementalSystems = [
+  SystemType.Coingecko,
+  SystemType.Anyblock,
+  SystemType.MaticGasStation,
+];
 
 export const SystemMonitorFooterButton: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -54,15 +58,8 @@ export const SystemMonitor: FunctionComponent = () => {
         </Typography>
         <MediumWrapper>
           {criticalSystems.map((type) => {
-            const system = systems[type];
-            return (
-              <SystemInfo
-                key={type}
-                status={system.status}
-                name={system.name}
-                type={type}
-              />
-            );
+            const status = systems[type];
+            return <SystemInfo key={type} status={status} name={type} />;
           })}
         </MediumWrapper>
         <Typography variant="caption">
@@ -73,15 +70,8 @@ export const SystemMonitor: FunctionComponent = () => {
         </Typography>
         <MediumWrapper>
           {supplementalSystems.map((type) => {
-            const system = systems[type];
-            return (
-              <SystemInfo
-                key={type}
-                status={system.status}
-                name={system.name}
-                type={type}
-              />
-            );
+            const status = systems[type];
+            return <SystemInfo key={type} status={status} name={type} />;
           })}
         </MediumWrapper>
       </DialogContent>

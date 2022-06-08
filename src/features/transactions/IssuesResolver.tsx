@@ -1,27 +1,29 @@
-import { DialogContent, Fab, Fade, Typography } from "@material-ui/core";
+import { Box, DialogContent, Fab, Fade, Typography } from "@material-ui/core";
 import { makeStyles, styled } from "@material-ui/core/styles";
 import { Feedback } from "@material-ui/icons";
 import React, { FunctionComponent, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import {
   ActionButton,
   ActionButtonWrapper,
   ClosableMenuIconButton,
+  CopyContentTypography,
 } from "../../components/buttons/Buttons";
-import { SyncProblemIcon } from "../../components/icons/RenIcons";
+import { IssueResolverIcon } from "../../components/icons/RenIcons";
 import { externalLinkAttributes, Link } from "../../components/links/Links";
 import { BridgeModalTitle } from "../../components/modals/BridgeModal";
 import { Debug } from "../../components/utils/Debug";
 import { links } from "../../constants/constants";
-import { $renNetwork } from "../network/networkSlice";
-import { WideDialog } from "./components/TransactionHistoryHelpers";
+import { parseGatewayQueryString } from "../gateway/gatewayUtils";
+import { useRenVMExplorerLink } from "../network/networkHooks";
+import { WideDialog } from "./components/TransactionsHistoryHelpers";
 import {
-  $currentSession,
   $issueResolver,
+  $transactions,
   setIssueResolverOpened,
 } from "./transactionsSlice";
-import { getRenExplorerLink } from "./transactionsUtils";
 
 export const FundsChip = styled("p")(({ theme }) => ({
   padding: `16px 47px`,
@@ -43,29 +45,32 @@ const useIssueResolverStyles = makeStyles((theme) => ({
 
 const MaxBox = styled("div")({
   maxWidth: 370,
-  margin: "0 auto",
+  margin: "16px auto",
 });
 
 export const IssuesResolver: FunctionComponent = () => {
   const { t } = useTranslation();
+  const location = useLocation();
+  const { additionalParams } = parseGatewayQueryString(location.search);
+  const { renVMHash } = additionalParams;
   const dispatch = useDispatch();
-  const network = useSelector($renNetwork);
-  const { dialogOpened } = useSelector($issueResolver);
-  const { data, txId, depositHash } = useSelector($currentSession);
   const styles = useIssueResolverStyles();
+  const { getRenVmExplorerLink } = useRenVMExplorerLink();
+  const { dialogOpened } = useSelector($issueResolver);
+  const { currentTxHash } = useSelector($transactions);
 
+  const txHash = currentTxHash || (renVMHash as string);
   const handleClose = useCallback(() => {
     dispatch(setIssueResolverOpened(false));
   }, [dispatch]);
 
-  const deposit = data?.transactions[depositHash] || {};
-
-  const explorer = getRenExplorerLink(network, depositHash);
+  const explorer = getRenVmExplorerLink(txHash);
   return (
     <WideDialog
       open={dialogOpened}
-      onEscapeKeyDown={handleClose}
-      onBackdropClick={handleClose}
+      onClose={handleClose}
+      // onEscapeKeyDown={handleClose}
+      // onBackdropClick={handleClose}
     >
       <BridgeModalTitle onClose={handleClose}>
         {t("tx.issue-resolver-title")}
@@ -88,20 +93,34 @@ export const IssuesResolver: FunctionComponent = () => {
       {/*  </MaxBox>*/}
       {/*</DialogContent>*/}
       <DialogContent className={styles.content}>
-        {depositHash !== "" && (
-          <Typography variant="body1" gutterBottom>
-            {t("tx.issue-resolver-viewing-deposit-header", { depositHash })}
-          </Typography>
-        )}
         <MaxBox>
-          <Typography variant="body2" color="textSecondary">
+          <Typography variant="body2" color="textSecondary" gutterBottom>
             {t("tx.issue-resolver-viewing-deposit-description")}
           </Typography>
         </MaxBox>
+        {Boolean(txHash) && (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography variant="body2" color="textSecondary">
+              {t("common.renvm-hash-label")}:&nbsp;
+            </Typography>
+            {/*<Typography variant="body1">*/}
+            {/*  <strong>{renVMHash}</strong>*/}
+            {/*</Typography>*/}
+            <CopyContentTypography
+              content={txHash || ""}
+              copiedMessage={t("common.copied-ex-message")}
+            />
+          </Box>
+        )}
         <ActionButtonWrapper>
           <Typography color="textPrimary">
-            <Link href={links.REN_EXPLORER_GUIDE} {...externalLinkAttributes}>
-              {t("tx.issue-resolver-explorer-guide-label")}
+            <Link
+              href={links.REN_EXPLORER_GUIDE}
+              {...externalLinkAttributes}
+              color="primary"
+              underline="hover"
+            >
+              {t("tx.issue-resolver-guide-label")}
             </Link>
           </Typography>
         </ActionButtonWrapper>
@@ -110,16 +129,16 @@ export const IssuesResolver: FunctionComponent = () => {
             {t("tx.issue-resolver-go-to-explorer-label")}
           </ActionButton>
         </ActionButtonWrapper>
-        <ActionButtonWrapper>
+        <Box mt={4}>
           <Typography color="textSecondary" variant="body2">
             {t("tx.issue-resolver-unresolved-text")}{" "}
             <Link href={links.BUGS_LOG} {...externalLinkAttributes}>
               {t("tx.issue-resolver-unresolved-link-text")}
             </Link>
           </Typography>
-        </ActionButtonWrapper>
+        </Box>
       </DialogContent>
-      <Debug it={{ depositHash, deposit, data: data, txId }} />
+      <Debug it={{ txHash }} />
     </WideDialog>
   );
 };
@@ -141,14 +160,13 @@ type IssuesResolverButtonProps = {
   className?: string;
 };
 
-export const IssuesResolverButton: FunctionComponent<IssuesResolverButtonProps> = ({
-  mode = "menu",
-  className,
-}) => {
+export const IssuesResolverButton: FunctionComponent<
+  IssuesResolverButtonProps
+> = ({ mode = "menu", className }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { dialogOpened: issueResolverOpened } = useSelector($issueResolver);
-  const { depositHash } = useSelector($currentSession);
+  const { currentTxHash } = useSelector($transactions);
   const handleIssueResolverToggle = useCallback(() => {
     dispatch(setIssueResolverOpened(!issueResolverOpened));
   }, [dispatch, issueResolverOpened]);
@@ -168,11 +186,11 @@ export const IssuesResolverButton: FunctionComponent<IssuesResolverButtonProps> 
     );
   }
   return (
-    <Fade in={!!depositHash}>
+    <Fade in={!!currentTxHash}>
       <ClosableMenuIconButton
         title={buttonTitle}
         className={className}
-        Icon={SyncProblemIcon}
+        Icon={IssueResolverIcon}
         opened={issueResolverOpened}
         onClick={handleIssueResolverToggle}
       />

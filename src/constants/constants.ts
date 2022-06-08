@@ -1,9 +1,8 @@
-export const appName = "RenBridge V2";
+export const appName = "RenBridge V3";
 
 export enum storageKeys {
   TERMS_AGREED = "termsAgreed",
-  SIG_MAP = "bridgeSigMap",
-  RAW_SIG_MAP = "bridgeRawSigMap",
+  SAFETY_ACK = "safetyAck",
 }
 
 export const links = {
@@ -22,4 +21,11 @@ export const links = {
     "https://support.ledger.com/hc/en-us/articles/360016265659-Solana-SOL-?docs=true",
 };
 
+export const prodDomains = [
+  "bridge-staging.renproject.io",
+  "staging.bridge.renproject.io",
+  "bridge.renproject.io",
+];
+
 export const MINT_GAS_UNIT_COST = 153400;
+export const RELEASE_GAS_UNIT_COST = MINT_GAS_UNIT_COST;

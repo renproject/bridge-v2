@@ -1,4 +1,4 @@
-# `ren bridge v2`
+# `ren bridge v3`
 
 An easy way to bridge cross-chain assets between blockchains.
 
@@ -23,6 +23,11 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
+
+### `yarn start-functions`
+
+Runs netlify functions in the development mode.<br />
+Open [http://localhost:9999](http://localhost:9999) to view it in the browser.
 
 ### `yarn test`
 
@@ -55,9 +60,7 @@ The core RenVM libraries on which the application is built are as follows:
 
 [`@renproject/multiwallet-ui`](https://www.npmjs.com/package/@renproject/multiwallet-ui) - provides extensible wallet selection, connection and management features for React apps. It comes together with default UI, but can be adapted to any React UI framework.
 
-[`@renproject/rentx`](https://www.npmjs.com/package/@renproject/rentx) - RenTX is for managing transactions. Allows transactions state tracing and makes it easier to build UI for appropriate transaction stages.
-
-[`@renproject/ren`](https://www.npmjs.com/package/@renproject/ren) - RenJS is the core library for interacting with RenVM. RenTX uses it internally. Bridge uses it for things such as fees calculation.
+[`@renproject/ren`](https://www.npmjs.com/package/@renproject/ren) - RenJS is the core library for interacting with RenVM.
 
 ## Forking
 
@@ -70,25 +73,6 @@ git clone https://github.com/renproject/bridge-v2.git
 ### Requirements
 
 RenBridge requires an Infura key provided as an environment variable. You can create one by going to [infura.io](https://infura.io). If another Ethereum provider is being used, it can be changed in [Multiwallet.tsx](src/providers/multiwallet/Multiwallet.tsx).
-
-### Common cases
-
-Here are some common cases you can run into:
-
-#### Adding new asset
-
-If you want to add a new asset, follow these steps:
-
-- add asset source chain and appropriate mappings to [rentx.ts](src/services/rentx.ts)
-- add a new asset and its chain data in [assetConfigs.ts](src/utils/assetConfigs.ts). Ensure you covered following points:
-  - add a new asset symbol to `BridgeCurrency` enum
-  - add the newly installed chain to `RenChain` and `BridgeChain` enums
-  - add a new `BridgeCurrencyConfig` entry in `currenciesConfig`.
-    Should include labels, icons/coloring, source chain and network mappings.
-  - add a new `BridgeChainConfig` entry in `chainsConfig`.
-    Should include labels, icons, block time/confirmations data and native currency mapping
-  - extend `toMintedCurrency` and `toReleasedCurrency` functions with new asset mappings
-  - enable newly added asset in `supportedLockCurrencies`, `supportedReleaseCurrencies`
 
 #### Changing visual appearance
 

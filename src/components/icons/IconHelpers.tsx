@@ -1,9 +1,47 @@
-import { IconProps, Typography } from "@material-ui/core";
+import { IconProps, SvgIcon, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SvgIconComponent } from "@material-ui/icons";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
+import { getPaddedScalingProps } from "../../utils/icons";
 import { CustomSvgIconComponent } from "./RenIcons";
+
+export const createPaddedIcon = (
+  Icon: FunctionComponent,
+  viewBoxWidth = 24,
+  viewBoxHeight = viewBoxWidth
+) => {
+  const GeneratedIcon: CustomSvgIconComponent = (props) => {
+    const { viewBox } = getPaddedScalingProps(viewBoxWidth, viewBoxHeight);
+    return <SvgIcon component={Icon} viewBox={viewBox} {...props} />;
+  };
+  return GeneratedIcon;
+};
+
+const nativeTokenIconSize = 200;
+const wrappedTokenIconSize = 256;
+
+export const nativeTokenIcon = (Icon: FunctionComponent) => {
+  return createPaddedIcon(Icon, nativeTokenIconSize);
+};
+
+export const wrappedTokenIcon = (Icon: FunctionComponent) => {
+  return createPaddedIcon(Icon, wrappedTokenIconSize);
+};
+
+const walletIconSize = 256;
+export const walletIcon = (Icon: FunctionComponent) => {
+  return createPaddedIcon(Icon, walletIconSize);
+};
+
+const chainIconSize = 254;
+export const chainIcon = (Icon: FunctionComponent) => {
+  return createPaddedIcon(Icon, chainIconSize);
+};
+
+export const chainIconFromToken = (Icon: FunctionComponent) => {
+  return createPaddedIcon(Icon, nativeTokenIconSize);
+};
 
 const useIconWithLabelStyles = makeStyles((theme) => ({
   root: {

@@ -1,10 +1,15 @@
-import { Tooltip, TooltipProps } from "@material-ui/core";
+import {
+  ButtonBase,
+  ClickAwayListener,
+  Tooltip,
+  TooltipProps,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { TooltipIcon } from "../icons/RenIcons";
 
-const useStyles = makeStyles((theme) => ({
+const useTooltipWithIconStyles = makeStyles((theme) => ({
   root: {
     display: "inline-flex",
     fontSize: 13,
@@ -20,22 +25,59 @@ type TooltipWithIconProps = Omit<TooltipProps, "children"> & {
 
 export const TooltipWithIcon: FunctionComponent<TooltipWithIconProps> = ({
   title,
-  placement = "top-end",
+  placement = "top",
   className,
   ...rest
 }) => {
-  const styles = useStyles();
+  const styles = useTooltipWithIconStyles();
   const resolvedClassName = classNames(styles.root, className);
+  const [open, setOpen] = React.useState(false);
+
+  const handleTooltipClose = () => {
+    setOpen(false);
+  };
+
+  const handleTooltipToggle = (event: any) => {
+    event.stopPropagation();
+    setOpen((prevOpen) => !prevOpen);
+    return false;
+  };
+
   return (
-    <Tooltip
-      title={title}
-      className={resolvedClassName}
-      placement={placement}
-      {...rest}
-    >
-      <span>
-        <TooltipIcon fontSize="inherit" color="inherit" />
-      </span>
-    </Tooltip>
+    <ClickAwayListener onClickAway={handleTooltipClose}>
+      <Tooltip
+        title={title}
+        className={resolvedClassName}
+        placement={placement}
+        PopperProps={{
+          disablePortal: true,
+        }}
+        onClose={handleTooltipClose}
+        open={open}
+        disableFocusListener
+        disableHoverListener
+        disableTouchListener
+      >
+        <ButtonBase onClick={handleTooltipToggle}>
+          <TooltipIcon fontSize="inherit" color="primary" />
+        </ButtonBase>
+      </Tooltip>
+    </ClickAwayListener>
+  );
+};
+
+type MessageWithTooltipProps = {
+  message: string;
+  tooltip: string;
+};
+
+export const MessageWithTooltip: FunctionComponent<MessageWithTooltipProps> = ({
+  message = "",
+  tooltip = "",
+}) => {
+  return (
+    <span>
+      {message} <TooltipWithIcon title={<span>{tooltip}</span>} />
+    </span>
   );
 };

@@ -1,20 +1,19 @@
 import React, { FunctionComponent } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps } from "react-router";
-import { Route } from "react-router-dom";
 import {
   BridgePaperWrapper,
   BridgePurePaper,
 } from "../components/layout/Paper";
 import { storageKeys } from "../constants/constants";
+import { GatewayRoutes } from "../features/gateway/GatewayRoutes";
 import {
   useExchangeRates,
   useGasPrices,
 } from "../features/marketData/marketDataHooks";
-import { MintFlow } from "../features/mint/MintFlow";
-import { ReleaseFlow } from "../features/release/ReleaseFlow";
 import { $ui } from "../features/ui/uiSlice";
 import { PaperTitleProvider } from "../providers/TitleProviders";
+import { GatewayContextProvider } from "../providers/TransactionProviders";
 import { ConnectedMainLayout } from "./MainLayout";
 import { paths } from "./routes";
 
@@ -34,14 +33,15 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
   return (
     <>
       <ConnectedMainLayout>
-        <PaperTitleProvider>
-          <BridgePaperWrapper>
-            <BridgePurePaper shaking={paperShaking}>
-              <Route path={paths.MINT} component={MintFlow} />
-              <Route path={paths.RELEASE} component={ReleaseFlow} />
-            </BridgePurePaper>
-          </BridgePaperWrapper>
-        </PaperTitleProvider>
+        <GatewayContextProvider>
+          <PaperTitleProvider>
+            <BridgePaperWrapper>
+              <BridgePurePaper shaking={paperShaking}>
+                <GatewayRoutes />
+              </BridgePurePaper>
+            </BridgePaperWrapper>
+          </PaperTitleProvider>
+        </GatewayContextProvider>
       </ConnectedMainLayout>
     </>
   );

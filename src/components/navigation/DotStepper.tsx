@@ -3,11 +3,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
 
-const useStyles = makeStyles((theme) => ({
+const useDotStepperStyles = makeStyles((theme) => ({
   button: {
     textTransform: "uppercase",
     alignItems: "flex-end",
-    fontWeight: theme.typography.fontWeightBold,
+    fontWeight: 700,
   },
 }));
 
@@ -22,7 +22,7 @@ export const DotStepper: FunctionComponent<DotStepperProps> = ({
   steps,
   ...rest
 }) => {
-  const styles = useStyles();
+  const styles = useDotStepperStyles();
   return (
     <MobileStepper
       variant="dots"

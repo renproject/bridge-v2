@@ -2,10 +2,12 @@ import React, {
   FunctionComponent,
   useCallback,
   useMemo,
+  useReducer,
   useState,
 } from "react";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
+import { prodDomains } from "../../constants/constants";
 import { ErrorBoundary } from "./Error";
 
 const useStyles = makeStyles({
@@ -29,7 +31,10 @@ const useStyles = makeStyles({
   },
 });
 
-const off = true; // process.env.NODE_ENV === "production";
+export const isProductionLike = prodDomains.includes(window.location.host);
+
+const off =
+  isProductionLike && !(localStorage.getItem("showDebugs") === "true");
 
 type DebugProps = {
   it: any;
@@ -77,7 +82,9 @@ export const DebugRenderer: FunctionComponent<Partial<DebugProps>> = ({
   it,
   children,
 }) => {
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const noClick = useCallback((event) => {
+    forceUpdate();
     event.stopPropagation();
   }, []);
   const classes = useStyles();

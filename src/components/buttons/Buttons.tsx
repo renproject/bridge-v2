@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   ButtonProps,
   Fade,
@@ -27,7 +28,10 @@ import {
   skyBlueLighter,
 } from "../../theme/colors";
 import { defaultShadow } from "../../theme/other";
-import { copyToClipboard } from "../../utils/copyToClipboard";
+import {
+  copyToClipboard,
+  copyToClipboardAsync,
+} from "../../utils/copyToClipboard";
 import {
   BrowserNotificationsIcon,
   CustomSvgIconComponent,
@@ -41,7 +45,7 @@ import { PulseIndicator } from "../progress/ProgressHelpers";
 import { MiddleEllipsisText } from "../typography/TypographyHelpers";
 
 export type ToggleIconButtonProps = IconButtonProps & {
-  variant?: "settings" | "notifications";
+  variant?: "settings" | "notifications" | "history";
   pressed?: boolean;
 };
 
@@ -90,6 +94,8 @@ export const ToggleIconButton: FunctionComponent<ToggleIconButtonProps> = ({
         return BrowserNotificationsIcon;
       case "settings":
         return MoreVertIcon;
+      case "history":
+        return TxHistoryIcon;
       default:
         return () => null;
     }
@@ -250,6 +256,42 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
   );
 };
 
+export const CopyContentTypography: FunctionComponent<
+  CopyContentButtonProps
+> = ({ content, copiedMessage = "Copied!" }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleClick = useCallback(() => {
+    if (!copied) {
+      copyToClipboardAsync(content).then(() => {
+        setCopied(true);
+        setTimeout(() => {
+          setCopied(false);
+        }, 4000);
+      });
+    }
+  }, [content, copied]);
+  return (
+    <Box display="flex" justifyContent="center" alignItems="center">
+      <span>
+        {copied && (
+          <Fade in={copied} timeout={1200}>
+            <span>{copiedMessage}</span>
+          </Fade>
+        )}
+        <Hide when={copied}>
+          <strong>
+            <MiddleEllipsisText hoverable>{content}</MiddleEllipsisText>
+          </strong>
+        </Hide>
+      </span>
+      <IconButton onClick={handleClick}>
+        <CopyIcon fontSize="inherit" />
+      </IconButton>
+    </Box>
+  );
+};
+
 const useMiddleEllipsisCopyStyles = makeStyles({
   root: {
     width: "100%",
@@ -345,13 +387,9 @@ type TransactionDetailsButtonProps = ButtonProps & {
   link?: string;
 };
 
-export const TransactionDetailsButton: FunctionComponent<TransactionDetailsButtonProps> = ({
-  label,
-  address,
-  isTx = true,
-  link = "",
-  size,
-}) => {
+export const TransactionDetailsButton: FunctionComponent<
+  TransactionDetailsButtonProps
+> = ({ label, address, isTx = true, link = "", size }) => {
   const styles = useTransactionDetailsButtonStyles();
 
   const buttonClassName = classNames(styles.button, {
@@ -452,18 +490,12 @@ type ClosableMenuIconButtonProps = IconButtonProps & {
   indicator?: boolean;
 };
 
-export const ClosableMenuIconButton: FunctionComponent<ClosableMenuIconButtonProps> = ({
-  opened,
-  indicator,
-  className,
-  Icon,
-  ...props
-}) => {
+export const ClosableMenuIconButton: FunctionComponent<
+  ClosableMenuIconButtonProps
+> = ({ opened, indicator, className, Icon, ...props }) => {
   const { icon: iconClassName, ...classes } = useMenuIconButtonStyles();
-  const {
-    hoisted: hoistedClassName,
-    indicator: indicatorClassname,
-  } = useTransactionHistoryIconButtonStyles();
+  const { hoisted: hoistedClassName, indicator: indicatorClassname } =
+    useTransactionHistoryIconButtonStyles();
   const ResolvedIcon = opened ? CloseIcon : Icon;
   const resolvedClassName = classNames(className, {
     [hoistedClassName]: opened,
@@ -557,5 +589,9 @@ export const SecondaryActionButton: FunctionComponent<ButtonProps> = (
 export const RedButton = withStyles((theme) => ({
   root: {
     color: theme.palette.error.main,
+    borderColor: theme.palette.error.light,
+    "&:hover": {
+      borderColor: theme.palette.error.dark,
+    },
   },
 }))(Button);

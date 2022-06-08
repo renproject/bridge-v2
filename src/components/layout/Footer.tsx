@@ -8,8 +8,9 @@ import classNames from "classnames";
 import React, { FunctionComponent } from "react";
 import { useTranslation } from "react-i18next";
 import { links } from "../../constants/constants";
+import { featureFlags } from "../../constants/featureFlags";
 import { LanguageSelector } from "../../features/i18n/components/I18nHelpers";
-// import { SystemMonitorFooterButton } from "../../features/ui/SystemMonitor";
+import { SystemMonitorFooterButton } from "../../features/ui/SystemMonitor";
 import { paths } from "../../pages/routes";
 import { CustomLinkProps, Link } from "../links/Links";
 
@@ -119,9 +120,11 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
             {t("navigation.wiki-label")}
           </FooterTextLink>
         </li>
-        {/*<li>*/}
-        {/*  <SystemMonitorFooterButton />*/}
-        {/*</li>*/}
+        {featureFlags.godMode && (
+          <li>
+            <SystemMonitorFooterButton />
+          </li>
+        )}
         <li>
           <LanguageSelector />
         </li>

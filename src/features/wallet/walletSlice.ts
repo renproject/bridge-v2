@@ -1,36 +1,44 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Asset, Chain } from "@renproject/chains";
 import { RootState } from "../../store/rootReducer";
-import {
-  BridgeChain,
-  BridgeCurrency,
-  getChainConfig,
-} from "../../utils/assetConfigs";
 
 export type AssetBalance = {
-  symbol: BridgeCurrency;
+  symbol: Asset;
   balance: number;
 };
 
+export type AddressScreening = {
+  dialogOpened: boolean;
+  fromAddressSanctioned: boolean | null;
+  toAddressSanctioned: boolean | null;
+};
+
 type WalletState = {
-  chain: BridgeChain;
+  chain: Chain;
   pickerOpened: boolean;
   balances: Array<AssetBalance>;
+  screening: AddressScreening;
 };
 
 let initialState: WalletState = {
-  chain: BridgeChain.ETHC,
+  chain: Chain.Ethereum,
   pickerOpened: false,
   balances: [],
+  screening: {
+    dialogOpened: false,
+    fromAddressSanctioned: null,
+    toAddressSanctioned: null,
+  },
 };
 
 const slice = createSlice({
   name: "wallet",
   initialState,
   reducers: {
-    setChain(state, action: PayloadAction<BridgeChain>) {
+    setChain(state, action: PayloadAction<Chain>) {
       state.chain = action.payload;
     },
-    setWalletPickerOpened(state, action: PayloadAction<boolean>) {
+    setPickerOpened(state, action: PayloadAction<boolean>) {
       state.pickerOpened = action.payload;
     },
     addOrUpdateBalance(state, action: PayloadAction<AssetBalance>) {
@@ -46,25 +54,30 @@ const slice = createSlice({
     resetBalances(state) {
       state.balances = [];
     },
+    setScreeningWarningOpened(state, action: PayloadAction<boolean>) {
+      state.screening.dialogOpened = action.payload;
+    },
+    setFromAddressSanctioned(state, action: PayloadAction<boolean | null>) {
+      state.screening.fromAddressSanctioned = action.payload;
+    },
+    setToAddressSanctioned(state, action: PayloadAction<boolean | null>) {
+      state.screening.toAddressSanctioned = action.payload;
+    },
   },
 });
 
 export const {
   setChain,
-  setWalletPickerOpened,
+  setPickerOpened,
   addOrUpdateBalance,
   resetBalances,
+  setScreeningWarningOpened,
+  setFromAddressSanctioned,
+  setToAddressSanctioned,
 } = slice.actions;
 
 export const walletReducer = slice.reducer;
 
 export const $wallet = (state: RootState) => state.wallet;
-export const $chain = createSelector($wallet, (wallet) => wallet.chain);
-export const $walletPickerOpened = createSelector(
-  $wallet,
-  (wallet) => wallet.pickerOpened
-);
-export const $multiwalletChain = createSelector($chain, (chain) => {
-  const chainConfig = getChainConfig(chain);
-  return chainConfig.rentxName;
-});
+
+export const $screening = createSelector($wallet, (wallet) => wallet.screening);

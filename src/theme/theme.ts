@@ -1,4 +1,4 @@
-import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
+import { createTheme, responsiveFontSizes } from "@material-ui/core";
 import { Palette } from "@material-ui/core/styles/createPalette";
 import { Shadows } from "@material-ui/core/styles/shadows";
 // import { Shadows } from "@material-ui/core/styles/shadows";
@@ -18,7 +18,7 @@ const baseTheme = (palette: Palette) => ({
   shadows: Array(25).fill("none") as Shadows,
 });
 
-declare module "@material-ui/core/styles/createMuiTheme" {
+declare module "@material-ui/core/styles" {
   interface Theme {
     customColors: typeof customColors;
   }
@@ -29,7 +29,7 @@ declare module "@material-ui/core/styles/createMuiTheme" {
 }
 
 export const lightTheme = responsiveFontSizes(
-  createMuiTheme({
+  createTheme({
     customColors,
     palette: lightPalette,
     ...baseTheme(lightPalette),
@@ -37,7 +37,7 @@ export const lightTheme = responsiveFontSizes(
 );
 
 export const darkTheme = responsiveFontSizes(
-  createMuiTheme({
+  createTheme({
     customColors,
     palette: darkPalette,
     ...baseTheme(darkPalette),

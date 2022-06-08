@@ -30,7 +30,7 @@ export const greenDark = "#2C8A6F";
 
 export const textDark = "#3F3F48";
 export const textLight = "#6B6D70";
-export const textLighter = "#87888C";
+export const textLighter = "#737478";
 export const textDisabled = "#DCE0E3";
 
 export const grayDisabled = "#c1c2c4";
@@ -53,11 +53,17 @@ export const strokeDefault = "#DBE0E8";
 export const alertWarning = "#AD5700";
 export const alertWarningBackground = "#FBF3E9";
 
-
 export const alertInfo = "#5027E2";
-export const alertInfoBackground = "#F7F3FF";
+export const alertInfoBackground = "#f7f3ff";
 export const alertError = "#D60000";
 export const alertErrorBackground = "#FBE8E8";
 
 export const alertSuccess = "#1E4620";
 export const alertSuccessBackground = "#EDF7EA";
+
+export const popoverBackground = "#CCE2FA";
+export const popoverTextColor = graphiteLight;
+
+export const chipPending = "#E8F3FF";
+export const chipDone = "#6BFFB8";
+export const chipAdvanced = "#FFD2D5";

@@ -1,9 +1,8 @@
 import { MuiThemeProvider } from "@material-ui/core";
-import "@renproject/fonts/index.css";
+import "@renproject/fonts/fonts.esm.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-// import { inspect } from "@xstate/inspect";
 import "./index.css";
 import { NotificationsProvider } from "./providers/Notifications";
 import { TitleProviders } from "./providers/TitleProviders";
@@ -13,38 +12,35 @@ import { lightTheme } from "./theme/theme";
 import "./i18n/i18n";
 import * as Sentry from "@sentry/react";
 
-// process.env.NODE_ENV !== "production" &&
-//   inspect({
-//     // options
-//     // url: 'https://statecharts.io/inspect', // (default)
-//     iframe: false, // open in new window
-//   });
+// clean history state after page reaload
+window.history.replaceState({}, document.title);
 
-if (process.env.REACT_APP_SENTRY_DSN) {
-  Sentry.init({
-    dsn: process.env.REACT_APP_SENTRY_DSN,
-    environment:
-      process.env.NODE_ENV === "development"
-        ? "dev"
-        : window.location.origin.includes("bridge.renproject.io")
+if (process.env.NODE_ENV !== "development") {
+  if (process.env.REACT_APP_SENTRY_DSN) {
+    Sentry.init({
+      dsn: process.env.REACT_APP_SENTRY_DSN,
+      environment: window.location.origin.includes("bridge.renproject.io")
         ? "prod"
         : "staging",
-    release: process.env.REACT_APP_VERSION,
-  });
+      release: process.env.REACT_APP_VERSION,
+    });
+  }
 }
 
 const render = () => {
   const App = require("./App").default;
   ReactDOM.render(
-    <Provider store={store}>
-      <MuiThemeProvider theme={lightTheme}>
-        <TitleProviders>
-          <NotificationsProvider>
-            <App />
-          </NotificationsProvider>
-        </TitleProviders>
-      </MuiThemeProvider>
-    </Provider>,
+    <>
+      <Provider store={store}>
+        <MuiThemeProvider theme={lightTheme}>
+          <TitleProviders>
+            <NotificationsProvider>
+              <App />
+            </NotificationsProvider>
+          </TitleProviders>
+        </MuiThemeProvider>
+      </Provider>
+    </>,
     document.getElementById("root")
   );
 };

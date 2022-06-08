@@ -1,4 +1,4 @@
-import { fade } from "@material-ui/core";
+import { alpha } from "@material-ui/core";
 import { Palette } from "@material-ui/core/styles/createPalette";
 import { Overrides } from "@material-ui/core/styles/overrides";
 import { getShadow } from "./animationUtils";
@@ -11,7 +11,9 @@ import {
   alertSuccessBackground,
   alertWarning,
   alertWarningBackground,
-  textDark,
+  black,
+  popoverBackground,
+  popoverTextColor,
   textDisabled,
   textLighter,
 } from "./colors";
@@ -67,10 +69,13 @@ export const overrides = (palette: Palette): Overrides => {
     },
     MuiChip: {
       root: {
-        paddingTop: 3, // TODO: fix after investigation font hoisting issue
         backgroundColor: "#F1F1F6",
-        borderRadius: 4,
+        borderRadius: 8,
         height: 22,
+        "& $avatarSmall": {
+          width: 13,
+          height: 13,
+        },
       },
       sizeSmall: {
         height: 16,
@@ -112,7 +117,17 @@ export const overrides = (palette: Palette): Overrides => {
     },
     MuiFormControlLabel: {
       root: {
+        display: "flex",
+        justifyContent: "stretch",
         marginRight: 0,
+      },
+      label: {
+        flexGrow: 1,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        fontSize: 12,
+        color: palette.text.primary,
       },
     },
     MuiFilledInput: {
@@ -207,8 +222,8 @@ export const overrides = (palette: Palette): Overrides => {
         color: textLighter,
         opacity: 1,
         "&$selected": {
-          color: textDark,
-          fontWeight: 500,
+          color: black,
+          fontWeight: 600,
         },
         "&$disabled": {
           color: textDisabled,
@@ -226,25 +241,27 @@ export const overrides = (palette: Palette): Overrides => {
         borderRadius: 30,
         borderColor: palette.grey[300],
         "&$selected": {
-          backgroundColor: fade(palette.grey[300], 0.6),
+          backgroundColor: alpha(palette.grey[300], 0.6),
           "&:hover": {
-            backgroundColor: fade(palette.grey[300], 0.6),
+            backgroundColor: alpha(palette.grey[300], 0.6),
           },
         },
         "&:hover": {
-          backgroundColor: fade(palette.grey[300], 0.4),
+          backgroundColor: alpha(palette.grey[300], 0.4),
         },
       },
     },
     MuiTooltip: {
-      arrow: {
-        color: palette.common.black,
+      popper: {
+        maxWidth: 200,
       },
       tooltip: {
         borderRadius: 4,
+        fontSize: 12,
+        padding: 9,
         textAlign: "center",
-        backgroundColor: palette.common.black,
-        fontSize: 11,
+        color: popoverTextColor,
+        backgroundColor: popoverBackground,
       },
     },
   } as Overrides;
