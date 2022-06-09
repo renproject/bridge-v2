@@ -88,6 +88,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           valueEquivalent={
             renVMFeeAmountUsd !== null ? (
               <NumberFormatText
+                inline
                 value={renVMFeeAmountUsd}
                 prefix="$"
                 decimalScale={2}
@@ -118,6 +119,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           valueEquivalent={
             fromChainFeeAmountUsd !== null ? (
               <NumberFormatText
+                inline
                 value={fromChainFeeAmountUsd}
                 prefix="$"
                 decimalScale={2}
@@ -148,6 +150,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           valueEquivalent={
             toChainFeeAmountUsd !== null ? (
               <NumberFormatText
+                inline
                 value={toChainFeeAmountUsd}
                 prefix="$"
                 decimalScale={2}

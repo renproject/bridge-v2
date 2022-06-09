@@ -60,15 +60,17 @@ const useLabelWithValueStyles = makeStyles<
       verticalAlign: "middle",
     },
     valueWrapper: {
-      flexGrow: 1,
+      display: "flex",
       overflow: "hidden",
       textAlign: "right",
       color: (props) => getElementColor(props, black, grey),
     },
     value: {
       whiteSpace: "nowrap",
+      overflow: "hidden",
     },
     valueEquivalent: {
+      whiteSpace: "nowrap",
       marginLeft: 4,
       color: (props) => getElementColor(props, grey),
     },
