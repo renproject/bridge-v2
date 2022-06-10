@@ -85,7 +85,7 @@ export const useWhitelist = () => {
       lockAndMint: {},
     };
     for (let selector of whitelist) {
-      console.log(selector);
+      // console.log(selector);
       const { asset, from, to, ioType } = decomposeSelector(selector);
       if (!supportedAssets.includes(asset) || ioType === null) {
         continue;

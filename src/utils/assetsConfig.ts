@@ -66,8 +66,6 @@ import {
   CustomSvgIconComponent,
   EmptyCircleIcon,
 } from "../components/icons/RenIcons";
-
-// import { env } from "../constants/environmentVariables";
 import { getAssetChainsConfig } from "./chainsConfig";
 
 export type AssetIconsConfig = {
