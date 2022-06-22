@@ -19,12 +19,12 @@ const useNumberFormatStyles = makeStyles({
 });
 
 type NumberFormatTextProps = NumberFormatProps & {
-  inline?: boolean;
+  flex?: boolean;
   spacedSuffix?: string;
 };
 
 export const NumberFormatText: FunctionComponent<NumberFormatTextProps> = ({
-  inline,
+  flex,
   spacedSuffix,
   value,
   ...props
@@ -32,7 +32,7 @@ export const NumberFormatText: FunctionComponent<NumberFormatTextProps> = ({
   const styles = useNumberFormatStyles();
   // const resolvedSuffix = spacedSuffix ? ` ${spacedSuffix}` : suffix;
   return (
-    <span className={inline ? styles.rootInline : styles.root}>
+    <span className={flex ? styles.root : styles.rootInline}>
       <NumberFormat
         className={styles.value}
         {...numberFormatOptions}

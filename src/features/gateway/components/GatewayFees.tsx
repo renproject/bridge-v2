@@ -75,6 +75,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           value={
             renVMFeeAmount ? (
               <NumberFormatText
+                flex
                 value={renVMFeeAmount}
                 spacedSuffix={assetConfig.shortName}
                 decimalScale={8}
@@ -88,7 +89,6 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           valueEquivalent={
             renVMFeeAmountUsd !== null ? (
               <NumberFormatText
-                inline
                 value={renVMFeeAmountUsd}
                 prefix="$"
                 decimalScale={2}
@@ -109,6 +109,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           value={
             fromChainFeeAmount !== null && fromChainFeeAsset !== null ? (
               <NumberFormatText
+                flex
                 value={fromChainFeeAmount}
                 spacedSuffix={assetsConfig[fromChainFeeAsset].shortName}
               />
@@ -119,7 +120,6 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           valueEquivalent={
             fromChainFeeAmountUsd !== null ? (
               <NumberFormatText
-                inline
                 value={fromChainFeeAmountUsd}
                 prefix="$"
                 decimalScale={2}
@@ -140,6 +140,7 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           value={
             toChainFeeAmount !== null && toChainFeeAsset !== null ? (
               <NumberFormatText
+                flex
                 value={toChainFeeAmount}
                 spacedSuffix={assetsConfig[toChainFeeAsset].shortName}
               />
@@ -150,7 +151,6 @@ export const GatewayFees: FunctionComponent<GatewayFeesProps> = ({
           valueEquivalent={
             toChainFeeAmountUsd !== null ? (
               <NumberFormatText
-                inline
                 value={toChainFeeAmountUsd}
                 prefix="$"
                 decimalScale={2}
