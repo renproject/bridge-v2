@@ -286,7 +286,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     confirmations: lockConfirmations,
     target: lockTargetConfirmations,
     // txId: lockTxId,
-    txIdFormatted: lockTxIdFormatted,
+    txHash: lockTxHash,
     // txIndex: lockTxIndex,
     txUrl: lockTxUrl,
     amount: lockAmount,
@@ -363,7 +363,7 @@ export const GatewayDepositProcessor: FunctionComponent<
     confirmations: mintConfirmations,
     target: mintTargetConfirmations,
     // txId: mintTxId,
-    txIdFormatted: mintTxIdFormatted,
+    txHash: mintTxHash,
     // txIndex: mintTxIndex,
     txUrl: mintTxUrl,
   } = outTxMeta;
@@ -411,7 +411,7 @@ export const GatewayDepositProcessor: FunctionComponent<
             lockStatus={lockStatus}
             lockAssetDecimals={lockAssetDecimals}
             lockAmount={lockAmount}
-            lockTxId={lockTxIdFormatted}
+            lockTxId={lockTxHash}
             lockTxUrl={lockTxUrl}
           />
         );
@@ -435,7 +435,7 @@ export const GatewayDepositProcessor: FunctionComponent<
         lockTargetConfirmations={lockTargetConfirmations}
         lockAssetDecimals={lockAssetDecimals}
         lockAmount={lockAmount}
-        lockTxId={lockTxIdFormatted}
+        lockTxId={lockTxHash}
         lockTxUrl={lockTxUrl}
         onSubmit={handleSubmit}
         onReset={handleReset}
@@ -470,12 +470,12 @@ export const GatewayDepositProcessor: FunctionComponent<
         <MintCompletingStatus
           gateway={gateway}
           transaction={transaction}
-          lockTxId={lockTxIdFormatted}
+          lockTxId={lockTxHash}
           lockTxUrl={lockTxUrl}
           mintAmount={mintAmount}
           mintAssetDecimals={mintAssetDecimals}
           mintTxUrl={mintTxUrl}
-          mintTxHash={mintTxIdFormatted}
+          mintTxHash={mintTxHash}
           mintConfirmations={mintConfirmations}
           mintTargetConfirmations={mintTargetConfirmations}
         />

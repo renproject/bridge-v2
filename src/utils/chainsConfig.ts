@@ -51,7 +51,7 @@ export type ChainColorConfig = {
 
 export type ChainConfig = ChainBaseConfig & ChainColorConfig & {};
 
-const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
+const chainsBaseConfig: Record<Exclude<Chain, Chain.RenChain>, ChainBaseConfig> = {
   Arbitrum: {
     Icon: chainIcon(Arbitrum),
     fullName: "Arbitrum",

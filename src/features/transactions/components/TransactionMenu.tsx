@@ -212,7 +212,7 @@ export interface ChainTransaction {
     txid: UrlBase64String;
     txindex: NumericString;
 
-    txidFormatted: string;
+    txHash: string;
 }
 
 export interface InputChainTransaction extends ChainTransaction {
@@ -286,10 +286,10 @@ export const UpdateTransactionForm: FunctionComponent<
     }
   }, []);
 
-  const [txIdFormatted, setTxIdFormatted] = useState("");
-  const handleTxIdFormattedChange = useCallback((event) => {
+  const [txHash, setTxHash] = useState("");
+  const handleTxHashChange = useCallback((event) => {
     const newValue = event.target.value;
-    setTxIdFormatted(newValue);
+    setTxHash(newValue);
   }, []);
 
   const [amount, setAmount] = useState("");
@@ -336,11 +336,11 @@ export const UpdateTransactionForm: FunctionComponent<
     let txPayload;
     if (isFromCC) {
       txPayload = (instance as EthereumBaseChain).Transaction({
-        txidFormatted: txIdFormatted,
+        txHash: txHash,
       });
     } else {
       txPayload = (instance as BitcoinBaseChain).Transaction({
-        txidFormatted: txIdFormatted,
+        txHash: txHash,
         txindex: txIndex,
       });
     }
@@ -351,7 +351,7 @@ export const UpdateTransactionForm: FunctionComponent<
       .tx as ChainTransaction;
     // const finalTx: InputChainTransaction = {
     //   txid: txId || payloadTxData.txid,
-    //   txidFormatted: txIdFormatted || payloadTxData.txidFormatted,
+    //   txHash: txHash || payloadTxData.txHash,
     //   txindex: txIndex || payloadTxData.txindex,
     //   chain: payloadTxData.chain,
     //   asset: asset as string,
@@ -385,7 +385,7 @@ export const UpdateTransactionForm: FunctionComponent<
     // gateway,
     // txId,
     txIndex,
-    txIdFormatted,
+    txHash,
     navigateToGateway,
     handleTxRecoveryClose,
     // amount,
@@ -414,8 +414,8 @@ export const UpdateTransactionForm: FunctionComponent<
       <OutlinedTextFieldWrapper>
         <OutlinedTextField
           label={"Formatted Transaction Hash (Id)"}
-          value={txIdFormatted}
-          onChange={handleTxIdFormattedChange}
+          value={txHash}
+          onChange={handleTxHashChange}
           placeholder={"Enter formatted transaction hash (id)"}
         />
       </OutlinedTextFieldWrapper>
