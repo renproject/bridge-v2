@@ -21,7 +21,7 @@ export type PartialChainTransaction = Partial<ChainTransaction> &
         txid: string;
       }
     | {
-        txidFormatted: string;
+        txHash: string;
       }
   );
 

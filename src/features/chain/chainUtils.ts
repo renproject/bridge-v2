@@ -14,7 +14,7 @@ import {
   BinanceSmartChain,
   Ethereum,
   EthProvider,
-  EvmNetworkConfig,
+  EVMNetworkConfig,
   Fantom,
   Polygon,
 } from "@renproject/chains-ethereum";
@@ -48,7 +48,7 @@ export type PartialChainInstanceMap = Partial<ChainInstanceMap>;
 
 interface EVMConstructor<EVM> {
   configMap: {
-    [network in RenNetwork]?: EvmNetworkConfig;
+    [network in RenNetwork]?: EVMNetworkConfig;
   };
 
   new ({
@@ -152,7 +152,7 @@ const getBitcoinBaseChain = <BTC extends BitcoinBaseChain>(ChainClass: BTC) => {
   };
 };
 
-const getDepositBaseChain = <DBC extends DepositChain>(ChainClass: DBC) => {
+const getDepositBaseChain = <DBC extends DepositChain<any, any>>(ChainClass: DBC) => {
   return {
     chain: ChainClass,
   };
