@@ -11,7 +11,7 @@ import {
   Ethereum,
   Fantom,
   Fil,
-  Kava,
+  KavaChain,
   Luna,
   Moonbeam,
   Optimism,
@@ -113,7 +113,7 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     networks: createNetworksConfig(250, 4002),
   },
   Kava: {
-    Icon: chainIcon(Kava),
+    Icon: chainIcon(KavaChain),
     fullName: "Kava",
     shortName: "Kava",
     networks: createNetworksConfig(2221, 2222),
