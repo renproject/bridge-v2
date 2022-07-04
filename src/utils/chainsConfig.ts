@@ -110,19 +110,19 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     networks: createNetworksConfig(250, 4002),
   },
   Kava: {
-    Icon: chainIcon(Ethereum),
+    Icon: chainIcon(Ethereum), // FIXME:
     fullName: "Kava",
     shortName: "Kava",
     networks: createNetworksConfig(2221, 2222),
   },
   Moonbeam: {
-    Icon: chainIcon(Ethereum),
+    Icon: chainIcon(Ethereum), // FIXME:
     fullName: "Moonbeam",
     shortName: "Moonbeam",
     networks: createNetworksConfig(1284, 1287),
   },
   Optimism: {
-    Icon: chainIcon(Ethereum),
+    Icon: chainIcon(Ethereum), // FIXME:
     fullName: "Optimism",
     shortName: "Optimism",
     networks: createNetworksConfig(10, 69),
@@ -169,7 +169,9 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
 };
 
 const getChainColorConfig = (chain: Chain) => {
+  // FIXME: Uncomment this.
   // const color = chainsColors[chain];
+  // return color.primary;
   return "#aaa";
 };
 

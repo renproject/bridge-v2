@@ -234,16 +234,16 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateSymbol: "ftx-token",
   },
   GLMR: {
-    Icon: nativeTokenIcon(Eth),
-    RenIcon: wrappedTokenIcon(RenEth),
+    Icon: nativeTokenIcon(Eth), // FIXME:
+    RenIcon: wrappedTokenIcon(RenEth), // FIXME:
     shortName: "GLMR",
     fullName: "Glimmer",
     rateService: AssetRateService.Coingecko,
     rateSymbol: "moonbeam",
   },
   KAVA: {
-    Icon: nativeTokenIcon(Eth),
-    RenIcon: wrappedTokenIcon(RenEth),
+    Icon: nativeTokenIcon(Eth), // FIXME:
+    RenIcon: wrappedTokenIcon(RenEth), // FIXME:
     shortName: "KAVA",
     fullName: "Kava",
     rateService: AssetRateService.Coingecko,
@@ -358,7 +358,9 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
 };
 
 const getAssetColorConfig = (asset: Asset) => {
+  // FIXME: Uncomment this.
   // const color = assetsColors[asset];
+  // return color.primary;
   return "#aaa";
 };
 
