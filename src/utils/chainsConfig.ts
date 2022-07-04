@@ -11,10 +11,10 @@ import {
   Ethereum,
   Fantom,
   Fil,
-  // Kava,
+  Kava,
   Luna,
-  // Moonbeam,
-  // Optimism,
+  Moonbeam,
+  Optimism,
   Polygon,
   Solana,
   Zec,
@@ -22,7 +22,10 @@ import {
 
 import { RenNetwork } from "@renproject/utils";
 import { chainIcon, chainIconFromToken } from "../components/icons/IconHelpers";
-import { CustomSvgIconComponent, EmptyCircleIcon } from "../components/icons/RenIcons";
+import {
+  CustomSvgIconComponent,
+  EmptyCircleIcon,
+} from "../components/icons/RenIcons";
 import { AssetChainsConfig } from "./assetsConfig";
 import {
   createNetworkConfig,
@@ -110,19 +113,19 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     networks: createNetworksConfig(250, 4002),
   },
   Kava: {
-    Icon: chainIcon(Ethereum), // FIXME:
+    Icon: chainIcon(Kava),
     fullName: "Kava",
     shortName: "Kava",
     networks: createNetworksConfig(2221, 2222),
   },
   Moonbeam: {
-    Icon: chainIcon(Ethereum), // FIXME:
+    Icon: chainIcon(Moonbeam),
     fullName: "Moonbeam",
     shortName: "Moonbeam",
     networks: createNetworksConfig(1284, 1287),
   },
   Optimism: {
-    Icon: chainIcon(Ethereum), // FIXME:
+    Icon: chainIcon(Optimism),
     fullName: "Optimism",
     shortName: "Optimism",
     networks: createNetworksConfig(10, 69),
@@ -169,10 +172,8 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
 };
 
 const getChainColorConfig = (chain: Chain) => {
-  // FIXME: Uncomment this.
-  // const color = chainsColors[chain];
-  // return color.primary;
-  return "#aaa";
+  const color = chainsColors[chain];
+  return color.primary;
 };
 
 export const chainsConfig = Object.fromEntries(
