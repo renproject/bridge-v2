@@ -11,7 +11,10 @@ import {
   Ethereum,
   Fantom,
   Fil,
+  // Kava,
   Luna,
+  // Moonbeam,
+  // Optimism,
   Polygon,
   Solana,
   Zec,
@@ -19,7 +22,7 @@ import {
 
 import { RenNetwork } from "@renproject/utils";
 import { chainIcon, chainIconFromToken } from "../components/icons/IconHelpers";
-import { CustomSvgIconComponent } from "../components/icons/RenIcons";
+import { CustomSvgIconComponent, EmptyCircleIcon } from "../components/icons/RenIcons";
 import { AssetChainsConfig } from "./assetsConfig";
 import {
   createNetworkConfig,
@@ -50,6 +53,12 @@ export type ChainColorConfig = {
 };
 
 export type ChainConfig = ChainBaseConfig & ChainColorConfig & {};
+
+const unsetChainConfig: ChainBaseConfig = {
+  Icon: EmptyCircleIcon,
+  fullName: "",
+  shortName: "",
+};
 
 const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Arbitrum: {
@@ -100,6 +109,24 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     shortName: "Fantom",
     networks: createNetworksConfig(250, 4002),
   },
+  Kava: {
+    Icon: chainIcon(Ethereum),
+    fullName: "Kava",
+    shortName: "Kava",
+    networks: createNetworksConfig(2221, 2222),
+  },
+  Moonbeam: {
+    Icon: chainIcon(Ethereum),
+    fullName: "Moonbeam",
+    shortName: "Moonbeam",
+    networks: createNetworksConfig(1284, 1287),
+  },
+  Optimism: {
+    Icon: chainIcon(Ethereum),
+    fullName: "Optimism",
+    shortName: "Optimism",
+    networks: createNetworksConfig(10, 69),
+  },
   Polygon: {
     Icon: chainIcon(Polygon),
     fullName: "Polygon",
@@ -138,11 +165,12 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     shortName: "Goerli",
     networks: createNetworksConfig(1, 5),
   },
+  Catalog: unsetChainConfig,
 };
 
 const getChainColorConfig = (chain: Chain) => {
-  const color = chainsColors[chain];
-  return color.primary;
+  // const color = chainsColors[chain];
+  return "#aaa";
 };
 
 export const chainsConfig = Object.fromEntries(
@@ -204,6 +232,9 @@ export const supportedEthereumChains: Array<Chain> = [
   Chain.Polygon,
   Chain.Avalanche,
   Chain.Arbitrum,
+  Chain.Kava,
+  Chain.Moonbeam,
+  Chain.Optimism,
 ];
 
 export const isEthereumBaseChain = (chain: Chain) =>

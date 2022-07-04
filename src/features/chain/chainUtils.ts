@@ -14,8 +14,11 @@ import {
   BinanceSmartChain,
   Ethereum,
   EthProvider,
-  EvmNetworkConfig,
+  EVMNetworkConfig,
   Fantom,
+  Kava,
+  Moonbeam,
+  Optimism,
   Polygon,
 } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
@@ -48,10 +51,10 @@ export type PartialChainInstanceMap = Partial<ChainInstanceMap>;
 
 interface EVMConstructor<EVM> {
   configMap: {
-    [network in RenNetwork]?: EvmNetworkConfig;
+    [network in RenNetwork]?: EVMNetworkConfig;
   };
 
-  new ({
+  new({
     network,
     provider,
   }: {
@@ -167,6 +170,9 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     [Chain.Avalanche]: getEthereumBaseChain(Avalanche, network),
     [Chain.Arbitrum]: getEthereumBaseChain(Arbitrum, network),
     [Chain.Fantom]: getEthereumBaseChain(Fantom, network),
+    [Chain.Kava]: getEthereumBaseChain(Kava, network),
+    [Chain.Moonbeam]: getEthereumBaseChain(Moonbeam, network),
+    [Chain.Optimism]: getEthereumBaseChain(Optimism, network),
   };
 
   const bitcoinBaseChains = {

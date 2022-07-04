@@ -1,7 +1,7 @@
 import { Badge } from "@material-ui/core";
 import { Asset, Chain } from "@renproject/chains";
 import {
-  assetsColors,
+  // assetsColors,
   Avax,
   Bch,
   Bnb,
@@ -16,6 +16,8 @@ import {
   Fil,
   Ftm,
   Ftt,
+  // Glmr,
+  // Kava,
   Knc,
   Link,
   Luna,
@@ -37,6 +39,8 @@ import {
   RenFil,
   RenFtm,
   RenFtt,
+  // RenGlmr,
+  // RenKava,
   RenKnc,
   RenLink,
   RenLuna,
@@ -229,6 +233,22 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateService: AssetRateService.Coingecko,
     rateSymbol: "ftx-token",
   },
+  GLMR: {
+    Icon: nativeTokenIcon(Eth),
+    RenIcon: wrappedTokenIcon(RenEth),
+    shortName: "GLMR",
+    fullName: "Glimmer",
+    rateService: AssetRateService.Coingecko,
+    rateSymbol: "moonbeam",
+  },
+  KAVA: {
+    Icon: nativeTokenIcon(Eth),
+    RenIcon: wrappedTokenIcon(RenEth),
+    shortName: "KAVA",
+    fullName: "Kava",
+    rateService: AssetRateService.Coingecko,
+    rateSymbol: "kava",
+  },
   KNC: {
     Icon: nativeTokenIcon(Knc),
     RenIcon: wrappedTokenIcon(RenKnc),
@@ -334,11 +354,12 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateSymbol: "zcash",
   },
   gETH: unsetAssetConfig,
+  oETH: unsetAssetConfig,
 };
 
 const getAssetColorConfig = (asset: Asset) => {
-  const color = assetsColors[asset];
-  return color.primary;
+  // const color = assetsColors[asset];
+  return "#aaa";
 };
 
 export type AssetChainsConfig = {
@@ -429,42 +450,44 @@ export const getUIAsset = (asset: Asset, chain: Chain) => {
 export const supportedAssets =
   env.ENABLED_ASSETS[0] === "*"
     ? [
-        Asset.BTC,
-        Asset.BCH,
-        Asset.DGB,
-        Asset.DOGE,
-        Asset.FIL,
-        Asset.LUNA,
-        Asset.ZEC,
-        Asset.ETH,
-        Asset.BNB,
-        Asset.AVAX,
-        Asset.FTM,
-        Asset.ArbETH,
-        Asset.MATIC,
-        // Asset.SOL, // not sure about that
-        Asset.REN,
-        Asset.DAI,
-        Asset.USDC,
-        Asset.USDT,
-        Asset.EURT,
-        Asset.BUSD,
-        Asset.MIM,
-        Asset.CRV,
-        Asset.LINK,
-        Asset.UNI,
-        Asset.SUSHI,
-        Asset.FTT,
-        Asset.ROOK,
-        Asset.BADGER,
-        Asset.KNC,
-      ]
+      Asset.BTC,
+      Asset.BCH,
+      Asset.DGB,
+      Asset.DOGE,
+      Asset.FIL,
+      Asset.LUNA,
+      Asset.ZEC,
+      Asset.ETH,
+      Asset.BNB,
+      Asset.AVAX,
+      Asset.FTM,
+      Asset.ArbETH,
+      Asset.MATIC,
+      Asset.GLMR,
+      Asset.KAVA,
+      // Asset.SOL, // not sure about that
+      Asset.REN,
+      Asset.DAI,
+      Asset.USDC,
+      Asset.USDT,
+      Asset.EURT,
+      Asset.BUSD,
+      Asset.MIM,
+      Asset.CRV,
+      Asset.LINK,
+      Asset.UNI,
+      Asset.SUSHI,
+      Asset.FTT,
+      Asset.ROOK,
+      Asset.BADGER,
+      Asset.KNC,
+    ]
     : env.ENABLED_ASSETS.filter((x) => {
-        const included = Object.keys(assetsConfig).includes(x);
-        if (!included) {
-          console.error("Unknown asset:", x);
-        }
-        return included;
-      }).map((x) => x as Asset);
+      const included = Object.keys(assetsConfig).includes(x);
+      if (!included) {
+        console.error("Unknown asset:", x);
+      }
+      return included;
+    }).map((x) => x as Asset);
 
 console.log("supportedAssets", supportedAssets);

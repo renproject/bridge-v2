@@ -1,4 +1,4 @@
-import { GatewayTransaction } from "@renproject/ren/build/main/gatewayTransaction";
+import { GatewayTransaction } from "@renproject/ren/gatewayTransaction";
 import { useCallback, useEffect, useState } from "react";
 
 export const depositSorter = (a: any, b: any) => {

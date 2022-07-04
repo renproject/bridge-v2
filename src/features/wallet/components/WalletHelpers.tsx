@@ -166,8 +166,8 @@ export const WalletConnectingInfo: WalletPickerProps<
         title={
           passed
             ? t("wallet.action-required", {
-                wallet: walletConfig.shortName,
-              })
+              wallet: walletConfig.shortName,
+            })
             : t("wallet.action-connecting")
         }
         onClose={onClose}
@@ -186,11 +186,11 @@ export const WalletConnectingInfo: WalletPickerProps<
         <Typography variant="h6" align="center">
           {passed
             ? t("wallet.action-connect-message", {
-                wallet: walletConfig.fullName,
-              })
+              wallet: walletConfig.fullName,
+            })
             : t("wallet.action-connecting-to", {
-                chain: chainConfig.fullName,
-              })}
+              chain: chainConfig.fullName,
+            })}
         </Typography>
       </PaperContent>
     </>
@@ -326,12 +326,12 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
               >
                 {pending || success
                   ? t("wallet.network-switching-label", {
-                      network: subNetworkName || networkKindName,
-                      wallet: "MetaMask",
-                    })
+                    network: subNetworkName || networkKindName,
+                    wallet: "MetaMask",
+                  })
                   : t("wallet.network-switch-label", {
-                      network: subNetworkName || networkKindName,
-                    })}
+                    network: subNetworkName || networkKindName,
+                  })}
               </ActionButton>
             </div>
           )}
@@ -461,59 +461,59 @@ export const WalletConnectionStatusButton: FunctionComponent<
   mobile,
   ...rest
 }) => {
-  const { Icon } = getWalletConfig(wallet as Wallet);
-  const { t } = useTranslation();
-  const {
-    indicator: indicatorClassName,
-    indicatorMobile: indicatorMobileClassName,
-    account: accountClassName,
-    hoisted: hoistedClassName,
-    ...classes
-  } = useWalletConnectionStatusButtonStyles();
-  const { ensName } = useEns(account);
+    const { Icon } = getWalletConfig(wallet as Wallet);
+    const { t } = useTranslation();
+    const {
+      indicator: indicatorClassName,
+      indicatorMobile: indicatorMobileClassName,
+      account: accountClassName,
+      hoisted: hoistedClassName,
+      ...classes
+    } = useWalletConnectionStatusButtonStyles();
+    const { ensName } = useEns(account);
 
-  const chainConfig = getChainConfig(chain);
-  const trimmedAddress = trimAddress(account);
-  const resolvedClassName = classNames(className, {
-    [hoistedClassName]: hoisted,
-  });
-  const buttonProps: any = mobile
-    ? {}
-    : {
+    const chainConfig = getChainConfig(chain);
+    const trimmedAddress = trimAddress(account);
+    const resolvedClassName = classNames(className, {
+      [hoistedClassName]: hoisted,
+    });
+    const buttonProps: any = mobile
+      ? {}
+      : {
         variant: "outlined",
         color: "secondary",
         classes,
       };
-  return (
-    <Button
-      className={resolvedClassName}
-      {...buttonProps}
-      {...rest}
-      title={chainConfig.fullName}
-    >
-      <WalletConnectionIndicator
-        status={status}
-        className={mobile ? indicatorMobileClassName : indicatorClassName}
-      />
-      {status === WalletStatus.Connected && <Icon />}
-      {status !== WalletStatus.Connected && (
-        <span>{getWalletConnectionLabel(status, t)}</span>
-      )}
-      {account && (
-        <>
-          <span className={accountClassName}>{ensName || trimmedAddress}</span>
-          {isEthereumBaseChain(chain) && (
-            <Davatar
-              size={24}
-              address={account as string}
-              generatedAvatarType="jazzicon"
-            />
-          )}
-        </>
-      )}
-    </Button>
-  );
-};
+    return (
+      <Button
+        className={resolvedClassName}
+        {...buttonProps}
+        {...rest}
+        title={chainConfig.fullName}
+      >
+        <WalletConnectionIndicator
+          status={status}
+          className={mobile ? indicatorMobileClassName : indicatorClassName}
+        />
+        {status === WalletStatus.Connected && <Icon />}
+        {status !== WalletStatus.Connected && (
+          <span>{getWalletConnectionLabel(status, t)}</span>
+        )}
+        {account && (
+          <>
+            <span className={accountClassName}>{ensName || trimmedAddress}</span>
+            {isEthereumBaseChain(chain) && (
+              <Davatar
+                size={24}
+                address={account as string}
+                generatedAvatarType="jazzicon"
+              />
+            )}
+          </>
+        )}
+      </Button>
+    );
+  };
 
 const useBackToWalletPicker = (onClose: () => void) => {
   const dispatch = useDispatch();
@@ -700,8 +700,67 @@ export const ArbitrumMetamaskConnectorInfo: WalletPickerProps<
   const handleBack = useBackToWalletPicker(onClose);
   const wallet = "MetaMask";
   const network = "Arbitrum";
-  // TODO: Update link once mainnet instructions are published.
-  const link = "https://developer.offchainlabs.com/docs/public_testnet";
+  const link = "https://developer.offchainlabs.com/docs/mainnet";
+  return (
+    <AbstractConnectorInfo
+      network={network}
+      wallet={wallet}
+      onBack={handleBack}
+      onClose={onClose}
+      acknowledge={acknowledge}
+      link={link}
+    />
+  );
+};
+
+export const KavaMetamaskConnectorInfo: WalletPickerProps<
+  any,
+  any
+>["DefaultInfo"] = ({ acknowledge, onClose }) => {
+  const handleBack = useBackToWalletPicker(onClose);
+  const wallet = "MetaMask";
+  const network = "Kava";
+  const link = "https://docs.kava.io/docs/ethereum/metamask";
+  return (
+    <AbstractConnectorInfo
+      network={network}
+      wallet={wallet}
+      onBack={handleBack}
+      onClose={onClose}
+      acknowledge={acknowledge}
+      link={link}
+    />
+  );
+};
+
+export const MoonbeamMetamaskConnectorInfo: WalletPickerProps<
+  any,
+  any
+>["DefaultInfo"] = ({ acknowledge, onClose }) => {
+  const handleBack = useBackToWalletPicker(onClose);
+  const wallet = "MetaMask";
+  const network = "Moonbeam";
+  const link = "https://docs.moonbeam.network/tokens/connect/metamask/";
+  return (
+    <AbstractConnectorInfo
+      network={network}
+      wallet={wallet}
+      onBack={handleBack}
+      onClose={onClose}
+      acknowledge={acknowledge}
+      link={link}
+    />
+  );
+};
+
+export const OptimismMetamaskConnectorInfo: WalletPickerProps<
+  any,
+  any
+>["DefaultInfo"] = ({ acknowledge, onClose }) => {
+  const handleBack = useBackToWalletPicker(onClose);
+  const wallet = "MetaMask";
+  const network = "Optimism";
+  const link = "https://medium.com/stakingbits/setting-up-metamask-for-optimistic-ethereum-optimism-5a3fb5b356ae";
   return (
     <AbstractConnectorInfo
       network={network}
