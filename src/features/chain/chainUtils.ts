@@ -16,6 +16,9 @@ import {
   EthProvider,
   EVMNetworkConfig,
   Fantom,
+  Kava,
+  Moonbeam,
+  Optimism,
   Polygon,
 } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
@@ -51,7 +54,7 @@ interface EVMConstructor<EVM> {
     [network in RenNetwork]?: EVMNetworkConfig;
   };
 
-  new ({
+  new({
     network,
     provider,
   }: {
@@ -167,6 +170,9 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     [Chain.Avalanche]: getEthereumBaseChain(Avalanche, network),
     [Chain.Arbitrum]: getEthereumBaseChain(Arbitrum, network),
     [Chain.Fantom]: getEthereumBaseChain(Fantom, network),
+    [Chain.Kava]: getEthereumBaseChain(Kava, network),
+    [Chain.Moonbeam]: getEthereumBaseChain(Moonbeam, network),
+    [Chain.Optimism]: getEthereumBaseChain(Optimism, network),
   };
 
   const bitcoinBaseChains = {

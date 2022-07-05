@@ -24,7 +24,7 @@ const dataRefreshInterval = 30; // seconds
 const fetchCoingeckoExchangeRates = async () => {
   return fetch(
     "https://api.coingecko.com/api/v3" +
-      `/coins/markets?vs_currency=usd&ids=${coingeckoSymbols.join(",")}`
+    `/coins/markets?vs_currency=usd&ids=${coingeckoSymbols.join(",")}`
   ).then((response) => response.json());
 };
 
@@ -111,11 +111,23 @@ export const useGasPrices = () => {
     };
     const ftmPrice = {
       chain: Chain.Fantom,
-      standard: 75, // avg gas price
+      standard: 5, // https://cointool.app/gasPrice/ftm
     };
     const arbPrice = {
       chain: Chain.Arbitrum,
-      standard: 0.4, // avg gas price
+      standard: 0.4, // https://cointool.app/gasPrice/arb
+    };
+    const glmrPrice = {
+      chain: Chain.Moonbeam,
+      standard: 100, // https://cointool.app/gasPrice/glmr
+    };
+    const kavaPrice = {
+      chain: Chain.Kava,
+      standard: 75, // TODO:
+    };
+    const oethPrice = {
+      chain: Chain.Optimism,
+      standard: 20, // https://public-grafana.optimism.io/d/9hkhMxn7z/public-dashboard?orgId=1&refresh=5m
     };
     const solanaPrice = {
       chain: Chain.Solana,
@@ -129,6 +141,9 @@ export const useGasPrices = () => {
       maticPrice,
       solanaPrice,
       arbPrice,
+      glmrPrice,
+      kavaPrice,
+      oethPrice,
     ] as Array<GasPrice>;
 
     dispatch(setGasPrices(gasPrices));

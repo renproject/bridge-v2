@@ -4,7 +4,7 @@ import RenJS, {
   GatewayFees,
   GatewayTransaction,
 } from "@renproject/ren";
-import { getInputAndOutputTypes } from "@renproject/ren/build/main/utils/inputAndOutputTypes";
+import { getInputAndOutputTypes } from "@renproject/ren/utils/inputAndOutputTypes";
 import {
   ChainCommon,
   ContractChain,
@@ -577,8 +577,8 @@ export const useGatewayFeesWithRates = (
     setRenVMFeeAmountUsd(
       fees.renVMFeeAmount !== null
         ? new BigNumber(fees.renVMFeeAmount)
-            .multipliedBy(assetUsdRate)
-            .toFixed()
+          .multipliedBy(assetUsdRate)
+          .toFixed()
         : null
     );
 
@@ -590,8 +590,8 @@ export const useGatewayFeesWithRates = (
       setFromChainFeeAmountUsd(
         fees.fromChainFeeAmount !== null && fromChainAssetUsdRate !== null
           ? new BigNumber(fees.fromChainFeeAmount)
-              .multipliedBy(fromChainAssetUsdRate)
-              .toFixed()
+            .multipliedBy(fromChainAssetUsdRate)
+            .toFixed()
           : null
       );
     }
@@ -603,8 +603,8 @@ export const useGatewayFeesWithRates = (
       setToChainFeeAmountUsd(
         fees.toChainFeeAmount !== null && toChainAssetUsdRate !== null
           ? new BigNumber(fees.toChainFeeAmount)
-              .multipliedBy(toChainAssetUsdRate)
-              .toFixed()
+            .multipliedBy(toChainAssetUsdRate)
+            .toFixed()
           : null
       );
     }

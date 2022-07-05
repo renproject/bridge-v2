@@ -18,11 +18,11 @@ import { PartialChainInstanceMap } from "../chain/chainUtils";
 export type PartialChainTransaction = Partial<ChainTransaction> &
   (
     | {
-        txid: string;
-      }
+      txid: string;
+    }
     | {
-        txHash: string;
-      }
+      txHash: string;
+    }
   );
 
 export interface CreateGatewayParams {

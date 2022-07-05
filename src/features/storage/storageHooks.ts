@@ -1,7 +1,7 @@
 // Source: https://usehooks.com/useLocalStorage/
 import { Asset, Chain } from "@renproject/chains";
 import { GatewayTransaction } from "@renproject/ren";
-import { TransactionParams } from "@renproject/ren/build/module/params";
+import { TransactionParams } from "@renproject/ren/module/params";
 import { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNotifications } from "../../providers/Notifications";
