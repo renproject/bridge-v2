@@ -2,6 +2,7 @@ import { Badge } from "@material-ui/core";
 import { Asset, Chain } from "@renproject/chains";
 import {
   assetsColors,
+  // assetsColors,
   Avax,
   Bch,
   Bnb,
@@ -16,6 +17,8 @@ import {
   Fil,
   Ftm,
   Ftt,
+  Glmr,
+  Kava,
   Knc,
   Link,
   Luna,
@@ -37,6 +40,8 @@ import {
   RenFil,
   RenFtm,
   RenFtt,
+  RenGlmr,
+  RenKava,
   RenKnc,
   RenLink,
   RenLuna,
@@ -229,6 +234,22 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateService: AssetRateService.Coingecko,
     rateSymbol: "ftx-token",
   },
+  GLMR: {
+    Icon: nativeTokenIcon(Glmr),
+    RenIcon: wrappedTokenIcon(RenGlmr),
+    shortName: "GLMR",
+    fullName: "Glimmer",
+    rateService: AssetRateService.Coingecko,
+    rateSymbol: "moonbeam",
+  },
+  KAVA: {
+    Icon: nativeTokenIcon(Kava),
+    RenIcon: wrappedTokenIcon(RenKava),
+    shortName: "KAVA",
+    fullName: "Kava",
+    rateService: AssetRateService.Coingecko,
+    rateSymbol: "kava",
+  },
   KNC: {
     Icon: nativeTokenIcon(Knc),
     RenIcon: wrappedTokenIcon(RenKnc),
@@ -334,6 +355,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateSymbol: "zcash",
   },
   gETH: unsetAssetConfig,
+  oETH: unsetAssetConfig,
 };
 
 const getAssetColorConfig = (asset: Asset) => {
@@ -442,6 +464,8 @@ export const supportedAssets =
         Asset.FTM,
         Asset.ArbETH,
         Asset.MATIC,
+        Asset.GLMR,
+        Asset.KAVA,
         // Asset.SOL, // not sure about that
         Asset.REN,
         Asset.DAI,

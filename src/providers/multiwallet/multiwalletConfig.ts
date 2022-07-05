@@ -10,6 +10,9 @@ import {
   AvalancheMetamaskConnectorInfo,
   BinanceMetamaskConnectorInfo,
   FantomMetamaskConnectorInfo,
+  KavaMetamaskConnectorInfo,
+  MoonbeamMetamaskConnectorInfo,
+  OptimismMetamaskConnectorInfo,
   PolygonMetamaskConnectorInfo,
 } from "../../features/wallet/components/WalletHelpers";
 import { createNetworkIdMapper } from "../../utils/networksConfig";
@@ -50,19 +53,19 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
         },
         ...(isEnabled(Chain.Ethereum, Wallet.MyEtherWallet)
           ? [
-              {
-                name: Wallet.MyEtherWallet,
-                logo: "",
-                connector: new EthereumMEWConnectConnector({
-                  debug: env.DEV,
-                  rpc: {
-                    42: `wss://kovan.infura.io/ws/v3/${env.INFURA_ID}`,
-                    1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
-                  },
-                  chainId: network === RenNetwork.Mainnet ? 1 : 42,
-                }),
-              },
-            ]
+            {
+              name: Wallet.MyEtherWallet,
+              logo: "",
+              connector: new EthereumMEWConnectConnector({
+                debug: env.DEV,
+                rpc: {
+                  42: `wss://kovan.infura.io/ws/v3/${env.INFURA_ID}`,
+                  1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
+                },
+                chainId: network === RenNetwork.Mainnet ? 1 : 42,
+              }),
+            },
+          ]
           : []),
         // ...(isEnabled(Chain.Ethereum, Wallet.Coinbase)
         //   ? [
@@ -162,22 +165,22 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
         // TODO: move this config into its own connector?
         ...(isEnabled(Chain.BinanceSmartChain, Wallet.MetaMask)
           ? [
-              {
-                name: Wallet.MetaMask,
-                logo: "",
-                info: BinanceMetamaskConnectorInfo,
-                connector: (() => {
-                  const connector = new BinanceSmartChainInjectedConnector({
-                    debug: true,
-                    networkIdMapper: createNetworkIdMapper(
-                      Chain.BinanceSmartChain
-                    ),
-                  });
-                  connector.getProvider = () => (window as any).ethereum;
-                  return connector;
-                })(),
-              },
-            ]
+            {
+              name: Wallet.MetaMask,
+              logo: "",
+              info: BinanceMetamaskConnectorInfo,
+              connector: (() => {
+                const connector = new BinanceSmartChainInjectedConnector({
+                  debug: true,
+                  networkIdMapper: createNetworkIdMapper(
+                    Chain.BinanceSmartChain
+                  ),
+                });
+                connector.getProvider = () => (window as any).ethereum;
+                return connector;
+              })(),
+            },
+          ]
           : []),
       ],
       [Chain.Solana]: [
@@ -215,6 +218,51 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
           connector: (() => {
             const connector = new EthereumInjectedConnector({
               networkIdMapper: createNetworkIdMapper(Chain.Arbitrum),
+              debug: true,
+            });
+            connector.getProvider = () => (window as any).ethereum;
+            return connector;
+          })(),
+        },
+      ],
+      [Chain.Kava]: [
+        {
+          name: Wallet.MetaMask,
+          logo: "",
+          info: KavaMetamaskConnectorInfo,
+          connector: (() => {
+            const connector = new EthereumInjectedConnector({
+              networkIdMapper: createNetworkIdMapper(Chain.Kava),
+              debug: true,
+            });
+            connector.getProvider = () => (window as any).ethereum;
+            return connector;
+          })(),
+        },
+      ],
+      [Chain.Moonbeam]: [
+        {
+          name: Wallet.MetaMask,
+          logo: "",
+          info: MoonbeamMetamaskConnectorInfo,
+          connector: (() => {
+            const connector = new EthereumInjectedConnector({
+              networkIdMapper: createNetworkIdMapper(Chain.Moonbeam),
+              debug: true,
+            });
+            connector.getProvider = () => (window as any).ethereum;
+            return connector;
+          })(),
+        },
+      ],
+      [Chain.Optimism]: [
+        {
+          name: Wallet.MetaMask,
+          logo: "",
+          info: OptimismMetamaskConnectorInfo,
+          connector: (() => {
+            const connector = new EthereumInjectedConnector({
+              networkIdMapper: createNetworkIdMapper(Chain.Optimism),
               debug: true,
             });
             connector.getProvider = () => (window as any).ethereum;
