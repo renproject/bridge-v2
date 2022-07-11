@@ -28,7 +28,7 @@
     "@renproject/utils": "3.3.0",
     "@sentry/react": "^6.5.1",
     "@slack/web-api": "^6.7.1",
-    "@solana/web3.js": "^1.36.0",
+    "@solana/web3.js": "^1.47.3",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
