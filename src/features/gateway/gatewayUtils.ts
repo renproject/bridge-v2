@@ -79,7 +79,7 @@ export const createGateway = async (
       });
     }
   } else if (isSolanaBaseChain(gatewayParams.from)) {
-    const solana = fromChainInstance.chain as Solana;
+    const solana = fromChainInstance.chain as unknown as Solana;
     if (partialTx) {
       fromChain = solana.Transaction(partialTx);
     } else if (gatewayParams.fromAddress) {
@@ -114,7 +114,7 @@ export const createGateway = async (
       toChain = ethereumChain.Account({ convertUnit, anyoneCanSubmit });
     }
   } else if (isSolanaBaseChain(gatewayParams.to)) {
-    const solana = toChainInstance.chain as Solana;
+    const solana = toChainInstance.chain as unknown as Solana;
     if (gatewayParams.toAddress) {
       toChain = solana.Address(gatewayParams.toAddress);
     } else {

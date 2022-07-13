@@ -15,6 +15,7 @@ export const featureFlags = {
   godMode:
     Boolean(queryString.parse(window.location.search).godMode) ||
     Boolean(localStorage.getItem("godMode")),
+  customRecipient: false
 };
 
 console.info(featureFlags);

@@ -132,7 +132,7 @@ export const getSolanaChain = (
       network,
       provider,
       signer,
-    }),
+    }) as any,
     connectionRequired: true,
     accounts: [],
   };
@@ -155,7 +155,7 @@ const getBitcoinBaseChain = <BTC extends BitcoinBaseChain>(ChainClass: BTC) => {
   };
 };
 
-const getDepositBaseChain = <DBC extends DepositChain>(ChainClass: DBC) => {
+const getDepositBaseChain = <DBC extends DepositChain<any, any>>(ChainClass: DBC) => {
   return {
     chain: ChainClass,
   };
@@ -217,7 +217,7 @@ export const alterContractChainProviderSigner = (
     console.info("Solana", provider);
     (window as any).solanaProvider = provider;
     alterSolanaChainProviderSigner(
-      chains[alteredChain] as ChainInstance<Solana>,
+      chains[alteredChain] as any as ChainInstance<Solana>,
       provider as SolanaConnector,
       false
     );

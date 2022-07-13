@@ -1,9 +1,9 @@
-import { Badge } from "@material-ui/core";
 import { Asset, Chain } from "@renproject/chains";
 import {
   assetsColors,
   // assetsColors,
   Avax,
+  Badger,
   Bch,
   Bnb,
   Btc,
@@ -72,7 +72,6 @@ import {
   EmptyCircleIcon,
 } from "../components/icons/RenIcons";
 
-import { env } from "../constants/environmentVariables";
 import { getAssetChainsConfig } from "./chainsConfig";
 
 export type AssetIconsConfig = {
@@ -123,7 +122,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateSymbol: "weth", // simple hack for duplicated ethereum entry
   },
   BADGER: {
-    Icon: nativeTokenIcon(Badge),
+    Icon: nativeTokenIcon(Badger),
     RenIcon: wrappedTokenIcon(RenBadger),
     shortName: "BADGER",
     fullName: "Badger DAO",
@@ -448,47 +447,38 @@ export const getUIAsset = (asset: Asset, chain: Chain) => {
   return { shortName, fullName, Icon };
 };
 
-export const supportedAssets =
-  env.ENABLED_ASSETS[0] === "*"
-    ? [
-        Asset.BTC,
-        Asset.BCH,
-        Asset.DGB,
-        Asset.DOGE,
-        Asset.FIL,
-        Asset.LUNA,
-        Asset.ZEC,
-        Asset.ETH,
-        Asset.BNB,
-        Asset.AVAX,
-        Asset.FTM,
-        Asset.ArbETH,
-        Asset.MATIC,
-        Asset.GLMR,
-        Asset.KAVA,
-        // Asset.SOL, // not sure about that
-        Asset.REN,
-        Asset.DAI,
-        Asset.USDC,
-        Asset.USDT,
-        Asset.EURT,
-        Asset.BUSD,
-        Asset.MIM,
-        Asset.CRV,
-        Asset.LINK,
-        Asset.UNI,
-        Asset.SUSHI,
-        Asset.FTT,
-        Asset.ROOK,
-        Asset.BADGER,
-        Asset.KNC,
-      ]
-    : env.ENABLED_ASSETS.filter((x) => {
-        const included = Object.keys(assetsConfig).includes(x);
-        if (!included) {
-          console.error("Unknown asset:", x);
-        }
-        return included;
-      }).map((x) => x as Asset);
+export const supportedAssets = [
+  Asset.BTC,
+  Asset.BCH,
+  Asset.DGB,
+  Asset.DOGE,
+  Asset.FIL,
+  Asset.LUNA,
+  Asset.ZEC,
+  Asset.ETH,
+  Asset.BNB,
+  Asset.AVAX,
+  Asset.FTM,
+  Asset.ArbETH,
+  Asset.MATIC,
+  Asset.GLMR,
+  Asset.KAVA,
+  // Asset.SOL, // not sure about that
+  Asset.REN,
+  Asset.DAI,
+  Asset.USDC,
+  Asset.USDT,
+  Asset.EURT,
+  Asset.BUSD,
+  Asset.MIM,
+  Asset.CRV,
+  Asset.LINK,
+  Asset.UNI,
+  Asset.SUSHI,
+  Asset.FTT,
+  Asset.ROOK,
+  Asset.BADGER,
+  Asset.KNC,
+];
 
 console.log("supportedAssets", supportedAssets);

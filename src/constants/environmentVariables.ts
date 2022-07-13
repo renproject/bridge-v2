@@ -20,15 +20,10 @@ const BSC_MM_ENABLED = Boolean(process.env.REACT_APP_BSC_MM_ENABLED);
 const ENABLED_EXTRA_WALLETS =
   process.env.REACT_APP_ENABLED_EXTRA_WALLETS?.split(",") || ["*"];
 
-const ENABLED_ASSETS = process.env.REACT_APP_ENABLED_ASSETS?.split(",") || [
-  "*",
-];
-
 export const env = {
   DEV,
   NETWORK,
   INFURA_ID,
-  ENABLED_ASSETS,
   ENABLED_EXTRA_WALLETS,
   BSC_MM_ENABLED,
   MEWCONNECT_ENABLED,

@@ -66,6 +66,7 @@ import {
 } from "../gatewayHooks";
 import { useRedirectToGatewayFlow } from "../gatewayRoutingUtils";
 import { $gateway, setAmount } from "../gatewaySlice";
+import { WalletConnectionActionButtonGuard } from "./shared/WalletSwitchHelpers";
 import { GatewayStepProps } from "./stepUtils";
 
 export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
@@ -190,7 +191,10 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
       <>
         {Header}
         <PaperContent bottomPadding>
-          <span>Please connect a wallet to proceed</span>
+          <Typography variant="body1" align="center" paragraph>
+            Please connect a wallet to proceed
+          </Typography>
+          <WalletConnectionActionButtonGuard chain={activeChain} />
         </PaperContent>
       </>
     );
@@ -231,7 +235,7 @@ export const GatewayFeesStep: FunctionComponent<GatewayStepProps> = ({
                   <NumberFormatText
                     value={outputAmount}
                     spacedSuffix={assetLabel}
-                    decimalScale={feesDecimalImpact(amount, 3)}
+                    decimalScale={feesDecimalImpact(amount, 4)}
                   />
                 ) : (
                   <Skeleton variant="text" height={18} width={66} />

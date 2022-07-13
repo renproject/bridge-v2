@@ -30,6 +30,7 @@ import {
   DeleteIcon,
   WalletIcon,
 } from "../../../../components/icons/RenIcons";
+import { OutlinedTextField } from "../../../../components/inputs/OutlinedTextField";
 import { BigTopWrapper } from "../../../../components/layout/LayoutHelpers";
 import {
   PaperContent,
@@ -39,6 +40,7 @@ import { Link } from "../../../../components/links/Links";
 import { BridgeModal } from "../../../../components/modals/BridgeModal";
 import { InlineSkeleton } from "../../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../../components/utils/Debug";
+import { featureFlags } from "../../../../constants/featureFlags";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import {
   getChainConfig,
@@ -54,7 +56,10 @@ import { useWallet } from "../../../wallet/walletHooks";
 import { setChain, setPickerOpened } from "../../../wallet/walletSlice";
 import { FeesToggler } from "../../components/FeeHelpers";
 import { GatewayFees } from "../../components/GatewayFees";
-import { useGatewayFeesWithoutGateway } from "../../gatewayHooks";
+import {
+  useAddressValidator,
+  useGatewayFeesWithoutGateway,
+} from "../../gatewayHooks";
 import { GatewayPaperHeader } from "./GatewayNavigationHelpers";
 
 type WalletConnectionActionButtonGuardProps = {
@@ -305,6 +310,14 @@ export const SendingReceivingWrapper: FunctionComponent<
   );
 };
 
+type ManualAddressInputProps = {};
+
+export const ManualAddressInput: FunctionComponent<
+  ManualAddressInputProps
+> = () => {
+  return null;
+};
+
 export const H2HAccountsResolver: FunctionComponent<
   H2HAccountsResolverProps
 > = ({ transactionType, from, to, disabled, onResolved }) => {
@@ -348,6 +361,11 @@ export const H2HAccountsResolver: FunctionComponent<
   const [differentAccounts, setDifferentAccounts] = useState(
     isCrossContractBaseChain
   );
+  const [customAccountMode, setCustomAccountMode] = useState(false);
+  const handleCustomAccountModeChange = useCallback((event) => {
+    setCustomAccountMode(event.target.checked);
+  }, []);
+  // const [customAccount, setCustomAccount] = useState("");
 
   const handleAccountsModeChange = useCallback((event) => {
     setDifferentAccounts(event.target.checked);
@@ -377,6 +395,15 @@ export const H2HAccountsResolver: FunctionComponent<
   const [cachedFromAccount, setCachedFromAccount] = useState(fromAccount);
   const [cachedToAccount, setCachedToAccount] = useState(toAccount);
 
+  const handleCustomAccountChange = useCallback((event) => {
+    setCachedToAccount(event.target.value);
+    // setCustomAccount(event.target.value);
+  }, []);
+  const { validateAddress } = useAddressValidator(to);
+  const isAddressValid = validateAddress(cachedToAccount);
+  const hasAddressError = !isAddressValid;
+  const showAddressError = Boolean(cachedToAccount) && hasAddressError;
+
   useEffect(() => {
     setCachedFromAccount(fromAccount);
   }, [fromAccount]);
@@ -384,7 +411,7 @@ export const H2HAccountsResolver: FunctionComponent<
   useEffect(() => {
     const newToAccount = differentAccounts ? toAccount : fromAccount;
     setCachedToAccount(newToAccount);
-  }, [toAccount, fromAccount, differentAccounts]);
+  }, [toAccount, fromAccount, differentAccounts, customAccountMode]);
 
   const [toPickerOpened, setToPickerOpened] = useState(false);
   const handleToPickerOpened = useCallback(() => {
@@ -409,23 +436,6 @@ export const H2HAccountsResolver: FunctionComponent<
     <>
       <GatewayPaperHeader title={"Choose Accounts"} />
       <PaperContent bottomPadding topPadding>
-        {/* <Box display="flex" justifyContent="center">
-          <ProgressWithContent color={alpha("#627EEA", 0.25)}>
-            <CircledIconContainer
-              className={styles.accounts}
-              color="white"
-              background={theme.customColors.blue}
-              size={115}
-            >
-              <AccountIcon fontSize="inherit" />
-            </CircledIconContainer>
-          </ProgressWithContent>
-        </Box>
-        <Box mt={3} mb={3}>
-          <Typography variant="h6" align="center">
-            Choose accounts used for this transaction.
-          </Typography>
-        </Box> */}
         <SendingReceivingWrapper
           from={from}
           to={to}
@@ -435,48 +445,72 @@ export const H2HAccountsResolver: FunctionComponent<
           ReceiveIcon={ReceiveIcon}
           sendIconTooltip={sendIconTooltip}
           receiveIconTooltip={receiveIconTooltip}
-        ></SendingReceivingWrapper>
-        {/* <AccountWrapper
-            chain={from}
-            label="Sending"
-            amount={amount}
-            AssetIcon={SendIcon}
-            assetIconTooltip={sendIconTooltip}
-          ></AccountWrapper>
-          <AccountWrapper
-            chain={to}
-            label="Receiving"
-            amount={outputAmount}
-            AssetIcon={ReceiveIcon}
-            assetIconTooltip={receiveIconTooltip}
-          ></AccountWrapper> */}
+        />
         <BigTopWrapper>
           {cachedFromAccount ? (
             <>
               <AccountWrapper chain={from} label="Sender Address">
                 {trimAddress(cachedFromAccount, 5)}
               </AccountWrapper>
-              <AccountWrapper chain={to} label="Recipient Address">
-                {differentAccounts && cachedToAccount && (
-                  <IconButton
-                    onClick={handleToPickerOpened}
-                    title="Pick new wallet/account"
+              {!customAccountMode && (
+                <AccountWrapper chain={to} label="Recipient Address">
+                  {differentAccounts && cachedToAccount && (
+                    <IconButton
+                      onClick={handleToPickerOpened}
+                      title="Pick new wallet/account"
+                    >
+                      <DeleteIcon fontSize="inherit" />
+                    </IconButton>
+                  )}
+                  {trimAddress(cachedToAccount, 5)}
+                  {differentAccounts && !cachedToAccount && (
+                    <Link
+                      color="primary"
+                      underline="hover"
+                      variant="caption"
+                      onClick={handleToPickerOpened}
+                    >
+                      Choose account
+                    </Link>
+                  )}
+                </AccountWrapper>
+              )}
+              {customAccountMode && (
+                <OutlinedTextField
+                  label="Recipient address"
+                  value={cachedToAccount}
+                  onChange={handleCustomAccountChange}
+                  error={showAddressError}
+                  helperText={
+                    showAddressError ? "Address is invalid" : undefined
+                  }
+                />
+              )}
+              {featureFlags.customRecipient && differentAccounts && (
+                <>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    <DeleteIcon fontSize="inherit" />
-                  </IconButton>
-                )}
-                {trimAddress(cachedToAccount, 5)}
-                {differentAccounts && !cachedToAccount && (
-                  <Link
-                    color="primary"
-                    underline="hover"
-                    variant="caption"
-                    onClick={handleToPickerOpened}
-                  >
-                    Choose account
-                  </Link>
-                )}
-              </AccountWrapper>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={customAccountMode}
+                          onChange={handleCustomAccountModeChange}
+                          name="primary"
+                          color="primary"
+                        />
+                      }
+                      label={
+                        <Typography variant="caption">
+                          I will enter recipient address manually
+                        </Typography>
+                      }
+                    />
+                  </Box>
+                </>
+              )}
               {showDifferentAccountSwitcher && (
                 <Box display="flex" alignItems="center" justifyContent="center">
                   <FormControlLabel
@@ -508,7 +542,6 @@ export const H2HAccountsResolver: FunctionComponent<
             />
           )}
         </BigTopWrapper>
-
         <SwitchWalletDialog
           open={toPickerOpened && differentAccounts}
           targetChain={to}
@@ -526,7 +559,7 @@ export const H2HAccountsResolver: FunctionComponent<
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleResolved}
-            disabled={!cachedToAccount || !cachedFromAccount}
+            disabled={!cachedToAccount || !cachedFromAccount || hasAddressError}
           >
             {cachedFromAccount ? "Accept Accounts" : "Connect a Wallet"}
           </ActionButton>

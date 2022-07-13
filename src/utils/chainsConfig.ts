@@ -235,8 +235,8 @@ export const supportedEthereumChains: Array<Chain> = [
   Chain.Polygon,
   Chain.Avalanche,
   Chain.Arbitrum,
-  Chain.Kava,
-  Chain.Moonbeam,
+  // Chain.Kava,
+  // Chain.Moonbeam,
   Chain.Optimism,
 ];
 

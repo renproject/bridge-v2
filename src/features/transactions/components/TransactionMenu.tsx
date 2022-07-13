@@ -212,7 +212,7 @@ export interface ChainTransaction {
     txid: UrlBase64String;
     txindex: NumericString;
 
-    txidFormatted: string;
+    txHash: string;
 }
 
 export interface InputChainTransaction extends ChainTransaction {
@@ -340,8 +340,8 @@ export const UpdateTransactionForm: FunctionComponent<
       });
     } else {
       txPayload = (instance as BitcoinBaseChain).Transaction({
-        txindex: txIndex,
         txHash: txHash,
+        txindex: txIndex,
       });
     }
     if (!txPayload) {
@@ -351,7 +351,7 @@ export const UpdateTransactionForm: FunctionComponent<
       .tx as ChainTransaction;
     // const finalTx: InputChainTransaction = {
     //   txid: txId || payloadTxData.txid,
-    //   txidFormatted: txIdFormatted || payloadTxData.txidFormatted,
+    //   txHash: txHash || payloadTxData.txHash,
     //   txindex: txIndex || payloadTxData.txindex,
     //   chain: payloadTxData.chain,
     //   asset: asset as string,

@@ -11,6 +11,9 @@ import store from "./store/store";
 import { lightTheme } from "./theme/theme";
 import "./i18n/i18n";
 import * as Sentry from "@sentry/react";
+// overwrite default BigNumber toString() digits policy
+import BigNumber from "bignumber.js";
+BigNumber.set({ EXPONENTIAL_AT: 30 });
 
 // clean history state after page reaload
 window.history.replaceState({}, document.title);

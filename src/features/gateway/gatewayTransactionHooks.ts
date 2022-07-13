@@ -42,7 +42,7 @@ export const useRenVMChainTransactionStatusUpdater = ({
   const [status, setStatus] = useState<ChainTransactionStatus | null>(null);
   const [target, setTarget] = useState<number | null>(null);
   const [txId, setTxId] = useState<string | null>(null);
-  const [txIdFormatted, setTxIdFormatted] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<string | null>(null);
   const [txIndex, setTxIndex] = useState<string | null>(null);
   const [amount, setAmount] = useState<string | null>(null);
 
@@ -60,7 +60,7 @@ export const useRenVMChainTransactionStatusUpdater = ({
 
       if (isDefined(progress.transaction)) {
         setTxId(progress.transaction.txid);
-        setTxIdFormatted(progress.transaction.txidFormatted);
+        setTxHash(progress.transaction.txHash);
         setTxIndex(progress.transaction.txindex);
         if (isDefined((progress.transaction as InputChainTransaction).amount)) {
           setAmount((progress.transaction as InputChainTransaction).amount);
@@ -101,7 +101,7 @@ export const useRenVMChainTransactionStatusUpdater = ({
     status,
     target,
     txId,
-    txIdFormatted,
+    txHash,
     txIndex,
     amount,
   };
@@ -127,7 +127,7 @@ export const useChainTransactionStatusUpdater = ({
   const [target, setTarget] = useState<number | null>(null);
   const [status, setStatus] = useState<ChainTransactionStatus | null>(null);
   const [txId, setTxId] = useState<string | null>(null);
-  const [txIdFormatted, setTxIdFormatted] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<string | null>(null);
   const [txIndex, setTxIndex] = useState<string | null>(null);
   const [amount, setAmount] = useState<string | null>(null);
   const [txUrl, setTxUrl] = useState<string | null>(null);
@@ -148,7 +148,7 @@ export const useChainTransactionStatusUpdater = ({
       }
       if (isDefined(progress.transaction)) {
         setTxId(progress.transaction.txid);
-        setTxIdFormatted(progress.transaction.txidFormatted);
+        setTxHash(progress.transaction.txHash);
         setTxIndex(progress.transaction.txindex);
         if (isDefined((progress.transaction as InputChainTransaction).amount)) {
           setAmount((progress.transaction as InputChainTransaction).amount);
@@ -193,7 +193,7 @@ export const useChainTransactionStatusUpdater = ({
     target,
     confirmations,
     txId,
-    txIdFormatted,
+    txHash,
     txIndex,
     txUrl,
     amount,
