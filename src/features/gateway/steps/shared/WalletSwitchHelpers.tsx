@@ -40,6 +40,7 @@ import { Link } from "../../../../components/links/Links";
 import { BridgeModal } from "../../../../components/modals/BridgeModal";
 import { InlineSkeleton } from "../../../../components/progress/ProgressHelpers";
 import { Debug } from "../../../../components/utils/Debug";
+import { featureFlags } from "../../../../constants/featureFlags";
 import { getAssetConfig } from "../../../../utils/assetsConfig";
 import {
   getChainConfig,
@@ -485,7 +486,7 @@ export const H2HAccountsResolver: FunctionComponent<
                   }
                 />
               )}
-              {differentAccounts && (
+              {featureFlags.customRecipient && differentAccounts && (
                 <>
                   <Box
                     display="flex"

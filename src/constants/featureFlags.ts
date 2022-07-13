@@ -14,7 +14,8 @@ export const featureFlags = {
     queryString.parse(window.location.search).walletConnectEnabled,
   godMode:
     Boolean(queryString.parse(window.location.search).godMode) ||
-    Boolean(localStorage.getItem("godMode"))
+    Boolean(localStorage.getItem("godMode")),
+  customRecipient: false
 };
 
 console.info(featureFlags);
