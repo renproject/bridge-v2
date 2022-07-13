@@ -3546,15 +3546,15 @@
     elliptic "^6.5.4"
     multiformats "^9.6.5"
 
-"@renproject/chains-solana@3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@renproject/chains-solana/-/chains-solana-3.3.0.tgz#5e126b3a0e16a8a28f8d8680b2a4eba822cd91db"
-  integrity sha512-tFL5F9cTjtnTeaFGh6y8F0m5QXDmG4wrjfHOn8l4pLHwmMyMCKj6lTRhgJhKFUXq1tm5xIEYJL9s6nEsh6glKQ==
+"@renproject/chains-solana@3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@renproject/chains-solana/-/chains-solana-3.4.2.tgz#2f99a49e3304c46d9eab485baab6d34456cd0e8a"
+  integrity sha512-HA7H16Ccx3jLtU14jJpVx61d9+bVm4Pu8jyRd/Jgkx0U7XJ6ax51Wy+tBLOYe+RiwPrWrCxT2aqoLMpx6+ICZA==
   dependencies:
     "@project-serum/associated-token" "^0.1.1"
     "@project-serum/borsh" "^0.2.5"
     "@project-serum/sol-wallet-adapter" "^0.2.6"
-    "@renproject/utils" "^3.3.0"
+    "@renproject/utils" "^3.4.2"
     "@solana/buffer-layout" "^4.0.0"
     "@solana/spl-token" "0.2.0"
     "@solana/web3.js" "1.44.0"
@@ -3792,6 +3792,19 @@
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-3.3.1.tgz#0af14765981a6618007fefeab3857aef3b3c7e28"
   integrity sha512-rx5wG5EzDuldG5GIMKifn2D5J83ftzmR16S1BNPvF7boTabcfCBrE98G49V0bkcSrMp11K3fRbC6a6640fYj2w==
+  dependencies:
+    "@noble/hashes" "1.1.1"
+    "@types/events" "3.0.0"
+    axios "^0.27.2"
+    base64-js "^1.5.1"
+    bignumber.js "^9.0.2"
+    events "^3.3.0"
+    immutable "^4.1.0"
+
+"@renproject/utils@^3.4.2":
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/@renproject/utils/-/utils-3.4.2.tgz#b23e414e06c4226333ed31e24a740c28e5404e83"
+  integrity sha512-D4/zITmiR6dgkEUEyl4NcR3ACK99kHpGwflivvHSncA5h9NZb8pEgHPGfIRMT9gjIjBp5KnBE2hKL2AfL1AF8w==
   dependencies:
     "@noble/hashes" "1.1.1"
     "@types/events" "3.0.0"
@@ -7956,6 +7969,13 @@ cron-parser@^4.1.0, cron-parser@^4.2.1:
   dependencies:
     luxon "^1.28.0"
 
+cross-env@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/cross-env/-/cross-env-7.0.3.tgz#865264b29677dc015ba8418918965dd232fc54cf"
+  integrity sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==
+  dependencies:
+    cross-spawn "^7.0.1"
+
 cross-fetch@3.1.5, cross-fetch@^3.1.4:
   version "3.1.5"
   resolved "https://registry.npmjs.org/cross-fetch/-/cross-fetch-3.1.5.tgz"
@@ -7971,7 +7991,7 @@ cross-fetch@^2.1.0:
     node-fetch "2.6.1"
     whatwg-fetch "2.0.4"
 
-cross-spawn@^7.0.2, cross-spawn@^7.0.3:
+cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
   resolved "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.3.tgz"
   integrity sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==
