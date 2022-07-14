@@ -115,6 +115,7 @@
     "@babel/preset-env": "^7.15.8",
     "netlify-cli": "^10",
     "prettier": "^2.5.1",
-    "react-app-rewired": "^2.2.1"
+    "react-app-rewired": "^2.2.1",
+    "cross-env": "^7.0.3"
   }
 }
