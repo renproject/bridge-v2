@@ -116,7 +116,7 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     Icon: chainIcon(KavaChain),
     fullName: "Kava",
     shortName: "Kava",
-    networks: createNetworksConfig(2221, 2222),
+    networks: createNetworksConfig(2222, 2221),
   },
   Moonbeam: {
     Icon: chainIcon(Moonbeam),

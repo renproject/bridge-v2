@@ -123,7 +123,7 @@ export const useGasPrices = () => {
     };
     const kavaPrice = {
       chain: Chain.Kava,
-      standard: 75, // TODO:
+      standard: 1,
     };
     const oethPrice = {
       chain: Chain.Optimism,
