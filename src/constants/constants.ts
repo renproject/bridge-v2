@@ -10,7 +10,7 @@ export const links = {
   WIKI: "https://github.com/renproject/ren/wiki",
   FAQ: "https://docs.renproject.io/darknodes/faq/renbridge-faq",
   SECURITY_AUDITS: "https://github.com/renproject/ren/wiki/Audits",
-  BUGS_LOG: "https://renprotocol.typeform.com/to/YdmFyB",
+  BUGS_LOG: "https://ko93wg99ztk.typeform.com/RenIssueTicket",
   REN_EXPLORER_GUIDE:
     "https://renproject.notion.site/Using-RenVM-s-Explorer-to-Solve-RenBridge-Issues-b190709927934b1f8dbd62e6df42f3ed",
   SOCIAL_TWITTER: "https://twitter.com/renprotocol",
