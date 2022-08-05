@@ -1,37 +1,37 @@
 import { Asset, Chain, chains } from "@renproject/chains";
 import {
-  Arbitrum,
-  Avalanche,
+  ArbitrumChain,
+  AvalancheChain,
   Bch,
   BinanceSmartChain,
   Btc,
   chainsColors,
   Dgb,
   Doge,
-  Ethereum,
-  Fantom,
+  EthereumChain,
+  FantomChain,
   Fil,
   KavaChain,
   Luna,
-  Moonbeam,
-  Optimism,
-  Polygon,
-  Solana,
-  Zec,
+  MoonbeamChain,
+  OptimismChain,
+  PolygonChain,
+  SolanaChain,
+  Zec
 } from "@renproject/icons";
 
 import { RenNetwork } from "@renproject/utils";
 import { chainIcon, chainIconFromToken } from "../components/icons/IconHelpers";
 import {
   CustomSvgIconComponent,
-  EmptyCircleIcon,
+  EmptyCircleIcon
 } from "../components/icons/RenIcons";
 import { AssetChainsConfig } from "./assetsConfig";
 import {
   createNetworkConfig,
   createNetworksConfig,
   NetworkConfig,
-  NetworksConfig,
+  NetworksConfig
 } from "./networksConfig";
 
 export type ChainIconsConfig = {
@@ -65,13 +65,13 @@ const unsetChainConfig: ChainBaseConfig = {
 
 const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
   Arbitrum: {
-    Icon: chainIcon(Arbitrum),
+    Icon: chainIcon(ArbitrumChain),
     fullName: "Arbitrum",
     shortName: "Arbitrum",
     networks: createNetworksConfig(42161, 421611),
   },
   Avalanche: {
-    Icon: chainIcon(Avalanche),
+    Icon: chainIcon(AvalancheChain),
     fullName: "Avalanche",
     shortName: "Avalanche",
     networks: createNetworksConfig(43114, 43113),
@@ -98,7 +98,7 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     shortName: "Dogecoin",
   },
   Ethereum: {
-    Icon: chainIcon(Ethereum),
+    Icon: chainIcon(EthereumChain),
     fullName: "Ethereum",
     shortName: "Eth",
     networks: {
@@ -107,7 +107,7 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     },
   },
   Fantom: {
-    Icon: chainIcon(Fantom),
+    Icon: chainIcon(FantomChain),
     fullName: "Fantom",
     shortName: "Fantom",
     networks: createNetworksConfig(250, 4002),
@@ -119,19 +119,19 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     networks: createNetworksConfig(2222, 2221),
   },
   Moonbeam: {
-    Icon: chainIcon(Moonbeam),
+    Icon: chainIcon(MoonbeamChain),
     fullName: "Moonbeam",
     shortName: "Moonbeam",
     networks: createNetworksConfig(1284, 1287),
   },
   Optimism: {
-    Icon: chainIcon(Optimism),
+    Icon: chainIcon(OptimismChain),
     fullName: "Optimism",
     shortName: "Optimism",
     networks: createNetworksConfig(10, 69),
   },
   Polygon: {
-    Icon: chainIcon(Polygon),
+    Icon: chainIcon(PolygonChain),
     fullName: "Polygon",
     shortName: "Polygon",
     networks: createNetworksConfig(137, 80001),
@@ -157,13 +157,13 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     shortName: "Terra",
   },
   Solana: {
-    Icon: chainIcon(Solana),
+    Icon: chainIcon(SolanaChain),
     fullName: "Solana",
     shortName: "Solana",
     networks: createNetworksConfig(1, 2, RenNetwork.Mainnet, RenNetwork.Devnet),
   },
   Goerli: {
-    Icon: chainIcon(Ethereum),
+    Icon: chainIcon(EthereumChain),
     fullName: "Goerli Testnet",
     shortName: "Goerli",
     networks: createNetworksConfig(1, 5),

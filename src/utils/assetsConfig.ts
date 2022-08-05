@@ -1,9 +1,7 @@
-import { Badge } from "@material-ui/core";
 import { Asset, Chain } from "@renproject/chains";
 import {
   assetsColors,
-  // assetsColors,
-  Avax,
+  Avax, Badger,
   Bch,
   Bnb,
   Btc,
@@ -61,7 +59,7 @@ import {
   Uni,
   Usdc,
   Usdt,
-  Zec,
+  Zec
 } from "@renproject/icons";
 import {
   nativeTokenIcon,
@@ -123,7 +121,7 @@ const assetsBaseConfig: Record<Asset, AssetBaseConfig> = {
     rateSymbol: "weth", // simple hack for duplicated ethereum entry
   },
   BADGER: {
-    Icon: nativeTokenIcon(Badge),
+    Icon: nativeTokenIcon(Badger),
     RenIcon: wrappedTokenIcon(RenBadger),
     shortName: "BADGER",
     fullName: "Badger DAO",

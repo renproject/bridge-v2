@@ -3598,10 +3598,10 @@
   resolved "https://registry.yarnpkg.com/@renproject/fonts/-/fonts-2.0.0-alpha.2.tgz#ac1027e02d9c00af9182ac7e14f37ec8943294f0"
   integrity sha512-s2BKIQVeE+GRT4ehCGY7PZT14aH8CQRabrMyWn2uQt2xZd6P59IY3YDFEaqqHmbm7KCaeh8XIepwHLyC+XHEAA==
 
-"@renproject/icons@0.3.5":
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/@renproject/icons/-/icons-0.3.5.tgz#21898a5fa2d3066e13ec3c17867e21dc3dd4dc94"
-  integrity sha512-4cbkZUBTQnXzFfRSt0pQOb7wj2ws895D4Bt7KeLxDezysjT+R9XjJ//9DtXOMGoh5wFiMgJC2doinFVcEV59+Q==
+"@renproject/icons@0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@renproject/icons/-/icons-0.3.6.tgz#d25d237956363ed52ff829fc97e832cfafdf6a47"
+  integrity sha512-3T7E44bGSGXXF057Vqizyvr8Z4h01+KwLI87twNzT0X8AxH5jht7LFz4up9fKCL77MiKk4HNIBg1kgFaakD9NQ==
 
 "@renproject/interfaces@2.5.9", "@renproject/interfaces@^2.5.2", "@renproject/interfaces@^2.5.9":
   version "2.5.9"
