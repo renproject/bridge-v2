@@ -50,7 +50,7 @@ export class SolanaConnector
     this.connection = new Connection(this.clusterURL);
     this.providerURL = providerURL;
     this.emitter = new ConnectorEmitter<SolanaProvider, string>(debug);
-    (window as any)._sol = this;
+
     if (typeof this.providerURL === "string"){
       this.wallet = new Wallet(this.providerURL, this.clusterURL);
     } else if((this.providerURL as any).isBraveWallet) {
@@ -61,10 +61,6 @@ export class SolanaConnector
     } else {
       this.wallet = new Wallet(this.providerURL, this.clusterURL);
     }
-
-    // this.interval = setInterval(() => {
-    //   this.handleUpdate();
-    // }, 3000);
 
     (window as any).solanaConnector = this;
   }
