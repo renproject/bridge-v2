@@ -51,16 +51,12 @@ export class SolanaConnector
     this.providerURL = providerURL;
     this.emitter = new ConnectorEmitter<SolanaProvider, string>(debug);
 
-    if (typeof this.providerURL === "string"){
-      this.wallet = new Wallet(this.providerURL, this.clusterURL);
-    } else if((this.providerURL as any).isBraveWallet) {
+    if ((this.providerURL as any).isBraveWallet) {
       // faking postMessage method so that serum isInjectedProvider
       // pass on Brave integrated solana wallet
       this.providerURL.postMessage = () => {}
-      this.wallet = new Wallet(this.providerURL, this.clusterURL);
-    } else {
-      this.wallet = new Wallet(this.providerURL, this.clusterURL);
     }
+    this.wallet = new Wallet(this.providerURL, this.clusterURL);
 
     (window as any).solanaConnector = this;
   }
