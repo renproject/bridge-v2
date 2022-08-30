@@ -54,7 +54,7 @@ export class SolanaConnector
     if ((this.providerURL as any).isBraveWallet) {
       // faking postMessage method so that serum isInjectedProvider
       // pass on Brave integrated solana wallet
-      this.providerURL.postMessage = () => {}
+      (this.providerURL as any).postMessage = () => {}
     }
     this.wallet = new Wallet(this.providerURL, this.clusterURL);
 
