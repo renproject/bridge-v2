@@ -50,11 +50,13 @@ export class SolanaConnector
     this.connection = new Connection(this.clusterURL);
     this.providerURL = providerURL;
     this.emitter = new ConnectorEmitter<SolanaProvider, string>(debug);
-    this.wallet = new Wallet(this.providerURL, this.clusterURL);
 
-    // this.interval = setInterval(() => {
-    //   this.handleUpdate();
-    // }, 3000);
+    if ((this.providerURL as any).isBraveWallet) {
+      // faking postMessage method so that serum isInjectedProvider
+      // pass on Brave integrated solana wallet
+      (this.providerURL as any).postMessage = () => {}
+    }
+    this.wallet = new Wallet(this.providerURL, this.clusterURL);
 
     (window as any).solanaConnector = this;
   }
