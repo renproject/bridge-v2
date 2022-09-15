@@ -41,7 +41,7 @@ export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
 
   const handleSetMaxAmount = useCallback(() => {
     if (onSetMaxAmount && balance) {
-      onSetMaxAmount(Number(balance).toString());
+      onSetMaxAmount(balance.toString());
     }
   }, [balance, onSetMaxAmount]);
 
@@ -81,7 +81,7 @@ export const BalanceInfo: FunctionComponent<BalanceInfoProps> = ({
                       {balance}
                     </Link>
                   ) : (
-                    <span>{Number(balance).toString()}</span>
+                    <span>{balance.toString()}</span>
                   )}
                 </span>
               </Fade>

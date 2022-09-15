@@ -1,3 +1,4 @@
+import { EthereumBaseChain } from "@renproject/chains-ethereum/base";
 import { ethers } from "ethers";
 import { Asset, Chain } from "@renproject/chains";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
@@ -158,7 +159,7 @@ export const useSwitchChainHelpers = (
 
   const addOrSwitchChain = useMemo(() => {
     const chainInstance = chains[chain];
-    const networkData = (chainInstance.chain as any).network.network;
+    const networkData = (chainInstance.chain as EthereumBaseChain).network.config;
     if (networkData) {
       const { chainId, chainName, rpcUrls, blockExplorerUrls, nativeCurrency } =
         networkData;
