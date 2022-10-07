@@ -103,7 +103,7 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     shortName: "Eth",
     networks: {
       ...createNetworkConfig(RenNetwork.Mainnet, 1),
-      ...createNetworkConfig(RenNetwork.Testnet, 42, "Kovan Test Network"),
+      ...createNetworkConfig(RenNetwork.Testnet, 5, "Goerli Testnet"),
     },
   },
   Fantom: {

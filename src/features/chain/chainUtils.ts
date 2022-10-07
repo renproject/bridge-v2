@@ -1,4 +1,4 @@
-import SolanaWallet from "@project-serum/sol-wallet-adapter";
+import SolanaWalletSerum from "@project-serum/sol-wallet-adapter";
 import { Chain, Filecoin } from "@renproject/chains";
 import {
   Bitcoin,
@@ -6,7 +6,7 @@ import {
   BitcoinCash,
   DigiByte,
   Dogecoin,
-  Zcash,
+  Zcash
 } from "@renproject/chains-bitcoin";
 import {
   Arbitrum,
@@ -19,16 +19,17 @@ import {
   Kava,
   Moonbeam,
   Optimism,
-  Polygon,
+  Polygon
 } from "@renproject/chains-ethereum";
 import { Solana } from "@renproject/chains-solana";
+import { Wallet as SolanaWallet } from "@renproject/chains-solana/wallet";
 import { Terra } from "@renproject/chains-terra";
 import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 
 import {
   Chain as GatewayChain,
   DepositChain,
-  RenNetwork,
+  RenNetwork
 } from "@renproject/utils";
 import { clusterApiUrl, Connection } from "@solana/web3.js";
 import { ethers, providers } from "ethers";
@@ -36,7 +37,7 @@ import { env } from "../../constants/environmentVariables";
 import {
   isContractBaseChain,
   isEthereumBaseChain,
-  supportedEthereumChains,
+  supportedEthereumChains
 } from "../../utils/chainsConfig";
 import { EthereumBaseChain } from "../../utils/missingTypes";
 
@@ -53,32 +54,23 @@ interface EVMConstructor<EVM> {
   configMap: {
     [network in RenNetwork]?: EVMNetworkConfig;
   };
-
   new({
     network,
-    provider,
-  }: {
+    provider
+}: {
     network: RenNetwork;
     provider: EthProvider;
+
   }): EVM;
 }
 
-export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
-  ChainClass: EVMConstructor<EVM>,
-  network: RenNetwork
-): ChainInstance & {
-  chain: EVM;
-} => {
+const getEVMDefaultProvider = (ChainClass: EVMConstructor<any>, network: RenNetwork) => {
   const config = ChainClass.configMap[network];
   if (!config) {
     throw new Error(`No configuration for ${ChainClass.name} on ${network}.`);
   }
 
-  // console.log("ccc", config.config);
   let rpcUrl = config.config.rpcUrls[0];
-  // if (config.config.chainId === "0x13881") {
-  //   rpcUrl = config.config.rpcUrls[1];
-  // }
   if (env.INFURA_ID) {
     for (const url of config.config.rpcUrls) {
       if (url.match(/^https:\/\/.*\$\{INFURA_API_KEY\}/)) {
@@ -89,23 +81,44 @@ export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
   }
 
   let provider = new providers.JsonRpcProvider(rpcUrl);
-  // if (config.config.chainId === "0x13881XX") {
-  //   console.log("overwriting chain", config);
-  //   provider = new providers.JsonRpcProvider({
-  //     url: rpcUrl,
-  //     headers: {
-  //       "access-control-allow-origin": "http://localhost:3000",
-  //     },
-  //     skipFetchSetup: true,
-  //   });
-  // } else {
-  //   provider = new providers.JsonRpcProvider(rpcUrl);
-  // }
+
+  return provider;
+}
+export const getEthereumChain = (
+  network: RenNetwork
+): ChainInstance & {
+  chain: Ethereum;
+} => {
+
+  const provider = getEVMDefaultProvider(Ethereum as unknown as any, network);
+  return {
+    chain: new Ethereum({
+      network,
+      provider,
+      defaultTestnet: "goerli"
+    }),
+    connectionRequired: true,
+    accounts: [],
+  };
+};
+
+export const getEthereumBaseChain = <EVM extends EthereumBaseChain>(
+  ChainClass: EVMConstructor<EVM>,
+  network: RenNetwork
+): ChainInstance & {
+  chain: EVM;
+} => {
+
+  const config = ChainClass.configMap[network];
+  if (!config) {
+    throw new Error(`No configuration for ${ChainClass.name} on ${network}.`);
+  }
+  const provider = getEVMDefaultProvider(ChainClass, network);
 
   return {
     chain: new ChainClass({
       network,
-      provider,
+      provider
     }),
     connectionRequired: true,
     accounts: [],
@@ -124,7 +137,7 @@ export const getSolanaChain = (
   // console.log(rpcUrl);
   const signer =
     ((window as any).solana as SolanaWallet) ||
-    new SolanaWallet(rpcUrl, network);
+    new SolanaWalletSerum(rpcUrl, network);
   console.info("solana signer", (window as any).solana, signer);
   console.info(signer);
   return {
@@ -163,7 +176,7 @@ const getDepositBaseChain = <DBC extends DepositChain>(ChainClass: DBC) => {
 
 export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
   const ethereumBaseChains = {
-    [Chain.Ethereum]: getEthereumBaseChain(Ethereum, network),
+    [Chain.Ethereum]: getEthereumChain(network),
     [Chain.BinanceSmartChain]: getEthereumBaseChain(BinanceSmartChain, network),
     [Chain.Polygon]: getEthereumBaseChain(Polygon, network),
     // [Chain.Goerli]: getEthereumBaseChain(Goerli, network),
