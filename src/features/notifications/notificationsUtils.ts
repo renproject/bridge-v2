@@ -32,7 +32,7 @@ export const useBrowserNotifications = (onEnabled = () => {}) => {
   return {
     enabled,
     handleEnable,
-    Notification,
+    // Notification,
     showBrowserNotification,
   };
 };
