@@ -60,6 +60,7 @@ export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
                 debug: env.DEV,
                 rpc: {
                   42: `wss://kovan.infura.io/ws/v3/${env.INFURA_ID}`,
+                  5: `wss://goerli.infura.io/ws/v3/${env.INFURA_ID}`,
                   1: `wss://mainnet.infura.io/ws/v3/${env.INFURA_ID}`,
                 },
                 chainId: network === RenNetwork.Mainnet ? 1 : 42,

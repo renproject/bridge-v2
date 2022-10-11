@@ -21,6 +21,7 @@ import {
   Optimism,
   Polygon
 } from "@renproject/chains-ethereum";
+import { goerliConfigMap } from "@renproject/chains-ethereum/ethereum";
 import { Solana } from "@renproject/chains-solana";
 import { Wallet as SolanaWallet } from "@renproject/chains-solana/wallet";
 import { Terra } from "@renproject/chains-terra";
@@ -64,8 +65,8 @@ interface EVMConstructor<EVM> {
   }): EVM;
 }
 
-const getEVMDefaultProvider = (ChainClass: EVMConstructor<any>, network: RenNetwork) => {
-  const config = ChainClass.configMap[network];
+const getEVMDefaultProvider = (ChainClass: EVMConstructor<any>, network: RenNetwork, configMap = ChainClass.configMap) => {
+  const config = configMap[network];
   if (!config) {
     throw new Error(`No configuration for ${ChainClass.name} on ${network}.`);
   }
@@ -84,13 +85,14 @@ const getEVMDefaultProvider = (ChainClass: EVMConstructor<any>, network: RenNetw
 
   return provider;
 }
+
 export const getEthereumChain = (
   network: RenNetwork
 ): ChainInstance & {
   chain: Ethereum;
 } => {
 
-  const provider = getEVMDefaultProvider(Ethereum as unknown as any, network);
+  const provider = getEVMDefaultProvider(Ethereum as unknown as any, network, goerliConfigMap);
   return {
     chain: new Ethereum({
       network,
