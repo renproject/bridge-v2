@@ -42,6 +42,15 @@ const isEnabled = (chain: Chain, wallet: Wallet) => {
 export const getMultiwalletConfig = (network: RenNetwork, reinit = false) => {
   return {
     chains: {
+      [Chain.Goerli]: [
+        {
+          name: Wallet.MetaMask,
+          logo: "",
+          connector: new EthereumInjectedConnector({
+            debug: env.DEV,
+            networkIdMapper: createNetworkIdMapper(Chain.Ethereum),
+          }),
+        }],
       [Chain.Ethereum]: [
         {
           name: Wallet.MetaMask,

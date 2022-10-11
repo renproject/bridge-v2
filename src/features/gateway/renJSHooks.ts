@@ -53,7 +53,7 @@ type ChainsByassetsMappingMapping = Record<
   Partial<Record<Asset, Array<Chain>>>
 >;
 
-export const useWhitelist = () => {
+export const useWhitelist = (dummy = false) => {
   const [whitelist, setWhitelist] = useState<Array<string> | null>(null);
   useEffect(() => {
     globalRenJs.provider.queryConfig().then((response) => {

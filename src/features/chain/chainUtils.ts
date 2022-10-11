@@ -1,5 +1,5 @@
 import SolanaWalletSerum from "@project-serum/sol-wallet-adapter";
-import { Chain, Filecoin } from "@renproject/chains";
+import { Chain, Filecoin, Goerli } from "@renproject/chains";
 import {
   Bitcoin,
   BitcoinBaseChain,
@@ -181,7 +181,7 @@ export const getDefaultChains = (network: RenNetwork): ChainInstanceMap => {
     [Chain.Ethereum]: getEthereumChain(network),
     [Chain.BinanceSmartChain]: getEthereumBaseChain(BinanceSmartChain, network),
     [Chain.Polygon]: getEthereumBaseChain(Polygon, network),
-    // [Chain.Goerli]: getEthereumBaseChain(Goerli, network),
+    [Chain.Goerli]: getEthereumBaseChain(Goerli, network),
     [Chain.Avalanche]: getEthereumBaseChain(Avalanche, network),
     [Chain.Arbitrum]: getEthereumBaseChain(Arbitrum, network),
     [Chain.Fantom]: getEthereumBaseChain(Fantom, network),

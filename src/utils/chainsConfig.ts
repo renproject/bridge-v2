@@ -26,6 +26,7 @@ import {
   CustomSvgIconComponent,
   EmptyCircleIcon
 } from "../components/icons/RenIcons";
+import { env } from "../constants/environmentVariables";
 import { AssetChainsConfig } from "./assetsConfig";
 import {
   createNetworkConfig,
@@ -106,6 +107,12 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
       ...createNetworkConfig(RenNetwork.Testnet, 5, "Goerli Testnet"),
     },
   },
+  Goerli: {
+    Icon: chainIcon(EthereumChain),
+    fullName: "Goerli Testnet",
+    shortName: "Goerli",
+    networks: createNetworksConfig(1, 5),
+  },
   Fantom: {
     Icon: chainIcon(FantomChain),
     fullName: "Fantom",
@@ -161,12 +168,6 @@ const chainsBaseConfig: Record<Chain, ChainBaseConfig> = {
     fullName: "Solana",
     shortName: "Solana",
     networks: createNetworksConfig(1, 2, RenNetwork.Mainnet, RenNetwork.Devnet),
-  },
-  Goerli: {
-    Icon: chainIcon(EthereumChain),
-    fullName: "Goerli Testnet",
-    shortName: "Goerli",
-    networks: createNetworksConfig(1, 5),
   },
   Catalog: unsetChainConfig,
 };
@@ -228,10 +229,10 @@ export const isDepositBaseChain = (chain: Chain) =>
   supportedDepositChains.includes(chain);
 
 export const supportedEthereumChains: Array<Chain> = [
-  Chain.Ethereum,
+  //TODO: hacky till Goerli became default Ethereum testnet in renJS
+  env.NETWORK === "mainnet" ? Chain.Ethereum : Chain.Goerli,
   Chain.BinanceSmartChain,
   Chain.Fantom,
-  // Chain.Goerli,
   Chain.Polygon,
   Chain.Avalanche,
   Chain.Arbitrum,
