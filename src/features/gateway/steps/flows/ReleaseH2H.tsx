@@ -371,14 +371,45 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
     tx: transaction?.out,
     debugLabel: "out",
   });
+
+  const [submittingOutSetup, setSubmittingOutSetup] = useState(false);
+  const [submittingOutError, setSubmittingOutError] = useState<any>();
+
   const {
     handleSubmit: handleSubmitRelease,
     submitting: submittingRelease,
     waiting: waitingRelease,
     done: doneRelease,
-    errorSubmitting: errorSubmittingRelease,
+    errorSubmitting: submittingReleaseError,
     handleReset: handleResetRelease,
   } = outSubmitter;
+
+  const handleSubmitReleaseAndOut = useCallback(async () => {
+    setSubmittingOutSetup(true);
+    if (transaction === null) {
+      return;
+    }
+    try {
+      for (const key of Object.keys(transaction.outSetup)) {
+        if (transaction.outSetup[key]) {
+          await transaction.outSetup[key].submit?.();
+          await transaction.outSetup[key].wait();
+        }
+      }
+      setSubmittingOutSetup(false);
+      await handleSubmitRelease();
+    } catch (error: any) {
+      setSubmittingOutError({ code: 1984, message: "outSetup error" });
+      console.error(error);
+    }
+  }, [handleSubmitRelease, transaction]);
+
+  const handleResetMintAndOut = useCallback(() => {
+    setSubmittingOutError(false);
+    setSubmittingOutSetup(false);
+    handleResetRelease();
+  }, [handleResetRelease]);
+
 
   const outTxMeta = useChainTransactionStatusUpdater({
     tx: transaction?.out,
@@ -449,13 +480,13 @@ const ReleaseH2HProcessor: FunctionComponent<ReleaseH2HProcessorProps> = ({
         releaseAmountUsd={releaseAmountUsd}
         releaseConfirmations={releaseConfirmations}
         releaseTargetConfirmations={releaseTargetConfirmations}
-        onReset={handleResetRelease}
-        onSubmit={handleSubmitRelease}
-        submitting={submittingRelease || !transaction?.out?.submit}
-        submittingDisabled={submittingReleaseDisabled}
+        onReset={handleResetMintAndOut}
+        onSubmit={handleSubmitReleaseAndOut}
+        submitting={submittingRelease || !transaction?.out?.submit || submittingOutSetup}
+        submittingDisabled={submittingReleaseDisabled || submittingOutSetup}
         waiting={waitingRelease}
         done={doneRelease}
-        errorSubmitting={errorSubmittingRelease}
+        errorSubmitting={submittingReleaseError || submittingOutError}
         ioType={ioType}
       />
     );

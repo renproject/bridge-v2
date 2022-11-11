@@ -134,7 +134,7 @@ export const getSolanaChain = (
 } => {
   const solanaNetwork =
     network === RenNetwork.Mainnet ? "mainnet-beta" : "devnet";
-  const rpcUrl = clusterApiUrl(solanaNetwork);
+  const rpcUrl = network === RenNetwork.Mainnet ? "https://solana-api.projectserum.com/" : clusterApiUrl(solanaNetwork);
   const provider = new Connection(rpcUrl);
   // console.log(rpcUrl);
   const signer =
