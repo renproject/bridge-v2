@@ -16,8 +16,8 @@ export interface SolanaConnectorOptions {
 
 const renNetworkToSolanaNetwork: { [k in RenNetwork]: string } = {
   [RenNetwork.Devnet]: clusterApiUrl("devnet"),
-  [RenNetwork.Mainnet]: clusterApiUrl("mainnet-beta"),
-  // [RenNetwork.Mainnet]: "https://solana-api.projectserum.com/",
+  // [RenNetwork.Mainnet]: clusterApiUrl("mainnet-beta"),
+  [RenNetwork.Mainnet]: "https://solana-api.projectserum.com/",
   [RenNetwork.Testnet]: clusterApiUrl("devnet"),
   [RenNetwork.Localnet]: "http://localhost:8899",
 };
@@ -47,6 +47,9 @@ export class SolanaConnector
     clusterURL,
   }: SolanaConnectorOptions) {
     this.network = network;
+    console.log("solana pu", providerURL);
+    console.log("solana cu", clusterURL);
+    // this.clusterURL = "https://solana-api.projectserum.com/";
     this.clusterURL = clusterURL || renNetworkToSolanaNetwork[this.network];
     this.connection = new Connection(this.clusterURL);
     this.providerURL = providerURL;
