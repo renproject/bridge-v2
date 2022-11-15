@@ -31,12 +31,12 @@ export const TransactionTypeTabs: FunctionComponent<TabsProps> = () => {
         indicatorColor="primary"
         variant="fullWidth"
       >
-        <Tab
-          className={styles.tab}
-          label={t("mint.tab-name")}
-          value={paths.MINT}
-        />
-        <Tab className={styles.tab} label="Bridge" value={paths.BRIDGE} />
+        {/*<Tab*/}
+        {/*  className={styles.tab}*/}
+        {/*  label={t("mint.tab-name")}*/}
+        {/*  value={paths.MINT}*/}
+        {/*/>*/}
+        {/*<Tab className={styles.tab} label="Bridge" value={paths.BRIDGE} />*/}
         <Tab
           className={styles.tab}
           label={t("release.tab-name")}
