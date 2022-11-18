@@ -90,7 +90,7 @@
     "start": "cross-env GENERATE_SOURCEMAP=false react-app-rewired start",
     "start-functions": "netlify functions:serve",
     "build": "react-app-rewired --max-old-space-size=8192 build",
-    "postbuild": "echo $COMMIT_REF > build/build.txt",
+    "postbuild": "echo $COMMIT_REF > build/build.html && cp build/index.html build/ipfs-404.html",
     "test": "react-app-rewired test",
     "lint": "eslint --ext js,ts,tsx src",
     "eject": "react-app-rewired eject",
