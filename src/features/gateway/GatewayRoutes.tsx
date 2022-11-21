@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Route, useHistory, useLocation } from "react-router-dom";
+import { Redirect, Route, useHistory, useLocation } from "react-router-dom";
 import { paths } from "../../pages/routes";
 import { usePageTitle } from "../../providers/TitleProviders";
 import { AddressScreeningWarningDialog } from "../wallet/components/WalletHelpers";
@@ -90,9 +90,12 @@ export const GatewayRoutes: FunctionComponent = () => {
 
   return (
     <GatewayLifecycleGuard>
+      <Route exact path={[paths.MINT, paths.BRIDGE]} >
+        <Redirect to={paths.RELEASE} />
+      </Route>
       <Route
         exact
-        path={[paths.MINT, paths.RELEASE, paths.BRIDGE]}
+        path={[paths.RELEASE]}
         component={GatewayConfigurationSteps}
       />
       <Route exact path={paths.MINT__GATEWAY_H2H} component={MintH2HProcess} />
