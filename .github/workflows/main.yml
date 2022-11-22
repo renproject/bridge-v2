@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feat/ipfs-upload
   pull_request: # all pull requests
 
 jobs:
@@ -28,11 +29,14 @@ jobs:
 
       - name: IPFS
         uses: aquiladev/ipfs-action@master
+        id: ipfs
         with:
           path: ./build
           service: infura
           infuraProjectId: ${{ secrets.INFURA_PROJECT_ID }}
           infuraProjectSecret: ${{ secrets.INFURA_PROJECT_SECRET }}
+      - name: IPFS CID
+        run: echo "The IPFS CID is ${{ steps.ipfs.outputs.cid }}"
 
       - name: Pack
         uses: montudor/action-zip@v1
