@@ -24,7 +24,7 @@ const ENABLED_ASSETS = process.env.REACT_APP_ENABLED_ASSETS?.split(",") || [
   "*",
 ];
 
-const SOLANA_MAINNET_RPC_URL = "https://multichain.renproject.io/mainnet/solana";
+const SOLANA_MAINNET_RPC_URL = "https://rpc.ankr.com/solana";
 
 
 export const env = {
