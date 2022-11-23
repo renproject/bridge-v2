@@ -6,6 +6,7 @@ import {
 } from "@renproject/multiwallet-base-connector";
 import Wallet from "@project-serum/sol-wallet-adapter/dist/esm/index";
 import { Connection, clusterApiUrl, PublicKey } from "@solana/web3.js";
+import { env } from "../../constants/environmentVariables";
 
 export interface SolanaConnectorOptions {
   debug?: boolean;
@@ -17,7 +18,7 @@ export interface SolanaConnectorOptions {
 const renNetworkToSolanaNetwork: { [k in RenNetwork]: string } = {
   [RenNetwork.Devnet]: clusterApiUrl("devnet"),
   // [RenNetwork.Mainnet]: clusterApiUrl("mainnet-beta"),
-  [RenNetwork.Mainnet]: "https://solana-api.projectserum.com/",
+  [RenNetwork.Mainnet]: env.SOLANA_MAINNET_RPC_URL,
   [RenNetwork.Testnet]: clusterApiUrl("devnet"),
   [RenNetwork.Localnet]: "http://localhost:8899",
 };

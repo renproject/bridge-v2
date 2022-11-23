@@ -24,6 +24,9 @@ const ENABLED_ASSETS = process.env.REACT_APP_ENABLED_ASSETS?.split(",") || [
   "*",
 ];
 
+const SOLANA_MAINNET_RPC_URL = "https://multichain.renproject.io/mainnet/solana";
+
+
 export const env = {
   DEV,
   NETWORK,
@@ -33,6 +36,7 @@ export const env = {
   BSC_MM_ENABLED,
   MEWCONNECT_ENABLED,
   WALLETCONNECT_ENABLED,
+  SOLANA_MAINNET_RPC_URL
 };
 
 console.debug("env", env, process);
