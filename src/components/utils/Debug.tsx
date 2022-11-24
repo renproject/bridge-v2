@@ -31,7 +31,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const isProductionLike = prodDomains.includes(window.location.host);
+export const isProductionLike = prodDomains.includes(window.location.host) || window.location.host.indexOf(".eth.") > -1;
 
 const off =
   isProductionLike && !(localStorage.getItem("showDebugs") === "true");
