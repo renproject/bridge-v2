@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - github-pages
   pull_request: # all pull requests
 
 jobs:
@@ -25,6 +25,11 @@ jobs:
 
       - name: Build
         run: yarn build
+
+      - name: DeployGHP
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build # The folder the action should deploy.
 
       - name: Pack
         uses: montudor/action-zip@v1
