@@ -29,7 +29,7 @@ jobs:
       - name: DeployGHP
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build # The folder the action should deploy.
+          folder: build
 
       - name: Pack
         uses: montudor/action-zip@v1
