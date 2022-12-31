@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - github-pages
+      - master
 #  pull_request: # all pull requests
 
 jobs:
