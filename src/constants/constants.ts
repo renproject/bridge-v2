@@ -25,7 +25,7 @@ export const prodDomains = [
   "bridge-staging.renproject.io",
   "staging.bridge.renproject.io",
   "bridge.renproject.io",
-  "testbridge.renproject.io/"
+  "testbridge.renproject.io"
 ];
 
 (window as any).prodDomains = prodDomains;
