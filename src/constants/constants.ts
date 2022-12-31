@@ -25,7 +25,10 @@ export const prodDomains = [
   "bridge-staging.renproject.io",
   "staging.bridge.renproject.io",
   "bridge.renproject.io",
+  "testbridge.renproject.io/"
 ];
+
+(window as any).prodDomains = prodDomains;
 
 export const MINT_GAS_UNIT_COST = 153400;
 export const RELEASE_GAS_UNIT_COST = MINT_GAS_UNIT_COST;
