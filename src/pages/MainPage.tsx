@@ -25,7 +25,7 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
     history.replace(paths.WELCOME);
   }
   if (location.pathname === "/") {
-    history.replace(paths.RELEASE);
+    history.replace(paths.ABOUT);
   }
   useExchangeRates();
   useGasPrices();

@@ -4,7 +4,6 @@ import { AppLoader } from "./components/progress/AppLoader";
 import { ImportantInfoModal } from "./features/ui/ImportantInfoModal";
 import { SystemMonitor } from "./features/ui/SystemMonitor";
 // import { SystemMonitor } from "./features/ui/SystemMonitor";
-import MainPage from "./pages/MainPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
 import { WelcomePage } from "./pages/WelcomePage";
@@ -31,7 +30,7 @@ function App() {
         <Switch>
           <Route exact path={paths.WELCOME} component={WelcomePage} />
           <Route exact path={paths.ABOUT} component={AboutPage} />
-          <Route exact path={mainPagePaths} component={MainPage} />
+          <Route path={mainPagePaths} component={AboutPage} />
           <Route component={NotFoundPage} />
         </Switch>
         <ImportantInfoModal />
