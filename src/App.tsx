@@ -6,7 +6,6 @@ import { SystemMonitor } from "./features/ui/SystemMonitor";
 // import { SystemMonitor } from "./features/ui/SystemMonitor";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
-import { WelcomePage } from "./pages/WelcomePage";
 
 // const MainPage = lazy(() => import("./pages/MainPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
