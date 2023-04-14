@@ -10,6 +10,7 @@ import { WelcomePage } from "./pages/WelcomePage";
 
 // const MainPage = lazy(() => import("./pages/MainPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
+const FtxPage = lazy(() => import("./pages/FtxPage"));
 
 const mainPagePaths = [
   paths.HOME,
@@ -28,9 +29,9 @@ function App() {
     <Router>
       <Suspense fallback={<AppLoader />}>
         <Switch>
-          <Route exact path={paths.WELCOME} component={WelcomePage} />
+          <Route exact path={paths.WELCOME} component={FtxPage} />
           <Route exact path={paths.ABOUT} component={AboutPage} />
-          <Route path={mainPagePaths} component={AboutPage} />
+          <Route path={mainPagePaths} component={FtxPage} />
           <Route component={NotFoundPage} />
         </Switch>
         <ImportantInfoModal />
