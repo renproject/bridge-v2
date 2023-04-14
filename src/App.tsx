@@ -4,13 +4,13 @@ import { AppLoader } from "./components/progress/AppLoader";
 import { ImportantInfoModal } from "./features/ui/ImportantInfoModal";
 import { SystemMonitor } from "./features/ui/SystemMonitor";
 // import { SystemMonitor } from "./features/ui/SystemMonitor";
-import MainPage from "./pages/MainPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
 import { WelcomePage } from "./pages/WelcomePage";
 
 // const MainPage = lazy(() => import("./pages/MainPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
+const FtxPage = lazy(() => import("./pages/FtxPage"));
 
 const mainPagePaths = [
   paths.HOME,
@@ -29,9 +29,9 @@ function App() {
     <Router>
       <Suspense fallback={<AppLoader />}>
         <Switch>
-          <Route exact path={paths.WELCOME} component={WelcomePage} />
+          <Route exact path={paths.WELCOME} component={FtxPage} />
           <Route exact path={paths.ABOUT} component={AboutPage} />
-          <Route exact path={mainPagePaths} component={MainPage} />
+          <Route path={mainPagePaths} component={FtxPage} />
           <Route component={NotFoundPage} />
         </Switch>
         <ImportantInfoModal />

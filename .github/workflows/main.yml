@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-  pull_request: # all pull requests
+#  pull_request: # all pull requests
 
 jobs:
   build:
@@ -25,6 +25,11 @@ jobs:
 
       - name: Build
         run: yarn build
+
+      - name: DeployGHP
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build #folder
 
       - name: Pack
         uses: montudor/action-zip@v1
